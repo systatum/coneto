@@ -3,6 +3,7 @@
 import { strToColor } from "./../lib/code-color";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
 import styled, { CSSProp } from "styled-components";
+import { useTheme } from "./../theme/provider";
 
 export interface AvatarProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
@@ -51,6 +52,9 @@ function Avatar({
   onClick,
   ...props
 }: AvatarProps) {
+  const { currentTheme } = useTheme();
+  const avatarTheme = currentTheme.avatar;
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isClickable = changeable || !!onChange || !!onClick;
@@ -86,7 +90,9 @@ function Avatar({
       $backgroundColor={!isImageValid ? backgroundColor : undefined}
       $fontSize={fontSize}
       $frameSize={frameSize}
-      $avatarStyle={styles?.self}
+      $borderColor={avatarTheme.borderColor}
+      $textColor={avatarTheme.textColor}
+      $style={styles?.self}
     >
       {isImageValid ? (
         <AvatarImage
@@ -99,7 +105,7 @@ function Avatar({
         <div>{initials}</div>
       )}
       {changeable ? (
-        <AvatarChange>
+        <AvatarChange $overlayBg={avatarTheme.overlayBackgroundColor}>
           <HiddenInput
             ref={fileInputRef}
             type="file"
@@ -107,7 +113,9 @@ function Avatar({
             onChange={handleFileChange}
             aria-label="profile-file-input"
           />
-          <AvatarChangeIcon>📷</AvatarChangeIcon>
+          <AvatarChangeIcon $color={avatarTheme.overlayIconColor}>
+            📷
+          </AvatarChangeIcon>
         </AvatarChange>
       ) : null}
     </AvatarContainer>
@@ -116,10 +124,12 @@ function Avatar({
 
 const AvatarContainer = styled.div<{
   $clickable: boolean;
-  $backgroundColor: string;
+  $backgroundColor?: string;
   $frameSize: number;
   $fontSize: number;
-  $avatarStyle: CSSProp;
+  $borderColor: string;
+  $textColor: string;
+  $style?: CSSProp;
 }>`
   position: relative;
   display: flex;
@@ -127,13 +137,19 @@ const AvatarContainer = styled.div<{
   justify-content: center;
   overflow: hidden;
   border-radius: 9999px;
-  border: 1px solid #f3f4f6;
   font-weight: bold;
+
+  border: 1px solid ${({ $borderColor }) => $borderColor};
+  color: ${({ $textColor }) => $textColor};
+
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   font-size: ${({ $fontSize }) => $fontSize}px;
   width: ${({ $frameSize }) => $frameSize}px;
   height: ${({ $frameSize }) => $frameSize}px;
+
   cursor: ${({ $clickable }) => ($clickable ? "pointer" : "default")};
+
+  ${({ $style }) => $style}
 `;
 
 const AvatarImage = styled.img`
@@ -142,13 +158,15 @@ const AvatarImage = styled.img`
   object-fit: contain;
 `;
 
-const AvatarChange = styled.div`
+const AvatarChange = styled.div<{
+  $overlayBg: string;
+}>`
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${({ $overlayBg }) => $overlayBg};
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
 
@@ -161,8 +179,10 @@ const HiddenInput = styled.input`
   display: none;
 `;
 
-const AvatarChangeIcon = styled.span`
-  color: white;
+const AvatarChangeIcon = styled.span<{
+  $color: string;
+}>`
+  color: ${({ $color }) => $color};
   font-size: 0.875rem;
 `;
 

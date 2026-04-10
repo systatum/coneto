@@ -4,6 +4,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { CapsuleThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface CapsuleContentProps {
   id: string;
@@ -36,13 +38,16 @@ function BaseCapsule({
   activeTab,
   onTabChange,
   full,
-  activeBackgroundColor = "oklch(54.6% .245 262.881)",
-  activeColor = "white",
+  activeBackgroundColor,
+  activeColor,
   styles,
   id,
   fontSize = 12,
   disabled,
 }: BaseCapsuleProps) {
+  const { currentTheme } = useTheme();
+  const capsuleTheme = currentTheme.capsule;
+
   const [hovered, setHovered] = useState<string | null>(null);
 
   const activeId = hovered || activeTab;
@@ -153,6 +158,7 @@ function BaseCapsule({
   return (
     <CapsuleWrapper
       id={id}
+      $theme={capsuleTheme}
       $disabled={disabled}
       aria-label="capsule"
       $containerStyle={styles?.capsuleWrapperStyle}
@@ -163,6 +169,7 @@ function BaseCapsule({
       <ActiveBackground
         aria-label="active-capsule-box"
         $style={styles?.tabStyle}
+        $theme={capsuleTheme}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: initialPosition.left,
@@ -182,6 +189,7 @@ function BaseCapsule({
       <HoverBorder
         aria-label="hover-capsule-box"
         $style={styles?.tabStyle}
+        $theme={capsuleTheme}
         $activeBackgroundColor={activeBackgroundColor}
         initial={{
           left: hoverPosition.left,
@@ -203,6 +211,7 @@ function BaseCapsule({
 
         return (
           <Tab
+            $theme={capsuleTheme}
             $isActive={isActive}
             $activeColor={activeColor}
             $disabled={disabled}
@@ -296,25 +305,27 @@ const CapsuleWrapper = styled.div<{
   $full?: boolean;
   $containerStyle?: CSSProp;
   $disabled?: boolean;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   overflow: hidden;
+
   padding-left: 0.1rem;
   padding-right: 0.1rem;
-  border-color: #ebebeb;
-  box-shadow:
-    0 1px 1px -2px #5b5b5b,
-    0 1px 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
-  ${({ $full }) =>
+  ${({ $full, $theme }) =>
     $full
       ? css`
           width: 100%;
-          background-color: white;
-          border-bottom-width: 1px;
+          background-color: ${$theme?.backgroundColor};
+          border-top-width: 0px;
+          border-left-width: 0px;
+          border-right-width: 0px;
         `
       : css`
           width: fit-content;
@@ -335,6 +346,7 @@ const CapsuleWrapper = styled.div<{
 const ActiveBackground = styled(motion.div)<{
   $style?: CSSProp;
   $activeBackgroundColor?: string;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -343,13 +355,16 @@ const ActiveBackground = styled(motion.div)<{
   z-index: 10;
   height: 25px;
 
-  background-color: ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+  background-color: ${({ $activeBackgroundColor, $theme }) =>
+    $activeBackgroundColor ?? $theme?.active?.backgroundColor};
+
   ${({ $style }) => $style}
 `;
 
 const HoverBorder = styled(motion.div)<{
   $style?: CSSProp;
   $activeBackgroundColor?: string;
+  $theme?: CapsuleThemeConfig;
 }>`
   position: absolute;
   top: 50%;
@@ -358,7 +373,9 @@ const HoverBorder = styled(motion.div)<{
   border-radius: 8px;
   z-index: 0;
   height: 25px;
-  border: 2px solid ${({ $activeBackgroundColor }) => $activeBackgroundColor};
+  border: 2px solid
+    ${({ $activeBackgroundColor, $theme }) =>
+      $activeBackgroundColor ?? $theme?.hover?.borderColor};
 
   ${({ $style }) => $style}
 `;
@@ -369,6 +386,7 @@ const Tab = styled.div<{
   $fontSize?: number;
   $disabled?: boolean;
   $activeColor?: string;
+  $theme?: CapsuleThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -383,14 +401,10 @@ const Tab = styled.div<{
   margin-bottom: 4px;
   gap: 4px;
 
-  ${({ $isActive, $activeColor }) =>
+  color: ${({ $isActive, $activeColor, $theme }) =>
     $isActive
-      ? css`
-          color: ${$activeColor};
-        `
-      : css`
-          color: #111827;
-        `}
+      ? ($activeColor ?? $theme?.tab?.activeTextColor)
+      : $theme?.tab?.textColor};
 
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
 

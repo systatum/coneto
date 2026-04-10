@@ -1,6 +1,7 @@
 import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
+import { useTheme } from "./../theme/provider";
 
 export interface GridProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
@@ -63,6 +64,9 @@ function GridCard({
   selectable,
   ...props
 }: GridCardProps) {
+  const { currentTheme } = useTheme();
+  const gridTheme = currentTheme.grid;
+
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -72,6 +76,11 @@ function GridCard({
       $style={styles?.self}
       $isSelected={isSelected}
       $selectable={selectable}
+      $backgroundColor={gridTheme.cardBackgroundColor}
+      $hoverBackgroundColor={gridTheme.cardHoverBackgroundColor}
+      $selectedBackgroundColor={gridTheme.cardSelectedBackgroundColor}
+      $borderColor={gridTheme.cardBorderColor}
+      $shadow={gridTheme.cardShadow}
       onClick={(e) => {
         if (selectable) {
           onSelected?.();
@@ -129,12 +138,23 @@ const GridBase = styled.div<{
 
 const GridCardWrapper = styled.div.attrs<{
   $isSelected?: boolean;
+  $backgroundColor?: string;
+  $hoverBackgroundColor?: string;
+  $selectedBackgroundColor?: string;
+  $borderColor?: string;
+  $shadow?: string;
 }>(({ $isSelected }) => ({
-  "aria-label": "grid-card",
   "data-selected": $isSelected,
+  "aria-label": "grid-card",
 }))<{
   $selectable?: boolean;
   $style?: CSSProp;
+
+  $backgroundColor?: string;
+  $hoverBackgroundColor?: string;
+  $selectedBackgroundColor?: string;
+  $borderColor?: string;
+  $shadow?: string;
 }>`
   position: relative;
   display: flex;
@@ -146,15 +166,25 @@ const GridCardWrapper = styled.div.attrs<{
   gap: 8px;
   font-size: 12px;
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  ${({ $selectable }) =>
+
+  background: ${({ $backgroundColor }) => $backgroundColor};
+  border: 1px solid ${({ $borderColor }) => $borderColor};
+  box-shadow: ${({ $shadow }) => $shadow};
+
+  ${({ $selectable, $hoverBackgroundColor }) =>
     $selectable &&
     css`
       cursor: pointer;
+
       &:hover {
-        background-color: #f3f3f3;
+        background-color: ${$hoverBackgroundColor};
       }
     `}
+
+  &[data-selected="true"] {
+    background: ${({ $selectedBackgroundColor }) => $selectedBackgroundColor};
+  }
+
   ${({ $style }) => $style}
 `;
 

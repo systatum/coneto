@@ -1,6 +1,8 @@
 import { ReactNode, useCallback, useState } from "react";
 import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
+import { CapsuleTabThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabContentProps[];
@@ -28,10 +30,13 @@ function CapsuleTab({
   tabs,
   styles,
   activeTab = "1",
-  activeBackgroundColor = "black",
+  activeBackgroundColor,
   onTabChange,
   children,
 }: CapsuleTabProps) {
+  const { currentTheme } = useTheme();
+  const capsuleTabTheme = currentTheme.capsuleTab;
+
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
   const isControlled = onTabChange && activeTab !== undefined;
@@ -50,12 +55,17 @@ function CapsuleTab({
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
   return (
-    <CapsuleTabWrapper aria-label="capsule-tab-wrapper" $style={styles?.self}>
+    <CapsuleTabWrapper
+      $theme={capsuleTabTheme}
+      aria-label="capsule-tab-wrapper"
+      $style={styles?.self}
+    >
       <Capsule
         styles={{
           capsuleWrapperStyle: css`
             padding-left: 5px;
             padding-right: 5px;
+            background-color: ${capsuleTabTheme?.backgroundColor};
 
             ${styles?.capsuleWrapperStyle};
           `,
@@ -71,7 +81,9 @@ function CapsuleTab({
         tabs={tabs}
         onTabChange={setSelected}
         activeTab={selected}
-        activeBackgroundColor={activeBackgroundColor}
+        activeBackgroundColor={
+          activeBackgroundColor ?? capsuleTabTheme?.activeBackgroundColor
+        }
         full
       />
 
@@ -88,13 +100,15 @@ function CapsuleTab({
 
 const CapsuleTabWrapper = styled.div<{
   $style?: CSSProp;
+  $theme?: CapsuleTabThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
-  border: 1px solid #ebebeb;
   border-radius: 2px;
-  box-shadow: 0 1px 3px -3px #5b5b5b;
+
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   ${({ $style }) => $style}
 `;

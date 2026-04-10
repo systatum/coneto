@@ -5,6 +5,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ToggleboxThemeConfig } from "./../theme";
 
 interface BaseToggleboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -42,11 +44,15 @@ function BaseTogglebox({
   disabled,
   ...props
 }: BaseToggleboxProps) {
+  const { currentTheme } = useTheme();
+  const toggleboxTheme = currentTheme.togglebox;
+
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
     getToggleboxSize(size);
 
   return (
     <ToggleboxWrapper
+      $theme={toggleboxTheme}
       $disabled={disabled}
       $style={styles?.rowStyle}
       aria-label="togglebox-row-wrapper"
@@ -73,8 +79,9 @@ function BaseTogglebox({
           disabled={disabled}
           onChange={onChange}
         />
-        <ToggleBackground checked={checked} />
+        <ToggleBackground $checked={checked} $theme={toggleboxTheme} />
         <ToggleButton
+          $theme={toggleboxTheme}
           aria-label="togglebox-thumb"
           transition={{ type: "spring", stiffness: 700, damping: 30 }}
           animate={{
@@ -112,7 +119,10 @@ function BaseTogglebox({
             />
           )}
           {description && (
-            <Description $style={styles?.descriptionStyle}>
+            <Description
+              $theme={toggleboxTheme}
+              $style={styles?.descriptionStyle}
+            >
               {description}
             </Description>
           )}
@@ -213,7 +223,11 @@ const getToggleboxSize = (size: number) => {
   };
 };
 
-const ToggleboxWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+const ToggleboxWrapper = styled.div<{
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $theme?: ToggleboxThemeConfig;
+}>`
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -222,10 +236,11 @@ const ToggleboxWrapper = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
   align-items: center;
   width: 100%;
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $theme }) =>
     $disabled &&
     css`
       cursor: not-allowed;
+      opacity: ${$theme?.disabledOpacity ?? 0.5};
       user-select: none;
       pointer-events: none;
     `};
@@ -256,29 +271,41 @@ const StyledInput = styled.input`
   opacity: 0;
 `;
 
-const ToggleBackground = styled.div<{ checked: boolean }>`
+const ToggleBackground = styled.div<{
+  $checked: boolean;
+  $theme?: ToggleboxThemeConfig;
+}>`
   width: 100%;
   height: 100%;
   border-radius: 9999px;
   transition: background-color 0.3s;
-  background-color: ${({ checked }) => (checked ? "#61A9F9" : "#D1D5DB")};
+
+  background-color: ${({ $checked, $theme }) =>
+    $checked ? $theme?.checkedBackgroundColor : $theme?.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
 `;
 
-const ToggleButton = styled(motion.div)`
+const ToggleButton = styled(motion.div)<{
+  $theme?: ToggleboxThemeConfig;
+}>`
   position: absolute;
   top: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
   border-radius: 9999px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  background-color: ${({ $theme }) => $theme?.thumbColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 `;
 
-const Description = styled.span<{ $style?: CSSProp }>`
+const Description = styled.span<{
+  $style?: CSSProp;
+  $theme?: ToggleboxThemeConfig;
+}>`
   font-size: 12px;
   width: 100%;
+  color: ${({ $theme }) => $theme?.descriptionColor};
   ${({ $style }) => $style}
 `;
 

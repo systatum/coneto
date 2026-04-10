@@ -3,6 +3,8 @@ import { useAnimation, motion } from "framer-motion";
 import { ReactNode, useEffect, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { DrawerTabThemeConfig } from "./../theme";
 
 export interface DrawerTabProps {
   tabs: DrawerTabContentProps[];
@@ -22,6 +24,9 @@ export interface DrawerTabContentProps {
 }
 
 function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
+  const { currentTheme } = useTheme();
+  const drawerTabTheme = currentTheme.drawerTab;
+
   const [isDrawerTab, setIsDrawerTab] = useState(false);
   const [selected, setSelected] = useState<string | number | null>(null);
 
@@ -54,6 +59,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
       animate={controls}
       $position={position}
       $style={styles?.drawerTabStyle}
+      $theme={drawerTabTheme}
     >
       <TabButtonsContainer $position={position} $style={styles?.tabStyle}>
         {tabs.map((tab) => (
@@ -61,6 +67,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
             key={tab.id}
             role="button"
             tabIndex={0}
+            $theme={drawerTabTheme}
             aria-label={`${tab.title}-tab`}
             $selected={tab.id === selected}
             $position={position}
@@ -83,10 +90,11 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
       </TabButtonsContainer>
 
       {selectedTab.map((tab) => (
-        <TabContentContainer key={tab.id}>
-          <TabHeader>
+        <TabContentContainer $theme={drawerTabTheme} key={tab.id}>
+          <TabHeader $theme={drawerTabTheme}>
             <span>{tab.title}</span>
             <CloseButton
+              $theme={drawerTabTheme}
               onClick={(e) => {
                 e.stopPropagation();
                 handleToggleDrawer(false);
@@ -96,7 +104,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
               <RiCloseLine size={16} />
             </CloseButton>
           </TabHeader>
-          <Divider />
+          <Divider $theme={drawerTabTheme} />
           <Content>{tab.content}</Content>
         </TabContentContainer>
       ))}
@@ -107,6 +115,7 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
 const DrawerTabContainer = styled(motion.div)<{
   $position: "left" | "right";
   $style?: CSSProp;
+  $theme: DrawerTabThemeConfig;
 }>`
   position: fixed;
   top: 2.5rem;
@@ -116,10 +125,11 @@ const DrawerTabContainer = styled(motion.div)<{
   min-width: 300px;
   padding-bottom: 1rem;
   gap: 0.75rem;
-  background: white;
-  border: 1px solid #d1d5db;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 9992999;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: ${({ $theme }) => $theme.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme.borderColor};
 
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
@@ -153,35 +163,36 @@ const TabButtonsContainer = styled.div<{
 const TabButton = styled.div<{
   $selected: boolean;
   $position: "left" | "right";
+  $theme: DrawerTabThemeConfig;
 }>`
   cursor: pointer;
   padding: 0.5rem;
-  background: white;
-  border-color: #d1d5db;
+  background: ${({ $theme }) => $theme.backgroundColor};
+  color: ${({ $theme }) => $theme.textColor};
 
   &:hover {
-    background: #f3f4f6;
+    background: ${({ $theme }) => $theme.hoverBackgroundColor};
   }
 
-  ${({ $selected, $position }) =>
+  ${({ $selected, $position, $theme }) =>
     $selected
       ? $position === "left"
         ? css`
-            border-top: 1px solid #d1d5db;
-            border-bottom: 1px solid #d1d5db;
-            border-right: 1px solid #d1d5db;
+            border-top: 1px solid ${$theme.borderColor};
+            border-bottom: 1px solid ${$theme.borderColor};
+            border-right: 1px solid ${$theme.borderColor};
             border-left: none;
             border-radius: 0 0.75rem 0.75rem 0;
           `
         : css`
-            border-top: 1px solid #d1d5db;
-            border-bottom: 1px solid #d1d5db;
-            border-left: 1px solid #d1d5db;
+            border-top: 1px solid${$theme.borderColor};
+            border-bottom: 1px solid ${$theme.borderColor};
+            border-left: 1px solid ${$theme.borderColor};
             border-right: none;
             border-radius: 0.75rem 0 0 0.75rem;
           `
       : css`
-          border: 1px solid #d1d5db;
+          border: 1px solid ${$theme.borderColor};
 
           ${$position === "left"
             ? css`
@@ -192,42 +203,43 @@ const TabButton = styled.div<{
               `}
 
           &:hover {
-            border: 1px solid #d1d5db;
+            border: 1px solid ${$theme.borderColor};
           }
         `}
 `;
 
-const TabContentContainer = styled.div`
+const TabContentContainer = styled.div<{ $theme: DrawerTabThemeConfig }>`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   position: relative;
   z-index: 9991999;
-  background: white;
+  background: ${({ $theme }) => $theme.backgroundColor};
 `;
 
-const TabHeader = styled.div`
+const TabHeader = styled.div<{ $theme: DrawerTabThemeConfig }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 6px 0.5rem 6px 1rem;
-  background-color: #f3f4f6;
+  background-color: ${({ $theme }) => $theme.headerBackgroundColor};
   position: relative;
   z-index: 9992999;
 
   span {
     font-weight: 500;
     font-size: 0.875rem;
+    color: ${({ $theme }) => $theme.textColor};
   }
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<{ $theme: DrawerTabThemeConfig }>`
   position: absolute;
   top: 2rem;
   left: 0;
   width: 100%;
   height: 1px;
-  background-color: #e5e7eb;
+  background-color: ${({ $theme }) => $theme.dividerColor};
 `;
 
 const Content = styled.span`
@@ -236,11 +248,11 @@ const Content = styled.span`
   z-index: 9992999;
 `;
 
-const CloseButton = styled.div`
+const CloseButton = styled.div<{ $theme: DrawerTabThemeConfig }>`
   width: 20px;
   height: 20px;
   border-radius: 0.25rem;
-  color: #4b5563;
+  color: ${({ $theme }) => $theme.textColor};
   display: flex;
   position: relative;
   justify-content: center;
@@ -248,7 +260,7 @@ const CloseButton = styled.div`
   cursor: pointer;
 
   &:hover {
-    background: #d1d5db;
+    background: ${({ $theme }) => $theme.closeButtonHoverBackground};
   }
 `;
 

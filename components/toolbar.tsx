@@ -20,6 +20,8 @@ import {
 } from "@floating-ui/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { ToolbarThemeConfig } from "./../theme";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -54,165 +56,38 @@ export interface ToolbarMenuSylesProps {
   toggleActiveStyle?: CSSProp;
 }
 
-type ToolbarVariantType = "default" | "primary" | "danger" | "none";
+export type ToolbarVariantType =
+  | "default"
+  | "primary"
+  | "danger"
+  | "success"
+  | "transparent";
 
-const VARIANT_CLASS_MAP = {
-  base: {
-    default: css`
-      background-color: white;
-      &:hover {
-        border-color: #ececec;
-      }
-    `,
-    primary: css`
-      background-color: rgb(86, 154, 236);
-      &:hover {
-        border-color: #5286c9;
-      }
-    `,
-    danger: css`
-      background-color: rgb(206, 55, 93);
-      &:hover {
-        border-color: #c00000;
-      }
-    `,
-  },
-  hover: {
-    default: css`
-      background-color: #f5f5f5;
-    `,
-    primary: css`
-      background-color: rgb(64, 142, 232);
-    `,
-    danger: css`
-      background-color: rgb(200, 53, 50);
-    `,
-  },
-  active: {
-    default: css`
-      &:active {
-        background-color: #e8e8e8;
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px #e8e8e8;
-      }
-    `,
-    primary: css`
-      &:active {
-        background-color: rgb(54, 132, 222);
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px rgb(54, 132, 222);
-      }
-    `,
-    danger: css`
-      &:active {
-        background-color: rgb(176, 40, 45);
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px rgb(176, 40, 45);
-      }
-    `,
-  },
-  focusVisible: {
-    default: css`
-      &:focus-visible {
-        outline: none;
-        box-shadow: inset 0 0 0 2px #666666;
-        transition: box-shadow 0.2s ease-in-out;
-        border-radius: inherit;
-        z-index: 40;
-      }
-    `,
-    primary: css`
-      &:focus-visible {
-        outline: none;
-        box-shadow: inset 0 0 0 2px #1e5bb5;
-        transition: box-shadow 0.2s ease-in-out;
-        border-radius: inherit;
-        z-index: 40;
-      }
-    `,
-    danger: css`
-      &:focus-visible {
-        outline: none;
-        box-shadow: inset 0 0 0 2px #8a1620;
-        transition: box-shadow 0.2s ease-in-out;
-        border-radius: inherit;
-        z-index: 40;
-      }
-    `,
-  },
-};
+const useVariantToolbar = () => {
+  const { currentTheme } = useTheme();
+  const toolbarVariant = currentTheme?.toolbar ?? {};
 
-const VARIANT_ACTIVE = {
-  background: {
-    default: css`
-      background-color: #e8e8e8;
-      position: relative;
+  const VARIANT_COLORS: Record<ToolbarVariantType, ToolbarThemeConfig> =
+    Object.keys(toolbarVariant).reduce(
+      (acc, key) => {
+        const variant: ToolbarThemeConfig =
+          toolbarVariant[key as ToolbarVariantType];
+        if (!variant) return acc;
+        acc[key as ToolbarVariantType] = {
+          backgroundColor: variant.backgroundColor,
+          textColor: variant.textColor,
+          borderColor: variant.borderColor,
+          hoverBackgroundColor: variant.hoverBackgroundColor,
+          activeBackgroundColor: variant.activeBackgroundColor,
+          focusBackgroundColor: variant.focusBackgroundColor,
+          dividerColor: variant.dividerColor,
+        };
+        return acc;
+      },
+      {} as Record<ToolbarVariantType, ToolbarThemeConfig>
+    );
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px #e8e8e8;
-        border-radius: inherit;
-        pointer-events: none;
-      }
-    `,
-    primary: css`
-      background-color: rgb(54, 132, 222);
-      position: relative;
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px rgb(54, 132, 222);
-        border-radius: inherit;
-        pointer-events: none;
-      }
-    `,
-    danger: css`
-      background-color: rgb(176, 40, 45);
-      position: relative;
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        box-shadow:
-          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-          inset 0 -0.5px 0.5px rgb(176, 40, 45);
-        border-radius: inherit;
-        pointer-events: none;
-      }
-    `,
-  },
-  border: {
-    default: css`
-      border-color: #ececec;
-    `,
-    primary: css`
-      border-color: #5286c9;
-    `,
-    danger: css`
-      border-color: #c00000;
-    `,
-  },
+  return { VARIANT_COLORS };
 };
 
 function Toolbar({ children, styles, big }: ToolbarProps) {
@@ -295,6 +170,9 @@ function ToolbarMenu({
   styles,
   variant = "default",
 }: ToolbarMenuProps) {
+  const { VARIANT_COLORS } = useVariantToolbar();
+  const toolbarTheme = VARIANT_COLORS[variant];
+
   const [hovered, setHovered] = useState<"main" | "original" | "dropdown">(
     "original"
   );
@@ -334,30 +212,70 @@ function ToolbarMenu({
     if (isOpen) setIsOpen(false);
   };
 
-  const menuBase = VARIANT_CLASS_MAP.base[variant];
-  const menuHover = VARIANT_CLASS_MAP.hover[variant];
-  const menuActive = VARIANT_CLASS_MAP.active[variant];
-  const menuFocusVisible = VARIANT_CLASS_MAP.focusVisible[variant];
-  const menuBorderActive = VARIANT_ACTIVE.border[variant];
-  const menuBackgroundActive = VARIANT_ACTIVE.background[variant];
-
   const filteredSubMenuList =
     subMenuList?.filter((menu): menu is ToolbarSubMenuProps => Boolean(menu)) ??
     [];
 
+  const toolbarButtonStyle = (
+    colors: ToolbarThemeConfig,
+    isOpen?: boolean
+  ) => css`
+    position: relative;
+    background-color: ${colors.backgroundColor};
+    color: ${colors.textColor};
+    transition: background-color 0.2s ease;
+
+    ${!isOpen &&
+    css`
+      &:hover {
+        background-color: ${!isOpen
+          ? colors.hoverBackgroundColor
+          : colors.activeBackgroundColor};
+      }
+    `}
+
+    &:active {
+      background-color: ${colors.activeBackgroundColor};
+      box-shadow:
+        inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+        inset 0 -0.5px 0.5px ${colors.activeBackgroundColor};
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-radius: inherit;
+      z-index: 40;
+      box-shadow: inset 0 0 0 2px ${colors.focusBackgroundColor};
+    }
+
+    ${isOpen &&
+    css`
+      background-color: ${colors.activeBackgroundColor};
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        box-shadow:
+          inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
+          inset 0 -0.5px 0.5px ${colors.activeBackgroundColor};
+        border-radius: inherit;
+        pointer-events: none;
+      }
+    `}
+  `;
+
   return (
-    <ToolbarContainer
-      aria-label="toolbar-menu"
-      ref={containerRef}
-      $style={styles?.containerStyle}
-    >
+    <ToolbarContainer aria-label="toolbar-menu" ref={containerRef}>
       <MenuWrapper
         ref={refs.setReference}
         $style={css`
-          ${menuBase};
-          ${variant !== "default" ? "color: white;" : "color: #4b5563"};
-          ${isOpen && menuBorderActive};
+          ${styles?.containerStyle};
         `}
+        $variant={variant}
+        $theme={toolbarTheme}
       >
         {(icon || caption) && (
           <>
@@ -368,10 +286,7 @@ function ToolbarMenu({
               onMouseLeave={() => setHovered("original")}
               onClick={handleMainClick}
               $style={css`
-                ${hovered === "main" && menuHover};
-                ${isOpen && menuBorderActive};
-                ${menuFocusVisible};
-                ${menuActive};
+                ${toolbarButtonStyle(toolbarTheme)};
                 ${styles?.triggerStyle}
               `}
             >
@@ -387,6 +302,7 @@ function ToolbarMenu({
             </TriggerButton>
             {subMenuList && caption && (
               <Divider
+                $theme={toolbarTheme}
                 $style={css`
                   height: ${hovered === "original" && !isOpen ? "80%" : "100%"};
                 `}
@@ -401,11 +317,7 @@ function ToolbarMenu({
             onMouseLeave={() => setHovered("original")}
             onClick={handleClickOpen}
             $style={css`
-              ${hovered === "dropdown" && menuHover};
-              ${isOpen && menuBackgroundActive};
-              ${isOpen && menuBorderActive};
-              ${menuActive};
-              ${menuFocusVisible};
+              ${toolbarButtonStyle(toolbarTheme, isOpen)}
               ${styles?.triggerStyle};
               ${isOpen && styles?.toggleActiveStyle};
             `}
@@ -453,15 +365,18 @@ const ToolbarWrapper = styled.div<{ $style?: CSSProp }>`
   ${(props) => props.$style}
 `;
 
-const ToolbarContainer = styled.div<{ $style?: CSSProp }>`
+const ToolbarContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-right: 0.25rem;
   position: relative;
-  ${(props) => props.$style}
 `;
 
-const MenuWrapper = styled.div<{ $style?: CSSProp }>`
+const MenuWrapper = styled.div<{
+  $style?: CSSProp;
+  $theme?: ToolbarThemeConfig;
+  $variant?: ToolbarVariantType;
+}>`
   display: flex;
   align-items: center;
   width: 100%;
@@ -469,9 +384,16 @@ const MenuWrapper = styled.div<{ $style?: CSSProp }>`
   border: 1px solid transparent;
   position: relative;
   user-select: none;
+  border-radius: 0.3rem;
   overflow: hidden;
   cursor: pointer;
-  border-radius: 0.3rem;
+
+  border: 1px solid
+    ${({ $theme, $variant }) =>
+      $variant === "transparent"
+        ? "transparent"
+        : ($theme?.hoverBackgroundColor ?? "transparent")};
+
   ${(props) => props.$style}
 `;
 
@@ -485,7 +407,7 @@ const TriggerButton = styled.button<{ $style?: CSSProp }>`
   padding-bottom: 0.5rem;
   padding-left: 0.8rem;
   padding-right: 0.8rem;
-  animation-duration: 200ms;
+
   cursor: pointer;
   ${(props) => props.$style}
 `;
@@ -503,7 +425,7 @@ const ToggleButton = styled.button<{ $style?: CSSProp }>`
   ${(props) => props.$style}
 `;
 
-const Divider = styled.span<{ $style?: CSSProp }>`
+const Divider = styled.span<{ $style?: CSSProp; $theme: ToolbarThemeConfig }>`
   position: absolute;
   right: 35px;
   top: 50%;
@@ -511,9 +433,9 @@ const Divider = styled.span<{ $style?: CSSProp }>`
   height: 100%;
   width: 1px;
   border-width: 0.5px;
-  color: #bdbdbd;
   z-index: 20;
   transition: height 150ms ease-in-out;
+  border-color: ${({ $theme }) => $theme?.dividerColor};
 
   ${(props) => props.$style}
 `;

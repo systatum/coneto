@@ -3,8 +3,10 @@ import { useSwipeable } from "react-swipeable";
 import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { OverlayBlocker } from "./overlay-blocker";
+import { SidebarThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface SidebarProps {
   children?: ReactNode;
@@ -28,6 +30,9 @@ export interface SidebarItemStylesProps {
 }
 
 function Sidebar({ children, styles, position = "left" }: SidebarProps) {
+  const { currentTheme } = useTheme();
+  const sidebarTheme = currentTheme.sidebar;
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(true);
   const controls = useAnimation();
@@ -86,6 +91,7 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
       )}
 
       <MotionSidebar
+        $theme={sidebarTheme}
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
         $position={position}
@@ -97,6 +103,7 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
       {isMobile && !isSidebarOpen && (
         <ToggleButton
           {...handlers}
+          $theme={sidebarTheme}
           onClick={() => handleToggleSidebar(true)}
           $position={position}
         >
@@ -104,7 +111,11 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
         </ToggleButton>
       )}
 
-      <DesktopSidebar $position={position} $style={styles?.desktopStyle}>
+      <DesktopSidebar
+        $theme={sidebarTheme}
+        $position={position}
+        $style={styles?.desktopStyle}
+      >
         {children}
       </DesktopSidebar>
     </>
@@ -114,6 +125,7 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
 const MotionSidebar = styled(motion.div)<{
   $position: "left" | "right";
   $style?: CSSProp;
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   z-index: 9999999;
@@ -123,15 +135,22 @@ const MotionSidebar = styled(motion.div)<{
   min-height: 100vh;
   width: 16rem;
   min-width: 300px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  border-color: #d1d5db;
-  background-color: white;
   padding: 2.5rem 1.5rem 1.5rem;
 
-  ${({ $position }) =>
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  color: ${({ $theme }) => $theme?.textColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
+
+  ${({ $theme, $position }) =>
     $position === "left"
-      ? "left: 0; border-right: 1px solid #d1d5db;"
-      : "right: 0; border-left: 1px solid #d1d5db;"}
+      ? css`
+          left: 0;
+          border-right: 1px solid ${$theme?.borderColor};
+        `
+      : css`
+          right: 0;
+          border-left: 1px solid ${$theme?.borderColor};
+        `}
   @media (min-width: 768px) {
     display: none;
   }
@@ -140,6 +159,7 @@ const MotionSidebar = styled(motion.div)<{
 
 const ToggleButton = styled.button<{
   $position: "left" | "right";
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   top: 0;
@@ -147,11 +167,17 @@ const ToggleButton = styled.button<{
   display: block;
   height: 100%;
   padding: 2px;
-  background-color: white;
   border-radius: var(--radius-xs);
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
+
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
+  background-color: ${({ $theme }) => $theme?.toggle?.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.toggle?.borderColor};
+  color: ${({ $theme }) => $theme?.textColor};
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme?.toggle?.hoverBackgroundColor};
+  }
 
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 
@@ -163,6 +189,7 @@ const ToggleButton = styled.button<{
 const DesktopSidebar = styled.div<{
   $position: "left" | "right";
   $style?: CSSProp;
+  $theme?: SidebarThemeConfig;
 }>`
   position: fixed;
   z-index: 40;
@@ -174,14 +201,20 @@ const DesktopSidebar = styled.div<{
   min-width: 300px;
   overflow-y: auto;
   padding: 2.5rem 1.5rem 1.5rem;
-  background-color: white;
-  border-color: #e5e7eb;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
 
-  ${({ $position }) =>
+  color: ${({ $theme }) => $theme?.textColor};
+  box-shadow: ${({ $theme }) => $theme?.boxShadow};
+
+  ${({ $theme, $position }) =>
     $position === "left"
-      ? "left: 0; border-right: 1px solid #d1d5db;"
-      : "right: 0; border-left: 1px solid #d1d5db;"}
+      ? css`
+          left: 0;
+          border-right: 1px solid ${$theme?.borderColor};
+        `
+      : css`
+          right: 0;
+          border-left: 1px solid ${$theme?.borderColor};
+        `}
 
   @media (min-width: 768px) {
     display: flex;

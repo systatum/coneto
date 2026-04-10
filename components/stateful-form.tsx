@@ -43,6 +43,7 @@ import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
 import { Frame, FrameProps } from "./frame";
+import { useTheme } from "./../theme/provider";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -379,6 +380,7 @@ interface FormFieldsProps<T extends FieldValues> {
   onChange?: (name: keyof T, value: FormValueType) => void;
   autoFocusField?: string;
   styles?: StatefulFormStylesProps;
+  rowWithFrame?: boolean;
 }
 
 function FormFields<T extends FieldValues>({
@@ -394,7 +396,11 @@ function FormFields<T extends FieldValues>({
   onChange,
   styles,
   autoFocusField,
+  rowWithFrame,
 }: FormFieldsProps<T>) {
+  const { currentTheme } = useTheme();
+  const statefulFormTheme = currentTheme?.statefulForm;
+
   const refs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
@@ -425,6 +431,8 @@ function FormFields<T extends FieldValues>({
           (f) => f.rowAlignItems
         )?.rowAlignItems;
 
+        const withFrame = visibleFields.some((f) => f.type === "frame");
+
         const rowStyleItem = visibleFields.find((f) => f.rowStyle)?.rowStyle;
 
         const nonButtonFields = visibleFields.filter(
@@ -446,8 +454,13 @@ function FormFields<T extends FieldValues>({
                     : rowJustifiedContent === "between"
                       ? "space-between"
                       : "center"};
-              `}
+              `};
 
+              ${rowWithFrame &&
+              css`
+                background-color: ${statefulFormTheme?.rowFrameBackgroundColor};
+                padding: 10px;
+              `}
 
               ${rowAlignedItem &&
               css`
@@ -458,7 +471,7 @@ function FormFields<T extends FieldValues>({
                     : rowAlignedItem === "between"
                       ? "space-between"
                       : "center"};
-              `}
+              `};
 
               ${rowStyleItem}
             `}
@@ -501,6 +514,7 @@ function FormFields<T extends FieldValues>({
                         autoFocusField={autoFocusField}
                         styles={styles}
                         shouldShowError={shouldShowError}
+                        rowWithFrame={true}
                       />
                     )}
                   </Frame>

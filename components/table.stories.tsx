@@ -2067,14 +2067,11 @@ export const WithRowGroup: Story = {
             containerStyle: css`
               min-width: 300px;
               padding: 20px;
-              background-color: white;
               border-radius: 4px;
-              border: 1px solid #bcb9b9;
               max-height: 500px;
               overflow: auto;
 
               scrollbar-width: thin;
-              scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
 
               &::-webkit-scrollbar {
                 width: 6px;
@@ -2083,15 +2080,6 @@ export const WithRowGroup: Story = {
 
               &::-webkit-scrollbar-track {
                 background: transparent;
-              }
-
-              &::-webkit-scrollbar-thumb {
-                background-color: rgba(0, 0, 0, 0.25);
-                border-radius: 999px;
-              }
-
-              &::-webkit-scrollbar-thumb:hover {
-                background-color: rgba(0, 0, 0, 0.4);
               }
             `,
           }}

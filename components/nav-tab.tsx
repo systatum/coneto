@@ -14,6 +14,8 @@ import { TipMenuItemProps } from "./tip-menu";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "../theme/provider";
+import { NavTabThemeConfig } from "./../theme";
 
 export interface NavTabProps {
   tabs?: NavTabContentProps[];
@@ -70,11 +72,14 @@ function NavTab({
   styles,
   actions,
   tabs = [],
-  activeColor = "rgb(59, 130, 246)",
+  activeColor,
   children,
   size = "md",
   onChange,
 }: NavTabProps) {
+  const { currentTheme } = useTheme();
+  const navTheme = currentTheme.navTab;
+
   const tooltipRefs = useRef<Array<TooltipRef | null>>([]);
 
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
@@ -169,15 +174,17 @@ function NavTab({
 
   return (
     <NavTabWrapper $containerStyle={styles?.containerStyle}>
-      <NavTabRowWrapper $style={styles?.containerRowStyle}>
+      <NavTabRowWrapper $theme={navTheme} $style={styles?.containerRowStyle}>
         <NavTabHeader
           aria-label="nav-tab-wrapper"
           $style={styles?.containerBoxStyle}
           ref={containerRef}
+          $theme={navTheme}
         >
           <NavTabList
             aria-label="nav-tab-list"
             $activeColor={activeColor}
+            $theme={navTheme}
             initial={{
               left: 0,
               width: 0,
@@ -214,8 +221,8 @@ function NavTab({
                   drawerStyle: (placement) => css`
                     border-radius: 0px;
                     padding: 0px;
-                    background-color: white;
-                    color: black;
+                    background-color: ${navTheme?.backgroundColor};
+                    color: ${navTheme?.textColor};
                     opacity: 0;
 
                     ${placement?.startsWith("bottom")
@@ -243,6 +250,7 @@ function NavTab({
                         ?.map((item, idx) => (
                           <NavTabItem
                             key={idx}
+                            $theme={navTheme}
                             onClick={() => {
                               if (item.content) {
                                 setSelectedLocal(item.id);
@@ -267,6 +275,7 @@ function NavTab({
                 }
               >
                 <NavTabItem
+                  $theme={navTheme}
                   key={tab.id}
                   $size={size}
                   aria-label="nav-tab-item"
@@ -318,9 +327,6 @@ function NavTab({
                       return (
                         <ContextMenu
                           iconSize={13}
-                          focusBackgroundColor="#d4d4d4"
-                          hoverBackgroundColor="#d4d4d4"
-                          activeBackgroundColor="#d4d4d4"
                           actions={actionsWithIcons}
                           styles={{
                             self: css`
@@ -371,6 +377,7 @@ function NavTab({
           <NavTabHeader
             aria-label="nav-tab-actions-wrapper"
             $actions={!!actions}
+            $theme={navTheme}
             $style={css`
               gap: 6px;
 
@@ -392,7 +399,7 @@ function NavTab({
 
                         ${action.active &&
                         css`
-                          border-bottom: 2px solid rgb(59, 130, 246);
+                          border-bottom: 2px solid ${navTheme?.indicatorColor};
                         `}
                         ${action?.styles?.self}
                       `,
@@ -438,13 +445,14 @@ const NavTabWrapper = styled.div<{
 const NavTabHeader = styled.div<{
   $style?: CSSProp;
   $actions?: boolean;
+  $theme: NavTabThemeConfig;
 }>`
   width: 100%;
   height: auto;
   display: flex;
   flex-direction: row;
   position: relative;
-  background-color: white;
+  background-color: ${({ $theme }) => $theme.backgroundColor};
 
   ${({ $actions }) =>
     $actions &&
@@ -458,6 +466,7 @@ const NavTabHeader = styled.div<{
 
 const NavTabRowWrapper = styled.div<{
   $style?: CSSProp;
+  $theme?: NavTabThemeConfig;
 }>`
   width: 100%;
   height: auto;
@@ -465,16 +474,18 @@ const NavTabRowWrapper = styled.div<{
   flex-direction: row;
   justify-content: space-between;
   position: relative;
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
-  box-shadow: 0 1px 4px -3px #5b5b5b;
   align-items: center;
+
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+  border-bottom: 1px solid ${({ $theme }) => $theme.borderColor};
+  box-shadow: ${({ $theme }) => $theme.boxShadow};
 
   ${({ $style }) => $style}
 `;
 
 const NavTabList = styled(motion.div)<{
   $activeColor?: string;
+  $theme?: NavTabThemeConfig;
 }>`
   position: absolute;
   bottom: 0;
@@ -482,7 +493,8 @@ const NavTabList = styled(motion.div)<{
   height: 2px;
   border-radius: 1px;
   pointer-events: none;
-  background-color: ${({ $activeColor }) => $activeColor};
+  background-color: ${({ $activeColor, $theme }) =>
+    $activeColor ?? $theme?.indicatorColor};
 `;
 
 const NavTabItem = styled.div<{
@@ -492,6 +504,7 @@ const NavTabItem = styled.div<{
   $isAction?: boolean;
   $subMenu?: boolean;
   $size?: NavTabSize;
+  $theme?: NavTabThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -507,19 +520,21 @@ const NavTabItem = styled.div<{
   user-select: none;
   padding: ${({ $size }) => ($size === "md" ? "12px 12px" : "7px 12px")};
 
-  ${({ $selected }) =>
+  ${({ $selected, $theme }) =>
     $selected &&
     css`
-      background-color: rgb(243 244 246 / 50%);
+      background-color: ${$theme?.selectedBackgroundColor};
     `}
 
-  ${({ $subMenu }) =>
+  ${({ $subMenu, $theme }) =>
     $subMenu &&
     css`
       justify-content: flex-start;
       width: 100%;
       min-width: 150px;
-      border: 1px solid #f3f3f3;
+      border: 1px solid ${$theme?.borderColor};
+      background-color: 1px solid ${$theme?.hoverBackgroundColor};
+      color: 1px solid ${$theme?.textColor};
       padding-right: 40px;
     `}
 
@@ -555,14 +570,12 @@ const NavTabItem = styled.div<{
     `}
 
   &:hover {
-    background-color: rgb(243 244 246 / 50%);
+    background-color: ${({ $theme }) => $theme.hoverBackgroundColor};
   }
 
   &:active:not(:has([aria-label="action-button"]:active)) {
-    background-color: rgb(243 244 246 / 80%);
-    box-shadow:
-      inset 0 0.5px 4px rgb(243 244 246 / 100%),
-      inset 0 -0.5px 0.5px rgb(243 244 246 / 80%);
+    background-color: ${({ $theme }) => $theme.activeBackgroundColor};
+    box-shadow: ${({ $theme }) => $theme.activeInsetShadow};
   }
 
   ${({ $boxStyle }) => $boxStyle};

@@ -1,13 +1,10 @@
-import {
-  INNER_CIRCLE_VARIANT_COLOR,
-  OUTER_CIRCLE_VARIANT_COLOR,
-  SteplineItemState,
-  TEXT_VARIANT_COLOR,
-} from "./../constants/step-component-util";
+import { SteplineItemState } from "./../constants/step-component-util";
 import { Children, cloneElement, isValidElement, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import type { CSSProp } from "styled-components";
 import { Tooltip } from "./tooltip";
+import { useTheme } from "./../theme/provider";
+import { SteplineThemeConfig } from "./../theme";
 
 export interface SteplineProps {
   children?: ReactNode;
@@ -21,6 +18,9 @@ export interface SteplineStylesProps {
 }
 
 function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
+  const { currentTheme } = useTheme();
+  const steplineTheme = currentTheme.stepline;
+
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
@@ -59,6 +59,7 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
                 aria-label="stepline-connector"
                 $variant={variant}
                 $line={line}
+                $theme={steplineTheme}
               />
             )}
             <StepContent>
@@ -108,6 +109,7 @@ const StepContent = styled.div`
 const StepLine = styled.div<{
   $variant?: string;
   $line: "solid" | "dash" | "dot";
+  $theme: SteplineThemeConfig;
 }>`
   align-self: center;
   flex: 1;
@@ -115,12 +117,12 @@ const StepLine = styled.div<{
   border-bottom-width: 1px;
   border-bottom-style: ${({ $line }) =>
     $line === "dash" ? "dashed" : $line === "dot" ? "dotted" : "solid"};
-  border-bottom-color: ${({ $variant }) =>
+  border-bottom-color: ${({ $variant, $theme }) =>
     $variant === "error"
-      ? "#b60000"
+      ? $theme?.line?.error || "#b60000"
       : $variant === "completed" || $variant === "current"
-        ? "#00b62e"
-        : "#9ca3af"};
+        ? $theme?.line?.completed || "#00b62e"
+        : $theme?.line?.default || "#9ca3af"};
 `;
 
 export type SteplineItemProps = SteplineItemState &
@@ -146,6 +148,9 @@ function SteplineItem({
   active,
   ...props
 }: SteplineItemProps) {
+  const { currentTheme } = useTheme();
+  const steplineTheme = currentTheme.stepline;
+
   const { collapsed } = props as SteplineProps;
 
   function StepCicle() {
@@ -159,12 +164,14 @@ function SteplineItem({
         }}
       >
         <OuterCircle
+          $theme={steplineTheme}
           aria-label="outer-circle"
           $active={active}
           $variant={variant}
           $style={styles?.outerCircleStyle}
         />
         <InnerCircle
+          $theme={steplineTheme}
           aria-label="inner-circle"
           $variant={variant}
           $style={styles?.innerCircleStyle}
@@ -179,11 +186,13 @@ function SteplineItem({
     return (
       (title || subtitle) && (
         <TextWrapper
+          $theme={steplineTheme}
           $variant={variant}
           $style={css`
             ${collapsed &&
             css`
               gap: 5px;
+              color: white;
             `}
             ${styles?.textWrapperStyle}
           `}
@@ -273,6 +282,7 @@ const OuterCircle = styled.div<{
   $active?: boolean;
   $variant: string;
   $style?: CSSProp;
+  $theme: SteplineThemeConfig;
 }>`
   position: absolute;
   display: flex;
@@ -295,8 +305,8 @@ const OuterCircle = styled.div<{
       transform: translate(-50%, -50%) scale(1.3);
     `};
 
-  ${({ $variant }) => css`
-    background-color: ${OUTER_CIRCLE_VARIANT_COLOR[$variant]};
+  ${({ $variant, $theme }) => css`
+    background-color: ${$theme?.outerCircle?.[$variant]};
   `};
 
   ${({ $style }) => $style}
@@ -305,6 +315,7 @@ const OuterCircle = styled.div<{
 const InnerCircle = styled.div<{
   $variant: string;
   $style?: CSSProp;
+  $theme: SteplineThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -319,17 +330,23 @@ const InnerCircle = styled.div<{
 
   color: white;
   background-color: #4b5563;
-  ${({ $variant }) => css`
-    background-color: ${INNER_CIRCLE_VARIANT_COLOR[$variant]};
+  ${({ $variant, $theme }) => css`
+    background-color: ${$theme?.innerCircle?.[$variant]};
   `}
 
   ${({ $style }) => $style}
 `;
 
-const TextWrapper = styled.div<{ $variant: string; $style?: CSSProp }>`
+const TextWrapper = styled.div<{
+  $variant: string;
+  $style?: CSSProp;
+  $theme: SteplineThemeConfig;
+}>`
   display: flex;
   flex-direction: column;
-  ${({ $variant }) => TEXT_VARIANT_COLOR[$variant]}
+  ${({ $variant, $theme }) => css`
+    color: ${$theme?.text?.[$variant]};
+  `}
 
   ${({ $style }) => $style}
 `;

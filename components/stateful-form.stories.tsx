@@ -22,6 +22,9 @@ import {
   StatefulForm,
   StatefulOnChangeType,
 } from "./stateful-form";
+import { BodyThemeConfiguration } from "./../theme";
+import { useTheme } from "./../theme/provider";
+import { darkenColor, lightenColor } from "./../lib/color";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -450,10 +453,6 @@ export const WithFrame: Story = {
               type: "date",
               placeholder: "Select start date",
               required: true,
-              rowStyle: css`
-                background-color: #f3f4f6;
-                padding: 10px;
-              `,
             },
             {
               name: "end_date",
@@ -469,10 +468,6 @@ export const WithFrame: Story = {
             type: "text",
             required: true,
             placeholder: "Enter purpose of expense",
-            rowStyle: css`
-              background-color: #f3f4f6;
-              padding: 10px;
-            `,
           },
         ],
       },
@@ -683,6 +678,9 @@ export const ConditionalElement: Story = {
 
 export const LeftLabeled: Story = {
   render: () => {
+    const { currentTheme, mode } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (country) => country.id === "US"
     );
@@ -784,7 +782,7 @@ export const LeftLabeled: Story = {
           </Button>
         </FormBody>
 
-        <Footer>
+        <Footer $theme={bodyTheme} $mode={mode}>
           <span>Already have an account?</span>
           <div
             style={{
@@ -833,12 +831,18 @@ const FormBody = styled.div`
   padding: 2rem;
 `;
 
-const Footer = styled.div`
+const Footer = styled.div<{
+  $theme?: BodyThemeConfiguration;
+  $mode: "light" | "dark";
+}>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 0.5rem;
-  background-color: #f3f4f6;
+  background-color: ${({ $theme, $mode }) =>
+    $mode === "dark"
+      ? lightenColor($theme?.backgroundColor, 0.1)
+      : darkenColor($theme?.backgroundColor, 0.1)};
   padding: 1rem 0;
   font-size: 0.875rem;
   text-align: center;

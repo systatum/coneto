@@ -267,6 +267,38 @@ Accepts \`CSSProp\`.
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Default: Story = {
+  args: {
+    children: "Button",
+  },
+  render: (args) => {
+    const VARIANTS: ButtonVariants["variant"][] = [
+      "link",
+      "outline-default",
+      "outline-primary",
+      "outline-danger",
+      "outline-success",
+      "default",
+      "primary",
+      "danger",
+      "secondary",
+      "ghost",
+      "transparent",
+      "success",
+    ] as const;
+
+    return (
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {VARIANTS.map((variant) => (
+          <Button key={variant} {...args} variant={variant}>
+            {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          </Button>
+        ))}
+      </div>
+    );
+  },
+};
+
 export const Pressed: Story = {
   args: {
     variant: "default",
@@ -335,38 +367,6 @@ export const CustomSizing: Story = {
         {BUTTONS_ITEMS.map((item, index) => (
           <Button key={index} {...args} size={item.size}>
             {item.children}
-          </Button>
-        ))}
-      </div>
-    );
-  },
-};
-
-export const AllVariants: Story = {
-  args: {
-    children: "Button",
-  },
-  render: (args) => {
-    const VARIANTS: ButtonVariants["variant"][] = [
-      "link",
-      "outline-default",
-      "outline-primary",
-      "outline-danger",
-      "outline-success",
-      "default",
-      "primary",
-      "danger",
-      "secondary",
-      "ghost",
-      "transparent",
-      "success",
-    ] as const;
-
-    return (
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        {VARIANTS.map((variant) => (
-          <Button key={variant} {...args} variant={variant}>
-            {variant.charAt(0).toUpperCase() + variant.slice(1)}
           </Button>
         ))}
       </div>

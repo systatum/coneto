@@ -3,6 +3,8 @@ import { Combobox } from "./combobox";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
+import { PaginationThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
 
 export interface PaginationProps {
   currentPage: number;
@@ -154,10 +156,7 @@ const PaginationItem = ({
             styles={{
               selectboxStyle: css`
                 height: 39px;
-                &:hover {
-                  border-color: #61a9f9;
-                }
-                border-color: ${highlightOnMatch ? "#61a9f9" : "#f3f4f6"};
+
                 ${styles?.selectboxStyle};
               `,
               containerStyle: css`
@@ -238,9 +237,13 @@ const PaginationButton = ({
   disabled,
   ...props
 }: PaginationButtonProps) => {
+  const { currentTheme } = useTheme();
+  const paginationTheme = currentTheme?.pagination;
+
   return (
     <Button
       {...props}
+      $theme={paginationTheme}
       aria-label="pagination-button"
       onClick={onClick}
       disabled={disabled}
@@ -255,6 +258,7 @@ const PaginationButton = ({
 const Button = styled.button<{
   $isActive?: boolean;
   $style?: CSSProp;
+  $theme: PaginationThemeConfig;
 }>`
   min-width: 39px;
   min-height: 39px;
@@ -268,20 +272,28 @@ const Button = styled.button<{
   font-weight: 500;
   cursor: pointer;
   outline: none;
-  background-color: white;
-  border: 1px solid ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
-  color: ${({ $isActive }) => ($isActive ? "#000" : "#374151")};
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+
+  border: 1px solid
+    ${({ $isActive, $theme }) =>
+      $isActive ? $theme.activeBorderColor : $theme.borderColor};
+
+  color: ${({ $isActive, $theme }) =>
+    $isActive ? $theme.activeTextColor : $theme.textColor};
 
   &:hover {
-    border-color: #61a9f9;
+    border-color: ${({ $theme }) => $theme.hoverBorderColor};
   }
 
   &:disabled {
     cursor: default;
     opacity: 0.3;
-    background-color: white;
+    background-color: ${({ $theme }) => $theme.disabledBackgroundColor};
+    color: ${({ $theme }) => $theme.disabledTextColor};
+
     &:hover {
-      border-color: ${({ $isActive }) => ($isActive ? "#61A9F9" : "#f3f4f6")};
+      border-color: ${({ $isActive, $theme }) =>
+        $isActive ? $theme.activeBorderColor : $theme.borderColor};
     }
   }
 

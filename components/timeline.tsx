@@ -5,13 +5,10 @@ import {
   ReactNode,
   useState,
 } from "react";
-import {
-  INNER_CIRCLE_VARIANT_COLOR,
-  OUTER_CIRCLE_VARIANT_COLOR,
-  SteplineItemState,
-  TEXT_VARIANT_COLOR,
-} from "./../constants/step-component-util";
+import { SteplineItemState } from "./../constants/step-component-util";
 import styled, { css, CSSProp } from "styled-components";
+import { useTheme } from "../theme/provider";
+import { TimelineThemeConfig } from "../theme";
 
 export interface TimelineProps {
   children?: ReactNode;
@@ -19,6 +16,9 @@ export interface TimelineProps {
 }
 
 function Timeline({ children, isClickable = false }: TimelineProps) {
+  const { currentTheme } = useTheme();
+  const timelineTheme = currentTheme.timeline;
+
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
 
@@ -55,19 +55,22 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
             <IndicatorWrapper>
               <CircleWrapper>
                 <OuterCircle
+                  $theme={timelineTheme}
                   aria-label="outer-circle-timeline"
-                  $color={OUTER_CIRCLE_VARIANT_COLOR[variant]}
+                  $variant={variant}
                   $isHovered={hoveredIndex === index}
                 />
                 <InnerCircle
+                  $theme={timelineTheme}
+                  $variant={variant}
                   aria-label="inner-circle-timeline"
-                  $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
                 />
               </CircleWrapper>
               <Divider
                 $line={line}
+                $theme={timelineTheme}
+                $variant={variant}
                 aria-label="timeline-connector"
-                $color={INNER_CIRCLE_VARIANT_COLOR[variant]}
                 $isLast={isLast}
               />
             </IndicatorWrapper>
@@ -117,8 +120,9 @@ const CircleWrapper = styled.div`
 `;
 
 const OuterCircle = styled.div<{
-  $color: string;
   $isHovered: boolean;
+  $theme: TimelineThemeConfig;
+  $variant: SteplineItemState["variant"];
 }>`
   min-width: 0.5rem;
   min-height: 0.5rem;
@@ -135,15 +139,20 @@ const OuterCircle = styled.div<{
     transform 0.2s ease,
     background-color 0.2s ease;
 
-  ${({ $isHovered, $color }) =>
+  background-color: ${({ $variant, $theme }) => $theme.outerCircle[$variant]};
+
+  ${({ $isHovered, $theme, $variant }) =>
     $isHovered &&
     css`
       transform: translate(-50%, -50%) scale(1.5);
-      background-color: ${$color};
+      background-color: ${$theme.outerCircle?.[$variant]};
     `}
 `;
 
-const InnerCircle = styled.div<{ $color: string }>`
+const InnerCircle = styled.div<{
+  $variant: SteplineItemState["variant"];
+  $theme: TimelineThemeConfig;
+}>`
   min-width: 0.5rem;
   min-height: 0.5rem;
   max-width: 0.5rem;
@@ -155,24 +164,34 @@ const InnerCircle = styled.div<{ $color: string }>`
   transform: translate(-50%, -50%);
 
   position: absolute;
-  background-color: ${(props) => props.$color};
+  background-color: ${({ $variant, $theme }) => $theme.innerCircle?.[$variant]};
 `;
 
 const Divider = styled.div<{
-  $color: string;
   $isLast: boolean;
   $line: "solid" | "dash" | "dot";
+  $theme: TimelineThemeConfig;
+  $variant: SteplineItemState["variant"];
 }>`
   width: 1px;
   height: 100%;
   position: absolute;
-  background-color: ${({ $line, $color }) =>
-    $line === "dash" || $line === "dot" ? "transparent" : $color};
+  background-color: ${({ $variant, $theme }) =>
+    $variant === "error"
+      ? $theme.line.error
+      : $variant === "completed" || $variant === "current"
+        ? $theme.line.completed
+        : $theme.line.default};
 
-  ${({ $line, $color }) =>
+  ${({ $line, $variant, $theme }) =>
     ($line === "dash" || $line === "dot") &&
     css`
-      border-left: 1px ${$line === "dash" ? "dashed" : "dotted"} ${$color};
+      border-left: 1px ${$line === "dash" ? "dashed" : "dotted"}
+        ${$variant === "error"
+          ? $theme.line.error
+          : $variant === "completed" || $variant === "current"
+            ? $theme.line.completed
+            : $theme.line.default};
       background-color: transparent;
     `}
 
@@ -220,10 +239,14 @@ function TimelineItem({
   id,
   variant,
 }: TimelineItemProps) {
+  const { currentTheme } = useTheme();
+  const timelineTheme = currentTheme.timeline;
+
   return (
     <TimelineContainer
       aria-label={`timeline-item-${id}`}
       id={String(id)}
+      $theme={timelineTheme}
       $style={styles?.self}
       $variant={variant}
     >
@@ -245,7 +268,8 @@ function TimelineItem({
 }
 
 const TimelineContainer = styled.div<{
-  $variant: keyof typeof TEXT_VARIANT_COLOR;
+  $variant: SteplineItemState["variant"];
+  $theme: TimelineThemeConfig;
   $style?: CSSProp;
 }>`
   display: flex;
@@ -254,10 +278,10 @@ const TimelineContainer = styled.div<{
   justify-content: space-between;
   align-items: flex-start;
 
-  ${({ $variant }) =>
-    TEXT_VARIANT_COLOR[$variant] &&
+  ${({ $variant, $theme }) =>
+    $theme.text?.[$variant] &&
     css`
-      ${TEXT_VARIANT_COLOR[$variant]}
+      ${$theme.text?.[$variant]}
     `}
 
   ${({ $style }) => $style}

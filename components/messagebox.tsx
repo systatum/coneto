@@ -3,6 +3,8 @@ import { RiCloseLine, RiInformation2Fill } from "@remixicon/react";
 import { ReactNode } from "react";
 import { Button } from "./button";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { MessageboxThemeConfig } from "./../theme";
 
 export type MessageboxVariantState =
   | "primary"
@@ -34,29 +36,6 @@ export interface ActionLinkProps {
   type: "button" | "link";
 }
 
-const VARIATION_STYLES = {
-  primary: {
-    container: "#e7f2fc",
-    text: "#2a63b4",
-    active: "#1f4a89",
-  },
-  success: {
-    container: "#e9f3e8",
-    text: "#43843d",
-    active: "#30602c",
-  },
-  danger: {
-    container: "#f6e7e7",
-    text: "#b92c25",
-    active: "#891f1a",
-  },
-  warning: {
-    container: "#fbf0e4",
-    text: "#9e5b20",
-    active: "#734418",
-  },
-} as const;
-
 function Messagebox({
   variant = "primary",
   title,
@@ -67,9 +46,17 @@ function Messagebox({
   closable = false,
   styles,
 }: MessageboxProps) {
+  const { currentTheme } = useTheme();
+  const messageboxTheme = currentTheme.messagebox;
+  const variantStyle = messageboxTheme[variant];
+
   return (
-    <Wrapper $variant={variant} $style={styles?.containerStyle}>
-      <BorderAccent $variant={variant} />
+    <Wrapper
+      $theme={messageboxTheme}
+      $variant={variant}
+      $style={styles?.containerStyle}
+    >
+      <BorderAccent $theme={messageboxTheme} $variant={variant} />
       <Figure
         {...icon}
         styles={{
@@ -79,7 +66,7 @@ function Messagebox({
           `,
         }}
         image={icon?.image ?? RiInformation2Fill}
-        color={icon?.color ?? VARIATION_STYLES[variant].text}
+        color={icon?.color ?? variantStyle.textColor}
       />
 
       <Content $style={styles?.contentWrapperStyle}>
@@ -91,18 +78,20 @@ function Messagebox({
               action.type === "button" ? (
                 <ActionItem
                   key={index}
-                  onClick={action.onClick}
                   $variant={variant}
+                  $theme={messageboxTheme}
+                  onClick={action.onClick}
                 >
                   {action.caption}
                 </ActionItem>
               ) : (
                 <ActionLink
                   key={index}
+                  $variant={variant}
+                  $theme={messageboxTheme}
                   href={action.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  $variant={variant}
                 >
                   {action.caption}
                 </ActionLink>
@@ -117,7 +106,7 @@ function Messagebox({
           styles={{
             containerStyle: css`
               position: absolute;
-              top: 1rem;
+              top: 13px;
               right: 0.5rem;
               cursor: pointer;
               transition: all 0.3s;
@@ -130,7 +119,7 @@ function Messagebox({
               width: fit-content;
               height: fit-content;
               padding: 2px;
-              color: ${VARIATION_STYLES[variant].text};
+              color: ${variantStyle.textColor};
             `,
           }}
         >
@@ -151,7 +140,8 @@ function Messagebox({
 
 const Wrapper = styled.div<{
   $style?: CSSProp;
-  $variant: keyof typeof VARIATION_STYLES;
+  $variant: MessageboxVariantState;
+  $theme: MessageboxThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -164,8 +154,11 @@ const Wrapper = styled.div<{
   overflow: hidden;
   height: 100%;
 
-  background-color: ${({ $variant }) => VARIATION_STYLES[$variant].container};
-  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  background-color: ${({ $variant, $theme }) =>
+    $theme[$variant].backgroundColor};
+
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
+
   ${({ $style }) => $style};
 `;
 
@@ -191,13 +184,14 @@ const Children = styled.span<{ $style?: CSSProp }>`
 `;
 
 const BorderAccent = styled.div<{
-  $variant: keyof typeof VARIATION_STYLES;
+  $variant: MessageboxVariantState;
+  $theme: MessageboxThemeConfig;
 }>`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  border-top: 2px solid ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  border-top: 2px solid ${({ $variant, $theme }) => $theme[$variant].textColor};
 `;
 
 const ActionList = styled.div`
@@ -207,14 +201,15 @@ const ActionList = styled.div`
 `;
 
 const ActionItem = styled.button<{
-  $variant: keyof typeof VARIATION_STYLES;
+  $variant: MessageboxVariantState;
+  $theme: MessageboxThemeConfig;
 }>`
   cursor: pointer;
   background: none;
   border: none;
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
   transition: all 0.3s;
 
   &:hover {
@@ -222,16 +217,18 @@ const ActionItem = styled.button<{
   }
 
   &:active {
-    color: ${({ $variant }) => VARIATION_STYLES[$variant].active};
+    color: ${({ $variant, $theme }) => $theme[$variant].activeColor};
   }
 `;
 
 const ActionLink = styled.a<{
-  $variant: keyof typeof VARIATION_STYLES;
+  $variant: MessageboxVariantState;
+  $theme: MessageboxThemeConfig;
 }>`
   font-size: 0.875rem;
   font-weight: 500;
-  color: ${({ $variant }) => VARIATION_STYLES[$variant].text};
+  color: ${({ $variant, $theme }) => $theme[$variant].textColor};
+
   transition: all 0.3s;
   cursor: pointer;
 
@@ -240,7 +237,7 @@ const ActionLink = styled.a<{
   }
 
   &:active {
-    color: ${({ $variant }) => VARIATION_STYLES[$variant].active};
+    color: ${({ $variant, $theme }) => $theme[$variant].activeColor};
   }
 `;
 

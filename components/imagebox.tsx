@@ -3,6 +3,8 @@ import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ImageboxThemeConfig } from "theme";
 
 interface BaseImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
@@ -16,6 +18,7 @@ interface BaseImageboxProps {
   id?: string;
   disabled?: boolean;
 }
+
 interface BaseImageboxStylesProps {
   self?: CSSProp;
 }
@@ -51,6 +54,9 @@ function BaseImagebox({
   url,
   id,
 }: BaseImageboxProps) {
+  const { currentTheme } = useTheme();
+  const imageboxTheme = currentTheme?.imagebox;
+
   const inputId = StatefulForm.sanitizeId({
     prefix: "imagebox",
     name,
@@ -144,6 +150,7 @@ function BaseImagebox({
 
   return (
     <InputBox
+      $theme={imageboxTheme}
       $disabled={disabled}
       aria-label="imagebox-input"
       $style={styles?.self}
@@ -166,7 +173,7 @@ function BaseImagebox({
           }}
         />
       ) : (
-        <IconPlaceholder>
+        <IconPlaceholder $theme={imageboxTheme}>
           <RiImageLine size={icon} />
         </IconPlaceholder>
       )}
@@ -186,6 +193,7 @@ function BaseImagebox({
         aria-label="imagebox-add-icon"
         $isDragging={isDragging}
         $editable={editable}
+        $theme={imageboxTheme}
       >
         <RiAddLine size={icon} />
       </AddIconWrapper>
@@ -269,6 +277,7 @@ const InputBox = styled.div<{
   $editable?: boolean;
   $borderless?: boolean;
   $disabled?: boolean;
+  $theme: ImageboxThemeConfig;
 }>`
   position: relative;
   width: ${({ $dimension }) => $dimension};
@@ -278,14 +287,16 @@ const InputBox = styled.div<{
   max-width: ${({ $dimension }) => $dimension};
   max-height: ${({ $dimension }) => $dimension};
   border-radius: 2px;
-  ${({ $borderless, $isDragging }) =>
+  ${({ $borderless, $isDragging, $theme }) =>
     !$borderless &&
     css`
-      border: 1px solid ${$isDragging ? "#3b82f6" : "#d1d5db"};
+      border: 1px solid
+        ${$isDragging ? $theme.draggingBorderColor : $theme.borderColor};
     `}
-  background-color: ${({ $isDragging }) =>
-    $isDragging ? "#eff6ff" : "#ffffff"};
-  color: ${({ $isDragging }) => ($isDragging ? "#3b82f6" : "#6b7280")};
+  background-color: ${({ $isDragging, $theme }) =>
+    $isDragging ? $theme.draggingBackgroundColor : $theme.backgroundColor};
+  color: ${({ $isDragging, $theme }) =>
+    $isDragging ? $theme.draggingTextColor : $theme.textColor};
   ${({ $editable }) =>
     $editable &&
     css`
@@ -303,11 +314,13 @@ const InputBox = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const IconPlaceholder = styled.div`
+const IconPlaceholder = styled.div<{
+  $theme: ImageboxThemeConfig;
+}>`
   position: absolute;
   top: 50%;
   left: 50%;
-  color: #c3c3c3;
+  color: ${({ $theme }) => $theme.iconColor};
   transform: translate(-50%, -50%);
 `;
 
@@ -322,17 +335,21 @@ const PreviewImage = styled.img`
 const AddIconWrapper = styled.div<{
   $isDragging: boolean;
   $editable?: boolean;
+  $theme: ImageboxThemeConfig;
 }>`
   position: absolute;
   bottom: -4px;
   right: -4px;
-  background-color: ${({ $isDragging }) =>
-    $isDragging ? "#60a5fa" : "#ffffff"};
-  border: 1px solid #d1d5db;
+  ${({ $isDragging, $theme }) => css`
+    background-color: ${$isDragging
+      ? $theme.draggingBackgroundColor
+      : $theme.backgroundColor};
+    border: 1px solid ${$theme.borderColor};
+    color: ${$theme.iconColor};
+  `}
   border-radius: 2px;
   width: fit-content;
   height: fit-content;
-  color: #c3c3c3;
 
   ${({ $editable }) =>
     !$editable &&

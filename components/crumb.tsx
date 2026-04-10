@@ -10,6 +10,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { CrumbThemeConfig } from "./../theme";
 
 export interface CrumbProps {
   children?: ReactNode;
@@ -35,8 +37,11 @@ function Crumb({
   hoverColor,
   textColor,
   lastTextColor,
-  arrowColor = "#9ca3af",
+  arrowColor,
 }: CrumbProps) {
+  const { currentTheme } = useTheme();
+  const crumbTheme = currentTheme.crumb;
+
   const [expanded, setExpanded] = useState(false);
 
   const allItems = Children.toArray(children).filter(
@@ -74,7 +79,7 @@ function Crumb({
             margin-right: 0.5rem;
             width: ${iconSize ?? 16};
             height: ${iconSize ?? 16};
-            color: ${arrowColor};
+            color: ${arrowColor ?? crumbTheme?.arrowColor};
           `,
         }}
         aria-label="arrow-icon"
@@ -100,6 +105,7 @@ function Crumb({
               >
                 <CrumbEllipsisIcon
                   size={iconSize}
+                  $theme={crumbTheme}
                   aria-label="ellipsis"
                   onClick={() => setExpanded(true)}
                   $hoverColor={hoverColor}
@@ -164,12 +170,13 @@ const CrumbEllipsisListItem = styled(motion.li)`
 const CrumbEllipsisIcon = styled(RiMoreLine)<{
   $textColor?: string;
   $hoverColor?: string;
+  $theme: CrumbThemeConfig;
 }>`
-  ${({ $textColor, $hoverColor }) => css`
-    color: ${$textColor ? $textColor : "#6b7280"};
+  ${({ $textColor, $hoverColor, $theme }) => css`
+    color: ${$textColor || $theme.ellipsisColor || "#6b7280"};
     cursor: pointer;
     &:hover {
-      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+      color: ${$hoverColor || $theme.ellipsisHoverColor || "#60a5fa"};
     }
   `}
 `;
@@ -201,8 +208,12 @@ function CrumbItem({
   textColor,
   lastTextColor,
 }: CrumbItemProps) {
+  const { currentTheme } = useTheme();
+  const crumbTheme = currentTheme.crumb;
+
   return path ? (
     <CrumbItemLink
+      $theme={crumbTheme}
       aria-label="crumb-item-link"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
@@ -216,6 +227,7 @@ function CrumbItem({
     </CrumbItemLink>
   ) : (
     <CrumbItemSpan
+      $theme={crumbTheme}
       aria-label="crumb-item-span"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
@@ -236,10 +248,11 @@ const CrumbItemLink = styled.a<{
   $fontSize?: number;
   $textColor?: string;
   $hoverColor?: string;
+  $theme: CrumbThemeConfig;
   $lastTextColor?: string;
 }>`
-  ${({ $textColor, $hoverColor, $fontSize }) => css`
-    color: ${$textColor ? $textColor : "#4b5563"};
+  ${({ $textColor, $hoverColor, $fontSize, $theme }) => css`
+    color: ${$textColor || $theme.textColor || "#4b5563"};
     margin-bottom: 2px;
 
     ${$fontSize &&
@@ -248,14 +261,14 @@ const CrumbItemLink = styled.a<{
     `}
 
     &:hover {
-      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+      color: ${$hoverColor || $theme.hoverColor || "#61a9f9"};
     }
   `}
 
-  ${({ $isLast, $lastTextColor }) =>
+  ${({ $isLast, $lastTextColor, $theme }) =>
     $isLast &&
     css`
-      color: ${$lastTextColor ? $lastTextColor : "#000"};
+      color: ${$lastTextColor || $theme.lastTextColor || "#000"};
       font-weight: 500;
     `}
 
@@ -268,10 +281,11 @@ const CrumbItemSpan = styled.span<{
   $fontSize?: number;
   $textColor?: string;
   $hoverColor?: string;
+  $theme: CrumbThemeConfig;
   $lastTextColor?: string;
 }>`
-  ${({ $textColor, $hoverColor, $fontSize }) => css`
-    color: ${$textColor ? $textColor : "#4b5563"};
+  ${({ $textColor, $hoverColor, $fontSize, $theme }) => css`
+    color: ${$textColor || $theme.textColor || "#4b5563"};
     margin-bottom: 2px;
 
     ${$fontSize &&
@@ -280,14 +294,14 @@ const CrumbItemSpan = styled.span<{
     `}
 
     &:hover {
-      color: ${$hoverColor ? $hoverColor : "#61a9f9"};
+      color: ${$hoverColor || $theme.hoverColor || "#61a9f9"};
     }
   `}
 
-  ${({ $isLast, $lastTextColor }) =>
+  ${({ $isLast, $lastTextColor, $theme }) =>
     $isLast &&
     css`
-      color: ${$lastTextColor ? $lastTextColor : "#000"};
+      color: ${$lastTextColor || $theme.lastTextColor || "#000"};
       font-weight: 500;
     `}
 

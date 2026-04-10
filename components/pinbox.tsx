@@ -9,6 +9,8 @@ import React, {
 import styled, { css } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { PinboxThemeConfig } from "./../theme";
 
 interface BasePinboxProps {
   fontSize?: number;
@@ -55,6 +57,9 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const pinboxTheme = currentTheme?.pinbox;
+
     const getDefaultValue = () => {
       let valIndex = 0;
       return parts.map((p) => {
@@ -396,6 +401,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
             >
               <PinboxInput
                 id={index === firstEditableIndex ? id : undefined}
+                $theme={pinboxTheme}
                 onChange={() => {}}
                 aria-label="pinbox-input"
                 $error={showError}
@@ -422,7 +428,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                 $fontSize={fontSize}
                 $isAnimate={isAnimate}
               />
-              <PinboxIndicator $error={showError} />
+              <PinboxIndicator $theme={pinboxTheme} $error={showError} />
             </PinboxInputContent>
           );
         })}
@@ -553,7 +559,10 @@ const PinboxInputContent = styled.div<{
   position: relative;
 `;
 
-const PinboxIndicator = styled.div<{ $error?: boolean }>`
+const PinboxIndicator = styled.div<{
+  $error?: boolean;
+  $theme: PinboxThemeConfig;
+}>`
   width: 70%;
   bottom: 3px;
   left: 50%;
@@ -561,18 +570,14 @@ const PinboxIndicator = styled.div<{ $error?: boolean }>`
   position: absolute;
   display: none;
 
-  ${({ $error }) =>
-    $error
-      ? css`
-          color: #991b1b;
-          border-color: #f87171;
-          box-shadow: 0 0 0 0.5px #f87171;
-        `
-      : css`
-          border-color: #61a9f9;
-          box-shadow: 0 0 0 0.5px #61a9f9;
-          z-index: 9999;
-        `};
+  border-color: ${({ $theme, $error }) =>
+    $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
+  box-shadow: 0 0 0 0.5px
+    ${({ $theme, $error }) =>
+      $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
+  color: ${({ $theme, $error }) =>
+    $error ? $theme.errorTextColor : $theme.textColor};
+  z-index: 9999;
 `;
 
 const PinboxInput = styled.input<{
@@ -580,6 +585,7 @@ const PinboxInput = styled.input<{
   $error?: boolean;
   $isStatic?: boolean;
   $isAnimate?: boolean;
+  $theme: PinboxThemeConfig;
 }>`
   ${({ $fontSize, $isStatic }) =>
     $isStatic
@@ -596,36 +602,35 @@ const PinboxInput = styled.input<{
           font-size: ${`${$fontSize}px`};
         `};
 
-  border: 1px solid #d1d5db;
   border-radius: 0px;
   outline: none;
   text-align: center;
   caret-color: transparent;
+  border: 1px solid
+    ${({ $theme, $error }) =>
+      $error
+        ? $theme?.errorBorderColor || "#f87171"
+        : $theme?.borderColor || "#d1d5db"};
 
-  ${({ $error }) =>
+  &:focus {
+    border-color: ${({ $theme }) => $theme?.focusedBorderColor || "#61A9F9"};
+    box-shadow: 0 0 0 0.5px
+      ${({ $theme }) => $theme?.focusedBorderColor || "#61A9F9"};
+    z-index: 9999;
+  }
+
+  color: ${({ $theme, $error }) =>
     $error
-      ? css`
-          color: #991b1b;
-          border: 0.5px solid #f87171;
+      ? $theme?.errorTextColor || "#991b1b"
+      : $theme?.textColor || "#1f2937"};
 
-          &:focus {
-            box-shadow: 0 0 0 0.5px #f87171;
-          }
-        `
-      : css`
-          &:focus {
-            border-color: #61a9f9;
-            box-shadow: 0 0 0 0.5px #61a9f9;
-            z-index: 9999;
-          }
-        `};
+  background-color: ${({ $theme }) => $theme?.backgroundColor || "#ffffff"};
 
   ${({ $isStatic }) =>
     $isStatic
       ? css`
           user-select: none;
           &:disabled {
-            background-color: #f9fafb;
             opacity: 0.6;
             user-select: none;
             border-color: rgba(0, 0, 0, 0.3);
@@ -640,7 +645,6 @@ const PinboxInput = styled.input<{
             display: flex;
           }
           &:disabled {
-            background-color: #f9fafb;
             opacity: 0.6;
             user-select: none;
             border-color: rgba(0, 0, 0, 0.3);

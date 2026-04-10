@@ -12,6 +12,8 @@ import {
   FieldLaneStylesProps,
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { TextareaThemeConfig } from "./../theme";
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -32,22 +34,16 @@ export interface TextareaStylesProps {
 
 const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
   ({ id, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
-    const autoResize = (el: HTMLTextAreaElement | null) => {
-      if (el) {
-        el.style.height = "auto";
-        el.style.height = `${el.scrollHeight}px`;
-      }
-    };
+    const { currentTheme } = useTheme();
+    const textareaTheme = currentTheme?.textarea;
 
     return (
       <TextareaInput
+        $theme={textareaTheme}
         $disabled={props?.disabled}
         $autogrow={autogrow}
         id={id}
         ref={(el) => {
-          if (autogrow) {
-            autoResize(el);
-          }
           if (typeof ref === "function") {
             ref(el);
           } else if (ref) {
@@ -55,9 +51,6 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
           }
         }}
         onChange={(e) => {
-          if (autogrow) {
-            autoResize(e.target);
-          }
           if (onChange) {
             onChange(e);
           }
@@ -150,49 +143,79 @@ const TextareaInput = styled.textarea<{
   $style?: CSSProp;
   $autogrow?: boolean;
   $disabled?: boolean;
+  $theme?: TextareaThemeConfig;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
   padding: 7px 8px;
   width: 100%;
   outline: none;
-  border: 1px solid ${({ $error }) => ($error ? "#f87171" : "#d1d5db")};
   z-index: 10;
   resize: none;
+
   ${({ $disabled }) =>
     $disabled &&
     css`
       cursor: not-allowed;
       user-select: none;
-      pointer-events: none;
     `};
+
+  background-color: ${({ $theme }) => $theme?.backgroundColor || "#ffffff"};
+  border: 1px solid
+    ${({ $theme, $error, $disabled }) =>
+      $disabled
+        ? $theme?.disabledBorderColor || "#d1d5db"
+        : $error
+          ? $theme?.errorBorderColor || "#f87171"
+          : $theme?.borderColor || "#d1d5db"};
+
+  color: ${({ $theme, $error, $disabled }) =>
+    $disabled
+      ? $theme?.disabledTextColor || "#9ca3af"
+      : $error
+        ? $theme?.errorTextColor || "#991b1b"
+        : $theme?.textColor || "#1f2937"};
 
   ${({ $autogrow }) =>
-    $autogrow &&
-    css`
-      overflow: hidden;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    `};
+    $autogrow
+      ? css`
+          overflow: hidden;
+          resize: none;
+        `
+      : css`
+          overflow-y: auto;
+          resize: vertical;
+        `}
 
-  ${({ $error }) =>
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) =>
+      $theme?.scrollbarThumbColor || "#3f3f46"};
+    border-radius: 999px;
+  }
+
+  &::placeholder {
+    color: ${({ $theme }) => $theme?.placeholderColor || "#9ca3af"};
+  }
+
+  ${({ $error, $theme }) =>
     $error
       ? css`
-          color: #991b1b;
           &:focus {
-            border-color: #f87171;
-            box-shadow: 0 0 0 1px #f87171;
+            border-color: ${$theme?.errorBorderColor || "#f87171"};
+            box-shadow: 0 0 0 1px ${$theme?.errorBorderColor || "#f87171"};
           }
         `
       : css`
           &:focus {
-            border-color: #61a9f9;
-            box-shadow: 0 0 0 1px #61a9f9;
+            border-color: ${$theme?.focusedBorderColor || "#61a9f9"};
+            box-shadow: 0 0 0 1px ${$theme?.focusedBorderColor || "#61a9f9"};
           }
-        `};
+        `}
+
   ${({ $style }) => $style}
 `;
 

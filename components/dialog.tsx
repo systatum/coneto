@@ -14,8 +14,15 @@ import { RiCloseLine } from "@remixicon/react";
 import { Button, ButtonStylesProps, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
-import { lightenColor } from "./../lib/lighten-color";
+import { darkenColor, lightenColor } from "../lib/color";
 import { createRoot } from "react-dom/client";
+import {
+  getThemeSnapshot,
+  subscribeTheme,
+  ThemeProvider,
+  useTheme,
+} from "./../theme/provider";
+import { DialogThemeConfig, ThemeMode } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -79,11 +86,16 @@ function Dialog({
   icon,
   onClosed,
 }: DialogProps) {
+  const { currentTheme, mode } = useTheme();
+  const dialogTheme = currentTheme.dialog;
+
   const [isVisible, setIsVisible] = useState(false);
   const { mounted, target } = usePortal();
 
   const closeDialog = () => {
-    onVisibilityChange(false);
+    if (onVisibilityChange) {
+      onVisibilityChange(false);
+    }
     if (onClosed) {
       onClosed();
     }
@@ -130,6 +142,7 @@ function Dialog({
         }}
       />
       <Wrapper
+        $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}
         $style={styles?.containerStyle}
@@ -149,10 +162,15 @@ function Dialog({
                       min-height: ${icon?.size
                         ? `${icon?.size * 1.5}px`
                         : `42px`};
-                      background-color: ${lightenColor(
-                        icon?.color ?? "black",
-                        0.9
-                      )};
+                      background-color: ${mode === "light"
+                        ? lightenColor(
+                            icon?.color ?? dialogTheme?.textColor,
+                            0.9
+                          )
+                        : darkenColor(
+                            icon?.color ?? dialogTheme?.textColor,
+                            0.8
+                          )};
                       border-radius: 99999px;
                       justify-content: center;
                       align-items: center;
@@ -181,6 +199,7 @@ function Dialog({
 
                 {subtitle && (
                   <Subtitle
+                    $theme={dialogTheme}
                     aria-label="dialog-subtitle"
                     $style={styles?.subtitleStyle}
                   >
@@ -253,26 +272,32 @@ function Dialog({
   );
 }
 
-const Wrapper = styled.div<{ $isOpen: boolean; $style?: CSSProp }>`
+const Wrapper = styled.div<{
+  $isOpen: boolean;
+  $style?: CSSProp;
+  $theme?: DialogThemeConfig;
+}>`
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9991999;
-  background: white;
+  z-index: 9992999;
   padding: 1.5rem;
-  border-radius: 2px;
   max-width: calc(100% - 2rem);
   width: 380px;
   justify-content: space-between;
   align-items: center;
   max-height: calc(100vh - 2rem);
   overflow-y: auto;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  box-shadow: ${({ $theme }) =>
+    $theme?.boxShadow ?? "0px 10px 20px rgba(0, 0, 0, 0.1)"};
+  color: ${({ $theme }) => $theme?.textColor ?? "inherit"};
+  background: ${({ $theme }) => $theme?.backgroundColor};
   animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
 
   ${({ $style }) => $style}
@@ -285,6 +310,8 @@ const Header = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   justify-content: center;
   align-items: center;
+  color: inherit;
+  background-color: inherit;
 
   ${({ $style }) => $style}
 `;
@@ -309,10 +336,13 @@ const Title = styled.h2<{
   ${({ $style }) => $style}
 `;
 
-const Subtitle = styled.h3<{ $style?: CSSProp }>`
+const Subtitle = styled.h3<{
+  $style?: CSSProp;
+  $theme?: DialogThemeConfig;
+}>`
   font-size: 13px;
-  color: #5a606b;
   text-align: center;
+  color: ${({ $theme }) => $theme?.subtitleColor ?? "#5a606b"};
 
   ${({ $style }) => $style}
 `;
@@ -344,6 +374,7 @@ interface DialogMountState {
   container: HTMLDivElement | null;
   setConfig?: (props: DialogConfig | null) => void;
   setIsOpen?: (isOpen: boolean) => void;
+  onMounted?: () => void;
 }
 
 const mountedStates = new Map<ComponentType<DialogConfig>, DialogMountState>();
@@ -356,13 +387,15 @@ function DialogProvider({
   const [config, setConfig] = useState<DialogConfig | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  useState(() => {
-    const state = mountedStates.get(Dialog);
-    if (state) {
-      state.setConfig = setConfig;
-      state.setIsOpen = setIsOpen;
-    }
-  });
+  const state = mountedStates.get(Dialog);
+  if (state) {
+    state.setConfig = setConfig;
+    state.setIsOpen = setIsOpen;
+  }
+
+  useEffect(() => {
+    mountedStates.get(Dialog)?.onMounted?.();
+  }, []);
 
   if (!config) return null;
 
@@ -393,7 +426,10 @@ function DialogProvider({
   );
 }
 
-function ensureProvider(component: ComponentType<DialogProps>) {
+function ensureProvider(
+  component: ComponentType<DialogProps>,
+  onReady?: () => void
+) {
   // If a container reference exists but is no longer attached to the DOM
   // reset all internal references so the provider can be recreated safely.
   if (!mountedStates.has(component)) {
@@ -414,32 +450,66 @@ function ensureProvider(component: ComponentType<DialogProps>) {
   }
   // If the provider is already mounted and valid, do nothing.
   // This ensures the modal system behaves as a singleton.
-  if (state.mounted) return;
+  if (state.mounted) {
+    renderRoot(state, component);
+    onReady();
+    return;
+  }
+
+  state.onMounted = onReady;
 
   const container = document.createElement("div");
   document.body.appendChild(container);
 
   const root = createRoot(container);
-  root.render(<DialogProvider component={component} />);
 
   state.container = container;
   state.root = root;
   state.mounted = true;
+
+  renderRoot(state, component);
+}
+
+function renderRoot(
+  state: DialogMountState,
+  component: ComponentType<DialogProps>
+) {
+  state.root?.render(<ThemeBridge component={component} />);
+}
+
+function ThemeBridge({
+  component: Dialog,
+}: {
+  component: ComponentType<DialogProps>;
+}) {
+  const [theme, setTheme] = useState(getThemeSnapshot());
+
+  useEffect(() => {
+    return subscribeTheme(() => {
+      setTheme(getThemeSnapshot());
+    });
+  }, []);
+
+  return (
+    <ThemeProvider mode={theme.mode} themes={theme.themes}>
+      <DialogProvider component={Dialog} />
+    </ThemeProvider>
+  );
 }
 
 export function createDialogController(component: ComponentType<DialogProps>) {
   return {
     show(config: DialogConfig) {
-      ensureProvider(component);
-      // Introduce a slight delay to ensure the component is fully mounted
-      // before triggering the open state, preserving animation consistency.
+      ensureProvider(component, () => {
+        // Introduce a slight delay to ensure the component is fully mounted
+        // before triggering the open state, preserving animation consistency.
+        const state = mountedStates.get(component);
 
-      const state = mountedStates.get(component);
-
-      setTimeout(() => {
-        state?.setConfig?.(config);
-        state?.setIsOpen?.(true);
-      }, 10);
+        setTimeout(() => {
+          state?.setConfig?.(config);
+          state?.setIsOpen?.(true);
+        }, 10);
+      });
     },
 
     hide() {

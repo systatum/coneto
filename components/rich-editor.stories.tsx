@@ -11,6 +11,7 @@ import { Badge } from "./badge";
 import { Boxbar } from "./boxbar";
 import { Button } from "./button";
 import { RichEditor, RichEditorRef } from "./rich-editor";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -493,6 +494,9 @@ export const PageEditor: Story = {
 
 export const ViewOnly: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const sentences = useMemo(
       () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
@@ -522,7 +526,7 @@ This is unordered list
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}

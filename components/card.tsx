@@ -9,6 +9,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { Togglebox } from "./togglebox";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTheme } from "./../theme/provider";
+import { CardThemeConfig } from "./../theme";
 
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -72,6 +74,9 @@ function Card({
   open = true,
   ...props
 }: CardProps) {
+  const { currentTheme } = useTheme();
+  const cardTheme = currentTheme.card;
+
   const filteredHeaderActions = Array.isArray(headerActions)
     ? headerActions?.filter((action) => !action?.hidden)
     : [];
@@ -85,18 +90,24 @@ function Card({
       $radius={radius}
       $padding={padding}
       $containerStyle={styles?.containerStyle}
+      $theme={cardTheme}
     >
       {(title || subtitle || headerActions) && (
-        <Header $headerStyle={styles?.headerStyle}>
+        <Header $theme={cardTheme} $headerStyle={styles?.headerStyle}>
           {(title || subtitle) && (
             <HeaderTextContainer $style={styles?.textContainerStyle}>
               {title && (
-                <HeaderTitle $style={styles?.titleStyle}>{title}</HeaderTitle>
+                <HeaderTitle $style={styles?.titleStyle} $theme={cardTheme}>
+                  {title}
+                </HeaderTitle>
               )}
               {subtitle && (
-                <HeaderSubitle $style={styles?.subtitleStyle}>
+                <HeaderSubtitle
+                  $style={styles?.subtitleStyle}
+                  $theme={cardTheme}
+                >
                   {subtitle}
-                </HeaderSubitle>
+                </HeaderSubtitle>
               )}
             </HeaderTextContainer>
           )}
@@ -199,11 +210,12 @@ const CardContainer = styled.div<{
   $radius: CardProps["radius"];
   $padding: CardProps["padding"];
   $containerStyle?: CSSProp;
+  $theme: CardThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff"};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor ?? "#d1d5db"};
   position: relative;
   width: fit-content;
 
@@ -218,6 +230,7 @@ const CardContainer = styled.div<{
 
 const Header = styled.div<{
   $headerStyle?: CSSProp;
+  $theme?: CardThemeConfig;
 }>`
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
@@ -225,19 +238,28 @@ const Header = styled.div<{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor ?? "#d1d5db"};
 
   ${({ $headerStyle }) => $headerStyle}
 `;
 
-const HeaderTitle = styled.span<{ $style?: CSSProp }>`
+const HeaderTitle = styled.span<{
+  $theme: CardThemeConfig;
+  $style?: CSSProp;
+}>`
   font-size: 1rem;
+  color: ${({ $theme }) => $theme?.titleColor ?? "#000000"};
+
   ${({ $style }) => $style}
 `;
 
-const HeaderSubitle = styled.span<{ $style?: CSSProp }>`
+const HeaderSubtitle = styled.span<{
+  $theme: CardThemeConfig;
+  $style?: CSSProp;
+}>`
   font-size: 0.8rem;
   font-weight: 400;
-  color: #8b8e92;
+  color: ${({ $theme }) => $theme?.subtitleColor ?? "#6b7280"};
 
   ${({ $style }) => $style}
 `;

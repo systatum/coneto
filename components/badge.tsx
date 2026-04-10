@@ -3,6 +3,8 @@ import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
 import { Button, ButtonStylesProps } from "./button";
+import { useTheme } from "./../theme/provider";
+import { BadgeThemeConfig } from "./../theme";
 
 export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
 
@@ -86,7 +88,7 @@ const VARIANTS_BADGE = {
   },
   red: {
     bg: "rgb(235 27 0)",
-    color: "#ffd4d4",
+    color: "#ffffff",
   },
 };
 
@@ -104,6 +106,9 @@ function Badge({
   metadata,
   ...props
 }: BadgeProps) {
+  const { currentTheme } = useTheme();
+  const badgeTheme = currentTheme.badge;
+
   const { bg: backgroundColorVariant, color: colorVariant } =
     VARIANTS_BADGE[variant];
 
@@ -116,13 +121,13 @@ function Badge({
     ? backgroundColor!
     : !isInvalidColor(backgroundColorVariant)
       ? backgroundColorVariant!
-      : "transparent";
+      : badgeTheme?.backgroundColor;
 
   const badgeTextColor = !isInvalidColor(textColor)
     ? textColor!
     : !isInvalidColor(colorVariant)
       ? colorVariant!
-      : "black";
+      : badgeTheme?.textColor;
 
   const badgeCircleColor = !isInvalidColor(circleColor)
     ? circleColor!
@@ -130,7 +135,7 @@ function Badge({
       ? textColor!
       : colorVariant
         ? colorVariant
-        : (circleColorLocal ?? "black");
+        : (circleColorLocal ?? badgeTheme?.circleColor);
 
   const actionsWithStyles = actions
     ?.filter((action) => !action?.hidden)
@@ -154,23 +159,22 @@ function Badge({
           background-color: transparent;
 
           &:hover {
-            background-color: #d1d5db;
+            background-color: ${badgeTheme?.action?.hoverBackgroundColor};
           }
 
           &:active {
-            background-color: #999999;
+            background-color: ${badgeTheme?.action?.activeBackgroundColor};
           }
 
           &:focus-visible {
             outline: none;
-            box-shadow: inset 0 0 0 2px #00000033;
-            transition: box-shadow 0.2s ease;
+            box-shadow: inset 0 0 0 2px ${badgeTheme?.action?.focusRingColor};
           }
 
           ${action?.disabled &&
           css`
             cursor: not-allowed;
-            opacity: 40%;
+            opacity: ${badgeTheme?.action?.disabledOpacity ?? 0.4};
           `};
 
           ${action?.icon?.styles?.self}
@@ -186,6 +190,7 @@ function Badge({
       id={String(id)}
       onClick={onClick}
       aria-label="badge"
+      $theme={badgeTheme}
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
       $hasCaption={caption.length > 0}
@@ -245,6 +250,7 @@ const BadgeIconWrapper = styled.div<{
 const BadgeWrapper = styled.div<{
   $backgroundColor: string;
   $textColor: string;
+  $theme?: BadgeThemeConfig;
   $hasCaption: boolean;
   $badgeStyle: CSSProp;
 }>`
@@ -254,10 +260,10 @@ const BadgeWrapper = styled.div<{
   align-items: center;
   padding: 2px 8px;
   font-size: 0.75rem;
-  border: 1px solid #e5e7eb;
   border-radius: 6px;
   width: fit-content;
   gap: 0.5rem;
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
   background: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ $textColor }) => $textColor};
   user-select: none;

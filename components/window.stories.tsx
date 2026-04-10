@@ -1,10 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Window } from "./window";
 import { RiCloseFill } from "@remixicon/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { css } from "styled-components";
 import { Textarea } from "./textarea";
 import { ColumnTableProps, Table } from "./table";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Window> = {
   title: "Content/Window",
@@ -122,12 +123,14 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => {
+    const { mode } = useTheme();
+
     return (
       <Window
         orientation="vertical"
         styles={{
           self: css`
-            height: 500px;
+            height: 400px;
           `,
         }}
         {...args}
@@ -135,22 +138,22 @@ export const Default: Story = {
         <Window.Cell
           styles={{
             self: css`
-              background-color: #fee2e2;
+              background-color: ${getWindowBg("Left", mode)};
               padding: 2.5rem;
             `,
           }}
         >
-          Left
+          Up
         </Window.Cell>
         <Window.Cell
           styles={{
             self: css`
-              background-color: #dcfce7;
+              background-color: ${getWindowBg("Right", mode)};
               padding: 2.5rem;
             `,
           }}
         >
-          Right
+          Down
         </Window.Cell>
       </Window>
     );
@@ -159,6 +162,8 @@ export const Default: Story = {
 
 export const Horizontal: Story = {
   render: (args) => {
+    const { mode } = useTheme();
+
     return (
       <Window
         orientation="horizontal"
@@ -172,7 +177,7 @@ export const Horizontal: Story = {
         <Window.Cell
           styles={{
             self: css`
-              background-color: #fee2e2;
+              background-color: ${getWindowBg("Left", mode)};
               padding: 2.5rem;
             `,
           }}
@@ -182,7 +187,7 @@ export const Horizontal: Story = {
         <Window.Cell
           styles={{
             self: css`
-              background-color: #dcfce7;
+              background-color: ${getWindowBg("Right", mode)};
               padding: 2.5rem;
             `,
           }}
@@ -196,26 +201,29 @@ export const Horizontal: Story = {
 
 export const Closable: Story = {
   render: (args) => {
-    const stateValue = [
-      {
-        title: "Left",
-        style: css`
-          background-color: #fee2e2;
-          padding: 2.5rem;
-        `,
-        actions: false,
-      },
-      {
-        title: "Right",
-        style: css`
-          background-color: #dcfce7;
-          padding: 2.5rem;
-        `,
-        actions: true,
-      },
-    ];
+    const { mode } = useTheme();
 
-    const [windows, setWindows] = useState(stateValue);
+    const baseWindows = useMemo(
+      () => [
+        { title: "Left", actions: false },
+        { title: "Right", actions: true },
+      ],
+      []
+    );
+
+    const [windows, setWindows] = useState(baseWindows);
+
+    const styledWindows = useMemo(
+      () =>
+        windows.map((w) => ({
+          ...w,
+          style: css`
+            background-color: ${getWindowBg(w.title, mode)};
+            padding: 2.5rem;
+          `,
+        })),
+      [windows, mode]
+    );
 
     const WINDOW_ACTIONS = (title: string) => [
       {
@@ -234,7 +242,7 @@ export const Closable: Story = {
         }}
         {...args}
       >
-        {windows.map((window) => (
+        {styledWindows.map((window) => (
           <Window.Cell
             key={window.title}
             styles={{ self: window.style }}
@@ -328,7 +336,6 @@ export const WithCellRef: Story = {
             styles={{
               self: css`
                 height: ${textareaHeight ? `${textareaHeight}px` : "50dvh"};
-                border-color: white;
               `,
             }}
             onChange={(e) => setValue(e.target.value)}
@@ -337,4 +344,13 @@ export const WithCellRef: Story = {
       </Window>
     );
   },
+};
+
+const getWindowBg = (title: string, mode: "light" | "dark") => {
+  if (title === "Left") {
+    return mode === "dark" ? "#7f1d1d" : "#fee2e2";
+  } else if (title === "Right") {
+    return mode === "dark" ? "#4338ca" : "#e0e7ff";
+  }
+  return mode === "dark" ? "#2a2b2f" : "#f9fafb";
 };

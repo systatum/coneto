@@ -17,6 +17,8 @@ import {
 } from "../lib/date";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { CalendarThemeConfig } from "./../theme";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
   options?: OptionProps[];
@@ -107,6 +109,9 @@ function BaseCalendar({
   onCalendarPeriodChanged,
   selectabilityMode = "single",
 }: BaseCalendarProps) {
+  const { currentTheme } = useTheme();
+  const calendarTheme = currentTheme?.calendar;
+
   const today = new Date();
   const currentMonth = monthNames.find(
     (data) => Number(data.value) === today.getMonth() + 1
@@ -528,15 +533,16 @@ function BaseCalendar({
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
-              background-color: white;
-              border: 1px solid #d1d5db;
               border-radius: 0.125rem;
               width: 100%;
-              box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
               list-style: none;
               outline: none;
-
-              ${styles?.self}
+              background-color: ${calendarTheme?.backgroundColor || "#ffffff"};
+              color: ${calendarTheme?.textColor};
+              border: 1px solid ${calendarTheme?.borderColor || "#d1d5db"};
+              box-shadow: ${calendarTheme?.boxShadow ||
+              "0 1px 2px 0 rgba(0, 0, 0, 0.05);"};
+              ${styles?.self};
             `
       }
     >
@@ -714,10 +720,10 @@ function BaseCalendar({
             aria-label="today-button"
             styles={{
               containerStyle: css`
-                border-color: #d1d5db;
+                border-color: ${calendarTheme?.borderColor};
               `,
               self: css`
-                color: black;
+                color: ${calendarTheme?.textColor};
                 width: 100%;
                 max-height: 34px;
                 max-width: 60px;
@@ -725,9 +731,8 @@ function BaseCalendar({
                 padding-left: 0.5rem;
                 padding-right: 0.5rem;
                 box-shadow: none;
-
                 &:hover {
-                  background-color: #e5e7eb;
+                  color: ${calendarTheme?.textColor};
                 }
               `,
             }}
@@ -738,7 +743,7 @@ function BaseCalendar({
       </CalendarHeader>
 
       <>
-        <GridDay>
+        <GridDay $theme={calendarTheme}>
           {dayNames.map((data, index) => (
             <div key={index}>{data.text}</div>
           ))}
@@ -867,6 +872,7 @@ function BaseCalendar({
               >
                 {selectabilityMode === "ranged" && (
                   <DataCellRange
+                    $theme={calendarTheme}
                     $disableWeekend={disableWeekend}
                     $isPickingProcess={startPicked.picked}
                     $isInRange={
@@ -902,6 +908,7 @@ function BaseCalendar({
                           margin-bottom: 3px;
                         `
                   }
+                  $theme={calendarTheme}
                   $isDisabled={isDisabled}
                   $disableWeekend={disableWeekend}
                   $isWeekend={isDateWeekend}
@@ -928,6 +935,7 @@ function BaseCalendar({
                       $isPickingProcess={startPicked.picked}
                       $disableWeekend={disableWeekend}
                       $isCurrentDate={isCurrentDate}
+                      $theme={calendarTheme}
                     />
                   )}
                 </DateCell>
@@ -1019,17 +1027,18 @@ const CalendarHeader = styled.div`
   gap: 0.5rem;
 `;
 
-const GridDay = styled.div`
+const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.25rem;
   text-align: center;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #6b7280;
   margin-bottom: 0.25rem;
   user-select: none;
   pointer-events: none;
+
+  color: ${({ $theme }) => $theme?.dayTextColor || "#6b7280"};
 `;
 
 const GridDate = styled.div`
@@ -1039,6 +1048,7 @@ const GridDate = styled.div`
   padding-bottom: 8px;
   width: 100%;
   overflow: hidden;
+  text-align: center;
 `;
 
 const DateCellWrapper = styled.li<{
@@ -1071,6 +1081,7 @@ export const DateCell = styled.span<{
   $isToday?: boolean;
   $isInRange?: boolean;
   $isPickingProcess?: boolean;
+  $theme: CalendarThemeConfig;
 }>`
   width: 27px;
   height: 27px;
@@ -1081,55 +1092,56 @@ export const DateCell = styled.span<{
   align-items: center;
   justify-content: center;
   user-select: none;
+  text-align: center;
 
-  ${({ $isDisabled, $isWeekend, $isPickingProcess }) =>
+  ${({ $isDisabled, $isWeekend, $isPickingProcess, $theme }) =>
     ($isDisabled && $isWeekend) || ($isDisabled && $isPickingProcess)
       ? css`
-          color: #d1d5db;
+          color: ${$theme?.disabledDateColor || "#d1d5db"};
         `
       : null};
 
-  ${({ $isWeekend, $isDisabled, $isToday }) =>
+  ${({ $isWeekend, $isDisabled, $isToday, $theme }) =>
     $isWeekend && !$isDisabled && !$isToday
       ? css`
-          color: #fca5a5;
+          color: ${$theme?.weekendDateColor || "#fca5a5"};
         `
       : null};
 
-  ${({ $isWeekend, $disableWeekend }) =>
+  ${({ $isWeekend, $disableWeekend, $theme }) =>
     $isWeekend &&
     $disableWeekend &&
     css`
-      color: #d1d5db;
+      color: ${$theme?.disabledDateColor || "#d1d5db"};
     `}
 
-  ${({ $isHighlighted, $isDisabled }) =>
+  ${({ $isHighlighted, $isDisabled, $theme }) =>
     $isHighlighted && $isDisabled
       ? css`
-          color: #d1d5db;
+          color: ${$theme?.disabledDateColor || "#d1d5db"};
         `
       : $isHighlighted &&
         css`
-          border-color: #61a9f9;
-          color: #61a9f9;
+          border-color: ${$theme?.hightlightDateColor || "#61a9f9"};
+          color: ${$theme?.hightlightDateColor || "#61a9f9"};
         `};
 
-  ${({ $isHighlighted, $isWeekend, $disableWeekend }) =>
+  ${({ $isHighlighted, $isWeekend, $disableWeekend, $theme }) =>
     $isHighlighted && $isWeekend && $disableWeekend
       ? css`
-          background-color: white;
-          color: #d1d5db;
+          background-color: ${$theme?.backgroundColor || "white"};
+          color: ${$theme?.disabledDateColor || "#d1d5db"};
           border-color: transparent;
           user-select: none;
           cursor: default;
         `
       : null};
 
-  ${({ $isCurrentDate }) =>
+  ${({ $isCurrentDate, $theme }) =>
     $isCurrentDate
       ? css`
-          background-color: #61a9f9;
-          color: white;
+          background-color: ${$theme?.hightlightDateColor || "#61a9f9"};
+          color: ${$theme?.highlightedDateTextColor || "white"};
         `
       : null};
 
@@ -1141,6 +1153,7 @@ export const DateCell = styled.span<{
     $isDisabled,
     $isWeekend,
     $disableWeekend,
+    $theme,
   }) => {
     if (
       $isToday &&
@@ -1150,23 +1163,23 @@ export const DateCell = styled.span<{
       $disableWeekend
     ) {
       return css`
-        color: #61a9f9;
+        color: ${$theme?.hightlightDateColor || "#61a9f9"};
         background-color: transparent;
       `;
     }
     if ($isToday && $isHighlighted && $isCurrentDate) {
       return css`
-        color: white;
+        color: ${$theme?.highlightedDateTextColor || "white"};
       `;
     }
     if ($isToday && $isHighlighted && !$isWeekend) {
       return css`
-        color: #61a9f9;
+        color: ${$theme?.hightlightDateColor || "#61a9f9"};
       `;
     }
     if ($isToday && !$isCurrentDate && $isPickingProcess && $isDisabled) {
       return css`
-        color: #d1d5db;
+        color: ${$theme?.disabledDateColor || "#d1d5db"};
       `;
     }
     if (
@@ -1176,29 +1189,29 @@ export const DateCell = styled.span<{
       $isCurrentDate
     ) {
       return css`
-        color: #d1d5db;
+        color: ${$theme?.disabledDateColor || "#d1d5db"};
         background-color: transparent;
       `;
     }
 
     if ($isToday && !$isCurrentDate && !$disableWeekend) {
       return css`
-        color: #61a9f9;
+        color: ${$theme?.hightlightDateColor || "#61a9f9"};
       `;
     }
     return null;
   }};
 
-  ${({ $isInRange, $disableWeekend, $isWeekend }) =>
+  ${({ $isInRange, $disableWeekend, $isWeekend, $theme }) =>
     $isInRange && $disableWeekend && $isWeekend
       ? css`
           background-color: transparent;
-          color: #d1d5db;
+          color: ${$theme?.disabledDateColor || "#d1d5db"};
         `
       : $isInRange
         ? css`
             background-color: transparent;
-            color: #61a9f9;
+            color: ${$theme?.rangeDateTextColor || "#61a9f9"};
           `
         : null};
 
@@ -1213,6 +1226,7 @@ const DataCellRange = styled.span<{
   $isPickingProcess?: boolean;
   $disableWeekend?: boolean;
   $isCurrentDate?: boolean;
+  $theme?: CalendarThemeConfig;
 }>`
   position: absolute;
   width: 45px;
@@ -1223,14 +1237,14 @@ const DataCellRange = styled.span<{
   background-color: transparent;
   overflow: hidden;
 
-  ${({ $isInRange, $isSameDate, $isPickingProcess }) =>
+  ${({ $isInRange, $isSameDate, $isPickingProcess, $theme }) =>
     $isSameDate && $isInRange && $isPickingProcess
       ? css`
           background-color: transparent;
         `
       : $isInRange &&
         css`
-          background-color: #dbeafe;
+          background-color: ${$theme?.rangeDateBackgroundColor};
         `};
 
   ${({ $isRangeStart, $isPickingProcess, $isSameDate }) =>
@@ -1246,7 +1260,7 @@ const DataCellRange = styled.span<{
     $isRangeEnd &&
     css`
       width: ${!$isPickingProcess && $isSameDate ? "0px" : "25px"};
-      transform: translateX(-2%) translateY(-50%);
+      transform: translateX(-10%) translateY(-50%);
     `};
 `;
 
@@ -1257,6 +1271,7 @@ const DateCellTodayDot = styled.div<{
   $disableWeekend?: boolean;
   $isWeekend?: boolean;
   $isCurrentDate?: boolean;
+  $theme: CalendarThemeConfig;
 }>`
   position: absolute;
   bottom: 1px;
@@ -1264,8 +1279,8 @@ const DateCellTodayDot = styled.div<{
   transform: translateX(-50%);
   width: 3px;
   height: 3px;
-  background-color: #61a9f9;
-  border: 1px solid #61a9f9;
+  background-color: ${({ $theme }) => $theme?.hightlightDateColor || "#61a9f9"};
+  border: 1px solid ${({ $theme }) => $theme?.hightlightDateColor || "#61a9f9"};
 
   ${({
     $isDisabled,
@@ -1274,19 +1289,20 @@ const DateCellTodayDot = styled.div<{
     $disableWeekend,
     $isCurrentDate,
     $isWeekend,
+    $theme,
   }) =>
     $isToday && $isPickingProcess && $isDisabled && !$isCurrentDate
       ? css`
-          background-color: #d1d5db;
-          border-color: #d1d5db;
+          background-color: ${$theme?.disabledDateColor || "#d1d5db"};
+          border-color: ${$theme?.disabledDateColor || "#d1d5db"};
         `
       : $isToday &&
         $disableWeekend &&
         !$isCurrentDate &&
         $isWeekend &&
         css`
-          background-color: #d1d5db;
-          border-color: #d1d5db;
+          background-color: ${$theme?.disabledDateColor || "#d1d5db"};
+          border-color: ${$theme?.disabledDateColor || "#d1d5db"};
         `}
 `;
 

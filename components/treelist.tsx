@@ -13,6 +13,8 @@ import { LoadingSpinner } from "./loading-spinner";
 import { SubMenuButtonProps } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { TreeListThemeConfig } from "./../theme";
 
 export interface TreeListProps
   extends Omit<
@@ -147,6 +149,9 @@ function TreeList({
   styles,
   ...props
 }: TreeListProps) {
+  const { currentTheme } = useTheme();
+  const treeListTheme = currentTheme.treelist;
+
   const [dragItem, setDragItem] = useState(null);
 
   const [isSelected, setIsSelected] = useState(selectedItem);
@@ -236,6 +241,7 @@ function TreeList({
         {...props}
         aria-label="tree-list-wrapper"
         $containerStyle={styles?.containerStyle}
+        $textColor={treeListTheme.textColor}
       >
         {hasActions && (
           <ActionsWrapper aria-label="tree-list-action-wrapper">
@@ -745,6 +751,9 @@ function TreeListItem<T extends TreeListItemsProps>({
   setOpenRowId,
   canContainChildren,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
+  const { currentTheme } = useTheme();
+  const treeListTheme = currentTheme.treelist;
+
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
@@ -778,6 +787,7 @@ function TreeListItem<T extends TreeListItemsProps>({
       style={{
         position: "relative",
         width: "100%",
+        backgroundColor: "inherit",
       }}
     >
       <TreeListItemWrapper
@@ -809,6 +819,7 @@ function TreeListItem<T extends TreeListItemsProps>({
             }
           }
         }}
+        $theme={treeListTheme}
         $isHovered={isHovered === item.id || openRowId === item.id}
         $isDropParent={dropIntent === "containment" && isOver}
         $style={styles?.self}
@@ -935,7 +946,9 @@ function TreeListItem<T extends TreeListItemsProps>({
         >
           {parts.map((part, index) =>
             part.toLowerCase() === searchTerm.toLowerCase() ? (
-              <HighlightedText key={index}>{part}</HighlightedText>
+              <HighlightedText $theme={treeListTheme} key={index}>
+                {part}
+              </HighlightedText>
             ) : (
               <span key={index}>{part}</span>
             )
@@ -1016,6 +1029,7 @@ function TreeListItem<T extends TreeListItemsProps>({
         )}
         {showHierarchyLine && (
           <TreeListHierarchyVerticalLine
+            $theme={treeListTheme}
             aria-label="vertical-line"
             $level={level}
             $isSameLevel={isSameLevel}
@@ -1040,6 +1054,7 @@ function TreeListItem<T extends TreeListItemsProps>({
           return (
             <TreeListHierarchyVerticalLine
               key={idx}
+              $theme={treeListTheme}
               aria-label="vertical-line-level"
               $level={idx}
               $isSameLevel={isSameLevelLine}
@@ -1153,10 +1168,12 @@ function TreeListItem<T extends TreeListItemsProps>({
 
 const TreeListWrapper = styled.div<{
   $containerStyle?: CSSProp;
+  $textColor?: string;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+  color: ${({ $textColor }) => $textColor};
 
   ${(props) => props.$containerStyle}
 `;
@@ -1274,6 +1291,7 @@ const GroupWrapper = styled.div`
   flex-direction: column;
   gap: 0.25rem;
   width: 100%;
+  background-color: inherit;
 
   &:not(:last-child) {
     padding-bottom: 8px;
@@ -1321,15 +1339,7 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
     border-radius: 9999px;
   `}
 
-  ${({ $isHovered, $isSelected, $showHierarchy }) =>
-    $isHovered || $isSelected
-      ? css`
-          background-color: #f3f4f6;
-        `
-      : $showHierarchy &&
-        css`
-          background-color: white;
-        `}
+  background-color:inherit;
 
   &[aria-expanded="true"] {
     transform: translateY(-50%) rotate(90deg);
@@ -1358,25 +1368,26 @@ const TreeListHierarchyVerticalLine = styled.div<{
   $isSelected?: boolean;
   $isSameLevel?: boolean;
   $style?: CSSProp;
+  $theme?: TreeListThemeConfig;
 }>`
   position: absolute;
   top: 0;
   width: 1px;
   z-index: 8888;
-  ${({ $level, $isSelected, $isSameLevel }) => css`
+  ${({ $level, $isSelected, $isSameLevel, $theme }) => css`
     height: 100%;
     left: ${$level * 12 + 9}px;
 
     ${$isSelected
       ? css`
-          border-left: 2px solid #3b82f6;
+          border-left: 2px solid ${$theme?.dividerHierarchySelectedColor};
         `
       : $isSameLevel
         ? css`
-            border-left: 2px solid #d7d6d6;
+            border-left: 2px solid ${$theme?.dividerHierarchyRelatedColor};
           `
         : css`
-            border-left: 2px solid rgb(243 243 243);
+            border-left: 2px solid ${$theme?.dividerHierarchyColor};
           `}
   `}
 
@@ -1390,6 +1401,7 @@ const TreeListItemWrapper = styled.li<{
   $level?: number;
   $isHovered?: boolean;
   $isDropParent?: boolean;
+  $theme?: TreeListThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -1402,18 +1414,25 @@ const TreeListItemWrapper = styled.li<{
   user-select: none;
   width: 100%;
 
-  ${({ $showHierarchyLine, $isSelected }) =>
+  ${({ $showHierarchyLine, $isSelected, $theme }) =>
     !$showHierarchyLine &&
     css`
-      border-left: 3px solid ${$isSelected ? "#3b82f6" : "transparent"};
-    `}
-  background-color: ${({ $isSelected, $isDropParent }) =>
-    $isDropParent ? "#f3f4f6" : $isSelected ? "#f3f4f6" : "white"};
-  ${({ $isHovered }) =>
+      border-left: 3px solid
+        ${$isSelected ? $theme?.dividerHierarchySelectedColor : "transparent"};
+    `};
+
+  background-color: ${({ $isSelected, $isDropParent, $theme }) =>
+    $isDropParent
+      ? $theme?.hoverBackgroundColor
+      : $isSelected
+        ? $theme?.selectedBackgroundColor
+        : $theme?.backgroundColor};
+
+  ${({ $isHovered, $theme }) =>
     $isHovered &&
     css`
-      background-color: #f3f4f6;
-    `}
+      background-color: ${$theme?.hoverBackgroundColor};
+    `};
 
   padding: 0.25rem 1.2rem;
   padding-right: 8px;
@@ -1428,10 +1447,10 @@ const TreeListItemWrapper = styled.li<{
   ${(props) => props.$style}
 `;
 
-const HighlightedText = styled.span`
-  background-color: #e5e7eb;
+const HighlightedText = styled.span<{ $theme?: TreeListThemeConfig }>`
   font-weight: 600;
   border-radius: 4px;
+  background-color: ${({ $theme }) => $theme?.highlightedText};
 `;
 
 function escapeRegExp(string: string) {

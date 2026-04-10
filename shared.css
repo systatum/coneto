@@ -29,16 +29,389 @@ html,
 body {
   margin: 0;
   line-height: inherit;
+  background-color: #ffffff;
+}
+
+body[data-theme="dark"] {
+  background-color: #1f2023;
+  color: white;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper {
+  background-color: #1f2023;
+  color: white;
+}
+
+/* Dark mode for the main docs content */
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq {
+  background-color: #1f2023;
+  color: #e5e7eb;
+}
+
+/* Headings */
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq h1,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq h2,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq h3 {
+  color: #f5f5f5;
+}
+
+/* Paragraphs */
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq p {
+  color: #d1d5db;
+}
+
+/* Tables */
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq table,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq th,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq td {
+  border-color: #444;
+  background-color: #1f2023;
+  color: #e5e7eb;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq th {
+  background-color: #2a2b2f;
+}
+
+/* Inline code */
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq code:not(pre code) {
+  background-color: #2a2b2f;
+  border-radius: 4px;
+  color: #f8f8f2;
+}
+
+/* Switch */
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  background-color: #2a2b2f;
+  border: 1px solid #444;
+  border-radius: 9999px;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  transition: all 0.2s;
+  text-align: center;
+  min-width: 40px;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span:first-child {
+  background-color: #444;
+  color: #f5f5f5;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9 span:last-child {
+  background-color: #2a2b2f;
+  color: #9ca3af;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:first-child {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:checked
+  ~ span:last-child {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+body[data-theme="dark"] .sbdocs.sbdocs-content .css-177r6r9:hover {
+  border-color: #4f46e5;
+}
+
+body[data-theme="dark"]
+  .sbdocs.sbdocs-content
+  .css-177r6r9
+  input:focus-visible
+  ~ span {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+/* PrismJS styling for code highlighting */
+.sbdocs.sbdocs-content.css-qa4clq .css-4zr3vl {
+  background-color: #2a2b2f;
+  color: #f5f5f5;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, "Roboto Mono", monospace;
+  font-size: 0.9rem;
+}
+
+.sbdocs-wrapper .docblock-source.sb-unstyled,
+.sbdocs-wrapper .docblock-source.sb-unstyled code {
+  background-color: #2a2b2f;
+  color: #f5f5f5;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+/* Dark mode for Storybook preview panel */
+body[data-theme="dark"] .sbdocs.sbdocs-preview.sb-unstyled.css-hd7ysc {
+  background-color: #1f2023;
+  border: 1px solid #444;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 3px 0px;
+  color: #e5e7eb;
+}
+
+/* Dark mode for Storybook preview panel */
+body[data-theme="dark"] .sbdocs.sbdocs-preview.sb-unstyled.css-s230ta {
+  background-color: #1f2023;
+  border: 1px solid #444;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 1px 3px 0px;
+  color: #e5e7eb;
+}
+
+/* code in the description */
+
+body[data-theme="dark"] .css-11xgcgt {
+  background-color: inherit;
+}
+
+body[data-theme="dark"] .css-o1d7ko,
+body[data-theme="dark"] .css-1fdphfk,
+body[data-theme="dark"] .css-wzniqs,
+body[data-theme="dark"] .css-1vgq5xr {
+  color: #9ca3af;
+  box-shadow: none;
+}
+
+body[data-theme="dark"] .css-o1d7ko,
+body[data-theme="dark"] .css-1fdphfk,
+body[data-theme="dark"] .sbdocs-expandable,
+body[data-theme="dark"] .css-1vgq5xr {
+  background-color: #2a2b2f;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* select, and input on controll */
+
+body[data-theme="dark"] select,
+body[data-theme="dark"] input.css-y8xp0s,
+body[data-theme="dark"] input.css-r7fl1p,
+body[data-theme="dark"] textarea.css-7mc623 {
+  background-color: #2a2b2f;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:focus,
+  &:hover {
+    border-color: rgb(105, 85, 193);
+    box-shadow: none;
+  }
+}
+
+/* button control */
+
+body[data-theme="dark"] .css-10lkeuu {
+  background-color: #2a2b2f;
+  color: #9ca3af;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+/* Dark mode for preview top bar */
+body[data-theme="dark"] .sb-bar.css-l1e2yg {
+  background-color: #2a2b2f;
+  color: #cbd5e1;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0px 0px inset;
+}
+
+/* PrismJS token colors */
+.docblock-source .prismjs .token.comment,
+.docblock-source .prismjs .token.prolog,
+.docblock-source .prismjs .token.doctype,
+.docblock-source .prismjs .token.cdata {
+  color: #6a737d;
+}
+
+.docblock-source .prismjs .token.punctuation {
+  color: #c5c8c6;
+}
+
+.docblock-source .prismjs .token.property,
+.docblock-source .prismjs .token.boolean,
+.docblock-source .prismjs .token.number,
+.docblock-source .prismjs .token.constant,
+.docblock-source .prismjs .token.string,
+.docblock-source .prismjs .token.tag.script.string,
+.docblock-source .prismjs .token.symbol {
+  color: #ffe7b6;
+}
+
+.docblock-source .prismjs .token.tag {
+  color: #ffe7b6;
+}
+
+.docblock-source .prismjs .token.tag.class-name,
+.docblock-source .prismjs .token.maybe-class-name,
+.docblock-source .prismjs .token.tag.script.maybe-class-name {
+  color: #66d9ef;
+}
+
+.docblock-source .prismjs .token.tag.script.console.class-name,
+.docblock-source .prismjs .token.tag.script.console.class-name {
+  color: #318d51;
+}
+
+.docblock-source .prismjs .token.function.property-access,
+.docblock-source .prismjs .token.tag.function.property-access {
+  color: #42c48b;
+}
+
+.docblock-source .prismjs .token.selector,
+.docblock-source .prismjs .token.attr-name,
+.docblock-source .prismjs .token.char,
+.docblock-source .prismjs .token.builtin,
+.docblock-source .prismjs .token.inserted {
+  color: #a6e22e;
+}
+
+.docblock-source .prismjs .token.operator,
+.docblock-source .prismjs .token.entity,
+.docblock-source .prismjs .token.url,
+.docblock-source .prismjs .token.variable {
+  color: #f8f8f2;
+}
+
+.docblock-source .prismjs .token.keyword {
+  color: #66d9ef;
+}
+
+.docblock-source .prismjs .token.function {
+  color: #ffbebe;
+}
+
+.docblock-source .prismjs .token.function.property-access {
+  color: #42c48b;
+}
+
+.docblock-source .prismjs .token.tag.script {
+  color: #ffbebe;
+}
+
+.docblock-source .prismjs .token.tag.script.token.punctuation,
+.docblock-source .prismjs .token.tag.script.token.operator {
+  color: #d2d2d2;
+}
+
+.docblock-source .prismjs .token.tag.script.plain-text {
+  color: #ffe7b6;
+}
+
+.docblock-source .prismjs .token.tag.script.class-name {
+  color: #66d9ef;
+}
+
+.docblock-source .prismjs .token.deleted {
+  color: #ffe7b6;
+}
+
+/* Replace .css-[code] with .css-xzp052 */
+body[data-theme="dark"] .sbdocs-wrapper .css-xzp052 {
+  background-color: #1f2023;
+  border-radius: 6px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Optional: headings inside the div */
+body[data-theme="dark"] .sbdocs-wrapper .css-xzp052 h1,
+body[data-theme="dark"] .sbdocs-wrapper .css-xzp052 h2,
+body[data-theme="dark"] .sbdocs-wrapper .css-xzp052 h3 {
+  color: #f5f5f5;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper table,
+body[data-theme="dark"] .sbdocs-wrapper th,
+body[data-theme="dark"] .sbdocs-wrapper tr,
+body[data-theme="dark"] .sbdocs-wrapper td {
+  border-color: #444;
+  background-color: #1f2023;
+  color: #e5e7eb;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper th {
+  background-color: #2a2b2f;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper code,
+body[data-theme="dark"] .sbdocs-wrapper .css-[code] {
+  background-color: #2a2b2f;
+  color: #f5f5f5;
+  border: none;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper code:not(pre code) {
+  background-color: #2a2b2f;
+  padding: 0.2rem 0.4rem;
+  border: none;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper ul,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq ul {
+  list-style-type: disc;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper ol,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq ol {
+  list-style-type: decimal;
+}
+
+body[data-theme="dark"] .sbdocs-wrapper ul li,
+body[data-theme="dark"] .sbdocs-wrapper ol li,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq ul li,
+body[data-theme="dark"] .sbdocs.sbdocs-content.css-qa4clq ol li {
+  color: #e5e7eb;
+}
+
+body[data-theme="light"] {
+  background-color: #ffffff;
+  color: black;
 }
 
 hr {
   height: 0;
   color: inherit;
   border-top-width: 1px;
-}
-
-abbr:where([title]) {
-  text-decoration: underline dotted;
 }
 
 h1,

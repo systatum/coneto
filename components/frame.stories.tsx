@@ -120,22 +120,3 @@ export const WithTitle: Story = {
     return <Frame {...args} />;
   },
 };
-
-export const Custom: Story = {
-  args: {
-    title: "Frame w/ Class",
-    styles: {
-      containerStyle: css`
-        font-size: 14px;
-        background-color: #f5f5f5;
-      `,
-      titleStyle: css`
-        background-color: #f5f5f5;
-      `,
-    },
-    children: <>This frame has a custom background color.</>,
-  },
-  render: (args) => {
-    return <Frame {...args} />;
-  },
-};

@@ -156,6 +156,9 @@ export const WithDropdown: Story = {
           value={value.value}
           label="Signature"
           name="signature"
+          onChange={(e) =>
+            setValue((prev) => ({ ...prev, value: e.target.value }))
+          }
           dropdowns={[
             {
               width: "150px",

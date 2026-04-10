@@ -5,6 +5,8 @@ import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
+import { useTheme } from "./../theme/provider";
+import { FieldLaneThemeConfig } from "./../theme";
 
 export interface FieldLaneProps {
   label?: string;
@@ -87,6 +89,9 @@ function FieldLane({
   labelWidth,
   required,
 }: FieldLaneProps) {
+  const { currentTheme } = useTheme();
+  const fieldLaneTheme = currentTheme.fieldLane;
+
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)
     : [];
@@ -130,10 +135,11 @@ function FieldLane({
                     border-right: 0;
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
-                    border-color: #d1d5db;
+                    border-color: ${fieldLaneTheme?.buttonBorderColor};
+
                     ${showError &&
                     css`
-                      border-color: #f87171;
+                      border-color: ${fieldLaneTheme?.buttonErrorBorderColor};
                     `}
 
                     ${index > 0 &&
@@ -156,10 +162,15 @@ function FieldLane({
                   `,
                   self: css`
                     font-size: 12px;
-                    color: black;
+                    color: ${fieldLaneTheme?.buttonTextColor};
+                    &:hover {
+                      color: ${fieldLaneTheme?.buttonTextColor};
+                    }
+
                     ${!children &&
                     css`
-                      border-right: 1px solid #d1d5db;
+                      border-right: 1px solid
+                        ${fieldLaneTheme?.buttonBorderColor};
                     `}
 
                     ${dropdown.width &&
@@ -235,17 +246,17 @@ function FieldLane({
                   height: fit-content;
 
                   color: ${showError
-                    ? "#f87171"
+                    ? fieldLaneTheme?.errorBackground
                     : props.iconColor
                       ? props.iconColor
-                      : "#6b7280"};
+                      : fieldLaneTheme?.actionColor};
 
                   &:hover {
                     color: ${showError
-                      ? "#ef4444"
+                      ? fieldLaneTheme?.errorForeground
                       : props.iconColor
                         ? props.iconColor
-                        : "#374151"};
+                        : fieldLaneTheme?.actionHoverColor};
                   }
                 `,
               }}
@@ -330,6 +341,7 @@ function FieldLane({
         $disabled={disabled}
         $style={styles?.bodyStyle}
         $labelGap={labelGap}
+        $theme={fieldLaneTheme}
       >
         {label && (
           <StatefulForm.Label
@@ -337,7 +349,15 @@ function FieldLane({
             labelPosition={labelPosition}
             required={required}
             htmlFor={disabled ? null : id}
-            styles={{ self: styles?.labelStyle }}
+            styles={{
+              self: css`
+                color: ${disabled
+                  ? fieldLaneTheme?.labelDisabledColor
+                  : fieldLaneTheme?.labelColor};
+
+                ${styles?.labelStyle};
+              `,
+            }}
             helper={helper}
             label={label}
           />
@@ -346,12 +366,17 @@ function FieldLane({
         {inputElement}
       </Body>
 
-      {showError && errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+      {showError && errorMessage && (
+        <ErrorText $theme={fieldLaneTheme}>{errorMessage}</ErrorText>
+      )}
     </Container>
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp; $disabled?: boolean }>`
+const Container = styled.div<{
+  $style?: CSSProp;
+  $disabled?: boolean;
+}>`
   display: flex;
   width: 100%;
   height: 100%;
@@ -374,6 +399,7 @@ const Body = styled.div<{
   $disabled?: boolean;
   $labelPosition?: FieldLaneProps["labelPosition"];
   $labelGap?: number;
+  $theme?: FieldLaneThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -384,11 +410,11 @@ const Body = styled.div<{
   min-height: 34px;
   gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $theme }) =>
     $disabled &&
     css`
       cursor: not-allowed;
-      opacity: 0.5;
+      opacity: ${$theme?.disabledOpacity ?? 0.5};
       user-select: none;
     `}
 
@@ -409,6 +435,7 @@ const InputWrapper = styled.label<{ $style?: CSSProp }>`
 
 const ErrorIconWrapper = styled.div<{
   $position?: FieldLaneProps["errorIconPosition"];
+  $theme?: FieldLaneThemeConfig;
 }>`
   ${({ $position }) =>
     $position === "absolute"
@@ -431,10 +458,15 @@ const ErrorIconWrapper = styled.div<{
           `};
 
   cursor: default;
+  svg {
+    background: ${({ $theme }) => $theme?.errorBackground ?? "#dc2626"};
+    color: ${({ $theme }) => $theme?.errorForeground ?? "#fff"};
+    border-radius: 9999px;
+  }
 `;
 
-const ErrorText = styled.span`
-  color: #dc2626;
+const ErrorText = styled.span<{ $theme?: FieldLaneThemeConfig }>`
+  color: ${({ $theme }) => $theme?.errorColor ?? "#dc2626"};
 `;
 
 export { FieldLane };

@@ -41,21 +41,24 @@ It supports left and right sections, customizable styling, spacing, transparency
 ### 🛠 Usage
 
 \`\`\`tsx
+const statusbarContent = {
+  left: [
+    { text: "Home", icon: { name: "home" } },
+    { button: { children: "Save", onClick: () => alert("Saved!") } },
+  ],
+  right: [
+    { text: "Profile", icon: { name: "user" } },
+    { render: <CustomComponent /> },
+  ],
+};
+
+
 <Statusbar
   size={12}
   activeBackgroundColor="#e0e0e0"
   hoverBackgroundColor="#f5f5f5"
   transparent={false}
-  content={{
-    left: [
-      { text: "Home", icon: { name: "home" } },
-      { button: { children: "Save", onClick: () => alert("Saved!") } },
-    ],
-    right: [
-      { text: "Profile", icon: { name: "user" } },
-      { render: <CustomComponent /> },
-    ],
-  }}
+  content={statusbarContent}
   styles={{
     self: css\`padding: 4px 12px;\`,
     itemStyle: css\`color: #333;\`,

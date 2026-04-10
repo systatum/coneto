@@ -13,6 +13,8 @@ import { LoadingSpinner } from "./loading-spinner";
 import { StatefulForm } from "./stateful-form";
 import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { FileDropBoxThemeConfig } from "./../theme";
 
 export interface OnFileDroppedFunctionProps {
   files: File[];
@@ -76,6 +78,9 @@ function FileDropBox({
   required,
   disabled,
 }: FileDropBoxProps) {
+  const { currentTheme } = useTheme();
+  const fileDropBoxTheme = currentTheme.fileDropBox;
+
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
     { id: 2, icon: RiFileUploadLine, size: 80 },
@@ -179,6 +184,7 @@ function FileDropBox({
 
   const inputElement: ReactElement = (
     <DropArea
+      $theme={fileDropBoxTheme}
       $dragOverStyle={styles?.dragOverStyle}
       $successStyle={styles?.successStyle}
       $isDragging={isDragging}
@@ -190,11 +196,14 @@ function FileDropBox({
       onDragLeave={!disabled && handleDragLeave}
     >
       {progress === "loading" && currentIndex !== null ? (
-        <ProgressContainer>
+        <ProgressContainer $theme={fileDropBoxTheme}>
           <LoadingSpinner iconSize={20} />
           <span>{progressLabel}</span>
-          <ProgressBarWrapper>
-            <ProgressBar width={progressPercentage} />
+          <ProgressBarWrapper $theme={fileDropBoxTheme}>
+            <ProgressBar
+              $width={progressPercentage}
+              $theme={fileDropBoxTheme}
+            />
           </ProgressBarWrapper>
         </ProgressContainer>
       ) : progress === "idle" ? (
@@ -204,17 +213,22 @@ function FileDropBox({
               {FILE_ICON.map(({ id, icon, size }) => (
                 <Figure
                   key={id}
-                  color={isDragging ? "#3b82f6" : "#6b7280"}
+                  color={
+                    isDragging
+                      ? fileDropBoxTheme.dragActiveTextColor
+                      : fileDropBoxTheme.iconColor
+                  }
                   image={icon}
                   size={size}
                 />
               ))}
             </IconsRow>
-            <PlaceholderText $isDragging={isDragging}>
+            <PlaceholderText $theme={fileDropBoxTheme} $isDragging={isDragging}>
               {placeholder}
             </PlaceholderText>
             <div>
-              <LinkText>Select some files</LinkText> from your computer
+              <LinkText $theme={fileDropBoxTheme}>Select some files</LinkText>{" "}
+              from your computer
             </div>
           </UploadContent>
           {children && (
@@ -330,8 +344,8 @@ const DropArea = styled.div<{
   $progress: ProgressProps;
   $dragOverStyle?: CSSProp;
   $successStyle?: CSSProp;
+  $theme: FileDropBoxThemeConfig;
 }>`
-  padding: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -340,39 +354,42 @@ const DropArea = styled.div<{
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  color: #6b7280;
   width: 100%;
 
-  ${({ $progress, $dragOverStyle }) =>
+  color: ${({ $theme }) => $theme.textColor};
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+
+  ${({ $progress, $dragOverStyle, $theme }) =>
     $progress === "idle" &&
     css`
+      padding: 0.75rem;
       border: 1px dotted transparent;
       background-image:
         repeating-linear-gradient(
           to right,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to bottom,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to left,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to top,
-          #9ca3af 0,
-          #9ca3af 8px,
+          ${$theme.defaultGradientColor} 0,
+          ${$theme.defaultGradientColor} 8px,
           transparent 8px,
           transparent 12px
         );
@@ -391,37 +408,38 @@ const DropArea = styled.div<{
       ${$dragOverStyle}
     `};
 
-  ${({ $isDragging }) =>
+  ${({ $isDragging, $theme }) =>
     $isDragging &&
     css`
-      background-color: #eff6ff;
-      color: #61a9f9;
+      background-color: ${$theme.dragActiveBackgroundColor};
+      color: ${$theme.dragActiveTextColor};
+
       background-image:
         repeating-linear-gradient(
           to right,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to bottom,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to left,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         ),
         repeating-linear-gradient(
           to top,
-          #60a5fa 0,
-          #60a5fa 8px,
+          ${$theme.dragActiveGradientColor} 0,
+          ${$theme.dragActiveGradientColor} 8px,
           transparent 8px,
           transparent 12px
         );
@@ -438,10 +456,10 @@ const DropArea = styled.div<{
       background-repeat: no-repeat;
     `};
 
-  ${({ $progress, $successStyle }) =>
+  ${({ $progress, $successStyle, $theme }) =>
     $progress === "succeed" &&
     css`
-      border: 1px solid #f3f4f6;
+      border: 1px solid ${$theme.borderColor};
       ${$successStyle}
     `};
 `;
@@ -463,53 +481,62 @@ const IconsRow = styled.div`
   gap: 0.5rem;
 `;
 
-const PlaceholderText = styled.span<{ $isDragging: boolean }>`
+const PlaceholderText = styled.span<{
+  $isDragging: boolean;
+  $theme: FileDropBoxThemeConfig;
+}>`
   font-size: 1.25rem;
-  color: ${(props) => (props.$isDragging ? "#3b82f6" : "#000")};
+  color: ${({ $theme, $isDragging }) =>
+    $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
 `;
 
-const LinkText = styled.span`
-  color: #3b82f6;
+const LinkText = styled.span<{ $theme: FileDropBoxThemeConfig }>`
+  color: ${({ $theme }) => $theme.dragActiveTextColor || "#3b82f6"};
   text-decoration: underline;
 `;
 
-const ProgressContainer = styled.div`
+const ProgressContainer = styled.div<{
+  $theme: FileDropBoxThemeConfig;
+}>`
   width: 100%;
   font-size: 0.875rem;
-  color: black;
   padding: 1rem;
   border-radius: 2px;
   position: relative;
-  border: 1px solid #f3f4f6;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border: 1px solid ${({ $theme }) => $theme.borderColor};
 `;
 
-const ProgressBarWrapper = styled.div`
+const ProgressBarWrapper = styled.div<{
+  $theme: FileDropBoxThemeConfig;
+}>`
   height: 4px;
   width: 100%;
-  background-color: #d1d5db;
   position: absolute;
   left: 0;
   bottom: 0;
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#e5e7eb"};
 `;
 
-const ProgressBar = styled.div<{ width: number }>`
+const ProgressBar = styled.div<{
+  $width: number;
+  $theme: FileDropBoxThemeConfig;
+}>`
   height: 4px;
-  background-color: #93c5fd;
   position: absolute;
   left: 0;
   bottom: 0;
   border-radius: 2px;
   transition: all 0.2s ease;
-  width: ${(props) => props.width}%;
+  width: ${({ $width }) => $width}%;
+  background-color: ${({ $theme }) => $theme.progressBarColor};
 `;
 
 const ErrorList = styled.ul`
   list-style-type: disc;
   font-size: 0.875rem;
-  color: #4b5563;
   margin-left: 2.5rem;
 `;
 

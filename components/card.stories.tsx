@@ -25,6 +25,7 @@ import { css } from "styled-components";
 import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
 import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
+import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Card> = {
   title: "Content/Card",
@@ -236,6 +237,13 @@ export const Default: Story = {
             icon={{ image: RiSpam2Line, color: "white" }}
             subMenuList={SUB_MENU_LIST}
           />
+
+          <Toolbar.Menu
+            caption="Success"
+            variant="success"
+            icon={{ image: RiSpam2Line, color: "white" }}
+            subMenuList={SUB_MENU_LIST}
+          />
         </Toolbar>
       </Card>
     );
@@ -356,9 +364,6 @@ export const WithHeader: Story = {
           containerStyle: css`
             padding: 0px;
           `,
-          headerStyle: css`
-            border-bottom: 1px solid #d1d5db;
-          `,
         }}
       >
         <div
@@ -436,6 +441,8 @@ export const WithHeader: Story = {
 
 export const WithHeaderAndFooter: Story = {
   render: () => {
+    const { mode } = useTheme();
+
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "breakfast",
@@ -706,12 +713,11 @@ export const WithHeaderAndFooter: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
           footerStyle: css`
             padding-left: 20px;
             padding-right: 20px;
-            border-top: 1px solid #d1d5db;
+            border-top: 1px solid ${mode === "dark" ? "transparent" : "#d1d5db"};
           `,
         }}
         footerContent={ContentCard}
@@ -1004,7 +1010,6 @@ export const WithFullWidthContent: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
         }}
         headerActions={[
@@ -1254,7 +1259,6 @@ export const Toggleable: Story = {
             headerStyle: css`
               padding-left: 15px;
               padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
             `,
           }}
         >
@@ -1299,7 +1303,6 @@ export const Toggleable: Story = {
             headerStyle: css`
               padding-left: 15px;
               padding-right: 15px;
-              border-bottom: 1px solid #d1d5db;
             `,
           }}
         >

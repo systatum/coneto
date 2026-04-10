@@ -34,6 +34,8 @@ import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
+import { useTheme } from "./../theme/provider";
+import { SelectboxThemeConfig } from "./../theme";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -146,6 +148,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const selectboxTheme = currentTheme?.selectbox;
+
     const finalOptions = useMemo(
       () => (Array.isArray(options) ? options : []),
       [options]
@@ -455,7 +460,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
                 top: 50%;
                 transform: translateY(-50%);
                 gap: 6px;
-                background-color: rgba(255, 255, 255, 0.6);
               `,
               labelStyle: css`
                 font-size: 14px;
@@ -466,6 +470,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         )}
         <Input
           {...props}
+          $theme={selectboxTheme}
           autoComplete={autoComplete}
           $style={styles?.self}
           {...getReferenceProps()}
@@ -528,6 +533,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         {isClearable && (
           <>
             <ClearIcon
+              $theme={selectboxTheme}
               aria-label="clearable-content"
               onMouseDown={() => {
                 handleOnChange?.([]);
@@ -538,7 +544,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
               size={16}
             />
-            <Divider aria-label="divider" />
+            <Divider $theme={selectboxTheme} aria-label="divider" />
           </>
         )}
 
@@ -558,13 +564,19 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           {isOpen ? (
             <IconOpened
               size={18}
-              color={highlightOnMatch && isFocused ? "#61a9f9" : "#9ca3af"}
+              color={
+                highlightOnMatch
+                  ? selectboxTheme?.iconActiveColor || "#61a9f9"
+                  : selectboxTheme?.iconColor || "#9ca3af"
+              }
             />
           ) : (
             <IconClosed
               size={18}
               color={
-                highlightOnMatch && FILTERED_ACTIVE ? "#61a9f9" : "#9ca3af"
+                highlightOnMatch
+                  ? selectboxTheme?.iconActiveColor || "#61a9f9"
+                  : selectboxTheme?.iconColor || "#9ca3af"
               }
             />
           )}
@@ -731,70 +743,93 @@ const Input = styled.input<{
   $clearable?: boolean;
   $hasError?: boolean;
   $disabled?: boolean;
+  $theme: SelectboxThemeConfig;
 }>`
   width: 100%;
   border-radius: 2px;
-  border: 1px solid #d1d5db;
   padding: 0.5rem 0.75rem;
   outline: none;
   height: 34px;
+
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#ffffff"};
+  color: ${({ $theme }) => $theme.textColor || "#111827"};
+
+  border: 1px solid ${({ $theme }) => $theme.borderColor || "#d1d5db"};
+
   padding-right: ${({ $clearable }) => ($clearable ? "50px" : "24px")};
 
-  ${({ $highlight, $hovered, $hasError, $focused }) =>
+  &::placeholder {
+    color: ${({ $theme }) => $theme.placeholderColor || "#9ca3af"};
+  }
+
+  ${({ $highlight, $hovered, $hasError, $focused, $theme }) =>
     $hasError
       ? css`
-          border-color: #ef4444;
+          border-color: ${$theme?.errorBorderColor || "#ef4444"};
         `
       : $highlight || $hovered || $focused
         ? css`
-            border-color: #61a9f9;
+            border-color: ${$theme?.focusedBorderColor || "#61a9f9"};
           `
         : css`
-            border-color: #d1d5db;
+            border-color: ${$theme?.borderColor || "#d1d5db"};
           `};
 
-  ${({ $disabled }) =>
+  ${({ $disabled, $theme }) =>
     $disabled &&
     css`
       user-select: none;
-      pointer-events: none;
-      background-color: rgba(255, 255, 255, 0.6);
+      opacity: ${$theme?.disabledOpacity};
     `};
 
-  &:focus {
-    border-color: #61a9f9;
-    box-shadow: 0 0 0 1px #61a9f9;
-  }
+  ${({ $hasError, $theme }) =>
+    !$hasError &&
+    css`
+      &:focus {
+        border-color: ${$theme?.focusedBorderColor || "#61a9f9"};
+        box-shadow: 0 0 0 1px ${$theme?.focusedBorderColor || "#61a9f9"};
+      }
+    `}
 
   ${({ $style }) => $style}
 `;
 
-const ClearIcon = styled(RiCloseLine)<{ $highlight?: boolean }>`
+const ClearIcon = styled(RiCloseLine)<{
+  $highlight?: boolean;
+  $theme: SelectboxThemeConfig;
+}>`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   right: 36px;
   z-index: 20;
   cursor: pointer;
-  color: ${({ $highlight }) => ($highlight ? "#fff" : "#9ca3af")};
-  background-color: ${({ $highlight }) =>
-    $highlight ? "#61a9f9" : "transparent"};
+  color: ${({ $theme }) => $theme.clearIconColor || "#9ca3af"};
+
+  background-color: ${({ $theme, $highlight }) =>
+    $highlight
+      ? $theme.iconActiveColor || "#61a9f9"
+      : $theme.clearIconBackground || "transparent"};
+
   border-radius: 2px;
   padding: 2px;
 
   &&:hover {
-    background-color: #e5e7eb !important;
+    background-color: ${({ $theme }) =>
+      $theme.clearIconHoverBackground || "#e5e7eb"};
   }
 `;
 
-const Divider = styled.span`
+const Divider = styled.span<{
+  $theme: SelectboxThemeConfig;
+}>`
   position: absolute;
   top: 50%;
   right: 31px;
   transform: translateY(-50%);
   width: 1px;
   min-height: 15px;
-  border-right: 1px solid #9ca3af;
+  border-right: 1px solid ${({ $theme }) => $theme.dividerColor || "#9ca3af"};
 `;
 
 const IconWrapper = styled.div`

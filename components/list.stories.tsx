@@ -248,8 +248,6 @@ export const Default: Story = {
 
 export const Draggable: Story = {
   render: () => {
-    "@remixicon/react";
-
     const LIST_GROUPS: ListGroupContentProps[] = [
       {
         id: "recent-content",
@@ -433,15 +431,6 @@ export const Draggable: Story = {
                 key={index}
                 id={group.id}
                 title={group.title}
-                styles={{
-                  emptySlateStyle: css`
-                    cursor: pointer;
-                    transition: all 200ms ease;
-                    &:hover {
-                      background-color: aliceblue;
-                    }
-                  `,
-                }}
                 emptySlate={"No content"}
               >
                 {group.items.map((list, i) => (
@@ -1621,8 +1610,6 @@ export const WithBadge: Story = {
                       leftSideContent={({ badge }) =>
                         badge(list.leftSideContent, {
                           withStyle: css`
-                            background-color: #488cac;
-                            color: white;
                             min-width: 30px;
                             max-width: 30px;
                           `,
@@ -2038,12 +2025,10 @@ export const WithMaxItems: Story = {
           headerStyle: css`
             padding-left: 15px;
             padding-right: 15px;
-            border-bottom: 1px solid #d1d5db;
           `,
           footerStyle: css`
             padding-left: 20px;
             padding-right: 20px;
-            border-top: 1px solid #d1d5db;
           `,
         }}
       >

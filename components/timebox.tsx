@@ -11,6 +11,8 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { TimeboxThemeConfig } from "./../theme";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -55,6 +57,9 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
     },
     ref
   ) => {
+    const { currentTheme } = useTheme();
+    const timeboxTheme = currentTheme?.timebox;
+
     const {
       hour: placeholderHour = "HH",
       minute: placeholderMinute = "MM",
@@ -234,6 +239,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         $focused={isFocused}
         $error={!!showError}
         $disabled={disabled}
+        $theme={timeboxTheme}
         onKeyDown={(e) => {
           if (onKeyDown) {
             onKeyDown(e);
@@ -263,6 +269,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           disabled={!editable || disabled}
           value={hour}
           onChange={(e) => handleChange("hour", e.target.value)}
+          $theme={timeboxTheme}
           onFocus={() => {
             setIsFocused(true);
 
@@ -288,12 +295,13 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             }
           }}
         />
-        <Colon>:</Colon>
+        <Colon $theme={timeboxTheme}>:</Colon>
         <Input
           aria-label="timebox-minute"
           ref={minuteRef}
           type="text"
           inputMode="numeric"
+          $theme={timeboxTheme}
           placeholder={placeholderMinute}
           disabled={!editable || disabled}
           value={minute}
@@ -329,11 +337,12 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         />
         {withSeconds && (
           <>
-            <Colon>:</Colon>
+            <Colon $theme={timeboxTheme}>:</Colon>
             <Input
               aria-label="timebox-second"
               ref={secondRef}
               type="text"
+              $theme={timeboxTheme}
               inputMode="numeric"
               placeholder={placeholderSecond}
               disabled={!editable || disabled}
@@ -449,6 +458,7 @@ const InputGroup = styled.div<{
   $error: boolean;
   $style?: CSSProp;
   $disabled?: boolean;
+  $theme?: TimeboxThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -457,29 +467,41 @@ const InputGroup = styled.div<{
   border: 1px solid;
   border-radius: 2px;
 
-  border-color: ${({ $error, $focused }) =>
-    $error ? "#dc2626" : $focused ? "#61A9F9" : "#d1d5db"};
+  border-color: ${({ $error, $focused, $theme }) =>
+    $error
+      ? $theme?.errorBorderColor || "#dc2626"
+      : $focused
+        ? $theme?.focusedBorderColor || "#61A9F9"
+        : $theme?.borderColor || "#d1d5db"};
+
+  background: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $disabled }) =>
-    $disabled &&
-    css`
-      cursor: not-allowed;
-      user-select: none;
-      pointer-events: none;
-    `};
+    $disabled
+      ? css`
+          cursor: not-allowed;
+          user-select: none;
+        `
+      : css`
+          cursor: text;
+        `};
 
   ${({ $style }) => $style}
 `;
 
-const Input = styled.input<{ $inputStyle?: CSSProp }>`
+const Input = styled.input<{
+  $inputStyle?: CSSProp;
+  $theme?: TimeboxThemeConfig;
+}>`
   min-width: 50px;
   max-width: 50px;
   height: 30px;
   font-size: 0.875rem;
   text-align: center;
-  background: white;
+  background: ${({ $theme }) => $theme?.backgroundColor};
   border: none;
   outline: none;
+  cursor: inherit;
 
   appearance: none;
   -moz-appearance: textfield;
@@ -493,10 +515,18 @@ const Input = styled.input<{ $inputStyle?: CSSProp }>`
     appearance: none;
   }
 
+  // Fix for autofill background
+  &:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px
+      ${({ $theme }) => $theme?.backgroundColor} inset;
+    -webkit-text-fill-color: ${({ $theme }) => $theme?.textColor};
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
   ${({ $inputStyle }) => $inputStyle}
 `;
 
-const Colon = styled.span`
+const Colon = styled.span<{ $theme?: TimeboxThemeConfig }>`
   transform: translateY(-1px);
 `;
 

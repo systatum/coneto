@@ -231,6 +231,15 @@ export const Default: Story = {
           variant="danger"
           subMenuList={subMenuList}
         />
+        <Toolbar.Menu
+          caption="Success Mode"
+          icon={{
+            image: RiMessage2Line,
+            color: "white",
+          }}
+          variant="success"
+          subMenuList={subMenuList}
+        />
       </Toolbar>
     );
   },
@@ -348,6 +357,14 @@ export const Big: Story = {
           icon={{
             color: "black",
           }}
+          subMenuList={subMenuList}
+        />
+        <Toolbar.Menu
+          caption="Success Mode"
+          icon={{
+            color: "black",
+          }}
+          variant="success"
           subMenuList={subMenuList}
         />
         <Toolbar.Menu caption="Save" />

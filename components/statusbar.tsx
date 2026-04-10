@@ -2,6 +2,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
+import { useTheme } from "./../theme/provider";
+import { StatusbarThemeConfig } from "./../theme";
 
 export interface StatusbarProps {
   styles?: StatusbarStylesProps;
@@ -32,8 +34,12 @@ function Statusbar({
   transparent,
   size = 11,
 }: StatusbarProps) {
+  const { currentTheme } = useTheme();
+  const statusbarTheme = currentTheme.statusbar;
+
   return (
     <StatusbarWrapper
+      $theme={statusbarTheme}
       aria-label="statusbar-wrapper"
       $transparent={transparent}
       $style={css`
@@ -128,6 +134,9 @@ function StatusbarItem({
   size?: number;
   transparent?: boolean;
 }) {
+  const { currentTheme } = useTheme();
+  const statusbarTheme = currentTheme.statusbar;
+
   if (button) {
     return (
       <Button
@@ -146,18 +155,17 @@ function StatusbarItem({
         }
         tipMenuSize={button?.tipMenuSize ?? "sm"}
         activeBackgroundColor={
-          button?.activeBackgroundColor
-            ? button?.activeBackgroundColor
-            : activeBackgroundColor
+          button?.activeBackgroundColor ??
+          activeBackgroundColor ??
+          statusbarTheme.item.activeBackgroundColor
         }
         hoverBackgroundColor={
-          button?.hoverBackgroundColor
-            ? button?.hoverBackgroundColor
-            : button?.activeBackgroundColor
-              ? button?.activeBackgroundColor
-              : hoverBackgroundColor
-                ? hoverBackgroundColor
-                : activeBackgroundColor
+          button?.hoverBackgroundColor ??
+          button?.activeBackgroundColor ??
+          hoverBackgroundColor ??
+          activeBackgroundColor ??
+          statusbarTheme.item.hoverBackgroundColor ??
+          statusbarTheme.item.activeBackgroundColor
         }
         styles={{
           ...button?.styles,
@@ -234,6 +242,7 @@ function StatusbarItem({
 const StatusbarWrapper = styled.div<{
   $style?: CSSProp;
   $transparent?: boolean;
+  $theme?: StatusbarThemeConfig;
 }>`
   bottom: 0;
   left: 0;
@@ -242,19 +251,21 @@ const StatusbarWrapper = styled.div<{
   flex-direction: row;
   justify-content: space-between;
   position: absolute;
-  border-top: 1px solid #dedddd;
   overflow: hidden;
   z-index: 9991999;
+  border-top: 1px solid ${({ $theme }) => $theme.borderColor};
 
-  ${({ $transparent }) =>
+  ${({ $transparent, $theme }) =>
     $transparent
       ? css`
           border-width: 0px;
         `
       : css`
-          background-color: #ececec;
-          box-shadow: inset 0 0px 0.5px rgba(0, 0, 0, 0.06);
+          background-color: ${$theme.backgroundColor};
+          box-shadow: ${$theme.boxShadow};
         `};
+
+  transition: background-color 0.2s ease-in-out;
 
   ${({ $style }) => $style};
 `;

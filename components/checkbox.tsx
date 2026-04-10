@@ -7,6 +7,7 @@ import {
 } from "react";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -52,6 +53,9 @@ function BaseCheckbox({
   id,
   ...props
 }: BaseCheckboxProps) {
+  const { currentTheme } = useTheme();
+  const checkboxTheme = currentTheme.checkbox;
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isChecked = Boolean(props.checked);
@@ -71,6 +75,10 @@ function BaseCheckbox({
       $checked={isChecked}
       $style={styles?.inputWrapperStyle}
       $disabled={props.disabled}
+      $backgroundColor={checkboxTheme?.backgroundColor}
+      $checkedBorderColor={checkboxTheme?.checkedBorderColor}
+      $highlightBackgroundColor={checkboxTheme?.highlightBackgroundColor}
+      $highlightHoverColor={checkboxTheme?.highlightHoverColor}
     >
       <InputContainer aria-label="input-container-checkbox">
         <CheckboxBox
@@ -93,6 +101,10 @@ function BaseCheckbox({
             $style={styles?.self}
             $disabled={props.disabled}
             disabled={props.disabled}
+            $backgroundColor={checkboxTheme?.backgroundColor}
+            $borderColor={checkboxTheme?.borderColor}
+            $checkedBorderColor={checkboxTheme?.checkedBorderColor}
+            $checkedBackgroundColor={checkboxTheme?.checkedBackgroundColor}
             readOnly
           />
           <Icon
@@ -104,6 +116,7 @@ function BaseCheckbox({
             strokeLinejoin="round"
             $style={styles?.iconStyle}
             $visible={indeterminate || isChecked}
+            $iconColor={checkboxTheme?.iconColor}
           >
             {indeterminate ? (
               <line x1="6" y1="12" x2="18" y2="12" />
@@ -117,7 +130,12 @@ function BaseCheckbox({
           <StatefulForm.Label
             aria-label="label"
             disabled={props?.disabled}
-            styles={{ self: styles?.labelStyle }}
+            styles={{
+              self: css`
+                ${checkboxTheme.labelColor};
+                ${styles?.labelStyle}
+              `,
+            }}
             htmlFor={props.disabled ? null : id}
             label={label}
           />
@@ -126,6 +144,7 @@ function BaseCheckbox({
 
       {description && (
         <DescriptionText
+          $descriptionColor={checkboxTheme.descriptionColor}
           $highlight={highlightOnChecked}
           $style={styles?.descriptionStyle}
         >
@@ -221,6 +240,10 @@ const InputWrapper = styled.label<{
   $hasDescription: boolean;
   $highlight: boolean;
   $checked: boolean;
+  $backgroundColor?: string;
+  $highlightBackgroundColor?: string;
+  $highlightHoverColor?: string;
+  $checkedBorderColor?: string;
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
@@ -228,16 +251,29 @@ const InputWrapper = styled.label<{
   display: flex;
   flex-direction: column;
   font-size: 12px;
-  background-color: ${({ $highlight, $checked }) =>
-    $highlight && $checked ? "#DBEAFE" : "transparent"};
-  border: ${({ $highlight }) =>
-    $highlight ? "1px solid transparent" : "none"};
+  background-color: ${({
+    $highlight,
+    $checked,
+    $backgroundColor,
+    $highlightBackgroundColor,
+  }) =>
+    $highlight && $checked
+      ? ($highlightBackgroundColor ?? $backgroundColor ?? "#DBEAFE")
+      : "transparent"};
+
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${({ $highlight }) => ($highlight ? "#E7F2FC" : "none")};
+    background-color: ${({
+      $highlight,
+      $highlightHoverColor,
+      $highlightBackgroundColor,
+    }) =>
+      $highlight
+        ? ($highlightHoverColor ?? $highlightBackgroundColor ?? "#E7F2FC")
+        : "none"};
   }
 
   ${({ $disabled }) =>
@@ -264,6 +300,10 @@ const HiddenCheckbox = styled.input<{
   $isError?: boolean;
   $checked?: boolean;
   $indeterminate?: boolean;
+  $backgroundColor?: string;
+  $checkedBackgroundColor?: string;
+  $borderColor?: string;
+  $checkedBorderColor?: string;
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
@@ -272,11 +312,20 @@ const HiddenCheckbox = styled.input<{
   width: 16px;
   border-radius: 0;
   outline: none;
-  background-color: ${({ $indeterminate, $checked }) =>
-    $indeterminate || $checked ? "#61A9F9" : "#ffffff"};
+  background-color: ${({
+    $indeterminate,
+    $checked,
+    $backgroundColor,
+    $checkedBackgroundColor,
+  }) =>
+    $indeterminate || $checked
+      ? ($checkedBackgroundColor ?? "#61A9F9")
+      : ($backgroundColor ?? "#ffffff")};
   border: 1px solid
-    ${({ $indeterminate, $checked }) =>
-      $indeterminate || $checked ? "#61A9F9" : "#6b7280"};
+    ${({ $indeterminate, $checked, $borderColor, $checkedBorderColor }) =>
+      $indeterminate || $checked
+        ? ($checkedBorderColor ?? "#61A9F9")
+        : ($borderColor ?? "#6b7280")};
 
   ${({ $disabled }) =>
     $disabled
@@ -299,11 +348,15 @@ const HiddenCheckbox = styled.input<{
   ${({ $style }) => $style};
 `;
 
-const Icon = styled.svg<{ $visible?: boolean; $style?: CSSProp }>`
+const Icon = styled.svg<{
+  $visible?: boolean;
+  $iconColor?: string;
+  $style?: CSSProp;
+}>`
   position: absolute;
   top: 50%;
   left: 50%;
-  color: white;
+  color: ${({ $iconColor }) => $iconColor ?? "white"};
   transform: ${({ $visible }) =>
     $visible
       ? "translate(-50%, -50%) scale(1)"
@@ -323,15 +376,18 @@ const InputContainer = styled.div`
   height: 100%;
 `;
 
-const DescriptionText = styled.span<{ $highlight?: boolean; $style?: CSSProp }>`
+const DescriptionText = styled.span<{
+  $highlight?: boolean;
+  $descriptionColor?: string;
+  $style?: CSSProp;
+}>`
   ${({ $highlight }) =>
     $highlight &&
     css`
       font-size: 14px;
     `}
   margin-left: 24px;
-
-  color: #4b5563;
+  color: ${({ $descriptionColor }) => $descriptionColor ?? "#4b5563"};
   ${({ $style }) => $style};
 `;
 
