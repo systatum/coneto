@@ -4,7 +4,7 @@ import { RiCloseFill } from "@remixicon/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { css } from "styled-components";
 import { Textarea } from "./textarea";
-import { ColumnTableProps, Table } from "./table";
+import { TableColumn, Table } from "./table";
 import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Window> = {
@@ -288,7 +288,7 @@ export const WithCellRef: Story = {
       );
     });
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
