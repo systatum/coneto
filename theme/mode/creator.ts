@@ -1,4 +1,4 @@
-import { ToolbarVariantType } from "./../../components/toolbar";
+import { ToolbarVariant } from "./../../components/toolbar";
 import { ButtonVariants } from "./../../components/button";
 import {
   ActionButtonThemeConfig,
@@ -1569,10 +1569,10 @@ export function createToggleboxTheme(
 
 // toolbar.tsx
 export function createToolbarTheme(
-  baseButton: Record<ToolbarVariantType, ToolbarThemeConfig>,
-  customVariants: Partial<Record<ToolbarVariantType, ToolbarThemeConfig>> = {}
-): Record<ToolbarVariantType, ToolbarThemeConfig> {
-  const variants: Record<ToolbarVariantType, ToolbarThemeConfig> = {
+  baseButton: Record<ToolbarVariant, ToolbarThemeConfig>,
+  customVariants: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {}
+): Record<ToolbarVariant, ToolbarThemeConfig> {
+  const variants: Record<ToolbarVariant, ToolbarThemeConfig> = {
     default: {
       ...baseButton?.default,
       hoverBackgroundColor:
