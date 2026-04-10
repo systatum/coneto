@@ -246,36 +246,34 @@ export interface ErrorSlateThemeConfig {
 }
 
 // field-lane.tsx
-export interface FieldLaneThemeConfig {
-  buttonTextColor: string;
-  buttonBorderColor: string;
-  buttonErrorTextColor: string;
-  buttonErrorBorderColor: string;
+export interface FieldLaneThemeConfig
+  extends Omit<BareThemeConfig, "backgroundColor"> {
+  buttonTextColor?: string;
+  buttonBorderColor?: string;
+  buttonErrorTextColor?: string;
+  buttonErrorBorderColor?: string;
 
-  textColor: string;
-
-  borderColor: string;
   highlightBackgroundColor: string;
 
   placeholderColor?: string;
   focusedBorderColor?: string;
 
-  disabledOpacity: number;
+  disabledOpacity?: number;
   disabledBorderColor?: string;
   disabledTextColor?: string;
 
-  actionColor: string;
-  actionHoverColor: string;
+  actionColor?: string;
+  actionHoverColor?: string;
 
-  errorColor: string;
-  errorBackground: string;
+  errorColor?: string;
+  errorBackground?: string;
   errorBorderColor?: string;
-  errorForeground: string;
+  errorForeground?: string;
 
-  selectedBackgroundColor: string;
+  selectedBackgroundColor?: string;
 
-  helperColor: string;
-  dividerColor: string;
+  helperColor?: string;
+  dividerColor?: string;
 }
 
 // file-input-box.tsx
@@ -465,7 +463,7 @@ export interface PhoneboxThemeConfig extends BareThemeConfig {
   disabledBorderColor?: string;
   disabledTextColor?: string;
 
-  placeholderColor: string;
+  placeholderColor?: string;
 
   boxShadow?: string;
 
@@ -505,14 +503,13 @@ export interface RatingThemeConfig {
 // rich-editor.tsx
 
 export interface RichEditorThemeConfig extends BareThemeConfig {
-  placeholderColor: string;
-  toolbarBackground: string;
-  toolbarButtonActive: string;
-  toolbarButtonHover: string;
-  toolbarButtonFocused: string;
-  scrollThumb: string;
-
-  preBackgroundColor: string;
+  placeholderColor?: string;
+  toolbarBackground?: string;
+  toolbarButtonActive?: string;
+  toolbarButtonHover?: string;
+  toolbarButtonFocused?: string;
+  scrollThumb?: string;
+  preBackgroundColor?: string;
 }
 
 // searchbox.tsx
