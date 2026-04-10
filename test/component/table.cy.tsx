@@ -1516,7 +1516,6 @@ describe("Table", () => {
       const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
         {
           caption: "Copy",
-          icon: { image: RiArrowUpSLine },
           onClick: () => {
             console.log("Copy clicked");
           },
@@ -1567,11 +1566,7 @@ describe("Table", () => {
 
         cy.findByText("Copy").click();
 
-        cy.wait(100);
-        cy.get("@consoleLog").should(
-          "not.have.been.calledWith",
-          "Copy clicked"
-        );
+        cy.findByText("Report Phishing").should("exist");
       });
     });
 

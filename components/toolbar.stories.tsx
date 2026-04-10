@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Toolbar, ToolbarSubMenuProps } from "./toolbar";
+import { Toolbar, ToolbarSubMenuList } from "./toolbar";
 import {
   RiSpam2Line,
   RiForbid2Line,
@@ -32,7 +32,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 - 🏷 **Toolbar.Menu**: Each menu can have a caption, an icon, and an optional dropdown sub-menu.
 - 🔀 **Variants**: Supports \`default\`, \`primary\`, and \`danger\` modes for visual emphasis.
 - 🔄 **Interactive states**: Hover, active, focus-visible, and open states are styled out-of-the-box.
-- ⬆️⬇️ **Dropdown menus**: Sub-menu lists can be fully customized with \`ToolbarSubMenuProps\`.
+- ⬆️⬇️ **Dropdown menus**: Sub-menu lists can be fully customized with \`ToolbarSubMenuList\`.
 - ⚡ **Dynamic sizing**: Supports a \`big\` mode for larger icons and vertically-aligned content.
 - 🎨 **Styling flexibility**: Customize the container, trigger, toggle button, and dropdown via the \`styles\` prop.
 - 🧩 **Composable children**: Place any custom JSX or multiple \`Toolbar.Menu\` items inside a toolbar.
@@ -42,7 +42,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 ### 📌 Usage
 
 \`\`\`tsx
-const subMenuList: ToolbarSubMenuProps[] = [
+const subMenuList: ToolbarSubMenuList[] = [
   { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
   { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, isDangerous: true, onClick: () => console.log("Deleted") },
 ];
@@ -126,7 +126,7 @@ type Story = StoryObj<typeof TipMenu>;
 
 export const Default: Story = {
   render: () => {
-    const subMenuList: ToolbarSubMenuProps[] = [
+    const subMenuList: ToolbarSubMenuList[] = [
       {
         caption: "Report Phishing",
         icon: {
@@ -247,7 +247,7 @@ export const Default: Story = {
 
 export const Big: Story = {
   render: () => {
-    const subMenuList: ToolbarSubMenuProps[] = [
+    const subMenuList: ToolbarSubMenuList[] = [
       {
         caption: "Report Phishing",
         icon: {

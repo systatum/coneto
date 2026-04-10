@@ -7,18 +7,24 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
 
-export type TipMenuItemVariantType = "sm" | "md";
+export const TipMenuVariant = {
+  Small: "sm",
+  Medium: "md",
+} as const;
+
+export type TipMenuVariant =
+  (typeof TipMenuVariant)[keyof typeof TipMenuVariant];
 
 export interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
   setIsOpen?: () => void;
-  variant?: TipMenuItemVariantType;
+  variant?: TipMenuVariant;
   withFilter?: boolean;
-  styles?: TipMenuStylesProps;
+  styles?: TipMenuStyles;
 }
 
-export interface TipMenuStylesProps {
+export interface TipMenuStyles {
   self?: CSSProp;
 }
 
@@ -109,7 +115,7 @@ export interface TipMenuItemProps {
   icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
   isDangerous?: boolean;
-  variant?: TipMenuItemVariantType;
+  variant?: TipMenuVariant;
   className?: string;
   hidden?: boolean;
 }
@@ -157,7 +163,7 @@ function TipMenuItem({
 
 const StyledTipMenuItem = styled.div<{
   $isDangerous: boolean;
-  $variant?: TipMenuItemVariantType;
+  $variant?: TipMenuVariant;
   $theme: TipMenuThemeConfig;
 }>`
   display: flex;

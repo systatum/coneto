@@ -8,9 +8,9 @@ import React, {
 } from "react";
 import { RiArrowRightSLine, RiDraggable } from "@remixicon/react";
 import { motion, AnimatePresence } from "framer-motion";
-import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
+import ContextMenu, { ContextMenuAction } from "./context-menu";
 import { LoadingSpinner } from "./loading-spinner";
-import { SubMenuButtonProps } from "./button";
+import { ButtonSubMenu } from "./button";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
@@ -21,29 +21,29 @@ export interface TreeListProps
     HTMLAttributes<HTMLDivElement>,
     "style" | "onChange" | "content"
   > {
-  content: TreeListContentProps[];
+  content: TreeListContent[];
   children?: ReactNode;
   emptySlate?: ReactNode;
   emptyItemSlate?: ReactNode | null;
   searchTerm?: string;
-  actions?: TreeListActionsProps[];
+  actions?: TreeListAction[];
   selectedItem?: string;
   onChange?: (id: string) => void;
-  onOpenChange?: (props?: TreeListOnOpenChangeProps) => void;
+  onOpenChange?: (props?: TreeListOnOpenChange) => void;
   showHierarchyLine?: boolean;
   collapsible?: boolean;
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
-  onDragged?: (props: TreeListOnDraggedProps) => void;
-  styles?: TreeListStylesProps;
+  onDragged?: (props: TreeListOnDragged) => void;
+  styles?: TreeListStyles;
 }
 
-export interface TreeListStylesProps {
+export interface TreeListStyles {
   containerStyle?: CSSProp;
   emptyItemSlateStyle?: CSSProp;
 }
 
-export interface TreeListOnDraggedProps {
+export interface TreeListOnDragged {
   id: string;
   oldGroupId: string;
   newGroupId: string;
@@ -51,7 +51,7 @@ export interface TreeListOnDraggedProps {
   newPosition: number;
 }
 
-export interface TreeListOnOpenChangeProps {
+export interface TreeListOnOpenChange {
   id?: string;
   isOpen?: boolean;
   setIsLoading?: (isLoading: boolean, caption?: string) => void;
@@ -59,60 +59,65 @@ export interface TreeListOnOpenChangeProps {
   setLastFetch?: (date: Date) => void;
 }
 
-type TreeListInitialState = "closed" | "opened";
+export const TreeListInitialState = {
+  Closed: "closed",
+  Opened: "opened",
+} as const;
 
-export interface TreeListContentProps {
+export type TreeListInitialState =
+  (typeof TreeListInitialState)[keyof typeof TreeListInitialState];
+
+export interface TreeListContent {
   id: string;
   caption?: string;
-  items?: TreeListItemsProps[];
+  items?: TreeListItem[];
   initialState?: TreeListInitialState;
-  actions?: TreeListContentActionsProps[];
+  actions?: TreeListContentAction[];
 }
 
-export interface TreeListContentActionsProps
-  extends Omit<ContextMenuActionsProps, "onClick"> {
+export interface TreeListContentAction
+  extends Omit<ContextMenuAction, "onClick"> {
   onClick?: (id?: string) => void;
 }
 
-export interface TreeListItemsProps {
+export interface TreeListItem {
   id: string;
   caption?: string;
   canContainChildren?: boolean;
-  onClick?: (props: TreeListItemsOnClickProps) => void;
-  actions?: TreeListItemsActionsProps[];
-  items?: TreeListItemsProps[];
+  onClick?: (props: TreeListItemOnClick) => void;
+  actions?: TreeListItemAction[];
+  items?: TreeListItem[];
   icon?: FigureProps["image"];
   iconOnActive?: FigureProps["image"];
   iconColor?: string;
   initialState?: TreeListInitialState;
 }
 
-export interface TreeListItemsActionsProps
-  extends Omit<ContextMenuActionsProps, "onClick"> {
+export interface TreeListItemAction extends Omit<ContextMenuAction, "onClick"> {
   onClick?: (id?: string) => void;
 }
 
-export interface TreeListItemsOnClickProps {
-  item?: TreeListItemsProps;
+export interface TreeListItemOnClick {
+  item?: TreeListItem;
   preventDefault?: () => void;
 }
 
-export interface TreeListActionsProps {
+export interface TreeListAction {
   id: string;
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
   icon?: FigureProps;
   styles?: { self?: CSSProp };
-  subMenu?: (props: SubMenuTreeListProps) => ReactNode;
+  subMenu?: (props: TreeListSubMenu) => ReactNode;
   hidden?: boolean;
 }
 
-type SubMenuTreeListProps = Omit<SubMenuButtonProps, "list">;
+type TreeListSubMenu = Omit<ButtonSubMenu, "list">;
 
 const DnDContext = createContext<{
   dragItem: {
     id: string;
-    item: TreeListItemsProps;
+    item: TreeListItem;
     oldGroupId: string;
     oldPosition: number;
   } | null;
@@ -602,7 +607,7 @@ function TreeListAction({
 }
 
 function collectAllItemIds(
-  items: TreeListItemsProps[],
+  items: TreeListItem[],
   initialState?: boolean,
   acc = {} as Record<string, boolean>
 ) {
@@ -623,7 +628,7 @@ function collectAllItemIds(
 }
 
 function findLevelById(
-  items: TreeListItemsProps[],
+  items: TreeListItem[],
   id: string,
   level = 0
 ): number | null {
@@ -637,7 +642,7 @@ function findLevelById(
   return null;
 }
 
-function findGroupOfItem(content: TreeListContentProps[], selectedId: string) {
+function findGroupOfItem(content: TreeListContent[], selectedId: string) {
   for (const group of content) {
     if (!group.items) continue;
     if (containsId(group.items, selectedId)) {
@@ -646,7 +651,7 @@ function findGroupOfItem(content: TreeListContentProps[], selectedId: string) {
   }
   return null;
 }
-function containsId(items: TreeListItemsProps[], id: string) {
+function containsId(items: TreeListItem[], id: string) {
   for (const item of items) {
     if (item.id === id) return true;
     if (item.items && containsId(item.items, id)) return true;
@@ -654,7 +659,7 @@ function containsId(items: TreeListItemsProps[], id: string) {
   return false;
 }
 
-interface TreeListItemComponent<T extends TreeListItemsProps> {
+interface TreeListItemComponent<T extends TreeListItem> {
   item: T;
   searchTerm?: string;
   onChange?: (item?: string) => void;
@@ -686,9 +691,9 @@ interface TreeListOpenWithId {
 }
 
 function findItemById(
-  items: TreeListItemsProps[] | undefined,
+  items: TreeListItem[] | undefined,
   id: string
-): TreeListItemsProps | undefined {
+): TreeListItem | undefined {
   if (!items) return;
 
   for (const item of items) {
@@ -701,7 +706,7 @@ function findItemById(
   return undefined;
 }
 
-export type TreeListNode = TreeListContentProps & Partial<TreeListItemsProps>;
+export type TreeListNode = TreeListContent & Partial<TreeListItem>;
 
 function findTreeListNode(
   nodes: TreeListNode[],
@@ -724,7 +729,7 @@ function hasChild(parent: TreeListNode, childId: string): boolean {
     (item) => item.id === childId || hasChild(item, childId)
   );
 }
-function TreeListItem<T extends TreeListItemsProps>({
+function TreeListItem<T extends TreeListItem>({
   item,
   isSelected,
   onChange,

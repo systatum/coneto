@@ -35,7 +35,6 @@ describe("Togglebox", () => {
     it("should show loading state (circle) after toggle", () => {
       onClickToggle();
       cy.get("input[type=checkbox]").should("be.checked");
-
       cy.findByLabelText("circle", { timeout: 1500 }).should("exist");
     });
   });
@@ -55,8 +54,9 @@ describe("Togglebox", () => {
         onClickToggle();
         cy.get("input[type=checkbox]").should("be.checked");
 
-        cy.findByLabelText("circle", { timeout: 1500 }).should("exist");
-        cy.findByLabelText("circle", { timeout: 1500 }).should("not.exist");
+        cy.findByLabelText("circle").should("exist");
+        cy.wait(2000);
+        cy.findByLabelText("circle").should("not.exist");
       });
     });
   });

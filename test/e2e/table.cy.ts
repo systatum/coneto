@@ -125,10 +125,12 @@ describe("Table Component", () => {
 
     context("when click content", () => {
       it("should render checked", () => {
-        cy.findByText("Load Balancer 1").click();
         cy.get("input[type=checkbox]").eq(1).should("be.checked");
-        cy.findAllByText("HTTPS").eq(0).click();
+        cy.findByText("Load Balancer 1").click();
+        cy.get("input[type=checkbox]").eq(1).should("not.be.checked");
         cy.get("input[type=checkbox]").eq(2).should("be.checked");
+        cy.findAllByText("HTTPS").eq(0).click();
+        cy.get("input[type=checkbox]").eq(2).should("not.be.checked");
       });
     });
   });

@@ -2,17 +2,24 @@ import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
 import { FigureProps } from "./figure";
-import { Button, ButtonStylesProps } from "./button";
+import { Button, ButtonStyles } from "./button";
 import { useTheme } from "./../theme/provider";
 import { BadgeThemeConfig } from "./../theme";
 
-export type BadgeVariantProps = null | "neutral" | "green" | "yellow" | "red";
+export const BadgeVariant = {
+  Neutral: "neutral",
+  Green: "green",
+  Yellow: "yellow",
+  Red: "red",
+} as const;
+
+export type BadgeVariant = (typeof BadgeVariant)[keyof typeof BadgeVariant];
 
 export interface BadgeProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   id?: string;
   metadata?: Record<string, unknown>;
-  variant?: BadgeVariantProps;
+  variant?: BadgeVariant;
   withCircle?: boolean;
   caption?: string;
   backgroundColor?: string;
@@ -21,21 +28,21 @@ export interface BadgeProps
   onClick?: (
     e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
   ) => void;
-  actions?: BadgeActionProps[];
-  styles?: BadgeStylesProps;
+  actions?: BadgeAction[];
+  styles?: BadgeStyles;
 }
 
-export interface BadgeStylesProps {
+export interface BadgeStyles {
   self?: CSSProp;
   actionWrapperStyle?: CSSProp;
 }
 
-export interface BadgeActionProps {
+export interface BadgeAction {
   icon?: FigureProps;
   onClick?: (badge?: BadgeProps) => void;
   disabled?: boolean;
   size?: number;
-  styles?: ButtonStylesProps;
+  styles?: ButtonStyles;
   title?: string;
   hidden?: boolean;
 }

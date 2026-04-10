@@ -14,10 +14,10 @@ export interface AvatarProps
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
   frameSize?: number;
   fontSize?: number;
-  styles?: AvatarStylesProps;
+  styles?: AvatarStyles;
 }
 
-export interface AvatarStylesProps {
+export interface AvatarStyles {
   self?: CSSProp;
 }
 

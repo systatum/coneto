@@ -35,7 +35,7 @@ It supports custom items (\`Timeline.Item\`), clickable states, variant-based co
 - \`subtitle\` (string): Secondary description or detail under the title.
 - \`sidenote\` (ReactNode): Optional content displayed beside the item.
 - \`variant\` (string): Status/variant of the item, affects colors. Options from \`TEXT_VARIANT_COLOR\`.
-- \`styles\` (TimelineItemStylesProps): Customize styling for item sub-elements.
+- \`styles\` (TimelineItemStyles): Customize styling for item sub-elements.
   - \`self\` – container wrapper
   - \`textWrapperStyle\` – wrapper for title & subtitle
   - \`titleStyle\` – title text

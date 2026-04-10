@@ -25,11 +25,19 @@ import { TooltipThemeConfig } from "./../theme";
 
 export type TooltipDialogPlacement = DialogPlacement;
 
+export const TooltipDialogOn = {
+  Hover: "hover",
+  Click: "click",
+} as const;
+
+export type TooltipDialogOn =
+  (typeof TooltipDialogOn)[keyof typeof TooltipDialogOn];
+
 export type TooltipProps = {
   dialog: ReactNode;
   children: ReactNode;
-  showDialogOn?: "hover" | "click";
-  hideDialogOn?: "hover" | "click";
+  showDialogOn?: TooltipDialogOn;
+  hideDialogOn?: TooltipDialogOn;
   dialogPlacement?: TooltipDialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
   safeAreaAriaLabels?: string[];
@@ -214,11 +222,11 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
 
 export interface TooltipContainerProps {
   placement?: Placement;
-  styles?: TooltipContainerStylesProps;
+  styles?: TooltipContainerStyles;
   dialog?: ReactNode;
 }
 
-export interface TooltipContainerStylesProps {
+export interface TooltipContainerStyles {
   drawerStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   arrowStyle?: CSSProp | ((placement?: Placement) => CSSProp);
   spacerStyle?: CSSProp | ((placement?: Placement) => CSSProp);

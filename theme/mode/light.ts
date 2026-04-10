@@ -85,7 +85,7 @@ const lightBadge = createBadgeTheme(lightBody);
 
 const lightBoxbar = createBoxbarTheme(lightBody);
 
-const lightButton = createButtonTheme(lightBody);
+const lightButton = createButtonTheme();
 
 const lightButtonTipMenuContainer = createTipMenuContainerTheme(lightBody);
 

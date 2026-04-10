@@ -26,54 +26,35 @@ import { ToolbarThemeConfig } from "./../theme";
 export interface ToolbarProps {
   children: ReactNode;
   big?: boolean;
-  styles?: ToolbarStylesProps;
+  styles?: ToolbarStyles;
 }
 
-export interface ToolbarStylesProps {
+export interface ToolbarStyles {
   self?: CSSProp;
 }
 
-export interface ToolbarMenuProps {
-  caption?: string;
-  icon?: FigureProps;
-  openedIcon?: FigureProps["image"];
-  closedIcon?: FigureProps["image"];
-  subMenuList?: ToolbarSubMenuProps[];
-  isOpen?: boolean;
-  setIsOpen?: (data?: boolean) => void;
-  onClick?: () => void;
-  styles?: ToolbarMenuSylesProps;
-  variant?: ToolbarVariantType;
-  iconSize?: number;
-}
+export const ToolbarVariant = {
+  Default: "default",
+  Primary: "primary",
+  Danger: "danger",
+  Success: "success",
+  Transparent: "transparent",
+} as const;
 
-export type ToolbarSubMenuProps = TipMenuItemProps;
-
-export interface ToolbarMenuSylesProps {
-  dropdownStyle?: CSSProp;
-  containerStyle?: CSSProp;
-  triggerStyle?: CSSProp;
-  toggleActiveStyle?: CSSProp;
-}
-
-export type ToolbarVariantType =
-  | "default"
-  | "primary"
-  | "danger"
-  | "success"
-  | "transparent";
+export type ToolbarVariant =
+  (typeof ToolbarVariant)[keyof typeof ToolbarVariant];
 
 const useVariantToolbar = () => {
   const { currentTheme } = useTheme();
   const toolbarVariant = currentTheme?.toolbar ?? {};
 
-  const VARIANT_COLORS: Record<ToolbarVariantType, ToolbarThemeConfig> =
+  const VARIANT_COLORS: Record<ToolbarVariant, ToolbarThemeConfig> =
     Object.keys(toolbarVariant).reduce(
       (acc, key) => {
         const variant: ToolbarThemeConfig =
-          toolbarVariant[key as ToolbarVariantType];
+          toolbarVariant[key as ToolbarVariant];
         if (!variant) return acc;
-        acc[key as ToolbarVariantType] = {
+        acc[key as ToolbarVariant] = {
           backgroundColor: variant.backgroundColor,
           textColor: variant.textColor,
           borderColor: variant.borderColor,
@@ -84,7 +65,7 @@ const useVariantToolbar = () => {
         };
         return acc;
       },
-      {} as Record<ToolbarVariantType, ToolbarThemeConfig>
+      {} as Record<ToolbarVariant, ToolbarThemeConfig>
     );
 
   return { VARIANT_COLORS };
@@ -158,6 +139,31 @@ function Toolbar({ children, styles, big }: ToolbarProps) {
   );
 }
 
+export interface ToolbarMenuProps {
+  caption?: string;
+  icon?: FigureProps;
+  openedIcon?: ToolbarMenuIcon;
+  closedIcon?: ToolbarMenuIcon;
+  subMenuList?: ToolbarSubMenuList[];
+  isOpen?: boolean;
+  setIsOpen?: (data?: boolean) => void;
+  onClick?: () => void;
+  styles?: ToolbarMenuStyles;
+  variant?: ToolbarVariant;
+  iconSize?: number;
+}
+
+type ToolbarMenuIcon = FigureProps["image"];
+
+export type ToolbarSubMenuList = TipMenuItemProps;
+
+export interface ToolbarMenuStyles {
+  dropdownStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  triggerStyle?: CSSProp;
+  toggleActiveStyle?: CSSProp;
+}
+
 function ToolbarMenu({
   caption,
   icon,
@@ -213,7 +219,7 @@ function ToolbarMenu({
   };
 
   const filteredSubMenuList =
-    subMenuList?.filter((menu): menu is ToolbarSubMenuProps => Boolean(menu)) ??
+    subMenuList?.filter((menu): menu is ToolbarSubMenuList => Boolean(menu)) ??
     [];
 
   const toolbarButtonStyle = (
@@ -375,7 +381,7 @@ const ToolbarContainer = styled.div`
 const MenuWrapper = styled.div<{
   $style?: CSSProp;
   $theme?: ToolbarThemeConfig;
-  $variant?: ToolbarVariantType;
+  $variant?: ToolbarVariant;
 }>`
   display: flex;
   align-items: center;
