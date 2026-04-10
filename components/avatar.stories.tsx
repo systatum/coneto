@@ -204,7 +204,7 @@ Accepts \`CSSProp\` (styled-components).
       `,
       control: false,
       table: {
-        type: { summary: "AvatarStylesProps" },
+        type: { summary: "AvatarStyles" },
       },
     },
   },
