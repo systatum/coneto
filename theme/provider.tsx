@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { AppTheme, ThemeMode } from "./index";
-import { themes } from "./themes";
+import { themes } from "./mode";
 
 interface ThemeContextValue {
   mode: ThemeMode;
