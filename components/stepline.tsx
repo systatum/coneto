@@ -1,4 +1,4 @@
-import { SteplineItemState } from "./../constants/step-component-util";
+import { SteplineItem } from "./../constants/step-component-util";
 import { Children, cloneElement, isValidElement, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import type { CSSProp } from "styled-components";
@@ -8,12 +8,12 @@ import { SteplineThemeConfig } from "./../theme";
 
 export interface SteplineProps {
   children?: ReactNode;
-  styles?: SteplineStylesProps;
+  styles?: SteplineStyles;
   gap?: number;
   collapsed?: boolean;
 }
 
-export interface SteplineStylesProps {
+export interface SteplineStyles {
   self?: CSSProp;
 }
 
@@ -32,7 +32,7 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
       {childArray.map((child, index) => {
         if (
           !isValidElement<
-            SteplineItemState &
+            SteplineItem &
               Partial<{
                 hoveredIndex?: number | null;
               }>
@@ -125,12 +125,12 @@ const StepLine = styled.div<{
         : $theme?.line?.default || "#9ca3af"};
 `;
 
-export type SteplineItemProps = SteplineItemState &
+export type SteplineItemProps = SteplineItem &
   Partial<{
-    styles?: SteplineItemStylesProps;
+    styles?: SteplineItemStyles;
   }>;
 
-export interface SteplineItemStylesProps {
+export interface SteplineItemStyles {
   containerStyle?: CSSProp;
   outerCircleStyle?: CSSProp;
   innerCircleStyle?: CSSProp;

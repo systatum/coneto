@@ -30,7 +30,7 @@ It supports icons, labels, collapsible tooltips, customizable styles, and click 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`children\` | ReactNode | — | Step components (\`Stepline.Item\`) to render inside the stepline. |
-| \`styles\` | SteplineStylesProps | — | Custom CSS styles for the wrapper. |
+| \`styles\` | SteplineStyles | — | Custom CSS styles for the wrapper. |
 | \`gap\` | number | 8 | Space in pixels between steps. |
 | \`collapsed\` | boolean | false | Collapses step labels into tooltips. |
 
@@ -45,7 +45,7 @@ It supports icons, labels, collapsible tooltips, customizable styles, and click 
 | \`variant\` | 'todo' \| 'current' \| 'completed' \| 'error' | 'todo' | Step visual variant affecting circle color and line color. |
 | \`active\` | boolean | false | Scale the outer circle to indicate active state. |
 | \`onClick\` | () => void | — | Callback when the step is clicked. |
-| \`styles\` | SteplineItemStylesProps | — | Custom styles for the item, outer/inner circle, and text wrapper. |
+| \`styles\` | SteplineItemStyles | — | Custom styles for the item, outer/inner circle, and text wrapper. |
 
 ---
 
