@@ -539,6 +539,7 @@ export interface SelectboxThemeConfig extends BodyThemeConfig {
 export interface SeparatorThemeConfig {
   containerColor?: string;
   lineColor?: string;
+  lineShadow?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
 }

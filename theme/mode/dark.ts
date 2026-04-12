@@ -263,7 +263,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   disabledDateColor: "#4b5563",
   weekendDateColor: "#fca5a5",
 
-  rangeDateBackgroundColor: "rgb(124, 101, 207)",
+  rangeDateBackgroundColor: "rgb(52 55 135)",
   rangeDateTextColor: "#ffffff",
   hightlightDateColor: "rgb(90, 94, 214)",
   highlightedDateTextColor: "#ffffff",
@@ -343,6 +343,7 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
 const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
 
 const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
+  selectedTextColor: darkBody.textColor,
   groupBackgroundColor: "rgb(35 37 41)",
 });
 
@@ -605,8 +606,7 @@ const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
 
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
-  lineColor:
-    "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
+  lineShadow: "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
   titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
 });
@@ -646,7 +646,29 @@ const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
 });
 
-const darkStepline = createSteplineTheme(darkBody, darkButton);
+const darkTimeline = createTimelineTheme(darkBody, darkButton, {
+  outerCircle: {
+    error: darkButton?.danger?.activeBackgroundColor || "#ff0000",
+    completed: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    current: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    todo: "#595959",
+  },
+  innerCircle: {
+    error: darkButton?.danger?.activeBackgroundColor || "#ff0000",
+    completed: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    current: darkButton?.success?.activeBackgroundColor || "#00b62e",
+    todo: "#595959",
+  },
+  line: {
+    default: "#595959",
+    completed: darkButton?.success?.backgroundColor || "#00b62e",
+    error: darkButton?.error?.backgroundColor || "#b60000",
+  }
+});
+
+const darkStepline = createSteplineTheme(darkBody, darkButton, {
+  line: darkTimeline.line,
+});
 
 const darkTable = createTableTheme(darkBody, {
   textColor: darkBody.textColor,
@@ -687,7 +709,6 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-const darkTimeline = createTimelineTheme(darkBody, darkButton);
 
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",

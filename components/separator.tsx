@@ -28,7 +28,7 @@ function Separator({
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
     >
-      <Line $style={styles?.lineStyle} $color={separatorTheme.lineColor} />
+      <Line $style={styles?.lineStyle} $color={separatorTheme.lineColor} $lineShadow={separatorTheme.lineShadow} />
       <Title
         $style={styles?.titleStyle}
         $textFloat={textFloat}
@@ -50,15 +50,13 @@ const SeparatorContainer = styled.div<{ $style?: CSSProp; $color?: string }>`
   ${({ $style }) => $style}
 `;
 
-const Line = styled.span<{ $style?: CSSProp; $color?: string }>`
+const Line = styled.span<{ $style?: CSSProp; $color?: string, $lineShadow?: string }>`
   position: absolute;
   width: 100%;
   height: 2px;
   border-radius: 0.125rem;
   background-color: ${({ $color }) => $color};
-  box-shadow:
-    inset 0 2px 2px #ffffff,
-    inset 0 -1px 1px #7a7a7a;
+  box-shadow: ${({ $lineShadow }) => $lineShadow};
 
   ${({ $style }) => $style}
 `;
