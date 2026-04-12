@@ -58,7 +58,7 @@ function LoadingSpinner({
         <SpinnerLabel
           $style={styles?.labelStyle}
           $textSize={textSize}
-          $color={loadingSpinnerTheme.textColor}
+          $color="#caced4"
         >
           {label}
         </SpinnerLabel>
