@@ -782,7 +782,6 @@ export const WithoutHeader: Story = {
           containerStyle: css`
             min-width: 300px;
             padding: 8px 8px 4px;
-            background-color: white;
           `,
         }}
         fields={DIVISION_EMPLOYEE_FIELDS}

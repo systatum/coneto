@@ -589,9 +589,12 @@ function TreeListAction({
   styles,
 }: TreeListActionInternalProps) {
   if (!onClick) onClick = () => {};
+  const { currentTheme } = useTheme();
+  const treeListTheme = currentTheme.treelist;
 
   return (
     <ActionItem
+      $theme={treeListTheme}
       $isActive={isActive}
       $isSelected={isSelected}
       role="button"
@@ -1252,6 +1255,7 @@ const ActionItem = styled.div<{
   $style?: CSSProp;
   $isSelected?: boolean;
   $isActive?: boolean;
+  $theme?: TreeListThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -1266,20 +1270,20 @@ const ActionItem = styled.div<{
   min-height: 36px;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${({ $theme }) => $theme?.hoverBackgroundColor};
   }
 
-  ${({ $isActive }) =>
+  ${({ $isActive, $theme }) =>
     $isActive &&
     css`
-      background-color: #f5f5f5;
+      background-color: ${$theme?.selectedBackgroundColor};
     `}
 
-  ${({ $isSelected }) =>
+  ${({ $isSelected, $theme }) =>
     $isSelected &&
     css`
-      background-color: #f5f5f5;
-      border-left: 3px solid #3b82f6;
+      background-color: ${$theme?.selectedBackgroundColor};
+      border-left: 3px solid ${$theme?.dividerHierarchySelectedColor};
     `}
   ${(props) => props.$style}
 `;
