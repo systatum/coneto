@@ -8,10 +8,27 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
 
+export const FieldLaneErrorIconPosition = {
+  Absolute: "absolute",
+  Relative: "relative",
+  None: "none",
+} as const;
+
+export type FieldLaneErrorIconPosition =
+  (typeof FieldLaneErrorIconPosition)[keyof typeof FieldLaneErrorIconPosition];
+
+export const FieldLaneLabelPosition = {
+  Top: "top",
+  Left: "left",
+} as const;
+
+export type FieldLaneLabelPosition =
+  (typeof FieldLaneLabelPosition)[keyof typeof FieldLaneLabelPosition];
+
 export interface FieldLaneProps {
   label?: string;
   showError?: boolean;
-  errorIconPosition?: "absolute" | "relative" | "none";
+  errorIconPosition?: FieldLaneErrorIconPosition;
   errorMessage?: string;
   dropdowns?: FieldLaneDropdownProps[];
   styles?: FieldLaneStyles;
@@ -21,7 +38,7 @@ export interface FieldLaneProps {
   id?: string;
   actions?: FieldLaneAction[];
   type?: string;
-  labelPosition?: "top" | "left";
+  labelPosition?: FieldLaneLabelPosition;
   labelWidth?: string;
   labelGap?: number;
   required?: boolean;
