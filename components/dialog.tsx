@@ -22,7 +22,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "./../theme/provider";
-import { DialogThemeConfig, ThemeMode } from "./../theme";
+import { DialogThemeConfig } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -46,7 +46,7 @@ export interface DialogProps {
   closable?: boolean;
   styles?: DialogStyles;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
-  buttons?: DialogButtonProps[];
+  buttons?: DialogButton[];
   title?: ReactNode;
   subtitle?: ReactNode;
   icon?: FigureProps;
@@ -65,7 +65,7 @@ export interface DialogStyles {
   buttonWrapperStyle?: CSSProp;
 }
 
-export interface DialogButtonProps extends Pick<ButtonVariants, "variant"> {
+export interface DialogButton extends Pick<ButtonVariants, "variant"> {
   id: string;
   caption: string;
   isLoading?: boolean;
