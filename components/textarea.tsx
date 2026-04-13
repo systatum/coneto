@@ -26,7 +26,7 @@ interface BaseTextareaProps
   id?: string;
 }
 
-export type Textareaaction = FieldLaneAction;
+export type TextareaAction = FieldLaneAction;
 
 export interface TextareaStyles {
   self?: CSSProp;
