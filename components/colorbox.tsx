@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
@@ -18,11 +18,11 @@ interface BaseColorboxProps
   value?: string;
   showError?: boolean;
   onClick?: () => void;
-  styles?: ColorboxStylesProps;
+  styles?: BaseColorboxStyles;
   id?: string;
 }
 
-export interface ColorboxStylesProps {
+export interface BaseColorboxStyles {
   self?: CSSProp;
 }
 
@@ -146,10 +146,11 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
   }
 );
 
+export type ColorboxStyles = BaseColorboxStyles & FieldLaneStyles;
 export interface ColorboxProps
   extends Omit<BaseColorboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type"> {
-  styles?: ColorboxStylesProps & FieldLaneStylesProps;
+  styles?: ColorboxStyles;
 }
 
 const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
