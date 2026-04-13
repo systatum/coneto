@@ -2,14 +2,14 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import {
   Combobox,
-  ComboboxActionProps,
-  ComboboxOptionProps,
-  ComboboxSingleOptionProps,
+  ComboboxAction,
+  ComboboxOption,
+  ComboboxSingleOption,
 } from "./combobox";
 import { SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Combobox> = {
@@ -50,7 +50,7 @@ Combobox makes use of the base Selectbox, featuring searchability, options-group
 \`\`\`ts
 {
   category: string;
-  options: OptionProps[];
+  options: SelectboxOption[];
   collapsible?: boolean;
   initialState?: "opened" | "closed";
 }
@@ -160,7 +160,7 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -191,7 +191,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -227,7 +227,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -237,7 +237,7 @@ export const WithDropdown: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",
@@ -348,7 +348,7 @@ export const WithActions: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -358,7 +358,7 @@ export const WithActions: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const FRUIT_ACTIONS: ComboboxActionProps[] = [
+    const FRUIT_ACTIONS: ComboboxAction[] = [
       {
         title: "Add Fruit",
         onClick: () => {
@@ -393,7 +393,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -497,7 +497,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
       {
         text: "Apple",
         value: "1",
@@ -727,7 +727,7 @@ export const Categorized: Story = {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
     const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
 
-    const FRUIT_OPTIONS: ComboboxOptionProps[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       {
         category: "Sweet",
         options: [
@@ -782,7 +782,7 @@ export const Categorized: Story = {
       { text: "Eggplants", value: "100", hidden: true },
     ];
 
-    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOptionProps[] =
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
       FRUIT_OPTIONS.map((item) => {
         if ("category" in item && item.options) {
           return {
