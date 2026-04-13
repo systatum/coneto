@@ -26,7 +26,7 @@ interface BaseTimeboxProps
   value?: string;
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
-  placeholder?: TimeboxPlaceholderProps;
+  placeholder?: TimeboxPlaceholder;
 }
 
 export interface TimeboxStyles {
@@ -34,7 +34,7 @@ export interface TimeboxStyles {
   inputWrapperStyle?: CSSProp;
 }
 
-export interface TimeboxPlaceholderProps {
+export interface TimeboxPlaceholder {
   hour?: string;
   minute?: string;
   second?: string;
