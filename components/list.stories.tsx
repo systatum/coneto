@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
 import {
   List,
-  ListGroupActionsProps,
-  ListGroupContentProps,
-  ListItemActionProps,
+  ListGroupaction,
+  ListGroupContent,
+  ListItemAction,
   ListItemProps,
 } from "./list";
 import {
@@ -248,7 +248,7 @@ export const Default: Story = {
 
 export const Draggable: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -454,7 +454,7 @@ export const Draggable: Story = {
 
 export const WithLoading: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -651,7 +651,7 @@ export const WithLoading: Story = {
 
 export const ReactNodeTitle: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "form-fields",
         title: "Form Fields",
@@ -730,7 +730,7 @@ export const ReactNodeTitle: Story = {
       }
     };
 
-    const LIST_GROUP_ACTIONS: ListGroupActionsProps[] = [
+    const LIST_GROUP_ACTIONS: ListGroupaction[] = [
       {
         caption: "Add",
         onClick: () =>
@@ -753,7 +753,7 @@ export const ReactNodeTitle: Story = {
       },
     ];
 
-    const LIST_ITEM_ACTIONS = (id: string): ListItemActionProps[] => {
+    const LIST_ITEM_ACTIONS = (id: string): ListItemAction[] => {
       const selectedByFormFieldsGroup = id.split("form-fields-");
       return [
         {
@@ -926,7 +926,7 @@ export const ReactNodeTitle: Story = {
 
 export const WithSubcontent: Story = {
   render: () => {
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "form-fields",
         title: "Form Fields",
@@ -948,7 +948,7 @@ export const WithSubcontent: Story = {
       statefulValue: { id: string; value: string }[];
     }
 
-    function useListController(initialGroups: ListGroupContentProps[]) {
+    function useListController(initialGroups: ListGroupContent[]) {
       const [groups, setGroups] = useState(initialGroups);
 
       const [inputValue, setInputValue] = useState<InputValueProps>({
@@ -1021,7 +1021,7 @@ export const WithSubcontent: Story = {
     const FIELDS = (
       itemId: string,
       inputValue: InputValueProps,
-      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContent[]>>
     ): FormFieldGroup[] => [
       {
         name: "value",
@@ -1053,8 +1053,8 @@ export const WithSubcontent: Story = {
     ];
 
     const LIST_ACTIONS_GROUP = (
-      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>
-    ): ListGroupActionsProps[] => [
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContent[]>>
+    ): ListGroupaction[] => [
       {
         caption: "Add",
         onClick: () =>
@@ -1077,9 +1077,9 @@ export const WithSubcontent: Story = {
 
     const LIST_ITEM_ACTIONS = (
       itemId: string,
-      setGroups: React.Dispatch<React.SetStateAction<ListGroupContentProps[]>>,
+      setGroups: React.Dispatch<React.SetStateAction<ListGroupContent[]>>,
       setInputValue: React.Dispatch<React.SetStateAction<InputValueProps>>
-    ): ListItemActionProps[] => {
+    ): ListItemAction[] => {
       const selectedByFormFieldsGroup = itemId.split("form-fields-");
 
       return [
@@ -1428,7 +1428,7 @@ export const WithBadge: Story = {
       leftSideContent?: number;
     };
 
-    type ListGroupContentWithNumber = Omit<ListGroupContentProps, "items"> & {
+    type ListGroupContentWithNumber = Omit<ListGroupContent, "items"> & {
       items: ListItem[];
     };
 
@@ -1646,7 +1646,7 @@ export const CustomOpener: Story = {
       />
     );
 
-    const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+    const ACTIONS_GROUPS: ListGroupaction[] = [
       {
         caption: "Add",
         onClick: (id: string) => {
@@ -1655,7 +1655,7 @@ export const CustomOpener: Story = {
       },
     ];
 
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -1711,7 +1711,7 @@ export const CustomOpener: Story = {
       },
     ];
 
-    const [groups, setGroups] = useState<ListGroupContentProps[]>(LIST_GROUPS);
+    const [groups, setGroups] = useState<ListGroupContent[]>(LIST_GROUPS);
     const [value, setValue] = useState({
       search: "",
       checked: [],
@@ -2086,7 +2086,7 @@ export const WithMaxItems: Story = {
 
 export const Accordion: Story = {
   render: () => {
-    const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+    const ACTIONS_GROUPS: ListGroupaction[] = [
       {
         caption: "Refresh",
         onClick: (id: string) => {
