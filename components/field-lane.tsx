@@ -14,12 +14,12 @@ export interface FieldLaneProps {
   errorIconPosition?: "absolute" | "relative" | "none";
   errorMessage?: string;
   dropdowns?: FieldLaneDropdownProps[];
-  styles?: FieldLaneStylesProps;
+  styles?: FieldLaneStyles;
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
   id?: string;
-  actions?: FieldLaneActionsProps[];
+  actions?: FieldLaneAction[];
   type?: string;
   labelPosition?: "top" | "left";
   labelWidth?: string;
@@ -27,14 +27,14 @@ export interface FieldLaneProps {
   required?: boolean;
 }
 
-export interface FieldLaneStylesProps {
+export interface FieldLaneStyles {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   controlStyle?: CSSProp;
   bodyStyle?: CSSProp;
 }
 
-export interface FieldLaneActionsProps {
+export interface FieldLaneAction {
   title?: string;
   icon?: FigureProps;
   iconColor?: string;
@@ -46,11 +46,11 @@ export interface FieldLaneActionsProps {
 
 export interface FieldLaneDropdownProps {
   disabled?: boolean;
-  options?: FieldLaneDropdownsOptionProps[];
+  options?: FieldLaneDropdownsOption[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
-  styles?: FieldLaneDropdownStylesProps;
+  styles?: FieldLaneDropdownStyles;
   withFilter?: boolean;
   render?: (props: {
     render?: (children?: ReactNode) => ReactNode;
@@ -59,13 +59,13 @@ export interface FieldLaneDropdownProps {
   hidden?: boolean;
 }
 
-export interface FieldLaneDropdownStylesProps {
+export interface FieldLaneDropdownStyles {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   self?: CSSProp;
 }
 
-export interface FieldLaneDropdownsOptionProps {
+export interface FieldLaneDropdownsOption {
   text: string;
   value: string;
   icon?: FigureProps;
@@ -352,8 +352,8 @@ function FieldLane({
             styles={{
               self: css`
                 color: ${disabled
-                  ? fieldLaneTheme?.labelDisabledColor
-                  : fieldLaneTheme?.labelColor};
+                  ? fieldLaneTheme?.disabledTextColor
+                  : fieldLaneTheme?.textColor};
 
                 ${styles?.labelStyle};
               `,
