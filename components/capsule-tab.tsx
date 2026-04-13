@@ -5,22 +5,22 @@ import { CapsuleTabThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
 export interface CapsuleTabProps {
-  tabs: CapsuleTabContentProps[];
+  tabs: CapsuleTabTab[];
   activeTab?: string;
   activeBackgroundColor?: string;
-  styles?: CapsuleTabStylesProps;
+  styles?: CapsuleTabStyles;
   onTabChange?: (id: string) => void;
   children?: ReactNode;
 }
 
-export interface CapsuleTabStylesProps {
+export interface CapsuleTabStyles {
   self?: CSSProp;
   contentStyle?: CSSProp;
   capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
 
-export interface CapsuleTabContentProps {
+export interface CapsuleTabTab {
   id: string;
   title: string;
   content: ReactNode;

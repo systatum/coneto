@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
+import { CapsuleTab, CapsuleTabTab } from "./capsule-tab";
 import { Button } from "./button";
 import { ChangeEvent, useState } from "react";
 import { Textbox } from "./textbox";
@@ -67,7 +67,7 @@ List of tab items.
       `,
       control: false,
       table: {
-        type: { summary: "CapsuleTabContentProps[]" },
+        type: { summary: "CapsuleTabTab[]" },
       },
     },
 
@@ -143,7 +143,7 @@ Available fields:
 All fields accept \`CSSProp\` (styled-components).
       `,
       table: {
-        type: { summary: "CapsuleTabStylesProps" },
+        type: { summary: "CapsuleTabStyles" },
       },
     },
   },
@@ -219,7 +219,7 @@ export const Default: Story = {
       );
     };
 
-    const TABS_ITEMS: CapsuleTabContentProps[] = [
+    const TABS_ITEMS: CapsuleTabTab[] = [
       {
         id: "1",
         title: "Write",
