@@ -13,7 +13,7 @@ import styled, { css, CSSProp } from "styled-components";
 
 export type ModalDialogProps = DialogProps;
 export type ModalDialogStyles = DialogStyles;
-export type ModalButton = DialogButton;
+export type ModalDialogButton = DialogButton;
 
 function ModalDialog({
   onVisibilityChange,

@@ -3,7 +3,7 @@ import {
   DrawerProps,
   SelectboxOption,
   Selectbox,
-  SelectboxLabelsProps,
+  SelectboxLabels,
   SelectboxStyles,
 } from "./selectbox";
 import {
@@ -18,7 +18,6 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 
 type DateboxSelectabilityMode = CalendarSelectabilityMode;
-type DateboxLabels = ComboboxLabelsProps;
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -37,7 +36,7 @@ type BaseDateboxProps = BaseCalendarProps & {
   labels?: DateboxLabels;
 };
 
-export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
+export interface DateboxLabels extends SelectboxLabels {}
 
 export type DateboxStyles = SelectboxStyles;
 
@@ -45,7 +44,7 @@ type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
       selectedOptionsLocal?: SelectboxOption;
-      setSelectedOptionsLocal?: (data: SelectboxOption) => void;
+      setSelectedOptionsLocal?: (option: SelectboxOption) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
       calendarSelectabilityMode?: DateboxSelectabilityMode;

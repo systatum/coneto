@@ -74,10 +74,10 @@ interface BaseSelectboxProps
       }
   ) => ReactNode;
   styles?: SelectboxStyles;
-  labels?: SelectboxLabelsProps;
+  labels?: SelectboxLabels;
 }
 
-export interface SelectboxLabelsProps {
+export interface SelectboxLabels {
   loadingText?: string;
 }
 

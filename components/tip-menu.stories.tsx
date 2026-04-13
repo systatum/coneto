@@ -13,9 +13,9 @@ import {
   RiEditLine,
   RiDeleteBinLine,
 } from "@remixicon/react";
-import { ModalDialog, ModalButtonProps } from "./modal-dialog";
+import { ModalDialog, ModalDialogButton } from "./modal-dialog";
 
-const BUTTONS: ModalButtonProps[] = [
+const BUTTONS: ModalDialogButton[] = [
   {
     id: "cancel",
     caption: "Cancel",
