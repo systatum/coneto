@@ -7,7 +7,7 @@ import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
 import { CapsuleThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
-export interface CapsuleTab {
+export interface CapsuleContentProps {
   id: string;
   title?: string;
   content?: ReactNode;
@@ -15,7 +15,7 @@ export interface CapsuleTab {
 }
 
 interface BaseCapsuleProps {
-  tabs: CapsuleTab[];
+  tabs: CapsuleContentProps[];
   activeTab?: string | null;
   onTabChange?: (id: string) => void;
   full?: boolean;
