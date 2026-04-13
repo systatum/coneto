@@ -17,7 +17,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { Button, ButtonStylesProps, ButtonVariants } from "./button";
+import { Button, ButtonStyles, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
@@ -31,11 +31,11 @@ export interface PaperDialogProps {
   children?: ReactNode;
   closable?: boolean;
   width?: string;
-  styles?: PaperDialogStylesProps;
+  styles?: PaperDialogStyles;
   onClosed?: () => void;
 }
 
-export interface PaperDialogStylesProps {
+export interface PaperDialogStyles {
   self?: CSSProp;
   tabStyle?: CSSProp;
   tabCloseStyle?: CSSProp;
@@ -47,17 +47,17 @@ export interface PaperDialogTriggerProps {
   setDialogState?: (dialogState: DialogState) => void;
   icon?: FigureProps;
   variant?: ButtonVariants["variant"];
-  styles?: PaperDialogTriggerStylesProps;
+  styles?: PaperDialogTriggerStyles;
 }
 
-export type PaperDialogTriggerStylesProps = ButtonStylesProps;
+export type PaperDialogTriggerStyles = ButtonStyles;
 
 export interface PaperDialogContentProps {
   children?: ReactNode;
-  styles?: PaperDialogContentStylesProps;
+  styles?: PaperDialogContentStyles;
 }
 
-export interface PaperDialogContentStylesProps {
+export interface PaperDialogContentStyles {
   self?: CSSProp;
 }
 

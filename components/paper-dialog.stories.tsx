@@ -7,7 +7,7 @@ import { z } from "zod";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { css } from "styled-components";
 import { Card } from "./card";
-import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
+import { TableColumn, TableSubMenuList, Table } from "./table";
 import { RiAddBoxLine, RiDeleteBin2Line, RiEdit2Line } from "@remixicon/react";
 
 const meta: Meta<typeof PaperDialog> = {
@@ -466,7 +466,7 @@ export const Nested: Story = {
       throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
     }
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -564,7 +564,7 @@ export const Nested: Story = {
     const ROW_ACTIONS = (
       rowId: string,
       withOnClick?: boolean
-    ): SubMenuListTableProps[] => {
+    ): TableSubMenuList[] => {
       const name = rowId.split("-")[0];
       const dataFamily = rows.find((props) => props.name === name);
       return [
