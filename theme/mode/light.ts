@@ -217,7 +217,7 @@ const lightToolbar = createToolbarTheme({
   success: lightButton.success,
 });
 
-const lightTooltip = createTooltipTheme();
+const lightTooltip = createTooltipTheme(lightBody);
 
 const lightThumbField = createThumbFieldTheme(lightBody);
 

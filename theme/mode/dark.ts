@@ -606,7 +606,8 @@ const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
 
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
-  lineShadow: "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
+  lineShadow:
+    "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
   titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
 });
@@ -663,7 +664,7 @@ const darkTimeline = createTimelineTheme(darkBody, darkButton, {
     default: "#595959",
     completed: darkButton?.success?.backgroundColor || "#00b62e",
     error: darkButton?.error?.backgroundColor || "#b60000",
-  }
+  },
 });
 
 const darkStepline = createSteplineTheme(darkBody, darkButton, {
@@ -709,7 +710,6 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-
 const darkTipMenu = createTipMenuTheme(darkBody, {
   hoverBackgroundColor: "#2a2a2a",
   activeBackgroundColor: "#333333",
@@ -744,10 +744,14 @@ const darkToolbar = createToolbarTheme({
   success: darkButton.success,
 });
 
-const darkTooltip = createTooltipTheme({
+const darkTooltip = createTooltipTheme(darkBody, {
   arrowBackgroundColor: "#3e4143",
-  backgroundColor: "#292c2e",
-  textColor: darkBody?.textColor,
+  literalStringBackgroundColor: "#292c2e",
+  nodeElementBackgroundColor: "#292c2e",
+  literalStringTextColor: darkBody?.textColor,
+  nodeElementTextColor: darkBody?.textColor,
+  literalStringBorderColor: darkBody?.borderColor,
+  nodeElementBorderColor: darkBody?.borderColor,
 });
 
 const darkTreeList = createTreeListTheme(darkBody, {
