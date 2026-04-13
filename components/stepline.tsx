@@ -192,7 +192,6 @@ function SteplineItem({
             ${collapsed &&
             css`
               gap: 5px;
-              color: white;
             `}
             ${styles?.textWrapperStyle}
           `}
