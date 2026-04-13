@@ -840,12 +840,13 @@ export function createListTheme(
     hoverTextColor: body.textColor,
     badgeBackgroundColor: "#488cac",
     borderColor: "#d1d5db",
-    mutedTextColor: "#6b7280",
     dragLineColor: "#3b82f6",
     emptyHoverBackgroundColor: "#dbeafe",
     badgeTextColor: "white",
     badgeBorderColor: "#d1d5db",
     toggleBackgroundColor: "#c1d6f1",
+    mutedTextColor: "#6b7280",
+    maxItemTextColor: "rgb(97, 97, 97)",
   };
 
   return {

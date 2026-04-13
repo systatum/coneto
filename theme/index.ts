@@ -1,7 +1,7 @@
 import { MessageboxVariantState } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 import { ToolbarVariant } from "./../components/toolbar";
-import { SteplineItem } from "./../constants/step-component-util";
+import { BaseSteplineItem } from "./../constants/step-component-util";
 
 export type ThemeMode = "light" | "dark";
 
@@ -356,6 +356,7 @@ export interface ListThemeConfig extends BodyThemeConfig {
   badgeTextColor?: string;
   badgeBackgroundColor?: string;
   badgeBorderColor?: string;
+  maxItemTextColor?: string;
 }
 
 // loading-skeleton.tsx
@@ -569,9 +570,9 @@ export interface SidebarThemeConfig extends BodyThemeConfig {
 
 // stepline.tsx
 export interface SteplineThemeConfig {
-  outerCircle: Record<SteplineItem["variant"], string>;
-  innerCircle: Record<SteplineItem["variant"], string>;
-  text: Record<SteplineItem["variant"], string>;
+  outerCircle: Record<BaseSteplineItem["variant"], string>;
+  innerCircle: Record<BaseSteplineItem["variant"], string>;
+  text: Record<BaseSteplineItem["variant"], string>;
   line?: {
     default: string;
     completed: string;

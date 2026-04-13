@@ -741,8 +741,7 @@ function ListShowMoreButton({
 
   return (
     <ShowMoreButton
-      $borderColor={listTheme.borderColor}
-      $textColor={listTheme.textColor}
+      $theme={listTheme}
       aria-label="list-show-more-button"
       $style={css`
         ${maxItemsStyle}
@@ -795,8 +794,7 @@ const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
 
 const ShowMoreButton = styled.button<{
   $style?: CSSProp;
-  $textColor?: string;
-  $borderColor?: string;
+  $theme?: ListThemeConfig;
 }>`
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
@@ -811,8 +809,8 @@ const ShowMoreButton = styled.button<{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid ${({ $borderColor }) => $borderColor};
-  color: ${({ $textColor }) => $textColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  color: ${({ $theme }) => $theme?.maxItemTextColor};
 
   ${({ $style }) => $style}
 `;
