@@ -1,21 +1,24 @@
 import { RiCalendar2Line } from "@remixicon/react";
 import {
   DrawerProps,
-  OptionProps,
+  SelectboxOption,
   Selectbox,
   SelectboxLabelsProps,
-  SelectboxStylesProps,
+  SelectboxStyles,
 } from "./selectbox";
 import {
   Calendar,
   BaseCalendarProps,
-  SelectabilityModeState,
+  CalendarSelectabilityMode,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 import { FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
+
+type DateboxSelectabilityMode = CalendarSelectabilityMode;
+type DateboxLabels = ComboboxLabelsProps;
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -25,27 +28,27 @@ type BaseDateboxProps = BaseCalendarProps & {
   disabled?: boolean;
   calendarFooter?: ReactNode;
   calendarTodayButtonCaption?: string;
-  calendarSelectabilityMode?: SelectabilityModeState;
+  calendarSelectabilityMode?: DateboxSelectabilityMode;
   placeholder?: string;
-  styles?: DateboxStylesProps;
+  styles?: DateboxStyles;
   helper?: string;
   id?: string;
   isLoading?: boolean;
-  labels?: ComboboxLabelsProps;
+  labels?: DateboxLabels;
 };
 
 export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
 
-export type DateboxStylesProps = SelectboxStylesProps;
+export type DateboxStyles = SelectboxStyles;
 
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
-      selectedOptionsLocal?: OptionProps;
-      setSelectedOptionsLocal?: (data: OptionProps) => void;
+      selectedOptionsLocal?: SelectboxOption;
+      setSelectedOptionsLocal?: (data: SelectboxOption) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
-      calendarSelectabilityMode?: SelectabilityModeState;
+      calendarSelectabilityMode?: DateboxSelectabilityMode;
       showError?: boolean;
     }
   >;
