@@ -63,7 +63,7 @@ const meta: Meta<typeof Sidebar> = {
     styles: {
       control: false,
       description: "Custom styles for sidebar containers.",
-      table: { type: { summary: "SidebarStylesProps" } },
+      table: { type: { summary: "SidebarStyles" } },
     },
   },
 };

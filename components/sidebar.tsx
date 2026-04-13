@@ -10,11 +10,11 @@ import { useTheme } from "./../theme/provider";
 
 export interface SidebarProps {
   children?: ReactNode;
-  styles?: SidebarStylesProps;
+  styles?: SidebarStyles;
   position?: "left" | "right";
 }
 
-export interface SidebarStylesProps {
+export interface SidebarStyles {
   mobileStyle?: CSSProp;
   desktopStyle?: CSSProp;
 }
@@ -22,10 +22,10 @@ export interface SidebarStylesProps {
 export interface SidebarItemProps {
   isFixed?: boolean;
   children?: ReactNode;
-  styles?: SidebarItemStylesProps;
+  styles?: SidebarItemStyles;
 }
 
-export interface SidebarItemStylesProps {
+export interface SidebarItemStyles {
   self?: CSSProp;
 }
 
