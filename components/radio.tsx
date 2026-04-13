@@ -6,6 +6,13 @@ import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RadioThemeConfig } from "theme";
 
+export const RadioMode = {
+  Radio: "radio",
+  Button: "button",
+} as const;
+
+export type RadioMode = (typeof RadioMode)[keyof typeof RadioMode];
+
 interface BaseRadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   value?: string;
@@ -18,7 +25,7 @@ interface BaseRadioProps
   styles?: BaseRadioStyles;
   showError?: boolean;
   errorMessage?: string;
-  mode?: "radio" | "button";
+  mode?: RadioMode;
   helper?: string;
   icon?: RadioIconProps;
 }
