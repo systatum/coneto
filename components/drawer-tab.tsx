@@ -9,9 +9,9 @@ import { DrawerTabThemeConfig } from "./../theme";
 export interface DrawerTabProps {
   tabs: DrawerTabContentProps[];
   position?: "left" | "right";
-  styles?: DrawerTabStylesProps;
+  styles?: DrawerTabStyles;
 }
-export interface DrawerTabStylesProps {
+export interface DrawerTabStyles {
   tabStyle?: CSSProp;
   drawerTabStyle?: CSSProp;
 }

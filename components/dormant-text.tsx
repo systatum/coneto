@@ -29,7 +29,7 @@ export interface DormantTextProps {
   onActive?: () => void;
   onCancelRequested?: () => void;
   dormantedMaxWidth?: string;
-  styles?: DormantTextStylesProps;
+  styles?: DormantTextStyles;
 }
 
 export interface DormantTextIconsProps {
@@ -37,7 +37,7 @@ export interface DormantTextIconsProps {
   cancel?: FigureProps;
 }
 
-export interface DormantTextStylesProps {
+export interface DormantTextStyles {
   dormantedStyle?: CSSProp;
   activeStyle?: CSSProp;
   actionStyle?: CSSProp;
