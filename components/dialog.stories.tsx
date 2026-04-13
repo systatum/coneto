@@ -116,7 +116,7 @@ Each button object supports:
       description:
         "Custom style overrides for different Dialog sections (container, header, title, subtitle, footer, overlay, etc.).",
       table: {
-        type: { summary: "DialogStylesProps" },
+        type: { summary: "DialogStyles" },
       },
     },
   },

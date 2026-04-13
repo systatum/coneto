@@ -11,7 +11,7 @@ import {
 import ReactDOM from "react-dom";
 import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
-import { Button, ButtonStylesProps, ButtonVariants } from "./button";
+import { Button, ButtonStyles, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { darkenColor, lightenColor } from "../lib/color";
@@ -44,7 +44,7 @@ export interface DialogProps {
   isOpen?: boolean;
   onVisibilityChange?: (isOpen?: boolean) => void;
   closable?: boolean;
-  styles?: DialogStylesProps;
+  styles?: DialogStyles;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
   buttons?: DialogButtonProps[];
   title?: ReactNode;
@@ -53,7 +53,7 @@ export interface DialogProps {
   onClosed?: () => void;
 }
 
-export interface DialogStylesProps {
+export interface DialogStyles {
   overlayStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
   headerStyle?: CSSProp;
@@ -70,7 +70,7 @@ export interface DialogButtonProps extends Pick<ButtonVariants, "variant"> {
   caption: string;
   isLoading?: boolean;
   disabled?: boolean;
-  styles?: ButtonStylesProps;
+  styles?: ButtonStyles;
 }
 
 function Dialog({
