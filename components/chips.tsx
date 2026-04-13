@@ -1,5 +1,5 @@
 import { RiAddLine } from "@remixicon/react";
-import { Badge, BadgeActionProps, BadgeProps } from "./badge";
+import { Badge, BadgeAction, BadgeProps } from "./badge";
 import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
@@ -27,14 +27,16 @@ import {
 import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
 
-export type ChipActionsProps = BadgeActionProps;
+export type ChipAction = BadgeAction;
+
+export type ChipProps = BadgeProps;
 
 interface BaseChipsProps {
-  options?: BadgeProps[];
+  options?: ChipProps[];
   inputValue?: string;
   setInputValue?: (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -42,20 +44,20 @@ interface BaseChipsProps {
   filterPlaceholder?: string;
   missingOptionLabel?: string;
   creatable?: boolean;
-  onOptionClicked?: (badge: BadgeProps) => void;
-  selectedOptions?: BadgeProps[];
+  onOptionClicked?: (badge: ChipProps) => void;
+  selectedOptions?: ChipProps[];
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
   emptySlate?: ReactNode;
   renderer?: (props: ChipRendererProps) => ReactNode;
-  styles?: BaseChipsStylesProps;
+  styles?: BaseChipsStyles;
   name?: string;
   id?: string;
   disabled?: boolean;
 }
 
-export interface BaseChipsStylesProps {
+export interface BaseChipsStyles {
   chipsContainerStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
   chipSelectedStyle?: CSSProp;
@@ -419,13 +421,13 @@ function ChipsDrawer({
 
             {options && options.length > 0 ? (
               <>
-                {options.map((data, index) => {
+                {options.map((chip, index) => {
                   const isClicked = selectedOptions?.some(
-                    (clicked) => clicked.id === data.id
+                    (clicked) => clicked.id === chip.id
                   );
 
                   return (
-                    <div key={data.id}>
+                    <div key={chip.id}>
                       {index > 0 &&
                         options[index - 1] &&
                         selectedOptions?.some(
@@ -436,7 +438,7 @@ function ChipsDrawer({
                         )}
 
                       <ChipsItem
-                        badge={data}
+                        chip={chip}
                         chipContainerStyle={styles?.chipContainerStyle}
                         hovered={hovered}
                         isClicked={isClicked}
@@ -487,12 +489,12 @@ function ChipsDrawer({
   );
 }
 
-export type ChipsStylesProps = BaseChipsStylesProps & FieldLaneStylesProps;
+export type ChipsStyles = BaseChipsStyles & FieldLaneStyles;
 
 export interface ChipsProps
   extends Omit<BaseChipsProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: ChipsStylesProps;
+  styles?: ChipsStyles;
 }
 
 function Chips({
@@ -618,7 +620,7 @@ const EmptyOptionContainer = styled.div<{
 `;
 
 function ChipsItem({
-  badge,
+  chip,
   isClicked,
   hovered,
   setHovered,
@@ -627,11 +629,11 @@ function ChipsItem({
   chipStyle,
   inputRef,
 }: {
-  badge: BadgeProps;
+  chip: ChipProps;
   isClicked: boolean;
   hovered: string | null;
   setHovered: (number: string) => void;
-  onOptionClicked?: (badge: BadgeProps) => void;
+  onOptionClicked?: (badge: ChipProps) => void;
   chipStyle?: CSSProp;
   chipContainerStyle?: CSSProp;
   inputRef?: RefObject<HTMLInputElement>;
@@ -640,34 +642,34 @@ function ChipsItem({
   const chipsTheme = currentTheme.chips;
 
   const finalValueActions =
-    badge.actions
+    chip.actions
       ?.filter((action) => !action?.hidden)
       .map((action) => ({
         ...action,
         styles: {
           self: css`
             opacity: 0;
-            ${hovered === badge.id &&
+            ${hovered === chip.id &&
             css`
               opacity: 1;
             `}
           `,
         },
         size: 14,
-        onClick: () => action.onClick && action.onClick?.(badge),
+        onClick: () => action.onClick && action.onClick?.(chip),
       })) ?? [];
 
   return (
     <ChipItemWrapper
-      $hovered={hovered === badge.id}
+      $hovered={hovered === chip.id}
       $style={chipContainerStyle}
       onClick={async (e) => {
         await e.stopPropagation();
-        await onOptionClicked?.(badge);
+        await onOptionClicked?.(chip);
         await inputRef.current.focus();
       }}
       $theme={chipsTheme}
-      onMouseEnter={() => setHovered(badge.id)}
+      onMouseEnter={() => setHovered(chip.id)}
     >
       <Checkbox
         checked={isClicked}
@@ -692,7 +694,7 @@ function ChipsItem({
         readOnly
       />
       <Badge
-        {...badge}
+        {...chip}
         styles={{
           self: css`
             cursor: pointer;

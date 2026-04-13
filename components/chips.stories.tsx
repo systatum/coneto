@@ -7,7 +7,7 @@ import { Badge, BadgeProps } from "./badge";
 import { Button } from "./button";
 import { Chips, MissingOptionFormProps } from "./chips";
 import { Colorbox } from "./colorbox";
-import { OptionProps } from "./selectbox";
+import { SelectboxOption } from "./selectbox";
 import { FormFieldProps, StatefulForm } from "./stateful-form";
 import { Textbox } from "./textbox";
 import { Tooltip } from "./tooltip";
@@ -979,7 +979,7 @@ export const CustomRenderer: Story = {
       </div>
     );
 
-    const EMPLOYEE_OPTIONS: OptionProps[] = [
+    const EMPLOYEE_OPTIONS: SelectboxOption[] = [
       { text: "Organization Owner", value: "1" },
       { text: "HR Manager", value: "2" },
       { text: "Member", value: "3" },
