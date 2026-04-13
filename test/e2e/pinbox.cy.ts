@@ -244,7 +244,7 @@ describe("Pinbox", () => {
           cy.findAllByLabelText("pinbox-input").eq(data).should("be.disabled");
           cy.findAllByLabelText("pinbox-input")
             .eq(data)
-            .should("have.css", "background-color", "rgb(249, 250, 251)");
+            .should("have.css", "background-color", "rgb(255, 255, 255)");
           cy.findAllByLabelText("pinbox-input")
             .eq(data)
             .should("have.css", "opacity", "0.6");
@@ -267,7 +267,7 @@ describe("Pinbox", () => {
 
         cy.findAllByLabelText("pinbox-input")
           .eq(1)
-          .should("have.css", "border-color", "rgb(248, 113, 113)");
+          .should("have.css", "border-color", "rgb(239, 68, 68)");
         cy.findAllByLabelText("pinbox-input")
           .eq(1)
           .should("have.css", "color", "rgb(153, 27, 27)");

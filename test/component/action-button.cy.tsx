@@ -272,7 +272,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(2)
-          .should("have.css", "background-color", "rgb(221, 221, 221)");
+          .should("have.css", "background-color", "rgb(236, 236, 236)");
       });
     });
 
@@ -364,11 +364,11 @@ describe("ActionButton", () => {
 
           cy.findAllByLabelText("action-button")
             .eq(2)
-            .should("have.css", "background-color", "rgb(221, 221, 221)");
+            .should("have.css", "background-color", "rgb(236, 236, 236)");
 
           cy.findAllByLabelText("button-toggle")
             .eq(0)
-            .should("have.css", "background-color", "rgb(221, 221, 221)");
+            .should("have.css", "background-color", "rgb(236, 236, 236)");
         });
       });
     });

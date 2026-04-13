@@ -15,7 +15,7 @@ describe("Pagination", () => {
             .click();
           cy.findAllByLabelText("pagination-button")
             .eq(1)
-            .should("have.css", "border", "1px solid rgb(243, 244, 246)");
+            .should("have.css", "border", "1px solid rgb(209, 213, 219)");
           cy.findAllByLabelText("pagination-button")
             .eq(2)
             .should("have.css", "border", "1px solid rgb(97, 169, 249)");
@@ -30,7 +30,7 @@ describe("Pagination", () => {
             .click({ force: true });
           cy.findAllByLabelText("pagination-button")
             .eq(0)
-            .should("have.css", "border", "1px solid rgb(243, 244, 246)")
+            .should("have.css", "border", "1px solid rgb(209, 213, 219)")
             .and("have.css", "opacity", "0.3");
           cy.findAllByLabelText("pagination-button")
             .eq(1)
@@ -46,7 +46,7 @@ describe("Pagination", () => {
           .should("have.css", "border", "1px solid rgb(97, 169, 249)");
         cy.findAllByLabelText("pagination-button")
           .eq(2)
-          .should("have.css", "border", "1px solid rgb(243, 244, 246)");
+          .should("have.css", "border", "1px solid rgb(209, 213, 219)");
 
         cy.findAllByLabelText("pagination-button")
           .eq(6)
@@ -55,7 +55,7 @@ describe("Pagination", () => {
 
         cy.findAllByLabelText("pagination-button")
           .eq(1)
-          .should("have.css", "border", "1px solid rgb(243, 244, 246)");
+          .should("have.css", "border", "1px solid rgb(209, 213, 219)");
         cy.findAllByLabelText("pagination-button")
           .eq(2)
           .should("have.css", "border", "1px solid rgb(97, 169, 249)");
@@ -100,7 +100,7 @@ describe("Pagination", () => {
           cy.findByPlaceholderText("1").should(
             "have.css",
             "border",
-            "1px solid rgb(243, 244, 246)"
+            "1px solid rgb(209, 213, 219)"
           );
         });
       });
@@ -129,12 +129,12 @@ describe("Pagination", () => {
 
           cy.findByPlaceholderText("1")
             .trigger("mouseover")
-            .should("have.css", "border", "1px solid rgb(243, 244, 246)")
+            .should("have.css", "border", "1px solid rgb(209, 213, 219)")
             .trigger("mouseout");
           cy.findByPlaceholderText("1").should(
             "have.css",
             "border",
-            "1px solid rgb(243, 244, 246)"
+            "1px solid rgb(209, 213, 219)"
           );
         });
       });

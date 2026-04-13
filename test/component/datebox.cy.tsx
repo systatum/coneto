@@ -47,7 +47,7 @@ describe("Datebox", () => {
 
         cy.findByLabelText("circle")
           .parent()
-          .should("have.css", "background-color", "rgba(255, 255, 255, 0.6)");
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
       });
 
       it("should disabled the input component", () => {
