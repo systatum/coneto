@@ -650,10 +650,15 @@ export interface TextareaThemeConfig extends TextboxThemeConfig {
 }
 
 // tooltip.tsx
-export interface TooltipThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface TooltipThemeConfig {
   boxShadow?: string;
   arrowBackgroundColor: string;
+  literalStringBackgroundColor: string;
+  literalStringTextColor?: string;
+  nodeElementBackgroundColor: string;
+  nodeElementTextColor: string;
+  literalStringBorderColor?: string;
+  nodeElementBorderColor?: string;
 }
 
 // timeline.tsx
