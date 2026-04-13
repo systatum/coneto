@@ -6,10 +6,10 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import {
-  FieldLaneActionsProps,
+  FieldLaneAction,
   FieldLane,
   FieldLaneProps,
-  FieldLaneStylesProps,
+  FieldLaneStyles,
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
@@ -18,7 +18,7 @@ import { TextareaThemeConfig } from "./../theme";
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
   showError?: boolean;
-  styles?: TextareaStylesProps;
+  styles?: TextareaStyles;
   onChange?: (
     data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -26,9 +26,9 @@ interface BaseTextareaProps
   id?: string;
 }
 
-export type TextareaActionsProps = FieldLaneActionsProps;
+export type Textareaaction = FieldLaneAction;
 
-export interface TextareaStylesProps {
+export interface TextareaStyles {
   self?: CSSProp;
 }
 
@@ -67,7 +67,7 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
 export interface TextareaProps
   extends Omit<BaseTextareaProps, "styles">,
     Omit<FieldLaneProps, "styles"> {
-  styles?: TextareaStylesProps & FieldLaneStylesProps;
+  styles?: TextareaStyles & FieldLaneStyles;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
