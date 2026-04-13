@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { DrawerTab, DrawerTabContentProps } from "./drawer-tab";
+import { DrawerTab, DrawerTabTab } from "./drawer-tab";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import { RiListCheck, RiNodeTree } from "@remixicon/react";
@@ -147,7 +147,7 @@ export const Default: Story = {
       );
     };
 
-    const tabs: DrawerTabContentProps[] = [
+    const tabs: DrawerTabTab[] = [
       {
         id: "1",
         title: "File Attributes",
@@ -218,7 +218,7 @@ export const FixedRight: Story = {
         </div>
       );
     };
-    const tabs: DrawerTabContentProps[] = [
+    const tabs: DrawerTabTab[] = [
       {
         id: "1",
         title: "File Attributes",

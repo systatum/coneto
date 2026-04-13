@@ -32,7 +32,7 @@ export interface TextboxStyles {
   self?: CSSProp;
 }
 
-export type TextboxActions = FieldLaneAction;
+export type TextboxAction = FieldLaneAction;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {

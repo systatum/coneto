@@ -133,7 +133,7 @@ const meta: Meta<typeof Textbox> = {
         "Array of action buttons displayed inside the input. Each action can have icon, tooltip, click handler, and disabled state.",
       table: {
         type: {
-          summary: "Textboxaction[]",
+          summary: "FieldLaneAction[]",
           detail: `{
   title?: string;
   icon?: FigureProps;

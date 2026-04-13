@@ -16,7 +16,7 @@ import { CrumbThemeConfig } from "./../theme";
 export interface CrumbProps {
   children?: ReactNode;
   maxShown?: number;
-  iconSeparator?: CrumbIconSeparator;
+  iconSeparator?: FigureProps["image"];
   fontSize?: number;
   textColor?: string;
   hoverColor?: string;
@@ -24,8 +24,6 @@ export interface CrumbProps {
   arrowColor?: string;
   styles?: CrumbStyles;
 }
-
-export type CrumbIconSeparator = FigureProps["image"];
 
 export interface CrumbStyles {
   self?: CSSProp;

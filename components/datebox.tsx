@@ -33,10 +33,8 @@ type BaseDateboxProps = BaseCalendarProps & {
   helper?: string;
   id?: string;
   isLoading?: boolean;
-  labels?: DateboxLabels;
+  labels?: SelectboxLabels;
 };
-
-export interface DateboxLabels extends SelectboxLabels {}
 
 export type DateboxStyles = SelectboxStyles;
 

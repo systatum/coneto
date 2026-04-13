@@ -52,11 +52,9 @@ export interface WindowCellStyles {
   self?: CSSProp;
 }
 
-export type WindowActionIcon = FigureProps;
-
 export interface WindowAction {
   onClick?: () => void;
-  icon?: WindowActionIcon;
+  icon?: FigureProps;
   styles?: WindowActionStyles;
   hidden?: boolean;
 }
