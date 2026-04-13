@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  LoadingSkeleton,
-  LoadingSkeletonOptionProps,
-} from "./loading-skeleton";
+import { LoadingSkeleton, LoadingSkeletonOption } from "./loading-skeleton";
 import { css } from "styled-components";
 import { Grid } from "./grid";
 import { useTheme } from "./../theme/provider";
@@ -115,7 +112,7 @@ export const Card: Story = {
     const { currentTheme } = useTheme();
     const loadingSkeletonTheme = currentTheme.loadingSkeleton;
 
-    const CARD_SAMPLE: LoadingSkeletonOptionProps[] = [
+    const CARD_SAMPLE: LoadingSkeletonOption[] = [
       {
         flashDirection: "left-to-right",
         flashRate: "normal",

@@ -9,15 +9,27 @@ import {
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
 
-type FlashDirection =
-  | "left-to-right"
-  | "right-to-left"
-  | "top-to-bottom"
-  | "bottom-to-top";
+export const FlashDirection = {
+  LeftToRight: "left-to-right",
+  RightToLeft: "right-to-left",
+  TopToBottom: "top-to-bottom",
+  BottomToTop: "bottom-to-top",
+} as const;
 
-type FlashRate = "slow" | "normal" | "fast" | number;
+export type FlashDirection =
+  (typeof FlashDirection)[keyof typeof FlashDirection];
 
-export interface LoadingSkeletonOptionProps {
+export const FlashRate = {
+  Slow: "slow",
+  Normal: "normal",
+  Fast: "fast",
+} as const;
+
+export type FlashRatePreset = (typeof FlashRate)[keyof typeof FlashRate];
+
+export type FlashRate = FlashRatePreset | number;
+
+export interface LoadingSkeletonOption {
   flashDirection?: FlashDirection;
   flashRate?: FlashRate;
   baseColor?: string;
@@ -36,7 +48,7 @@ export interface LoadingSkeletonStyles {
 
 export interface LoadingSkeletonProps
   extends LoadingSkeletonBaseProps,
-    LoadingSkeletonOptionProps {
+    LoadingSkeletonOption {
   height?: number | string;
   width?: number | string;
 }
@@ -67,7 +79,7 @@ function LoadingSkeleton({
     >
       {childArray.map((child, index) => {
         const componentChild = child as ReactElement<
-          LoadingSkeletonItemProps & LoadingSkeletonOptionProps
+          LoadingSkeletonItemProps & LoadingSkeletonOption
         >;
 
         const isItem = componentChild.type === LoadingSkeleton.Item;
@@ -98,7 +110,7 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 
 export interface LoadingSkeletonItemProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
-    LoadingSkeletonOptionProps {
+    LoadingSkeletonOption {
   styles?: LoadingSkeletonStyles;
   height?: number | string;
   width?: number | string;
