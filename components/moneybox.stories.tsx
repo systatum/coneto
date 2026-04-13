@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import { Moneybox } from "./moneybox";
 
 const meta: Meta<typeof Moneybox> = {
@@ -76,7 +76,7 @@ optional currency dropdown.
         "Available currencies when `editableCurrency` is enabled. Each item: `{ id, name, symbol }`.",
       table: {
         type: {
-          summary: "CurrencyOptionProps[]",
+          summary: "MoneyboxCurrencyOption[]",
           detail: `{ id: string; name: string; symbol: string }[]`,
         },
       },
@@ -230,7 +230,7 @@ export const WithDropdown: Story = {
       { text: "DEC", value: "12" },
     ];
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",
