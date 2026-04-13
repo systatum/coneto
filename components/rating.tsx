@@ -15,7 +15,7 @@ export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
 
 interface BaseRatingProps {
   rating?: string;
-  onChange?: (rating: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   withLabel?: boolean;
   size?: RatingSize;
