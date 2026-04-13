@@ -2,7 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, InputHTMLAttributes } from "react";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RadioThemeConfig } from "theme";
 
@@ -15,7 +15,7 @@ interface BaseRadioProps
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   highlightOnChecked?: boolean;
-  styles?: BaseRadioStylesProps;
+  styles?: BaseRadioStyles;
   showError?: boolean;
   errorMessage?: string;
   mode?: "radio" | "button";
@@ -25,7 +25,7 @@ interface BaseRadioProps
 
 export type RadioIconProps = FigureProps;
 
-interface BaseRadioStylesProps {
+interface BaseRadioStyles {
   descriptionStyle?: CSSProp;
   self?: CSSProp;
   titleStyle?: CSSProp;
@@ -34,7 +34,7 @@ interface BaseRadioStylesProps {
   textWrapperStyle?: CSSProp;
 }
 
-export interface RadioOptionProps {
+export interface RadioOption {
   value?: string;
   label?: string;
   description?: string;
@@ -127,12 +127,12 @@ function BaseRadio({
   );
 }
 
-export type RadioStylesProps = BaseRadioStylesProps & FieldLaneStylesProps;
+export type RadioStyles = BaseRadioStyles & FieldLaneStyles;
 
 export interface RadioProps
   extends Omit<BaseRadioProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: RadioStylesProps;
+  styles?: RadioStyles;
 }
 
 function Radio({
