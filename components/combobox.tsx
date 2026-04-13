@@ -14,7 +14,7 @@ import {
   DrawerProps,
   SelectboxOption,
   Selectbox,
-  SelectboxLabelsProps,
+  SelectboxLabels,
   SelectboxSelectedOptions,
   SelectboxStyles,
 } from "./selectbox";
@@ -49,19 +49,27 @@ interface BaseComboboxProps {
   controlled?: boolean;
 }
 
+export const ComboboxGroupInitialState = {
+  Opened: "opened",
+  Closed: "closed",
+} as const;
+
+export type ComboboxGroupInitialState =
+  (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
+
 export interface ComboboxGroupedOption {
   category?: string;
   options?: ComboboxSingleOption[];
   collapsible?: boolean;
   hidden?: boolean;
-  initialState?: "closed" | "opened";
+  initialState?: ComboboxGroupInitialState;
 }
 
 export type ComboboxSingleOption = SelectboxOption;
 
 export type ComboboxOption = ComboboxSingleOption | ComboboxGroupedOption;
 
-export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
+export interface ComboboxLabelsProps extends SelectboxLabels {}
 
 export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   containerStyle?: CSSProp;
