@@ -15,14 +15,14 @@ import {
   RiRefreshLine,
   RiAddBoxLine,
 } from "@remixicon/react";
-import { Toolbar, ToolbarSubMenuProps } from "./toolbar";
+import { Toolbar, ToolbarSubMenuList } from "./toolbar";
 import { Searchbox } from "./searchbox";
 import React, { ChangeEvent, useMemo, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { Button } from "./button";
-import { List, ListGroupContentProps, ListItemProps } from "./list";
+import { List, ListGroupContent, ListItemProps } from "./list";
 import { css } from "styled-components";
-import { ColumnTableProps, SubMenuListTableProps, Table } from "./table";
+import { TableColumn, TableSubMenuList, Table } from "./table";
 import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
 import { useTheme } from "./../theme/provider";
@@ -165,7 +165,7 @@ export const Default: Story = {
     padding: "sm",
   },
   render: () => {
-    const SUB_MENU_LIST: ToolbarSubMenuProps[] = [
+    const SUB_MENU_LIST: ToolbarSubMenuList[] = [
       {
         caption: "Report Phishing",
         icon: { image: RiSpam2Line, color: "blue" },
@@ -443,7 +443,7 @@ export const WithHeaderAndFooter: Story = {
   render: () => {
     const { mode } = useTheme();
 
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "breakfast",
         title: "Breakfast",
@@ -799,7 +799,7 @@ export const WithFullWidthContent: Story = {
       subtitle: value.subtitle,
     });
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -920,7 +920,7 @@ export const WithFullWidthContent: Story = {
 
     const TIP_MENU_ACTION = (
       columnCaption: DepartmentKeys
-    ): SubMenuListTableProps[] => {
+    ): TableSubMenuList[] => {
       return [
         {
           caption: "Sort Ascending",
@@ -946,7 +946,7 @@ export const WithFullWidthContent: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -1093,7 +1093,7 @@ export const Toggleable: Story = {
       originalData,
       getRowId,
     }: {
-      columns: ColumnTableProps[];
+      columns: TableColumn[];
       rows: T[];
       setRows: React.Dispatch<React.SetStateAction<T[]>>;
       originalData: T[];
@@ -1110,7 +1110,7 @@ export const Toggleable: Story = {
         setRows(sorted);
       };
 
-      const tipMenu = (column: keyof T): SubMenuListTableProps[] => [
+      const tipMenu = (column: keyof T): TableSubMenuList[] => [
         {
           caption: "Sort Ascending",
           icon: { image: RiArrowUpSLine, color: "gray" },
@@ -1183,7 +1183,7 @@ export const Toggleable: Story = {
       },
     ];
 
-    const departmentColumns: ColumnTableProps[] = [
+    const departmentColumns: TableColumn[] = [
       { id: "departmentName", caption: "Department", sortable: true },
       { id: "head", caption: "Department Head", sortable: true },
       { id: "employeeCount", caption: "Employees", sortable: true },
@@ -1225,7 +1225,7 @@ export const Toggleable: Story = {
       },
     ];
 
-    const assetColumns: ColumnTableProps[] = [
+    const assetColumns: TableColumn[] = [
       { id: "assetName", caption: "Asset Name", sortable: true },
       { id: "category", caption: "Category", sortable: true },
       { id: "assignedTo", caption: "Assigned To", sortable: true },
