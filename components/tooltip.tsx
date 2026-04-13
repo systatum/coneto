@@ -414,11 +414,7 @@ const TooltipDrawer = styled.div<{
     $content === "literal"
       ? $theme.literalStringTextColor
       : $theme.nodeElementTextColor};
-  border: 1px solid
-    ${({ $theme, $content }) =>
-      $content === "literal"
-        ? $theme.literalStringBorderColor || "transparent"
-        : $theme.nodeElementBorderColor};
+
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;

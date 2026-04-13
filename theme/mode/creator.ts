@@ -1626,7 +1626,6 @@ export function createToolbarTheme(
 
 // tooltip.tsx
 export function createTooltipTheme(
-  body: BodyThemeConfig,
   customTheme: Partial<TooltipThemeConfig> = {}
 ): TooltipThemeConfig {
   const defaultTheme: TooltipThemeConfig = {
@@ -1636,8 +1635,6 @@ export function createTooltipTheme(
     nodeElementTextColor: "#111827",
     boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
     arrowBackgroundColor: "#b9babc",
-    nodeElementBorderColor: "#e5e7eb",
-    literalStringBorderColor: "transparent",
   };
 
   return {

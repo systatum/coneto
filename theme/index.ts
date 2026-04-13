@@ -657,8 +657,6 @@ export interface TooltipThemeConfig {
   literalStringTextColor?: string;
   nodeElementBackgroundColor: string;
   nodeElementTextColor: string;
-  literalStringBorderColor?: string;
-  nodeElementBorderColor?: string;
 }
 
 // timeline.tsx

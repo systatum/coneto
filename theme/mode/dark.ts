@@ -744,14 +744,12 @@ const darkToolbar = createToolbarTheme({
   success: darkButton.success,
 });
 
-const darkTooltip = createTooltipTheme(darkBody, {
+const darkTooltip = createTooltipTheme({
   arrowBackgroundColor: "#3e4143",
   literalStringBackgroundColor: "#292c2e",
   nodeElementBackgroundColor: "#292c2e",
   literalStringTextColor: darkBody?.textColor,
   nodeElementTextColor: darkBody?.textColor,
-  literalStringBorderColor: darkBody?.borderColor,
-  nodeElementBorderColor: darkBody?.borderColor,
 });
 
 const darkTreeList = createTreeListTheme(darkBody, {
