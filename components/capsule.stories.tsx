@@ -199,7 +199,7 @@ Available fields:
 All fields accept \`CSSProp\`.
       `,
       table: {
-        type: { summary: "CapsuleStylesProps" },
+        type: { summary: "CapsuleStyles" },
       },
     },
   },
