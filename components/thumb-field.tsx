@@ -29,7 +29,13 @@ interface BaseThumbFieldStyles {
   triggerStyle?: CSSProp;
 }
 
-export type ThumbFieldValue = "up" | "down" | "blank";
+const ThumbFieldValue = {
+  Up: "up",
+  Down: "down",
+  Blank: "blank",
+} as const;
+
+type ThumbFieldValue = (typeof ThumbFieldValue)[keyof typeof ThumbFieldValue];
 
 function BaseThumbField({
   onChange,
