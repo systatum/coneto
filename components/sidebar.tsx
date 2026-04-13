@@ -8,10 +8,18 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { SidebarThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
+export const SidebarPosition = {
+  Left: "left",
+  Right: "right",
+} as const;
+
+export type SidebarPosition =
+  (typeof SidebarPosition)[keyof typeof SidebarPosition];
+
 export interface SidebarProps {
   children?: ReactNode;
   styles?: SidebarStyles;
-  position?: "left" | "right";
+  position?: SidebarPosition;
 }
 
 export interface SidebarStyles {
