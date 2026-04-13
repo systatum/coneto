@@ -99,11 +99,20 @@ export const FormFieldType = {
 
 export type FormFieldType = (typeof FormFieldType)[keyof typeof FormFieldType];
 
+export const StatefulFormMode = {
+  OnChange: "onChange",
+  OnBlur: "onBlur",
+  OnSubmit: "onSubmit",
+} as const;
+
+export type StatefulFormMode =
+  (typeof StatefulFormMode)[keyof typeof StatefulFormMode];
+
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
   validationSchema?: Z;
-  mode?: "onChange" | "onBlur" | "onSubmit";
+  mode?: StatefulFormMode;
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
   fieldSize?: string;
