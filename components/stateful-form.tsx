@@ -121,6 +121,26 @@ export interface StatefulFormStyles {
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
+export const FormFieldRowJustifyContent = {
+  Center: "center",
+  Start: "flex-start",
+  End: "flex-end",
+  Between: "space-between",
+} as const;
+
+export type FormFieldRowJustifyContent =
+  (typeof FormFieldRowJustifyContent)[keyof typeof FormFieldRowJustifyContent];
+
+export const FormFieldRowAlignItems = {
+  Center: "center",
+  Start: "flex-start",
+  End: "flex-end",
+  Stretch: "stretch",
+} as const;
+
+export type FormFieldRowAlignItems =
+  (typeof FormFieldRowAlignItems)[keyof typeof FormFieldRowAlignItems];
+
 export interface FormFieldProps {
   name: string;
   id?: string;
@@ -140,8 +160,8 @@ export interface FormFieldProps {
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
   disabled?: boolean;
-  rowJustifyContent?: "center" | "start" | "end" | "between";
-  rowAlignItems?: "center" | "start" | "end" | "between";
+  rowJustifyContent?: FormFieldRowJustifyContent;
+  rowAlignItems?: FormFieldRowAlignItems;
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
@@ -450,13 +470,7 @@ function FormFields<T extends FieldValues>({
               ${styles?.rowStyle}
               ${rowJustifiedContent &&
               css`
-                justify-content: ${rowJustifiedContent === "end"
-                  ? "flex-end"
-                  : rowJustifiedContent === "start"
-                    ? "flex-start"
-                    : rowJustifiedContent === "between"
-                      ? "space-between"
-                      : "center"};
+                justify-content: ${rowJustifiedContent};
               `};
 
               ${rowWithFrame &&
@@ -467,13 +481,7 @@ function FormFields<T extends FieldValues>({
 
               ${rowAlignedItem &&
               css`
-                align-items: ${rowAlignedItem === "end"
-                  ? "end"
-                  : rowAlignedItem === "start"
-                    ? "start"
-                    : rowAlignedItem === "between"
-                      ? "space-between"
-                      : "center"};
+                align-items: ${rowAlignedItem};
               `};
 
               ${rowStyleItem}
