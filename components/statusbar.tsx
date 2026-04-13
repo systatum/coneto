@@ -7,16 +7,16 @@ import { StatusbarThemeConfig } from "./../theme";
 
 export interface StatusbarProps {
   styles?: StatusbarStyles;
-  content?: StatusbarContentProps;
+  content?: StatusbarContent;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   transparent?: boolean;
   size?: number;
 }
 
-export interface StatusbarContentProps {
-  left?: StatusbarItemProps[];
-  right?: StatusbarItemProps[];
+export interface StatusbarContent {
+  left?: StatusbarItem[];
+  right?: StatusbarItem[];
 }
 
 export interface StatusbarStyles {
@@ -69,7 +69,7 @@ function Statusbar({
 }
 
 const renderSection = (
-  items?: StatusbarItemProps[],
+  items?: StatusbarItem[],
   style?: CSSProp,
   itemStyle?: CSSProp,
   activeBackgroundColor?: string,
@@ -103,7 +103,7 @@ const renderSection = (
   );
 };
 
-export interface StatusbarItemProps {
+export interface StatusbarItem {
   text?: string;
   icon?: FigureProps;
   render?: ReactNode;
@@ -128,7 +128,7 @@ function StatusbarItem({
   size,
   width,
   transparent,
-}: StatusbarItemProps & {
+}: StatusbarItem & {
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
   size?: number;

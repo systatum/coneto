@@ -74,7 +74,7 @@ const statusbarContent = {
   argTypes: {
     content: {
       description:
-        "Content object for the statusbar. Use \`left\` and \`right\` arrays of StatusbarItemProps to configure items.",
+        "Content object for the statusbar. Use \`left\` and \`right\` arrays of StatusbarItem to configure items.",
       control: false,
     },
     styles: {
