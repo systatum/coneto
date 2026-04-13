@@ -3,10 +3,10 @@ import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
 
-export type ContextMenuActionsProps = TipMenuItemProps;
+export type ContextMenuAction = TipMenuItemProps;
 
 export interface ContextMenuProps {
-  actions: ContextMenuActionsProps[];
+  actions: ContextMenuAction[];
   onOpen?: (prop: boolean) => void;
   focusBackgroundColor?: string;
   activeBackgroundColor?: string;
@@ -14,10 +14,10 @@ export interface ContextMenuProps {
   maxActionsBeforeCollapsing?: number;
   iconSize?: number;
   open?: boolean;
-  styles?: ContextMenuStylesProps;
+  styles?: ContextMenuStyles;
 }
 
-export interface ContextMenuStylesProps {
+export interface ContextMenuStyles {
   containerStyle?: CSSProp;
   self?: CSSProp;
   dropdownStyle?: CSSProp;
