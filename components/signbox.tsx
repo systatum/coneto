@@ -1,7 +1,7 @@
 import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SignboxThemeConfig } from "./../theme";
@@ -18,12 +18,12 @@ interface BaseSignboxProps {
   errorMessage?: string;
   height?: string;
   width?: string;
-  styles?: SignboxStylesProps;
+  styles?: SignboxStyles;
   helper?: string;
   id?: string;
 }
 
-export interface SignboxStylesProps {
+export interface SignboxStyles {
   self?: CSSProp;
 }
 
@@ -278,7 +278,7 @@ function BaseSignbox({
 export interface SignboxProps
   extends Omit<BaseSignboxProps, "styles" | "children">,
     Omit<FieldLaneProps, "styles" | "type" | "children"> {
-  styles?: SignboxStylesProps & FieldLaneStylesProps;
+  styles?: SignboxStyles & FieldLaneStyles;
 }
 
 function Signbox({
