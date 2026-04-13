@@ -1,4 +1,4 @@
-import { MessageboxVariantState } from "./../components/messagebox";
+import { MessageboxVariant } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
@@ -378,7 +378,7 @@ export interface MessageboxVariantTheme
 }
 
 export type MessageboxThemeConfig = {
-  [K in MessageboxVariantState]: MessageboxVariantTheme;
+  [K in MessageboxVariant]: MessageboxVariantTheme;
 };
 
 // moneybox.tsx
