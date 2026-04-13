@@ -33,35 +33,35 @@ export type DocumentSource = (builder: {
 export interface DocumentViewerProps {
   source?: DocumentSource;
   onRegionSelected?: (region: BoundingBoxState) => void;
-  boundingBoxes?: BoundingBoxesProps[];
+  boundingBoxes?: BoundingBoxes[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   libPdfJsWorkerSrc?: string;
-  styles?: DocumentViewerStylesProps;
+  styles?: DocumentViewerStyles;
   selectable?: boolean;
-  labels?: DocumentViewerLabelProps;
+  labels?: DocumentViewerLabel;
   title?: string;
 }
 
-export interface DocumentViewerLabelProps {
+export interface DocumentViewerLabel {
   zoomPlaceholder?: string;
   totalPages?: (props: { currentPage?: number; totalPages?: number }) => string;
 }
 
-export interface DocumentViewerStylesProps {
+export interface DocumentViewerStyles {
   containerStyle?: CSSProp;
   zoomStyle?: CSSProp;
   selectionStyle?: CSSProp;
   boxStyle?: CSSProp;
 }
 
-export interface BoundingBoxesProps {
+export interface BoundingBoxes {
   page?: number;
   x: number;
   y: number;
   width: number;
   height: number;
   contentOnHover?: React.ReactNode;
-  boxStyle?: BoxStyleProps;
+  boxStyle?: BoxStyle;
 }
 
 export interface BoundingBoxState {
@@ -82,7 +82,7 @@ export interface DocumentViewerRef {
    */
   repositionPopUp: (data: HTMLDivElement) => void;
 }
-interface BoxStyleProps {
+interface BoxStyle {
   borderColor?: string;
   backgroundColor?: string;
 }

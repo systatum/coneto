@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
-  BoundingBoxesProps,
+  BoundingBoxes,
   BoundingBoxState,
   DocumentViewerRef,
   DocumentViewer,
@@ -12,7 +12,7 @@ import { Button } from "./button";
 import { Textbox } from "./textbox";
 import styled, { css } from "styled-components";
 import { Window } from "./window";
-import { ColumnTableProps, Table } from "./table";
+import { TableColumn, Table } from "./table";
 import { createPortal } from "react-dom";
 import { urlToBase64 } from "./../lib/base64";
 
@@ -100,7 +100,7 @@ DocumentViewer is a powerful component for displaying documents such as PDFs, im
         "List of bounding boxes displayed on the document with optional hover content.",
       control: false,
       table: {
-        type: { summary: "BoundingBoxesProps[]" },
+        type: { summary: "BoundingBoxes[]" },
         defaultValue: { summary: "[]" },
       },
     },
@@ -153,7 +153,7 @@ Example:
         "Custom styling overrides for container, zoom combobox, and selection box.",
       control: false,
       table: {
-        type: { summary: "DocumentViewerStylesProps" },
+        type: { summary: "DocumentViewerStyles" },
       },
     },
   },
@@ -168,7 +168,7 @@ export const PDF: Story = {
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
       {
         page: 1,
         x: 0.1319796954314721,
@@ -225,7 +225,7 @@ export const PDF: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxesProps = {
+        const box: BoundingBoxes = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -260,7 +260,7 @@ export const PDF: Story = {
       };
     }, [popupVisibility]);
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "page",
         caption: "Page",
@@ -416,7 +416,7 @@ export const PNG: Story = {
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -473,7 +473,7 @@ export const PNG: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxesProps = {
+        const box: BoundingBoxes = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -607,7 +607,7 @@ export const WithFile: Story = {
     }, []);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -664,7 +664,7 @@ export const WithFile: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxesProps = {
+        const box: BoundingBoxes = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -796,7 +796,7 @@ export const Base64: Story = {
     }, []);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxesProps[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -853,7 +853,7 @@ export const Base64: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxesProps = {
+        const box: BoundingBoxes = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
