@@ -793,3 +793,5 @@ export interface AppTheme {
   treelist: TreeListThemeConfig;
   window: WindowThemeConfig;
 }
+
+export * from "./provider";
