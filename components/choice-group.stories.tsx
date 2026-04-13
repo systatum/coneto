@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { ChoiceGroup } from "./choice-group";
 import { ChangeEvent, ComponentProps, useState } from "react";
-import { Radio, RadioOptionProps } from "./radio";
+import { Radio, RadioOption } from "./radio";
 import { Checkbox } from "./checkbox";
 import { useArgs } from "@storybook/preview-api";
 import {
@@ -102,7 +102,7 @@ export const WithRadio: StoryRadio = {
   },
 
   render: (args) => {
-    const RADIO_OPTIONS: RadioOptionProps[] = [
+    const RADIO_OPTIONS: RadioOption[] = [
       {
         value: "comments",
         label: "Comments",
@@ -167,7 +167,7 @@ export const WithRadioAndIcon: StoryRadio = {
   },
 
   render: (args) => {
-    const RADIO_OPTIONS: RadioOptionProps[] = [
+    const RADIO_OPTIONS: RadioOption[] = [
       {
         value: "comments",
         label: "Comments",
@@ -240,7 +240,7 @@ export const WithRadioButton: StoryRadio = {
     const GROUP_B = "radio_group_b";
     const GROUP_C = "radio_group_c";
 
-    const RADIO_OPTIONS_WITH_ICON: RadioOptionProps[] = [
+    const RADIO_OPTIONS_WITH_ICON: RadioOption[] = [
       {
         value: "text",
         label: "Text",
@@ -268,7 +268,7 @@ export const WithRadioButton: StoryRadio = {
       },
     ];
 
-    const RADIO_OPTIONS_WITH_IMAGE: RadioOptionProps[] = [
+    const RADIO_OPTIONS_WITH_IMAGE: RadioOption[] = [
       {
         value: "text",
         label: "Text",
@@ -401,13 +401,13 @@ export const WithCheckbox: StoryCheckbox = {
     valueSelected: [],
   },
   render: () => {
-    interface CheckboxOptionProps {
+    interface CheckboxOption {
       value: string;
       label: string;
       description: string;
     }
 
-    const CHECKBOX_OPTIONS: CheckboxOptionProps[] = [
+    const CHECKBOX_OPTIONS: CheckboxOption[] = [
       {
         value: "email",
         label: "Email",
