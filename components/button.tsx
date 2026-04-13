@@ -1,7 +1,7 @@
 import * as React from "react";
 import { LoadingSpinner } from "./loading-spinner";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
-import { TipMenu, TipMenuItemProps, TipMenuItemVariantType } from "./tip-menu";
+import { TipMenu, TipMenuItemProps, TipMenuVariant } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import {
   autoUpdate,
@@ -22,26 +22,59 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { TipMenuContainerThemeConfig } from "./../theme";
 
+export const ButtonVariant = {
+  Link: "link",
+  Default: "default",
+  Primary: "primary",
+  Danger: "danger",
+  Secondary: "secondary",
+  Ghost: "ghost",
+  Transparent: "transparent",
+  Success: "success",
+  OutlineDefault: "outline-default",
+  OutlineSuccess: "outline-success",
+  OutlinePrimary: "outline-primary",
+  OutlineDanger: "outline-danger",
+} as const;
+
+export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
+
+export const ButtonSize = {
+  Icon: "icon",
+  Xs: "xs",
+  Sm: "sm",
+  Md: "md",
+  Lg: "lg",
+} as const;
+
+export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
+
 export type ButtonVariants = {
-  variant?:
-    | "link"
-    | "default"
-    | "primary"
-    | "danger"
-    | "secondary"
-    | "ghost"
-    | "transparent"
-    | "success"
-    | "outline-default"
-    | "outline-success"
-    | "outline-primary"
-    | "outline-danger";
-  size?: "icon" | "xs" | "md" | "sm" | "lg";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
 };
 
-export interface SubMenuButtonProps {
+export const ButtonShowSubMenuOn = {
+  Caret: "caret",
+  Self: "self",
+} as const;
+
+export type ButtonShowSubMenuOn =
+  (typeof ButtonShowSubMenuOn)[keyof typeof ButtonShowSubMenuOn];
+
+export const ButtonDisplayLabel = {
+  Flex: "flex",
+  Ellipsis: "ellipsis",
+} as const;
+
+export type ButtonDisplayLabel =
+  (typeof ButtonDisplayLabel)[keyof typeof ButtonDisplayLabel];
+
+export type ButtonTipMenu = TipMenuItemProps;
+
+export interface ButtonSubMenu {
   list?: (
-    subMenuList: TipMenuItemProps[],
+    subMenuList: ButtonTipMenu[],
     withFilter?: { withFilter?: boolean }
   ) => React.ReactNode;
   show?: (
@@ -51,28 +84,34 @@ export interface SubMenuButtonProps {
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
+export type ButtonTipMenuSize = TipMenuVariant;
+
 export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
   ButtonVariants & {
     isLoading?: boolean;
-    subMenu?: (props: SubMenuButtonProps) => React.ReactNode;
-    openedIcon?: FigureProps["image"];
-    closedIcon?: FigureProps["image"];
-    showSubMenuOn?: "caret" | "self";
-    tipMenuSize?: TipMenuItemVariantType;
+    subMenu?: (props: ButtonSubMenu) => React.ReactNode;
+    openedIcon?: ButtonIcon["image"];
+    closedIcon?: ButtonIcon["image"];
+    tipMenuSize?: ButtonTipMenuSize;
     safeAreaAriaLabels?: string[];
-    dialogPlacement?: DialogPlacement;
+    dialogPlacement?: ButtonDialogPlacement;
     onOpen?: (prop: boolean) => void;
     open?: boolean;
-    styles?: ButtonStylesProps;
+    styles?: ButtonStyles;
     anchorRef?: React.RefObject<HTMLElement>;
-    icon?: FigureProps;
+    icon?: ButtonIcon;
     pressed?: boolean;
     activeBackgroundColor?: string;
     hoverBackgroundColor?: string;
-    displayLabel?: "flex" | "ellipsis";
+    showSubMenuOn?: ButtonShowSubMenuOn;
+    displayLabel?: ButtonDisplayLabel;
   };
 
-export interface ButtonStylesProps {
+export type ButtonIcon = FigureProps;
+
+export type ButtonDialogPlacement = DialogPlacement;
+
+export interface ButtonStyles {
   dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
   self?: CSSProp;
   toggleStyle?: CSSProp;
@@ -387,7 +426,7 @@ const ButtonLabel = styled.span<{
   flex: 1;
 `;
 
-export interface ButtonTipMenuContainerStylesProps {
+export interface ButtonTipMenuContainerStyles {
   self?: CSSProp;
 }
 
@@ -396,7 +435,7 @@ function ButtonTipMenuContainer({
   children,
   ...props
 }: Omit<React.ComponentProps<"div">, "style"> & {
-  styles?: ButtonTipMenuContainerStylesProps;
+  styles?: ButtonTipMenuContainerStyles;
   children?: React.ReactNode;
 }) {
   const { currentTheme } = useTheme();
