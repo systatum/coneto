@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
@@ -21,7 +21,7 @@ interface BaseTimeboxProps
   > {
   withSeconds?: boolean;
   editable?: boolean;
-  styles?: TimeboxStylesProps;
+  styles?: TimeboxStyles;
   showError?: boolean;
   value?: string;
   name?: string;
@@ -29,7 +29,7 @@ interface BaseTimeboxProps
   placeholder?: TimeboxPlaceholderProps;
 }
 
-export interface TimeboxStylesProps {
+export interface TimeboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
 }
@@ -379,7 +379,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 export interface TimeboxProps
   extends Omit<BaseTimeboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
-  styles?: TimeboxStylesProps & FieldLaneStylesProps;
+  styles?: TimeboxStyles & FieldLaneStyles;
 }
 
 const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
