@@ -1,10 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import {
-  ColumnTableProps,
-  SubMenuListTableProps,
-  Table,
-  TableActionsProps,
-} from "./table";
+import { TableColumn, TableSubMenuList, Table, TableAction } from "./table";
 import { useEffect, useMemo, useState } from "react";
 import {
   RiArrowDownSLine,
@@ -21,7 +16,7 @@ import {
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
 import { css } from "styled-components";
-import { CapsuleContentProps } from "./capsule";
+import { CapsuleTab } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
 import { generateSentence } from "./../lib/text";
@@ -290,7 +285,7 @@ Each column includes:
     `,
       control: false,
       table: {
-        type: { summary: "ColumnTableProps[]" },
+        type: { summary: "TableColumn[]" },
       },
     },
 
@@ -304,7 +299,7 @@ Header-level actions displayed when rows are selected.
     `,
       control: false,
       table: {
-        type: { summary: "TableActionsProps[]" },
+        type: { summary: "TableAction[]" },
       },
     },
 
@@ -346,7 +341,7 @@ Used to define rows and grouping structure.
 Generates sorting menu for each column.
 
 \`\`\`ts
-(columnId: string) => SubMenuListTableProps[]
+(columnId: string) => TableSubMenuList[]
 \`\`\`
 
 - Used when \`sortable: true\` in column
@@ -355,7 +350,7 @@ Generates sorting menu for each column.
       control: false,
       table: {
         type: {
-          summary: "(columnId: string) => SubMenuListTableProps[]",
+          summary: "(columnId: string) => TableSubMenuList[]",
         },
       },
     },
@@ -463,7 +458,7 @@ Used to override default text (i18n, UX customization)
     `,
       control: false,
       table: {
-        type: { summary: "TableLabelsProps | null" },
+        type: { summary: "TableLabels | null" },
       },
     },
 
@@ -476,7 +471,7 @@ Summary row displayed at the bottom.
     `,
       control: false,
       table: {
-        type: { summary: "SummaryRowProps[]" },
+        type: { summary: "TableSummaryRow[]" },
       },
     },
 
@@ -496,7 +491,7 @@ All accept \`CSSProp\` (styled-components).
     `,
       control: false,
       table: {
-        type: { summary: "TableStylesProps" },
+        type: { summary: "TableStyles" },
       },
     },
   },
@@ -521,7 +516,7 @@ export const Default: Story = {
       );
     });
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -551,7 +546,7 @@ export const Default: Story = {
 
 export const Appendable: Story = {
   render: () => {
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "from",
         caption: "From",
@@ -684,7 +679,7 @@ export const Appendable: Story = {
 
     const TIP_MENU_ACTION = (
       columnCaption: "from" | "content"
-    ): SubMenuListTableProps[] => {
+    ): TableSubMenuList[] => {
       return [
         {
           caption: "Sort Ascending",
@@ -719,7 +714,7 @@ export const Appendable: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -797,7 +792,7 @@ export const Appendable: Story = {
 
 export const WithOneAction: Story = {
   render: () => {
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "from",
         caption: "From",
@@ -930,7 +925,7 @@ export const WithOneAction: Story = {
 
     const TIP_MENU_ACTION = (
       columnCaption: "from" | "content"
-    ): SubMenuListTableProps[] => {
+    ): TableSubMenuList[] => {
       return [
         {
           caption: "Sort Ascending",
@@ -965,7 +960,7 @@ export const WithOneAction: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Delete",
@@ -1114,7 +1109,7 @@ export const SortableWithPagination: Story = {
       setPagedRows(sorted);
     };
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -1127,9 +1122,7 @@ export const SortableWithPagination: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string
-    ): SubMenuListTableProps[] => {
+    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
       const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
 
       return [
@@ -1236,7 +1229,7 @@ export const WithLoading: Story = {
         />
       );
     });
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -1270,7 +1263,7 @@ export const WithEmptySlate: Story = {
   render: () => {
     const emptyRows = [];
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -1403,7 +1396,7 @@ export const WithSummary: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "itemId",
         caption: "Item ID",
@@ -1460,9 +1453,7 @@ export const WithSummary: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string
-    ): SubMenuListTableProps[] => {
+    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
       const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
@@ -1499,7 +1490,7 @@ export const WithSummary: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -1779,7 +1770,7 @@ export const WithRowGroup: Story = {
     });
     const [isFocus, setIsFocus] = useState(false);
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "title",
         caption: "Title",
@@ -1832,7 +1823,7 @@ export const WithRowGroup: Story = {
       setRows(sortedRows);
     };
 
-    const VIEW_MODES: CapsuleContentProps[] = [
+    const VIEW_MODES: CapsuleTab[] = [
       {
         id: "taken",
         title: "Taken",
@@ -1843,7 +1834,7 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const VIEW_MODES_WITH_ICON: CapsuleContentProps[] = [
+    const VIEW_MODES_WITH_ICON: CapsuleTab[] = [
       {
         id: "frontend",
         icon: {
@@ -1858,7 +1849,7 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const COPY_ACTIONS: SubMenuListTableProps[] = [
+    const COPY_ACTIONS: TableSubMenuList[] = [
       {
         caption: "Copy to parent",
         icon: {
@@ -1882,7 +1873,7 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const TOP_ACTIONS: TableActionsProps[] = [
+    const TOP_ACTIONS: TableAction[] = [
       {
         type: "capsule",
         capsuleProps: {
@@ -1943,9 +1934,7 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string
-    ): SubMenuListTableProps[] => {
+    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
       const column =
         columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
@@ -1983,7 +1972,7 @@ export const WithRowGroup: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -2258,7 +2247,7 @@ export const WithRowAppendix: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "itemId",
         caption: "Item ID",
@@ -2315,9 +2304,7 @@ export const WithRowAppendix: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string
-    ): SubMenuListTableProps[] => {
+    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
       const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
@@ -2354,7 +2341,7 @@ export const WithRowAppendix: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -2608,7 +2595,7 @@ export const Draggable: Story = {
 
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
-    const columnsDefault = (sortable?: boolean): ColumnTableProps[] => {
+    const columnsDefault = (sortable?: boolean): TableColumn[] => {
       let sortableValue = sortable;
       return [
         {
@@ -2708,7 +2695,7 @@ export const Draggable: Story = {
 
     const [selected, setSelected] = useState([]);
 
-    const columnsGroup: ColumnTableProps[] = [
+    const columnsGroup: TableColumn[] = [
       {
         id: "title",
         caption: "Title",
@@ -2829,7 +2816,7 @@ export const Draggable: Story = {
       }
     };
 
-    const COPY_ACTIONS: SubMenuListTableProps[] = [
+    const COPY_ACTIONS: TableSubMenuList[] = [
       {
         caption: "Copy to parent",
         icon: {
@@ -2853,7 +2840,7 @@ export const Draggable: Story = {
       },
     ];
 
-    const TOP_ACTIONS: TableActionsProps[] = [
+    const TOP_ACTIONS: TableAction[] = [
       {
         caption: "Delete",
         disabled: selected.length === 0,
@@ -2880,7 +2867,7 @@ export const Draggable: Story = {
       columnCaption: string,
       rowNumber?: number,
       category?: TableCategoryState
-    ): SubMenuListTableProps[] => {
+    ): TableSubMenuList[] => {
       const column =
         columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
 
@@ -2933,7 +2920,7 @@ export const Draggable: Story = {
       ];
     };
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",

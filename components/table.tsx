@@ -35,9 +35,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 
-export type RowData = (string | ReactNode)[];
-
-export interface ColumnTableProps {
+export interface TableColumn {
   caption: string;
   sortable?: boolean;
   styles?: { self?: CSSProp };
@@ -45,7 +43,7 @@ export interface ColumnTableProps {
   id: string;
 }
 
-export interface TableActionsProps extends ActionButtonProps {
+export interface TableAction extends ActionButtonProps {
   type?: "button" | "capsule";
   capsuleProps?: CapsuleProps;
 }
@@ -62,12 +60,12 @@ export interface TableProps {
     oldPosition: number;
     newPosition: number;
   }) => void;
-  actions?: TableActionsProps[];
-  columns: ColumnTableProps[];
+  actions?: TableAction[];
+  columns: TableColumn[];
   onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => SubMenuListTableProps[];
+  subMenuList?: (columnCaption: string) => TableSubMenuList[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -75,15 +73,17 @@ export interface TableProps {
   onPreviousPageRequested?: () => void;
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
-  labels?: TableLabelsProps;
-  sumRow?: SummaryRowProps[];
-  styles?: TableStylesProps;
-  searchbox?: SearchboxProps;
+  labels?: TableLabels;
+  sumRow?: TableSummaryRow[];
+  styles?: TableStyles;
+  searchbox?: TableSearchbox;
 }
 
-export type SubMenuListTableProps = TipMenuItemProps;
+type TableSearchbox = SearchboxProps;
 
-export interface TableStylesProps {
+export type TableSubMenuList = TipMenuItemProps;
+
+export interface TableStyles {
   containerStyle?: CSSProp;
   tableHeaderStyle?: CSSProp;
   tableBodyStyle?: CSSProp;
@@ -92,7 +92,7 @@ export interface TableStylesProps {
   totalSelectedItemTextStyle?: CSSProp;
 }
 
-export interface TableLabelsProps {
+export interface TableLabels {
   totalSelectedItemText?: ((count: number) => string) | null;
   pageNumberText?: string | number;
 }
@@ -101,14 +101,14 @@ interface TableAlwaysShowDragIconProp {
   alwaysShowDragIcon?: boolean;
 }
 
-export interface SummaryRowProps {
+export interface TableSummaryRow {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
-  styles?: SummaryRowStylesProps;
+  styles?: SummaryRowStyles;
 }
 
-export interface SummaryRowStylesProps {
+export interface SummaryRowStyles {
   self?: CSSProp;
 }
 
@@ -135,7 +135,7 @@ const DnDContext = createContext<{
   setDragItem: () => {},
 });
 
-const TableColumnContext = createContext<ColumnTableProps[]>([]);
+const TableColumnContext = createContext<TableColumn[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
 
 function Table({
@@ -1019,13 +1019,17 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
     `}
 `;
 
+type TableRowAction = TipMenuItemProps;
+
+export type TableRowContent = (string | ReactNode)[];
+
 export interface TableRowProps {
-  content?: RowData;
+  content?: TableRowContent;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TipMenuItemProps[];
+  actions?: (columnCaption: string) => TableRowAction[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
@@ -1033,10 +1037,10 @@ export interface TableRowProps {
     close?: () => void;
   }) => void;
   groupId?: string;
-  styles?: TableRowStylesProps;
+  styles?: TableRowStyles;
 }
 
-export interface TableRowStylesProps {
+export interface TableRowStyles {
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   rowStyle?: CSSProp;
@@ -1283,7 +1287,7 @@ function TableRow({
           (() => {
             const listActions = actions(`${rowId}`);
             const actionsWithIcons = listActions
-              ?.filter((action): action is TipMenuItemProps => Boolean(action))
+              ?.filter((action): action is TableRowAction => Boolean(action))
               .map((action) => ({
                 ...action,
                 icon: {
