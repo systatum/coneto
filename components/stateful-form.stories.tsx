@@ -7,12 +7,9 @@ import { BadgeProps } from "./badge";
 import { Button } from "./button";
 import { CapsuleTab } from "./capsule";
 import { Card } from "./card";
-import {
-  OnCompleteFunctionProps,
-  OnFileDroppedFunctionProps,
-} from "./file-drop-box";
+import { OnCompleteFunction, OnFileDroppedFunction } from "./file-drop-box";
 import { Messagebox } from "./messagebox";
-import { CurrencyOption } from "./moneybox";
+import { MoneyboxCurrencyOption } from "./moneybox";
 import { CountryCodeProps } from "./phonebox";
 import { PinboxParts } from "./pinbox";
 import { SelectboxOption } from "./selectbox";
@@ -952,7 +949,7 @@ export const AllCase: Story = {
       },
     ];
 
-    const CURRENCY_OPTIONS: CurrencyOption[] = [
+    const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       { id: "USD", name: "US Dollar", symbol: "$" },
       { id: "EUR", name: "Euro", symbol: "€" },
@@ -1202,7 +1199,7 @@ export const AllCase: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunctionProps) => {
+    }: OnFileDroppedFunction) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -1229,7 +1226,7 @@ export const AllCase: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunctionProps) => {
+    }: OnCompleteFunction) => {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
