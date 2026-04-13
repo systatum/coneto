@@ -7,7 +7,7 @@ import { Fragment, useMemo, ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { Button } from "./button";
 import { Combobox } from "./combobox";
-import { DrawerProps, OptionProps } from "./selectbox";
+import { DrawerProps, SelectboxOption } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import {
   getValidMultipleDate,
@@ -16,37 +16,39 @@ import {
   removeWeekend,
 } from "../lib/date";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { CalendarThemeConfig } from "./../theme";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
-  options?: OptionProps[];
+  options?: CalendarOption[];
   selectedDates?: string[];
   onChange?: (dates: string[]) => void;
-  dayNames?: OptionProps[];
-  monthNames?: OptionProps[];
+  dayNames?: CalendarOption[];
+  monthNames?: CalendarOption[];
   disableWeekend?: boolean;
-  format?: FormatProps;
+  format?: CalendarFormat;
   yearPastReach?: number;
   futurePastReach?: number;
   onClick?: () => void;
   onCalendarPeriodChanged?: (date: Date) => void;
-  styles?: BaseCalendarStylesProps;
+  styles?: BaseCalendarStyles;
   footer?: ReactNode;
   todayButtonCaption?: string;
-  selectabilityMode?: SelectabilityModeState;
+  selectabilityMode?: CalendarSelectabilityMode;
   id?: string;
   name?: string;
 }
 
-export interface BaseCalendarStylesProps {
+export type CalendarOption = SelectboxOption;
+
+export interface BaseCalendarStyles {
   self?: CSSProp;
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
 
-interface CalendarStateProps {
+interface CalendarState {
   open: boolean;
   month: string[];
   year: string[];
@@ -59,9 +61,31 @@ type CustomChangeEvent = {
   };
 };
 
-export type FormatProps = "mm/dd/yyyy" | "yyyy/mm/dd" | "dd/mm/yyyy";
-export type DateBoxOpen = "open" | "month" | "year";
-export type SelectabilityModeState = "single" | "multiple" | "ranged";
+export const CalendarFormat = {
+  MM_DD_YYYY: "mm/dd/yyyy",
+  YYYY_MM_DD: "yyyy/mm/dd",
+  DD_MM_YYYY: "dd/mm/yyyy",
+} as const;
+
+export type CalendarFormat =
+  (typeof CalendarFormat)[keyof typeof CalendarFormat];
+
+const DateBoxOpen = {
+  Open: "open",
+  Month: "month",
+  Year: "year",
+} as const;
+
+type DateBoxOpen = (typeof DateBoxOpen)[keyof typeof DateBoxOpen];
+
+export const CalendarSelectabilityMode = {
+  Single: "single",
+  Multiple: "multiple",
+  Ranged: "ranged",
+} as const;
+
+export type CalendarSelectabilityMode =
+  (typeof CalendarSelectabilityMode)[keyof typeof CalendarSelectabilityMode];
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: "1" },
@@ -166,7 +190,7 @@ function BaseCalendar({
 
   const [currentDate, setCurrentDate] = useState(stateDate);
 
-  const [calendarState, setCalendarState] = useState<CalendarStateProps>({
+  const [calendarState, setCalendarState] = useState<CalendarState>({
     open: false,
     month: [String(stateDate.getMonth() + 1)],
     year: [String(stateDate.getFullYear())],
@@ -949,13 +973,12 @@ function BaseCalendar({
   );
 }
 
-export type CalendarStylesProps = BaseCalendarStylesProps &
-  FieldLaneStylesProps;
+export type CalendarStyles = BaseCalendarStyles & FieldLaneStyles;
 
 export interface CalendarProps
   extends Omit<BaseCalendarProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: CalendarStylesProps;
+  styles?: CalendarStyles;
 }
 
 function Calendar({
@@ -1306,7 +1329,7 @@ const DateCellTodayDot = styled.div<{
         `}
 `;
 
-function formatDate(date: Date, format: FormatProps) {
+function formatDate(date: Date, format: CalendarFormat) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
