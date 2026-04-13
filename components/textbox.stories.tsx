@@ -3,7 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import { Textbox, TextboxProps } from "./textbox";
 
 const meta: Meta<typeof Textbox> = {
@@ -133,7 +133,7 @@ const meta: Meta<typeof Textbox> = {
         "Array of action buttons displayed inside the input. Each action can have icon, tooltip, click handler, and disabled state.",
       table: {
         type: {
-          summary: "TextboxActionsProps[]",
+          summary: "Textboxaction[]",
           detail: `{
   title?: string;
   icon?: FigureProps;
@@ -153,7 +153,7 @@ const meta: Meta<typeof Textbox> = {
         type: {
           summary: "FieldLaneDropdownProps[]",
           detail: `{
-  options?: FieldLaneDropdownsOptionProps[];
+  options?: FieldLaneDropdownsOption[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
@@ -175,7 +175,7 @@ const meta: Meta<typeof Textbox> = {
       description: "Custom styles for the input and container.",
       table: {
         type: {
-          summary: "TextboxStylesProps & FieldLaneStylesProps",
+          summary: "TextboxStyles & FieldLaneStyles",
           detail: `{
   self?: CSSProp;             // Styles applied to the input
   bodyStyle?: CSSProp;
@@ -280,7 +280,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",

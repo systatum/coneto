@@ -9,10 +9,10 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import {
-  FieldLaneActionsProps,
+  FieldLaneAction,
   FieldLane,
   FieldLaneProps,
-  FieldLaneStylesProps,
+  FieldLaneStyles,
 } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
@@ -25,14 +25,14 @@ interface BaseTextboxProps
   > {
   showError?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  styles?: TextboxStylesProps;
+  styles?: TextboxStyles;
 }
 
-export interface TextboxStylesProps {
+export interface TextboxStyles {
   self?: CSSProp;
 }
 
-export type TextareaActions = FieldLaneActionsProps;
+export type TextareaActions = FieldLaneAction;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {
@@ -112,7 +112,7 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
 export interface TextboxProps
   extends Omit<BaseTextboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "id" | "type"> {
-  styles?: TextboxStylesProps & FieldLaneStylesProps;
+  styles?: TextboxStyles & FieldLaneStyles;
 }
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
