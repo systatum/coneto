@@ -17,23 +17,31 @@ export interface MessageboxProps {
   title: string;
   icon?: FigureProps;
   children: ReactNode;
-  actionLinks?: ActionLinkProps[];
+  actionLinks?: MessageActionLinks[];
   closable?: boolean;
   onCloseRequest?: () => void;
-  styles?: MessageboxStylesProps;
+  styles?: MessageboxStyles;
 }
 
-export interface MessageboxStylesProps {
+export interface MessageboxStyles {
   containerStyle?: CSSProp;
   titleStyle?: CSSProp;
   contentWrapperStyle?: CSSProp;
   contentStyle?: CSSProp;
 }
-export interface ActionLinkProps {
+export const MessageActionType = {
+  Button: "button",
+  Link: "link",
+} as const;
+
+export type MessageActionType =
+  (typeof MessageActionType)[keyof typeof MessageActionType];
+
+export interface MessageActionLinks {
   caption: string;
   onClick?: () => void;
   href?: string;
-  type: "button" | "link";
+  type: MessageActionType;
 }
 
 function Messagebox({
