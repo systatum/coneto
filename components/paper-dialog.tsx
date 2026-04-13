@@ -24,10 +24,25 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { PaperDialogThemeConfig } from "./../theme";
 
-export type DialogState = "restored" | "closed" | "minimized";
+export const PaperDialogState = {
+  Restored: "restored",
+  Closed: "closed",
+  Minimized: "minimized",
+} as const;
+
+export type PaperDialogState =
+  (typeof PaperDialogState)[keyof typeof PaperDialogState];
+
+export const PaperDialogPosition = {
+  Left: "left",
+  Right: "right",
+} as const;
+
+export type PaperDialogPosition =
+  (typeof PaperDialogPosition)[keyof typeof PaperDialogPosition];
 
 export interface PaperDialogProps {
-  position?: "left" | "right";
+  position?: PaperDialogPosition;
   children?: ReactNode;
   closable?: boolean;
   width?: string;
@@ -44,7 +59,7 @@ export interface PaperDialogStyles {
 
 export interface PaperDialogTriggerProps {
   children?: ReactNode;
-  setDialogState?: (dialogState: DialogState) => void;
+  setDialogState?: (dialogState: PaperDialogState) => void;
   icon?: FigureProps;
   variant?: ButtonVariants["variant"];
   styles?: PaperDialogTriggerStyles;
@@ -75,7 +90,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
 
-    const [dialogState, setDialogState] = useState<DialogState>("closed");
+    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
     const controls = useAnimation();
     const isLeft = position === "left";
 
@@ -96,7 +111,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
       return () => document.removeEventListener("keydown", handleEscape);
     }, [handleEscape]);
 
-    const handleToggleDrawer = (open: DialogState) => {
+    const handleToggleDrawer = (open: PaperDialogState) => {
       setDialogState(open);
       controls.start({
         x: open === "minimized" ? (isLeft ? "-100%" : "100%") : 0,
@@ -246,7 +261,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 );
 
 const DialogOverlay = styled.div<{
-  $dialogState: DialogState;
+  $dialogState: PaperDialogState;
   $paperDialogStyle?: CSSProp;
 }>`
   position: fixed;
