@@ -3,14 +3,14 @@ import {
   Button,
   ButtonVariants,
   ButtonSubMenu,
-  ButtonShowSubMenuOn,
+  ButtonShowSubMenuPosition,
 } from "./button";
 import { ReactNode } from "react";
 import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 
 export type ActionButtonSubMenu = ButtonSubMenu;
-export type ActionButtonShowSubMenuOn = ButtonShowSubMenuOn;
+export type ActionButtonShowSubMenuPosition = ButtonShowSubMenuPosition;
 
 export interface ActionButtonProps {
   caption?: string;
@@ -19,7 +19,7 @@ export interface ActionButtonProps {
   styles?: ActionButtonStyles;
   subMenu?: (props: ActionButtonSubMenu) => ReactNode;
   disabled?: boolean;
-  showSubMenuOn?: ActionButtonShowSubMenuOn;
+  showSubMenuOn?: ActionButtonShowSubMenuPosition;
   variant?: ButtonVariants["variant"];
   className?: string;
   pressed?: boolean;

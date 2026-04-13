@@ -54,13 +54,13 @@ export type ButtonVariants = {
   size?: ButtonSize;
 };
 
-export const ButtonShowSubMenuOn = {
+export const ButtonShowSubMenuPosition = {
   Caret: "caret",
   Self: "self",
 } as const;
 
-export type ButtonShowSubMenuOn =
-  (typeof ButtonShowSubMenuOn)[keyof typeof ButtonShowSubMenuOn];
+export type ButtonShowSubMenuPosition =
+  (typeof ButtonShowSubMenuPosition)[keyof typeof ButtonShowSubMenuPosition];
 
 export const ButtonDisplayLabel = {
   Flex: "flex",
@@ -103,7 +103,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     pressed?: boolean;
     activeBackgroundColor?: string;
     hoverBackgroundColor?: string;
-    showSubMenuOn?: ButtonShowSubMenuOn;
+    showSubMenuOn?: ButtonShowSubMenuPosition;
     displayLabel?: ButtonDisplayLabel;
   };
 
