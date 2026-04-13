@@ -25,13 +25,13 @@ export type CardShadow = (typeof CardShadow)[keyof typeof CardShadow];
 
 export const CardBorderRadius = {
   None: "none",
-  Xs: "xs",
-  Sm: "sm",
-  Md: "md",
-  Lg: "lg",
-  Xl: "xl",
-  "2Xl": "2xl",
-  "3Xl": "3xl",
+  ExtraSmall: "xs",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
+  ExtraExtraExtraLarge: "3xl",
   Full: "full",
 } as const;
 
@@ -40,19 +40,12 @@ export type CardBorderRadius =
 
 export const CardPadding = {
   None: "none",
-  Sm: "sm",
-  Md: "md",
-  Lg: "lg",
-  Xl: "xl",
-  "2Xl": "2xl",
-  "3Xl": "3xl",
-  4: "4",
-  5: "5",
-  6: "6",
-  7: "7",
-  8: "8",
-  9: "9",
-  10: "10",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
+  ExtraExtraExtraLarge: "3xl",
 } as const;
 
 export type CardPadding = (typeof CardPadding)[keyof typeof CardPadding];

@@ -41,10 +41,10 @@ export type ButtonVariant = (typeof ButtonVariant)[keyof typeof ButtonVariant];
 
 export const ButtonSize = {
   Icon: "icon",
-  Xs: "xs",
-  Sm: "sm",
-  Md: "md",
-  Lg: "lg",
+  ExtraSmall: "xs",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
 } as const;
 
 export type ButtonSize = (typeof ButtonSize)[keyof typeof ButtonSize];
