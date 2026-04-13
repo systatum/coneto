@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import { Pinbox, PinboxState } from "./pinbox";
+import { Pinbox, PinboxParts } from "./pinbox";
 import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Pinbox> = {
@@ -94,7 +94,7 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState("");
 
-    const PARTS_INPUT: PinboxState[] = [
+    const PARTS_INPUT: PinboxParts[] = [
       { type: "static", text: "S" },
       { type: "alphanumeric" },
       { type: "digit" },
@@ -119,7 +119,7 @@ export const Masked: Story = {
   render: () => {
     const [value, setValue] = useState("");
 
-    const PARTS_INPUT: PinboxState[] = [
+    const PARTS_INPUT: PinboxParts[] = [
       { type: "static", text: "S" },
       { type: "alphanumeric" },
       { type: "alphanumeric" },
@@ -145,7 +145,7 @@ export const Disabled: Story = {
   render: () => {
     const [value, setValue] = useState("");
 
-    const PARTS_INPUT: PinboxState[] = [
+    const PARTS_INPUT: PinboxParts[] = [
       { type: "static", text: "S" },
       { type: "alphanumeric" },
       { type: "alphanumeric" },
@@ -172,7 +172,7 @@ export const Error: Story = {
   render: () => {
     const [value, setValue] = useState("");
 
-    const PARTS_INPUT: PinboxState[] = [
+    const PARTS_INPUT: PinboxParts[] = [
       { type: "static", text: "S" },
       { type: "alphanumeric" },
       { type: "alphanumeric" },

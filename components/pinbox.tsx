@@ -6,9 +6,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { PinboxThemeConfig } from "./../theme";
 
@@ -19,20 +19,22 @@ interface BasePinboxProps {
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
-  parts?: PinboxState[];
+  parts?: PinboxParts[];
   name?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur?: () => void;
   value?: string;
   disabled?: boolean;
-  styles?: BasePinboxStylesProps;
   id?: string;
   required?: boolean;
+  styles?: BasePinboxStyles;
 }
 
-interface BasePinboxStylesProps {}
+interface BasePinboxStyles {
+  self?: CSSProp;
+}
 
-export interface PinboxState {
+export interface PinboxParts {
   type?: PinboxTypeState;
   text?: string;
 }
@@ -54,6 +56,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       id,
       onBlur,
       required,
+      styles,
     },
     ref
   ) => {
@@ -405,6 +408,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                 onChange={() => {}}
                 aria-label="pinbox-input"
                 $error={showError}
+                $style={styles?.self}
                 ref={(el: HTMLInputElement) => {
                   inputsRef.current[index] = el;
 
@@ -449,12 +453,12 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
   }
 );
 
-export type PinboxStylesProps = BasePinboxStylesProps & FieldLaneStylesProps;
+export type PinboxStyles = BasePinboxStyles & FieldLaneStyles;
 
 export interface PinboxProps
   extends Omit<BasePinboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: PinboxStylesProps;
+  styles?: PinboxStyles;
 }
 
 const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
@@ -586,6 +590,7 @@ const PinboxInput = styled.input<{
   $isStatic?: boolean;
   $isAnimate?: boolean;
   $theme: PinboxThemeConfig;
+  $style?: CSSProp;
 }>`
   ${({ $fontSize, $isStatic }) =>
     $isStatic
@@ -651,6 +656,8 @@ const PinboxInput = styled.input<{
             cursor: not-allowed;
           }
         `};
+
+  ${({ $style }) => $style}
 `;
 
 const switchInputBox = (type: PinboxTypeState) => {
