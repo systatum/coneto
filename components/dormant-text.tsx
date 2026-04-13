@@ -17,6 +17,14 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DormantTextThemeConfig } from "./../theme";
 
+export const DormantTextAcceptChangeOn = {
+  Enter: "enter",
+  Click: "click",
+  All: "all",
+} as const;
+
+export type DormantTextAcceptChangeOn =
+  (typeof DormantTextAcceptChangeOn)[keyof typeof DormantTextAcceptChangeOn];
 export interface DormantTextProps {
   onActionClick?: () => void;
   icons?: DormantTextIconsProps;
@@ -24,7 +32,7 @@ export interface DormantTextProps {
   children?: ReactNode;
   content?: string | number;
   fullWidth?: boolean;
-  acceptChangeOn?: "enter" | "click" | "all";
+  acceptChangeOn?: DormantTextAcceptChangeOn;
   cancelable?: boolean;
   onActive?: () => void;
   onCancelRequested?: () => void;
