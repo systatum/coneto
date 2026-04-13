@@ -23,11 +23,7 @@ import {
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
-import {
-  Searchbox,
-  SearchboxProps,
-  SearchboxResultMenuProps,
-} from "./searchbox";
+import { Searchbox, SearchboxProps, SearchboxResultMenu } from "./searchbox";
 import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
@@ -43,8 +39,16 @@ export interface TableColumn {
   id: string;
 }
 
+export const TableActionType = {
+  Button: "button",
+  Capsule: "capsule",
+} as const;
+
+export type TableActionType =
+  (typeof TableActionType)[keyof typeof TableActionType];
+
 export interface TableAction extends ActionButtonProps {
-  type?: "button" | "capsule";
+  type?: TableActionType;
   capsuleProps?: CapsuleProps;
 }
 
@@ -97,7 +101,7 @@ export interface TableLabels {
   pageNumberText?: string | number;
 }
 
-interface TableAlwaysShowDragIconProp {
+interface TableAlwaysShowDragIcon {
   alwaysShowDragIcon?: boolean;
 }
 
@@ -112,7 +116,7 @@ export interface SummaryRowStyles {
   self?: CSSProp;
 }
 
-export type TableResultMenuProps = SearchboxResultMenuProps;
+export type TableResultMenuProps = SearchboxResultMenu;
 
 const DnDContext = createContext<{
   dragItem: {
@@ -162,7 +166,7 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
-}: TableProps & TableAlwaysShowDragIconProp) {
+}: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
 
@@ -242,7 +246,7 @@ function Table({
         setOpenRowId,
         alwaysShowDragIcon,
       } as TableRowGroupProps &
-        TableAlwaysShowDragIconProp & {
+        TableAlwaysShowDragIcon & {
           selectedData?: string[];
           handleSelect?: (data: string) => void;
           draggable?: boolean;
@@ -285,7 +289,7 @@ function Table({
             setDragItem(null);
           }
         },
-      } as TableRowProps & TableAlwaysShowDragIconProp);
+      } as TableRowProps & TableAlwaysShowDragIcon);
     }
 
     return null;
@@ -873,7 +877,7 @@ function TableRowGroup({
   const tableTheme = currentTheme.table;
 
   const { openRowId, setOpenRowId, alwaysShowDragIcon } =
-    props as TableAlwaysShowDragIconProp & TableRowOpenWithId;
+    props as TableAlwaysShowDragIcon & TableRowOpenWithId;
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
@@ -914,7 +918,7 @@ function TableRowGroup({
           }
         },
       } as TableRowProps &
-        TableAlwaysShowDragIconProp & {
+        TableAlwaysShowDragIcon & {
           index?: number;
           onDropItem?: (position: number) => void;
           groupLength?: number;
@@ -1086,7 +1090,7 @@ function TableRow({
     isLast,
     index,
   } = props as TableRowOpenWithId &
-    TableAlwaysShowDragIconProp & {
+    TableAlwaysShowDragIcon & {
       index?: number;
       isSelected?: boolean;
       isLast?: boolean;
