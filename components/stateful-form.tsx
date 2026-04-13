@@ -106,10 +106,10 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   fieldSize?: string;
   onChange?: (args: { currentState: any }) => void;
   autoFocusField?: string;
-  styles?: StatefulFormStylesProps;
+  styles?: StatefulFormStyles;
 }
 
-export interface StatefulFormStylesProps {
+export interface StatefulFormStyles {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   frameContainerStyle?: CSSProp;
@@ -379,7 +379,7 @@ interface FormFieldsProps<T extends FieldValues> {
   setValue?: UseFormSetValue<T>;
   onChange?: (name: keyof T, value: FormValueType) => void;
   autoFocusField?: string;
-  styles?: StatefulFormStylesProps;
+  styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
 }
 
