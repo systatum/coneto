@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Searchbox, SearchboxResultMenuItemProps } from "./searchbox";
+import { Searchbox, SearchboxResultMenuItem } from "./searchbox";
 import { useArgs } from "@storybook/preview-api";
 import { ChangeEvent, useMemo, useState } from "react";
 import {
@@ -110,7 +110,7 @@ export const WithResultMenu: Story = {
     placeholder: "Search here...",
   },
   render: (args) => {
-    const PEOPLE_MENU: SearchboxResultMenuItemProps[] = [
+    const PEOPLE_MENU: SearchboxResultMenuItem[] = [
       {
         caption: "Adam Noto Hakarsa",
         icon: { image: RiUserSmileLine },

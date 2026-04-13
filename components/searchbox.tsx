@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { Button, SubMenuButtonProps } from "./button";
+import { Button, ButtonSubMenu } from "./button";
 import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
@@ -19,21 +19,21 @@ export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   name?: string;
   value?: string;
-  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
-  styles?: SearchboxStylesProps;
-  resultMenu?: SearchboxResultMenuProps;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  styles?: SearchboxStyles;
+  resultMenu?: SearchboxResultMenu;
   showResultMenu?: boolean;
   safeAriaLabelSubMenu?: string[];
 }
 
-export interface SearchboxStylesProps {
+export interface SearchboxStyles {
   self?: CSSProp;
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
 }
 
-export type SearchboxResultMenuProps = (props: SubMenuButtonProps) => ReactNode;
-export type SearchboxResultMenuItemProps = TipMenuItemProps;
+export type SearchboxResultMenu = (props: ButtonSubMenu) => ReactNode;
+export type SearchboxResultMenuItem = TipMenuItemProps;
 
 const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
   (
