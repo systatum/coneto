@@ -256,6 +256,7 @@ function TooltipContainer({
       <TooltipDrawer
         $theme={tooltipTheme}
         aria-label="tooltip-drawer"
+        $content={typeof dialog === "string" ? "literal" : "nodeElement"}
         $drawerStyle={
           typeof styles?.drawerStyle === "function"
             ? styles?.drawerStyle(placement as Placement)
@@ -402,10 +403,18 @@ const TooltipArrow = styled.div<{
 const TooltipDrawer = styled.div<{
   $drawerStyle?: CSSProp;
   $theme: TooltipThemeConfig;
+  $content: "literal" | "nodeElement";
 }>`
   position: relative;
-  background-color: ${({ $theme }) => $theme.backgroundColor};
-  color: ${({ $theme }) => $theme.textColor};
+  background-color: ${({ $theme, $content }) =>
+    $content === "literal"
+      ? $theme.literalStringBackgroundColor
+      : $theme.nodeElementBackgroundColor};
+  color: ${({ $theme, $content }) =>
+    $content === "literal"
+      ? $theme.literalStringTextColor
+      : $theme.nodeElementTextColor};
+
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;

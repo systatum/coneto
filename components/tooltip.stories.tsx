@@ -414,16 +414,10 @@ export const WithForm: Story = {
               width: fit-content;
               padding: 0 12px;
             `,
-            arrowStyle: css`
-              background-color: ${isDark ? "#3e4143" : "#e5e7eb"};
-              border: 1px solid ${isDark ? "#3e4143" : "#e5e7eb"};
-            `,
+
             drawerStyle: css`
               width: fit-content;
               left: 1rem;
-              background-color: ${isDark ? "#292c2e" : "white"};
-              color: ${isDark ? "inherit" : "black"};
-              border: 1px solid ${isDark ? "#3e4143" : "#e5e7eb"};
             `,
           }}
         >
@@ -536,16 +530,9 @@ export const WithBadge: Story = {
             width: fit-content;
             padding: 0 12px;
           `,
-          arrowStyle: css`
-            background-color: #e5e7eb;
-            border: 1px solid #e5e7eb;
-          `,
           drawerStyle: css`
             width: fit-content;
             left: 1rem;
-            background-color: white;
-            color: black;
-            border: 1px solid #e5e7eb;
           `,
         }}
       >

@@ -539,6 +539,7 @@ export interface SelectboxThemeConfig extends BodyThemeConfig {
 export interface SeparatorThemeConfig {
   containerColor?: string;
   lineColor?: string;
+  lineShadow?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
 }
@@ -649,10 +650,13 @@ export interface TextareaThemeConfig extends TextboxThemeConfig {
 }
 
 // tooltip.tsx
-export interface TooltipThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface TooltipThemeConfig {
   boxShadow?: string;
   arrowBackgroundColor: string;
+  literalStringBackgroundColor: string;
+  literalStringTextColor?: string;
+  nodeElementBackgroundColor: string;
+  nodeElementTextColor: string;
 }
 
 // timeline.tsx
@@ -787,3 +791,5 @@ export interface AppTheme {
   treelist: TreeListThemeConfig;
   window: WindowThemeConfig;
 }
+
+export * from "./provider";

@@ -317,6 +317,10 @@ body[data-theme="dark"] .sb-bar.css-l1e2yg {
   color: #66d9ef;
 }
 
+.docblock-source .prismjs .token.keyword.module {
+  color: #50848e; /* #1f6e7d; */
+}
+
 .docblock-source .prismjs .token.function {
   color: #ffbebe;
 }

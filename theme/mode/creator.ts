@@ -1265,6 +1265,7 @@ export function createSeparatorTheme(
   const defaultTheme: SeparatorThemeConfig = {
     containerColor: "#6b7280",
     lineColor: "#111827",
+    lineShadow: "inset 0 2px 2px #ffffff, inset 0 -1px 1px #7a7a7a",
     titleColor: "#6b7280",
     backgroundTitleColor: body.backgroundColor,
   };
@@ -1628,10 +1629,12 @@ export function createTooltipTheme(
   customTheme: Partial<TooltipThemeConfig> = {}
 ): TooltipThemeConfig {
   const defaultTheme: TooltipThemeConfig = {
-    backgroundColor: "#4b5563",
-    textColor: "#ffffff",
+    literalStringBackgroundColor: "#e7e7e7",
+    literalStringTextColor: "#111827",
+    nodeElementBackgroundColor: "#e7e7e7",
+    nodeElementTextColor: "#111827",
     boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
-    arrowBackgroundColor: "#4b5563",
+    arrowBackgroundColor: "#b9babc",
   };
 
   return {

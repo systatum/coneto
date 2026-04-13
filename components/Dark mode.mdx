@@ -1,0 +1,54 @@
+# Dark mode
+
+This section talks about dark mode, how to turn it on, and why we support it.
+Dark mode is easier on your eyes in low light. Less glare, less strain. It also
+saves battery on OLED screens because darker pixels use less power. And honestly?
+A lot of people just love the look. That sleek, dark aesthetic is hard to beat.
+Those reasons are why dark mode has become a favorite everywhere.
+
+Coneto React UI library comes with a built-in dark mode support as a core part of
+the design system. By handling theming at the system level, Coneto removes the
+need for repeated styling logic and allows focus to remain on product development
+instead of UI maintenance.
+
+## Enabling dark mode
+
+Dark mode is enabled through the `Theme` provider. Set the `mode` to `"dark"`.
+
+```tsx
+import { Theme, ThemeMode } from "@systatum/coneto/theme"
+import { Buton } from "@systatum/coneto/components/button"
+
+function App() {
+  const mode: ThemeMode = "dark"
+
+  return (
+    <Theme mode={mode}>
+      <Button title="Save" />
+    </Theme>
+  )
+}
+```
+
+All components within the `Theme` scope automatically adjust to the selected
+mode. No additional configuration is required.
+
+If no theme is provided, the default mode is `"light"`.
+
+## Automatic component adaptation
+
+Components just work with the theme out of the box. Take a `Button`, for example. In
+dark mode, it automatically gets the right background, text color, and hover or focus
+states. Switch to light mode, and it adapts instantly without changing any props. That
+means way less conditional styling and no duplicated code.
+
+
+
+## Theming and future extension
+
+Right now, we support two modes: light and dark. They work consistently across all
+component categories. In the future, we plan to add other color schemes and let you
+define your own themes easily. That means you'll be able to use brand-specific design
+tokens or build your own custom color system. And the best part? You won't need to change
+how you use existing components when we add those features.
+

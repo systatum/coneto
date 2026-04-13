@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect } from "react";
-import { ThemeProvider as StyledThemeProvider } from "styled-components";
-import { AppTheme, ThemeMode } from "./index";
+import styled, {
+  ThemeProvider as StyledThemeProvider,
+} from "styled-components";
+import { AppTheme, BodyThemeConfig, ThemeMode } from "./index";
 import { themes } from "./mode";
 
 interface ThemeContextValue {
@@ -91,3 +93,38 @@ export function useTheme() {
     mode,
   };
 }
+
+export function Theme({
+  mode,
+  children,
+  themes: themesContent = themes,
+}: {
+  mode: ThemeMode;
+  children: React.ReactNode;
+  themes?: Record<string, AppTheme>;
+}) {
+  const theme = themesContent[mode];
+
+  return (
+    <ThemeProvider mode={mode} themes={themesContent}>
+      <BodyWrapper $theme={theme?.body}>{children}</BodyWrapper>
+    </ThemeProvider>
+  );
+}
+
+const BodyWrapper = styled.div<{
+  $theme: BodyThemeConfig;
+}>`
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  background-color: ${({ $theme }) => $theme?.backgroundColor || "transparent"};
+  color: ${({ $theme }) => $theme?.textColor || "inherit"};
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+`;
