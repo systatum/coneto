@@ -6,10 +6,10 @@ export interface FigureProps
   image?: ComponentType<any> | string;
   size?: number;
   color?: string;
-  styles?: FigureStylesProps;
+  styles?: FigureStyles;
 }
 
-export interface FigureStylesProps {
+export interface FigureStyles {
   self?: CSSProp;
 }
 
