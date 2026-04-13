@@ -11,10 +11,10 @@ export interface PaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
-  styles?: PaginationStylesProps;
+  styles?: PaginationStyles;
 }
 
-export interface PaginationStylesProps {
+export interface PaginationStyles {
   containerStyle?: CSSProp;
   buttonStyle?: CSSProp;
   selectboxStyle?: CSSProp;
@@ -112,7 +112,7 @@ const PaginationItem = ({
   onPageChange: (page: number) => void;
   setCurrentPageLocal: (page: string[]) => void;
   comboboxPagesNumber?: number;
-  styles?: PaginationStylesProps;
+  styles?: PaginationStyles;
 }) => {
   const highlightOnMatch = useMemo(() => {
     return currentPage <= comboboxPagesNumber;
@@ -222,10 +222,10 @@ interface PaginationButtonProps {
   children: ReactNode;
   isActive?: boolean;
   disabled?: boolean;
-  styles?: PaginationButtonStylesProps;
+  styles?: PaginationButtonStyles;
 }
 
-interface PaginationButtonStylesProps {
+interface PaginationButtonStyles {
   self?: CSSProp;
 }
 
