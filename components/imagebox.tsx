@@ -6,9 +6,18 @@ import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ImageboxThemeConfig } from "theme";
 
+export const ImageboxSize = {
+  ExtraSmall: "xs",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+} as const;
+
+export type ImageboxSize = (typeof ImageboxSize)[keyof typeof ImageboxSize];
+
 interface BaseImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: ImageboxSize;
   name?: string;
   styles?: BaseImageboxStyles;
   value?: File | string | null;
