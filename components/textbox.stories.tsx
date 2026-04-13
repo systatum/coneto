@@ -151,7 +151,7 @@ const meta: Meta<typeof Textbox> = {
         "Dropdown configuration array supporting custom rendering, optional filtering, and selection options.",
       table: {
         type: {
-          summary: "FieldLaneDropdownProps[]",
+          summary: "FieldLaneDropdown[]",
           detail: `{
   options?: FieldLaneDropdownsOption[];
   caption?: string;

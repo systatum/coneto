@@ -30,7 +30,7 @@ export interface FieldLaneProps {
   showError?: boolean;
   errorIconPosition?: FieldLaneErrorIconPosition;
   errorMessage?: string;
-  dropdowns?: FieldLaneDropdownProps[];
+  dropdowns?: FieldLaneDropdown[];
   styles?: FieldLaneStyles;
   helper?: string;
   disabled?: boolean;
@@ -61,7 +61,7 @@ export interface FieldLaneAction {
   hidden?: boolean;
 }
 
-export interface FieldLaneDropdownProps {
+export interface FieldLaneDropdown {
   disabled?: boolean;
   options?: FieldLaneDropdownsOption[];
   caption?: string;
