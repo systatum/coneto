@@ -67,34 +67,37 @@ export type FormValueType =
   | string[]
   | number[];
 
-export type FormFieldType =
-  | "text"
-  | "message"
-  | "number"
-  | "email"
-  | "password"
-  | "textarea"
-  | "checkbox"
-  | "radio"
-  | "phone"
-  | "color"
-  | "file_drop_box"
-  | "file"
-  | "image"
-  | "signbox"
-  | "money"
-  | "date"
-  | "combo"
-  | "chips"
-  | "rating"
-  | "thumbfield"
-  | "toggle"
-  | "capsule"
-  | "time"
-  | "button"
-  | "pin"
-  | "frame"
-  | "custom";
+export const FormFieldType = {
+  Text: "text",
+  Message: "message",
+  Number: "number",
+  Email: "email",
+  Password: "password",
+  Textarea: "textarea",
+  Checkbox: "checkbox",
+  Radio: "radio",
+  Phone: "phone",
+  Color: "color",
+  FileDropBox: "file_drop_box",
+  File: "file",
+  Image: "image",
+  Signbox: "signbox",
+  Money: "money",
+  Date: "date",
+  Combo: "combo",
+  Chips: "chips",
+  Rating: "rating",
+  Thumbfield: "thumbfield",
+  Toggle: "toggle",
+  Capsule: "capsule",
+  Time: "time",
+  Button: "button",
+  Pin: "pin",
+  Frame: "frame",
+  Custom: "custom",
+} as const;
+
+export type FormFieldType = (typeof FormFieldType)[keyof typeof FormFieldType];
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
