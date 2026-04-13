@@ -1,22 +1,30 @@
 import { ChangeEvent, MouseEvent, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RatingThemeConfig } from "./../theme";
+
+export const RatingSize = {
+  Sm: "sm",
+  Md: "md",
+  Lg: "lg",
+} as const;
+
+export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
 
 interface BaseRatingProps {
   rating?: string;
   onChange?: (rating: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
   withLabel?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: RatingSize;
   disabled?: boolean;
   name?: string;
-  styles?: BaseRatingStylesProps;
+  styles?: BaseRatingStyles;
   id?: string;
 }
-interface BaseRatingStylesProps {
+interface BaseRatingStyles {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
@@ -161,12 +169,12 @@ function BaseRating({
   );
 }
 
-export type RatingStylesProps = BaseRatingStylesProps & FieldLaneStylesProps;
+export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
   extends Omit<BaseRatingProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: RatingStylesProps;
+  styles?: RatingStyles;
 }
 
 function Rating({
