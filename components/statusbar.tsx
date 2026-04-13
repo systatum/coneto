@@ -6,7 +6,7 @@ import { useTheme } from "./../theme/provider";
 import { StatusbarThemeConfig } from "./../theme";
 
 export interface StatusbarProps {
-  styles?: StatusbarStylesProps;
+  styles?: StatusbarStyles;
   content?: StatusbarContentProps;
   activeBackgroundColor?: string;
   hoverBackgroundColor?: string;
@@ -19,7 +19,7 @@ export interface StatusbarContentProps {
   right?: StatusbarItemProps[];
 }
 
-export interface StatusbarStylesProps {
+export interface StatusbarStyles {
   self?: CSSProp;
   itemStyle?: CSSProp;
   leftWrapperStyle?: CSSProp;
@@ -108,12 +108,12 @@ export interface StatusbarItemProps {
   icon?: FigureProps;
   render?: ReactNode;
   button?: ButtonProps;
-  styles?: StatusbarItemStylesProps;
+  styles?: StatusbarItemStyles;
   width?: string;
   hidden?: boolean;
 }
 
-interface StatusbarItemStylesProps {
+interface StatusbarItemStyles {
   self?: CSSProp;
 }
 
