@@ -1,13 +1,13 @@
 import { css } from "styled-components";
 import {
   CapsuleTab,
-  CapsuleTabContentProps,
-  CapsuleTabStylesProps,
+  CapsuleTabTab,
+  CapsuleTabStyles,
 } from "./../../components/capsule-tab";
 import { useState } from "react";
 
 describe("Capsule Tab", () => {
-  const TABS_ITEMS: CapsuleTabContentProps[] = [
+  const TABS_ITEMS: CapsuleTabTab[] = [
     { id: "1", title: "Write", content: "Write Tab" },
     { id: "2", title: "Review", content: "Review Tab" },
   ];
@@ -16,7 +16,7 @@ describe("Capsule Tab", () => {
     withCallback,
     styles,
   }: {
-    styles?: CapsuleTabStylesProps;
+    styles?: CapsuleTabStyles;
     withCallback?: boolean;
   }) {
     const [activeTab, setActiveTab] = useState("2");

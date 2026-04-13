@@ -9,18 +9,18 @@ import { COUNTRY_CODES } from "./../../constants/countries";
 import { Boxbar } from "./../../components/boxbar";
 import { Badge, BadgeProps } from "./../../components/badge";
 import { css } from "styled-components";
-import { OptionProps } from "./../../components/selectbox";
-import { CapsuleContentProps } from "./../../components/capsule";
+import { SelectboxOption } from "./../../components/selectbox";
+import { CapsuleTab } from "./../../components/capsule";
 import { useMemo, useState } from "react";
 import {
-  OnCompleteFunctionProps,
+  OnCompleteFunction,
   FileDropBox,
-  OnFileDroppedFunctionProps,
+  OnFileDroppedFunction,
 } from "./../../components/file-drop-box";
 import { Table } from "./../../components/table";
 import { RiDeleteBin2Fill } from "@remixicon/react";
 import z from "zod";
-import { PinboxState } from "./../../components/pinbox";
+import { PinboxParts } from "./../../components/pinbox";
 
 const DEFAULT_COUNTRY_CODES = (() => {
   const code =
@@ -30,7 +30,7 @@ const DEFAULT_COUNTRY_CODES = (() => {
   return code;
 })();
 
-const FRUIT_OPTIONS: OptionProps[] = [
+const FRUIT_OPTIONS: SelectboxOption[] = [
   { text: "Apple", value: "1" },
   { text: "Banana", value: "2" },
   { text: "Orange", value: "3" },
@@ -55,12 +55,12 @@ const MONTH_NAMES = [
   { text: "DEC", value: "12" },
 ];
 
-const CAPSULE_TABS: CapsuleContentProps[] = [
+const CAPSULE_TABS: CapsuleTab[] = [
   { id: "paid", title: "Paid" },
   { id: "unpaid", title: "Unpaid" },
 ];
 
-const PARTS_INPUT: PinboxState[] = [
+const PARTS_INPUT: PinboxParts[] = [
   { type: "static", text: "S" },
   { type: "alphanumeric" },
   { type: "digit" },
@@ -680,20 +680,20 @@ describe("StatefulForm", () => {
         Fp32: 3,
       } as const;
 
-      const HOST_ARCHITECTURE_OPTIONS: OptionProps[] = [
+      const HOST_ARCHITECTURE_OPTIONS: SelectboxOption[] = [
         { value: String(HostArchitecture.x86), text: "x86" },
         { value: String(HostArchitecture.x64), text: "x64" },
         { value: String(HostArchitecture.ARM), text: "ARM" },
         { value: String(HostArchitecture.ARM64), text: "ARM64" },
       ];
 
-      const COMPILATION_TARGET_OPTIONS: OptionProps[] = [
+      const COMPILATION_TARGET_OPTIONS: SelectboxOption[] = [
         { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
         { value: String(CompilationTarget.Simulator), text: "Simulator" },
         { value: String(CompilationTarget.IP), text: "IP" },
       ];
 
-      const COMPILATION_EFFORT_OPTIONS: OptionProps[] = [
+      const COMPILATION_EFFORT_OPTIONS: SelectboxOption[] = [
         {
           value: String(CompilationEffort.SimpleScheduling),
           text: "Simple scheduling",
@@ -708,7 +708,7 @@ describe("StatefulForm", () => {
         },
       ];
 
-      const QUANTIZATION_TYPE_OPTIONS: OptionProps[] = [
+      const QUANTIZATION_TYPE_OPTIONS: SelectboxOption[] = [
         { value: String(Quantization.Int8), text: "INT8" },
         { value: String(Quantization.Bf16), text: "BF16" },
         { value: String(Quantization.Fp16), text: "FP16" },
@@ -1558,7 +1558,7 @@ describe("StatefulForm", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunctionProps) => {
+      }: OnFileDroppedFunction) => {
         const file = files[0];
         setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
         setProgressLabel(`Uploading ${file.name}`);
@@ -1588,7 +1588,7 @@ describe("StatefulForm", () => {
         succeedFiles,
         hideProgressLabel,
         showUploaderForm,
-      }: OnCompleteFunctionProps) => {
+      }: OnCompleteFunction) => {
         console.log(succeedFiles, "This is succeedFiles");
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(

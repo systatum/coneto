@@ -2,7 +2,7 @@ import {
   ReviewTabContent,
   WriteTabContent,
 } from "./../../components/nav-tab.stories";
-import { NavTab, NavTabContentProps } from "./../../components/nav-tab";
+import { NavTab, NavTabTabProps } from "./../../components/nav-tab";
 import { Button } from "./../../components/button";
 import { css } from "styled-components";
 import {
@@ -550,7 +550,7 @@ describe("NavTab", () => {
   });
 });
 
-const TABS_ITEMS: NavTabContentProps[] = [
+const TABS_ITEMS: NavTabTabProps[] = [
   {
     id: "1",
     title: "Write",

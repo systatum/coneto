@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import {
-  CurrencyOptionProps,
+  MoneyboxCurrencyOption,
   Moneybox,
   MoneyboxProps,
 } from "./../../components/moneybox";
@@ -64,7 +64,7 @@ describe("Moneybox", () => {
   });
 
   context("editableCurrency", () => {
-    const CURRENCY_OPTIONS: CurrencyOptionProps[] = [
+    const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       { id: "USD", name: "US Dollar", symbol: "$" },
       { id: "EUR", name: "Euro", symbol: "€" },

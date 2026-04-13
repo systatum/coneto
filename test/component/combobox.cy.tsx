@@ -1,10 +1,9 @@
 import {
   Combobox,
-  ComboboxActionProps,
-  ComboboxGroupedOptionProps,
-  ComboboxOptionProps,
+  ComboboxAction,
+  ComboboxOption,
   ComboboxProps,
-  ComboboxSingleOptionProps,
+  ComboboxSingleOption,
 } from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
@@ -16,7 +15,7 @@ import {
 } from "@remixicon/react";
 import { useState } from "react";
 
-const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
+const FRUIT_OPTIONS: ComboboxSingleOption[] = [
   { text: "Apple", value: "1" },
   { text: "Banana", value: "2" },
   { text: "Orange", value: "3" },
@@ -26,7 +25,7 @@ const FRUIT_OPTIONS: ComboboxSingleOptionProps[] = [
   { text: "Watermelon", value: "7" },
 ];
 
-const MIX_FRUIT_OPTIONS: ComboboxOptionProps[] = [
+const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
   {
     category: "Sweet",
     options: [
@@ -318,7 +317,7 @@ describe("Combobox", () => {
     });
 
     context("initialState", () => {
-      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOptionProps[] =
+      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
         MIX_FRUIT_OPTIONS.map((item) => {
           if ("category" in item && item.options) {
             return {
@@ -462,7 +461,7 @@ describe("Combobox", () => {
   });
 
   context("actions", () => {
-    const FRUIT_ACTIONS: ComboboxActionProps[] = [
+    const FRUIT_ACTIONS: ComboboxAction[] = [
       {
         title: "Add Fruit",
         onClick: () => {},
