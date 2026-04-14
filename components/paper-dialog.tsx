@@ -62,10 +62,8 @@ export interface PaperDialogTriggerProps {
   setDialogState?: (dialogState: PaperDialogState) => void;
   icon?: FigureProps;
   variant?: ButtonVariants["variant"];
-  styles?: PaperDialogTriggerStyles;
+  styles?: ButtonStyles;
 }
-
-export type PaperDialogTriggerStyles = ButtonStyles;
 
 export interface PaperDialogContentProps {
   children?: ReactNode;
