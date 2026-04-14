@@ -984,7 +984,7 @@ export const AllCase: Story = {
       money: string;
       phone: string;
       thumb_field: boolean;
-      togglebox: boolean;
+      toggle: boolean;
       signature: string;
       capsule: string;
       country_code?: CountryCodeProps;
@@ -1014,7 +1014,7 @@ export const AllCase: Story = {
       money: "",
       phone: "",
       thumb_field: false,
-      togglebox: false,
+      toggle: false,
       signature: "",
       capsule: "",
       country_code: DEFAULT_COUNTRY_CODES,
@@ -1159,7 +1159,7 @@ export const AllCase: Story = {
       phone: z.string().min(8, "Phone number must be 8 digits").optional(),
       rating: z.string().optional(),
       thumb_field: z.boolean(),
-      togglebox: z.boolean(),
+      toggle: z.boolean(),
       capsule: z.string().max(4, "Paid is required"),
       pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
       country_code: z
@@ -1429,8 +1429,8 @@ export const AllCase: Story = {
         helper: "This field allows you to select a thumbs-up or down value",
       },
       {
-        name: "togglebox",
-        title: "Togglebox",
+        name: "toggle",
+        title: "Toggle",
         type: "toggle",
         placeholder: "Toggle",
         required: true,

@@ -489,7 +489,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -549,7 +549,7 @@ describe("List", () => {
                     title={group.title}
                     subtitle={group.subtitle}
                     actions={group.actions}
-                    openerStyle="togglebox"
+                    openerStyle="toggle"
                   >
                     {group.items.map((list, i) => (
                       <List.Item
@@ -626,7 +626,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -678,7 +678,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -731,7 +731,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -779,7 +779,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -827,7 +827,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -879,7 +879,7 @@ describe("List", () => {
               title={group.title}
               subtitle={group.subtitle}
               actions={group.actions}
-              openerStyle="togglebox"
+              openerStyle="toggle"
             >
               {group.items.map((list, i) => (
                 <List.Item
@@ -929,7 +929,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -981,7 +981,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -1028,7 +1028,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -1136,7 +1136,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                   styles={group.styles}
                 >
                   {group.items.map((list, i) => (
@@ -1247,7 +1247,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -1314,7 +1314,7 @@ describe("List", () => {
                   subtitle={group.subtitle}
                   actions={group.actions}
                   emptySlate={"This content is not available"}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -1363,7 +1363,7 @@ describe("List", () => {
                     actions={group.actions}
                     emptySlate={"This content is not available"}
                     styles={group.styles}
-                    openerStyle="togglebox"
+                    openerStyle="toggle"
                   >
                     {group.items.map((list, i) => (
                       <List.Item
@@ -1484,7 +1484,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -1528,7 +1528,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -1652,7 +1652,7 @@ describe("List", () => {
                 id={group.id}
                 title={group.title}
                 subtitle={group.subtitle}
-                openerStyle="togglebox"
+                openerStyle="toggle"
                 actions={ACTIONS_GROUPS}
                 rightSideContent={RIGHT_SIDE_CONTENT}
               >
@@ -1697,7 +1697,7 @@ describe("List", () => {
                   id={group.id}
                   title={group.title}
                   subtitle={group.subtitle}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                   actions={ACTIONS_GROUPS}
                   rightSideContent={RIGHT_SIDE_CONTENT}
                 >
@@ -1832,7 +1832,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -1882,7 +1882,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -1933,7 +1933,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -1994,7 +1994,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -2138,7 +2138,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2291,7 +2291,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2336,7 +2336,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -2438,7 +2438,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2495,7 +2495,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2555,7 +2555,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -2616,7 +2616,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2671,7 +2671,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2726,7 +2726,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2780,7 +2780,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2845,7 +2845,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -2915,7 +2915,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -2971,7 +2971,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -3026,7 +3026,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -3089,7 +3089,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -3207,7 +3207,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -3260,7 +3260,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -3327,7 +3327,7 @@ describe("List", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item
@@ -3423,7 +3423,7 @@ describe("List", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item

@@ -672,8 +672,8 @@ export interface ThumbFieldThemeConfig {
   disabledOpacity?: number;
 }
 
-// togglebox.tsx
-export interface ToggleboxThemeConfig extends BodyThemeConfig {
+// toggle.tsx
+export interface ToggleThemeConfig extends BodyThemeConfig {
   checkedBackgroundColor?: string;
   thumbColor?: string;
   descriptionColor?: string;
@@ -786,7 +786,7 @@ export interface AppTheme {
   timeline: TimelineThemeConfig;
   tipmenu: TipMenuThemeConfig;
   timebox: TimeboxThemeConfig;
-  togglebox: ToggleboxThemeConfig;
+  toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;

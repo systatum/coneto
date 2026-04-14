@@ -249,9 +249,9 @@
       "import": "./dist/components/tip-menu.js",
       "types": "./dist/components/tip-menu.d.ts"
     },
-    "./togglebox": {
-      "import": "./dist/components/togglebox.js",
-      "types": "./dist/components/togglebox.d.ts"
+    "./toggle": {
+      "import": "./dist/components/toggle.js",
+      "types": "./dist/components/toggle.d.ts"
     },
     "./toolbar": {
       "import": "./dist/components/toolbar.js",

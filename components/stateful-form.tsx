@@ -33,7 +33,7 @@ import { Textarea, TextareaProps } from "./textarea";
 import styled, { css, CSSProp } from "styled-components";
 import { Rating, RatingProps } from "./rating";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
-import { Togglebox, ToggleboxProps } from "./togglebox";
+import { Toggle, ToggleProps } from "./toggle";
 import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Button, ButtonProps } from "./button";
@@ -190,7 +190,7 @@ export interface FormFieldProps {
   chipsProps?: ChipsProps;
   ratingProps?: RatingProps;
   thumbFieldProps?: ThumbFieldProps;
-  toggleboxProps?: ToggleboxProps;
+  toggleProps?: ToggleProps;
   capsuleProps?: CapsuleProps;
   timeboxProps?: TimeboxProps;
   buttonProps?: ButtonProps;
@@ -1901,7 +1901,7 @@ function FormFields<T extends FieldValues>({
                   control={control}
                   name={field.name as Path<T>}
                   render={({ field: controllerField }) => (
-                    <Togglebox
+                    <Toggle
                       id={field.id}
                       name={controllerField.name}
                       labelGap={field.labelGap}
@@ -1927,35 +1927,35 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       disabled={field.disabled || disabled}
-                      {...field.toggleboxProps}
+                      {...field.toggleProps}
                       title={field.title}
                       label={field.placeholder}
                       styles={{
-                        ...field.toggleboxProps?.styles,
+                        ...field.toggleProps?.styles,
                         titleStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.toggleboxProps?.styles?.titleStyle}
+                          ${field.toggleProps?.styles?.titleStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.toggleboxProps?.styles?.labelStyle}
+                          ${field.toggleProps?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.toggleboxProps?.styles?.containerStyle}
+                          ${field.toggleProps?.styles?.containerStyle}
                         `,
                         controlStyle: css`
                           min-height: 34px;
-                          ${field.toggleboxProps?.styles?.controlStyle}
+                          ${field.toggleProps?.styles?.controlStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1965,7 +1965,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.toggleboxProps?.styles?.bodyStyle}
+                          ${field.toggleProps?.styles?.bodyStyle}
                         `,
                       }}
                     />

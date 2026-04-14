@@ -5,10 +5,10 @@ import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { ToggleboxThemeConfig } from "./../theme";
+import { useTheme } from "../theme/provider";
+import { ToggleThemeConfig } from "../theme";
 
-interface BaseToggleboxProps
+interface BaseToggleProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
   checked?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -18,10 +18,10 @@ interface BaseToggleboxProps
   label?: string;
   description?: string;
   size?: number;
-  styles?: BaseToggleboxStyles;
+  styles?: BaseToggleStyles;
 }
 
-interface BaseToggleboxStyles {
+interface BaseToggleStyles {
   descriptionStyle?: CSSProp;
   rowStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
@@ -30,7 +30,7 @@ interface BaseToggleboxStyles {
   titleStyle?: CSSProp;
 }
 
-function BaseTogglebox({
+function BaseToggle({
   name,
   checked = false,
   onChange,
@@ -43,26 +43,26 @@ function BaseTogglebox({
   id,
   disabled,
   ...props
-}: BaseToggleboxProps) {
+}: BaseToggleProps) {
   const { currentTheme } = useTheme();
-  const toggleboxTheme = currentTheme.togglebox;
+  const toggleTheme = currentTheme.toggle;
 
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
-    getToggleboxSize(size);
+    getToggleSize(size);
 
   return (
-    <ToggleboxWrapper
-      $theme={toggleboxTheme}
+    <ToggleWrapper
+      $theme={toggleTheme}
       $disabled={disabled}
       $style={styles?.rowStyle}
-      aria-label="togglebox-row-wrapper"
+      aria-label="toggle-row-wrapper"
     >
       <StyledLabel
         $disabled={disabled}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.2 }}
-        aria-label="togglebox-wrapper"
+        aria-label="toggle-wrapper"
         style={{
           width: widthWrapper,
           height: heightWrapper,
@@ -72,7 +72,7 @@ function BaseTogglebox({
       >
         <StyledInput
           {...props}
-          aria-label="togglebox-input"
+          aria-label="toggle-input"
           id={id}
           name={name}
           type="checkbox"
@@ -85,10 +85,10 @@ function BaseTogglebox({
             }
           }}
         />
-        <ToggleBackground $checked={checked} $theme={toggleboxTheme} />
+        <ToggleBackground $checked={checked} $theme={toggleTheme} />
         <ToggleButton
-          $theme={toggleboxTheme}
-          aria-label="togglebox-thumb"
+          $theme={toggleTheme}
+          aria-label="toggle-thumb"
           transition={{ type: "spring", stiffness: 700, damping: 30 }}
           animate={{
             x: checked ? thumbShift : 0,
@@ -104,7 +104,7 @@ function BaseTogglebox({
             icon && (
               <Figure
                 {...icon}
-                aria-label="togglebox-icon"
+                aria-label="toggle-icon"
                 size={icon?.size ?? iconSize}
               />
             )
@@ -113,9 +113,9 @@ function BaseTogglebox({
       </StyledLabel>
 
       {(label || description) && (
-        <ToggleboxTextWrapper
+        <ToggleTextWrapper
           $style={styles?.textWrapperStyle}
-          aria-label="togglebox-text-wrapper"
+          aria-label="toggle-text-wrapper"
         >
           {label && (
             <StatefulForm.Label
@@ -126,28 +126,25 @@ function BaseTogglebox({
             />
           )}
           {description && (
-            <Description
-              $theme={toggleboxTheme}
-              $style={styles?.descriptionStyle}
-            >
+            <Description $theme={toggleTheme} $style={styles?.descriptionStyle}>
               {description}
             </Description>
           )}
-        </ToggleboxTextWrapper>
+        </ToggleTextWrapper>
       )}
-    </ToggleboxWrapper>
+    </ToggleWrapper>
   );
 }
 
-export type ToggleboxStyles = BaseToggleboxStyles & FieldLaneStyles;
+export type ToggleStyles = BaseToggleStyles & FieldLaneStyles;
 
-export interface ToggleboxProps
-  extends Omit<BaseToggleboxProps, "styles">,
+export interface ToggleProps
+  extends Omit<BaseToggleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: ToggleboxStyles;
+  styles?: ToggleStyles;
 }
 
-function Togglebox({
+function Toggle({
   label,
   showError,
   styles,
@@ -163,9 +160,9 @@ function Togglebox({
   labelPosition,
   disabled,
   ...rest
-}: ToggleboxProps) {
+}: ToggleProps) {
   const inputId = StatefulForm.sanitizeId({
-    prefix: "togglebox",
+    prefix: "toggle",
     name,
     id,
   });
@@ -175,7 +172,7 @@ function Togglebox({
     controlStyle,
     containerStyle,
     titleStyle,
-    ...toggleboxStyles
+    ...toggleStyles
   } = styles ?? {};
 
   return (
@@ -203,10 +200,10 @@ function Togglebox({
         labelStyle: titleStyle,
       }}
     >
-      <BaseTogglebox
+      <BaseToggle
         {...rest}
         id={inputId}
-        styles={toggleboxStyles}
+        styles={toggleStyles}
         disabled={disabled}
         label={label}
         description={description}
@@ -215,7 +212,7 @@ function Togglebox({
   );
 }
 
-const getToggleboxSize = (size: number) => {
+const getToggleSize = (size: number) => {
   const widthWrapper = size * 2;
   const heightWrapper = size * 1;
   const thumbShift = size * 1.02;
@@ -229,10 +226,10 @@ const getToggleboxSize = (size: number) => {
   };
 };
 
-const ToggleboxWrapper = styled.div<{
+const ToggleWrapper = styled.div<{
   $style?: CSSProp;
   $disabled?: boolean;
-  $theme?: ToggleboxThemeConfig;
+  $theme?: ToggleThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -253,7 +250,7 @@ const ToggleboxWrapper = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const ToggleboxTextWrapper = styled.div<{ $style?: CSSProp }>`
+const ToggleTextWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -285,7 +282,7 @@ const StyledInput = styled.input`
 
 const ToggleBackground = styled.div<{
   $checked: boolean;
-  $theme?: ToggleboxThemeConfig;
+  $theme?: ToggleThemeConfig;
 }>`
   width: 100%;
   height: 100%;
@@ -298,7 +295,7 @@ const ToggleBackground = styled.div<{
 `;
 
 const ToggleButton = styled(motion.div)<{
-  $theme?: ToggleboxThemeConfig;
+  $theme?: ToggleThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -313,7 +310,7 @@ const ToggleButton = styled(motion.div)<{
 
 const Description = styled.span<{
   $style?: CSSProp;
-  $theme?: ToggleboxThemeConfig;
+  $theme?: ToggleThemeConfig;
 }>`
   font-size: 12px;
   width: 100%;
@@ -321,4 +318,4 @@ const Description = styled.span<{
   ${({ $style }) => $style}
 `;
 
-export { Togglebox };
+export { Toggle };

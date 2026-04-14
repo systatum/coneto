@@ -1,11 +1,11 @@
 import { Ri24HoursFill } from "@remixicon/react";
-import { Togglebox } from "./../../components/togglebox";
+import { Toggle } from "../../components/toggle";
 
-describe("Togglebox", () => {
+describe("Toggle", () => {
   context("with size", () => {
     it("render with calculate icon, wrapper, and thumb-shift value", () => {
       cy.mount(
-        <Togglebox size={30} icon={{ image: Ri24HoursFill }} checked={true} />
+        <Toggle size={30} icon={{ image: Ri24HoursFill }} checked={true} />
       );
       const size = 30;
       const widthWrapper = size * 2;
@@ -13,11 +13,11 @@ describe("Togglebox", () => {
       const thumbShift = size * 1.02;
       const iconSize = size * 0.6;
 
-      cy.findByLabelText("togglebox-wrapper").each(($wrapper) => {
+      cy.findByLabelText("toggle-wrapper").each(($wrapper) => {
         expect($wrapper.width()).to.eq(widthWrapper);
         expect($wrapper.height()).to.eq(heightWrapper);
       });
-      cy.findByLabelText("togglebox-icon").each(($icon) => {
+      cy.findByLabelText("toggle-icon").each(($icon) => {
         expect($icon.width()).to.eq(iconSize);
         expect($icon.height()).to.eq(iconSize);
       });
@@ -26,7 +26,7 @@ describe("Togglebox", () => {
 
       // make sure of the matrix when use of 2d transformation
       // matrix(scaleX, skewY, skewX, scaleY, translateX, translateY)
-      cy.findByLabelText("togglebox-thumb")
+      cy.findByLabelText("toggle-thumb")
         .should("exist")
         .invoke("css", "transform")
         .then((transform) => {
@@ -46,13 +46,13 @@ describe("Togglebox", () => {
   context("with description", () => {
     it("render with align center", () => {
       cy.mount(
-        <Togglebox
+        <Toggle
           label="Click and load"
           description="Click and you will see a loading icon"
           checked={true}
         />
       );
-      cy.findByLabelText("togglebox-row-wrapper")
+      cy.findByLabelText("toggle-row-wrapper")
         .should("have.css", "flex-direction", "row")
         .and("have.css", "align-items", "center");
     });

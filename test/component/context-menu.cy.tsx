@@ -155,7 +155,7 @@ describe("context-menu", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -207,7 +207,7 @@ describe("context-menu", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -256,7 +256,7 @@ describe("context-menu", () => {
                 title={group.title}
                 subtitle={group.subtitle}
                 actions={group.actions}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item
@@ -309,7 +309,7 @@ describe("context-menu", () => {
                   title={group.title}
                   subtitle={group.subtitle}
                   actions={group.actions}
-                  openerStyle="togglebox"
+                  openerStyle="toggle"
                 >
                   {group.items.map((list, i) => (
                     <List.Item

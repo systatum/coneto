@@ -1,11 +1,11 @@
 import { getIdContent } from "test/support/commands";
 
-describe("Togglebox", () => {
-  const onClickToggle = () => cy.findByLabelText("togglebox-wrapper").click();
+describe("Toggle", () => {
+  const onClickToggle = () => cy.findByLabelText("toggle-wrapper").click();
 
   context("Default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-togglebox--default"));
+      cy.visit(getIdContent("input-elements-toggle--default"));
     });
 
     it("should toggle checkbox state on click", () => {
@@ -16,7 +16,7 @@ describe("Togglebox", () => {
 
   context("with icon", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-togglebox--with-icon"));
+      cy.visit(getIdContent("input-elements-toggle--with-icon"));
     });
 
     context("when clicking", () => {
@@ -29,7 +29,7 @@ describe("Togglebox", () => {
 
   context("with icon and loading", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-togglebox--with-icon-and-loading"));
+      cy.visit(getIdContent("input-elements-toggle--with-icon-and-loading"));
     });
 
     it("should show loading state (circle) after toggle", () => {
@@ -41,7 +41,7 @@ describe("Togglebox", () => {
 
   context("with description", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-togglebox--with-description"));
+      cy.visit(getIdContent("input-elements-toggle--with-description"));
     });
 
     it("should render label and description", () => {
@@ -63,18 +63,18 @@ describe("Togglebox", () => {
 
   context("with error", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-togglebox--with-error"));
+      cy.visit(getIdContent("input-elements-toggle--with-error"));
     });
 
     it("should show error message", () => {
-      cy.findByText("Must add value on togglebox").should("exist");
+      cy.findByText("Must add value on toggle").should("exist");
     });
 
     context("when clicking", () => {
       it("should hide error message", () => {
         onClickToggle();
         cy.get("input[type=checkbox]").should("be.checked");
-        cy.findByText("Must add value on togglebox").should("not.exist");
+        cy.findByText("Must add value on toggle").should("not.exist");
       });
     });
   });
