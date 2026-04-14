@@ -95,7 +95,7 @@ const meta: Meta<typeof Textarea> = {
         "Array of action buttons rendered inside the input. Each action can have an icon, tooltip title, click handler, and optional disabled state.",
       table: {
         type: {
-          summary: "TextareaAction[]",
+          summary: "FieldLaneAction[]",
           detail: `{
   title?: string;
   icon?: FigureProps;

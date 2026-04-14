@@ -5,12 +5,7 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import {
-  FieldLaneAction,
-  FieldLane,
-  FieldLaneProps,
-  FieldLaneStyles,
-} from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextareaThemeConfig } from "./../theme";
@@ -25,8 +20,6 @@ interface BaseTextareaProps
   autogrow?: boolean;
   id?: string;
 }
-
-export type TextareaAction = FieldLaneAction;
 
 export interface TextareaStyles {
   self?: CSSProp;

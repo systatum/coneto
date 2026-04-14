@@ -8,12 +8,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import {
-  FieldLaneAction,
-  FieldLane,
-  FieldLaneProps,
-  FieldLaneStyles,
-} from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextboxThemeConfig } from "./../theme";
@@ -31,8 +26,6 @@ interface BaseTextboxProps
 export interface TextboxStyles {
   self?: CSSProp;
 }
-
-export type TextboxAction = FieldLaneAction;
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {
