@@ -61,7 +61,7 @@ describe("List", () => {
       });
     });
 
-    context("with togglebox opener", () => {
+    context("with toggle opener", () => {
       beforeEach(() => {
         cy.visit(getIdContent("content-list--custom-opener"));
       });
@@ -74,11 +74,11 @@ describe("List", () => {
       });
 
       it("renders with fit-content (48px)", () => {
-        cy.findAllByLabelText("togglebox-wrapper")
+        cy.findAllByLabelText("toggle-wrapper")
           .eq(0)
           .should("have.css", "width", "48px");
 
-        cy.findAllByLabelText("togglebox-wrapper")
+        cy.findAllByLabelText("toggle-wrapper")
           .eq(0)
           .then(($el) => {
             const width = $el[0].getBoundingClientRect().width;
@@ -87,11 +87,11 @@ describe("List", () => {
       });
 
       context("when given actions", () => {
-        it("renders correct spacing between togglebox and action", () => {
+        it("renders correct spacing between toggle and action", () => {
           cy.findAllByLabelText("action-button")
             .eq(0)
             .then(($action) => {
-              cy.findAllByLabelText("togglebox-wrapper").then(($toggle) => {
+              cy.findAllByLabelText("toggle-wrapper").then(($toggle) => {
                 const a = $action[0].getBoundingClientRect();
                 const t = $toggle[0].getBoundingClientRect();
 
@@ -106,7 +106,7 @@ describe("List", () => {
       context("when clicking", () => {
         it("renders collapsed the content", () => {
           cy.contains("Messages").should("be.visible");
-          cy.findAllByLabelText("togglebox-thumb").eq(0).click();
+          cy.findAllByLabelText("toggle-thumb").eq(0).click();
           cy.contains("Messages").should("not.be.visible");
         });
       });
