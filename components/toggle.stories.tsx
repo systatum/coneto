@@ -1,19 +1,19 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Togglebox } from "./togglebox";
+import { Toggle } from "./toggle";
 import { useEffect } from "react";
 import * as RemixIcons from "@remixicon/react";
 import { useArgs } from "@storybook/preview-api";
 import { css } from "styled-components";
 
-const meta: Meta<typeof Togglebox> = {
-  title: "Input Elements/Togglebox",
-  component: Togglebox,
+const meta: Meta<typeof Toggle> = {
+  title: "Input Elements/Toggle",
+  component: Toggle,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-Togglebox is a flexible toggle switch component for React, designed for binary on/off states. 
+Toggle is a flexible toggle switch component for React, designed for binary on/off states. 
 It supports icons, loading states, custom sizes, labels, descriptions, and full styling control. 
 It integrates seamlessly with \`FieldLane\` for form layout and validation support.
 
@@ -33,7 +33,7 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
 ### 📌 Usage
 
 \`\`\`tsx
-<Togglebox
+<Toggle
   checked={true}
   label="Enable notifications"
   description="Receive email updates for new activity"
@@ -50,7 +50,7 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
 />
 
 {/* Integration with FieldLane and validation */}
-<Togglebox
+<Toggle
   title="Enable dark mode"
   label="Dark Mode"
   showError={true}
@@ -136,15 +136,15 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
     },
     styles: {
       description:
-        "Custom styles for individual sub-elements of the togglebox. Accepts a ToggleboxStyles object.",
+        "Custom styles for individual sub-elements of the toggle. Accepts a ToggleStyles object.",
       table: {
-        type: { summary: "ToggleboxStyles" },
+        type: { summary: "ToggleStyles" },
       },
       control: { type: "object" },
     },
     disabled: {
       control: "boolean",
-      description: "Disables the togglebox, preventing interaction.",
+      description: "Disables the toggle, preventing interaction.",
       defaultValue: false,
       table: {
         type: { summary: "boolean" },
@@ -241,7 +241,7 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
 
 export default meta;
 
-type Story = StoryObj<typeof Togglebox>;
+type Story = StoryObj<typeof Toggle>;
 
 export const Default: Story = {
   args: {
@@ -251,7 +251,7 @@ export const Default: Story = {
     const [, setUpdateArgs] = useArgs();
 
     return (
-      <Togglebox
+      <Toggle
         {...args}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
@@ -268,7 +268,7 @@ export const WithIcon: Story = {
     const [, setUpdateArgs] = useArgs();
 
     return (
-      <Togglebox
+      <Toggle
         {...args}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
@@ -295,7 +295,7 @@ export const WithIconAndLoading: Story = {
     }, [args.checked]);
 
     return (
-      <Togglebox
+      <Toggle
         {...args}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
@@ -329,7 +329,7 @@ export const WithDescription: Story = {
     }, [args.checked]);
 
     return (
-      <Togglebox
+      <Toggle
         {...args}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
       />
@@ -344,7 +344,7 @@ export const WithError: Story = {
     isLoading: false,
     showError: true,
     label: "With Error",
-    errorMessage: "Must add value on togglebox",
+    errorMessage: "Must add value on toggle",
   },
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
@@ -359,7 +359,7 @@ export const WithError: Story = {
     }, [args.checked]);
 
     return (
-      <Togglebox
+      <Toggle
         {...args}
         showError={!args.checked}
         onChange={(e) => setUpdateArgs({ checked: e.target.checked })}
