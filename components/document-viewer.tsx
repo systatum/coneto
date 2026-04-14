@@ -38,11 +38,11 @@ export interface DocumentViewerProps {
   libPdfJsWorkerSrc?: string;
   styles?: DocumentViewerStyles;
   selectable?: boolean;
-  labels?: DocumentViewerLabel;
+  labels?: DocumentViewerLabels;
   title?: string;
 }
 
-export interface DocumentViewerLabel {
+export interface DocumentViewerLabels {
   zoomPlaceholder?: string;
   totalPages?: (props: { currentPage?: number; totalPages?: number }) => string;
 }
