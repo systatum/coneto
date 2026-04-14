@@ -58,6 +58,7 @@ function BaseTogglebox({
       aria-label="togglebox-row-wrapper"
     >
       <StyledLabel
+        $disabled={disabled}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.2 }}
@@ -77,7 +78,12 @@ function BaseTogglebox({
           type="checkbox"
           checked={checked}
           disabled={disabled}
-          onChange={onChange}
+          onChange={(e) => {
+            if (disabled) return;
+            if (onChange) {
+              onChange(e);
+            }
+          }}
         />
         <ToggleBackground $checked={checked} $theme={toggleboxTheme} />
         <ToggleButton
@@ -113,6 +119,7 @@ function BaseTogglebox({
         >
           {label && (
             <StatefulForm.Label
+              disabled={disabled}
               htmlFor={disabled ? null : id}
               styles={{ self: styles?.labelStyle }}
               label={label}
@@ -147,7 +154,6 @@ function Togglebox({
   errorMessage,
   actions,
   helper,
-  disabled,
   name,
   id,
   title,
@@ -155,6 +161,7 @@ function Togglebox({
   labelGap,
   labelWidth,
   labelPosition,
+  disabled,
   ...rest
 }: ToggleboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -241,7 +248,6 @@ const ToggleboxWrapper = styled.div<{
       cursor: not-allowed;
       opacity: ${$theme?.disabledOpacity ?? 0.5};
       user-select: none;
-      pointer-events: none;
     `};
 
   ${({ $style }) => $style}
@@ -255,12 +261,19 @@ const ToggleboxTextWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const StyledLabel = styled(motion.label)`
+const StyledLabel = styled(motion.label)<{ $disabled?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
   cursor: pointer;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      pointer-events: none;
+    `}
 `;
 
 const StyledInput = styled.input`
