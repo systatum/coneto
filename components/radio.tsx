@@ -27,10 +27,8 @@ interface BaseRadioProps
   errorMessage?: string;
   mode?: RadioMode;
   helper?: string;
-  icon?: RadioIconProps;
+  icon?: FigureProps;
 }
-
-export type RadioIconProps = FigureProps;
 
 interface BaseRadioStyles {
   descriptionStyle?: CSSProp;
@@ -45,7 +43,7 @@ export interface RadioOption {
   value?: string;
   label?: string;
   description?: string;
-  icon?: RadioIconProps;
+  icon?: FigureProps;
 }
 
 function BaseRadio({

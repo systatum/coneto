@@ -49,11 +49,9 @@ export interface DialogProps {
   buttons?: DialogButton[];
   title?: ReactNode;
   subtitle?: ReactNode;
-  icon?: DialogIcon;
+  icon?: FigureProps;
   onClosed?: () => void;
 }
-
-export type DialogIcon = FigureProps;
 
 export interface DialogStyles {
   overlayStyle?: CSSProp;

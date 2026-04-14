@@ -90,8 +90,8 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
   ButtonVariants & {
     isLoading?: boolean;
     subMenu?: (props: ButtonSubMenu) => React.ReactNode;
-    openedIcon?: ButtonIcon["image"];
-    closedIcon?: ButtonIcon["image"];
+    openedIcon?: FigureProps["image"];
+    closedIcon?: FigureProps["image"];
     tipMenuSize?: ButtonTipMenuSize;
     safeAreaAriaLabels?: string[];
     dialogPlacement?: ButtonDialogPlacement;
@@ -99,15 +99,13 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     open?: boolean;
     styles?: ButtonStyles;
     anchorRef?: React.RefObject<HTMLElement>;
-    icon?: ButtonIcon;
+    icon?: FigureProps;
     pressed?: boolean;
     activeBackgroundColor?: string;
     hoverBackgroundColor?: string;
     showSubMenuOn?: ButtonShowSubMenuPosition;
     displayLabel?: ButtonDisplayLabel;
   };
-
-export type ButtonIcon = FigureProps;
 
 export type ButtonDialogPlacement = DialogPlacement;
 

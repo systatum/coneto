@@ -142,8 +142,8 @@ function Toolbar({ children, styles, big }: ToolbarProps) {
 export interface ToolbarMenuProps {
   caption?: string;
   icon?: FigureProps;
-  openedIcon?: ToolbarMenuIcon;
-  closedIcon?: ToolbarMenuIcon;
+  openedIcon?: FigureProps["image"];
+  closedIcon?: FigureProps["image"];
   subMenuList?: ToolbarSubMenuList[];
   isOpen?: boolean;
   setIsOpen?: (data?: boolean) => void;
@@ -152,8 +152,6 @@ export interface ToolbarMenuProps {
   variant?: ToolbarVariant;
   iconSize?: number;
 }
-
-type ToolbarMenuIcon = FigureProps["image"];
 
 export type ToolbarSubMenuList = TipMenuItemProps;
 

@@ -17,8 +17,6 @@ import { FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 
-type DateboxSelectabilityMode = CalendarSelectabilityMode;
-
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
   label?: string;
@@ -27,7 +25,7 @@ type BaseDateboxProps = BaseCalendarProps & {
   disabled?: boolean;
   calendarFooter?: ReactNode;
   calendarTodayButtonCaption?: string;
-  calendarSelectabilityMode?: DateboxSelectabilityMode;
+  calendarSelectabilityMode?: CalendarSelectabilityMode;
   placeholder?: string;
   styles?: DateboxStyles;
   helper?: string;
@@ -45,7 +43,7 @@ type CalendarDrawerProps = BaseCalendarProps &
       setSelectedOptionsLocal?: (option: SelectboxOption) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
-      calendarSelectabilityMode?: DateboxSelectabilityMode;
+      calendarSelectabilityMode?: CalendarSelectabilityMode;
       showError?: boolean;
     }
   >;
