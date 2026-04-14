@@ -109,10 +109,10 @@ export interface TableSummaryRowColumn {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
-  styles?: SummaryRowStyles;
+  styles?: TableSummaryRowColumnStyles;
 }
 
-export interface SummaryRowStyles {
+export interface TableSummaryRowColumnStyles {
   self?: CSSProp;
 }
 
