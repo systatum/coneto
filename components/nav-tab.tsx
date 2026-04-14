@@ -33,9 +33,10 @@ export interface NavTabStyles {
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
   containerBoxStyle?: CSSProp;
-  containerRowStyle?: CSSProp;
   containerActionsStyle?: CSSProp;
-  boxStyle?: CSSProp;
+  tabStyle?: CSSProp;
+  barStyle?: CSSProp;
+  underscoreStyle?: CSSProp;
 }
 
 export interface NavTabAction extends ActionButtonProps {
@@ -66,8 +67,12 @@ export interface NavTabSubItem {
   onClick?: () => void;
   content?: ReactNode;
   hidden?: boolean;
+  styles?: NavTabSubItemStyles;
 }
 
+export interface NavTabSubItemStyles {
+  self?: CSSProp;
+}
 export interface NavTabTabAction extends Omit<TipMenuItemProps, "onClick"> {
   onClick: (id?: string) => void;
 }
@@ -178,18 +183,19 @@ function NavTab({
   );
 
   return (
-    <NavTabWrapper $containerStyle={styles?.containerStyle}>
-      <NavTabRowWrapper $theme={navTheme} $style={styles?.containerRowStyle}>
-        <NavTabHeader
-          aria-label="nav-tab-wrapper"
+    <NavTabContainer $style={styles?.containerStyle}>
+      <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
+        <NavTabTabsSection
+          aria-label="nav-tab-tabs-sections"
           $style={styles?.containerBoxStyle}
           ref={containerRef}
           $theme={navTheme}
         >
-          <NavTabList
-            aria-label="nav-tab-list"
+          <NavTabUnderscore
+            aria-label="nav-tab-underscore"
             $activeColor={activeColor}
             $theme={navTheme}
+            $style={styles?.underscoreStyle}
             initial={{
               left: 0,
               width: 0,
@@ -253,9 +259,10 @@ function NavTab({
                       tab.subItems
                         ?.filter((item) => !item?.hidden)
                         ?.map((item, idx) => (
-                          <NavTabItem
+                          <NavTabTab
                             key={idx}
                             $theme={navTheme}
+                            $style={item?.styles?.self}
                             onClick={() => {
                               if (item.content) {
                                 setSelectedLocal(item.id);
@@ -274,17 +281,17 @@ function NavTab({
                           >
                             {item.icon && <Figure {...item.icon} />}
                             {item.caption}
-                          </NavTabItem>
+                          </NavTabTab>
                         ))}
                   </>
                 }
               >
-                <NavTabItem
+                <NavTabTab
                   $theme={navTheme}
                   key={tab.id}
                   $size={size}
-                  aria-label="nav-tab-item"
-                  $boxStyle={styles?.boxStyle}
+                  aria-label="nav-tab-tab"
+                  $style={styles?.tabStyle}
                   ref={setTabRef(index)}
                   role="tab"
                   onClick={(e) => {
@@ -372,14 +379,14 @@ function NavTab({
                         />
                       );
                     })()}
-                </NavTabItem>
+                </NavTabTab>
               </Tooltip>
             );
           })}
-        </NavTabHeader>
+        </NavTabTabsSection>
 
         {actions && (
-          <NavTabHeader
+          <NavTabTabsSection
             aria-label="nav-tab-actions-wrapper"
             $actions={!!actions}
             $theme={navTheme}
@@ -412,9 +419,9 @@ function NavTab({
                   />
                 );
               })}
-          </NavTabHeader>
+          </NavTabTabsSection>
         )}
-      </NavTabRowWrapper>
+      </NavTabBar>
 
       <NavContent $contentStyle={styles?.contentStyle}>
         {filteredTabs.map((tab, index) => {
@@ -429,12 +436,12 @@ function NavTab({
         })}
         {children}
       </NavContent>
-    </NavTabWrapper>
+    </NavTabContainer>
   );
 }
 
-const NavTabWrapper = styled.div<{
-  $containerStyle?: CSSProp;
+const NavTabContainer = styled.div<{
+  $style?: CSSProp;
 }>`
   width: 100%;
   height: 100%;
@@ -444,10 +451,10 @@ const NavTabWrapper = styled.div<{
   font-size: 14px;
   top: 0;
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
-const NavTabHeader = styled.div<{
+const NavTabTabsSection = styled.div<{
   $style?: CSSProp;
   $actions?: boolean;
   $theme: NavTabThemeConfig;
@@ -469,7 +476,7 @@ const NavTabHeader = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const NavTabRowWrapper = styled.div<{
+const NavTabBar = styled.div<{
   $style?: CSSProp;
   $theme?: NavTabThemeConfig;
 }>`
@@ -488,9 +495,10 @@ const NavTabRowWrapper = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const NavTabList = styled(motion.div)<{
+const NavTabUnderscore = styled(motion.div)<{
   $activeColor?: string;
   $theme?: NavTabThemeConfig;
+  $style?: CSSProp;
 }>`
   position: absolute;
   bottom: 0;
@@ -500,11 +508,13 @@ const NavTabList = styled(motion.div)<{
   pointer-events: none;
   background-color: ${({ $activeColor, $theme }) =>
     $activeColor ?? $theme?.indicatorColor};
+
+  ${({ $style }) => $style}
 `;
 
-const NavTabItem = styled.div<{
+const NavTabTab = styled.div<{
   $selected?: boolean;
-  $boxStyle?: CSSProp;
+  $style?: CSSProp;
   $isHovered?: boolean;
   $isAction?: boolean;
   $subMenu?: boolean;
@@ -583,7 +593,7 @@ const NavTabItem = styled.div<{
     box-shadow: ${({ $theme }) => $theme.activeInsetShadow};
   }
 
-  ${({ $boxStyle }) => $boxStyle};
+  ${({ $style }) => $style};
 `;
 
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
