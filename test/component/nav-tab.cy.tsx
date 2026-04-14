@@ -30,7 +30,7 @@ describe("NavTab", () => {
     context("when given hidden", () => {
       it("renders without hidden tab", () => {
         cy.mount(<NavTab tabs={TABS_ITEMS} activeTab={"2"} />);
-        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+        cy.findAllByLabelText("nav-tab-tab").should("have.length", 2);
         cy.findByText("Write").should("exist");
         cy.findByText("Review").should("exist");
         cy.findByText("Empty").should("not.exist");
@@ -76,7 +76,7 @@ describe("NavTab", () => {
       it("should not render the hidden tab in the navigation", () => {
         cy.mount(<NavTabWithHidden hidden={true} />);
 
-        cy.findAllByLabelText("nav-tab-item").should("have.length", 1);
+        cy.findAllByLabelText("nav-tab-tab").should("have.length", 1);
       });
 
       context("when given active tab", () => {
@@ -104,7 +104,7 @@ describe("NavTab", () => {
           cy.findByText("Write tab content").should("not.exist");
 
           // Click visible tab (Write)
-          cy.findAllByLabelText("nav-tab-item").eq(0).click();
+          cy.findAllByLabelText("nav-tab-tab").eq(0).click();
           cy.findByText("Review tab content").should("not.exist");
           cy.findByText("Write tab content").should("exist");
 
@@ -120,7 +120,7 @@ describe("NavTab", () => {
       it("should render all tabs normally", () => {
         cy.mount(<NavTabWithHidden hidden={false} />);
 
-        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+        cy.findAllByLabelText("nav-tab-tab").should("have.length", 2);
       });
     });
 
@@ -128,7 +128,7 @@ describe("NavTab", () => {
       it("should render all tabs normally", () => {
         cy.mount(<NavTabWithHidden />);
 
-        cy.findAllByLabelText("nav-tab-item").should("have.length", 2);
+        cy.findAllByLabelText("nav-tab-tab").should("have.length", 2);
       });
     });
   });
@@ -190,7 +190,7 @@ describe("NavTab", () => {
           />
         );
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(0)
           .should("have.css", "height", "35px");
         cy.findAllByLabelText("action-button")
@@ -210,7 +210,7 @@ describe("NavTab", () => {
           />
         );
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(0)
           .should("have.css", "height", "45px");
         cy.findAllByLabelText("action-button")
@@ -225,7 +225,7 @@ describe("NavTab", () => {
           <NavTab actions={ACTION_BUTTON} tabs={TABS_ITEMS} activeTab={"2"} />
         );
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(0)
           .should("have.css", "height", "45px");
         cy.findAllByLabelText("action-button")
@@ -243,11 +243,11 @@ describe("NavTab", () => {
           "This tab is meant to review the content that has been submitted. It includes multiple paragraphs to simulate a longer layout."
         ).should("be.visible");
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(1)
           .should("have.css", "background-color", "rgba(243, 244, 246, 0.5)");
 
-        cy.findAllByLabelText("nav-tab-list")
+        cy.findAllByLabelText("nav-tab-underscore")
           .eq(0)
           .should("have.css", "background-color", "rgb(59, 130, 246)")
           .and("have.css", "opacity", "1");
@@ -262,11 +262,11 @@ describe("NavTab", () => {
           cy.findByText(text).should("not.exist")
         );
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(1)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
 
-        cy.findAllByLabelText("nav-tab-list")
+        cy.findAllByLabelText("nav-tab-underscore")
           .eq(0)
           .should("have.css", "background-color", "rgb(59, 130, 246)")
           .and("have.css", "opacity", "0");
@@ -281,11 +281,11 @@ describe("NavTab", () => {
           cy.findByText(text).should("not.exist")
         );
 
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(1)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
 
-        cy.findAllByLabelText("nav-tab-list")
+        cy.findAllByLabelText("nav-tab-underscore")
           .eq(0)
           .should("have.css", "background-color", "rgb(59, 130, 246)")
           .and("have.css", "opacity", "0");
@@ -488,7 +488,7 @@ describe("NavTab", () => {
         cy.mount(
           <NavTab tabs={TABS_ITEMS} activeTab={"2"} activeColor="red" />
         );
-        cy.findByLabelText("nav-tab-list").should(
+        cy.findByLabelText("nav-tab-underscore").should(
           "have.css",
           "background-color",
           "rgb(255, 0, 0)"
@@ -505,7 +505,7 @@ describe("NavTab", () => {
             tabs={TABS_ITEMS}
             activeTab={"2"}
             styles={{
-              boxStyle: css`
+              tabStyle: css`
                 padding: 20px;
                 color: red;
               `,
@@ -513,7 +513,7 @@ describe("NavTab", () => {
           />
         );
         cy.wait(200);
-        cy.findAllByLabelText("nav-tab-item")
+        cy.findAllByLabelText("nav-tab-tab")
           .eq(0)
           .should("have.css", "padding", "20px")
           .and("have.css", "color", "rgb(255, 0, 0)");
@@ -529,7 +529,7 @@ describe("NavTab", () => {
             tabs={TABS_ITEMS}
             activeTab={"2"}
             styles={{
-              boxStyle: css`
+              tabStyle: css`
                 padding: 20px;
                 background-color: white;
               `,
