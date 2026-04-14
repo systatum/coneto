@@ -7,7 +7,7 @@ import { RiCloseLine } from "@remixicon/react";
 import { HTMLAttributes, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { ActionButton, ActionButtonProps } from "./action-button";
-import { Togglebox } from "./togglebox";
+import { Toggle } from "./toggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
@@ -140,7 +140,7 @@ function Card({
                   <ActionButton key={index} {...props} />
                 ))}
               {toggleable && (
-                <Togglebox
+                <Toggle
                   styles={{
                     bodyStyle: css`
                       min-height: 0;

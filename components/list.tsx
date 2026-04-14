@@ -24,7 +24,7 @@ import { Searchbox, SearchboxStyles } from "./searchbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
-import { Togglebox } from "./togglebox";
+import { Toggle } from "./toggle";
 import styled, { css, CSSProp } from "styled-components";
 import ContextMenu, { ContextMenuAction } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
@@ -382,7 +382,7 @@ export interface ListGroupaction extends Omit<ActionButtonProps, "onClick"> {
 
 export const ListGroupOpenerStyle = {
   Chevron: "chevron",
-  ToggleBox: "togglebox",
+  Toggle: "toggle",
   None: "none",
 } as const;
 
@@ -562,8 +562,8 @@ function ListGroup({
               }}
               size={18}
             />
-          ) : openerStyle === "togglebox" ? (
-            <Togglebox
+          ) : openerStyle === "toggle" ? (
+            <Toggle
               styles={{
                 containerStyle: css`
                   width: fit-content;
