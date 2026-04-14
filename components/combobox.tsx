@@ -504,6 +504,9 @@ function ComboboxDrawer({
             setHasInteracted(false);
           }
 
+          requestAnimationFrame(() => {
+            setHighlightedIndex(null);
+          });
           onClick?.();
         }}
         onMouseMove={() => {

@@ -379,6 +379,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           justCommittedRef.current = true;
           commitOrRevert(selectedOption, selectedOptionsLocal, confirmedValue);
         }
+
+        requestAnimationFrame(() => {
+          setHighlightedIndex(null);
+        });
       }
 
       if (e.key === "Escape") {
@@ -393,6 +397,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         if (!isOpen) {
           inputRef.current?.blur();
         }
+
+        requestAnimationFrame(() => {
+          setHighlightedIndex(null);
+        });
       }
     };
 
