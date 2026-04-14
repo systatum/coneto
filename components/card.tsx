@@ -14,11 +14,11 @@ import { CardThemeConfig } from "./../theme";
 
 export const CardShadow = {
   None: "none",
-  Sm: "sm",
-  Md: "md",
-  Lg: "lg",
-  Xl: "xl",
-  "2Xl": "2xl",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
 } as const;
 
 export type CardShadow = (typeof CardShadow)[keyof typeof CardShadow];
