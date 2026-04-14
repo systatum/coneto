@@ -905,6 +905,8 @@ const EmptyContent = styled(motion.div)<{
   ${({ $style }) => $style}
 `;
 
+export type ListItemAction = ContextMenuAction;
+
 export interface ListItemProps {
   id: string;
   title?: ReactNode;
@@ -916,7 +918,7 @@ export interface ListItemProps {
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: (id?: string) => ContextMenuAction[];
+  actions?: (id?: string) => ListItemAction[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
