@@ -1,10 +1,11 @@
+import { DialogPlacement } from "./../../lib/floating-placement";
 import { Badge } from "./../../components/badge";
-import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
+import { Tooltip } from "./../../components/tooltip";
 import { css } from "styled-components";
 
 describe("Tooltip", () => {
   context("dialogPlacement", () => {
-    const ALL_PLACEMENTS: TooltipDialogPlacement[] = [
+    const ALL_PLACEMENTS: DialogPlacement[] = [
       "top-left",
       "top-center",
       "top-right",

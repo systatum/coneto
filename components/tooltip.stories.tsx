@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Tooltip, TooltipDialogPlacement, TooltipProps } from "./tooltip";
+import { Tooltip, TooltipProps } from "./tooltip";
+import { DialogPlacement } from "./../lib/floating-placement";
 import { Button } from "./button";
 import { Badge } from "./badge";
 import {
@@ -254,7 +255,7 @@ export const Link: Story = {
 
 export const Positioning: Story = {
   render: () => {
-    const Content = ({ placement }: { placement: TooltipDialogPlacement }) => (
+    const Content = ({ placement }: { placement: DialogPlacement }) => (
       <Tooltip
         dialog={placement}
         showDialogOn="hover"

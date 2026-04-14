@@ -23,8 +23,6 @@ import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { TooltipThemeConfig } from "./../theme";
 
-export type TooltipDialogPlacement = DialogPlacement;
-
 export const TooltipDialogPosition = {
   Hover: "hover",
   Click: "click",
@@ -38,7 +36,7 @@ export type TooltipProps = {
   children: ReactNode;
   showDialogOn?: TooltipDialogPosition;
   hideDialogOn?: TooltipDialogPosition;
-  dialogPlacement?: TooltipDialogPlacement;
+  dialogPlacement?: DialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
   safeAreaAriaLabels?: string[];
   showDelayPeriod?: number;
