@@ -275,7 +275,16 @@ function FileDropBox({
           labelWidth={labelWidth}
           labelPosition={labelPosition}
           required={required}
-          styles={{ self: styles?.labelStyle }}
+          disabled={disabled}
+          styles={{
+            self: css`
+              color: ${disabled
+                ? fileDropBoxTheme?.disabledTextColor
+                : fileDropBoxTheme?.textColor};
+
+              ${styles?.labelStyle};
+            `,
+          }}
           helper={helper}
           label={label}
         />
