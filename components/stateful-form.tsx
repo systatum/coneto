@@ -130,25 +130,25 @@ export interface StatefulFormStyles {
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
-export const FormFieldRowJustifyContent = {
+export const FormFieldRowJustifyPosition = {
   Center: "center",
   Start: "flex-start",
   End: "flex-end",
   Between: "space-between",
 } as const;
 
-export type FormFieldRowJustifyContent =
-  (typeof FormFieldRowJustifyContent)[keyof typeof FormFieldRowJustifyContent];
+export type FormFieldRowJustifyPosition =
+  (typeof FormFieldRowJustifyPosition)[keyof typeof FormFieldRowJustifyPosition];
 
-export const FormFieldRowAlignItems = {
+export const FormFieldRowItemsAligment = {
   Center: "center",
   Start: "flex-start",
   End: "flex-end",
   Stretch: "stretch",
 } as const;
 
-export type FormFieldRowAlignItems =
-  (typeof FormFieldRowAlignItems)[keyof typeof FormFieldRowAlignItems];
+export type FormFieldRowItemsAligment =
+  (typeof FormFieldRowItemsAligment)[keyof typeof FormFieldRowItemsAligment];
 
 export interface FormFieldProps {
   name: string;
@@ -169,8 +169,8 @@ export interface FormFieldProps {
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
   disabled?: boolean;
-  rowJustifyContent?: FormFieldRowJustifyContent;
-  rowAlignItems?: FormFieldRowAlignItems;
+  rowJustifyPosition?: FormFieldRowJustifyPosition;
+  rowItemsAlignment?: FormFieldRowItemsAligment;
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
@@ -456,12 +456,12 @@ function FormFields<T extends FieldValues>({
         }
 
         const rowJustifiedContent = visibleFields.find(
-          (f) => f.rowJustifyContent
-        )?.rowJustifyContent;
+          (f) => f.rowJustifyPosition
+        )?.rowJustifyPosition;
 
         const rowAlignedItem = visibleFields.find(
-          (f) => f.rowAlignItems
-        )?.rowAlignItems;
+          (f) => f.rowItemsAlignment
+        )?.rowItemsAlignment;
 
         const withFrame = visibleFields.some((f) => f.type === "frame");
 

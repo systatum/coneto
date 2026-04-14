@@ -500,7 +500,7 @@ describe("StatefulForm", () => {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyContent: "flex-end",
+          rowJustifyPosition: "flex-end",
         },
       ];
 
@@ -1707,7 +1707,7 @@ describe("StatefulForm", () => {
           type: "button",
           required: false,
           disabled: !isFormValid,
-          rowJustifyContent: "flex-end",
+          rowJustifyPosition: "flex-end",
         },
       ];
 
@@ -2308,7 +2308,7 @@ describe("StatefulForm", () => {
         required: true,
         placeholder: "Enter text",
         width: "15%",
-        rowJustifyContent: "flex-end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 

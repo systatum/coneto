@@ -337,7 +337,7 @@ export const Default: Story = {
         required: true,
         disabled: !isFormValid,
         placeholder: "Enter text",
-        rowJustifyContent: "flex-end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 
@@ -473,7 +473,7 @@ export const WithFrame: Story = {
         title: "Submit",
         type: "button",
         disabled: !isFormValid,
-        rowJustifyContent: "flex-end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 
@@ -653,7 +653,7 @@ export const ConditionalElement: Story = {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyContent: "flex-end",
+          rowJustifyPosition: "flex-end",
         },
       ] as FormFieldGroup[];
     }, [formFields.compEffort, formFields.quantType, isFormValid]);
@@ -1479,7 +1479,7 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        rowJustifyContent: "flex-end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 
