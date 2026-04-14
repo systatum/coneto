@@ -70,11 +70,9 @@ export const ButtonDisplayLabel = {
 export type ButtonDisplayLabel =
   (typeof ButtonDisplayLabel)[keyof typeof ButtonDisplayLabel];
 
-export type ButtonTipMenu = TipMenuItemProps;
-
 export interface ButtonSubMenu {
   list?: (
-    subMenuList: ButtonTipMenu[],
+    subMenuList: TipMenuItemProps[],
     withFilter?: { withFilter?: boolean }
   ) => React.ReactNode;
   show?: (
@@ -84,17 +82,15 @@ export interface ButtonSubMenu {
   render?: (children?: React.ReactNode) => React.ReactNode;
 }
 
-export type ButtonTipMenuSize = TipMenuVariant;
-
 export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
   ButtonVariants & {
     isLoading?: boolean;
     subMenu?: (props: ButtonSubMenu) => React.ReactNode;
     openedIcon?: FigureProps["image"];
     closedIcon?: FigureProps["image"];
-    tipMenuSize?: ButtonTipMenuSize;
+    tipMenuSize?: TipMenuVariant;
     safeAreaAriaLabels?: string[];
-    dialogPlacement?: ButtonDialogPlacement;
+    dialogPlacement?: DialogPlacement;
     onOpen?: (prop: boolean) => void;
     open?: boolean;
     styles?: ButtonStyles;
@@ -106,8 +102,6 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     showSubMenuOn?: ButtonShowSubMenuPosition;
     displayLabel?: ButtonDisplayLabel;
   };
-
-export type ButtonDialogPlacement = DialogPlacement;
 
 export interface ButtonStyles {
   dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
