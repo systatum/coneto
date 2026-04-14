@@ -60,7 +60,7 @@ import {
   createTimelineTheme,
   createTipMenuContainerTheme,
   createTipMenuTheme,
-  createToggleboxTheme,
+  createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
   createWindowTheme,
@@ -727,7 +727,7 @@ const darkThumbField = createThumbFieldTheme(darkBody, {
   errorColor: "#f87171",
 });
 
-const darkTogglebox = createToggleboxTheme(darkBody, {
+const darkToggle = createToggleTheme(darkBody, {
   backgroundColor: "rgb(80, 80, 80)",
   checkedBackgroundColor: darkButton?.primary?.hoverBackgroundColor,
   thumbColor: "#f5f5f5",
@@ -834,7 +834,7 @@ export const darkTheme: AppTheme = {
   timeline: darkTimeline,
   tipmenu: darkTipMenu,
   thumbField: darkThumbField,
-  togglebox: darkTogglebox,
+  toggle: darkToggle,
   toolbar: darkToolbar,
   tooltip: darkTooltip,
   treelist: darkTreeList,

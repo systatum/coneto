@@ -1856,7 +1856,7 @@ export const CustomOpener: Story = {
                 title={group.title}
                 actions={ACTIONS_GROUPS}
                 rightSideContent={group.rightSideContent}
-                openerStyle="togglebox"
+                openerStyle="toggle"
               >
                 {group.items.map((list, i) => (
                   <List.Item

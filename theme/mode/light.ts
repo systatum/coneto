@@ -60,7 +60,7 @@ import {
   createTimelineTheme,
   createTipMenuContainerTheme,
   createTipMenuTheme,
-  createToggleboxTheme,
+  createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
   createWindowTheme,
@@ -207,7 +207,7 @@ const lightTipMenu = createTipMenuTheme(lightBody, {
   dangerousActiveBackgroundColor: lightButton.danger.activeBackgroundColor,
 });
 
-const lightTogglebox = createToggleboxTheme(lightBody);
+const lightToggle = createToggleTheme(lightBody);
 
 const lightToolbar = createToolbarTheme({
   default: lightButton.default,
@@ -288,7 +288,7 @@ export const lightTheme: AppTheme = {
   timeline: lightTimeline,
   tipmenu: lightTipMenu,
   thumbField: lightThumbField,
-  togglebox: lightTogglebox,
+  toggle: lightToggle,
   toolbar: lightToolbar,
   tooltip: lightTooltip,
   treelist: lightTreeList,

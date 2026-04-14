@@ -106,7 +106,7 @@ const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
   combo: "combobox",
   rating: "rating",
   thumbfield: "thumbfield",
-  toggle: "togglebox",
+  toggle: "toggle",
   capsule: "capsule",
   time: "timebox",
   button: "button",
@@ -137,7 +137,7 @@ const allValue = {
   money: "",
   phone: "",
   thumb_field: false,
-  togglebox: false,
+  toggle: false,
   signature: "",
   capsule: "",
   country_code: DEFAULT_COUNTRY_CODES,
@@ -291,8 +291,8 @@ const ALL_INPUT: FormFieldGroup[] = [
     required: true,
   },
   {
-    name: "togglebox",
-    title: "Togglebox",
+    name: "toggle",
+    title: "Toggle",
     type: "toggle",
     required: true,
   },
@@ -2522,8 +2522,8 @@ describe("StatefulForm", () => {
 
         flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
           if (prop.name === "country_code") return;
-          if (prop.name === "togglebox") {
-            cy.findByLabelText("togglebox-row-wrapper").then(($el) => {
+          if (prop.name === "toggle") {
+            cy.findByLabelText("toggle-row-wrapper").then(($el) => {
               const width = $el.width();
               expect(width).to.be.closeTo(222.5, 10);
             });

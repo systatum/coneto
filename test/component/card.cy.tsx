@@ -38,14 +38,14 @@ describe("Card", () => {
 
   context("toggleable", () => {
     context("when given", () => {
-      it("renders the card using togglebox", () => {
+      it("renders the card using toggle", () => {
         cy.mount(<ProductCard toggleable />);
-        cy.findByLabelText("togglebox-wrapper").should("exist");
+        cy.findByLabelText("toggle-wrapper").should("exist");
       });
 
       it("renders with height by 24px (by default)", () => {
         cy.mount(<ProductCard toggleable />);
-        cy.findByLabelText("togglebox-wrapper")
+        cy.findByLabelText("toggle-wrapper")
           .should("exist")
           .should("have.css", "height", "24px");
       });
@@ -54,7 +54,7 @@ describe("Card", () => {
         it("should collapsing the card content", () => {
           cy.mount(<ProductCard toggleable />);
           cy.findByLabelText("card-content").should("exist");
-          cy.findByLabelText("togglebox-wrapper").should("exist").click();
+          cy.findByLabelText("toggle-wrapper").should("exist").click();
           cy.findByLabelText("card-content").should("not.exist");
         });
       });
@@ -68,7 +68,7 @@ describe("Card", () => {
           );
           cy.findByLabelText("card-content").should("exist");
           cy.findByLabelText("card-footer").should("exist");
-          cy.findByLabelText("togglebox-wrapper").should("exist").click();
+          cy.findByLabelText("toggle-wrapper").should("exist").click();
           cy.findByLabelText("card-content").should("not.exist");
           cy.findByLabelText("card-footer").should("not.exist");
         });
