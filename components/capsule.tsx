@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { Figure, FigureProps } from "./figure";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { CapsuleThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
-export interface CapsuleContentProps {
+export interface CapsuleTab {
   id: string;
   title?: string;
   content?: ReactNode;
@@ -15,20 +15,20 @@ export interface CapsuleContentProps {
 }
 
 interface BaseCapsuleProps {
-  tabs: CapsuleContentProps[];
+  tabs: CapsuleTab[];
   activeTab?: string | null;
   onTabChange?: (id: string) => void;
   full?: boolean;
   activeBackgroundColor?: string;
   activeColor?: string;
-  styles?: BaseCapsuleStylesProps;
+  styles?: BaseCapsuleStyles;
   id?: string;
   name?: string;
   fontSize?: number;
   disabled?: boolean;
 }
 
-interface BaseCapsuleStylesProps {
+interface BaseCapsuleStyles {
   capsuleWrapperStyle?: CSSProp;
   tabStyle?: CSSProp;
 }
@@ -239,12 +239,12 @@ function BaseCapsule({
   );
 }
 
-export type CapsuleStylesProps = BaseCapsuleStylesProps & FieldLaneStylesProps;
+export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
 
 export interface CapsuleProps
   extends Omit<BaseCapsuleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: CapsuleStylesProps;
+  styles?: CapsuleStyles;
 }
 
 function Capsule({

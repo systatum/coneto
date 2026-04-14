@@ -12,10 +12,10 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListGroupActionsProps,
-  ListGroupContentProps,
+  ListGroupaction,
+  ListGroupContent,
   ListGroupProps,
-  ListItemActionProps,
+  ListItemAction,
   ListItemProps,
   ListProps,
 } from "./../../components/list";
@@ -55,7 +55,7 @@ describe("List", () => {
     },
   ];
 
-  const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
+  const LIST_GROUPS_OPENABLE: ListGroupContent[] = [
     {
       id: "recent-content",
       title: "Recent Content",
@@ -129,7 +129,7 @@ describe("List", () => {
       groupOpenerBehavior?: ListProps["groupOpenerBehavior"];
       groupProps?: Omit<ListGroupProps, "id" | "children" | "title">;
     }) {
-      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupaction[] = [
         {
           caption: "Refresh",
           onClick: (id: string) => {
@@ -287,7 +287,7 @@ describe("List", () => {
 
   context("colors in the List.Item level", () => {
     function ListItemWithColors() {
-      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupaction[] = [
         {
           caption: "Refresh",
           onClick: (id: string) => {
@@ -1057,7 +1057,7 @@ describe("List", () => {
 
   context("group", () => {
     context("titleStyle", () => {
-      const LIST_GROUPS_WITH_TITLE_STYLE: ListGroupContentProps[] = [
+      const LIST_GROUPS_WITH_TITLE_STYLE: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1168,7 +1168,7 @@ describe("List", () => {
     });
 
     context("subtitleStyle", () => {
-      const LIST_GROUPS_WITH_SUBTITLE_STYLE: ListGroupContentProps[] = [
+      const LIST_GROUPS_WITH_SUBTITLE_STYLE: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1277,7 +1277,7 @@ describe("List", () => {
     });
 
     context("when items is empty", () => {
-      const LIST_GROUPS_WITH_EMPTY: ListGroupContentProps[] = [
+      const LIST_GROUPS_WITH_EMPTY: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1408,7 +1408,7 @@ describe("List", () => {
         />
       );
 
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      const LIST_GROUPS: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1571,7 +1571,7 @@ describe("List", () => {
         />
       );
 
-      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupaction[] = [
         {
           caption: "Add",
           onClick: (id: string) => {
@@ -1580,7 +1580,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      const LIST_GROUPS: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -1739,7 +1739,7 @@ describe("List", () => {
 
   context("actions", () => {
     context("when given in the list", () => {
-      const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
+      const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemAction[] => [
         {
           caption: "Add",
           icon: { image: RiArrowRightSLine },
@@ -1757,7 +1757,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      const LIST_GROUPS: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -2048,7 +2048,7 @@ describe("List", () => {
     });
 
     context("when given in the group", () => {
-      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupaction[] = [
         {
           caption: "Add",
           onClick: (id: string) => {
@@ -2064,7 +2064,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      const LIST_GROUPS: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -2204,7 +2204,7 @@ describe("List", () => {
         />
       );
 
-      const ACTIONS_GROUPS: ListGroupActionsProps[] = [
+      const ACTIONS_GROUPS: ListGroupaction[] = [
         {
           caption: "Add",
           onClick: (id: string) => {
@@ -2213,7 +2213,7 @@ describe("List", () => {
         },
       ];
 
-      const LIST_GROUPS: ListGroupContentProps[] = [
+      const LIST_GROUPS: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -2396,7 +2396,7 @@ describe("List", () => {
         leftSideContent?: number;
       };
 
-      type TestListGroup = Omit<ListGroupContentProps, "items"> & {
+      type TestListGroup = Omit<ListGroupContent, "items"> & {
         items: TestListItem[];
       };
 
@@ -3156,7 +3156,7 @@ describe("List", () => {
     });
 
     context("without children", () => {
-      const LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN: ListGroupContentProps[] = [
+      const LIST_GROUPS_OPENABLE_WITHOUT_CHILDREN: ListGroupContent[] = [
         {
           id: "recent-content",
           title: "Recent Content",
@@ -3385,7 +3385,7 @@ describe("List", () => {
         </div>
       );
     };
-    const LIST_GROUPS_OPENABLE: ListGroupContentProps[] = [
+    const LIST_GROUPS_OPENABLE: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",

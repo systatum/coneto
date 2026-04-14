@@ -244,7 +244,7 @@ describe("Statusbar", () => {
         cy.findAllByLabelText("statusbar-button")
           .eq(0)
           .should("exist")
-          .and("have.css", "background-color", "rgb(236, 236, 236)");
+          .and("have.css", "background-color", "rgb(221, 221, 221)");
 
         cy.findByLabelText("statusbar-wrapper").should(
           "have.css",
@@ -260,7 +260,7 @@ describe("Statusbar", () => {
         cy.findAllByLabelText("statusbar-button")
           .eq(0)
           .should("exist")
-          .and("have.css", "border-color", "rgb(0, 0, 0)");
+          .and("have.css", "border-color", "rgb(17, 17, 17)");
 
         cy.findByLabelText("statusbar-wrapper")
           .should("have.css", "border-width", "0px")
@@ -303,7 +303,7 @@ describe("Statusbar", () => {
         cy.findAllByLabelText("statusbar-button")
           .eq(0)
           .should("exist")
-          .and("have.css", "background-color", "rgb(236, 236, 236)");
+          .and("have.css", "background-color", "rgb(221, 221, 221)");
 
         cy.findAllByLabelText("statusbar-button")
           .eq(0)
@@ -318,7 +318,7 @@ describe("Statusbar", () => {
         cy.findAllByLabelText("statusbar-button")
           .eq(2)
           .should("exist")
-          .and("have.css", "background-color", "rgb(236, 236, 236)");
+          .and("have.css", "background-color", "rgb(221, 221, 221)");
 
         cy.findAllByLabelText("statusbar-button")
           .eq(2)
@@ -506,7 +506,7 @@ describe("Statusbar", () => {
 
         cy.findByLabelText("statusbar-button")
           .should("exist")
-          .and("have.css", "background-color", "rgb(236, 236, 236)");
+          .and("have.css", "background-color", "rgb(221, 221, 221)");
       });
 
       context("when given hidden", () => {

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react/*";
 import { Statusbar } from "./statusbar";
-import { CapsuleTab, CapsuleTabContentProps } from "./capsule-tab";
+import { CapsuleTab, CapsuleTabTab } from "./capsule-tab";
 import { Textbox } from "./textbox";
 import { ChangeEvent, useState } from "react";
 import {
@@ -74,7 +74,7 @@ const statusbarContent = {
   argTypes: {
     content: {
       description:
-        "Content object for the statusbar. Use \`left\` and \`right\` arrays of StatusbarItemProps to configure items.",
+        "Content object for the statusbar. Use \`left\` and \`right\` arrays of StatusbarItem to configure items.",
       control: false,
     },
     styles: {
@@ -295,7 +295,7 @@ export const ContainerizedClassicTheme: Story = {
       );
     };
 
-    const TABS_ITEMS: CapsuleTabContentProps[] = [
+    const TABS_ITEMS: CapsuleTabTab[] = [
       {
         id: "1",
         title: "Write",
@@ -495,7 +495,7 @@ export const ContainerizedModernTheme: Story = {
       );
     };
 
-    const TABS_ITEMS: CapsuleTabContentProps[] = [
+    const TABS_ITEMS: CapsuleTabTab[] = [
       {
         id: "1",
         title: "Write",

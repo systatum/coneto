@@ -8,7 +8,7 @@ import {
 import { ChangeEvent, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ThumbFieldThemeConfig } from "./../theme";
 
@@ -19,17 +19,23 @@ interface BaseThumbFieldProps {
   thumbsDownBackgroundColor?: string;
   disabled?: boolean;
   name?: string;
-  styles?: BaseThumbFieldStylesProps;
+  styles?: BaseThumbFieldStyles;
   id?: string;
   showError?: boolean;
 }
 
-interface BaseThumbFieldStylesProps {
+interface BaseThumbFieldStyles {
   triggerWrapperStyle?: CSSProp;
   triggerStyle?: CSSProp;
 }
 
-export type ThumbFieldValue = "up" | "down" | "blank";
+const ThumbFieldValue = {
+  Up: "up",
+  Down: "down",
+  Blank: "blank",
+} as const;
+
+type ThumbFieldValue = (typeof ThumbFieldValue)[keyof typeof ThumbFieldValue];
 
 function BaseThumbField({
   onChange,
@@ -135,13 +141,12 @@ function BaseThumbField({
   );
 }
 
-export type ThumbFieldStylesProps = BaseThumbFieldStylesProps &
-  FieldLaneStylesProps;
+export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
 
 export interface ThumbFieldProps
   extends Omit<BaseThumbFieldProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: ThumbFieldStylesProps;
+  styles?: ThumbFieldStyles;
 }
 
 function ThumbField({

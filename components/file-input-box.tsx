@@ -9,7 +9,7 @@ import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileInputBoxThemeConfig } from "./../theme";
 
@@ -21,11 +21,11 @@ interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   showError?: boolean;
   errorMessage?: string;
-  styles?: BaseFileInputBoxStylesProps;
+  styles?: BaseFileInputBoxStyles;
   helper?: string;
 }
 
-interface BaseFileInputBoxStylesProps {
+interface BaseFileInputBoxStyles {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   self?: CSSProp;
@@ -156,13 +156,12 @@ function BaseFileInputBox({
   );
 }
 
-export type FileInputBoxStylesProps = BaseFileInputBoxStylesProps &
-  FieldLaneStylesProps;
+export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: FileInputBoxStylesProps;
+  styles?: FileInputBoxStyles;
 }
 
 function FileInputBox({

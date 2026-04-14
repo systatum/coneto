@@ -8,13 +8,21 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { SidebarThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
+export const SidebarPosition = {
+  Left: "left",
+  Right: "right",
+} as const;
+
+export type SidebarPosition =
+  (typeof SidebarPosition)[keyof typeof SidebarPosition];
+
 export interface SidebarProps {
   children?: ReactNode;
-  styles?: SidebarStylesProps;
-  position?: "left" | "right";
+  styles?: SidebarStyles;
+  position?: SidebarPosition;
 }
 
-export interface SidebarStylesProps {
+export interface SidebarStyles {
   mobileStyle?: CSSProp;
   desktopStyle?: CSSProp;
 }
@@ -22,10 +30,10 @@ export interface SidebarStylesProps {
 export interface SidebarItemProps {
   isFixed?: boolean;
   children?: ReactNode;
-  styles?: SidebarItemStylesProps;
+  styles?: SidebarItemStyles;
 }
 
-export interface SidebarItemStylesProps {
+export interface SidebarItemStyles {
   self?: CSSProp;
 }
 

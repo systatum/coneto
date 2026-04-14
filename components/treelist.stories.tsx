@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
 import {
   TreeList,
-  TreeListActionsProps,
-  TreeListContentActionsProps,
-  TreeListContentProps,
-  TreeListItemsActionsProps,
-  TreeListItemsProps,
+  TreeListAction,
+  TreeListContentAction,
+  TreeListContent,
+  TreeListItemAction,
+  TreeListItem,
   TreeListNode,
-  TreeListOnDraggedProps,
+  TreeListOnDragged,
 } from "./treelist";
 import {
   RiAddBoxLine,
@@ -27,7 +27,7 @@ import { Button } from "./button";
 import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
-import { OptionProps } from "./selectbox";
+import { SelectboxOption } from "./selectbox";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
 
 const meta: Meta<typeof TreeList> = {
@@ -103,7 +103,7 @@ export const Default: Story = {
       console.log("Clicked person:", props.item.caption);
     };
 
-    const TREE_LIST_DATA: TreeListContentProps[] = [
+    const TREE_LIST_DATA: TreeListContent[] = [
       {
         id: "member",
         caption: "Member of Technical Staff",
@@ -158,8 +158,7 @@ export const Default: Story = {
       return `${first} ${last}`;
     };
 
-    const [content, setContent] =
-      useState<TreeListContentProps[]>(TREE_LIST_DATA);
+    const [content, setContent] = useState<TreeListContent[]>(TREE_LIST_DATA);
 
     return (
       <TreeList
@@ -241,12 +240,12 @@ export const Default: Story = {
 export const Nested: Story = {
   render: () => {
     type UseTreeListControllerOptions = {
-      initialData: TreeListContentProps[];
+      initialData: TreeListContent[];
       defaultPrevented?: boolean;
       initialState?: "opened" | "closed";
     };
 
-    const HEADER_ACTIONS: TreeListContentActionsProps[] = [
+    const HEADER_ACTIONS: TreeListContentAction[] = [
       {
         caption: "New Folder",
         onClick: () => console.log("first"),
@@ -256,7 +255,7 @@ export const Nested: Story = {
       },
     ];
 
-    const TREE_LIST_DATA: TreeListContentProps[] = [
+    const TREE_LIST_DATA: TreeListContent[] = [
       {
         id: "home",
         caption: "Home",
@@ -311,15 +310,15 @@ export const Nested: Story = {
       const [groups, setGroups] = useState(initialData);
 
       function applyContent(
-        tree: TreeListContentProps[],
+        tree: TreeListContent[],
         defaultPrevented?: boolean,
         initialState?: "opened" | "closed"
-      ): TreeListContentProps[] {
+      ): TreeListContent[] {
         return tree.map((props) => {
           const hasChildren =
             Array.isArray(props.items) && props.items.length > 0;
 
-          let normalizedItems: TreeListItemsProps[] | undefined = undefined;
+          let normalizedItems: TreeListItem[] | undefined = undefined;
 
           if (hasChildren && props.items) {
             normalizedItems = props.items.map((item) => {
@@ -363,10 +362,10 @@ export const Nested: Story = {
       }
 
       function applyItemsRecursively(
-        items: TreeListItemsProps[],
+        items: TreeListItem[],
         defaultPrevented?: boolean,
         initialState?: "opened" | "closed"
-      ): TreeListItemsProps[] {
+      ): TreeListItem[] {
         return items.map((item) => {
           const hasChildren =
             Array.isArray(item.items) && item.items.length > 0;
@@ -460,7 +459,7 @@ export const Nested: Story = {
         id,
         newGroupId,
         newPosition,
-      }: TreeListOnDraggedProps) => {
+      }: TreeListOnDragged) => {
         const dragged = TreeList.findTreeListNode(groups, id);
 
         if (
@@ -591,7 +590,7 @@ export const WithActions: Story = {
       console.log("Clicked person:", props.item.caption);
     };
 
-    const ITEM_ACTIONS: TreeListItemsActionsProps[] = [
+    const ITEM_ACTIONS: TreeListItemAction[] = [
       {
         caption: "Edit",
         icon: { image: RiEdit2Line },
@@ -633,7 +632,7 @@ export const WithActions: Story = {
       return itemActions.slice(0, itemLength);
     }, [showItem]);
 
-    const TREE_LIST_DATA: TreeListContentProps[] = [
+    const TREE_LIST_DATA: TreeListContent[] = [
       {
         id: "member",
         caption: "Member of Technical Staff",
@@ -678,7 +677,7 @@ export const WithActions: Story = {
       },
     ];
 
-    const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
+    const TREE_LIST_ACTIONS: TreeListAction[] = [
       {
         id: "discover",
         caption: "Discover",
@@ -697,7 +696,7 @@ export const WithActions: Story = {
       },
     ];
 
-    const SHOW_OPTIONS: OptionProps[] = [
+    const SHOW_OPTIONS: SelectboxOption[] = [
       { text: "1", value: "1" },
       { text: "2", value: "2" },
       { text: "3", value: "3" },
@@ -783,7 +782,6 @@ export const WithoutHeader: Story = {
           containerStyle: css`
             min-width: 300px;
             padding: 8px 8px 4px;
-            background-color: white;
           `,
         }}
         fields={DIVISION_EMPLOYEE_FIELDS}
@@ -809,7 +807,7 @@ export const WithoutHeader: Story = {
       },
     ];
 
-    const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
+    const TREE_LIST_ACTIONS: TreeListAction[] = [
       {
         id: "add-new-branch",
         icon: { image: RiAddBoxLine },
@@ -847,9 +845,9 @@ export const WithoutHeader: Story = {
 
 export const WithEmptySlate: Story = {
   render: () => {
-    const TREE_LIST_DATA: TreeListContentProps[] = [];
+    const TREE_LIST_DATA: TreeListContent[] = [];
 
-    const TREE_LIST_ACTIONS: TreeListActionsProps[] = [
+    const TREE_LIST_ACTIONS: TreeListAction[] = [
       {
         id: "discover",
         caption: "Discover",

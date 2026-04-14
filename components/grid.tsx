@@ -9,13 +9,13 @@ export interface GridProps
   height?: number | string;
   width?: number | string;
   gap?: number | string;
-  styles?: GridStylesProps;
+  styles?: GridStyles;
   preset?: GridPresetKey;
 }
 
 export interface GridCardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
-  styles?: GridCardStylesProps;
+  styles?: GridCardStyles;
   children?: ReactNode;
   thumbnail?: string;
   isSelected?: boolean;
@@ -23,11 +23,11 @@ export interface GridCardProps
   selectable?: boolean;
 }
 
-export interface GridStylesProps {
+export interface GridStyles {
   self?: CSSProp;
 }
 
-export type GridCardStylesProps = GridStylesProps;
+export type GridCardStyles = GridStyles;
 
 function Grid({
   children,

@@ -20,20 +20,28 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Searchbox, SearchboxStylesProps } from "./searchbox";
+import { Searchbox, SearchboxStyles } from "./searchbox";
 import { AnimatePresence, motion } from "framer-motion";
 import { LoadingSpinner } from "./loading-spinner";
 import { Checkbox } from "./checkbox";
 import { Togglebox } from "./togglebox";
 import styled, { css, CSSProp } from "styled-components";
-import ContextMenu, { ContextMenuActionsProps } from "./context-menu";
+import ContextMenu, { ContextMenuAction } from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { ListThemeConfig, TreeListThemeConfig } from "theme";
+import { ListThemeConfig } from "theme";
 
-export interface ListProps extends ListMaxItemsProp {
+export const ListOpenerBehavior = {
+  Any: "any",
+  OnlyOne: "onlyOne",
+} as const;
+
+export type ListOpenerBehavior =
+  (typeof ListOpenerBehavior)[keyof typeof ListOpenerBehavior];
+
+export interface ListProps extends ListMaxItems {
   searchable?: boolean;
   onSearchRequested?: (search: ChangeEvent<HTMLInputElement>) => void;
   children: ReactNode;
@@ -41,7 +49,7 @@ export interface ListProps extends ListMaxItemsProp {
   draggable?: boolean;
   selectable?: boolean;
   searchValue?: string;
-  styles?: ListStylesProps;
+  styles?: ListStyles;
   onDragged?: (props: {
     id: string;
     oldGroupId: string;
@@ -49,43 +57,41 @@ export interface ListProps extends ListMaxItemsProp {
     oldPosition: number;
     newPosition: number;
   }) => void;
-  groupOpenerBehavior?: "any" | "onlyOne";
-  openerBehavior?: "any" | "onlyOne";
-  onOpen?: (props?: ListOnOpenProps) => void;
+  groupOpenerBehavior?: ListOpenerBehavior;
+  openerBehavior?: ListOpenerBehavior;
+  onOpen?: (props?: ListOnOpen) => void;
   alwaysShowDragIcon?: boolean;
   inputRef?: Ref<HTMLInputElement>;
   onSearchKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  labels?: ListLabelsProps;
+  labels?: ListLabels;
 }
 
-export interface ListLabelsProps {
+export interface ListLabels {
   moreItemsText?: ReactNode;
   lessItemsText?: ReactNode;
 }
 
-export interface ListOnOpenProps {
+export interface ListOnOpen {
   id?: string;
   isOpen?: boolean;
 }
 
-export type ListItemActionProps = ContextMenuActionsProps;
-
-interface ListAlwaysShowDragIconProp {
+interface ListAlwaysShowDragIcon {
   alwaysShowDragIcon?: boolean;
 }
 
-interface ListMaxItemsProp {
+interface ListMaxItems {
   maxItems?: number;
   maxItemsWithIcon?: boolean;
 }
 
-export interface ListStylesProps {
+export interface ListStyles {
   maxItemsStyle?: CSSProp;
-  searchboxStyles?: SearchboxStylesProps;
+  searchboxStyles?: SearchboxStyles;
   containerStyle?: CSSProp;
 }
 
-export interface LeftSideContentMenuProps {
+export interface LeftSideContentMenu {
   badge?: (badge: ReactNode, withStyle?: { withStyle?: CSSProp }) => ReactNode;
   render?: (children?: ReactNode) => ReactNode;
 }
@@ -279,8 +285,8 @@ function List({
             const componentChild = child as ReactElement<
               ListItemProps &
                 ListItemWithId &
-                ListAlwaysShowDragIconProp &
-                ListMaxItemsProp & { labels?: ListLabelsProps }
+                ListAlwaysShowDragIcon &
+                ListMaxItems & { labels?: ListLabels }
             >;
 
             if (child.type === React.Fragment) {
@@ -370,10 +376,26 @@ const ListContainer = styled.div<{
 
   ${({ $containerStyle }) => $containerStyle}
 `;
-export interface ListGroupActionsProps
-  extends Omit<ActionButtonProps, "onClick"> {
+export interface ListGroupaction extends Omit<ActionButtonProps, "onClick"> {
   onClick?: (e?: string) => void;
 }
+
+export const ListGroupOpenerStyle = {
+  Chevron: "chevron",
+  ToggleBox: "togglebox",
+  None: "none",
+} as const;
+
+export type ListGroupOpenerStyle =
+  (typeof ListGroupOpenerStyle)[keyof typeof ListGroupOpenerStyle];
+
+export const ListGroupInitialState = {
+  Opened: "opened",
+  Closed: "closed",
+} as const;
+
+export type ListGroupInitialState =
+  (typeof ListGroupInitialState)[keyof typeof ListGroupInitialState];
 
 export interface ListGroupProps {
   id: string;
@@ -382,16 +404,16 @@ export interface ListGroupProps {
   children: ReactNode;
   draggable?: boolean;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: ListGroupActionsProps[];
-  openerStyle?: "chevron" | "togglebox" | "none";
+  actions?: ListGroupaction[];
   emptySlate?: ReactNode;
-  initialState?: "opened" | "closed";
+  openerStyle?: ListGroupOpenerStyle;
+  initialState?: ListGroupInitialState;
   selectable?: boolean;
-  styles?: ListGroupStylesProps;
+  styles?: ListGroupStyles;
   onClick?: ({ toggle }: { toggle: () => void }) => void;
 }
 
-interface ListGroupStylesProps {
+interface ListGroupStyles {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   titleStyle?: CSSProp;
@@ -403,15 +425,15 @@ interface ListGroupStylesProps {
   rightSideWrapperStyle?: CSSProp;
 }
 
-export interface ListGroupContentProps {
+export interface ListGroupContent {
   id: string;
   title: string;
   subtitle?: string;
-  actions?: ListGroupActionsProps[];
+  actions?: ListGroupaction[];
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  initialState?: "opened" | "closed";
+  initialState?: ListGroupInitialState;
   items: ListItemProps[];
-  styles?: ListGroupStylesProps;
+  styles?: ListGroupStyles;
 }
 
 function ListGroup({
@@ -440,8 +462,8 @@ function ListGroup({
     maxItems,
     maxItemsWithIcon,
   } = props as ListItemWithId &
-    ListAlwaysShowDragIconProp &
-    ListMaxItemsProp & { labels?: ListLabelsProps };
+    ListAlwaysShowDragIcon &
+    ListMaxItems & { labels?: ListLabels };
 
   const childArray = Children.toArray(children).filter(isValidElement);
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
@@ -582,7 +604,7 @@ function ListGroup({
             const componentChild = child as ReactElement<
               ListItemProps &
                 ListItemWithId &
-                ListAlwaysShowDragIconProp & {
+                ListAlwaysShowDragIcon & {
                   index: number;
                   onDropItem?: (position: number) => void;
                   groupLength?: number;
@@ -709,16 +731,15 @@ function ListShowMoreButton({
   expanded: boolean;
   setExpanded: (prop: boolean) => void;
   isOpen?: boolean | undefined;
-  labels?: ListLabelsProps;
+  labels?: ListLabels;
   maxItemsStyle?: CSSProp;
-} & ListMaxItemsProp) {
+} & ListMaxItems) {
   const { currentTheme } = useTheme();
   const listTheme = currentTheme.list;
 
   return (
     <ShowMoreButton
-      $borderColor={listTheme.borderColor}
-      $textColor={listTheme.textColor}
+      $theme={listTheme}
       aria-label="list-show-more-button"
       $style={css`
         ${maxItemsStyle}
@@ -771,8 +792,7 @@ const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
 
 const ShowMoreButton = styled.button<{
   $style?: CSSProp;
-  $textColor?: string;
-  $borderColor?: string;
+  $theme?: ListThemeConfig;
 }>`
   margin-top: 0.25rem;
   padding: 0.25rem 0.5rem;
@@ -787,8 +807,8 @@ const ShowMoreButton = styled.button<{
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid ${({ $borderColor }) => $borderColor};
-  color: ${({ $textColor }) => $textColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  color: ${({ $theme }) => $theme?.maxItemTextColor};
 
   ${({ $style }) => $style}
 `;
@@ -885,6 +905,8 @@ const EmptyContent = styled(motion.div)<{
   ${({ $style }) => $style}
 `;
 
+export type ListItemAction = ContextMenuAction;
+
 export interface ListItemProps {
   id: string;
   title?: ReactNode;
@@ -896,7 +918,7 @@ export interface ListItemProps {
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: (id?: string) => ListItemActionProps[];
+  actions?: (id?: string) => ListItemAction[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
@@ -904,10 +926,8 @@ export interface ListItemProps {
     checked?: boolean;
     name?: string;
   };
-  leftSideContent?:
-    | ReactNode
-    | ((props?: LeftSideContentMenuProps) => ReactNode);
-  styles?: ListItemStylesProps;
+  leftSideContent?: ReactNode | ((props?: LeftSideContentMenu) => ReactNode);
+  styles?: ListItemStyles;
   hoverTextColor?: string;
   hoverBackgroundColor?: string;
   selected?: boolean;
@@ -917,7 +937,7 @@ export interface ListItemProps {
   onMouseMove?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-export interface ListItemStylesProps {
+export interface ListItemStyles {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   titleStyle?: CSSProp;
@@ -971,7 +991,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
       onDropItem,
       ...domProps
     } = props as ListItemWithId &
-      ListAlwaysShowDragIconProp & {
+      ListAlwaysShowDragIcon & {
         index?: number;
         onDropItem?: (position: number) => void;
         groupLength?: number;

@@ -67,49 +67,61 @@ export type FormValueType =
   | string[]
   | number[];
 
-export type FormFieldType =
-  | "text"
-  | "message"
-  | "number"
-  | "email"
-  | "password"
-  | "textarea"
-  | "checkbox"
-  | "radio"
-  | "phone"
-  | "color"
-  | "file_drop_box"
-  | "file"
-  | "image"
-  | "signbox"
-  | "money"
-  | "date"
-  | "combo"
-  | "chips"
-  | "rating"
-  | "thumbfield"
-  | "toggle"
-  | "capsule"
-  | "time"
-  | "button"
-  | "pin"
-  | "frame"
-  | "custom";
+export const FormFieldType = {
+  Text: "text",
+  Message: "message",
+  Number: "number",
+  Email: "email",
+  Password: "password",
+  Textarea: "textarea",
+  Checkbox: "checkbox",
+  Radio: "radio",
+  Phone: "phone",
+  Color: "color",
+  FileDropBox: "file_drop_box",
+  File: "file",
+  Image: "image",
+  Signbox: "signbox",
+  Money: "money",
+  Date: "date",
+  Combo: "combo",
+  Chips: "chips",
+  Rating: "rating",
+  Thumbfield: "thumbfield",
+  Toggle: "toggle",
+  Capsule: "capsule",
+  Time: "time",
+  Button: "button",
+  Pin: "pin",
+  Frame: "frame",
+  Custom: "custom",
+} as const;
+
+export type FormFieldType = (typeof FormFieldType)[keyof typeof FormFieldType];
+
+export const StatefulFormMode = {
+  OnChange: "onChange",
+  OnBlur: "onBlur",
+  OnSubmit: "onSubmit",
+} as const;
+
+export type StatefulFormMode =
+  (typeof StatefulFormMode)[keyof typeof StatefulFormMode];
 
 export interface StatefulFormProps<Z extends ZodTypeAny> {
   fields: FormFieldGroup[];
   formValues: TypeOf<Z>;
   validationSchema?: Z;
-  mode?: "onChange" | "onBlur" | "onSubmit";
+  mode?: StatefulFormMode;
   onValidityChange?: (e: boolean) => void;
   labelSize?: string;
   fieldSize?: string;
   onChange?: (args: { currentState: any }) => void;
   autoFocusField?: string;
-  styles?: StatefulFormStylesProps;
+  styles?: StatefulFormStyles;
 }
 
-export interface StatefulFormStylesProps {
+export interface StatefulFormStyles {
   containerStyle?: CSSProp;
   rowStyle?: CSSProp;
   frameContainerStyle?: CSSProp;
@@ -117,6 +129,26 @@ export interface StatefulFormStylesProps {
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
+
+export const FormFieldRowJustifyPosition = {
+  Center: "center",
+  Start: "flex-start",
+  End: "flex-end",
+  Between: "space-between",
+} as const;
+
+export type FormFieldRowJustifyPosition =
+  (typeof FormFieldRowJustifyPosition)[keyof typeof FormFieldRowJustifyPosition];
+
+export const FormFieldRowItemsAligment = {
+  Center: "center",
+  Start: "flex-start",
+  End: "flex-end",
+  Stretch: "stretch",
+} as const;
+
+export type FormFieldRowItemsAligment =
+  (typeof FormFieldRowItemsAligment)[keyof typeof FormFieldRowItemsAligment];
 
 export interface FormFieldProps {
   name: string;
@@ -137,8 +169,8 @@ export interface FormFieldProps {
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
   disabled?: boolean;
-  rowJustifyContent?: "center" | "start" | "end" | "between";
-  rowAlignItems?: "center" | "start" | "end" | "between";
+  rowJustifyPosition?: FormFieldRowJustifyPosition;
+  rowItemsAlignment?: FormFieldRowItemsAligment;
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textboxProps?: TextboxProps;
@@ -379,7 +411,7 @@ interface FormFieldsProps<T extends FieldValues> {
   setValue?: UseFormSetValue<T>;
   onChange?: (name: keyof T, value: FormValueType) => void;
   autoFocusField?: string;
-  styles?: StatefulFormStylesProps;
+  styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
 }
 
@@ -424,12 +456,12 @@ function FormFields<T extends FieldValues>({
         }
 
         const rowJustifiedContent = visibleFields.find(
-          (f) => f.rowJustifyContent
-        )?.rowJustifyContent;
+          (f) => f.rowJustifyPosition
+        )?.rowJustifyPosition;
 
         const rowAlignedItem = visibleFields.find(
-          (f) => f.rowAlignItems
-        )?.rowAlignItems;
+          (f) => f.rowItemsAlignment
+        )?.rowItemsAlignment;
 
         const withFrame = visibleFields.some((f) => f.type === "frame");
 
@@ -447,13 +479,7 @@ function FormFields<T extends FieldValues>({
               ${styles?.rowStyle}
               ${rowJustifiedContent &&
               css`
-                justify-content: ${rowJustifiedContent === "end"
-                  ? "flex-end"
-                  : rowJustifiedContent === "start"
-                    ? "flex-start"
-                    : rowJustifiedContent === "between"
-                      ? "space-between"
-                      : "center"};
+                justify-content: ${rowJustifiedContent};
               `};
 
               ${rowWithFrame &&
@@ -464,13 +490,7 @@ function FormFields<T extends FieldValues>({
 
               ${rowAlignedItem &&
               css`
-                align-items: ${rowAlignedItem === "end"
-                  ? "end"
-                  : rowAlignedItem === "start"
-                    ? "start"
-                    : rowAlignedItem === "between"
-                      ? "space-between"
-                      : "center"};
+                align-items: ${rowAlignedItem};
               `};
 
               ${rowStyleItem}

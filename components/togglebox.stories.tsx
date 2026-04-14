@@ -136,9 +136,9 @@ It integrates seamlessly with \`FieldLane\` for form layout and validation suppo
     },
     styles: {
       description:
-        "Custom styles for individual sub-elements of the togglebox. Accepts a ToggleboxStylesProps object.",
+        "Custom styles for individual sub-elements of the togglebox. Accepts a ToggleboxStyles object.",
       table: {
-        type: { summary: "ToggleboxStylesProps" },
+        type: { summary: "ToggleboxStyles" },
       },
       control: { type: "object" },
     },
@@ -289,7 +289,7 @@ export const WithIconAndLoading: Story = {
       if (args.checked) {
         setUpdateArgs({ isLoading: true });
         setTimeout(() => {
-          setUpdateArgs({ isLoading: "false" });
+          setUpdateArgs({ isLoading: false });
         }, 1200);
       }
     }, [args.checked]);
@@ -323,7 +323,7 @@ export const WithDescription: Story = {
       if (args.checked) {
         setUpdateArgs({ isLoading: true });
         setTimeout(() => {
-          setUpdateArgs({ isLoading: "false" });
+          setUpdateArgs({ isLoading: false });
         }, 1200);
       }
     }, [args.checked]);

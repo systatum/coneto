@@ -23,11 +23,7 @@ import {
 } from "@remixicon/react";
 import { AnimatePresence, motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
-import {
-  Searchbox,
-  SearchboxProps,
-  SearchboxResultMenuProps,
-} from "./searchbox";
+import { Searchbox, SearchboxProps, SearchboxResultMenu } from "./searchbox";
 import { Capsule, CapsuleProps } from "./capsule";
 import ContextMenu from "./context-menu";
 import { ActionButton, ActionButtonProps } from "./action-button";
@@ -35,9 +31,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 
-export type RowData = (string | ReactNode)[];
-
-export interface ColumnTableProps {
+export interface TableColumn {
   caption: string;
   sortable?: boolean;
   styles?: { self?: CSSProp };
@@ -45,8 +39,16 @@ export interface ColumnTableProps {
   id: string;
 }
 
-export interface TableActionsProps extends ActionButtonProps {
-  type?: "button" | "capsule";
+export const TableActionType = {
+  Button: "button",
+  Capsule: "capsule",
+} as const;
+
+export type TableActionType =
+  (typeof TableActionType)[keyof typeof TableActionType];
+
+export interface TableAction extends ActionButtonProps {
+  type?: TableActionType;
   capsuleProps?: CapsuleProps;
 }
 
@@ -62,12 +64,12 @@ export interface TableProps {
     oldPosition: number;
     newPosition: number;
   }) => void;
-  actions?: TableActionsProps[];
-  columns: ColumnTableProps[];
+  actions?: TableAction[];
+  columns: TableColumn[];
   onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => SubMenuListTableProps[];
+  subMenuList?: (columnCaption: string) => TableSubMenuList[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -75,15 +77,17 @@ export interface TableProps {
   onPreviousPageRequested?: () => void;
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
-  labels?: TableLabelsProps;
-  sumRow?: SummaryRowProps[];
-  styles?: TableStylesProps;
-  searchbox?: SearchboxProps;
+  labels?: TableLabels;
+  sumRow?: TableSummaryRowColumn[];
+  styles?: TableStyles;
+  searchbox?: TableSearchbox;
 }
 
-export type SubMenuListTableProps = TipMenuItemProps;
+type TableSearchbox = SearchboxProps;
 
-export interface TableStylesProps {
+export type TableSubMenuList = TipMenuItemProps;
+
+export interface TableStyles {
   containerStyle?: CSSProp;
   tableHeaderStyle?: CSSProp;
   tableBodyStyle?: CSSProp;
@@ -92,27 +96,27 @@ export interface TableStylesProps {
   totalSelectedItemTextStyle?: CSSProp;
 }
 
-export interface TableLabelsProps {
+export interface TableLabels {
   totalSelectedItemText?: ((count: number) => string) | null;
   pageNumberText?: string | number;
 }
 
-interface TableAlwaysShowDragIconProp {
+interface TableAlwaysShowDragIcon {
   alwaysShowDragIcon?: boolean;
 }
 
-export interface SummaryRowProps {
+export interface TableSummaryRowColumn {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
-  styles?: SummaryRowStylesProps;
+  styles?: TableSummaryRowColumnStyles;
 }
 
-export interface SummaryRowStylesProps {
+export interface TableSummaryRowColumnStyles {
   self?: CSSProp;
 }
 
-export type TableResultMenuProps = SearchboxResultMenuProps;
+export type TableResultMenuProps = SearchboxResultMenu;
 
 const DnDContext = createContext<{
   dragItem: {
@@ -135,7 +139,7 @@ const DnDContext = createContext<{
   setDragItem: () => {},
 });
 
-const TableColumnContext = createContext<ColumnTableProps[]>([]);
+const TableColumnContext = createContext<TableColumn[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
 
 function Table({
@@ -162,7 +166,7 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
-}: TableProps & TableAlwaysShowDragIconProp) {
+}: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
 
@@ -242,7 +246,7 @@ function Table({
         setOpenRowId,
         alwaysShowDragIcon,
       } as TableRowGroupProps &
-        TableAlwaysShowDragIconProp & {
+        TableAlwaysShowDragIcon & {
           selectedData?: string[];
           handleSelect?: (data: string) => void;
           draggable?: boolean;
@@ -285,7 +289,7 @@ function Table({
             setDragItem(null);
           }
         },
-      } as TableRowProps & TableAlwaysShowDragIconProp);
+      } as TableRowProps & TableAlwaysShowDragIcon);
     }
 
     return null;
@@ -873,7 +877,7 @@ function TableRowGroup({
   const tableTheme = currentTheme.table;
 
   const { openRowId, setOpenRowId, alwaysShowDragIcon } =
-    props as TableAlwaysShowDragIconProp & TableRowOpenWithId;
+    props as TableAlwaysShowDragIcon & TableRowOpenWithId;
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
@@ -914,7 +918,7 @@ function TableRowGroup({
           }
         },
       } as TableRowProps &
-        TableAlwaysShowDragIconProp & {
+        TableAlwaysShowDragIcon & {
           index?: number;
           onDropItem?: (position: number) => void;
           groupLength?: number;
@@ -1019,13 +1023,17 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
     `}
 `;
 
+type TableRowAction = TipMenuItemProps;
+
+export type TableRowContent = (string | ReactNode)[];
+
 export interface TableRowProps {
-  content?: RowData;
+  content?: TableRowContent;
   selectable?: boolean;
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TipMenuItemProps[];
+  actions?: (columnCaption: string) => TableRowAction[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
@@ -1033,10 +1041,10 @@ export interface TableRowProps {
     close?: () => void;
   }) => void;
   groupId?: string;
-  styles?: TableRowStylesProps;
+  styles?: TableRowStyles;
 }
 
-export interface TableRowStylesProps {
+export interface TableRowStyles {
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   rowStyle?: CSSProp;
@@ -1082,7 +1090,7 @@ function TableRow({
     isLast,
     index,
   } = props as TableRowOpenWithId &
-    TableAlwaysShowDragIconProp & {
+    TableAlwaysShowDragIcon & {
       index?: number;
       isSelected?: boolean;
       isLast?: boolean;
@@ -1283,7 +1291,7 @@ function TableRow({
           (() => {
             const listActions = actions(`${rowId}`);
             const actionsWithIcons = listActions
-              ?.filter((action): action is TipMenuItemProps => Boolean(action))
+              ?.filter((action): action is TableRowAction => Boolean(action))
               .map((action) => ({
                 ...action,
                 icon: {

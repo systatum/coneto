@@ -24,10 +24,10 @@ export interface ErrorSlateProps {
     | "505";
   children?: ReactNode;
   title?: string;
-  styles?: ErrorSlateStylesProps;
+  styles?: ErrorSlateStyles;
 }
 
-export interface ErrorSlateStylesProps {
+export interface ErrorSlateStyles {
   titleStyle?: CSSProp;
   cubeFaceStyle?: CSSProp;
 }

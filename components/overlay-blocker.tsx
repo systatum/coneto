@@ -24,11 +24,11 @@ export interface OverlayBlockerProps {
   show?: boolean;
   zIndex?: number;
   onClick?: OverlayBlockerClickHandler;
-  styles?: OverlayBlockerStylesProps;
+  styles?: OverlayBlockerStyles;
   children?: ReactNode;
 }
 
-export interface OverlayBlockerStylesProps {
+export interface OverlayBlockerStyles {
   self?: CSSProp;
 }
 

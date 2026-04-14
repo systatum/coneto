@@ -498,7 +498,7 @@ Grouped Option
 ```ts
 {
   category: string;
-  options: OptionProps[];
+  options: SelectboxOption[];
   collapsible?: boolean;
   initialState?: "opened" | "closed";
 }
@@ -2085,7 +2085,7 @@ It supports icons, labels, collapsible tooltips, customizable styles, and click 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | ReactNode | — | Step components (`Stepline.Item`) to render inside the stepline. |
-| `styles` | SteplineStylesProps | — | Custom CSS styles for the wrapper. |
+| `styles` | SteplineStyles | — | Custom CSS styles for the wrapper. |
 | `gap` | number | 8 | Space in pixels between steps. |
 | `collapsed` | boolean | false | Collapses step labels into tooltips. |
 
@@ -2099,7 +2099,7 @@ It supports icons, labels, collapsible tooltips, customizable styles, and click 
 | `variant` | 'todo' | 'current' | 'completed' | 'error' | 'todo' | Step visual variant affecting circle color and line color. |
 | `active` | boolean | false | Scale the outer circle to indicate active state. |
 | `onClick` | () => void | — | Callback when the step is clicked. |
-| `styles` | SteplineItemStylesProps | — | Custom styles for the item, outer/inner circle, and text wrapper. |
+| `styles` | SteplineItemStyles | — | Custom styles for the item, outer/inner circle, and text wrapper. |
 
 ---
 📌 Usage
@@ -2516,7 +2516,7 @@ It supports custom items (`Timeline.Item`), clickable states, variant-based colo
 - `subtitle` (string): Secondary description or detail under the title.
 - `sidenote` (ReactNode): Optional content displayed beside the item.
 - `variant` (string): Status/variant of the item, affects colors. Options from `TEXT_VARIANT_COLOR`.
-- `styles` (TimelineItemStylesProps): Customize styling for item sub-elements.
+- `styles` (TimelineItemStyles): Customize styling for item sub-elements.
   - `self` – container wrapper
   - `textWrapperStyle` – wrapper for title & subtitle
   - `titleStyle` – title text
@@ -2684,7 +2684,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 - 🏷 **Toolbar.Menu**: Each menu can have a caption, an icon, and an optional dropdown sub-menu.
 - 🔀 **Variants**: Supports `default`, `primary`, and `danger` modes for visual emphasis.
 - 🔄 **Interactive states**: Hover, active, focus-visible, and open states are styled out-of-the-box.
-- ⬆️⬇️ **Dropdown menus**: Sub-menu lists can be fully customized with `ToolbarSubMenuProps`.
+- ⬆️⬇️ **Dropdown menus**: Sub-menu lists can be fully customized with `ToolbarSubMenuList`.
 - ⚡ **Dynamic sizing**: Supports a `big` mode for larger icons and vertically-aligned content.
 - 🎨 **Styling flexibility**: Customize the container, trigger, toggle button, and dropdown via the `styles` prop.
 - 🧩 **Composable children**: Place any custom JSX or multiple `Toolbar.Menu` items inside a toolbar.
@@ -2693,7 +2693,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 📌 Usage
 
 ```tsx
-const subMenuList: ToolbarSubMenuProps[] = [
+const subMenuList: ToolbarSubMenuList[] = [
   { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
   { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, isDangerous: true, onClick: () => console.log("Deleted") },
 ];

@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
 import { COUNTRY_CODES } from "./../constants/countries";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import { CountryCodeProps, Phonebox } from "./phonebox";
 import { StatefulOnChangeType } from "./stateful-form";
 
@@ -104,7 +104,7 @@ export const WithDropdown: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",

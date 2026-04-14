@@ -91,7 +91,7 @@ describe("TipMenu", () => {
       cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
       cy.findAllByLabelText("tip-menu-item")
         .eq(2)
-        .should("have.css", "background-color", "rgb(239, 68, 68)");
+        .should("have.css", "background-color", "rgb(206, 55, 93)");
     });
   });
 
@@ -111,7 +111,7 @@ describe("TipMenu", () => {
         .eq(2)
         .realHover()
         .wait(200)
-        .should("have.css", "background-color", "rgb(231, 31, 41)");
+        .should("have.css", "background-color", "rgb(161, 47, 75)");
     });
   });
 

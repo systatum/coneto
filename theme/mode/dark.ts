@@ -463,6 +463,7 @@ const darkList = createListTheme(darkBody, {
   badgeBorderColor: "#3f3f46",
   toggleBackgroundColor: "#1e3a5f",
   hoverTextColor: "#111111",
+  maxItemTextColor: "#9ca3af",
 });
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({

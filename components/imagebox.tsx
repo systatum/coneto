@@ -2,15 +2,24 @@ import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { RiAddLine, RiImageLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ImageboxThemeConfig } from "theme";
 
+export const ImageboxSize = {
+  ExtraSmall: "xs",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+} as const;
+
+export type ImageboxSize = (typeof ImageboxSize)[keyof typeof ImageboxSize];
+
 interface BaseImageboxProps {
   onFileSelected?: (file: File | undefined) => void;
-  size?: "xs" | "sm" | "md" | "lg";
+  size?: ImageboxSize;
   name?: string;
-  styles?: BaseImageboxStylesProps;
+  styles?: BaseImageboxStyles;
   value?: File | string | null;
   borderless?: boolean;
   editable?: boolean;
@@ -19,7 +28,7 @@ interface BaseImageboxProps {
   disabled?: boolean;
 }
 
-interface BaseImageboxStylesProps {
+interface BaseImageboxStyles {
   self?: CSSProp;
 }
 
@@ -201,13 +210,12 @@ function BaseImagebox({
   );
 }
 
-export type ImageboxStylesProps = BaseImageboxStylesProps &
-  FieldLaneStylesProps;
+export type ImageboxStyles = BaseImageboxStyles & FieldLaneStyles;
 
 export interface ImageboxProps
   extends Omit<BaseImageboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: ImageboxStylesProps;
+  styles?: ImageboxStyles;
 }
 
 function Imagebox({

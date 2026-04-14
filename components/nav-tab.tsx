@@ -18,18 +18,18 @@ import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
 
 export interface NavTabProps {
-  tabs?: NavTabContentProps[];
+  tabs?: NavTabTabProps[];
   activeTab?: string;
   activeColor?: string;
   children?: ReactNode;
-  actions?: NavTabActionsProps[];
-  styles?: NavTabStylesProps;
+  actions?: NavTabAction[];
+  styles?: NavTabStyles;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
   active?: boolean;
 }
 
-export interface NavTabStylesProps {
+export interface NavTabStyles {
   contentStyle?: CSSProp;
   containerStyle?: CSSProp;
   containerBoxStyle?: CSSProp;
@@ -38,23 +38,28 @@ export interface NavTabStylesProps {
   boxStyle?: CSSProp;
 }
 
-export interface NavTabActionsProps extends ActionButtonProps {
+export interface NavTabAction extends ActionButtonProps {
   active?: boolean;
 }
 
-export type NavTabSize = "md" | "sm";
+export const NavTabSize = {
+  Small: "sm",
+  Medium: "md",
+};
 
-export interface NavTabContentProps {
+export type NavTabSize = (typeof NavTabSize)[keyof typeof NavTabSize];
+
+export interface NavTabTabProps {
   id: string;
   title: string;
   content?: ReactNode;
   onClick?: () => void;
-  actions?: SubMenuNavTab[];
-  subItems?: NavTabSubItemsContentProps[];
+  actions?: NavTabTabAction[];
+  subItems?: NavTabSubItem[];
   hidden?: boolean;
 }
 
-export interface NavTabSubItemsContentProps {
+export interface NavTabSubItem {
   id: string;
   caption: string;
   icon?: FigureProps;
@@ -63,7 +68,7 @@ export interface NavTabSubItemsContentProps {
   hidden?: boolean;
 }
 
-export interface SubMenuNavTab extends Omit<TipMenuItemProps, "onClick"> {
+export interface NavTabTabAction extends Omit<TipMenuItemProps, "onClick"> {
   onClick: (id?: string) => void;
 }
 

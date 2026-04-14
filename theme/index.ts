@@ -1,7 +1,7 @@
-import { MessageboxVariantState } from "./../components/messagebox";
+import { MessageboxVariant } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
-import { ToolbarVariantType } from "./../components/toolbar";
-import { SteplineItemState } from "./../constants/step-component-util";
+import { ToolbarVariant } from "./../components/toolbar";
+import { BaseSteplineItem } from "./../constants/step-component-util";
 
 export type ThemeMode = "light" | "dark";
 
@@ -356,6 +356,7 @@ export interface ListThemeConfig extends BodyThemeConfig {
   badgeTextColor?: string;
   badgeBackgroundColor?: string;
   badgeBorderColor?: string;
+  maxItemTextColor?: string;
 }
 
 // loading-skeleton.tsx
@@ -377,7 +378,7 @@ export interface MessageboxVariantTheme
 }
 
 export type MessageboxThemeConfig = {
-  [K in MessageboxVariantState]: MessageboxVariantTheme;
+  [K in MessageboxVariant]: MessageboxVariantTheme;
 };
 
 // moneybox.tsx
@@ -570,9 +571,9 @@ export interface SidebarThemeConfig extends BodyThemeConfig {
 
 // stepline.tsx
 export interface SteplineThemeConfig {
-  outerCircle: Record<SteplineItemState["variant"], string>;
-  innerCircle: Record<SteplineItemState["variant"], string>;
-  text: Record<SteplineItemState["variant"], string>;
+  outerCircle: Record<BaseSteplineItem["variant"], string>;
+  innerCircle: Record<BaseSteplineItem["variant"], string>;
+  text: Record<BaseSteplineItem["variant"], string>;
   line?: {
     default: string;
     completed: string;
@@ -786,7 +787,7 @@ export interface AppTheme {
   tipmenu: TipMenuThemeConfig;
   timebox: TimeboxThemeConfig;
   togglebox: ToggleboxThemeConfig;
-  toolbar: Record<ToolbarVariantType, ToolbarThemeConfig>;
+  toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
   window: WindowThemeConfig;

@@ -1,4 +1,4 @@
-import { ToolbarVariantType } from "./../../components/toolbar";
+import { ToolbarVariant } from "./../../components/toolbar";
 import { ButtonVariants } from "./../../components/button";
 import {
   ActionButtonThemeConfig,
@@ -193,7 +193,7 @@ export function createBoxbarTheme(
 
 // button.tsx
 export function createButtonTheme(
-  body: BodyThemeConfig,
+  body: BodyThemeConfig = {},
   customVariants: Partial<
     Record<ButtonVariants["variant"], ButtonThemeConfig>
   > = {}
@@ -201,7 +201,7 @@ export function createButtonTheme(
   const variants: Record<string, ButtonThemeConfig> = {
     default: {
       backgroundColor: "#dddddd",
-      textColor: "black",
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       textDecoration: "none",
@@ -233,7 +233,7 @@ export function createButtonTheme(
     },
     secondary: {
       backgroundColor: "#ececec",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#cccccc",
       activeBackgroundColor: "#b3b3b3",
       focusBackgroundColor: "#B4B4B480",
@@ -241,7 +241,7 @@ export function createButtonTheme(
     },
     ghost: {
       backgroundColor: "transparent",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#f3f3f3",
       activeBackgroundColor: "#eaeaea",
       focusBackgroundColor: "#00000033",
@@ -258,7 +258,7 @@ export function createButtonTheme(
     },
     transparent: {
       backgroundColor: "transparent",
-      textColor: body.textColor,
+      textColor: body.textColor || "rgb(17, 17, 17)",
       hoverBackgroundColor: "#e2e2e2",
       activeBackgroundColor: "#cfcfcf",
       focusBackgroundColor: "#cfcfcf",
@@ -840,12 +840,13 @@ export function createListTheme(
     hoverTextColor: body.textColor,
     badgeBackgroundColor: "#488cac",
     borderColor: "#d1d5db",
-    mutedTextColor: "#6b7280",
     dragLineColor: "#3b82f6",
     emptyHoverBackgroundColor: "#dbeafe",
     badgeTextColor: "white",
     badgeBorderColor: "#d1d5db",
     toggleBackgroundColor: "#c1d6f1",
+    mutedTextColor: "#6b7280",
+    maxItemTextColor: "rgb(97, 97, 97)",
   };
 
   return {
@@ -1445,9 +1446,9 @@ export function createTableTheme(
     headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
     headerBorderColor: "rgb(229, 231, 235)",
 
-    rowGroupBackgroundColor: "white",
+    rowGroupBackgroundColor: "rgb(249, 250, 251)",
 
-    rowBackgroundColor: "white",
+    rowBackgroundColor: "rgb(249, 250, 251)",
     rowBorderColor: "#e5e7eb",
     rowSubtitleTextColor: "#1f2937",
     rowHoverBackgroundColor: "#e7f2fc",
@@ -1570,10 +1571,10 @@ export function createToggleboxTheme(
 
 // toolbar.tsx
 export function createToolbarTheme(
-  baseButton: Record<ToolbarVariantType, ToolbarThemeConfig>,
-  customVariants: Partial<Record<ToolbarVariantType, ToolbarThemeConfig>> = {}
-): Record<ToolbarVariantType, ToolbarThemeConfig> {
-  const variants: Record<ToolbarVariantType, ToolbarThemeConfig> = {
+  baseButton: Record<ToolbarVariant, ToolbarThemeConfig>,
+  customVariants: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {}
+): Record<ToolbarVariant, ToolbarThemeConfig> {
+  const variants: Record<ToolbarVariant, ToolbarThemeConfig> = {
     default: {
       ...baseButton?.default,
       hoverBackgroundColor:

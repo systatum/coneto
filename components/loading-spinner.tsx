@@ -7,9 +7,9 @@ export interface LoadingSpinnerProps {
   textSize?: number;
   label?: string;
   gap?: number;
-  styles?: LoadingSpinnerStylesProps;
+  styles?: LoadingSpinnerStyles;
 }
-export interface LoadingSpinnerStylesProps {
+export interface LoadingSpinnerStyles {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   iconStyle?: CSSProp;

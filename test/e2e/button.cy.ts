@@ -64,16 +64,16 @@ describe("Button", () => {
           border: "rgb(66, 163, 64)",
           hoverBg: "rgb(66, 163, 64)",
         },
-        default: { bg: "rgb(236, 236, 236)", color: "rgb(0, 0, 0)" },
+        default: { bg: "rgb(221, 221, 221)", color: "rgb(17, 17, 17)" },
         primary: { bg: "rgb(86, 154, 236)", color: "rgb(255, 255, 255)" },
         danger: { bg: "rgb(206, 55, 93)", color: "rgb(255, 255, 255)" },
-        secondary: { bg: "rgb(221, 221, 221)", color: "rgb(17, 17, 17)" },
+        secondary: { bg: "rgb(236, 236, 236)", color: "rgb(17, 17, 17)" },
         ghost: { bg: "rgba(0, 0, 0, 0)", color: "rgb(17, 17, 17)" },
-        transparent: { bg: "rgba(0, 0, 0, 0)", color: "rgb(0, 0, 0)" },
+        transparent: { bg: "rgba(0, 0, 0, 0)", color: "rgb(17, 17, 17)" },
         success: { bg: "rgb(66, 163, 64)", color: "rgb(255, 255, 255)" },
       };
 
-      cy.visit(getIdContent("controls-button--all-variants"));
+      cy.visit(getIdContent("controls-button--default"));
 
       Object.entries(VARIANT_STYLES).forEach(([variant, style]) => {
         const exactRegex = new RegExp(`^${variant}$`, "i");
@@ -115,7 +115,7 @@ describe("Button", () => {
       );
 
       cy.findByRole("button", { name: /Button/i })
-        .should("have.css", "background-color", "rgb(236, 236, 236)")
+        .should("have.css", "background-color", "rgb(221, 221, 221)")
         .and("have.css", "opacity", "0.6")
         .and("have.css", "pointer-events", "none");
     });

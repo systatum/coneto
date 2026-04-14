@@ -13,10 +13,10 @@ import { useTheme } from "./../theme/provider";
 
 export interface ChoiceGroupProps {
   children: ReactNode;
-  styles?: ChoiceGroupStylesProps;
+  styles?: ChoiceGroupStyles;
 }
 
-export interface ChoiceGroupStylesProps {
+export interface ChoiceGroupStyles {
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
 }

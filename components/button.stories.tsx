@@ -258,7 +258,7 @@ Available fields:
 Accepts \`CSSProp\`.
       `,
       table: {
-        type: { summary: "ButtonStylesProps" },
+        type: { summary: "ButtonStyles" },
       },
     },
   },

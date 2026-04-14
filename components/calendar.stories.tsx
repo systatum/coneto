@@ -233,7 +233,7 @@ Custom styles override for the calendar.
 Includes container, label, and body styling.
       `,
       table: {
-        type: { summary: "CalendarStylesProps" },
+        type: { summary: "CalendarStyles" },
       },
     },
   },

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Badge, BadgeVariantProps } from "./badge";
+import { Badge, BadgeVariant } from "./badge";
 import { css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
 
@@ -188,7 +188,7 @@ Used for inline operations (e.g. remove, edit).
       `,
       control: false,
       table: {
-        type: { summary: "BadgeActionProps[]" },
+        type: { summary: "BadgeAction[]" },
       },
     },
 
@@ -204,7 +204,7 @@ Accepts \`CSSProp\` (styled-components).
       `,
       control: false,
       table: {
-        type: { summary: "BadgeStylesProps" },
+        type: { summary: "BadgeStyles" },
       },
     },
   },
@@ -335,7 +335,7 @@ export const Custom: Story = {
             }}
             backgroundColor={badge.backgroundColor}
             textColor={badge.textColor}
-            variant={badge.variant as BadgeVariantProps}
+            variant={badge.variant as BadgeVariant}
             key={badge.id}
             withCircle
             caption={badge.caption}

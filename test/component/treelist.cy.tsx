@@ -1,9 +1,9 @@
 import {
   TreeList,
-  TreeListActionsProps,
-  TreeListContentActionsProps,
-  TreeListContentProps,
-  TreeListItemsActionsProps,
+  TreeListAction,
+  TreeListContentAction,
+  TreeListContent,
+  TreeListItemAction,
 } from "./../../components/treelist";
 import {
   RiAddBoxLine,
@@ -17,7 +17,7 @@ import { StatefulForm } from "./../../components/stateful-form";
 
 describe("Treelist", () => {
   context("common behavior", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
@@ -116,12 +116,12 @@ describe("Treelist", () => {
   });
 
   context("actions", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
 
-      const HEADER_ACTIONS: TreeListContentActionsProps[] = [
+      const HEADER_ACTIONS: TreeListContentAction[] = [
         {
           caption: "New File",
           onClick: () => console.log("add new file in this group"),
@@ -131,7 +131,7 @@ describe("Treelist", () => {
         },
       ];
 
-      const ITEMS_ACTIONS: TreeListItemsActionsProps[] = [
+      const ITEMS_ACTIONS: TreeListItemAction[] = [
         {
           caption: "Delete",
           onClick: () => console.log("delete this list"),
@@ -283,7 +283,7 @@ describe("Treelist", () => {
     });
 
     context("when given actions in the main level", () => {
-      let TREE_LIST_ACTIONS: TreeListActionsProps[];
+      let TREE_LIST_ACTIONS: TreeListAction[];
 
       beforeEach(() => {
         const onDiscover = cy.stub().as("onDiscover");
@@ -351,7 +351,7 @@ describe("Treelist", () => {
 
       context("with subMenu", () => {
         context("with show", () => {
-          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListAction[] = [
             {
               id: "add-new-branch",
               icon: { image: RiAddBoxLine },
@@ -404,7 +404,7 @@ describe("Treelist", () => {
         });
 
         context("with render", () => {
-          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListActionsProps[] = [
+          const TREE_LIST_ACTIONS_WITH_RENDER: TreeListAction[] = [
             {
               id: "add-new-branch",
               icon: { image: RiAddBoxLine },
@@ -507,7 +507,7 @@ describe("Treelist", () => {
   });
 
   context("alwaysShowDragIcon", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
@@ -600,7 +600,7 @@ describe("Treelist", () => {
   });
 
   context("initialState", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
@@ -645,7 +645,7 @@ describe("Treelist", () => {
   });
 
   context("selectedItem", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
@@ -690,7 +690,7 @@ describe("Treelist", () => {
   });
 
   context("caption", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");
@@ -732,7 +732,7 @@ describe("Treelist", () => {
   });
 
   context("collapsible", () => {
-    let TREE_LIST_DATA: TreeListContentProps[];
+    let TREE_LIST_DATA: TreeListContent[];
 
     beforeEach(() => {
       const setPerson = cy.stub().as("setPerson");

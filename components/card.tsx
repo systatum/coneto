@@ -12,39 +12,63 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
 
+export const CardShadow = {
+  None: "none",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
+} as const;
+
+export type CardShadow = (typeof CardShadow)[keyof typeof CardShadow];
+
+export const CardBorderRadius = {
+  None: "none",
+  ExtraSmall: "xs",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
+  ExtraExtraExtraLarge: "3xl",
+  Full: "full",
+} as const;
+
+export type CardBorderRadius =
+  (typeof CardBorderRadius)[keyof typeof CardBorderRadius];
+
+export const CardPadding = {
+  None: "none",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
+  ExtraLarge: "xl",
+  ExtraExtraLarge: "2xl",
+  ExtraExtraExtraLarge: "3xl",
+} as const;
+
+export type CardPadding = (typeof CardPadding)[keyof typeof CardPadding];
+
 export interface CardProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
-  shadow?: "none" | "sm" | "md" | "lg" | "xl" | "2xl";
-  radius?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "full";
-  padding?:
-    | "none"
-    | "sm"
-    | "md"
-    | "lg"
-    | "xl"
-    | "2xl"
-    | "3xl"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
-    | "8"
-    | "9"
-    | "10";
+  shadow?: CardShadow;
+  radius?: CardBorderRadius;
+  padding?: CardPadding;
   children: ReactNode;
   title?: ReactNode;
   subtitle?: ReactNode;
   footerContent?: ReactNode;
   closable?: boolean;
   onCloseRequest?: () => void;
-  headerActions?: CardActionsProps[];
-  styles?: CardStylesProps;
+  headerActions?: ActionButtonProps[];
+  styles?: CardStyles;
   toggleable?: boolean;
   onToggleChange?: (isOpen?: boolean) => void;
   open?: boolean;
 }
 
-export interface CardStylesProps {
+export interface CardStyles {
   textContainerStyle?: CSSProp;
   actionContainerStyle?: CSSProp;
   containerStyle?: CSSProp;
@@ -54,8 +78,6 @@ export interface CardStylesProps {
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
 }
-
-export type CardActionsProps = ActionButtonProps;
 
 function Card({
   children,

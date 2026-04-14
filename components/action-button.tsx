@@ -1,24 +1,32 @@
 import { css, CSSProp } from "styled-components";
-import { Button, ButtonVariants, SubMenuButtonProps } from "./button";
+import {
+  Button,
+  ButtonVariants,
+  ButtonSubMenu,
+  ButtonShowSubMenuPosition,
+} from "./button";
 import { ReactNode } from "react";
 import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
+
+export type ActionButtonSubMenu = ButtonSubMenu;
+export type ActionButtonShowSubMenuPosition = ButtonShowSubMenuPosition;
 
 export interface ActionButtonProps {
   caption?: string;
   icon?: FigureProps;
   onClick?: () => void;
-  styles?: ActionButtonStylesProps;
-  subMenu?: (props: SubMenuButtonProps) => ReactNode;
+  styles?: ActionButtonStyles;
+  subMenu?: (props: ActionButtonSubMenu) => ReactNode;
   disabled?: boolean;
-  showSubMenuOn?: "caret" | "self";
+  showSubMenuOn?: ActionButtonShowSubMenuPosition;
   variant?: ButtonVariants["variant"];
   className?: string;
   pressed?: boolean;
   hidden?: boolean;
 }
 
-export interface ActionButtonStylesProps {
+export interface ActionButtonStyles {
   self?: CSSProp;
   toggleStyle?: CSSProp;
   dividerStyle?: CSSProp;

@@ -21,7 +21,7 @@ describe("RichEditor", () => {
         cy.findAllByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "509px"
+          "472px"
         );
       });
     });
@@ -39,7 +39,7 @@ describe("RichEditor", () => {
         cy.findAllByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "509px"
+          "472px"
         );
       });
 
@@ -52,14 +52,14 @@ describe("RichEditor", () => {
             />
           );
           cy.findAllByLabelText("rich-editor-content")
-            .should("have.css", "height", "509px")
+            .should("have.css", "height", "472px")
             .click()
             .type("{enter}{enter}{enter}");
 
           cy.findAllByLabelText("rich-editor-content").should(
             "have.css",
             "height",
-            "581px"
+            "544px"
           );
         });
       });

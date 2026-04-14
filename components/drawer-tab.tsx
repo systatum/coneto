@@ -6,17 +6,25 @@ import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DrawerTabThemeConfig } from "./../theme";
 
+export const DrawerTabPosition = {
+  Left: "left",
+  Right: "right",
+} as const;
+
+export type DrawerTabPosition =
+  (typeof DrawerTabPosition)[keyof typeof DrawerTabPosition];
+
 export interface DrawerTabProps {
-  tabs: DrawerTabContentProps[];
-  position?: "left" | "right";
-  styles?: DrawerTabStylesProps;
+  tabs: DrawerTabTab[];
+  position?: DrawerTabPosition;
+  styles?: DrawerTabStyles;
 }
-export interface DrawerTabStylesProps {
+export interface DrawerTabStyles {
   tabStyle?: CSSProp;
   drawerTabStyle?: CSSProp;
 }
 
-export interface DrawerTabContentProps {
+export interface DrawerTabTab {
   id: string;
   title: string;
   icon: FigureProps["image"];

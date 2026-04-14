@@ -20,11 +20,11 @@ export interface LaunchpadProps {
 export interface LaunchpadSectionProps {
   children: ReactNode;
   title?: string;
-  styles?: LaunchpadSectionStylesProps;
+  styles?: LaunchpadSectionStyles;
   gridPreset?: GridPresetKey;
 }
 
-export interface LaunchpadSectionStylesProps {
+export interface LaunchpadSectionStyles {
   containerStyle?: CSSProp;
   gridStyle?: CSSProp;
   separatorStyle?: CSSProp;
@@ -34,10 +34,10 @@ export interface LaunchpadSectionItemProps {
   href: string;
   iconUrl: string;
   label: string;
-  styles?: LaunchpadSectionItemStylesProps;
+  styles?: LaunchpadSectionItemStyles;
 }
 
-export interface LaunchpadSectionItemStylesProps {
+export interface LaunchpadSectionItemStyles {
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
 }

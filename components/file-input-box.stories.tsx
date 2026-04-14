@@ -212,7 +212,7 @@ All accept \`CSSProp\` (styled-components).
       `,
       control: false,
       table: {
-        type: { summary: "FileInputBoxStylesProps" },
+        type: { summary: "FileInputBoxStyles" },
       },
     },
   },

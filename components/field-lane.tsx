@@ -8,33 +8,50 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
 
+export const FieldLaneErrorIconPosition = {
+  Absolute: "absolute",
+  Relative: "relative",
+  None: "none",
+} as const;
+
+export type FieldLaneErrorIconPosition =
+  (typeof FieldLaneErrorIconPosition)[keyof typeof FieldLaneErrorIconPosition];
+
+export const FieldLaneLabelPosition = {
+  Top: "top",
+  Left: "left",
+} as const;
+
+export type FieldLaneLabelPosition =
+  (typeof FieldLaneLabelPosition)[keyof typeof FieldLaneLabelPosition];
+
 export interface FieldLaneProps {
   label?: string;
   showError?: boolean;
-  errorIconPosition?: "absolute" | "relative" | "none";
+  errorIconPosition?: FieldLaneErrorIconPosition;
   errorMessage?: string;
-  dropdowns?: FieldLaneDropdownProps[];
-  styles?: FieldLaneStylesProps;
+  dropdowns?: FieldLaneDropdown[];
+  styles?: FieldLaneStyles;
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
   id?: string;
-  actions?: FieldLaneActionsProps[];
+  actions?: FieldLaneAction[];
   type?: string;
-  labelPosition?: "top" | "left";
+  labelPosition?: FieldLaneLabelPosition;
   labelWidth?: string;
   labelGap?: number;
   required?: boolean;
 }
 
-export interface FieldLaneStylesProps {
+export interface FieldLaneStyles {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   controlStyle?: CSSProp;
   bodyStyle?: CSSProp;
 }
 
-export interface FieldLaneActionsProps {
+export interface FieldLaneAction {
   title?: string;
   icon?: FigureProps;
   iconColor?: string;
@@ -44,13 +61,13 @@ export interface FieldLaneActionsProps {
   hidden?: boolean;
 }
 
-export interface FieldLaneDropdownProps {
+export interface FieldLaneDropdown {
   disabled?: boolean;
-  options?: FieldLaneDropdownsOptionProps[];
+  options?: FieldLaneDropdownsOption[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
-  styles?: FieldLaneDropdownStylesProps;
+  styles?: FieldLaneDropdownStyles;
   withFilter?: boolean;
   render?: (props: {
     render?: (children?: ReactNode) => ReactNode;
@@ -59,13 +76,13 @@ export interface FieldLaneDropdownProps {
   hidden?: boolean;
 }
 
-export interface FieldLaneDropdownStylesProps {
+export interface FieldLaneDropdownStyles {
   drawerStyle?: CSSProp;
   containerStyle?: CSSProp;
   self?: CSSProp;
 }
 
-export interface FieldLaneDropdownsOptionProps {
+export interface FieldLaneDropdownsOption {
   text: string;
   value: string;
   icon?: FigureProps;
@@ -217,7 +234,7 @@ function FieldLane({
           return (
             <Button
               key={index}
-              displayLabel="flex"
+              labelMode="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
@@ -352,8 +369,8 @@ function FieldLane({
             styles={{
               self: css`
                 color: ${disabled
-                  ? fieldLaneTheme?.labelDisabledColor
-                  : fieldLaneTheme?.labelColor};
+                  ? fieldLaneTheme?.disabledTextColor
+                  : fieldLaneTheme?.textColor};
 
                 ${styles?.labelStyle};
               `,

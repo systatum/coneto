@@ -10,14 +10,20 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { MoneyboxThemeConfig } from "./../theme";
 
-export type SeparatorTypeProps = "dot" | "comma";
+export const MoneyboxSeparator = {
+  Dot: "dot",
+  Comma: "comma",
+} as const;
 
-export interface CurrencyOptionProps {
+export type MoneyboxSeparator =
+  (typeof MoneyboxSeparator)[keyof typeof MoneyboxSeparator];
+
+export interface MoneyboxCurrencyOption {
   id: string;
   name: string;
   symbol: string;
@@ -33,16 +39,16 @@ interface BaseMoneyboxProps
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   placeholder?: string;
-  separator?: SeparatorTypeProps;
+  separator?: MoneyboxSeparator;
   showError?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  styles?: MoneyboxStylesProps;
+  styles?: MoneyboxStyles;
   editableCurrency?: boolean;
-  currencyOptions?: CurrencyOptionProps[];
+  currencyOptions?: MoneyboxCurrencyOption[];
   id?: string;
 }
 
-export interface MoneyboxStylesProps {
+export interface MoneyboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
 }
@@ -250,7 +256,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
 export interface MoneyboxProps
   extends Omit<BaseMoneyboxProps, "styles" | "actions">,
     Omit<FieldLaneProps, "styles" | "type" | "actions"> {
-  styles?: MoneyboxStylesProps & FieldLaneStylesProps;
+  styles?: MoneyboxStyles & FieldLaneStyles;
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -394,7 +400,7 @@ const MoneyboxInput = styled.input<{
 
 const unformatMoneyboxNumber = (
   val: string,
-  separator: SeparatorTypeProps
+  separator: MoneyboxSeparator
 ): string => {
   if (!val) return "";
 
@@ -431,7 +437,7 @@ const unformatMoneyboxNumber = (
 
 const formatMoneyboxNumber = (
   val: string,
-  separator: SeparatorTypeProps
+  separator: MoneyboxSeparator
 ): string => {
   if (!val) return "";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pinbox, PinboxProps, PinboxState } from "./../../components/pinbox";
+import { Pinbox, PinboxProps, PinboxParts } from "./../../components/pinbox";
 
 describe("Pinbox", () => {
   function ProductPinbox(props: PinboxProps) {
@@ -212,7 +212,7 @@ describe("Pinbox", () => {
   });
 });
 
-const PARTS_INPUT: PinboxState[] = [
+const PARTS_INPUT: PinboxParts[] = [
   { type: "static", text: "S" },
   { type: "alphanumeric" },
   { type: "alphanumeric" },
@@ -221,7 +221,7 @@ const PARTS_INPUT: PinboxState[] = [
   { type: "alphanumeric" },
 ];
 
-const MIX_PARTS_INPUT: PinboxState[] = [
+const MIX_PARTS_INPUT: PinboxParts[] = [
   { type: "static", text: "S" },
   { type: "alphanumeric" },
   { type: "digit" },

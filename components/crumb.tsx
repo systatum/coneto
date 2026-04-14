@@ -22,9 +22,10 @@ export interface CrumbProps {
   hoverColor?: string;
   lastTextColor?: string;
   arrowColor?: string;
-  styles?: CrumbStylesProps;
+  styles?: CrumbStyles;
 }
-export interface CrumbStylesProps {
+
+export interface CrumbStyles {
   self?: CSSProp;
 }
 
@@ -185,7 +186,7 @@ export interface CrumbItemProps {
   path?: string;
   children?: ReactNode;
   isLast?: boolean;
-  styles?: CrumbItemStylesProps;
+  styles?: CrumbItemStyles;
   onClick?: () => void;
   fontSize?: number;
   textColor?: string;
@@ -193,7 +194,7 @@ export interface CrumbItemProps {
   lastTextColor?: string;
 }
 
-export interface CrumbItemStylesProps {
+export interface CrumbItemStyles {
   self?: CSSProp;
 }
 

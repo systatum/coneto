@@ -9,16 +9,16 @@ import {
   RiSpam2Line,
 } from "@remixicon/react";
 import {
-  ColumnTableProps,
-  SubMenuListTableProps,
+  TableColumn,
+  TableSubMenuList,
   Table,
-  TableActionsProps,
+  TableAction,
   TableProps,
   TableRowProps,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
-import { CapsuleContentProps } from "./../../components/capsule";
+import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
 import { useState } from "react";
@@ -31,7 +31,7 @@ interface TableItemProps {
 }
 
 describe("Table", () => {
-  const columnsBasic: ColumnTableProps[] = [
+  const columnsBasic: TableColumn[] = [
     {
       id: "name",
       caption: "Name",
@@ -44,7 +44,7 @@ describe("Table", () => {
     },
   ];
 
-  const VIEW_MODES: CapsuleContentProps[] = [
+  const VIEW_MODES: CapsuleTab[] = [
     {
       id: "new",
       title: "New",
@@ -428,7 +428,7 @@ describe("Table", () => {
       };
     }
 
-    const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+    const DEFAULT_TOP_ACTIONS: TableAction[] = [
       {
         caption: "Copy",
         icon: { image: RiArrowUpSLine },
@@ -824,7 +824,7 @@ describe("Table", () => {
     },
   ];
 
-  const TOP_ACTIONS: TableActionsProps[] = [
+  const TOP_ACTIONS: TableAction[] = [
     {
       caption: "Delete",
       icon: { image: RiDeleteBin2Line },
@@ -841,7 +841,7 @@ describe("Table", () => {
     },
   ];
 
-  const columns: ColumnTableProps[] = [
+  const columns: TableColumn[] = [
     {
       id: "title",
       caption: "Title",
@@ -876,7 +876,7 @@ describe("Table", () => {
     ];
   };
 
-  const ROW_ACTIONS = (rowId: string): SubMenuListTableProps[] => {
+  const ROW_ACTIONS = (rowId: string): TableSubMenuList[] => {
     return [
       {
         caption: "Edit",
@@ -1287,7 +1287,7 @@ describe("Table", () => {
   context("with selectable", () => {
     context("checkbox style", () => {
       it("renders with transparent wrapper", () => {
-        const columns: ColumnTableProps[] = [
+        const columns: TableColumn[] = [
           {
             id: "name",
             caption: "Name",
@@ -1338,7 +1338,7 @@ describe("Table", () => {
 
     context("when initialize", () => {
       it("renders content with checked value", () => {
-        const columns: ColumnTableProps[] = [
+        const columns: TableColumn[] = [
           {
             id: "name",
             caption: "Name",
@@ -1442,7 +1442,7 @@ describe("Table", () => {
 
   context("with top actions", () => {
     context("when given default", () => {
-      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
           caption: "Copy",
           icon: { image: RiArrowUpSLine },
@@ -1513,10 +1513,9 @@ describe("Table", () => {
         },
       ];
 
-      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
           caption: "Copy",
-          icon: { image: RiArrowUpSLine },
           onClick: () => {
             console.log("Copy clicked");
           },
@@ -1567,16 +1566,12 @@ describe("Table", () => {
 
         cy.findByText("Copy").click();
 
-        cy.wait(100);
-        cy.get("@consoleLog").should(
-          "not.have.been.calledWith",
-          "Copy clicked"
-        );
+        cy.findByText("Report Phishing").should("exist");
       });
     });
 
     context("when given capsule", () => {
-      const VIEW_MODES: CapsuleContentProps[] = [
+      const VIEW_MODES: CapsuleTab[] = [
         {
           id: "new",
           title: "New",
@@ -1587,7 +1582,7 @@ describe("Table", () => {
         },
       ];
 
-      const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+      const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
           type: "capsule",
           capsuleProps: {
@@ -1638,7 +1633,7 @@ describe("Table", () => {
       });
 
       context("when given only with icon", () => {
-        const VIEW_MODES_WITH_ICON: CapsuleContentProps[] = [
+        const VIEW_MODES_WITH_ICON: CapsuleTab[] = [
           {
             id: "frontend",
             icon: {
@@ -1653,7 +1648,7 @@ describe("Table", () => {
           },
         ];
 
-        const DEFAULT_TOP_ACTIONS: TableActionsProps[] = [
+        const DEFAULT_TOP_ACTIONS: TableAction[] = [
           {
             type: "capsule",
             capsuleProps: {
@@ -1928,7 +1923,7 @@ describe("Table", () => {
     function TableWithRowActions({
       actions,
     }: {
-      actions?: (columnCaption: string) => SubMenuListTableProps[];
+      actions?: (columnCaption: string) => TableSubMenuList[];
     }) {
       return (
         <Table

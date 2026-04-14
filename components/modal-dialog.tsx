@@ -5,15 +5,15 @@ import { useTheme } from "./../theme/provider";
 import {
   createDialogController,
   Dialog,
-  DialogButtonProps,
+  DialogButton,
   DialogProps,
-  DialogStylesProps,
+  DialogStyles,
 } from "./dialog";
 import styled, { css, CSSProp } from "styled-components";
 
 export type ModalDialogProps = DialogProps;
-export type ModalDialogStylesProps = DialogStylesProps;
-export type ModalButtonProps = DialogButtonProps;
+export type ModalDialogStyles = DialogStyles;
+export type ModalDialogButton = DialogButton;
 
 function ModalDialog({
   onVisibilityChange,

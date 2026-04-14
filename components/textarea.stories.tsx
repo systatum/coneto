@@ -3,7 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import { StatefulOnChangeType } from "./stateful-form";
 import { Textarea, TextareaProps } from "./textarea";
 
@@ -95,7 +95,7 @@ const meta: Meta<typeof Textarea> = {
         "Array of action buttons rendered inside the input. Each action can have an icon, tooltip title, click handler, and optional disabled state.",
       table: {
         type: {
-          summary: "TextareaActionsProps[]",
+          summary: "FieldLaneAction[]",
           detail: `{
   title?: string;
   icon?: FigureProps;
@@ -202,7 +202,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",

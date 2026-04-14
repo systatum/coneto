@@ -5,24 +5,21 @@ import { z } from "zod";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { BadgeProps } from "./badge";
 import { Button } from "./button";
-import { CapsuleContentProps } from "./capsule";
+import { CapsuleTab } from "./capsule";
 import { Card } from "./card";
-import {
-  OnCompleteFunctionProps,
-  OnFileDroppedFunctionProps,
-} from "./file-drop-box";
+import { OnCompleteFunction, OnFileDroppedFunction } from "./file-drop-box";
 import { Messagebox } from "./messagebox";
-import { CurrencyOptionProps } from "./moneybox";
+import { MoneyboxCurrencyOption } from "./moneybox";
 import { CountryCodeProps } from "./phonebox";
-import { PinboxState } from "./pinbox";
-import { OptionProps } from "./selectbox";
+import { PinboxParts } from "./pinbox";
+import { SelectboxOption } from "./selectbox";
 import {
   FormFieldGroup,
   FormValueType,
   StatefulForm,
   StatefulOnChangeType,
 } from "./stateful-form";
-import { BodyThemeConfiguration } from "./../theme";
+import { BodyThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { darkenColor, lightenColor } from "./../lib/color";
 
@@ -164,7 +161,7 @@ Custom styles for form components:
 - \`frameContainerStyle\`: CSS for frame containers.
 - \`frameTitleStyle\`: CSS for frame titles.
 `,
-      table: { type: { summary: "StatefulFormStylesProps" } },
+      table: { type: { summary: "StatefulFormStyles" } },
     },
   },
 };
@@ -194,7 +191,7 @@ export const Default: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
     });
 
-    const SALUTATION_OPTIONS: OptionProps[] = [
+    const SALUTATION_OPTIONS: SelectboxOption[] = [
       { text: "Mr.", value: "1" },
       { text: "Mrs.", value: "2" },
       { text: "Ms.", value: "3" },
@@ -340,7 +337,7 @@ export const Default: Story = {
         required: true,
         disabled: !isFormValid,
         placeholder: "Enter text",
-        rowJustifyContent: "end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 
@@ -401,12 +398,12 @@ export const WithFrame: Story = {
       purpose: z.string().min(10, "Business purpose is required"),
     });
 
-    const MANAGER_NAME_OPTIONS: OptionProps[] = [
+    const MANAGER_NAME_OPTIONS: SelectboxOption[] = [
       { text: "Alim Naufal", value: "1" },
       { text: "Soekarno", value: "2" },
     ];
 
-    const DEPARTMENT_OPTIONS: OptionProps[] = [
+    const DEPARTMENT_OPTIONS: SelectboxOption[] = [
       { text: "HR", value: "1" },
       { text: "IT", value: "2" },
     ];
@@ -476,7 +473,7 @@ export const WithFrame: Story = {
         title: "Submit",
         type: "button",
         disabled: !isFormValid,
-        rowJustifyContent: "end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 
@@ -557,20 +554,20 @@ export const ConditionalElement: Story = {
       Fp32: 3,
     } as const;
 
-    const HOST_ARCHITECTURE_OPTIONS: OptionProps[] = [
+    const HOST_ARCHITECTURE_OPTIONS: SelectboxOption[] = [
       { value: String(HostArchitecture.x86), text: "x86" },
       { value: String(HostArchitecture.x64), text: "x64" },
       { value: String(HostArchitecture.ARM), text: "ARM" },
       { value: String(HostArchitecture.ARM64), text: "ARM64" },
     ];
 
-    const COMPILATION_TARGET_OPTIONS: OptionProps[] = [
+    const COMPILATION_TARGET_OPTIONS: SelectboxOption[] = [
       { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
       { value: String(CompilationTarget.Simulator), text: "Simulator" },
       { value: String(CompilationTarget.IP), text: "IP" },
     ];
 
-    const COMPILATION_EFFORT_OPTIONS: OptionProps[] = [
+    const COMPILATION_EFFORT_OPTIONS: SelectboxOption[] = [
       {
         value: String(CompilationEffort.SimpleScheduling),
         text: "Simple scheduling",
@@ -585,7 +582,7 @@ export const ConditionalElement: Story = {
       },
     ];
 
-    const QUANTIZATION_TYPE_OPTIONS: OptionProps[] = [
+    const QUANTIZATION_TYPE_OPTIONS: SelectboxOption[] = [
       { value: String(Quantization.Int8), text: "INT8" },
       { value: String(Quantization.Bf16), text: "BF16" },
       { value: String(Quantization.Fp16), text: "FP16" },
@@ -656,7 +653,7 @@ export const ConditionalElement: Story = {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyContent: "end",
+          rowJustifyPosition: "flex-end",
         },
       ] as FormFieldGroup[];
     }, [formFields.compEffort, formFields.quantType, isFormValid]);
@@ -832,7 +829,7 @@ const FormBody = styled.div`
 `;
 
 const Footer = styled.div<{
-  $theme?: BodyThemeConfiguration;
+  $theme?: BodyThemeConfig;
   $mode: "light" | "dark";
 }>`
   display: flex;
@@ -899,7 +896,7 @@ export const AllCase: Story = {
       throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
     }
 
-    const FRUIT_OPTIONS: OptionProps[] = [
+    const FRUIT_OPTIONS: SelectboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -952,7 +949,7 @@ export const AllCase: Story = {
       },
     ];
 
-    const CURRENCY_OPTIONS: CurrencyOptionProps[] = [
+    const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       { id: "USD", name: "US Dollar", symbol: "$" },
       { id: "EUR", name: "Euro", symbol: "€" },
@@ -1025,7 +1022,7 @@ export const AllCase: Story = {
       pin: "",
     });
 
-    const CAPSULE_TABS: CapsuleContentProps[] = [
+    const CAPSULE_TABS: CapsuleTab[] = [
       {
         id: "paid",
         title: "Paid",
@@ -1036,7 +1033,7 @@ export const AllCase: Story = {
       },
     ];
 
-    const PARTS_INPUT: PinboxState[] = [
+    const PARTS_INPUT: PinboxParts[] = [
       {
         type: "static",
         text: "S",
@@ -1202,7 +1199,7 @@ export const AllCase: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunctionProps) => {
+    }: OnFileDroppedFunction) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -1229,7 +1226,7 @@ export const AllCase: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunctionProps) => {
+    }: OnCompleteFunction) => {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
@@ -1482,7 +1479,7 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        rowJustifyContent: "end",
+        rowJustifyPosition: "flex-end",
       },
     ];
 

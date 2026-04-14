@@ -11,7 +11,7 @@ import {
 import ReactDOM from "react-dom";
 import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
-import { Button, ButtonStylesProps, ButtonVariants } from "./button";
+import { Button, ButtonStyles, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { darkenColor, lightenColor } from "../lib/color";
@@ -22,7 +22,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "./../theme/provider";
-import { DialogThemeConfig, ThemeMode } from "./../theme";
+import { DialogThemeConfig } from "./../theme";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -44,16 +44,16 @@ export interface DialogProps {
   isOpen?: boolean;
   onVisibilityChange?: (isOpen?: boolean) => void;
   closable?: boolean;
-  styles?: DialogStylesProps;
+  styles?: DialogStyles;
   onClick?: (args: { id: string; closeDialog: () => void }) => void;
-  buttons?: DialogButtonProps[];
+  buttons?: DialogButton[];
   title?: ReactNode;
   subtitle?: ReactNode;
   icon?: FigureProps;
   onClosed?: () => void;
 }
 
-export interface DialogStylesProps {
+export interface DialogStyles {
   overlayStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
   headerStyle?: CSSProp;
@@ -65,12 +65,12 @@ export interface DialogStylesProps {
   buttonWrapperStyle?: CSSProp;
 }
 
-export interface DialogButtonProps extends Pick<ButtonVariants, "variant"> {
+export interface DialogButton extends Pick<ButtonVariants, "variant"> {
   id: string;
   caption: string;
   isLoading?: boolean;
   disabled?: boolean;
-  styles?: ButtonStylesProps;
+  styles?: ButtonStyles;
 }
 
 function Dialog({

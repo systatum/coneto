@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import {
   Searchbox,
   SearchboxProps,
-  SearchboxResultMenuItemProps,
+  SearchboxResultMenuItem,
 } from "./../../components/searchbox";
 import {
   RiUserLine,
@@ -59,7 +59,7 @@ describe("Searchbox", () => {
 
   context("resultMenu", () => {
     context("list", () => {
-      const PEOPLE_MENU: SearchboxResultMenuItemProps[] = [
+      const PEOPLE_MENU: SearchboxResultMenuItem[] = [
         {
           caption: "Adam Noto Hakarsa",
           icon: { image: RiUserSmileLine },

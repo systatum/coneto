@@ -6,10 +6,10 @@ export interface EmptySlateProps {
   title: string;
   subtitle?: string;
   actions?: ReactNode;
-  styles?: EmptySlateStylesProps;
+  styles?: EmptySlateStyles;
 }
 
-export interface EmptySlateStylesProps {
+export interface EmptySlateStyles {
   containerStyle?: CSSProp;
   imageStyle?: CSSProp;
   contentStyle?: CSSProp;

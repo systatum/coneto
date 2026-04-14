@@ -1,5 +1,5 @@
 import { RiCheckLine, RiCloseLine } from "@remixicon/react";
-import { Badge, BadgeActionProps } from "./../../components/badge";
+import { Badge, BadgeAction } from "./../../components/badge";
 import { strToColor } from "./../../lib/code-color";
 
 describe("Badge", () => {
@@ -87,7 +87,7 @@ describe("Badge", () => {
   });
 
   context("with actions", () => {
-    const contentAction: BadgeActionProps[] = [
+    const contentAction: BadgeAction[] = [
       {
         icon: { image: RiCloseLine },
         onClick: () => {
@@ -97,7 +97,7 @@ describe("Badge", () => {
       },
     ];
 
-    const contentActions: BadgeActionProps[] = [
+    const contentActions: BadgeAction[] = [
       {
         icon: { image: RiCheckLine },
         onClick: () => {
@@ -114,7 +114,7 @@ describe("Badge", () => {
       },
     ];
 
-    const contentWithHiddenActions: BadgeActionProps[] = [
+    const contentWithHiddenActions: BadgeAction[] = [
       {
         hidden: true,
         icon: { image: RiCheckLine },

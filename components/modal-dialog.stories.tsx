@@ -96,7 +96,7 @@ Each button object supports:
       description:
         "Custom style overrides for different ModalDialog sections (container, content, overlay, etc.).",
       table: {
-        type: { summary: "ModalDialogStylesProps" },
+        type: { summary: "ModalDialogStyles" },
       },
     },
   },

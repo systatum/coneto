@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FieldLaneDropdownsOptionProps, FieldLane } from "./field-lane";
+import { FieldLaneDropdownsOption, FieldLane } from "./field-lane";
 import { useState } from "react";
 import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
 import { Calendar } from "./calendar";
 import { Textbox, TextboxProps } from "./textbox";
 import { Combobox, ComboboxProps } from "./combobox";
-import { OptionProps } from "./selectbox";
+import { SelectboxOption } from "./selectbox";
 
 const meta: Meta<typeof FieldLane> = {
   title: "Stage/FieldLane",
@@ -164,7 +164,7 @@ export const Default: Story = {
       selectedOption: "2",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",
@@ -237,7 +237,7 @@ export const CustomRenderer: Story = {
       value: "",
     });
 
-    const FRUIT_OPTIONS: OptionProps[] = [
+    const FRUIT_OPTIONS: SelectboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -247,7 +247,7 @@ export const CustomRenderer: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const MONTH_NAMES: OptionProps[] = [
+    const MONTH_NAMES: SelectboxOption[] = [
       { text: "JAN", value: "1" },
       { text: "FEB", value: "2" },
       { text: "MAR", value: "3" },
@@ -284,7 +284,7 @@ export const CustomRenderer: Story = {
       },
     };
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",

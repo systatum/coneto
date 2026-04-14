@@ -16,21 +16,17 @@ import {
 } from "@remixicon/react";
 import {
   List,
-  ListGroupContentProps,
-  ListItemActionProps,
+  ListGroupContent,
+  ListItemAction,
 } from "./../../components/list";
 import { css } from "styled-components";
 import {
-  SubMenuTreeList,
+  TreeListItemAction,
   TreeList,
-  TreeListContentProps,
+  TreeListContent,
 } from "./../../components/treelist";
-import {
-  ColumnTableProps,
-  SubMenuListTableProps,
-  Table,
-} from "./../../components/table";
-import { NavTab, SubMenuNavTab } from "./../../components/nav-tab";
+import { TableColumn, TableSubMenuList, Table } from "./../../components/table";
+import { NavTab, NavTabTabAction } from "./../../components/nav-tab";
 
 const checkMenuAlignment = () => {
   return cy
@@ -55,7 +51,7 @@ const checkMenuAlignment = () => {
 
 describe("context-menu", () => {
   context("when given in List component", () => {
-    const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemActionProps[] => [
+    const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemAction[] => [
       {
         caption: "Add",
         icon: { image: RiArrowRightSLine },
@@ -65,7 +61,7 @@ describe("context-menu", () => {
       },
     ];
 
-    const LIST_GROUPS: ListGroupContentProps[] = [
+    const LIST_GROUPS: ListGroupContent[] = [
       {
         id: "recent-content",
         title: "Recent Content",
@@ -75,20 +71,20 @@ describe("context-menu", () => {
             id: "messages",
             title: "Messages",
             subtitle: "Check your inbox",
-            leftIcon: RiMailFill,
+            icon: { image: RiMailFill },
             actions: LIST_ACTION_ITEMS_PROPS,
           },
           {
             id: "notifications",
             title: "Notifications",
             subtitle: "View Alerts",
-            leftIcon: RiNotification3Fill,
+            icon: { image: RiNotification3Fill },
           },
           {
             id: "calendar",
             title: "Calendar",
             subtitle: "Upcoming events",
-            leftIcon: RiCalendar2Fill,
+            icon: { image: RiCalendar2Fill },
           },
         ],
       },
@@ -101,26 +97,26 @@ describe("context-menu", () => {
             id: "home",
             title: "Home",
             subtitle: "Go to homepage",
-            leftIcon: RiHome2Fill,
+            icon: { image: RiHome2Fill },
             actions: LIST_ACTION_ITEMS_PROPS,
           },
           {
             id: "profile",
             title: "Profile",
             subtitle: "View your profile",
-            leftIcon: RiUser3Fill,
+            icon: { image: RiUser3Fill },
           },
           {
             id: "settings",
             title: "Settings",
             subtitle: "Adjust preferences",
-            leftIcon: RiSettings3Fill,
+            icon: { image: RiSettings3Fill },
           },
         ],
       },
     ];
 
-    const ROW_ACTIONS = (id: string): ListItemActionProps[] => [
+    const ROW_ACTIONS = (id: string): ListItemAction[] => [
       {
         className: "test-classname",
         caption: "Edit",
@@ -167,7 +163,7 @@ describe("context-menu", () => {
                     id={list.id}
                     groupId={group.id}
                     actions={ROW_ACTIONS}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     selectedOptions={{
@@ -219,7 +215,7 @@ describe("context-menu", () => {
                     id={list.id}
                     groupId={group.id}
                     actions={ROW_ACTIONS}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     selectedOptions={{
@@ -268,7 +264,7 @@ describe("context-menu", () => {
                     id={list.id}
                     groupId={group.id}
                     actions={ROW_ACTIONS}
-                    leftIcon={list.leftIcon}
+                    icon={list.icon}
                     subtitle={list.subtitle}
                     title={list.title}
                     selectedOptions={{
@@ -321,7 +317,7 @@ describe("context-menu", () => {
                       id={list.id}
                       groupId={group.id}
                       actions={ROW_ACTIONS}
-                      leftIcon={list.leftIcon}
+                      icon={list.icon}
                       subtitle={list.subtitle}
                       title={list.title}
                       selectedOptions={{
@@ -348,7 +344,7 @@ describe("context-menu", () => {
   });
 
   context("when given in TreeList component", () => {
-    const ITEM_ACTIONS: SubMenuTreeList[] = [
+    const ITEM_ACTIONS: TreeListItemAction[] = [
       {
         className: "editable-action-tip",
         caption: "Edit",
@@ -380,7 +376,7 @@ describe("context-menu", () => {
       },
     ];
 
-    const TREE_LIST_DATA: TreeListContentProps[] = [
+    const TREE_LIST_DATA: TreeListContent[] = [
       {
         id: "member",
         caption: "Member of Technical Staff",
@@ -530,7 +526,7 @@ describe("context-menu", () => {
   context("when given in Table component", () => {
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
-    const ROW_ACTION = (rowId: string): SubMenuListTableProps[] => {
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
@@ -562,7 +558,7 @@ describe("context-menu", () => {
       );
     });
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -684,7 +680,7 @@ describe("context-menu", () => {
   });
 
   context("when given in Navtab component", () => {
-    const SUB_MENU: SubMenuNavTab[] = [
+    const SUB_MENU: NavTabTabAction[] = [
       {
         caption: "Discover",
         onClick: () => {

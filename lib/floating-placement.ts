@@ -1,18 +1,25 @@
 import { Placement } from "@floating-ui/react";
 
+export const DialogPlacement = {
+  BottomLeft: "bottom-left",
+  BottomRight: "bottom-right",
+  BottomCenter: "bottom-center",
+
+  TopLeft: "top-left",
+  TopRight: "top-right",
+  TopCenter: "top-center",
+
+  LeftTop: "left-top",
+  LeftBottom: "left-bottom",
+  LeftCenter: "left-center",
+
+  RightTop: "right-top",
+  RightBottom: "right-bottom",
+  RightCenter: "right-center",
+} as const;
+
 export type DialogPlacement =
-  | "bottom-left"
-  | "bottom-right"
-  | "bottom-center"
-  | "top-left"
-  | "top-right"
-  | "top-center"
-  | "left-top"
-  | "left-bottom"
-  | "left-center"
-  | "right-top"
-  | "right-bottom"
-  | "right-center";
+  (typeof DialogPlacement)[keyof typeof DialogPlacement];
 
 export function getFloatingPlacement(placement: DialogPlacement): Placement {
   switch (placement) {

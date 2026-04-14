@@ -7,10 +7,10 @@ import { BoxbarThemeConfig } from "./../theme";
 
 export interface BoxbarProps {
   children: ReactNode;
-  styles?: BoxbarStylesProps;
+  styles?: BoxbarStyles;
 }
 
-export interface BoxbarStylesProps {
+export interface BoxbarStyles {
   self: CSSProp;
 }
 

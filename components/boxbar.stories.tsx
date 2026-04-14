@@ -89,7 +89,7 @@ Available fields:
 Accepts \`CSSProp\` (styled-components).
       `,
       table: {
-        type: { summary: "BoxbarStylesProps" },
+        type: { summary: "BoxbarStyles" },
         defaultValue: { summary: "undefined" },
       },
     },

@@ -6,34 +6,46 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { MessageboxThemeConfig } from "./../theme";
 
-export type MessageboxVariantState =
-  | "primary"
-  | "success"
-  | "danger"
-  | "warning";
+export const MessageboxVariant = {
+  Primary: "primary",
+  Success: "success",
+  Danger: "danger",
+  Warning: "warning",
+} as const;
+
+export type MessageboxVariant =
+  (typeof MessageboxVariant)[keyof typeof MessageboxVariant];
 
 export interface MessageboxProps {
-  variant?: MessageboxVariantState;
+  variant?: MessageboxVariant;
   title: string;
   icon?: FigureProps;
   children: ReactNode;
-  actionLinks?: ActionLinkProps[];
+  actionLinks?: MessageActionLinks[];
   closable?: boolean;
   onCloseRequest?: () => void;
-  styles?: MessageboxStylesProps;
+  styles?: MessageboxStyles;
 }
 
-export interface MessageboxStylesProps {
+export interface MessageboxStyles {
   containerStyle?: CSSProp;
   titleStyle?: CSSProp;
   contentWrapperStyle?: CSSProp;
   contentStyle?: CSSProp;
 }
-export interface ActionLinkProps {
+export const MessageActionType = {
+  Button: "button",
+  Link: "link",
+} as const;
+
+export type MessageActionType =
+  (typeof MessageActionType)[keyof typeof MessageActionType];
+
+export interface MessageActionLinks {
   caption: string;
   onClick?: () => void;
   href?: string;
-  type: "button" | "link";
+  type: MessageActionType;
 }
 
 function Messagebox({
@@ -140,7 +152,7 @@ function Messagebox({
 
 const Wrapper = styled.div<{
   $style?: CSSProp;
-  $variant: MessageboxVariantState;
+  $variant: MessageboxVariant;
   $theme: MessageboxThemeConfig;
 }>`
   display: flex;
@@ -184,7 +196,7 @@ const Children = styled.span<{ $style?: CSSProp }>`
 `;
 
 const BorderAccent = styled.div<{
-  $variant: MessageboxVariantState;
+  $variant: MessageboxVariant;
   $theme: MessageboxThemeConfig;
 }>`
   position: absolute;
@@ -201,7 +213,7 @@ const ActionList = styled.div`
 `;
 
 const ActionItem = styled.button<{
-  $variant: MessageboxVariantState;
+  $variant: MessageboxVariant;
   $theme: MessageboxThemeConfig;
 }>`
   cursor: pointer;
@@ -222,7 +234,7 @@ const ActionItem = styled.button<{
 `;
 
 const ActionLink = styled.a<{
-  $variant: MessageboxVariantState;
+  $variant: MessageboxVariant;
   $theme: MessageboxThemeConfig;
 }>`
   font-size: 0.875rem;

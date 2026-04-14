@@ -1,14 +1,22 @@
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 
+export const SeparatorTextFloat = {
+  Left: "left",
+  Right: "right",
+} as const;
+
+export type SeparatorTextFloat =
+  (typeof SeparatorTextFloat)[keyof typeof SeparatorTextFloat];
+
 export interface SeparatorProps {
   title?: string;
-  textFloat?: "left" | "right";
+  textFloat?: SeparatorTextFloat;
   depth?: string;
-  styles?: SeparatorStylesProps;
+  styles?: SeparatorStyles;
 }
 
-export interface SeparatorStylesProps {
+export interface SeparatorStyles {
   containerStyle?: CSSProp;
   titleStyle?: CSSProp;
   lineStyle?: CSSProp;

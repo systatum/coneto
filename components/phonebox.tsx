@@ -25,7 +25,7 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { Searchbox } from "./searchbox";
@@ -56,12 +56,12 @@ interface BasePhoneboxProps {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
   countryCodeValue?: CountryCodeProps;
-  styles?: PhoneboxStylesProps;
+  styles?: PhoneboxStyles;
   id?: string;
   required?: boolean;
 }
 
-export interface PhoneboxStylesProps {
+export interface PhoneboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
@@ -375,7 +375,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 export interface PhoneboxProps
   extends Omit<BasePhoneboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "onChange"> {
-  styles?: PhoneboxStylesProps & FieldLaneStylesProps;
+  styles?: PhoneboxStyles & FieldLaneStyles;
 }
 
 const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(

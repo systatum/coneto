@@ -12,14 +12,14 @@ import {
 import {
   castValue,
   DrawerProps,
-  OptionProps,
+  SelectboxOption,
   Selectbox,
-  SelectboxLabelsProps,
+  SelectboxLabels,
   SelectboxSelectedOptions,
-  SelectboxStylesProps,
+  SelectboxStyles,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
-import { List, ListItemStylesProps } from "./list";
+import { List, ListItemStyles } from "./list";
 import { FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
@@ -33,63 +33,68 @@ interface BaseComboboxProps {
   placeholder?: string;
   emptySlate?: string;
   highlightOnMatch?: boolean;
-  actions?: ComboboxActionProps[];
+  actions?: ComboboxAction[];
   name?: string;
   multiple?: boolean;
   maxSelectableItems?: number | undefined;
-  styles?: ComboboxStylesProps;
+  styles?: ComboboxStyles;
   helper?: string;
   disabled?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   strict?: boolean;
-  options: ComboboxOptionProps[];
+  options: ComboboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
   controlled?: boolean;
 }
 
-export interface ComboboxGroupedOptionProps {
+export const ComboboxGroupInitialState = {
+  Opened: "opened",
+  Closed: "closed",
+} as const;
+
+export type ComboboxGroupInitialState =
+  (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
+
+export interface ComboboxGroupedOption {
   category?: string;
-  options?: OptionProps[];
+  options?: ComboboxSingleOption[];
   collapsible?: boolean;
   hidden?: boolean;
-  initialState?: "closed" | "opened";
+  initialState?: ComboboxGroupInitialState;
 }
 
-export type ComboboxSingleOptionProps = OptionProps;
+export type ComboboxSingleOption = SelectboxOption;
 
-export type ComboboxOptionProps =
-  | ComboboxSingleOptionProps
-  | ComboboxGroupedOptionProps;
+export type ComboboxOption = ComboboxSingleOption | ComboboxGroupedOption;
 
-export interface ComboboxLabelsProps extends SelectboxLabelsProps {}
+export interface ComboboxLabelsProps extends SelectboxLabels {}
 
-export interface ComboboxStylesProps
-  extends Omit<SelectboxStylesProps, "self"> {
+export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
 
-export interface ComboboxActionProps {
+export interface ComboboxAction {
   onClick?: () => void;
   icon?: FigureProps;
   title: string;
-  styles?: ComboboxActionStylesProps;
+  styles?: ComboboxActionStyles;
   hidden?: boolean;
 }
 
-export type ComboboxActionStylesProps = ListItemStylesProps;
+export type ComboboxActionStyles = ListItemStyles;
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
     inputRef?: Ref<HTMLInputElement>;
     handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-    selectedOptionsLocal: OptionProps;
-    setSelectedOptionsLocal: (value: OptionProps) => void;
+    selectedOptionsLocal: SelectboxOption;
+    setSelectedOptionsLocal: (value: SelectboxOption) => void;
     setHasInteracted?: (value: boolean) => void;
-    setConfirmedValue?: (option: OptionProps | null) => void;
+    setConfirmedValue?: (option: SelectboxOption | null) => void;
     openedCategoryGroup?: Set<String>;
     setOpenedCategoryGroup?: (
       updater: (prev: Set<string>) => Set<string>
@@ -313,7 +318,7 @@ function ComboboxDrawer({
 
   const floatingRef = useRef<HTMLUListElement>(null);
 
-  const finalOptions = useMemo<OptionProps[]>(() => {
+  const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
       options?.flatMap((item) => {
         if (isGroupedOption(item)) {
@@ -445,7 +450,7 @@ function ComboboxDrawer({
     return { mapped, totalOptions };
   }, [options, openedCategoryGroup]);
 
-  function renderOption(option: OptionProps, index: number) {
+  function renderOption(option: SelectboxOption, index: number) {
     const optionValue = String(option.value);
     const isSelected = finalSelectedOptions.includes(optionValue);
 
@@ -807,8 +812,8 @@ const EmptyState = styled.li<{ $theme: ComboboxThemeConfig }>`
 `;
 
 function isGroupedOption(
-  item: ComboboxSingleOptionProps | ComboboxGroupedOptionProps
-): item is ComboboxGroupedOptionProps {
+  item: ComboboxSingleOption | ComboboxGroupedOption
+): item is ComboboxGroupedOption {
   return "options" in item;
 }
 

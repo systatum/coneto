@@ -30,20 +30,34 @@ export interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
   toolbarRightPanel?: ReactNode;
-  styles?: RichEditorStylesProps;
-  mode?: RichEditorModeState;
-  toolbarPosition?: RichEditorToolbarPositionState;
+  styles?: RichEditorStyles;
+  mode?: RichEditorMode;
+  toolbarPosition?: RichEditorToolbarPosition;
   autogrow?: boolean;
   height?: number;
 }
 
-export interface RichEditorStylesProps {
+export interface RichEditorStyles {
   editorStyle?: CSSProp;
   containerStyle?: CSSProp;
 }
 
-export type RichEditorToolbarPositionState = "top" | "bottom";
-export type RichEditorModeState = "view-only" | "page-editor" | "text-editor";
+export const RichEditorToolbarPosition = {
+  Top: "top",
+  Bottom: "bottom",
+} as const;
+
+export type RichEditorToolbarPosition =
+  (typeof RichEditorToolbarPosition)[keyof typeof RichEditorToolbarPosition];
+
+export const RichEditorMode = {
+  ViewOnly: "view-only",
+  PageEditor: "page-editor",
+  TextEditor: "text-editor",
+} as const;
+
+export type RichEditorMode =
+  (typeof RichEditorMode)[keyof typeof RichEditorMode];
 
 export interface RichEditorToolbarButtonProps {
   icon?: FigureProps;
@@ -51,10 +65,10 @@ export interface RichEditorToolbarButtonProps {
   children?: ReactNode;
   isOpen?: boolean;
   isActive?: boolean;
-  styles?: RichEditorToolbarButtonStylesProps;
+  styles?: RichEditorToolbarButtonStyles;
 }
 
-export interface RichEditorToolbarButtonStylesProps {
+export interface RichEditorToolbarButtonStyles {
   self?: CSSProp;
 }
 
@@ -1268,7 +1282,7 @@ function RichEditorToolbarButton({
 
 const Wrapper = styled.div<{
   $containerStyle?: CSSProp;
-  $mode?: RichEditorModeState;
+  $mode?: RichEditorMode;
   $theme: RichEditorThemeConfig;
 }>`
   ${({ $mode, $theme }) =>
@@ -1286,7 +1300,7 @@ const Wrapper = styled.div<{
 `;
 
 const ToolbarWrapper = styled.div<{
-  $toolbarPosition?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPosition;
 }>`
   position: absolute;
   width: 100%;
@@ -1302,7 +1316,7 @@ const ToolbarWrapper = styled.div<{
 `;
 
 const Toolbar = styled.div<{
-  $toolbarPosition?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPosition;
   $theme: RichEditorThemeConfig;
 }>`
   display: flex;
@@ -1347,7 +1361,7 @@ const ToolbarRightPanel = styled.div`
 `;
 
 const MenuWrapper = styled.div<{
-  $toolbarPosition?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPosition;
 }>`
   position: absolute;
   ${({ $toolbarPosition }) =>
@@ -1365,9 +1379,9 @@ const MenuWrapper = styled.div<{
 `;
 
 const EditorArea = styled.div<{
-  $toolbarPosition?: RichEditorToolbarPositionState;
+  $toolbarPosition?: RichEditorToolbarPosition;
   $editorStyle?: CSSProp;
-  $mode?: RichEditorModeState;
+  $mode?: RichEditorMode;
   $autogrow?: boolean;
   $height?: number;
   $theme: RichEditorThemeConfig;

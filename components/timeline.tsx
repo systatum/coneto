@@ -5,7 +5,7 @@ import {
   ReactNode,
   useState,
 } from "react";
-import { SteplineItemState } from "./../constants/step-component-util";
+import { BaseSteplineItem } from "./../constants/step-component-util";
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "../theme/provider";
 import { TimelineThemeConfig } from "../theme";
@@ -27,7 +27,7 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
       {childArray.map((child, index) => {
         if (
           !isValidElement<
-            SteplineItemState &
+            BaseSteplineItem &
               Partial<{
                 isClickable?: boolean;
               }>
@@ -122,7 +122,7 @@ const CircleWrapper = styled.div`
 const OuterCircle = styled.div<{
   $isHovered: boolean;
   $theme: TimelineThemeConfig;
-  $variant: SteplineItemState["variant"];
+  $variant: BaseSteplineItem["variant"];
 }>`
   min-width: 0.5rem;
   min-height: 0.5rem;
@@ -150,7 +150,7 @@ const OuterCircle = styled.div<{
 `;
 
 const InnerCircle = styled.div<{
-  $variant: SteplineItemState["variant"];
+  $variant: BaseSteplineItem["variant"];
   $theme: TimelineThemeConfig;
 }>`
   min-width: 0.5rem;
@@ -171,7 +171,7 @@ const Divider = styled.div<{
   $isLast: boolean;
   $line: "solid" | "dash" | "dot";
   $theme: TimelineThemeConfig;
-  $variant: SteplineItemState["variant"];
+  $variant: BaseSteplineItem["variant"];
 }>`
   width: 1px;
   height: 100%;
@@ -217,14 +217,14 @@ const ContentWrapper = styled.div<{ $isLast: boolean }>`
     `}
 `;
 
-export type TimelineItemProps = SteplineItemState &
+export type TimelineItemProps = BaseSteplineItem &
   Partial<{
     sidenote?: ReactNode;
     isClickable?: boolean;
-    styles?: TimelineItemStylesProps;
+    styles?: TimelineItemStyles;
   }>;
 
-export type TimelineItemStylesProps = SteplineItemState["styles"] & {
+export type TimelineItemStyles = BaseSteplineItem["styles"] & {
   textWrapperStyle?: CSSProp;
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
@@ -268,7 +268,7 @@ function TimelineItem({
 }
 
 const TimelineContainer = styled.div<{
-  $variant: SteplineItemState["variant"];
+  $variant: BaseSteplineItem["variant"];
   $theme: TimelineThemeConfig;
   $style?: CSSProp;
 }>`

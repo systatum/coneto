@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { css } from "styled-components";
 import { Datebox } from "./datebox";
-import { FieldLaneDropdownsOptionProps } from "./field-lane";
+import { FieldLaneDropdownsOption } from "./field-lane";
 import { Messagebox } from "./messagebox";
 
 const meta: Meta<typeof Datebox> = {
@@ -203,7 +203,7 @@ export const WithDropdown: Story = {
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
     ];
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOptionProps[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
       {
         text: "On-site",
         value: "1",

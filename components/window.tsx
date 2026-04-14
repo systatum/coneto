@@ -14,21 +14,29 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { Button, ButtonStylesProps } from "./button";
+import { Button, ButtonStyles } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "./../theme/provider";
 
+export const WindowOrientation = {
+  Horizontal: "horizontal",
+  Vertical: "vertical",
+} as const;
+
+export type WindowOrientation =
+  (typeof WindowOrientation)[keyof typeof WindowOrientation];
+
 export interface WindowProps {
-  orientation?: "horizontal" | "vertical";
+  orientation?: WindowOrientation;
   children?: ReactNode;
   onResize?: () => void;
   onResizeComplete?: () => void;
   initialSizeRatio?: number[];
-  styles?: WindowStylesProps;
+  styles?: WindowStyles;
 }
 
-export interface WindowStylesProps {
+export interface WindowStyles {
   self?: CSSProp;
   dividerStyle?: CSSProp;
 }
@@ -36,22 +44,22 @@ export interface WindowStylesProps {
 export interface WindowCellProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
-  styles?: WindowCellStylesProps;
-  actions?: WindowActionProps[];
+  styles?: WindowCellStyles;
+  actions?: WindowAction[];
 }
 
-export interface WindowCellStylesProps {
+export interface WindowCellStyles {
   self?: CSSProp;
 }
 
-export interface WindowActionProps {
+export interface WindowAction {
   onClick?: () => void;
   icon?: FigureProps;
-  styles?: WindowActionStylesProps;
+  styles?: WindowActionStyles;
   hidden?: boolean;
 }
 
-export type WindowActionStylesProps = ButtonStylesProps;
+export type WindowActionStyles = ButtonStyles;
 
 function Window({
   orientation = "vertical",

@@ -30,7 +30,7 @@ import {
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { isValidDateString } from "../lib/date";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
@@ -41,7 +41,7 @@ export type SelectboxSelectedOptions = number | string | number[] | string[];
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
-  options?: OptionProps[];
+  options?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
@@ -63,32 +63,30 @@ interface BaseSelectboxProps
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
-        options: OptionProps[];
+        options: SelectboxOption[];
         handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-        selectedOptionsLocal: OptionProps;
-        setSelectedOptionsLocal: (value: OptionProps) => void;
+        selectedOptionsLocal: SelectboxOption;
+        setSelectedOptionsLocal: (value: SelectboxOption) => void;
         hasInteracted?: boolean;
         setHasInteracted?: (value: boolean) => void;
         ref?: Ref<HTMLInputElement>;
-        setConfirmedValue?: (option: OptionProps | null) => void;
+        setConfirmedValue?: (option: SelectboxOption | null) => void;
       }
   ) => ReactNode;
-  styles?: SelectboxStylesProps;
-  labels?: SelectboxLabelsProps;
+  styles?: SelectboxStyles;
+  labels?: SelectboxLabels;
 }
 
-export interface SelectboxLabelsProps {
+export interface SelectboxLabels {
   loadingText?: string;
 }
 
-interface BaseSelectboxStylesProps {
+interface BaseSelectboxStyles {
   selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
 
-export interface SelectboxStylesProps
-  extends FieldLaneStylesProps,
-    BaseSelectboxStylesProps {}
+export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
 
 export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
@@ -110,7 +108,7 @@ interface InteractionModeProps {
   setInteractionMode: (props: "keyboard" | "mouse") => void;
 }
 
-export interface OptionProps {
+export interface SelectboxOption {
   text: string;
   render?: ReactNode;
   value: string | number;
@@ -210,7 +208,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     };
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
-      useState<OptionProps>(initialState);
+      useState<SelectboxOption>(initialState);
 
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
@@ -221,9 +219,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       "keyboard" | "mouse"
     >("mouse");
 
-    const [confirmedValue, setConfirmedValue] = useState<OptionProps | null>(
-      null
-    );
+    const [confirmedValue, setConfirmedValue] =
+      useState<SelectboxOption | null>(null);
 
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<(HTMLLIElement | null)[]>([]);
@@ -276,9 +273,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const justCommittedRef = useRef(false);
 
     const commitOrRevert = (
-      selectedOption?: OptionProps,
-      currentLocal: OptionProps = selectedOptionsLocal,
-      currentConfirmed: OptionProps | null = confirmedValue
+      selectedOption?: SelectboxOption,
+      currentLocal: SelectboxOption = selectedOptionsLocal,
+      currentConfirmed: SelectboxOption | null = confirmedValue
     ) => {
       if (selectedOption) {
         const val = String(selectedOption.value);
@@ -612,7 +609,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 export interface SelectboxProps
   extends Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
-  styles?: SelectboxStylesProps;
+  styles?: SelectboxStyles;
 }
 
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(

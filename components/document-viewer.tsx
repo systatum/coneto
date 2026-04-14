@@ -33,35 +33,35 @@ export type DocumentSource = (builder: {
 export interface DocumentViewerProps {
   source?: DocumentSource;
   onRegionSelected?: (region: BoundingBoxState) => void;
-  boundingBoxes?: BoundingBoxesProps[];
+  boundingBoxes?: BoundingBox[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   libPdfJsWorkerSrc?: string;
-  styles?: DocumentViewerStylesProps;
+  styles?: DocumentViewerStyles;
   selectable?: boolean;
-  labels?: DocumentViewerLabelProps;
+  labels?: DocumentViewerLabels;
   title?: string;
 }
 
-export interface DocumentViewerLabelProps {
+export interface DocumentViewerLabels {
   zoomPlaceholder?: string;
   totalPages?: (props: { currentPage?: number; totalPages?: number }) => string;
 }
 
-export interface DocumentViewerStylesProps {
+export interface DocumentViewerStyles {
   containerStyle?: CSSProp;
   zoomStyle?: CSSProp;
   selectionStyle?: CSSProp;
   boxStyle?: CSSProp;
 }
 
-export interface BoundingBoxesProps {
+export interface BoundingBox {
   page?: number;
   x: number;
   y: number;
   width: number;
   height: number;
   contentOnHover?: React.ReactNode;
-  boxStyle?: BoxStyleProps;
+  styles?: { self?: BoxStyle };
 }
 
 export interface BoundingBoxState {
@@ -82,7 +82,7 @@ export interface DocumentViewerRef {
    */
   repositionPopUp: (data: HTMLDivElement) => void;
 }
-interface BoxStyleProps {
+interface BoxStyle {
   borderColor?: string;
   backgroundColor?: string;
 }
@@ -767,8 +767,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     $selectionStyle={css`
                       ${styles?.boxStyle}
 
-                      border-color: ${box.boxStyle?.borderColor};
-                      background-color: ${box.boxStyle?.backgroundColor};
+                      border-color: ${box.styles?.self?.borderColor};
+                      background-color: ${box.styles?.self?.backgroundColor};
 
                       ${selection &&
                       css`
@@ -790,8 +790,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                         style={{
                           left: contentLeft,
                           top: contentTop,
-                          borderColor: box.boxStyle?.borderColor,
-                          backgroundColor: box.boxStyle?.backgroundColor,
+                          borderColor: box.styles?.self?.borderColor,
+                          backgroundColor: box.styles?.self?.backgroundColor,
                         }}
                         aria-label="selection-content-hovered"
                       >

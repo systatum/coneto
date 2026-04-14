@@ -6,12 +6,12 @@ import {
   useRef,
 } from "react";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStylesProps } from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
-export interface CheckboxOptionProps {
+export interface CheckboxOption {
   value: string;
   label: string;
   description: string;
@@ -28,11 +28,11 @@ interface BaseCheckboxProps
   indeterminate?: boolean;
   description?: string;
   highlightOnChecked?: boolean;
-  styles?: BaseCheckboxStylesProps;
+  styles?: BaseCheckboxStyles;
   helper?: string;
 }
 
-interface BaseCheckboxStylesProps {
+interface BaseCheckboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   titleStyle?: CSSProp;
@@ -155,13 +155,12 @@ function BaseCheckbox({
   );
 }
 
-export type CheckboxStylesProps = BaseCheckboxStylesProps &
-  FieldLaneStylesProps;
+export type CheckboxStyles = BaseCheckboxStyles & FieldLaneStyles;
 
 export interface CheckboxProps
   extends Omit<BaseCheckboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
-  styles?: CheckboxStylesProps;
+  styles?: CheckboxStyles;
 }
 
 function Checkbox({

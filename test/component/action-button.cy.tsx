@@ -1,4 +1,4 @@
-import { NavTab, NavTabContentProps } from "./../../components/nav-tab";
+import { NavTab, NavTabTabProps } from "./../../components/nav-tab";
 import { Card } from "./../../components/card";
 import {
   RiAddBoxLine,
@@ -12,14 +12,10 @@ import {
   RiShieldLine,
   RiSpam2Line,
 } from "@remixicon/react";
-import { List, ListGroupContentProps } from "./../../components/list";
+import { List, ListGroupContent } from "./../../components/list";
 import { css } from "styled-components";
 import { TipMenuItemProps } from "./../../components/tip-menu";
-import {
-  ColumnTableProps,
-  Table,
-  TableActionsProps,
-} from "./../../components/table";
+import { TableColumn, Table, TableAction } from "./../../components/table";
 import { ReactNode } from "react";
 
 describe("ActionButton", () => {
@@ -276,7 +272,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(2)
-          .should("have.css", "background-color", "rgb(221, 221, 221)");
+          .should("have.css", "background-color", "rgb(236, 236, 236)");
       });
     });
 
@@ -368,11 +364,11 @@ describe("ActionButton", () => {
 
           cy.findAllByLabelText("action-button")
             .eq(2)
-            .should("have.css", "background-color", "rgb(221, 221, 221)");
+            .should("have.css", "background-color", "rgb(236, 236, 236)");
 
           cy.findAllByLabelText("button-toggle")
             .eq(0)
-            .should("have.css", "background-color", "rgb(221, 221, 221)");
+            .should("have.css", "background-color", "rgb(236, 236, 236)");
         });
       });
     });
@@ -771,7 +767,7 @@ describe("ActionButton", () => {
     context("when given pressed", () => {
       it("should render table button with pressed", () => {
         function TableComponent() {
-          const columns: ColumnTableProps[] = [
+          const columns: TableColumn[] = [
             {
               id: "name",
               caption: "Name",
@@ -824,7 +820,7 @@ describe("ActionButton", () => {
     context("when given className", () => {
       it("should render the class", () => {
         function TableComponent() {
-          const columns: ColumnTableProps[] = [
+          const columns: TableColumn[] = [
             {
               id: "name",
               caption: "Name",
@@ -876,7 +872,7 @@ describe("ActionButton", () => {
     context("when given variant", () => {
       it("should render button with variant", () => {
         function TableComponent() {
-          const columns: ColumnTableProps[] = [
+          const columns: TableColumn[] = [
             {
               id: "name",
               caption: "Name",
@@ -929,7 +925,7 @@ describe("ActionButton", () => {
       context("with caret", () => {
         it("should render button with 0px radius top-right and bottom-right", () => {
           function TableComponent() {
-            const columns: ColumnTableProps[] = [
+            const columns: TableColumn[] = [
               {
                 id: "name",
                 caption: "Name",
@@ -982,7 +978,7 @@ describe("ActionButton", () => {
       context("with self", () => {
         it("should render button with 6px radius top-right and bottom-right", () => {
           function TableComponent() {
-            const columns: ColumnTableProps[] = [
+            const columns: TableColumn[] = [
               {
                 id: "name",
                 caption: "Name",
@@ -1051,7 +1047,7 @@ describe("ActionButton", () => {
       context("when given variant", () => {
         it("should render button with variant", () => {
           function TableComponent() {
-            const columns: ColumnTableProps[] = [
+            const columns: TableColumn[] = [
               {
                 id: "name",
                 caption: "Name",
@@ -1107,7 +1103,7 @@ describe("ActionButton", () => {
   });
 });
 
-const LIST_GROUPS: ListGroupContentProps[] = [
+const LIST_GROUPS: ListGroupContent[] = [
   {
     id: "employees",
     title: "Employees",
@@ -1127,7 +1123,7 @@ const LIST_GROUPS: ListGroupContentProps[] = [
   },
 ];
 
-const TOP_ACTIONS: TableActionsProps[] = [
+const TOP_ACTIONS: TableAction[] = [
   {
     className: "table-delete-action",
     caption: "Delete",
@@ -1153,7 +1149,7 @@ const TOP_ACTIONS: TableActionsProps[] = [
   },
 ];
 
-const TABS_ITEMS: NavTabContentProps[] = [
+const TABS_ITEMS: NavTabTabProps[] = [
   {
     id: "1",
     title: "Write",

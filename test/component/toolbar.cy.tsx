@@ -1,5 +1,5 @@
 import { css } from "styled-components";
-import { Toolbar, ToolbarSubMenuProps } from "./../../components/toolbar";
+import { Toolbar, ToolbarSubMenuList } from "./../../components/toolbar";
 import {
   RiSpam2Line,
   RiForbid2Line,
@@ -14,7 +14,7 @@ import {
 } from "@remixicon/react";
 
 describe("Toolbar", () => {
-  const TIP_MENU_ITEMS: ToolbarSubMenuProps[] = [
+  const TIP_MENU_ITEMS: ToolbarSubMenuList[] = [
     {
       caption: "Report Phishing",
       icon: { image: RiSpam2Line, color: "blue" },
@@ -161,7 +161,7 @@ describe("Toolbar", () => {
             cy.wrap($button).should(
               "have.css",
               "background-color",
-              "rgb(232, 232, 232)"
+              "rgb(207, 207, 207)"
             );
           });
       });
@@ -220,7 +220,7 @@ describe("Toolbar", () => {
         cy.findByLabelText("toolbar-menu-toggle")
           .realHover()
           .wait(300)
-          .should("have.css", "background-color", "rgb(245, 245, 245)");
+          .should("have.css", "background-color", "rgb(226, 226, 226)");
       });
     });
   });

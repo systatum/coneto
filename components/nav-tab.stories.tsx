@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { NavTab, NavTabContentProps } from "./nav-tab";
+import { NavTab, NavTabTabProps } from "./nav-tab";
 import { Textbox } from "./textbox";
 import { useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
@@ -13,7 +13,7 @@ import {
   RiSettings5Line,
   RiTable2,
 } from "@remixicon/react";
-import { ColumnTableProps, Table } from "./table";
+import { TableColumn, Table } from "./table";
 import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
 
@@ -108,7 +108,7 @@ Configuration for right-side action buttons in the NavTab component. Each action
 - **caption**: Optional text label displayed on the action button.
 - **icon**: FigureProps object to render a custom icon inside the button.
 - **onClick**: Callback function triggered when the button is clicked.
-- **styles**: Optional styling overrides using \`ActionButtonStylesProps\` (styled-components compatible).
+- **styles**: Optional styling overrides using \`ActionButtonStyles\` (styled-components compatible).
 - **subMenu**: Function returning a ReactNode to render a dropdown or sub-menu associated with the button.
 - **disabled**: Boolean to disable the button interaction.
 - **showSubMenuOn**: Determines how the sub-menu is triggered: "caret" (click on caret) or "self" (click anywhere on button).
@@ -149,7 +149,7 @@ export const Default: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("2");
 
-    const TABS_ITEMS: NavTabContentProps[] = [
+    const TABS_ITEMS: NavTabTabProps[] = [
       {
         id: "1",
         title: "Write",
@@ -182,7 +182,7 @@ export const Small: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("2");
 
-    const TABS_ITEMS: NavTabContentProps[] = [
+    const TABS_ITEMS: NavTabTabProps[] = [
       {
         id: "1",
         title: "Write",
@@ -225,7 +225,7 @@ export const WithActions: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("3");
 
-    const TABS_ITEMS: NavTabContentProps[] = [
+    const TABS_ITEMS: NavTabTabProps[] = [
       {
         id: "1",
         title: "Write",
@@ -325,7 +325,7 @@ export const WithSubItems: Story = {
       );
     });
 
-    const columns: ColumnTableProps[] = [
+    const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
@@ -338,7 +338,7 @@ export const WithSubItems: Story = {
       },
     ];
 
-    const TABS_ITEMS: NavTabContentProps[] = [
+    const TABS_ITEMS: NavTabTabProps[] = [
       {
         id: "1",
         title: "Write",
