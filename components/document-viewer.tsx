@@ -61,7 +61,7 @@ export interface BoundingBox {
   width: number;
   height: number;
   contentOnHover?: React.ReactNode;
-  boxStyle?: BoxStyle;
+  styles?: { self?: BoxStyle };
 }
 
 export interface BoundingBoxState {
@@ -767,8 +767,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     $selectionStyle={css`
                       ${styles?.boxStyle}
 
-                      border-color: ${box.boxStyle?.borderColor};
-                      background-color: ${box.boxStyle?.backgroundColor};
+                      border-color: ${box.styles?.self?.borderColor};
+                      background-color: ${box.styles?.self?.backgroundColor};
 
                       ${selection &&
                       css`
@@ -790,8 +790,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                         style={{
                           left: contentLeft,
                           top: contentTop,
-                          borderColor: box.boxStyle?.borderColor,
-                          backgroundColor: box.boxStyle?.backgroundColor,
+                          borderColor: box.styles?.self?.borderColor,
+                          backgroundColor: box.styles?.self?.backgroundColor,
                         }}
                         aria-label="selection-content-hovered"
                       >

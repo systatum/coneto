@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import {
-  BoundingBoxes,
+  BoundingBox,
   BoundingBoxState,
   DocumentViewerRef,
   DocumentViewer,
@@ -100,7 +100,7 @@ DocumentViewer is a powerful component for displaying documents such as PDFs, im
         "List of bounding boxes displayed on the document with optional hover content.",
       control: false,
       table: {
-        type: { summary: "BoundingBoxes[]" },
+        type: { summary: "BoundingBox[]" },
         defaultValue: { summary: "[]" },
       },
     },
@@ -168,7 +168,7 @@ export const PDF: Story = {
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([
       {
         page: 1,
         x: 0.1319796954314721,
@@ -176,7 +176,7 @@ export const PDF: Story = {
         width: 0.751269035532995,
         height: 0.34532374100719426,
         contentOnHover: <p>heyyy</p>,
-        boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
+        styles: { self: { borderColor: "#aqua", backgroundColor: "#aqua" } },
       },
     ]);
 
@@ -225,7 +225,7 @@ export const PDF: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxes = {
+        const box: BoundingBox = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -416,7 +416,7 @@ export const PNG: Story = {
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -424,7 +424,7 @@ export const PNG: Story = {
         width: 0.1949579831932773,
         x: 0.03361344537815126,
         y: 0.033602150537634407,
-        boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
+        styles: { self: { borderColor: "#aqua", backgroundColor: "#aqua" } },
       },
     ]);
 
@@ -473,7 +473,7 @@ export const PNG: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxes = {
+        const box: BoundingBox = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -607,7 +607,7 @@ export const WithFile: Story = {
     }, []);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -615,7 +615,7 @@ export const WithFile: Story = {
         width: 0.1949579831932773,
         x: 0.03361344537815126,
         y: 0.033602150537634407,
-        boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
+        styles: { self: { borderColor: "#aqua", backgroundColor: "#aqua" } },
       },
     ]);
 
@@ -664,7 +664,7 @@ export const WithFile: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxes = {
+        const box: BoundingBox = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
@@ -796,7 +796,7 @@ export const Base64: Story = {
     }, []);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
-    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBoxes[]>([
+    const [boundingBoxes, setBoundingBoxes] = useState<BoundingBox[]>([
       {
         contentOnHover: <p>This document viewer show using PNG format</p>,
         height: 0.04973118279569892,
@@ -804,7 +804,7 @@ export const Base64: Story = {
         width: 0.1949579831932773,
         x: 0.03361344537815126,
         y: 0.033602150537634407,
-        boxStyle: { borderColor: "#aqua", backgroundColor: "#aqua" },
+        styles: { self: { borderColor: "#aqua", backgroundColor: "#aqua" } },
       },
     ]);
 
@@ -853,7 +853,7 @@ export const Base64: Story = {
 
     const handleCommentSubmission = async () => {
       await setBoundingBoxes((prev) => {
-        const box: BoundingBoxes = {
+        const box: BoundingBox = {
           ...currentlySelectedRegion,
           contentOnHover: <p>{commentText}</p>,
         };
