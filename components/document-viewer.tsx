@@ -33,7 +33,7 @@ export type DocumentSource = (builder: {
 export interface DocumentViewerProps {
   source?: DocumentSource;
   onRegionSelected?: (region: BoundingBoxState) => void;
-  boundingBoxes?: BoundingBoxes[];
+  boundingBoxes?: BoundingBox[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   libPdfJsWorkerSrc?: string;
   styles?: DocumentViewerStyles;
@@ -54,7 +54,7 @@ export interface DocumentViewerStyles {
   boxStyle?: CSSProp;
 }
 
-export interface BoundingBoxes {
+export interface BoundingBox {
   page?: number;
   x: number;
   y: number;
