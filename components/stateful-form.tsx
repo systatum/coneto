@@ -212,6 +212,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   disabled,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
+    if (disabled) return;
     onChange?.({ currentState: { [name]: value } });
   };
 
