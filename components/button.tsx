@@ -90,7 +90,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     closedIcon?: FigureProps["image"];
     tipMenuSize?: TipMenuVariant;
     safeAreaAriaLabels?: string[];
-    dialogPlacement?: DialogPlacement;
+    dialogPlacement?: ButtonDialogPlacement;
     onOpen?: (prop: boolean) => void;
     open?: boolean;
     styles?: ButtonStyles;
@@ -102,6 +102,8 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     showSubMenuOn?: ButtonShowSubMenuPosition;
     displayLabel?: ButtonDisplayLabel;
   };
+
+export type ButtonDialogPlacement = DialogPlacement;
 
 export interface ButtonStyles {
   dropdownStyle?: CSSProp | ((placement: Placement) => CSSProp);
