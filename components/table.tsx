@@ -78,7 +78,7 @@ export interface TableProps {
   disablePreviousPageButton?: boolean;
   disableNextPageButton?: boolean;
   labels?: TableLabels;
-  sumRow?: TableSummaryRow[];
+  sumRow?: TableSummaryRowColumn[];
   styles?: TableStyles;
   searchbox?: TableSearchbox;
 }
@@ -105,7 +105,7 @@ interface TableAlwaysShowDragIcon {
   alwaysShowDragIcon?: boolean;
 }
 
-export interface TableSummaryRow {
+export interface TableSummaryRowColumn {
   span?: number;
   content?: ReactNode;
   bold?: boolean;
