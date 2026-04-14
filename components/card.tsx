@@ -61,7 +61,7 @@ export interface CardProps
   footerContent?: ReactNode;
   closable?: boolean;
   onCloseRequest?: () => void;
-  headerActions?: CardAction[];
+  headerActions?: ActionButtonProps[];
   styles?: CardStyles;
   toggleable?: boolean;
   onToggleChange?: (isOpen?: boolean) => void;
@@ -78,8 +78,6 @@ export interface CardStyles {
   titleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
 }
-
-export type CardAction = ActionButtonProps;
 
 function Card({
   children,

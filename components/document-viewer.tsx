@@ -30,24 +30,11 @@ export type DocumentSource = (builder: {
   ) => { type: "encoded"; src: string };
 }) => ResolvedSource;
 
-export const DocumentViewerInitialZoom = {
-  75: 75,
-  100: 100,
-  110: 110,
-  120: 120,
-  130: 130,
-  140: 140,
-  150: 150,
-} as const;
-
-export type DocumentViewerInitialZoom =
-  (typeof DocumentViewerInitialZoom)[keyof typeof DocumentViewerInitialZoom];
-
 export interface DocumentViewerProps {
   source?: DocumentSource;
   onRegionSelected?: (region: BoundingBoxState) => void;
   boundingBoxes?: BoundingBoxes[];
-  initialZoom?: DocumentViewerInitialZoom;
+  initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
   libPdfJsWorkerSrc?: string;
   styles?: DocumentViewerStyles;
   selectable?: boolean;

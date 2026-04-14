@@ -76,8 +76,6 @@ export interface ListOnOpen {
   isOpen?: boolean;
 }
 
-export type ListItemAction = ContextMenuAction;
-
 interface ListAlwaysShowDragIcon {
   alwaysShowDragIcon?: boolean;
 }
@@ -918,7 +916,7 @@ export interface ListItemProps {
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
-  actions?: (id?: string) => ListItemAction[];
+  actions?: (id?: string) => ContextMenuAction[];
   children?: ReactNode;
   openable?: boolean;
   selectedOptions?: {
