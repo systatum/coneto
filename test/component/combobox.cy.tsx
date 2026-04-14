@@ -102,6 +102,69 @@ describe("Combobox", () => {
     );
   }
 
+  context("style", () => {
+    it("should render the height with 34px", () => {
+      cy.mount(
+        <ProductCombobox options={null} placeholder="Select a fruit..." />
+      );
+
+      cy.findByPlaceholderText("Select a fruit...").should(
+        "have.css",
+        "height",
+        "34px"
+      );
+    });
+
+    context("when selected the value", () => {
+      context("when clicking arrow", () => {
+        it("should highlight selected option (rgb(97, 169, 249))", () => {
+          cy.mount(
+            <ProductCombobox
+              options={FRUIT_OPTIONS}
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByPlaceholderText("Select a fruit...").type("Banana");
+          cy.findByRole("option", { name: "Banana" }).click();
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Banana"
+          );
+
+          cy.findByLabelText("selectbox-opener").click();
+          cy.wait(500);
+          cy.findAllByLabelText("list-item-row")
+            .eq(1)
+            .should("have.css", "background-color", "rgb(97, 169, 249)");
+        });
+      });
+
+      context("when pressing arrow up/arrow down", () => {
+        it("should highlight selected option (rgb(97, 169, 249))", () => {
+          cy.mount(
+            <ProductCombobox
+              options={FRUIT_OPTIONS}
+              placeholder="Select a fruit..."
+            />
+          );
+          cy.findByPlaceholderText("Select a fruit...").type("Banana");
+          cy.findByRole("option", { name: "Banana" }).click();
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Banana"
+          );
+
+          cy.findByPlaceholderText("Select a fruit...").type("{uparrow}");
+
+          cy.wait(500);
+          cy.findAllByLabelText("list-item-row")
+            .eq(1)
+            .should("have.css", "background-color", "rgb(97, 169, 249)");
+        });
+      });
+    });
+  });
+
   context("common behavior", () => {
     const selectApple = (props = {}) => {
       cy.window().then((win) => {
@@ -443,20 +506,6 @@ describe("Combobox", () => {
 
         cy.findByLabelText("circle").should("not.exist");
       });
-    });
-  });
-
-  context("style", () => {
-    it("should render the height with 34px", () => {
-      cy.mount(
-        <ProductCombobox options={null} placeholder="Select a fruit..." />
-      );
-
-      cy.findByPlaceholderText("Select a fruit...").should(
-        "have.css",
-        "height",
-        "34px"
-      );
     });
   });
 
