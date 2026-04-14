@@ -2611,10 +2611,10 @@ It is commonly used for action menus, context menus, or inline tips.
     
 
       <item>
-        <title>Togglebox - Coneto React UI</title>
-        <link>https://coneto.systatum.com/?path=/docs/input-elements-togglebox</link>
+        <title>Toggle - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/input-elements-toggle</link>
         <guid>41c70b9d483cd078443744764438467123470c00</guid>
-        <description><![CDATA[Togglebox is a flexible toggle switch component for React, designed for binary on/off states. 
+        <description><![CDATA[Toggle is a flexible toggle switch component for React, designed for binary on/off states. 
 It supports icons, loading states, custom sizes, labels, descriptions, and full styling control. 
 It integrates seamlessly with `FieldLane` for form layout and validation support.
 
@@ -2632,7 +2632,7 @@ It integrates seamlessly with `FieldLane` for form layout and validation support
 📌 Usage
 
 ```tsx
-<Togglebox
+<Toggle
   checked={true}
   label="Enable notifications"
   description="Receive email updates for new activity"
@@ -2649,7 +2649,7 @@ It integrates seamlessly with `FieldLane` for form layout and validation support
 />
 
 {/* Integration with FieldLane and validation */}
-<Togglebox
+<Toggle
   title="Enable dark mode"
   label="Dark Mode"
   showError={true}

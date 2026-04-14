@@ -61,7 +61,7 @@ import {
   TimelineThemeConfig,
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
-  ToggleboxThemeConfig,
+  ToggleThemeConfig,
   ToolbarThemeConfig,
   TooltipThemeConfig,
   TreeListThemeConfig,
@@ -1550,12 +1550,12 @@ export function createTipMenuTheme(
   };
 }
 
-// togglebox.tsx
-export function createToggleboxTheme(
+// toggle.tsx
+export function createToggleTheme(
   body: BodyThemeConfig,
-  custom: Partial<ToggleboxThemeConfig> = {}
-): ToggleboxThemeConfig {
-  const defaultTheme: ToggleboxThemeConfig = {
+  custom: Partial<ToggleThemeConfig> = {}
+): ToggleThemeConfig {
+  const defaultTheme: ToggleThemeConfig = {
     backgroundColor: "#D1D5DB",
     checkedBackgroundColor: "#61A9F9",
     thumbColor: "#ffffff",
