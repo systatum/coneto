@@ -234,7 +234,7 @@ function FieldLane({
           return (
             <Button
               key={index}
-              displayLabel="flex"
+              labelMode="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {

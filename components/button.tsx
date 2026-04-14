@@ -62,13 +62,13 @@ export const ButtonShowSubMenuPosition = {
 export type ButtonShowSubMenuPosition =
   (typeof ButtonShowSubMenuPosition)[keyof typeof ButtonShowSubMenuPosition];
 
-export const ButtonDisplayLabel = {
+export const ButtonLabelMode = {
   Flex: "flex",
   Ellipsis: "ellipsis",
 } as const;
 
-export type ButtonDisplayLabel =
-  (typeof ButtonDisplayLabel)[keyof typeof ButtonDisplayLabel];
+export type ButtonLabelMode =
+  (typeof ButtonLabelMode)[keyof typeof ButtonLabelMode];
 
 export interface ButtonSubMenu {
   list?: (
@@ -100,7 +100,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     activeBackgroundColor?: string;
     hoverBackgroundColor?: string;
     showSubMenuOn?: ButtonShowSubMenuPosition;
-    displayLabel?: ButtonDisplayLabel;
+    labelMode?: ButtonLabelMode;
   };
 
 export type ButtonDialogPlacement = DialogPlacement;
@@ -135,7 +135,7 @@ function Button({
   pressed,
   icon,
   hoverBackgroundColor,
-  displayLabel = "ellipsis",
+  labelMode = "ellipsis",
   ...props
 }: ButtonProps) {
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
@@ -280,7 +280,7 @@ function Button({
         )}
         {children && (
           <ButtonLabel
-            $withFlex={displayLabel === "flex"}
+            $withFlex={labelMode === "flex"}
             aria-label="button-label"
           >
             {children}
