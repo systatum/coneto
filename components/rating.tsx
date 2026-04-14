@@ -6,9 +6,9 @@ import { useTheme } from "./../theme/provider";
 import { RatingThemeConfig } from "./../theme";
 
 export const RatingSize = {
-  Sm: "sm",
-  Md: "md",
-  Lg: "lg",
+  Small: "sm",
+  Medium: "md",
+  Large: "lg",
 } as const;
 
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
