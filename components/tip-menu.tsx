@@ -8,18 +8,28 @@ import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
 
 export const TipMenuVariant = {
-  Small: "sm",
-  Medium: "md",
+  Default: "default",
+  Primary: "primary",
+  Danger: "danger",
+  Success: "success",
 } as const;
 
 export type TipMenuVariant =
   (typeof TipMenuVariant)[keyof typeof TipMenuVariant];
+
+export const TipMenuSize = {
+  Small: "sm",
+  Medium: "md",
+} as const;
+
+export type TipMenuSize = (typeof TipMenuSize)[keyof typeof TipMenuSize];
 
 export interface TipMenuProps {
   children?: ReactNode;
   subMenuList?: TipMenuItemProps[];
   setIsOpen?: () => void;
   variant?: TipMenuVariant;
+  size?: TipMenuSize;
   withFilter?: boolean;
   styles?: TipMenuStyles;
 }
@@ -33,7 +43,8 @@ function TipMenu({
   subMenuList,
   styles,
   setIsOpen,
-  variant = "md",
+  variant = "default",
+  size = "md",
   withFilter,
 }: TipMenuProps) {
   const [search, setSearch] = useState<string>("");
@@ -92,7 +103,6 @@ function TipMenu({
           variant={menu.variant ?? variant}
           caption={menu.caption}
           icon={menu.icon}
-          isDangerous={menu.isDangerous}
           className={menu.className}
           hidden={menu.hidden}
           onClick={(e) => {
@@ -114,8 +124,8 @@ export interface TipMenuItemProps {
   caption: string;
   icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
-  isDangerous?: boolean;
   variant?: TipMenuVariant;
+  size?: TipMenuSize;
   className?: string;
   hidden?: boolean;
 }
@@ -124,8 +134,8 @@ function TipMenuItem({
   caption,
   icon,
   onClick,
-  isDangerous = false,
   variant,
+  size,
   className,
   hidden,
 }: TipMenuItemProps) {
@@ -139,48 +149,35 @@ function TipMenuItem({
   return (
     <StyledTipMenuItem
       $variant={variant}
+      $size={size}
       aria-label="tip-menu-item"
-      $isDangerous={isDangerous}
       onMouseDown={onClick}
       $theme={tipMenuTheme}
       className={className}
     >
-      {icon && (
-        <Figure
-          {...icon}
-          aria-label="tip-menu-icon"
-          color={
-            isDangerous
-              ? "white"
-              : (COLOR_STYLE_MAP[icon?.color] ?? icon?.color)
-          }
-        />
-      )}
+      {icon && <Figure {...icon} aria-label="tip-menu-icon" />}
       <StyledCaption>{caption}</StyledCaption>
     </StyledTipMenuItem>
   );
 }
 
 const StyledTipMenuItem = styled.div<{
-  $isDangerous: boolean;
   $variant?: TipMenuVariant;
-  $theme: TipMenuThemeConfig;
+  $theme: Record<TipMenuVariant, TipMenuThemeConfig>;
+  $size?: TipMenuSize;
 }>`
   display: flex;
   align-items: center;
   cursor: pointer;
   border-radius: 4px;
 
-  background-color: ${({ $isDangerous, $theme }) =>
-    $isDangerous ? $theme.dangerousBackgroundColor : $theme.backgroundColor};
-
-  color: ${({ $isDangerous, $theme }) =>
-    $isDangerous ? "white" : $theme.textColor};
-
+  background-color: ${({ $theme, $variant }) =>
+    $theme[$variant]?.backgroundColor};
+  color: ${({ $theme, $variant }) => $theme[$variant]?.textColor};
   transition: background-color 0.2s;
 
-  ${({ $variant }) =>
-    $variant === "sm"
+  ${({ $size }) =>
+    $size === "sm"
       ? css`
           gap: 8px;
           padding: 2px;
@@ -188,27 +185,24 @@ const StyledTipMenuItem = styled.div<{
       : css`
           gap: 12px;
           padding: 8px;
-        `}
+        `};
 
   &:hover {
-    background-color: ${({ $isDangerous, $theme }) =>
-      $isDangerous
-        ? $theme.dangerousHoverBackgroundColor
-        : $theme.hoverBackgroundColor};
+    background-color: ${({ $theme, $variant }) =>
+      $theme[$variant]?.hoverBackgroundColor};
   }
 
   &:active {
-    background-color: ${({ $isDangerous, $theme }) =>
-      $isDangerous
-        ? $theme.dangerousActiveBackgroundColor
-        : $theme.activeBackgroundColor};
+    background-color: ${({ $theme, $variant }) =>
+      $theme[$variant]?.activeBackgroundColor};
 
     box-shadow: inset 0 0.5px 4px rgba(0, 0, 0, 0.2);
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px ${({ $theme }) => $theme.focusBorderColor};
+    box-shadow: inset 0 0 0 2px
+      ${({ $theme, $variant }) => $theme[$variant]?.focusBackgroundColor};
   }
 `;
 
