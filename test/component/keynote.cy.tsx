@@ -3,6 +3,46 @@ import { Keynote, KeynoteStyles } from "./../../components/keynote";
 
 describe("Keynote", () => {
   context("rendered condition", () => {
+    context("when not given keyLabels", () => {
+      it("should still rendered with key", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+          />
+        );
+
+        const expectedValue = [
+          "modelType",
+          "requestCreatedBy",
+          "lastSynced",
+          "createdOn",
+          "desc",
+        ];
+
+        expectedValue.map((value) => {
+          cy.findByText(value).should("exist");
+        });
+        Object.values(data).map((value) => {
+          cy.findByText(value).should("exist");
+        });
+      });
+    });
+
     context("when keyLabels is less than the key", () => {
       it("should rendered with key", () => {
         const data = {
