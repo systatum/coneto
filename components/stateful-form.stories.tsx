@@ -1484,38 +1484,378 @@ export const AllCase: Story = {
     ];
 
     return (
-      <div
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          display: "flex",
-          width: "100%",
-          flexDirection: "column",
-          gap: "0.5rem",
-          paddingTop: "1rem",
-          paddingBottom: "1rem",
-          maxWidth: "500px",
+      <StatefulForm
+        styles={{
+          containerStyle: css`
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            width: 100%;
+            padding: 1rem;
+            max-width: 500px;
+          `,
         }}
-      >
-        <StatefulForm
-          onChange={({ currentState }) => {
-            const { chips, ...rest } = currentState;
-            void chips;
+        onChange={({ currentState }) => {
+          const { chips, ...rest } = currentState;
+          void chips;
 
-            setValue((prev) => ({
-              ...prev,
-              ...rest,
-            }));
-          }}
-          onValidityChange={setIsFormValid}
-          labelSize="14px"
-          fieldSize="14px"
-          fields={FIELDS}
-          formValues={value}
-          validationSchema={schema}
-          mode="onChange"
-        />
-      </div>
+          setValue((prev) => ({
+            ...prev,
+            ...rest,
+          }));
+        }}
+        onValidityChange={setIsFormValid}
+        labelSize="14px"
+        fieldSize="14px"
+        fields={FIELDS}
+        formValues={value}
+        validationSchema={schema}
+        mode="onChange"
+      />
+    );
+  },
+};
+
+export const AllCaseDisabled: Story = {
+  render: () => {
+    interface AllCaseValueProps {
+      text: string;
+      time: string;
+      email: string;
+      number: string;
+      password: string;
+      textarea: string;
+      rating: string;
+      check: boolean;
+      chips?: {
+        searchText: string;
+        selectedOptions: BadgeProps[];
+      };
+      color: string;
+      combo: string[];
+      date: string[];
+      file_drop_box?: File[];
+      file: File[] | undefined;
+      image: File | undefined;
+      money: string;
+      phone: string;
+      thumb_field: boolean;
+      togglebox: boolean;
+      signature: string;
+      capsule: string;
+      country_code?: CountryCodeProps;
+      currency: string;
+      pin: string;
+    }
+
+    const [value, setValue] = useState<AllCaseValueProps>({
+      text: "",
+      time: "",
+      email: "",
+      number: "",
+      password: "",
+      textarea: "",
+      rating: "",
+      check: false,
+      chips: {
+        searchText: "",
+        selectedOptions: [],
+      },
+      color: "",
+      combo: [],
+      date: [""],
+      file_drop_box: [] as File[],
+      file: undefined,
+      image: undefined,
+      money: "",
+      phone: "",
+      thumb_field: false,
+      togglebox: false,
+      signature: "",
+      capsule: "",
+      country_code: undefined,
+      currency: "USD",
+      pin: "",
+    });
+
+    const CAPSULE_TABS: CapsuleTab[] = [
+      {
+        id: "paid",
+        title: "Paid",
+      },
+      {
+        id: "unpaid",
+        title: "Unpaid",
+      },
+    ];
+
+    const PARTS_INPUT: PinboxParts[] = [
+      {
+        type: "static",
+        text: "S",
+      },
+      {
+        type: "alphanumeric",
+      },
+      {
+        type: "digit",
+      },
+      {
+        type: "alphabet",
+      },
+      {
+        type: "static",
+        text: "-",
+      },
+      {
+        type: "alphabet",
+      },
+    ];
+
+    const FIELDS: FormFieldGroup[] = [
+      {
+        name: "text",
+        title: "Text",
+        type: "text",
+        required: true,
+        placeholder: "Enter text",
+        helper: "This field is used to enter a single line of text",
+      },
+      {
+        name: "email",
+        title: "Email",
+        type: "email",
+        required: true,
+        placeholder: "Enter email address",
+        helper: "This field is used to enter an email address",
+      },
+      {
+        name: "time",
+        title: "Time",
+        type: "time",
+        required: true,
+        placeholder: "Enter time",
+        helper: "This field allows you to select a time",
+      },
+      {
+        name: "number",
+        title: "Number",
+        type: "number",
+        required: true,
+        placeholder: "Enter number",
+        helper: "This field only accepts numeric values",
+      },
+      {
+        name: "password",
+        title: "Password",
+        type: "password",
+        required: true,
+        placeholder: "Enter password",
+        helper: "This field is used to enter a secure password",
+      },
+      {
+        name: "textarea",
+        title: "Textarea",
+        type: "textarea",
+        rows: 3,
+        required: true,
+        placeholder: "Enter text here",
+        helper: "This field allows you to enter multiple lines of text",
+      },
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: true,
+        helper: "This pinbox allows you to enter your PIN code.",
+        pinboxProps: {
+          parts: PARTS_INPUT,
+        },
+      },
+      {
+        name: "check",
+        title: "Checkbox",
+        placeholder: "Check",
+        type: "checkbox",
+        helper: "This checkbox allows you to toggle a boolean value",
+      },
+      {
+        name: "radio",
+        title: "Radio",
+        placeholder: "Radio",
+        type: "radio",
+        helper: "This radio allows you to select one option",
+      },
+      {
+        name: "color",
+        title: "Color",
+        type: "color",
+        required: true,
+        placeholder: "Enter the color here",
+        helper: "This field allows you to pick or input a color value",
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: true,
+        placeholder: "Select a fruit...",
+        helper: "This field allows you to select one or more options",
+        comboboxProps: {
+          options: [],
+        },
+      },
+      {
+        name: "date",
+        title: "Date",
+        type: "date",
+        required: true,
+        placeholder: "Select a date",
+        helper: "This field allows you to select a date",
+        dateProps: {
+          monthNames: [],
+        },
+      },
+      {
+        name: "file_drop_box",
+        title: "File Drop Box",
+        type: "file_drop_box",
+        required: true,
+        helper: "This field allows you to upload files via drag and drop",
+      },
+      {
+        name: "file",
+        title: "File",
+        type: "file",
+        required: true,
+        helper: "This field allows you to upload one or more files",
+        fileInputBoxProps: {
+          accept: "image/jpeg",
+        },
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        required: true,
+        helper: "This field allows you to upload and preview an image",
+      },
+      {
+        name: "money",
+        title: "Money",
+        type: "money",
+        required: true,
+        placeholder: "Enter amount",
+        helper: "This field is used to input a monetary value",
+        moneyProps: {
+          separator: "dot",
+          editableCurrency: true,
+          currencyOptions: [
+            {
+              id: "USD",
+              name: "US Dollar",
+              symbol: "$",
+            },
+          ],
+          currency: value.currency,
+        },
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        type: "phone",
+        required: true,
+        placeholder: "Enter phone number",
+        helper: "This field allows you to enter a phone number",
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
+        required: true,
+        helper: "This field allows you to draw a signature",
+      },
+      {
+        name: "rating",
+        title: "Rating",
+        type: "rating",
+        required: true,
+        helper: "This field allows you to provide a rating",
+      },
+      {
+        name: "thumb_field",
+        title: "Thumb Field",
+        type: "thumbfield",
+        required: true,
+        helper: "This field allows you to select a thumbs-up or down value",
+      },
+      {
+        name: "togglebox",
+        title: "Togglebox",
+        type: "toggle",
+        placeholder: "Toggle",
+        required: true,
+        helper: "This field allows you to toggle a boolean state",
+      },
+      {
+        name: "chips",
+        title: "Chips",
+        type: "chips",
+        required: false,
+        helper: "This field allows you to select multiple items",
+        chipsProps: {
+          options: [],
+          selectedOptions: value.chips.selectedOptions,
+          inputValue: value.chips.searchText,
+        },
+      },
+      {
+        name: "capsule",
+        title: "Monetary Value",
+        type: "capsule",
+        required: true,
+        helper: "This field allows you to switch between monetary options",
+        capsuleProps: {
+          tabs: CAPSULE_TABS,
+        },
+      },
+      {
+        name: "text",
+        title: "Save",
+        type: "button",
+        required: true,
+        rowJustifyPosition: "flex-end",
+      },
+    ];
+
+    return (
+      <StatefulForm
+        styles={{
+          containerStyle: css`
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            width: 100%;
+            padding: 1rem;
+            max-width: 500px;
+          `,
+        }}
+        disabled
+        onChange={({ currentState }) => {
+          const { chips, ...rest } = currentState;
+          void chips;
+
+          setValue((prev) => ({
+            ...prev,
+            ...rest,
+          }));
+        }}
+        labelSize="14px"
+        fieldSize="14px"
+        fields={FIELDS}
+        formValues={value}
+        mode="onChange"
+      />
     );
   },
 };

@@ -100,10 +100,22 @@ function BaseFileInputBox({
       $style={styles?.self}
       $isDragging={!disabled && isDragging}
       $hasFile={selectedFiles.length > 0}
-      onClick={!disabled && handleBrowseClick}
-      onDrop={!disabled && handleDrop}
-      onDragOver={!disabled && handleDragOver}
-      onDragLeave={!disabled && handleDragLeave}
+      onClick={() => {
+        if (disabled) return;
+        handleBrowseClick();
+      }}
+      onDrop={(e) => {
+        if (disabled) return;
+        handleDrop(e);
+      }}
+      onDragOver={(e) => {
+        if (disabled) return;
+        handleDragOver(e);
+      }}
+      onDragLeave={(e) => {
+        if (disabled) return;
+        handleDragLeave();
+      }}
       aria-label="file-input-box-wrapper"
       $disabled={disabled}
       $isError={showError}
