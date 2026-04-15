@@ -35,13 +35,13 @@ function Keynote<T extends Record<string, unknown>>({
   renderer,
   styles,
 }: KeynoteProps<T>) {
-  const shouldRenderFromData = data && keys && keyLabels;
+  const shouldRenderFromData = data && keys;
 
   return (
     <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
-            const keyLabel = keyLabels[index] ?? String(key);
+            const keyLabel = keyLabels?.[index] ?? String(key);
             const value = data[key];
             const renderFn = renderer?.[key];
 
