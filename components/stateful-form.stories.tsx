@@ -1740,7 +1740,13 @@ export const AllCaseDisabled: Story = {
         moneyProps: {
           separator: "dot",
           editableCurrency: true,
-          currencyOptions: [],
+          currencyOptions: [
+            {
+              id: "USD",
+              name: "US Dollar",
+              symbol: "$",
+            },
+          ],
           currency: value.currency,
         },
       },
