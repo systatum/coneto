@@ -2849,10 +2849,10 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
     
 
       <item>
-        <title>Window - Coneto React UI</title>
+        <title>SplitPane - Coneto React UI</title>
         <link>https://coneto.systatum.com/?path=/docs/content-window</link>
         <guid>d9404ddb82b788fa82259578022ad67471dc658c</guid>
-        <description><![CDATA[Window is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
+        <description><![CDATA[SplitPane is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
 
 ---
 ✨ Features
@@ -2868,7 +2868,7 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
 ---
 📌 Usage
 ```tsx
-<Window
+<SplitPane
   orientation="horizontal"
   initialSizeRatio={[0.4, 0.6]}
   styles={{
@@ -2878,7 +2878,7 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
   onResize={() => console.log("Resizing...")}
   onResizeComplete={() => console.log("Resize complete")}
 >
-  <Window.Cell
+  <SplitPane.Cell
     styles={{ self: css`background: #f9fafb;` }}
     actions={[
       {
@@ -2888,8 +2888,8 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
     ]}
   >
     <div>Left content</div>
-  </Window.Cell>
-  <Window.Cell
+  </SplitPane.Cell>
+  <SplitPane.Cell
     styles={{ self: css`background: #fff;` }}
     actions={[
       {
@@ -2899,13 +2899,13 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
     ]}
   >
     <div>Right content</div>
-  </Window.Cell>
-</Window>
+  </SplitPane.Cell>
+</SplitPane>
 ```
 
 - Use `orientation` to control layout direction.
 - Provide `initialSizeRatio` to control starting sizes of cells.
-- Add any ReactNode as content for each `Window.Cell`.
+- Add any ReactNode as content for each `SplitPane.Cell`.
 - Use `actions` to attach buttons or icons inside a cell.
 - Fully styleable via the `styles` prop for both container and dividers.
 - Listen to `onResize` and `onResizeComplete` for drag events.]]></description>

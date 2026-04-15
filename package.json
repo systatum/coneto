@@ -221,6 +221,10 @@
       "import": "./dist/components/stepline.js",
       "types": "./dist/components/stepline.d.ts"
     },
+    "./split-pane": {
+      "import": "./dist/components/split-pane.js",
+      "types": "./dist/components/split-pane.d.ts"
+    },
     "./table": {
       "import": "./dist/components/table.js",
       "types": "./dist/components/table.d.ts"
@@ -264,10 +268,6 @@
     "./treelist": {
       "import": "./dist/components/treelist.js",
       "types": "./dist/components/treelist.d.ts"
-    },
-    "./window": {
-      "import": "./dist/components/window.js",
-      "types": "./dist/components/window.d.ts"
     },
     "./constants/*": {
       "import": "./dist/constants/*.js",
