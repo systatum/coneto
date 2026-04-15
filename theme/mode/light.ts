@@ -63,7 +63,7 @@ import {
   createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
-  createWindowTheme,
+  createSplitPaneTheme,
   createTooltipTheme,
 } from "./creator";
 
@@ -223,7 +223,7 @@ const lightThumbField = createThumbFieldTheme(lightBody);
 
 const lightTreeList = createTreeListTheme(lightBody);
 
-const lightWindow = createWindowTheme(lightBody);
+const lightSplitPane = createSplitPaneTheme(lightBody);
 
 export const lightTheme: AppTheme = {
   body: lightBody,
@@ -281,6 +281,7 @@ export const lightTheme: AppTheme = {
   statusbar: lightStatusbar,
   statefulForm: lightStatefulForm,
   stepline: lightStepline,
+  splitPane: lightSplitPane,
   table: lightTable,
   textarea: lightTextarea,
   textbox: lightTextbox,
@@ -292,5 +293,4 @@ export const lightTheme: AppTheme = {
   toolbar: lightToolbar,
   tooltip: lightTooltip,
   treelist: lightTreeList,
-  window: lightWindow,
 };

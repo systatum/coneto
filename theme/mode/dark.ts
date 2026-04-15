@@ -63,8 +63,8 @@ import {
   createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
-  createWindowTheme,
   createTooltipTheme,
+  createSplitPaneTheme,
 } from "./creator";
 
 // Dark
@@ -758,7 +758,7 @@ const darkTreeList = createTreeListTheme(darkBody, {
   dividerHierarchySelectedColor: "#485c7d",
 });
 
-const darkWindow = createWindowTheme(darkBody, {
+const darkSplitPane = createSplitPaneTheme(darkBody, {
   backgroundColor: "#111827",
   textColor: "#f9fafb",
   dividerColor: "#374151",
@@ -820,6 +820,7 @@ export const darkTheme: AppTheme = {
   statusbar: darkStatusbar,
   statefulForm: darkStatefulForm,
   stepline: darkStepline,
+  splitPane: darkSplitPane,
   table: darkTable,
   textarea: darkTextarea,
   textbox: darkTextbox,
@@ -831,5 +832,4 @@ export const darkTheme: AppTheme = {
   toolbar: darkToolbar,
   tooltip: darkTooltip,
   treelist: darkTreeList,
-  window: darkWindow,
 };

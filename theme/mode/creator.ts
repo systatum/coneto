@@ -50,6 +50,7 @@ import {
   SeparatorThemeConfig,
   SidebarThemeConfig,
   SignboxThemeConfig,
+  SplitPaneThemeConfig,
   StatefulFormThemeConfig,
   StatusbarThemeConfig,
   SteplineThemeConfig,
@@ -65,7 +66,6 @@ import {
   ToolbarThemeConfig,
   TooltipThemeConfig,
   TreeListThemeConfig,
-  WindowThemeConfig,
 } from "./../index";
 
 // body
@@ -1683,12 +1683,12 @@ export function createTreeListTheme(
   };
 }
 
-// window.tsx
-export function createWindowTheme(
+// split-pane.tsx
+export function createSplitPaneTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<WindowThemeConfig> = {}
-): WindowThemeConfig {
-  const defaultTheme: WindowThemeConfig = {
+  customTheme: Partial<SplitPaneThemeConfig> = {}
+): SplitPaneThemeConfig {
+  const defaultTheme: SplitPaneThemeConfig = {
     backgroundColor: body?.backgroundColor || "#ffffff",
     textColor: body?.textColor || "#111827",
     dividerColor: "#d1d5db",
