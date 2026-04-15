@@ -58,7 +58,7 @@ It is commonly used for action menus, context menus, or inline tips.
 <TipMenu
   subMenuList={[
     { caption: "Edit", onClick: () => console.log("Edit clicked") },
-    { caption: "Delete", isDangerous: true, onClick: () => console.log("Deleted") },
+    { caption: "Delete", variant:"danger", onClick: () => console.log("Deleted") },
     { caption: "View", variant: "sm" }
   ]}
   withFilter
@@ -135,6 +135,7 @@ export const Default: Story = {
                 image: RiSpam2Line,
                 color: "blue",
               },
+              variant: "primary",
               onClick: () => console.log("Phishing reported"),
             },
             {
@@ -149,17 +150,16 @@ export const Default: Story = {
               caption: "Block Sender",
               icon: {
                 image: RiShieldLine,
-                color: "orange",
               },
-              isDangerous: true,
+              variant: "danger",
               onClick: () => console.log("Sender blocked"),
             },
             {
               caption: "Mark as Read",
               icon: {
                 image: RiCheckLine,
-                color: "green",
               },
+              variant: "primary",
               onClick: () => console.log("Marked as read"),
             },
             {
@@ -168,6 +168,7 @@ export const Default: Story = {
                 image: RiInboxArchiveLine,
                 color: "purple",
               },
+              variant: "default",
               onClick: () => console.log("Moved to spam"),
             },
             {
@@ -176,6 +177,8 @@ export const Default: Story = {
                 image: RiDownloadLine,
                 color: "teal",
               },
+              variant: "success",
+
               onClick: () => console.log("Downloading"),
             },
             {
@@ -184,15 +187,15 @@ export const Default: Story = {
                 image: RiLink,
                 color: "gray",
               },
+              variant: "default",
               onClick: () => console.log("Link copied"),
             },
             {
               caption: "Share",
               icon: {
                 image: RiShareLine,
-                color: "indigo",
               },
-              isDangerous: true,
+              variant: "primary",
               onClick: () => console.log("Shared"),
             },
             {
@@ -206,13 +209,15 @@ export const Default: Story = {
             {
               caption: "Delete",
               icon: { image: RiDeleteBinLine, color: "red" },
+              variant: "danger",
               onClick: () => setIsOpen(!isOpen),
             },
             {
               caption: "Quit",
+              variant: "default",
             },
           ]}
-        ></TipMenu>
+        />
         <ModalDialog
           isOpen={isOpen}
           onVisibilityChange={setIsOpen}
