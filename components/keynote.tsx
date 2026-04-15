@@ -136,6 +136,12 @@ const Value = styled.span<{
   width: 70%;
   font-size: 14px;
   text-align: end;
+  overflow: clip;
+  user-select: text;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
   color: ${({ $color }) => $color};
 
   ${({ $style }) => $style}
