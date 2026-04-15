@@ -210,7 +210,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   <IconButton
                     $theme={paperDialogTheme}
                     $isLeft={isLeft}
-                    aria-label="button-close"
+                    aria-label="paper-dialog-toggle-close"
                     onClick={() => {
                       setDialogState("closed");
                       if (onClosed) {
@@ -220,6 +220,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   >
                     <Figure
                       {...icons?.closeIcon}
+                      aria-label="paper-dialog-close-icon"
                       image={icons?.closeIcon?.image ?? RiCloseLine}
                       size={icons?.closeIcon?.size ?? 18}
                     />
@@ -234,7 +235,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                 <IconButton
                   $theme={paperDialogTheme}
                   $isLeft={isLeft}
-                  aria-label="paper-dialog-toggle"
+                  aria-label="paper-dialog-toggle-restore"
                   onClick={() =>
                     handleToggleDrawer(
                       dialogState === "minimized" ? "restored" : "minimized"
@@ -247,6 +248,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                       icons?.restoreIcon?.image ??
                       (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
                     }
+                    aria-label="paper-dialog-restore-icon"
                     size={icons?.restoreIcon?.size ?? 18}
                     styles={{
                       self: css`
