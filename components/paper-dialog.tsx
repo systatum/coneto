@@ -48,6 +48,12 @@ export interface PaperDialogProps {
   width?: string;
   styles?: PaperDialogStyles;
   onClosed?: () => void;
+  icons?: PaperDialogIcons;
+}
+
+export interface PaperDialogIcons {
+  closeIcon?: FigureProps;
+  restoreIcon?: FigureProps;
 }
 
 export interface PaperDialogStyles {
@@ -82,7 +88,15 @@ export interface PaperDialogRef {
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
   (
-    { position = "right", children, closable = true, width, styles, onClosed },
+    {
+      position = "right",
+      children,
+      closable = true,
+      width,
+      styles,
+      onClosed,
+      icons,
+    },
     ref
   ) => {
     const { currentTheme } = useTheme();
@@ -204,7 +218,11 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                       }
                     }}
                   >
-                    <RiCloseLine size={20} />
+                    <Figure
+                      {...icons?.closeIcon}
+                      image={icons?.closeIcon?.image ?? RiCloseLine}
+                      size={icons?.closeIcon?.size ?? 18}
+                    />
                   </IconButton>
                 </CloseButtonWrapper>
               )}
@@ -223,29 +241,23 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     )
                   }
                 >
-                  {isLeft ? (
-                    <RiArrowRightSLine
-                      style={{
-                        transition: "transform 0.5s ease-in-out",
-                        transform:
-                          dialogState === "restored"
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                      }}
-                      size={20}
-                    />
-                  ) : (
-                    <RiArrowLeftSLine
-                      style={{
-                        transition: "transform 0.5s ease-in-out",
-                        transform:
-                          dialogState === "restored"
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                      }}
-                      size={20}
-                    />
-                  )}
+                  <Figure
+                    {...icons?.restoreIcon}
+                    image={
+                      icons?.restoreIcon?.image ??
+                      (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+                    }
+                    size={icons?.restoreIcon?.size ?? 18}
+                    styles={{
+                      self: css`
+                        display: flex;
+                        transition: transform 0.5s ease-in-out;
+                        transform: ${dialogState === "restored"
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)"};
+                      `,
+                    }}
+                  />
                 </IconButton>
               </MinimizeButtonWrapper>
 
