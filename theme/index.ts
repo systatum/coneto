@@ -716,8 +716,8 @@ export interface TreeListThemeConfig
   dividerHierarchyRelatedColor?: string;
 }
 
-// window.tsx
-export interface WindowThemeConfig
+// split-pane.tsx
+export interface SplitPaneThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   dividerColor?: string;
 }
@@ -779,6 +779,7 @@ export interface AppTheme {
   statusbar: StatusbarThemeConfig;
   statefulForm: StatefulFormThemeConfig;
   stepline: SteplineThemeConfig;
+  splitPane: SplitPaneThemeConfig;
   table: TableThemeConfig;
   textbox: TextboxThemeConfig;
   textarea: TextareaThemeConfig;
@@ -790,7 +791,6 @@ export interface AppTheme {
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
-  window: WindowThemeConfig;
 }
 
 export * from "./provider";
