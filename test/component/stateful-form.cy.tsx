@@ -836,7 +836,7 @@ describe("StatefulForm", () => {
           .and("have.css", "user-select", "none");
       });
 
-      context("when add interaction", () => {
+      context("when trying to interact", () => {
         it("should not change value", () => {
           const onChange = cy.spy().as("onChange");
           cy.mount(
