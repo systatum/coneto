@@ -2,7 +2,7 @@ import { css } from "styled-components";
 import { Tooltip } from "./tooltip";
 import { RiInformationLine } from "@remixicon/react";
 
-export default function Helper({ value }: { value: string }) {
+function Helper({ value }: { value: string }) {
   return (
     <Tooltip
       styles={{
@@ -32,3 +32,5 @@ export default function Helper({ value }: { value: string }) {
     </Tooltip>
   );
 }
+
+export { Helper };
