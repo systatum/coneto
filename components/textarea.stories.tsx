@@ -144,12 +144,6 @@ export const Default: Story = {
     placeholder: "Type your message...",
     value: "",
     rows: 3,
-    styles: {
-      self: css`
-        min-width: 400px;
-        max-width: 400px;
-      `,
-    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -161,7 +155,14 @@ export const Default: Story = {
       }
     };
 
-    return <Textarea {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textarea
+        {...args}
+        width={400}
+        value={args.value}
+        onChange={handleChange}
+      />
+    );
   },
 };
 
@@ -173,12 +174,6 @@ export const Autogrow: Story = {
     placeholder: "Type your message...",
     value: "",
     rows: 3,
-    styles: {
-      self: css`
-        min-width: 400px;
-        max-width: 400px;
-      `,
-    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -190,7 +185,14 @@ export const Autogrow: Story = {
       }
     };
 
-    return <Textarea {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textarea
+        {...args}
+        width={400}
+        value={args.value}
+        onChange={handleChange}
+      />
+    );
   },
 };
 
@@ -232,6 +234,7 @@ export const WithDropdown: Story = {
         onChange={(e) =>
           setValue((prev) => ({ ...prev, value: e.target.value }))
         }
+        width={400}
         dropdowns={[
           {
             width: "150px",
@@ -257,11 +260,6 @@ export const WithDropdown: Story = {
             withFilter: true,
           },
         ]}
-        styles={{
-          self: css`
-            min-width: 300px;
-          `,
-        }}
       />
     );
   },
@@ -276,12 +274,6 @@ export const WithErrorMessage: Story = {
     value: "",
     showError: true,
     errorMessage: "This field is required",
-    styles: {
-      self: css`
-        min-width: 400px;
-        max-width: 400px;
-      `,
-    },
   },
   render: (args: TextareaProps) => {
     const [, setUpdateArgs] = useArgs();
@@ -293,6 +285,13 @@ export const WithErrorMessage: Story = {
       }
     };
 
-    return <Textarea {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textarea
+        {...args}
+        width={400}
+        value={args.value}
+        onChange={handleChange}
+      />
+    );
   },
 };
