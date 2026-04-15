@@ -51,10 +51,11 @@ export interface PaperDialogProps {
 }
 
 export interface PaperDialogStyles {
-  self?: CSSProp;
-  tabStyle?: CSSProp;
-  tabCloseStyle?: CSSProp;
-  paperDialogStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  minimizeButtonStyle?: CSSProp;
+  closeButtonStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  overlayStyle?: CSSProp;
 }
 
 export interface PaperDialogTriggerProps {
@@ -160,7 +161,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         {dialogState !== "closed" && (
           <DialogOverlay
             $dialogState={dialogState}
-            $paperDialogStyle={styles?.paperDialogStyle}
+            $style={styles?.containerStyle}
           >
             {dialogState === "restored" && (
               <OverlayBlocker
@@ -175,6 +176,9 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     }
                   }
                 }}
+                styles={{
+                  self: styles?.overlayStyle,
+                }}
                 show={dialogState === "restored"}
               />
             )}
@@ -185,13 +189,13 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               $isLeft={isLeft}
-              $style={styles?.self}
+              $style={styles?.contentStyle}
               $theme={paperDialogTheme}
             >
               {closable && (
                 <CloseButtonWrapper
                   $isLeft={isLeft}
-                  $tabStyle={styles?.tabCloseStyle}
+                  $style={styles?.closeButtonStyle}
                 >
                   <IconButton
                     $theme={paperDialogTheme}
@@ -211,7 +215,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 
               <MinimizeButtonWrapper
                 $isLeft={isLeft}
-                $tabStyle={styles?.tabStyle}
+                $style={styles?.minimizeButtonStyle}
               >
                 <IconButton
                   $theme={paperDialogTheme}
@@ -260,7 +264,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 
 const DialogOverlay = styled.div<{
   $dialogState: PaperDialogState;
-  $paperDialogStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   position: fixed;
   z-index: 9991999;
@@ -270,7 +274,7 @@ const DialogOverlay = styled.div<{
       inset: 0;
     `}
 
-  ${({ $paperDialogStyle }) => $paperDialogStyle}
+  ${({ $style }) => $style}
 `;
 
 const MotionDialog = styled(motion.div)<{
@@ -307,7 +311,7 @@ const MotionDialog = styled(motion.div)<{
 
 const CloseButtonWrapper = styled.div<{
   $isLeft: boolean;
-  $tabStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   position: absolute;
   top: 4px;
@@ -327,12 +331,12 @@ const CloseButtonWrapper = styled.div<{
           translate: 4px;
         `}
 
-  ${({ $tabStyle }) => $tabStyle}
+  ${({ $style }) => $style}
 `;
 
 const MinimizeButtonWrapper = styled.div<{
   $isLeft: boolean;
-  $tabStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   position: absolute;
   z-index: 9999;
@@ -351,7 +355,7 @@ const MinimizeButtonWrapper = styled.div<{
           right: 100%;
           translate: 4px;
         `}
-  ${({ $tabStyle }) => $tabStyle}
+  ${({ $style }) => $style}
 `;
 
 const IconButton = styled.button<{
