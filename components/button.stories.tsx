@@ -283,7 +283,6 @@ export const Default: Story = {
       "danger",
       "secondary",
       "ghost",
-      "transparent",
       "success",
     ] as const;
 
@@ -317,7 +316,6 @@ export const Pressed: Story = {
       "danger",
       "secondary",
       "ghost",
-      "transparent",
       "success",
     ] as const;
 

@@ -1614,11 +1614,11 @@ export function createToolbarTheme(
       focusBackgroundColor:
         baseButton?.success?.focusBackgroundColor ?? "#2FE62080",
     },
-    transparent: {
-      ...baseButton?.transparent,
-      hoverBackgroundColor: baseButton?.transparent?.hoverBackgroundColor,
-      activeBackgroundColor: baseButton?.transparent?.activeBackgroundColor,
-      focusBackgroundColor: baseButton?.transparent?.focusBackgroundColor,
+    ghost: {
+      ...baseButton?.ghost,
+      hoverBackgroundColor: baseButton?.ghost?.hoverBackgroundColor,
+      activeBackgroundColor: baseButton?.ghost?.activeBackgroundColor,
+      focusBackgroundColor: baseButton?.ghost?.focusBackgroundColor,
     },
   };
 

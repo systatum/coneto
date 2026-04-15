@@ -29,7 +29,6 @@ export const ButtonVariant = {
   Danger: "danger",
   Secondary: "secondary",
   Ghost: "ghost",
-  Transparent: "transparent",
   Success: "success",
   OutlineDefault: "outline-default",
   OutlineSuccess: "outline-success",

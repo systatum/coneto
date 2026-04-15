@@ -379,6 +379,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           justCommittedRef.current = true;
           commitOrRevert(selectedOption, selectedOptionsLocal, confirmedValue);
         }
+
+        requestAnimationFrame(() => {
+          setHighlightedIndex(null);
+        });
       }
 
       if (e.key === "Escape") {
@@ -393,6 +397,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         if (!isOpen) {
           inputRef.current?.blur();
         }
+
+        requestAnimationFrame(() => {
+          setHighlightedIndex(null);
+        });
       }
     };
 
@@ -546,6 +554,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         )}
 
         <IconWrapper
+          $isLoading={isLoading}
           aria-label="selectbox-opener"
           onClick={async () => {
             await setIsOpen((prev) => {
@@ -718,7 +727,6 @@ const Container = styled.div<{
     css`
       user-select: none;
       pointer-events: none;
-      opacity: 0.5;
     `};
 
   ${({ $disabled }) =>
@@ -829,12 +837,18 @@ const Divider = styled.span<{
   border-right: 1px solid ${({ $theme }) => $theme.dividerColor || "#9ca3af"};
 `;
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.div<{ $isLoading?: boolean }>`
   position: absolute;
   top: 50%;
   right: 8px;
   transform: translateY(-50%);
   cursor: pointer;
+
+  ${({ $isLoading }) =>
+    $isLoading &&
+    css`
+      opacity: 0.5;
+    `}
 `;
 
 export { Selectbox };

@@ -38,7 +38,7 @@ import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Button, ButtonProps } from "./button";
 import { Radio, RadioProps } from "./radio";
-import Helper from "./helper";
+import { Helper } from "./helper";
 import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";

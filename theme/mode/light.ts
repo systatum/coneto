@@ -213,7 +213,7 @@ const lightToolbar = createToolbarTheme({
   default: lightButton.default,
   primary: lightButton.primary,
   danger: lightButton.danger,
-  transparent: lightButton.transparent,
+  ghost: lightButton.ghost,
   success: lightButton.success,
 });
 

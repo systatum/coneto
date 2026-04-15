@@ -3,6 +3,46 @@ import { Keynote, KeynoteStyles } from "./../../components/keynote";
 
 describe("Keynote", () => {
   context("rendered condition", () => {
+    context("when not given keyLabels", () => {
+      it("should still rendered with key", () => {
+        const data = {
+          modelType: "MXQ83700F3",
+          requestCreatedBy: "adam@systatum.com",
+          lastSynced: "2025-06-20",
+          createdOn: "2025-06-19",
+          desc: "Backup unit installed on site",
+        };
+
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={[
+              "modelType",
+              "requestCreatedBy",
+              "lastSynced",
+              "createdOn",
+              "desc",
+            ]}
+          />
+        );
+
+        const expectedValue = [
+          "modelType",
+          "requestCreatedBy",
+          "lastSynced",
+          "createdOn",
+          "desc",
+        ];
+
+        expectedValue.map((value) => {
+          cy.findByText(value).should("exist");
+        });
+        Object.values(data).map((value) => {
+          cy.findByText(value).should("exist");
+        });
+      });
+    });
+
     context("when keyLabels is less than the key", () => {
       it("should rendered with key", () => {
         const data = {
@@ -126,7 +166,7 @@ describe("Keynote", () => {
         requestCreatedBy: "adam@systatum.com",
         lastSynced: "2025-06-20",
         createdOn: "2025-06-19",
-        desc: "Backup unit installed on site",
+        desc: "/home/alim.naufal@systatum.local/Documents/works/mydb-studio-system/winamp/node_modules/.pnpm/electron@40.1.0/node_modules/electron/dist/electron,--no-sandbox,dist-electron/electron/main.js",
       };
 
       return (
@@ -212,6 +252,23 @@ describe("Keynote", () => {
     });
 
     context("value label", () => {
+      it("renders text wrapping styles correctly", () => {
+        cy.mount(<ProductKeyNote />);
+
+        cy.findAllByLabelText("keynote-point-value").each(($el) => {
+          cy.wrap($el)
+            .should("have.css", "font-size", "14px")
+            .and("have.css", "white-space", "normal")
+            .and("have.css", "overflow-wrap", "anywhere")
+            .and("have.css", "word-break")
+            .and((wordBreak) => {
+              expect(["break-word", "break-all", "normal"]).to.include(
+                wordBreak
+              );
+            });
+        });
+      });
+
       it("renders with 14px and width 70%", () => {
         cy.mount(<ProductKeyNote />);
 

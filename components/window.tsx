@@ -292,7 +292,7 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
           <ActionContainer>
             {filteredActions.map((action, index) => (
               <Button
-                variant="transparent"
+                variant="ghost"
                 key={index}
                 aria-label="window-button"
                 onClick={() => {

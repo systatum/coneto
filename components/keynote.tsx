@@ -35,13 +35,13 @@ function Keynote<T extends Record<string, unknown>>({
   renderer,
   styles,
 }: KeynoteProps<T>) {
-  const shouldRenderFromData = data && keys && keyLabels;
+  const shouldRenderFromData = data && keys;
 
   return (
     <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
       {shouldRenderFromData
         ? keys?.map((key, index) => {
-            const keyLabel = keyLabels[index] ?? String(key);
+            const keyLabel = keyLabels?.[index] ?? String(key);
             const value = data[key];
             const renderFn = renderer?.[key];
 
@@ -136,6 +136,12 @@ const Value = styled.span<{
   width: 70%;
   font-size: 14px;
   text-align: end;
+  overflow: clip;
+  user-select: text;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
   color: ${({ $color }) => $color};
 
   ${({ $style }) => $style}
