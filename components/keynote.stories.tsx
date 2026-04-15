@@ -104,7 +104,7 @@ export const Default: Story = {
       requestCreatedBy: "adam@systatum.com",
       lastSynced: "2025-06-20",
       createdOn: "2025-06-19",
-      desc: "Backup unit installed on site",
+      desc: "/home/alim.naufal@systatum.local/Documents/works/mydb-studio-system/winamp/node_modules/.pnpm/electron@40.1.0/node_modules/electron/dist/electron,--no-sandbox,dist-electron/electron/main.js",
     };
 
     return (
