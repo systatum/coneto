@@ -2586,7 +2586,7 @@ It is commonly used for action menus, context menus, or inline tips.
 <TipMenu
   subMenuList={[
     { caption: "Edit", onClick: () => console.log("Edit clicked") },
-    { caption: "Delete", isDangerous: true, onClick: () => console.log("Deleted") },
+    { caption: "Delete", variant:"danger", onClick: () => console.log("Deleted") },
     { caption: "View", variant: "sm" }
   ]}
   withFilter
@@ -2695,7 +2695,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 ```tsx
 const subMenuList: ToolbarSubMenuList[] = [
   { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
-  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, isDangerous: true, onClick: () => console.log("Deleted") },
+  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, variant:"danger", onClick: () => console.log("Deleted") },
 ];
 
 <Toolbar big>

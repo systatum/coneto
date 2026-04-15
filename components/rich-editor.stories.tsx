@@ -154,7 +154,7 @@ export const Default: Story = {
         icon: {
           image: RiDeleteBinLine,
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Junk reported"),
       },
     ];
@@ -289,7 +289,7 @@ export const Autogrow: Story = {
         icon: {
           image: RiDeleteBinLine,
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Junk reported"),
       },
     ];

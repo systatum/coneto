@@ -1222,7 +1222,7 @@ const LIST_OPTIONS: TipMenuItemProps[] = [
       image: RiShieldLine,
       color: "orange",
     },
-    isDangerous: true,
+    variant: "danger",
     onClick: () => console.log("Sender blocked"),
   },
   {

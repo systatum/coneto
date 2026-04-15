@@ -24,7 +24,7 @@ describe("TipMenu", () => {
       {
         caption: "Block Sender",
         icon: { image: RiShieldLine, color: "orange" },
-        isDangerous: true,
+        variant: "danger",
         onClick: cy.stub().as("blockClick"),
       },
       {
@@ -43,7 +43,7 @@ describe("TipMenu", () => {
             {
               caption: "Sender",
               icon: { image: RiShieldLine, color: "orange" },
-              isDangerous: true,
+              variant: "danger",
             },
             {
               caption: "Read",
@@ -65,7 +65,7 @@ describe("TipMenu", () => {
             {
               caption: "Sender",
               icon: { image: RiShieldLine, color: "orange" },
-              isDangerous: true,
+              variant: "danger",
             },
             {
               caption: "Read",
