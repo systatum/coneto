@@ -47,3 +47,9 @@ export const Default: Story = {
     return <Helper value="Default Value" />;
   },
 };
+
+export const WithCustomDelay: Story = {
+  render: () => {
+    return <Helper value="Custom Delay Value" showDelayPeriod={1500} />;
+  },
+};
