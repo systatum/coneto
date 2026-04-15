@@ -8,7 +8,13 @@ import { COUNTRY_CODES } from "./../constants/countries";
 import { css } from "styled-components";
 import { Card } from "./card";
 import { TableColumn, TableSubMenuList, Table } from "./table";
-import { RiAddBoxLine, RiDeleteBin2Line, RiEdit2Line } from "@remixicon/react";
+import {
+  RiAddBoxLine,
+  RiCheckLine,
+  RiDeleteBin2Line,
+  RiEdit2Line,
+  RiSubtractLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -42,9 +48,22 @@ const meta: Meta<typeof PaperDialog> = {
 </PaperDialog>
 \`\`\`
 
+### 🎨 Custom Icons
+You can override the default control icons (e.g. close and restore) by passing custom icon components:
+
+\`\`\`tsx
+<PaperDialog
+  icons={{
+    closeIcon: { image: RiCloseLine },
+    restoreIcon: { image: RiSubtractLine }
+  }}
+/>
+\`\`\`
+
 ### 📝 Notes
 - Always include both \`PaperDialog.Trigger\` and \`PaperDialog.Content\` as children.
 - Use \`styles\` prop to override default styles.
+- Use the \`icons\` prop to override default icons.
         `,
       },
     },
@@ -64,6 +83,19 @@ const meta: Meta<typeof PaperDialog> = {
       description:
         "Width of the dialog. If not provided, min-width defaults to 92vw",
       control: { type: "text" },
+    },
+    icons: {
+      description: `
+Customize the dialog control icons.
+
+- \`closeIcon\`: Icon used for closing the dialog
+- \`restoreIcon\`: Icon used for toggling minimized/restored state
+
+Each icon accepts:
+- \`image\`: React component (icon)
+- \`size\`: Icon size (optional)
+      `,
+      control: false,
     },
     children: {
       description:
@@ -238,6 +270,68 @@ export const Default: Story = {
                 </Button>
               </div>
             </div>
+          </PaperDialog.Content>
+        </PaperDialog>
+      </div>
+    );
+  },
+};
+
+export const CustomIcon: Story = {
+  render: () => {
+    const dialogRef = useRef<PaperDialogRef>(null);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        }}
+      >
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
+
+        <PaperDialog
+          closable={true}
+          width="35vw"
+          icons={{
+            closeIcon: {
+              image: RiCheckLine,
+            },
+            restoreIcon: {
+              image: RiSubtractLine,
+            },
+          }}
+          ref={dialogRef}
+        >
+          <PaperDialog.Content
+            styles={{
+              self: {
+                padding: "36px",
+                gap: "16px",
+              },
+            }}
+          >
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Dialog with Custom Icons
+            </h2>
+
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              This dialog demonstrates how to customize the close and restore
+              icons using the <code>icons</code> prop.
+            </p>
+
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              You can replace the default icons with any icon component to
+              better match your application’s design or interaction needs.
+            </p>
+
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              In this example, the close action uses a check icon, while the
+              restore action uses a subtract icon for a more customized
+              appearance.
+            </p>
           </PaperDialog.Content>
         </PaperDialog>
       </div>
