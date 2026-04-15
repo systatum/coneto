@@ -581,7 +581,7 @@ function BaseCalendar({
             }}
           >
             <Button
-              variant="transparent"
+              variant="ghost"
               styles={{
                 self: css`
                   width: fit-content;
@@ -650,7 +650,7 @@ function BaseCalendar({
             </div>
 
             <Button
-              variant="transparent"
+              variant="ghost"
               styles={{
                 containerStyle: css`
                   cursor: pointer;
@@ -686,7 +686,7 @@ function BaseCalendar({
             }}
           >
             <Button
-              variant="transparent"
+              variant="ghost"
               styles={{
                 containerStyle: css`
                   cursor: pointer;
@@ -711,7 +711,7 @@ function BaseCalendar({
             />
 
             <Button
-              variant="transparent"
+              variant="ghost"
               styles={{
                 containerStyle: css`
                   cursor: pointer;

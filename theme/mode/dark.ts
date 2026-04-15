@@ -189,14 +189,7 @@ const darkButton = createButtonTheme(darkBody, {
     textDecoration: "underline",
     dividerColor: "#48398dbf",
   },
-  transparent: {
-    backgroundColor: "transparent",
-    textColor: darkBody.textColor,
-    hoverBackgroundColor: "#363636",
-    activeBackgroundColor: "#1f1f1f",
-    focusBackgroundColor: "#ffffff20",
-    dividerColor: "#363636",
-  },
+
   "outline-default": {
     backgroundColor: "transparent",
     textColor: "#a3a3a3",
@@ -741,7 +734,7 @@ const darkToolbar = createToolbarTheme({
   default: darkButton.default,
   primary: darkButton.primary,
   danger: darkButton.danger,
-  transparent: darkButton.transparent,
+  ghost: darkButton.ghost,
   success: darkButton.success,
 });
 

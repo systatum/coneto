@@ -38,7 +38,7 @@ export const ToolbarVariant = {
   Primary: "primary",
   Danger: "danger",
   Success: "success",
-  Transparent: "transparent",
+  Ghost: "ghost",
 } as const;
 
 export type ToolbarVariant =
@@ -394,7 +394,7 @@ const MenuWrapper = styled.div<{
 
   border: 1px solid
     ${({ $theme, $variant }) =>
-      $variant === "transparent"
+      $variant === "ghost"
         ? "transparent"
         : ($theme?.hoverBackgroundColor ?? "transparent")};
 

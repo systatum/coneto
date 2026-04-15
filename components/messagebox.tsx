@@ -114,7 +114,7 @@ function Messagebox({
       </Content>
       {closable && (
         <Button
-          variant="transparent"
+          variant="ghost"
           styles={{
             containerStyle: css`
               position: absolute;

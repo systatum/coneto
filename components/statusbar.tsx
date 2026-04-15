@@ -147,11 +147,7 @@ function StatusbarItem({
           size: button?.icon?.size ? button?.icon?.size : size,
         }}
         variant={
-          button?.variant
-            ? button?.variant
-            : transparent
-              ? "transparent"
-              : "default"
+          button?.variant ? button?.variant : transparent ? "ghost" : "default"
         }
         tipMenuSize={button?.tipMenuSize ?? "sm"}
         activeBackgroundColor={

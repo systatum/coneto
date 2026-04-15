@@ -116,7 +116,6 @@ describe("Button", () => {
         { variant: "danger", icon: { image: RiStarLine } },
         { variant: "secondary", icon: { image: RiAddLine } },
         { variant: "ghost", icon: { image: RiSearchLine } },
-        { variant: "transparent", icon: { image: RiHeartLine } },
         { variant: "success", icon: { image: RiStarLine } },
       ];
 
@@ -158,7 +157,6 @@ describe("Button", () => {
         "danger",
         "secondary",
         "ghost",
-        "transparent",
         "success",
       ] as const;
 
