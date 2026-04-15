@@ -1484,119 +1484,30 @@ export const AllCase: Story = {
     ];
 
     return (
-      <div
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          display: "flex",
-          width: "100%",
-          flexDirection: "column",
-          gap: "0.5rem",
-          paddingTop: "1rem",
-          paddingBottom: "1rem",
-          maxWidth: "500px",
-        }}
-      >
-        <StatefulForm
-          onChange={({ currentState }) => {
-            const { chips, ...rest } = currentState;
-            void chips;
+      <StatefulForm
+        onChange={({ currentState }) => {
+          const { chips, ...rest } = currentState;
+          void chips;
 
-            setValue((prev) => ({
-              ...prev,
-              ...rest,
-            }));
-          }}
-          onValidityChange={setIsFormValid}
-          labelSize="14px"
-          fieldSize="14px"
-          fields={FIELDS}
-          formValues={value}
-          validationSchema={schema}
-          mode="onChange"
-        />
-      </div>
+          setValue((prev) => ({
+            ...prev,
+            ...rest,
+          }));
+        }}
+        onValidityChange={setIsFormValid}
+        labelSize="14px"
+        fieldSize="14px"
+        fields={FIELDS}
+        formValues={value}
+        validationSchema={schema}
+        mode="onChange"
+      />
     );
   },
 };
 
 export const AllCaseDisabled: Story = {
   render: () => {
-    const [isFormValid, setIsFormValid] = useState(false);
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
-
-    if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
-    }
-
-    const FRUIT_OPTIONS: SelectboxOption[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
-    ];
-
-    const BADGE_OPTIONS: BadgeProps[] = [
-      {
-        id: "1",
-        caption: "Anime",
-      },
-      {
-        id: "2",
-        caption: "Manga",
-      },
-      {
-        id: "3",
-        caption: "Comics",
-      },
-      {
-        id: "4",
-        caption: "Movies",
-      },
-      {
-        id: "5",
-        caption: "Podcasts",
-      },
-      {
-        id: "6",
-        caption: "TV Shows",
-      },
-      {
-        id: "7",
-        caption: "Novels",
-      },
-      {
-        id: "8",
-        caption: "Music",
-      },
-      {
-        id: "9",
-        caption: "Games",
-      },
-      {
-        id: "10",
-        caption: "Webtoons",
-      },
-    ];
-
-    const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
-      { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
-      { id: "USD", name: "US Dollar", symbol: "$" },
-      { id: "EUR", name: "Euro", symbol: "€" },
-      { id: "JPY", name: "Japanese Yen", symbol: "¥" },
-      { id: "GBP", name: "British Pound", symbol: "£" },
-      { id: "SGD", name: "Singapore Dollar", symbol: "$" },
-      { id: "AUD", name: "Australian Dollar", symbol: "$" },
-      { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
-      { id: "KRW", name: "South Korean Won", symbol: "₩" },
-      { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
-    ];
-
     interface AllCaseValueProps {
       text: string;
       time: string;
@@ -1652,7 +1563,7 @@ export const AllCaseDisabled: Story = {
       togglebox: false,
       signature: "",
       capsule: "",
-      country_code: DEFAULT_COUNTRY_CODES,
+      country_code: undefined,
       currency: "USD",
       pin: "",
     });
@@ -1689,203 +1600,6 @@ export const AllCaseDisabled: Story = {
       {
         type: "alphabet",
       },
-    ];
-
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = value.chips.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
-      setValue((prev) => ({
-        ...prev,
-        chips: {
-          ...prev.chips,
-          selectedOptions: isAlreadySelected
-            ? prev.chips.selectedOptions.filter((data) => data.id !== badge.id)
-            : [...prev.chips.selectedOptions, badge],
-        },
-      }));
-    };
-
-    const badgeSchema = z.object({
-      id: z.string().optional(),
-      metadata: z.record(z.unknown()).optional(),
-      variant: z.string().optional(),
-      withCircle: z.boolean().optional(),
-      caption: z.string().optional(),
-      backgroundColor: z.string().optional(),
-      textColor: z.string().optional(),
-      circleColor: z.string().optional(),
-    });
-
-    const schema = z.object({
-      text: z.string().min(3, "Text must be at least 3 characters"),
-      email: z.string().email("Please enter a valid email address"),
-      time: z.string().optional(),
-      number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
-        message: "Number must be numeric",
-      }),
-      password: z.string().min(6, "Password must be at least 6 characters"),
-      textarea: z.string().min(10, "Text must be at least 10 characters"),
-      check: z.boolean(),
-      chips: z.object({
-        searchText: z.string().optional(),
-        selectedOptions: z.array(badgeSchema).optional(),
-      }),
-      color: z.string().min(4, "Color is required"),
-      combo: z
-        .array(z.string().min(1, "Choose one"))
-        .min(1, "Combo must have at least one item")
-        .refine(
-          (arr) =>
-            arr.every((val) =>
-              FRUIT_OPTIONS.some((opt) => {
-                return opt.value === val;
-              })
-            ),
-          "Invalid value in combo"
-        ),
-      date: z.array(
-        z
-          .string()
-          .nonempty("Choose your date")
-          .refine(
-            (val) =>
-              /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
-            {
-              message: "Invalid date",
-            }
-          )
-      ),
-      file_drop_box: z.any().optional(),
-      file: z
-        .preprocess((value) => {
-          if (value instanceof FileList) return Array.from(value);
-          if (Array.isArray(value)) return value;
-          return [];
-        }, z.array(z.any()))
-        .refine((files) => files.length > 0, {
-          message: "At least one file is required",
-        })
-        .refine((files) => files.every((file) => file.type === "image/jpeg"), {
-          message: "Only JPEG files are allowed",
-        })
-        .refine(
-          (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
-          {
-            message: "Each file must be 5MB or less",
-          }
-        ),
-      image: z
-        .any()
-        .refine(
-          (file) => {
-            return file?.type === "image/jpeg";
-          },
-          {
-            message: "Only JPEG file are allowed",
-          }
-        )
-        .refine((file) => file?.size <= 5 * 1024 * 1024, {
-          message: "File size must be 5MB or less",
-        }),
-      money: z.string().optional(),
-      signature: z.string().min(1, "Signature is required"),
-      phone: z.string().min(8, "Phone number must be 8 digits").optional(),
-      rating: z.string().optional(),
-      thumb_field: z.boolean(),
-      togglebox: z.boolean(),
-      capsule: z.string().max(4, "Paid is required"),
-      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
-      country_code: z
-        .object({
-          id: z.string(),
-          name: z.string(),
-          flag: z.string(),
-          code: z.string(),
-        })
-        .optional(),
-    });
-
-    const onChangeForm = (e?: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const target = e.target;
-        const { name, value } = target;
-
-        let updatedValue: FormValueType = value;
-
-        if (target instanceof HTMLInputElement && target.type === "checkbox") {
-          updatedValue = target.checked;
-        }
-
-        if (target.name === "chips") {
-          setValue((prev) => ({
-            ...prev,
-            chips: { ...prev.chips, ["searchText"]: String(updatedValue) },
-          }));
-        } else {
-          setValue((prev) => ({ ...prev, [name]: updatedValue }));
-        }
-      }
-    };
-
-    const onFileDropped = async ({
-      error,
-      files,
-      setProgressLabel,
-      succeed,
-    }: OnFileDroppedFunction) => {
-      const file = files[0];
-      setProgressLabel(`Uploading ${file.name}`);
-
-      return new Promise<void>((resolve) => {
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 20;
-
-          if (progress >= 100) {
-            clearInterval(interval);
-            if (file === null) {
-              error(file, `file ${files[0].name} is not uploaded`);
-            } else {
-              succeed(file);
-            }
-            setProgressLabel(`Uploaded ${files[0].name}`);
-            resolve();
-          }
-        }, 300);
-      });
-    };
-
-    const onComplete = ({
-      failedFiles,
-      setProgressLabel,
-      succeedFiles,
-    }: OnCompleteFunction) => {
-      setValue((prev) => ({
-        ...prev,
-        file_drop_box: succeedFiles,
-      }));
-      console.log(succeedFiles, "This is succeedFiles");
-      console.log(failedFiles, "This is failedFiles");
-      setProgressLabel(
-        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
-      );
-    };
-
-    const MONTH_NAMES = [
-      { text: "JAN", value: "1" },
-      { text: "FEB", value: "2" },
-      { text: "MAR", value: "3" },
-      { text: "APR", value: "4" },
-      { text: "MAY", value: "5" },
-      { text: "JUN", value: "6" },
-      { text: "JUL", value: "7" },
-      { text: "AUG", value: "8" },
-      { text: "SEP", value: "9" },
-      { text: "OCT", value: "10" },
-      { text: "NOV", value: "11" },
-      { text: "DEC", value: "12" },
     ];
 
     const FIELDS: FormFieldGroup[] = [
@@ -1978,7 +1692,7 @@ export const AllCaseDisabled: Story = {
         placeholder: "Select a fruit...",
         helper: "This field allows you to select one or more options",
         comboboxProps: {
-          options: FRUIT_OPTIONS,
+          options: [],
         },
       },
       {
@@ -1989,7 +1703,7 @@ export const AllCaseDisabled: Story = {
         placeholder: "Select a date",
         helper: "This field allows you to select a date",
         dateProps: {
-          monthNames: MONTH_NAMES,
+          monthNames: [],
         },
       },
       {
@@ -1998,10 +1712,6 @@ export const AllCaseDisabled: Story = {
         type: "file_drop_box",
         required: true,
         helper: "This field allows you to upload files via drag and drop",
-        fileDropBoxProps: {
-          onComplete,
-          onFileDropped,
-        },
       },
       {
         name: "file",
@@ -2030,7 +1740,7 @@ export const AllCaseDisabled: Story = {
         moneyProps: {
           separator: "dot",
           editableCurrency: true,
-          currencyOptions: CURRENCY_OPTIONS,
+          currencyOptions: [],
           currency: value.currency,
         },
       },
@@ -2078,25 +1788,10 @@ export const AllCaseDisabled: Story = {
         required: false,
         helper: "This field allows you to select multiple items",
         chipsProps: {
-          options: BADGE_OPTIONS,
-          styles: {
-            chipStyle: css`
-              width: 100%;
-              gap: 0.5rem;
-              border-color: transparent;
-            `,
-            chipContainerStyle: css`
-              gap: 4px;
-            `,
-            chipsDrawerStyle: css`
-              min-width: 250px;
-            `,
-          },
-          onOptionClicked: handleOptionClicked,
+          options: [],
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,
         },
-        onChange: onChangeForm,
       },
       {
         name: "capsule",
@@ -2118,39 +1813,23 @@ export const AllCaseDisabled: Story = {
     ];
 
     return (
-      <div
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          display: "flex",
-          width: "100%",
-          flexDirection: "column",
-          gap: "0.5rem",
-          paddingTop: "1rem",
-          paddingBottom: "1rem",
-          maxWidth: "500px",
-        }}
-      >
-        <StatefulForm
-          disabled
-          onChange={({ currentState }) => {
-            const { chips, ...rest } = currentState;
-            void chips;
+      <StatefulForm
+        disabled
+        onChange={({ currentState }) => {
+          const { chips, ...rest } = currentState;
+          void chips;
 
-            setValue((prev) => ({
-              ...prev,
-              ...rest,
-            }));
-          }}
-          onValidityChange={setIsFormValid}
-          labelSize="14px"
-          fieldSize="14px"
-          fields={FIELDS}
-          formValues={value}
-          validationSchema={schema}
-          mode="onChange"
-        />
-      </div>
+          setValue((prev) => ({
+            ...prev,
+            ...rest,
+          }));
+        }}
+        labelSize="14px"
+        fieldSize="14px"
+        fields={FIELDS}
+        formValues={value}
+        mode="onChange"
+      />
     );
   },
 };
