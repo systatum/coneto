@@ -47,7 +47,7 @@ function BaseSignbox({
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
 
   const valueRef = useRef(value);
-  console.log(disabled);
+
   useEffect(() => {
     valueRef.current = value;
   }, [value]);
