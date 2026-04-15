@@ -288,7 +288,7 @@ function BaseSignbox({
             clearCanvas(e);
           }}
           disabled={disabled}
-          variant="transparent"
+          variant="ghost"
           icon={{
             image: RiEraserLine,
             size: 16,
