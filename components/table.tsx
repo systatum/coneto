@@ -499,7 +499,7 @@ function Table({
                           subMenuList={
                             subMenuList ? subMenuList(col.id) : undefined
                           }
-                          variant="transparent"
+                          variant="ghost"
                         />
                       </Toolbar>
                     )}

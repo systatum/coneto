@@ -242,7 +242,7 @@ function Dialog({
 
         {closable && (
           <Button
-            variant="transparent"
+            variant="ghost"
             onClick={() => closeDialog()}
             aria-label="close-dialog"
             styles={{

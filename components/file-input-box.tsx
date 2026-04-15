@@ -114,7 +114,7 @@ function BaseFileInputBox({
             <FileItem key={index}>
               <Button
                 aria-label="delete-button"
-                variant="transparent"
+                variant="ghost"
                 styles={{
                   containerStyle: css`
                     cursor: pointer;

@@ -264,7 +264,7 @@ function BaseSignbox({
           }}
           aria-label="signbox-clearable"
           onClick={(e) => clearCanvas(e)}
-          variant="transparent"
+          variant="ghost"
           icon={{
             image: RiEraserLine,
             size: 16,
