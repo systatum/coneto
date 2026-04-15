@@ -504,6 +504,9 @@ function ComboboxDrawer({
             setHasInteracted(false);
           }
 
+          requestAnimationFrame(() => {
+            setHighlightedIndex(null);
+          });
           onClick?.();
         }}
         onMouseMove={() => {
@@ -752,25 +755,18 @@ const listItemRowStyle = ({
     }
   `}
 
+  ${shouldHighlight &&
+  css`
+    background-color: ${theme.highlightBackgroundColor};
+    color: ${theme.textColor};
+  `};
+
   ${isSelected &&
   !multiple &&
   css`
     font-weight: 600;
     background-color: ${theme.selectedBackgroundColor};
     color: ${theme.selectedTextColor};
-    &:hover {
-      color: ${theme.textColor};
-    }
-  `};
-
-  ${shouldHighlight &&
-  css`
-    background-color: ${theme.highlightBackgroundColor};
-    color: ${theme.textColor};
-
-    &:hover {
-      background-color: ${theme.highlightBackgroundColor};
-    }
   `};
 `;
 
