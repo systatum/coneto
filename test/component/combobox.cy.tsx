@@ -116,21 +116,45 @@ describe("Combobox", () => {
     });
 
     context("when selected the value", () => {
+      const firstSelection = () => {
+        cy.mount(
+          <ProductCombobox
+            options={FRUIT_OPTIONS}
+            placeholder="Select a fruit..."
+          />
+        );
+        cy.findByPlaceholderText("Select a fruit...").type("Banana");
+        cy.findByRole("option", { name: "Banana" }).click();
+        cy.findByPlaceholderText("Select a fruit...").should(
+          "have.value",
+          "Banana"
+        );
+      };
+
+      beforeEach(() => {
+        firstSelection();
+      });
+
+      it("should display the selected value", () => {
+        // selection in beforeEach
+      });
+
+      context("when hovering the selected option", () => {
+        it("still highlight with selected option (rgb(97, 169, 249))", () => {
+          cy.findByLabelText("selectbox-opener").click();
+          cy.wait(500);
+
+          // hovering the selected option
+          cy.findAllByLabelText("list-item-row").eq(1).trigger("mouseover");
+
+          cy.findAllByLabelText("list-item-row")
+            .eq(1)
+            .should("have.css", "background-color", "rgb(97, 169, 249)");
+        });
+      });
+
       context("when clicking arrow", () => {
         it("should highlight selected option (rgb(97, 169, 249))", () => {
-          cy.mount(
-            <ProductCombobox
-              options={FRUIT_OPTIONS}
-              placeholder="Select a fruit..."
-            />
-          );
-          cy.findByPlaceholderText("Select a fruit...").type("Banana");
-          cy.findByRole("option", { name: "Banana" }).click();
-          cy.findByPlaceholderText("Select a fruit...").should(
-            "have.value",
-            "Banana"
-          );
-
           cy.findByLabelText("selectbox-opener").click();
           cy.wait(500);
           cy.findAllByLabelText("list-item-row")
@@ -141,19 +165,6 @@ describe("Combobox", () => {
 
       context("when pressing arrow up/arrow down", () => {
         it("should highlight selected option (rgb(97, 169, 249))", () => {
-          cy.mount(
-            <ProductCombobox
-              options={FRUIT_OPTIONS}
-              placeholder="Select a fruit..."
-            />
-          );
-          cy.findByPlaceholderText("Select a fruit...").type("Banana");
-          cy.findByRole("option", { name: "Banana" }).click();
-          cy.findByPlaceholderText("Select a fruit...").should(
-            "have.value",
-            "Banana"
-          );
-
           cy.findByPlaceholderText("Select a fruit...").type("{uparrow}");
 
           cy.wait(500);
