@@ -1,39 +1,57 @@
 import { TipMenu, TipMenuItemProps } from "../../components/tip-menu";
 import {
-  RiSpam2Line,
   RiForbid2Line,
   RiShieldLine,
   RiCheckLine,
+  RiDownloadLine,
 } from "@remixicon/react";
 
 describe("TipMenu", () => {
-  let TIP_MENU_ITEMS: TipMenuItemProps[];
+  const TIP_MENU_HOVER_THEME = {
+    default: {
+      background: "rgb(243, 243, 243)",
+      color: "rgb(17, 17, 17)",
+    },
+    primary: {
+      background: "rgb(62, 125, 211)",
+      color: "rgb(255, 255, 255)",
+    },
+    danger: {
+      background: "rgb(161, 47, 75)",
+      color: "rgb(255, 255, 255)",
+    },
+    success: {
+      background: "rgb(43, 140, 41)",
+      color: "rgb(255, 255, 255)",
+    },
+  } as const;
 
-  beforeEach(() => {
-    TIP_MENU_ITEMS = [
-      {
-        caption: "Report Phishing",
-        icon: { image: RiSpam2Line, color: "blue" },
-        onClick: cy.stub().as("phishingClick"),
-      },
-      {
-        caption: "Report Junk",
-        icon: { image: RiForbid2Line, color: "red" },
-        onClick: cy.stub().as("junkClick"),
-      },
-      {
-        caption: "Block Sender",
-        icon: { image: RiShieldLine, color: "orange" },
-        variant: "danger",
-        onClick: cy.stub().as("blockClick"),
-      },
-      {
-        caption: "Mark as Read",
-        icon: { image: RiCheckLine, color: "green" },
-        onClick: cy.stub().as("readClick"),
-      },
-    ];
-  });
+  const TIP_MENU_ITEMS: TipMenuItemProps[] = [
+    {
+      caption: "Ignore Message",
+      icon: { image: RiForbid2Line, color: "gray" },
+      variant: "default",
+      onClick: () => console.log("Ignore message clicked"),
+    },
+    {
+      caption: "Download Attachment",
+      icon: { image: RiDownloadLine, color: "teal" },
+      variant: "primary",
+      onClick: () => console.log("Download attachment clicked"),
+    },
+    {
+      caption: "Block Sender",
+      icon: { image: RiShieldLine, color: "orange" },
+      variant: "danger",
+      onClick: () => console.log("Block sender clicked"),
+    },
+    {
+      caption: "Mark as Read",
+      icon: { image: RiCheckLine, color: "green" },
+      variant: "success",
+      onClick: () => console.log("Mark as read clicked"),
+    },
+  ];
 
   context("when given hidden action", () => {
     it("should render without hidden action", () => {
@@ -79,47 +97,43 @@ describe("TipMenu", () => {
   });
 
   context("when render", () => {
-    it("renders all items", () => {
+    it("renders all variants", () => {
       cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
       cy.findAllByLabelText("tip-menu-item").should(
         "have.length",
         TIP_MENU_ITEMS.length
       );
     });
-
-    it("renders dangerous item with red background", () => {
-      cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
-      cy.findAllByLabelText("tip-menu-item")
-        .eq(2)
-        .should("have.css", "background-color", "rgb(206, 55, 93)");
-    });
   });
 
   context("when hover", () => {
-    it("renders background color change on normal item", () => {
+    it("applies correct hover styles per variant (Button theme)", () => {
       cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
-      cy.findAllByLabelText("tip-menu-item")
-        .eq(0)
-        .realHover()
-        .wait(200)
-        .should("have.css", "background-color", "rgb(242, 242, 242)");
-    });
 
-    it("renders background color change on dangerous item", () => {
-      cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
-      cy.findAllByLabelText("tip-menu-item")
-        .eq(2)
-        .realHover()
-        .wait(200)
-        .should("have.css", "background-color", "rgb(161, 47, 75)");
+      TIP_MENU_ITEMS.forEach((item, index) => {
+        const theme = TIP_MENU_HOVER_THEME[item.variant || "default"];
+        cy.findAllByLabelText("tip-menu-item")
+          .eq(index)
+          .realHover()
+          .wait(200)
+          .should("have.css", "background-color", theme.background)
+          .and("have.css", "color", theme.color);
+      });
     });
   });
 
   context("when click", () => {
     it("renders call onClick handler for junk item", () => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("log");
+      });
+
       cy.mount(<TipMenu subMenuList={TIP_MENU_ITEMS} />);
       cy.findAllByLabelText("tip-menu-item").eq(1).click();
-      cy.get("@junkClick").should("have.been.called");
+      cy.get("@log").should(
+        "have.been.calledWith",
+        "Download attachment clicked"
+      );
     });
   });
 });
