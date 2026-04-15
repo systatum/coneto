@@ -59,10 +59,11 @@ It is commonly used for action menus, context menus, or inline tips.
   subMenuList={[
     { caption: "Edit", onClick: () => console.log("Edit clicked") },
     { caption: "Delete", variant:"danger", onClick: () => console.log("Deleted") },
-    { caption: "View", variant: "sm" }
+    { caption: "View", variant: "success" }
   ]}
   withFilter
-  variant="md"
+  size="md"
+  variant="default"
   setIsOpen={() => console.log("Menu closed")}
   styles={{
     self: css\`min-width: 200px;\`,
