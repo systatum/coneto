@@ -1485,6 +1485,16 @@ export const AllCase: Story = {
 
     return (
       <StatefulForm
+        styles={{
+          containerStyle: css`
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            width: 100%;
+            padding: 1rem;
+            max-width: 500px;
+          `,
+        }}
         onChange={({ currentState }) => {
           const { chips, ...rest } = currentState;
           void chips;
@@ -1820,6 +1830,16 @@ export const AllCaseDisabled: Story = {
 
     return (
       <StatefulForm
+        styles={{
+          containerStyle: css`
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            width: 100%;
+            padding: 1rem;
+            max-width: 500px;
+          `,
+        }}
         disabled
         onChange={({ currentState }) => {
           const { chips, ...rest } = currentState;
