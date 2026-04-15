@@ -2,6 +2,7 @@ import { MessageboxVariant } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
+import { TipMenuVariant } from "./../components/tip-menu";
 
 export type ThemeMode = "light" | "dark";
 
@@ -695,12 +696,7 @@ export interface TipMenuThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
-
-  dangerousBackgroundColor?: string;
-  dangerousHoverBackgroundColor?: string;
-  dangerousActiveBackgroundColor?: string;
-
-  focusBorderColor?: string;
+  focusBackgroundColor?: string;
 }
 
 // treelist.tsx
@@ -784,7 +780,7 @@ export interface AppTheme {
   textarea: TextareaThemeConfig;
   thumbField: ThumbFieldThemeConfig;
   timeline: TimelineThemeConfig;
-  tipmenu: TipMenuThemeConfig;
+  tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
   timebox: TimeboxThemeConfig;
   toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
