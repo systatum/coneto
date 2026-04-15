@@ -1,7 +1,7 @@
 import * as React from "react";
 import { LoadingSpinner } from "./loading-spinner";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
-import { TipMenu, TipMenuItemProps, TipMenuVariant } from "./tip-menu";
+import { TipMenu, TipMenuItemProps, TipMenuSize } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import {
   autoUpdate,
@@ -88,7 +88,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     subMenu?: (props: ButtonSubMenu) => React.ReactNode;
     openedIcon?: FigureProps["image"];
     closedIcon?: FigureProps["image"];
-    tipMenuSize?: TipMenuVariant;
+    tipMenuSize?: TipMenuSize;
     safeAreaAriaLabels?: string[];
     dialogPlacement?: ButtonDialogPlacement;
     onOpen?: (prop: boolean) => void;
@@ -363,7 +363,7 @@ function Button({
                   }}
                   withFilter={withFilter ?? false}
                   subMenuList={subMenuList}
-                  variant={tipMenuSize}
+                  size={tipMenuSize}
                 />
               ),
               show: (children, { withArrow, arrowStyle, drawerStyle } = {}) => (
