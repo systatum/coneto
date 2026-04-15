@@ -1,15 +1,15 @@
 import { css } from "styled-components";
-import { Window } from "./../../components/window";
+import { SplitPane } from "../../components/split-pane";
 import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
 import { RiCloseFill, RiEdit2Fill } from "@remixicon/react";
 
-describe("Window", () => {
+describe("SplitPane", () => {
   context("style", () => {
     context("divider", () => {
       it("should have default 2.5px", () => {
         cy.mount(
-          <Window
+          <SplitPane
             orientation="horizontal"
             styles={{
               self: css`
@@ -17,12 +17,12 @@ describe("Window", () => {
               `,
             }}
           >
-            <Window.Cell>Top</Window.Cell>
-            <Window.Cell>Bottom</Window.Cell>
-          </Window>
+            <SplitPane.Cell>Top</SplitPane.Cell>
+            <SplitPane.Cell>Bottom</SplitPane.Cell>
+          </SplitPane>
         );
 
-        cy.findByLabelText("window-divider").should(
+        cy.findByLabelText("split-pane-divider").should(
           "have.css",
           "border-bottom-width",
           "2.5px"
@@ -31,13 +31,13 @@ describe("Window", () => {
     });
   });
 
-  context("Window.Cell", () => {
-    function WindowCellDefault() {
+  context("SplitPane.Cell", () => {
+    function SplitPaneCellDefault() {
       return (
-        <Window.Cell
-          onMouseEnter={() => console.log("now is hovering window-cell")}
-          onMouseLeave={() => console.log("now is leaving window-cell")}
-          onClick={() => console.log("now is clicking window-cell")}
+        <SplitPane.Cell
+          onMouseEnter={() => console.log("now is hovering split-pane-cell")}
+          onMouseLeave={() => console.log("now is leaving split-pane-cell")}
+          onClick={() => console.log("now is clicking split-pane-cell")}
           actions={[
             {
               hidden: true,
@@ -53,14 +53,14 @@ describe("Window", () => {
           ]}
         >
           Test
-        </Window.Cell>
+        </SplitPane.Cell>
       );
     }
     context("actions", () => {
       context("when given with hidden", () => {
         it("should ignore hidden actions", () => {
-          cy.mount(<WindowCellDefault />);
-          cy.findAllByLabelText("window-button").should("have.length", 1);
+          cy.mount(<SplitPaneCellDefault />);
+          cy.findAllByLabelText("split-pane-button").should("have.length", 1);
         });
       });
     });
@@ -72,12 +72,12 @@ describe("Window", () => {
             cy.spy(win.console, "log").as("consoleLog");
           });
 
-          cy.mount(<WindowCellDefault />);
-          cy.findByLabelText("window-cell").trigger("mouseover");
+          cy.mount(<SplitPaneCellDefault />);
+          cy.findByLabelText("split-pane-cell").trigger("mouseover");
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "now is hovering window-cell"
+            "now is hovering split-pane-cell"
           );
         });
       });
@@ -90,18 +90,18 @@ describe("Window", () => {
             cy.spy(win.console, "log").as("consoleLog");
           });
 
-          cy.mount(<WindowCellDefault />);
-          cy.findByLabelText("window-cell")
+          cy.mount(<SplitPaneCellDefault />);
+          cy.findByLabelText("split-pane-cell")
             .trigger("mouseover")
             .trigger("mouseout");
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "now is hovering window-cell"
+            "now is hovering split-pane-cell"
           );
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "now is leaving window-cell"
+            "now is leaving split-pane-cell"
           );
         });
       });
@@ -114,12 +114,12 @@ describe("Window", () => {
             cy.spy(win.console, "log").as("consoleLog");
           });
 
-          cy.mount(<WindowCellDefault />);
-          cy.findByLabelText("window-cell").click();
+          cy.mount(<SplitPaneCellDefault />);
+          cy.findByLabelText("split-pane-cell").click();
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "now is clicking window-cell"
+            "now is clicking split-pane-cell"
           );
         });
       });
@@ -131,7 +131,7 @@ describe("Window", () => {
       const onResize = cy.stub().as("onResize");
 
       cy.mount(
-        <Window
+        <SplitPane
           orientation="horizontal"
           styles={{
             self: css`
@@ -140,12 +140,12 @@ describe("Window", () => {
           }}
           onResize={onResize}
         >
-          <Window.Cell>Top</Window.Cell>
-          <Window.Cell>Bottom</Window.Cell>
-        </Window>
+          <SplitPane.Cell>Top</SplitPane.Cell>
+          <SplitPane.Cell>Bottom</SplitPane.Cell>
+        </SplitPane>
       );
 
-      cy.findByLabelText("window-divider").trigger("mousedown", {
+      cy.findByLabelText("split-pane-divider").trigger("mousedown", {
         clientY: 250,
       });
 
@@ -158,17 +158,17 @@ describe("Window", () => {
     });
   });
 
-  context("ref in window.cell level", () => {
+  context("ref in split-pane.cell level", () => {
     context("when resize", () => {
       it("renders similar height as a reference", () => {
-        function WindowWithTextbox() {
+        function SplitPaneWithTextbox() {
           const [textareaHeight, setTextareaHeight] = useState<number | null>(
             null
           );
           const secondCellRef = useRef<HTMLDivElement | null>(null);
 
           return (
-            <Window
+            <SplitPane
               styles={{
                 self: css`
                   height: 500px;
@@ -182,8 +182,8 @@ describe("Window", () => {
                 }
               }}
             >
-              <Window.Cell>Test</Window.Cell>
-              <Window.Cell
+              <SplitPane.Cell>Test</SplitPane.Cell>
+              <SplitPane.Cell
                 ref={secondCellRef}
                 styles={{
                   self: css`
@@ -193,7 +193,7 @@ describe("Window", () => {
                 }}
               >
                 <Textarea
-                  aria-label="textarea-with-window"
+                  aria-label="textarea-with-split-pane"
                   styles={{
                     self: css`
                       height: ${textareaHeight
@@ -206,25 +206,25 @@ describe("Window", () => {
                     console.log(e);
                   }}
                 />
-              </Window.Cell>
-            </Window>
+              </SplitPane.Cell>
+            </SplitPane>
           );
         }
-        cy.mount(<WindowWithTextbox />);
+        cy.mount(<SplitPaneWithTextbox />);
 
-        cy.findAllByLabelText("window-divider")
+        cy.findAllByLabelText("split-pane-divider")
           .trigger("mousedown", {
             clientY: 250,
           })
           .trigger("mousemove", { clientY: 150 })
           .trigger("mouseup");
 
-        cy.findAllByLabelText("window-cell")
+        cy.findAllByLabelText("split-pane-cell")
           .eq(1)
           .invoke("height")
           .should("be.closeTo", 350, 4);
 
-        cy.findAllByLabelText("textarea-with-window")
+        cy.findAllByLabelText("textarea-with-split-pane")
           .eq(0)
           .parent()
           .invoke("height")
@@ -236,7 +236,7 @@ describe("Window", () => {
   context("initialSizeRatio", () => {
     it("renders with initial size", () => {
       cy.mount(
-        <Window
+        <SplitPane
           orientation="horizontal"
           styles={{
             self: css`
@@ -245,7 +245,7 @@ describe("Window", () => {
           }}
           initialSizeRatio={[90, 10]}
         >
-          <Window.Cell
+          <SplitPane.Cell
             styles={{
               self: css`
                 background-color: #fee2e2;
@@ -253,8 +253,8 @@ describe("Window", () => {
             }}
           >
             Up
-          </Window.Cell>
-          <Window.Cell
+          </SplitPane.Cell>
+          <SplitPane.Cell
             styles={{
               self: css`
                 background-color: #dcfce7;
@@ -262,15 +262,15 @@ describe("Window", () => {
             }}
           >
             Down
-          </Window.Cell>
-        </Window>
+          </SplitPane.Cell>
+        </SplitPane>
       );
-      cy.findByLabelText("window").should("have.css", "height", "500px");
-      cy.findAllByLabelText("window-cell")
+      cy.findByLabelText("split-pane").should("have.css", "height", "500px");
+      cy.findAllByLabelText("split-pane-cell")
         .eq(0)
         .invoke("height")
         .should("be.closeTo", 450, 3);
-      cy.findAllByLabelText("window-cell")
+      cy.findAllByLabelText("split-pane-cell")
         .eq(1)
         .invoke("height")
         .should("be.closeTo", 50, 3);
@@ -279,7 +279,7 @@ describe("Window", () => {
     context("when not given", () => {
       it("renders automatically reference from children", () => {
         cy.mount(
-          <Window
+          <SplitPane
             orientation="horizontal"
             styles={{
               self: css`
@@ -287,7 +287,7 @@ describe("Window", () => {
               `,
             }}
           >
-            <Window.Cell
+            <SplitPane.Cell
               styles={{
                 self: css`
                   background-color: #fee2e2;
@@ -295,8 +295,8 @@ describe("Window", () => {
               }}
             >
               Up
-            </Window.Cell>
-            <Window.Cell
+            </SplitPane.Cell>
+            <SplitPane.Cell
               styles={{
                 self: css`
                   background-color: #dcfce7;
@@ -304,15 +304,15 @@ describe("Window", () => {
               }}
             >
               Down
-            </Window.Cell>
-          </Window>
+            </SplitPane.Cell>
+          </SplitPane>
         );
-        cy.findByLabelText("window").should("have.css", "height", "500px");
-        cy.findAllByLabelText("window-cell")
+        cy.findByLabelText("split-pane").should("have.css", "height", "500px");
+        cy.findAllByLabelText("split-pane-cell")
           .eq(0)
           .invoke("height")
           .should("be.closeTo", 250, 3);
-        cy.findAllByLabelText("window-cell")
+        cy.findAllByLabelText("split-pane-cell")
           .eq(1)
           .invoke("height")
           .should("be.closeTo", 250, 3);
