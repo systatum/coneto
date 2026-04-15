@@ -26,6 +26,16 @@ describe("Textarea", () => {
     );
   }
 
+  context("width", () => {
+    context("when given 250px", () => {
+      it("should have the correct width", () => {
+        cy.mount(<ProductTextarea width={250} />);
+
+        cy.get("#textarea").should("have.css", "width", "250px");
+      });
+    });
+  });
+
   context("onChange", () => {
     context("when given", () => {
       it("should change the value", () => {

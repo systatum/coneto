@@ -19,6 +19,7 @@ interface BaseTextareaProps
   ) => void;
   autogrow?: boolean;
   id?: string;
+  width?: string | number;
 }
 
 export interface TextareaStyles {
@@ -26,12 +27,16 @@ export interface TextareaStyles {
 }
 
 const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
-  ({ id, showError, rows, onChange, autogrow, styles, ...props }, ref) => {
+  (
+    { id, showError, rows, onChange, autogrow, styles, width, ...props },
+    ref
+  ) => {
     const { currentTheme } = useTheme();
     const textareaTheme = currentTheme?.textarea;
 
     return (
       <TextareaInput
+        $width={width}
         $theme={textareaTheme}
         $disabled={props?.disabled}
         $autogrow={autogrow}
@@ -86,6 +91,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       id: props.id,
     });
 
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      self: textareaStyles,
+    } = styles ?? {};
+
     return (
       <FieldLane
         id={inputId}
@@ -102,10 +115,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         disabled={disabled}
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
         }}
       >
         <BaseTextarea
@@ -121,7 +134,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 border-bottom-left-radius: 0px;
               `}
 
-              ${styles?.self}
+              ${textareaStyles}
             `,
           }}
           ref={ref}
@@ -137,6 +150,7 @@ const TextareaInput = styled.textarea<{
   $autogrow?: boolean;
   $disabled?: boolean;
   $theme?: TextareaThemeConfig;
+  $width?: string | number;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -178,7 +192,7 @@ const TextareaInput = styled.textarea<{
       : css`
           overflow-y: auto;
           resize: vertical;
-        `}
+        `};
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -207,7 +221,13 @@ const TextareaInput = styled.textarea<{
             border-color: ${$theme?.focusedBorderColor || "#61a9f9"};
             box-shadow: 0 0 0 1px ${$theme?.focusedBorderColor || "#61a9f9"};
           }
-        `}
+        `};
+
+  ${({ $width }) =>
+    $width &&
+    css`
+      width: ${typeof $width === "number" ? `${$width}px` : $width};
+    `}
 
   ${({ $style }) => $style}
 `;
