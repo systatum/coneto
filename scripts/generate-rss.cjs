@@ -15,10 +15,10 @@
 //  *   - Parses welcome.mdx as authoritative channel metadata
 //  *   - Uses filesystem timestamps for pubDate
 //  *   - Strips markdown headings (#, ##) globally
+//  *   - Converts markdown formatting to HTML inside CDATA blocks
 //  *
 //  * Execution:
 //  *   node scripts/generate-rss.js
-//  *
 //  *
 
 const fg = require("fast-glob");
@@ -43,13 +43,83 @@ function hash(input) {
 }
 
 /**
- * Remove markdown heading markers and normalize whitespace.
+ * Convert markdown-flavored text to safe HTML for use inside RSS CDATA blocks.
+ *
+ * Transformations (in order):
+ *   1. Strip markdown headings (#, ##, ###, etc.) at line start
+ *   2. Convert **bold** to <strong>bold</strong>
+ *   3. Convert unordered bullet lines (-, *, •) into <ul><li>…</li></ul>
+ *   4. Convert ordered list lines (1. 2. etc.) into <ol><li>…</li></ol>
+ *   5. Convert remaining \n to <br/>
+ *   6. Collapse excessive blank lines
  */
 function cleanDescription(input = "") {
-  return input
-    .replace(/^\s*#+\s*/gm, "") // strip #, ##, ### at line start
-    .replace(/\n{3,}/g, "\n\n") // collapse excessive spacing
-    .trim();
+  let text = input;
+
+  // 1. Strip markdown headings
+  text = text.replace(/^\s*#{1,6}\s+/gm, "");
+
+  // 2. Bold: **text** or __text__ → <strong>text</strong>
+  text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  text = text.replace(/__(.+?)__/g, "<strong>$1</strong>");
+
+  // 3. Underline: _text_ → <u>text</u>
+  text = text.replace(/_(.+?)_/g, "<u>$1</u>");
+
+  // 4 & 5. List handling — group consecutive list lines into <ul> or <ol>
+  //
+  // Strategy: split into lines, walk through them, collect runs of list items,
+  // then wrap each run in the appropriate tag.
+  const lines = text.split("\n");
+  const result = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // Unordered bullet: starts with -, *, or •
+    if (/^\s*[-*•]\s+/.test(line)) {
+      const listItems = [];
+      while (i < lines.length && /^\s*[-*•]\s+/.test(lines[i])) {
+        const itemText = lines[i].replace(/^\s*[-*•]\s+/, "").trim();
+        listItems.push(`<li>${itemText}</li>`);
+        i++;
+      }
+      result.push(`<ul>${listItems.join("")}</ul>`);
+      continue;
+    }
+
+    // Ordered list: starts with a number followed by . or )
+    if (/^\s*\d+[.)]\s+/.test(line)) {
+      const listItems = [];
+      while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) {
+        const itemText = lines[i].replace(/^\s*\d+[.)]\s+/, "").trim();
+        listItems.push(`<li>${itemText}</li>`);
+        i++;
+      }
+      result.push(`<ol>${listItems.join("")}</ol>`);
+      continue;
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  text = result.join("\n");
+
+  // 5. Convert remaining newlines to <br/>
+  //    Skip newlines that are immediately adjacent to block-level HTML tags
+  //    (<ul>, <ol>, <li>) to avoid spurious <br/> inside list markup.
+  text = text.replace(/\n(?!<\/?(?:ul|ol|li)>)(?!$)/g, "<br/>");
+
+  // Also remove leading <br/> that sneak in before/after list blocks
+  text = text.replace(/<br\/>(<(?:ul|ol)>)/g, "$1");
+  text = text.replace(/(<\/(?:ul|ol)>)<br\/>/g, "$1");
+
+  // 6. Collapse 3+ consecutive <br/> into two
+  text = text.replace(/(<br\/>){3,}/g, "<br/><br/>");
+
+  return text.trim();
 }
 
 /**
@@ -227,9 +297,10 @@ async function main() {
           <title>${mdx.title}</title>
           <link>${SITE_URL}/?path=/docs/${slug}</link>
           <guid>${hash(file)}</guid>
-          <description><![CDATA[${cleanDescription(
-            mdx.description
-          )}]]></description>
+          <description><![CDATA[${cleanDescription(mdx.description)}]]></description>
+          <content:encoded><![CDATA[
+            ${cleanDescription(mdx.description)}
+          ]]></content:encoded>
           <pubDate>${stats.mtime.toUTCString()}</pubDate>
           </item>
           `);
@@ -258,6 +329,9 @@ async function main() {
         <link>${url}</link>
         <guid>${guid}</guid>
         <description><![CDATA[${cleanDescription(description)}]]></description>
+        <content:encoded><![CDATA[
+          ${cleanDescription(description)}
+        ]]></content:encoded>
         <pubDate>${stats.mtime.toUTCString()}</pubDate>
       </item>
     `);
@@ -268,7 +342,8 @@ async function main() {
    * CDATA is used to preserve markdown-like content safely.
    */
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>${channelTitle}</title>
     <link>${SITE_URL}</link>
