@@ -350,8 +350,7 @@ async function main() {
   <channel>
     <title>${channelTitle}</title>
     <link>${SITE_URL}</link>
-    <description><![CDATA[${channelDescription}]]></description>
-    <content:encoded><![CDATA[${channelDescription}]]></description>
+    <description>${channelDescription}</description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
     <lastBuildDate>${lastModified.toUTCString()}</lastBuildDate>
