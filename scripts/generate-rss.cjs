@@ -42,37 +42,75 @@ function hash(input) {
   return crypto.createHash("sha1").update(input).digest("hex");
 }
 
+function escapeXml(input = "") {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function stripHtml(input = "") {
+  return input.replace(/<[^>]+>/g, "");
+}
+
+/**
+ * Produce a short plain-text summary suitable for <description>.
+ * Input is raw (pre-cleanDescription) text — strip markdown first,
+ * then collapse whitespace and take up to 3 sentences.
+ */
+function makeSummary(rawText = "") {
+  const plain = rawText
+    // Strip markdown headings
+    .replace(/^\s*#{1,6}\s+/gm, "")
+    // Strip bold/italic markers
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/_(.+?)_/g, "$1")
+    // Strip bullet/list markers
+    .replace(/^\s*[-*•]\s+/gm, "")
+    .replace(/^\s*\d+[.)]\s+/gm, "")
+    // Collapse whitespace
+    .replace(/\n+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Take up to 3 sentences (split on ". " to avoid breaking decimals)
+  const sentences = plain.split(/(?<=\.)\s+/);
+  return sentences.slice(0, 3).join(" ").trim();
+}
+
 /**
  * Convert markdown-flavored text to safe HTML for use inside RSS CDATA blocks.
  *
  * Transformations (in order):
  *   1. Strip markdown headings (#, ##, ###, etc.) at line start
- *   2. Convert **bold** to <strong>bold</strong>
- *   3. Convert unordered bullet lines (-, *, •) into <ul><li>…</li></ul>
- *   4. Convert ordered list lines (1. 2. etc.) into <ol><li>…</li></ol>
- *   5. Convert remaining \n to <br/>
- *   6. Collapse excessive blank lines
+ *   2. Convert **bold** / __bold__ to <strong>
+ *   3. Convert _text_ to underline span
+ *   4. Convert unordered bullet lines into <ul><li>…</li></ul>
+ *   5. Convert ordered list lines into <ol><li>…</li></ul>
+ *   6. Convert remaining \n to <br/>
+ *   7. Collapse excessive <br/> runs
  */
+
 function cleanDescription(input = "") {
   let text = input;
 
   // 1. Strip markdown headings
   text = text.replace(/^\s*#{1,6}\s+/gm, "");
 
-  // 2. Bold: **text** or __text__ → <strong>text</strong>
+  // 2. Bold
   text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   text = text.replace(/__(.+?)__/g, "<strong>$1</strong>");
 
-  // 3. Underline: _text_ → <u>text</u>
+  // 3. Underline
   text = text.replace(
     /_(.+?)_/g,
     '<span style="text-decoration:underline">$1</span>'
   );
 
   // 4 & 5. List handling — group consecutive list lines into <ul> or <ol>
-  //
-  // Strategy: split into lines, walk through them, collect runs of list items,
-  // then wrap each run in the appropriate tag.
   const lines = text.split("\n");
   const result = [];
   let i = 0;
@@ -80,7 +118,7 @@ function cleanDescription(input = "") {
   while (i < lines.length) {
     const line = lines[i];
 
-    // Unordered bullet: starts with -, *, or •
+    // Unordered bullet
     if (/^\s*[-*•]\s+/.test(line)) {
       const listItems = [];
       while (i < lines.length && /^\s*[-*•]\s+/.test(lines[i])) {
@@ -92,7 +130,7 @@ function cleanDescription(input = "") {
       continue;
     }
 
-    // Ordered list: starts with a number followed by . or )
+    // Ordered list
     if (/^\s*\d+[.)]\s+/.test(line)) {
       const listItems = [];
       while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) {
@@ -110,16 +148,14 @@ function cleanDescription(input = "") {
 
   text = result.join("\n");
 
-  // 5. Convert remaining newlines to <br/>
-  //    Skip newlines that are immediately adjacent to block-level HTML tags
-  //    (<ul>, <ol>, <li>) to avoid spurious <br/> inside list markup.
+  // 6. Convert remaining newlines to <br/>, skip those adjacent to block tags
   text = text.replace(/\n(?!<\/?(?:ul|ol|li)>)(?!$)/g, "<br/>");
 
-  // Also remove leading <br/> that sneak in before/after list blocks
+  // Remove spurious <br/> immediately before/after list blocks
   text = text.replace(/<br\/>(<(?:ul|ol)>)/g, "$1");
   text = text.replace(/(<\/(?:ul|ol)>)<br\/>/g, "$1");
 
-  // 6. Collapse 3+ consecutive <br/> into two
+  // 7. Collapse 3+ consecutive <br/> into two
   text = text.replace(/(<br\/>){3,}/g, "<br/><br/>");
 
   return text.trim();
@@ -127,7 +163,6 @@ function cleanDescription(input = "") {
 
 /**
  * Extract meta from .stories.tsx using AST.
- * Regex is avoided due to nested object complexity.
  */
 function extractMetaFromStories(code) {
   const ast = parse(code, {
@@ -158,20 +193,17 @@ function extractMetaFromStories(code) {
             for (const p of prop.value.properties) {
               if (p.type !== "ObjectProperty") continue;
               if (p.key.name !== "docs") continue;
-
               if (p.value.type !== "ObjectExpression") continue;
 
               for (const dp of p.value.properties) {
                 if (dp.type !== "ObjectProperty") continue;
                 if (dp.key.name !== "description") continue;
-
                 if (dp.value.type !== "ObjectExpression") continue;
 
                 for (const dpp of dp.value.properties) {
                   if (dpp.type !== "ObjectProperty") continue;
                   if (dpp.key.name !== "component") continue;
 
-                  // Template literal (multi-line markdown)
                   if (dpp.value.type === "TemplateLiteral") {
                     meta.description = dpp.value.quasis
                       .map((q) => q.value.cooked)
@@ -190,9 +222,7 @@ function extractMetaFromStories(code) {
 }
 
 /**
- * Fallback extraction:
- * Pulls all "description: ..." fields from argTypes.
- * Produces a bullet-style text summary.
+ * Fallback: pull all "description: ..." fields from argTypes.
  */
 function fallbackDescription(code) {
   const matches = [...code.matchAll(/description:\s*["`']([^"`']+)["`']/g)];
@@ -201,33 +231,22 @@ function fallbackDescription(code) {
 
 /**
  * Extract metadata from MDX.
- * Assumes simple structure:
- *   <Meta title="..." />
- *   <div className="sb-section-title"> ... </div>
  */
 function extractFromMDX(code) {
   const result = {};
 
-  // Extract Meta title
   const metaMatch = code.match(/<Meta\s+title=["']([^"']+)["']/);
   if (metaMatch) {
     result.title = metaMatch[1].trim();
   }
 
-  // Extract main descriptive block
   const sectionMatch = code.match(
     /<div[^>]*className=['"]sb-section-title['"][^>]*>([\s\S]*?)<\/div>/
   );
 
   if (sectionMatch) {
     let content = sectionMatch[1];
-
-    /**
-     * Remove JSX/HTML tags but preserve inner text.
-     * This intentionally flattens formatting for RSS compatibility.
-     */
     content = content.replace(/<[^>]+>/g, "");
-
     result.description = content;
   }
 
@@ -242,6 +261,34 @@ function toSlug(title) {
   return title.toLowerCase().replace(/\s+/g, "-").replace(/\//g, "-");
 }
 
+/**
+ * Build a single <item> block.
+ *
+ * @param {object} opts
+ * @param {string} opts.title         - Display title
+ * @param {string} opts.url           - Canonical link
+ * @param {string} opts.guid          - Stable unique ID
+ * @param {string} opts.rawDescription - Raw (markdown) description text
+ * @param {Date}   opts.pubDate       - Last modified date
+ */
+function buildItem({ title, url, guid, rawDescription, pubDate }) {
+  // <description> — short plain-text preview (3 sentences max)
+  const summary = escapeXml(makeSummary(rawDescription));
+
+  // <content:encoded> — full rich HTML inside CDATA (no escaping needed)
+  const fullHtml = cleanDescription(rawDescription);
+
+  return `
+  <item>
+    <title>${escapeXml(title)}</title>
+    <link>${url}</link>
+    <guid isPermaLink="false">${guid}</guid>
+    <description>${summary}</description>
+    <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
+    <pubDate>${pubDate.toUTCString()}</pubDate>
+  </item>`;
+}
+
 async function main() {
   const pkg = await fs.readJSON(path.join(ROOT, "package.json"));
   const version = pkg.version;
@@ -250,10 +297,8 @@ async function main() {
 
   const items = [];
 
-  // Default channel metadata (overridden by Welcome.mdx)
   let channelTitle = "Systatum Coneto React UI Library";
   let channelDescription = "Component documentation feed";
-
   let lastModified = new Date(0);
 
   for (const file of files) {
@@ -265,9 +310,7 @@ async function main() {
       lastModified = stats.mtime;
     }
 
-    /**
-     * MDX handling
-     */
+    // MDX
     if (file.endsWith(".mdx")) {
       const mdx = extractFromMDX(code);
 
@@ -276,40 +319,32 @@ async function main() {
       }
 
       if (!mdx.description) {
-        const stripped = code
+        mdx.description = code
           .replace(/<[^>]+>/g, "")
           .replace(/^\s*#+\s*/gm, "")
           .trim();
-
-        mdx.description = stripped;
       }
 
+      // Welcome.mdx → channel metadata only, not an item
       if (file.toLowerCase().endsWith("welcome.mdx")) {
         console.log("✅ FOUND WELCOME:", file);
-
-        const cleanedDesc = cleanDescription(mdx.description || "");
-
-        if (cleanedDesc) channelDescription = cleanedDesc;
-
-        continue;
-      } else {
-        const slug = toSlug(mdx.title);
-
-        items.push(`
-          <item>
-          <title>${mdx.title}</title>
-          <link>${SITE_URL}/?path=/docs/${slug}</link>
-          <guid isPermaLink="false">${hash(file)}</guid>
-          <description><![CDATA[${cleanDescription(mdx.description)}]]></description>
-          <content:encoded><![CDATA[
-            ${cleanDescription(mdx.description)}
-          ]]></content:encoded>
-          <pubDate>${stats.mtime.toUTCString()}</pubDate>
-          </item>
-          `);
-
+        channelDescription = mdx.description || "";
         continue;
       }
+
+      const slug = toSlug(mdx.title);
+
+      items.push(
+        buildItem({
+          title: mdx.title,
+          url: `${SITE_URL}/?path=/docs/${slug}`,
+          guid: hash(file),
+          rawDescription: mdx.description,
+          pubDate: stats.mtime,
+        })
+      );
+
+      continue;
     }
 
     /**
@@ -319,25 +354,19 @@ async function main() {
     if (!meta.title) continue;
 
     const description =
-      meta.description || fallbackDescription(code) || "No description";
+      meta.description || fallbackDescription(code) || "No description.";
 
     const slug = toSlug(meta.title);
 
-    const url = `${SITE_URL}/?path=/docs/${slug}`;
-    const guid = hash(file + meta.title);
-
-    items.push(`
-      <item>
-        <title>${meta.title.split("/").pop()} - Coneto React UI</title>
-        <link>${url}</link>
-        <guid isPermaLink="false">${guid}</guid>
-        <description><![CDATA[${cleanDescription(description)}]]></description>
-        <content:encoded><![CDATA[
-          ${cleanDescription(description)}
-        ]]></content:encoded>
-        <pubDate>${stats.mtime.toUTCString()}</pubDate>
-      </item>
-    `);
+    items.push(
+      buildItem({
+        title: `${meta.title.split("/").pop()} - Coneto React UI`,
+        url: `${SITE_URL}/?path=/docs/${slug}`,
+        guid: hash(file + meta.title),
+        rawDescription: description,
+        pubDate: stats.mtime,
+      })
+    );
   }
 
   /**
@@ -346,21 +375,23 @@ async function main() {
    */
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
+  xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>${channelTitle}</title>
+    <title>${escapeXml(channelTitle)}</title>
     <link>${SITE_URL}</link>
-    <description>${channelDescription}</description>
+    <description>${escapeXml(makeSummary(channelDescription))}</description>
+    <content:encoded><![CDATA[${cleanDescription(channelDescription)}]]></content:encoded>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
+    <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>${lastModified.toUTCString()}</lastBuildDate>
     ${items.join("\n")}
   </channel>
 </rss>`;
 
   await fs.outputFile(path.join(ROOT, OUTPUT), rss);
-
-  console.log(`RSS generated at ${OUTPUT}`);
+  console.log(`✅ RSS generated at ${OUTPUT}`);
 }
 
 main();
