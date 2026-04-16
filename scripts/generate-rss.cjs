@@ -132,10 +132,7 @@ function cleanDescription(input = "") {
 
   // 1. Handle code block WITHOUT modifying content meaning
   text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-    const escaped = code
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    const escaped = code;
 
     return `<pre><code>${escaped}</code></pre>`;
   });
