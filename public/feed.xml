@@ -44,7 +44,7 @@ central square. That square is the user. The person everything is built for. A r
 that every interface ultimately connects back to you and the people your product serves.</description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <lastBuildDate>Thu, 16 Apr 2026 04:47:58 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 16 Apr 2026 05:53:43 GMT</lastBuildDate>
     
           <item>
           <title>Dark mode</title>
@@ -1337,7 +1337,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 - Use `data` + `keys` + `keyLabels` to render object values automatically.
 - Fully styleable using the `styles` prop.
 - `Keynote.Point` can be used individually for custom rows.]]></description>
-        <pubDate>Thu, 16 Apr 2026 04:47:58 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 05:47:45 GMT</pubDate>
       </item>
     
 
@@ -1723,14 +1723,26 @@ optional currency dropdown.
 - ⌨️ Handles "Escape" key to close the dialog
 🛠 Usage
 ```tsx
-<PaperDialog ref={dialogRef} position="right" closable width="400px">
-  <PaperDialog.Trigger>
-    Open Dialog
-  </PaperDialog.Trigger>
-  <PaperDialog.Content>
-    <p>Your content here</p>
-  </PaperDialog.Content>
-</PaperDialog>
+<>
+  <Button onClick={() => dialogRef.current.openDialog()}>
+   Open Dialog
+  </Button>
+    
+  <PaperDialog ref={dialogRef} position="right" closable width="400px">
+    Your content here
+  </PaperDialog>
+</>
+```
+🎨 Custom Icons
+You can override the default control icons (e.g. close and restore) by passing custom icon components:
+
+```tsx
+<PaperDialog
+  icons={{
+    closeIcon: { image: RiCloseLine },
+    restoreIcon: { image: RiSubtractLine }
+  }}
+/>
 ```
 🎨 Custom Icons
 You can override the default control icons (e.g. close and restore) by passing custom icon components:
@@ -1744,10 +1756,9 @@ You can override the default control icons (e.g. close and restore) by passing c
 />
 ```
 📝 Notes
-- Always include both `PaperDialog.Trigger` and `PaperDialog.Content` as children.
 - Use `styles` prop to override default styles.
 - Use the `icons` prop to override default icons.]]></description>
-        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 05:53:43 GMT</pubDate>
       </item>
     
 
