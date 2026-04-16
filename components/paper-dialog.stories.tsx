@@ -42,9 +42,8 @@ const meta: Meta<typeof PaperDialog> = {
   <PaperDialog.Trigger>
     Open Dialog
   </PaperDialog.Trigger>
-  <PaperDialog.Content>
-    <p>Your content here</p>
-  </PaperDialog.Content>
+  
+  <p>Your content here</p>
 </PaperDialog>
 \`\`\`
 
@@ -300,36 +299,33 @@ export const CustomIcon: Story = {
               image: RiSubtractLine,
             },
           }}
+          styles={{
+            contentStyle: {
+              padding: "36px",
+              gap: "16px",
+            },
+          }}
           ref={dialogRef}
         >
-          <PaperDialog.Content
-            styles={{
-              self: {
-                padding: "36px",
-                gap: "16px",
-              },
-            }}
-          >
-            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-              Dialog with Custom Icons
-            </h2>
+          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+            Dialog with Custom Icons
+          </h2>
 
-            <p style={{ fontSize: "14px", color: "#4B5563" }}>
-              This dialog demonstrates how to customize the close and restore
-              icons using the <code>icons</code> prop.
-            </p>
+          <p style={{ fontSize: "14px", color: "#4B5563" }}>
+            This dialog demonstrates how to customize the close and restore
+            icons using the <code>icons</code> prop.
+          </p>
 
-            <p style={{ fontSize: "14px", color: "#4B5563" }}>
-              You can replace the default icons with any icon component to
-              better match your application’s design or interaction needs.
-            </p>
+          <p style={{ fontSize: "14px", color: "#4B5563" }}>
+            You can replace the default icons with any icon component to better
+            match your application’s design or interaction needs.
+          </p>
 
-            <p style={{ fontSize: "14px", color: "#4B5563" }}>
-              In this example, the close action uses a check icon, while the
-              restore action uses a subtract icon for a more customized
-              appearance.
-            </p>
-          </PaperDialog.Content>
+          <p style={{ fontSize: "14px", color: "#4B5563" }}>
+            In this example, the close action uses a check icon, while the
+            restore action uses a subtract icon for a more customized
+            appearance.
+          </p>
         </PaperDialog>
       </div>
     );

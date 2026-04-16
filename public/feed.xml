@@ -1702,9 +1702,8 @@ optional currency dropdown.
   <PaperDialog.Trigger>
     Open Dialog
   </PaperDialog.Trigger>
-  <PaperDialog.Content>
-    <p>Your content here</p>
-  </PaperDialog.Content>
+  
+  <p>Your content here</p>
 </PaperDialog>
 ```
 📝 Notes
