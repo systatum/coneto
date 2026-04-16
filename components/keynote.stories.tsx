@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { Keynote } from "./keynote";
 import { generateSentence } from "./../lib/text";
+import { useTheme } from "./../theme";
 
 const meta: Meta<typeof Keynote> = {
   title: "Content/Keynote",
@@ -16,7 +17,7 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
 
 ### ✨ Features
 - 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
-- 🎨 **Custom rendering**: Provide a \`renderer\` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
+- 🎨 **Custom rendering**: Supports \`ReactNode\` values and per-key formatters for flexible rendering (e.g., bold text, currency formatting, or custom JSX).
 - 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via \`styles\` prop.
 
 ---
@@ -25,12 +26,9 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
 
 \`\`\`tsx
 <Keynote
-  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: 80000 }}
+  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: <b>80000 $</b> }}
   keys={["name", "role", "salary"]}
   keyLabels={["Full Name", "Position", "Monthly Salary"]}
-  renderer={{
-    salary: val => <b>{val.toLocaleString()} $</b>
-  }}
   styles={{
     self: css\`margin-top: 16px;\`,
     rowStyle: css\`padding: 8px 0;\`,
@@ -47,7 +45,6 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
 \`\`\`
 
 - Use \`data\` + \`keys\` + \`keyLabels\` to render object values automatically.
-- Use \`renderer\` for custom formatting or JSX output.
 - Fully styleable using the \`styles\` prop.
 - \`Keynote.Point\` can be used individually for custom rows.
 `,
@@ -66,11 +63,6 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
     keyLabels: {
       control: false,
       description: "Display labels corresponding to each key.",
-    },
-    renderer: {
-      control: false,
-      description:
-        "Custom renderers for specific keys. Example: `{ amount: val => <b>{val}</b> }`",
     },
     children: {
       control: false,
@@ -135,9 +127,23 @@ export const Default: Story = {
 
 export const CustomRendering: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const buttonTheme = currentTheme?.button;
+
     const data = {
       modelType: "MXQ83700F3",
-      requestCreatedBy: "alim@systatum.com",
+      requestCreatedBy: (
+        <div
+          onClick={() => console.log("Email was sent")}
+          style={{
+            fontWeight: 500,
+            cursor: "pointer",
+            color: buttonTheme?.link?.textColor,
+          }}
+        >
+          alim@systatum.com
+        </div>
+      ),
       lastSynced: "2025-06-20",
       createdOn: "2025-06-19",
       desc: generateSentence({
@@ -163,20 +169,6 @@ export const CustomRendering: Story = {
           "Created On",
           "Description",
         ]}
-        renderer={{
-          requestCreatedBy: (value) => (
-            <div
-              onClick={() => console.log("Email was sent")}
-              style={{
-                fontWeight: 500,
-                cursor: "pointer",
-                color: "#3b82f6",
-              }}
-            >
-              {value}
-            </div>
-          ),
-        }}
       />
     );
   },
