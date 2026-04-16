@@ -54,7 +54,6 @@ export interface PaperDialogStyles {
   contentStyle?: CSSProp;
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
-  containerStyle?: CSSProp;
   overlayStyle?: CSSProp;
 }
 
@@ -143,11 +142,6 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
         isValidElement(child) && child.type === PaperDialog.Trigger
     );
 
-    const content = childArray.find(
-      (child): child is ReactElement<PaperDialogContentProps> =>
-        isValidElement(child) && child.type === PaperDialog.Content
-    );
-
     return (
       <Fragment>
         {trigger &&
@@ -159,10 +153,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
           })}
 
         {dialogState !== "closed" && (
-          <DialogOverlay
-            $dialogState={dialogState}
-            $style={styles?.containerStyle}
-          >
+          <DialogOverlay $dialogState={dialogState}>
             {dialogState === "restored" && (
               <OverlayBlocker
                 onClick={async ({ preventDefault, close }) => {
@@ -189,17 +180,14 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
               initial={{ x: isLeft ? "-100%" : "100%" }}
               animate={controls}
               $isLeft={isLeft}
-              $style={styles?.contentStyle}
               $theme={paperDialogTheme}
             >
               {closable && (
-                <CloseButtonWrapper
-                  $isLeft={isLeft}
-                  $style={styles?.closeButtonStyle}
-                >
+                <ActionButtonWrapper $top={4} $isLeft={isLeft}>
                   <IconButton
                     $theme={paperDialogTheme}
                     $isLeft={isLeft}
+                    $style={styles?.closeButtonStyle}
                     aria-label="button-close"
                     onClick={() => {
                       setDialogState("closed");
@@ -210,15 +198,13 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   >
                     <RiCloseLine size={20} />
                   </IconButton>
-                </CloseButtonWrapper>
+                </ActionButtonWrapper>
               )}
 
-              <MinimizeButtonWrapper
-                $isLeft={isLeft}
-                $style={styles?.minimizeButtonStyle}
-              >
+              <ActionButtonWrapper $top={44} $isLeft={isLeft}>
                 <IconButton
                   $theme={paperDialogTheme}
+                  $style={styles?.minimizeButtonStyle}
                   $isLeft={isLeft}
                   aria-label="paper-dialog-toggle"
                   onClick={() =>
@@ -251,9 +237,15 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     />
                   )}
                 </IconButton>
-              </MinimizeButtonWrapper>
+              </ActionButtonWrapper>
 
-              <Fragment>{content}</Fragment>
+              <PaperDialogContent
+                $theme={paperDialogTheme}
+                aria-label="paper-dialog-content"
+                $style={styles?.contentStyle}
+              >
+                {children}
+              </PaperDialogContent>
             </MotionDialog>
           </DialogOverlay>
         )}
@@ -309,12 +301,13 @@ const MotionDialog = styled(motion.div)<{
   ${({ $style }) => $style};
 `;
 
-const CloseButtonWrapper = styled.div<{
+const ActionButtonWrapper = styled.div<{
   $isLeft: boolean;
+  $top: number;
   $style?: CSSProp;
 }>`
   position: absolute;
-  top: 4px;
+  top: ${({ $top }) => `${$top}px`};
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -330,37 +323,12 @@ const CloseButtonWrapper = styled.div<{
           right: 100%;
           translate: 4px;
         `}
-
-  ${({ $style }) => $style}
-`;
-
-const MinimizeButtonWrapper = styled.div<{
-  $isLeft: boolean;
-  $style?: CSSProp;
-}>`
-  position: absolute;
-  z-index: 9999;
-  top: 44px;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  ${({ $isLeft }) =>
-    $isLeft
-      ? css`
-          left: 100%;
-          translate: -4px;
-        `
-      : css`
-          right: 100%;
-          translate: 4px;
-        `}
-  ${({ $style }) => $style}
 `;
 
 const IconButton = styled.button<{
   $isLeft: boolean;
   $theme?: PaperDialogThemeConfig;
+  $style?: CSSProp;
 }>`
   position: relative;
   cursor: pointer;
@@ -386,7 +354,9 @@ const IconButton = styled.button<{
           border-top-width: 1px;
           border-bottom-width: 1px;
           border-radius: 0.75rem 0 0 0.75rem;
-        `}
+        `};
+
+  ${({ $style }) => $style}
 `;
 
 function PaperDialogTrigger({
@@ -403,33 +373,18 @@ function PaperDialogTrigger({
       onClick={() => {
         setDialogState("restored");
       }}
+      icon={{
+        ...icon,
+        size: icon?.size ?? 20,
+      }}
       styles={styles}
     >
-      {icon && <Figure {...icon} size={icon?.size ?? 20} />}
       {children}
     </Button>
   );
 }
 
-export function PaperDialogContent({
-  children,
-  styles,
-}: PaperDialogContentProps) {
-  const { currentTheme } = useTheme();
-  const paperDialogTheme = currentTheme.paperDialog;
-
-  return (
-    <StyledDialogContent
-      $theme={paperDialogTheme}
-      aria-label="paper-dialog-content"
-      $style={styles?.self}
-    >
-      {children}
-    </StyledDialogContent>
-  );
-}
-
-const StyledDialogContent = styled.div<{
+const PaperDialogContent = styled.div<{
   $style?: CSSProp;
   $theme?: PaperDialogThemeConfig;
 }>`
@@ -449,7 +404,6 @@ const StyledDialogContent = styled.div<{
 
 const PaperDialog = Object.assign(PaperDialogBase, {
   Trigger: PaperDialogTrigger,
-  Content: PaperDialogContent,
 });
 
 export { PaperDialog };
