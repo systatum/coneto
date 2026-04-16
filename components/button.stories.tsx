@@ -409,7 +409,7 @@ export const WithTipMenu: Story = {
           {
             caption: "Block Sender",
             icon: { image: RiShieldLine, color: "orange" },
-            isDangerous: true,
+            variant: "danger",
             onClick: () => console.log("Sender blocked"),
           },
           {
@@ -448,7 +448,7 @@ export const WithTipMenu: Story = {
           {
             caption: "Block Sender",
             icon: { image: RiShieldLine, color: "orange" },
-            isDangerous: true,
+            variant: "danger",
             onClick: () => console.log("Sender blocked"),
           },
           {

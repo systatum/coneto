@@ -44,8 +44,8 @@ It is commonly used for action menus, context menus, or inline tips.
 ### ✨ Features
 - 🖱 **Clickable menu items**: Each item supports an onClick handler.
 - 🔍 **Optional search/filter**: Automatically filter menu items with \`withFilter\`.
-- 🎨 **Item variants**: Supports \`sm\` and \`md\` variants for spacing and size.
-- ⚠️ **Dangerous actions**: Items can be styled to indicate dangerous actions (e.g., delete).
+- 🎨 **Variants**: Supports multiple visual variants via variant prop (default, primary, success, danger) to represent different action types, including destructive actions.
+- 📏 **Sizes**: Supports sm and md variants for spacing and sizing.
 - 🖌 **Custom styles**: Full styling support via \`styles\` prop.
 - 📦 **Composable children**: Render additional custom content inside the menu.
 - 🎨 **Icon support**: Each menu item can have an optional icon rendered via the \`Figure\` component.
@@ -58,11 +58,12 @@ It is commonly used for action menus, context menus, or inline tips.
 <TipMenu
   subMenuList={[
     { caption: "Edit", onClick: () => console.log("Edit clicked") },
-    { caption: "Delete", isDangerous: true, onClick: () => console.log("Deleted") },
-    { caption: "View", variant: "sm" }
+    { caption: "Delete", variant: "danger", onClick: () => console.log("Deleted") },
+    { caption: "View", variant: "success" }
   ]}
   withFilter
-  variant="md"
+  size="md"
+  variant="default"
   setIsOpen={() => console.log("Menu closed")}
   styles={{
     self: css\`min-width: 200px;\`,
@@ -74,8 +75,8 @@ It is commonly used for action menus, context menus, or inline tips.
 
 - Use \`subMenuList\` to define menu items.
 - Use \`withFilter\` to enable the search box.
-- Use \`variant\` to change spacing and sizing for items.
-- Use \`isDangerous\` to highlight critical actions.
+- Use \`variant\` to change the appearance for items.
+- Use \`size\` to change spacing and sizing for items.
 - Fully styleable via \`styles.self\`.
 - You can still pass custom children if needed.
 `,
@@ -92,7 +93,7 @@ It is commonly used for action menus, context menus, or inline tips.
     subMenuList: {
       control: false,
       description:
-        "Array of menu items to display. Each item is an object with `caption`, optional `icon`, `onClick`, `isDangerous`, `variant`, `className`, and `hidden` properties.",
+        "Array of menu items to display. Each item is an object with `caption`, optional `icon`, `onClick`, `size`, `variant`, `className`, and `hidden` properties.",
     },
     setIsOpen: {
       control: false,
@@ -135,6 +136,7 @@ export const Default: Story = {
                 image: RiSpam2Line,
                 color: "blue",
               },
+              variant: "primary",
               onClick: () => console.log("Phishing reported"),
             },
             {
@@ -149,17 +151,16 @@ export const Default: Story = {
               caption: "Block Sender",
               icon: {
                 image: RiShieldLine,
-                color: "orange",
               },
-              isDangerous: true,
+              variant: "danger",
               onClick: () => console.log("Sender blocked"),
             },
             {
               caption: "Mark as Read",
               icon: {
                 image: RiCheckLine,
-                color: "green",
               },
+              variant: "primary",
               onClick: () => console.log("Marked as read"),
             },
             {
@@ -168,6 +169,7 @@ export const Default: Story = {
                 image: RiInboxArchiveLine,
                 color: "purple",
               },
+              variant: "default",
               onClick: () => console.log("Moved to spam"),
             },
             {
@@ -176,6 +178,8 @@ export const Default: Story = {
                 image: RiDownloadLine,
                 color: "teal",
               },
+              variant: "success",
+
               onClick: () => console.log("Downloading"),
             },
             {
@@ -184,15 +188,15 @@ export const Default: Story = {
                 image: RiLink,
                 color: "gray",
               },
+              variant: "default",
               onClick: () => console.log("Link copied"),
             },
             {
               caption: "Share",
               icon: {
                 image: RiShareLine,
-                color: "indigo",
               },
-              isDangerous: true,
+              variant: "primary",
               onClick: () => console.log("Shared"),
             },
             {
@@ -206,13 +210,15 @@ export const Default: Story = {
             {
               caption: "Delete",
               icon: { image: RiDeleteBinLine, color: "red" },
+              variant: "danger",
               onClick: () => setIsOpen(!isOpen),
             },
             {
               caption: "Quit",
+              variant: "default",
             },
           ]}
-        ></TipMenu>
+        />
         <ModalDialog
           isOpen={isOpen}
           onVisibilityChange={setIsOpen}

@@ -179,7 +179,7 @@ export const Default: Story = {
       {
         caption: "Block Sender",
         icon: { image: RiShieldLine, color: "orange" },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Sender blocked"),
       },
       {
@@ -205,7 +205,7 @@ export const Default: Story = {
       {
         caption: "Share",
         icon: { image: RiSendPlane2Line, color: "indigo" },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Shared"),
       },
       {

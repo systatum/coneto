@@ -201,11 +201,7 @@ const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
 
 const lightTimeline = createTimelineTheme(lightBody);
 
-const lightTipMenu = createTipMenuTheme(lightBody, {
-  dangerousBackgroundColor: lightButton.danger.backgroundColor,
-  dangerousHoverBackgroundColor: lightButton.danger.hoverBackgroundColor,
-  dangerousActiveBackgroundColor: lightButton.danger.activeBackgroundColor,
-});
+const lightTipMenu = createTipMenuTheme(lightButton);
 
 const lightToggle = createToggleTheme(lightBody);
 

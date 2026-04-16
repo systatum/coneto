@@ -1085,7 +1085,7 @@ export const WithSubcontent: Story = {
       return [
         {
           caption: "Delete",
-          isDangerous: true,
+          variant: "danger",
           icon: { image: RiDeleteBin2Fill },
           onClick: () => {
             setGroups((prev) =>
@@ -1881,7 +1881,7 @@ export const CustomOpener: Story = {
                       },
                       {
                         caption: "Delete",
-                        isDangerous: true,
+                        variant: "danger",
                         icon: {
                           image: RiDeleteBack2Line,
                         },
