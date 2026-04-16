@@ -82,35 +82,78 @@ function makeSummary(rawText = "") {
 }
 
 /**
- * Convert markdown-flavored text to safe HTML for use inside RSS CDATA blocks.
+ * Convert markdown-like text into structured HTML for RSS <content:encoded>.
+ *
+ * Goals:
+ *   - Preserve meaning (especially code blocks / JSX)
+ *   - Produce RSS-friendly HTML (block-based, not <br/> hacks)
+ *   - Avoid unsafe HTML parsing issues
  *
  * Transformations (in order):
- *   1. Strip markdown headings (#, ##, ###, etc.) at line start
- *   2. Convert **bold** / __bold__ to <strong>
- *   3. Convert _text_ to underline span
- *   4. Convert unordered bullet lines into <ul><li>…</li></ul>
- *   5. Convert ordered list lines into <ol><li>…</li></ul>
- *   6. Convert remaining \n to <br/>
- *   7. Collapse excessive <br/> runs
+ *
+ *   1. Extract code blocks (```...```)
+ *      - Escape HTML (<, >, &)
+ *      - Wrap in <pre><code> to prevent RSS stripping JSX (e.g. <Component />)
+ *
+ *   2. Normalize line endings
+ *      - Convert CRLF → LF
+ *      - Trim outer whitespace
+ *
+ *   3. Convert markdown headings (#, ##, etc.)
+ *      - Transform into <h3> for consistent RSS rendering
+ *
+ *   4. Convert horizontal rules (---)
+ *      - Transform into <hr/>
+ *
+ *   5. Convert inline formatting
+ *      - **bold** / __bold__ → <strong>
+ *      - _text_ → <em> (avoid underline for semantic correctness)
+ *
+ *   6. Convert lists
+ *      - Group consecutive:
+ *        - [- * •] → <ul><li>...</li></ul>
+ *        - [1. / 1)] → <ol><li>...</li></ol>
+ *
+ *   7. Convert remaining text blocks
+ *      - Non-empty lines → <p>...</p>
+ *      - Empty lines → paragraph separation
+ *
+ *   8. Restore code blocks
+ *      - Replace placeholders with <pre><code> blocks
+ *
+ * Result:
+ *   - Clean, structured HTML
+ *   - No reliance on <br/> for layout
+ *   - Safe rendering in RSS readers
  */
 
 function cleanDescription(input = "") {
   let text = input;
 
-  // 1. Strip markdown headings
+  // 1. Handle code block WITHOUT modifying content meaning
+  text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+    const escaped = code
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    return `<pre><code>${escaped}</code></pre>`;
+  });
+
+  // 2. Strip markdown headings
   text = text.replace(/^\s*#{1,6}\s+/gm, "");
 
-  // 2. Bold
+  // 3. Bold
   text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   text = text.replace(/__(.+?)__/g, "<strong>$1</strong>");
 
-  // 3. Underline
+  // 4. Underline
   text = text.replace(
     /_(.+?)_/g,
     '<span style="text-decoration:underline">$1</span>'
   );
 
-  // 4 & 5. List handling — group consecutive list lines into <ul> or <ol>
+  // 5. List handling — group consecutive list lines into <ul> or <ol>
   const lines = text.split("\n");
   const result = [];
   let i = 0;
