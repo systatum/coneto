@@ -1308,7 +1308,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 ---
 ✨ Features
 - 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
-- 🎨 **Custom rendering**: Provide a `renderer` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
+- 🎨 **Custom rendering**: Supports `ReactNode` values and per-key formatters for flexible rendering (e.g., bold text, currency formatting, or custom JSX).
 - 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via `styles` prop.
 
 ---
@@ -1316,12 +1316,9 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 
 ```tsx
 <Keynote
-  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: 80000 }}
+  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: <b>80000 $</b> }}
   keys={["name", "role", "salary"]}
   keyLabels={["Full Name", "Position", "Monthly Salary"]}
-  renderer={{
-    salary: val => <b>{val.toLocaleString()} $</b>
-  }}
   styles={{
     self: css`margin-top: 16px;`,
     rowStyle: css`padding: 8px 0;`,
@@ -1338,7 +1335,6 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 ```
 
 - Use `data` + `keys` + `keyLabels` to render object values automatically.
-- Use `renderer` for custom formatting or JSX output.
 - Fully styleable using the `styles` prop.
 - `Keynote.Point` can be used individually for custom rows.]]></description>
         <pubDate>Thu, 16 Apr 2026 05:47:45 GMT</pubDate>
@@ -1736,6 +1732,17 @@ optional currency dropdown.
     Your content here
   </PaperDialog>
 </>
+```
+🎨 Custom Icons
+You can override the default control icons (e.g. close and restore) by passing custom icon components:
+
+```tsx
+<PaperDialog
+  icons={{
+    closeIcon: { image: RiCloseLine },
+    restoreIcon: { image: RiSubtractLine }
+  }}
+/>
 ```
 🎨 Custom Icons
 You can override the default control icons (e.g. close and restore) by passing custom icon components:
