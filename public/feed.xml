@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
-  xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:atom="http://www.w3.org/2005/Atom"
   xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Systatum Coneto React UI Library</title>
@@ -9,7 +7,6 @@
     <description><![CDATA[Coneto: A React UI Library for Every Use Case, Done Right Deliver apps in half the time with Coneto, free of charge! Coneto is the extremely complete React UI library created by Systatum. It is designed with modernity, simplicity, and usability at its core. Here you’ll find everything from stateful forms you can build in just a few lines of code to a versatile data grid and a solid set of tabs and view management tools.]]></description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <atom:link href="https://coneto.systatum.com/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>Thu, 16 Apr 2026 05:55:31 GMT</lastBuildDate>
     
   <item>
