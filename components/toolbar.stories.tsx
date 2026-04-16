@@ -74,11 +74,11 @@ const subMenuList: ToolbarSubMenuList[] = [
   - \`caption\`
   - \`icon\` (image + color)
   - \`onClick\` callback
-  - \`isDangerous\` for destructive actions.
 - **Variants** apply predefined colors and hover/active/focus states:
   - \`default\` — standard gray/white styles.
   - \`primary\` — emphasized with blue background and white text.
   - \`danger\` — red background for destructive actions.
+  - \`success\` — green background for successful actions.
 - **big** prop enlarges icons and vertically centers content for toolbars that require higher visibility.
 - **styles** prop allows CSS overrides for:
   - \`self\` — toolbar wrapper

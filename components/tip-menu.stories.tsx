@@ -75,8 +75,8 @@ It is commonly used for action menus, context menus, or inline tips.
 
 - Use \`subMenuList\` to define menu items.
 - Use \`withFilter\` to enable the search box.
-- Use \`variant\` to change spacing and sizing for items.
-- Use \`isDangerous\` to highlight critical actions.
+- Use \`variant\` to change the appearance for items.
+- Use \`size\` to change spacing and sizing for items.
 - Fully styleable via \`styles.self\`.
 - You can still pass custom children if needed.
 `,
@@ -93,7 +93,7 @@ It is commonly used for action menus, context menus, or inline tips.
     subMenuList: {
       control: false,
       description:
-        "Array of menu items to display. Each item is an object with `caption`, optional `icon`, `onClick`, `isDangerous`, `variant`, `className`, and `hidden` properties.",
+        "Array of menu items to display. Each item is an object with `caption`, optional `icon`, `onClick`, `size`, `variant`, `className`, and `hidden` properties.",
     },
     setIsOpen: {
       control: false,
