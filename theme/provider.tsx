@@ -12,6 +12,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue>({
   mode: "light",
+  themes: themes,
 });
 
 export function useThemeMode() {
