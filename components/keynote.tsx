@@ -2,13 +2,12 @@ import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 
-export interface KeynoteProps<T extends Record<string, unknown>> {
+export interface KeynoteProps<T extends Record<string, ReactNode>> {
   data?: T;
   keys?: (keyof T)[];
   keyLabels?: string[];
   children?: ReactNode;
   styles?: KeynoteStyles;
-  renderer?: Partial<Record<keyof T, (value: T[keyof T]) => ReactNode>>;
 }
 
 export interface KeynotePointProps {
@@ -27,12 +26,11 @@ export interface KeynotePointStyles {
   rowValueStyle?: CSSProp;
 }
 
-function Keynote<T extends Record<string, unknown>>({
+function Keynote<T extends Record<string, ReactNode>>({
   data,
   keys,
   keyLabels,
   children,
-  renderer,
   styles,
 }: KeynoteProps<T>) {
   const shouldRenderFromData = data && keys;
@@ -42,8 +40,7 @@ function Keynote<T extends Record<string, unknown>>({
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const keyLabel = keyLabels?.[index] ?? String(key);
-            const value = data[key];
-            const renderFn = renderer?.[key];
+            const value = data?.[key];
 
             return (
               <KeynotePoint
@@ -55,7 +52,7 @@ function Keynote<T extends Record<string, unknown>>({
                 key={String(key)}
                 label={keyLabel}
               >
-                {renderFn ? renderFn(value) : String(value ?? "-")}
+                {value ?? "-"}
               </KeynotePoint>
             );
           })
@@ -141,6 +138,8 @@ const Value = styled.span<{
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: break-word;
+  display: flex;
+  justify-content: end;
 
   color: ${({ $color }) => $color};
 
