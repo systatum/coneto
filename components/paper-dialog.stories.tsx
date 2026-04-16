@@ -172,73 +172,70 @@ export const Default: Story = {
       >
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
-        <PaperDialog width="35vw" ref={dialogRef}>
-          <PaperDialog.Content
-            styles={{
-              self: {
-                padding: "36px",
-                gap: "24px",
-              },
+        <PaperDialog
+          width="35vw"
+          styles={{
+            contentStyle: {
+              padding: "36px",
+              gap: "24px",
+            },
+          }}
+          ref={dialogRef}
+        >
+          <Button onClick={() => dialogRef.current?.minimizeDialog()}>
+            Minimize here.
+          </Button>
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Add New Employee
+            </h2>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              Fill out the information below to add a new employee to your team.
+            </p>
+          </div>
+
+          <div
+            style={{
+              maxWidth: "400px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
             }}
           >
-            <Button onClick={() => dialogRef.current?.minimizeDialog()}>
-              Minimize here.
-            </Button>
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-            >
-              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                Add New Employee
-              </h2>
-              <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                Fill out the information below to add a new employee to your
-                team.
-              </p>
-            </div>
+            <StatefulForm
+              fields={EMPLOYEE_FIELDS}
+              formValues={value}
+              validationSchema={employeeSchema}
+              onValidityChange={setIsFormValid}
+              onChange={({ currentState }) =>
+                setValue((prev) => ({ ...prev, ...currentState }))
+              }
+              mode="onChange"
+            />
 
             <div
               style={{
-                maxWidth: "400px",
                 display: "flex",
-                flexDirection: "column",
-                gap: "4px",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "flex-end",
               }}
             >
-              <StatefulForm
-                fields={EMPLOYEE_FIELDS}
-                formValues={value}
-                validationSchema={employeeSchema}
-                onValidityChange={setIsFormValid}
-                onChange={({ currentState }) =>
-                  setValue((prev) => ({ ...prev, ...currentState }))
-                }
-                mode="onChange"
-              />
-
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
+              <Button
+                disabled={!isFormValid}
+                styles={{
+                  self: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
                 }}
+                type="submit"
               >
-                <Button
-                  disabled={!isFormValid}
-                  styles={{
-                    self: {
-                      width: "100%",
-                      cursor: "pointer",
-                      maxWidth: "180px",
-                    },
-                  }}
-                  type="submit"
-                >
-                  Save
-                </Button>
-              </div>
+                Save
+              </Button>
             </div>
-          </PaperDialog.Content>
+          </div>
         </PaperDialog>
       </div>
     );
@@ -260,32 +257,31 @@ export const NonClosable: Story = {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
 
-        <PaperDialog closable={false} width="35vw" ref={dialogRef}>
-          <PaperDialog.Content
-            styles={{
-              self: {
-                padding: "36px",
-                gap: "16px",
-              },
-            }}
-          >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-            >
-              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                Non-Escapable Dialog
-              </h2>
-              <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                This dialog cannot be closed by pressing the Escape key or
-                clicking the background overlay. Use the close button or action
-                buttons to dismiss it.
-              </p>
-              <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                You can still interact with the content and action buttons
-                inside the dialog.
-              </p>
-            </div>
-          </PaperDialog.Content>
+        <PaperDialog
+          closable={false}
+          width="35vw"
+          styles={{
+            contentStyle: {
+              padding: "36px",
+              gap: "16px",
+            },
+          }}
+          ref={dialogRef}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Non-Escapable Dialog
+            </h2>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              This dialog cannot be closed by pressing the Escape key or
+              clicking the background overlay. Use the close button or action
+              buttons to dismiss it.
+            </p>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              You can still interact with the content and action buttons inside
+              the dialog.
+            </p>
+          </div>
         </PaperDialog>
       </div>
     );
@@ -368,68 +364,70 @@ export const FixedLeft: Story = {
     ];
 
     return (
-      <PaperDialog closable position="left" width="70vw">
+      <PaperDialog
+        styles={{
+          contentStyle: {
+            padding: "36px",
+            gap: "16px",
+          },
+        }}
+        closable
+        position="left"
+        width="70vw"
+      >
         <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
-        <PaperDialog.Content
-          styles={{
-            self: {
-              padding: "36px",
-              gap: "16px",
-            },
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+            Add New Employee
+          </h2>
+          <p style={{ fontSize: "14px", color: "#4B5563" }}>
+            Fill out the information below to add a new employee to your team.
+          </p>
+        </div>
+
+        <div
+          style={{
+            maxWidth: "400px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "4px",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-              Add New Employee
-            </h2>
-            <p style={{ fontSize: "14px", color: "#4B5563" }}>
-              Fill out the information below to add a new employee to your team.
-            </p>
-          </div>
+          <StatefulForm
+            fields={EMPLOYEE_FIELDS}
+            formValues={value}
+            validationSchema={employeeSchema}
+            onValidityChange={setIsFormValid}
+            onChange={({ currentState }) =>
+              setValue((prev) => ({ ...prev, ...currentState }))
+            }
+            mode="onChange"
+          />
 
           <div
             style={{
-              maxWidth: "400px",
               display: "flex",
-              flexDirection: "column",
-              gap: "4px",
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "flex-end",
             }}
           >
-            <StatefulForm
-              fields={EMPLOYEE_FIELDS}
-              formValues={value}
-              validationSchema={employeeSchema}
-              onValidityChange={setIsFormValid}
-              onChange={({ currentState }) =>
-                setValue((prev) => ({ ...prev, ...currentState }))
-              }
-              mode="onChange"
-            />
-
-            <div
-              style={{
-                display: "flex",
-                width: "100%",
-                flexDirection: "row",
-                justifyContent: "flex-end",
+            <Button
+              disabled={!isFormValid}
+              styles={{
+                self: {
+                  width: "100%",
+                  cursor: "pointer",
+                  maxWidth: "180px",
+                },
               }}
+              type="submit"
             >
-              <Button
-                disabled={!isFormValid}
-                styles={{
-                  self: {
-                    width: "100%",
-                    cursor: "pointer",
-                    maxWidth: "180px",
-                  },
-                }}
-                type="submit"
-              >
-                Save
-              </Button>
-            </div>
+              Save
+            </Button>
           </div>
-        </PaperDialog.Content>
+        </div>
       </PaperDialog>
     );
   },
@@ -655,75 +653,78 @@ export const Nested: Story = {
           </Table>
         </Card>
 
-        <PaperDialog ref={dialogRef1} closable width="90vw">
-          <PaperDialog.Content
+        <PaperDialog
+          ref={dialogRef1}
+          styles={{
+            contentStyle: css`
+              gap: 24px;
+              overflow: auto;
+            `,
+          }}
+          closable
+          width="90vw"
+        >
+          <Card
+            title="Family Registry"
+            subtitle="Detailed view of employees and their family registry records"
             styles={{
-              self: css`
-                gap: 24px;
-                overflow: auto;
+              containerStyle: css`
+                padding: 0px;
+                width: 100%;
+              `,
+              headerStyle: css`
+                border-bottom: 1px solid #d1d5db;
               `,
             }}
           >
-            <Card
-              title="Family Registry"
-              subtitle="Detailed view of employees and their family registry records"
-              styles={{
-                containerStyle: css`
-                  padding: 0px;
-                  width: 100%;
-                `,
-                headerStyle: css`
-                  border-bottom: 1px solid #d1d5db;
-                `,
-              }}
-            >
-              <Table
-                searchable
-                actions={[
-                  {
-                    caption: "Add Family",
-                    icon: {
-                      image: RiAddBoxLine,
-                    },
-                    onClick: async () => {
-                      await dialogRef2.current.openDialog();
-                    },
+            <Table
+              searchable
+              actions={[
+                {
+                  caption: "Add Family",
+                  icon: {
+                    image: RiAddBoxLine,
                   },
-                ]}
-                searchbox={{ onChange: (e) => setFamilySearch(e.target.value) }}
-                columns={columns}
-                onItemsSelected={handleItemsSelected}
-              >
-                {filteredFamilyRows?.map((rowValue, rowIndex) => (
-                  <Table.Row
-                    key={rowIndex}
-                    actions={ROW_ACTIONS}
-                    rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
-                    content={[
-                      rowValue.name,
-                      rowValue.status,
-                      rowValue.gender,
-                      rowValue.birthday,
-                    ]}
-                  />
-                ))}
-              </Table>
-            </Card>
-          </PaperDialog.Content>
+                  onClick: async () => {
+                    await dialogRef2.current.openDialog();
+                  },
+                },
+              ]}
+              searchbox={{ onChange: (e) => setFamilySearch(e.target.value) }}
+              columns={columns}
+              onItemsSelected={handleItemsSelected}
+            >
+              {filteredFamilyRows?.map((rowValue, rowIndex) => (
+                <Table.Row
+                  key={rowIndex}
+                  actions={ROW_ACTIONS}
+                  rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
+                  content={[
+                    rowValue.name,
+                    rowValue.status,
+                    rowValue.gender,
+                    rowValue.birthday,
+                  ]}
+                />
+              ))}
+            </Table>
+          </Card>
         </PaperDialog>
 
-        <PaperDialog ref={dialogRef2} closable width="75vw">
-          <PaperDialog.Content
-            styles={{
-              self: { padding: "36px", gap: "24px" },
-            }}
-          >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-            >
-              <h3>Nested</h3>
-            </div>
-          </PaperDialog.Content>
+        <PaperDialog
+          ref={dialogRef2}
+          closable
+          width="75vw"
+          styles={{
+            contentStyle: css`
+              padding: 36px;
+              gap: 24px;
+            `,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <h3>Nested</h3>
+          </div>
         </PaperDialog>
       </Fragment>
     );
