@@ -58,7 +58,7 @@ It is commonly used for action menus, context menus, or inline tips.
 <TipMenu
   subMenuList={[
     { caption: "Edit", onClick: () => console.log("Edit clicked") },
-    { caption: "Delete", variant:"danger", onClick: () => console.log("Deleted") },
+    { caption: "Delete", variant: "danger", onClick: () => console.log("Deleted") },
     { caption: "View", variant: "success" }
   ]}
   withFilter

@@ -44,7 +44,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 \`\`\`tsx
 const subMenuList: ToolbarSubMenuList[] = [
   { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
-  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, variant:"danger", onClick: () => console.log("Deleted") },
+  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, variant: "danger", onClick: () => console.log("Deleted") },
 ];
 
 <Toolbar big>
