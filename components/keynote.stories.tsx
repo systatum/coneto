@@ -17,7 +17,7 @@ Keynote displays key-value pairs in a clean, structured layout with data sourced
 
 ### ✨ Features
 - 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
-- 🎨 **Custom data**: Supports \`ReactNode\` values and per-key formatters for flexible rendering (e.g., bold text, currency formatting, or custom JSX).
+- 🎨 **Custom rendering**: Supports \`ReactNode\` values and per-key formatters for flexible rendering (e.g., bold text, currency formatting, or custom JSX).
 - 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via \`styles\` prop.
 
 ---

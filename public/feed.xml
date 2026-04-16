@@ -44,7 +44,7 @@ central square. That square is the user. The person everything is built for. A r
 that every interface ultimately connects back to you and the people your product serves.</description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <lastBuildDate>Thu, 16 Apr 2026 02:52:49 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 16 Apr 2026 04:47:58 GMT</lastBuildDate>
     
           <item>
           <title>Dark mode</title>
@@ -377,7 +377,7 @@ Key features include:
 - **Styling Overrides**: Customize each section using CSS props.
 
 This component is ideal for dashboards, panels, grouped content, and modular UI sections.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -710,7 +710,7 @@ Grouped Option
   }}
 />
 ```]]></description>
-        <pubDate>Wed, 15 Apr 2026 09:01:34 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -1224,6 +1224,35 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
     
 
       <item>
+        <title>Helper - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-helper</link>
+        <guid>6159a77407fa03f82555e09cf7dce7affd64d3ec</guid>
+        <description><![CDATA[**Helper** is a lightweight tooltip trigger component used to display contextual help or additional information via an icon.
+
+---
+✨ Features
+- 💡 **Tooltip display**: Shows contextual information when hovering over the helper icon.
+- ⏱ **Delay support**: Includes a configurable delay before showing the tooltip (`showDelayPeriod`).
+- 🎯 **Smart positioning**: Adjusts tooltip arrow alignment based on placement.
+- 🧩 **Composable**: Built on top of the `Tooltip` component for flexibility and consistency.
+- 🎨 **Customizable styles**: Supports style overrides for container and arrow via the `styles` prop.
+
+---
+📌 Usage
+
+```tsx
+<Helper value="This field is required and must be unique." />
+```
+
+- The `value` prop defines the content shown inside the tooltip.
+- Displays an information icon that users can hover to reveal the message.
+- Ideal for form fields, labels, or any UI that needs extra explanation without cluttering the layout.
+- Uses a default hover delay of 400ms to improve user experience.]]></description>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
+      </item>
+    
+
+      <item>
         <title>Imagebox - Coneto React UI</title>
         <link>https://coneto.systatum.com/?path=/docs/input-elements-imagebox</link>
         <guid>9f0056c77928f74d487a255f37cd8c1d0670f719</guid>
@@ -1279,7 +1308,7 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 ---
 ✨ Features
 - 🗝 **Automatic key-value rendering**: Display selected keys and labels from a data object.
-- 🎨 **Custom rendering**: Provide a `renderer` function per key for formatting (e.g., bold numbers, currency formatting, JSX content).
+- 🎨 **Custom rendering**: Supports `ReactNode` values and per-key formatters for flexible rendering (e.g., bold text, currency formatting, or custom JSX).
 - 🖌 **Styling flexibility**: Customize the wrapper, rows, keys, and values via `styles` prop.
 
 ---
@@ -1287,12 +1316,9 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 
 ```tsx
 <Keynote
-  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: 80000 }}
+  data={{ name: "Budi Siahaan", role: "Frontend Engineer", salary: <b>80000 $</b> }}
   keys={["name", "role", "salary"]}
   keyLabels={["Full Name", "Position", "Monthly Salary"]}
-  renderer={{
-    salary: val => <b>{val.toLocaleString()} $</b>
-  }}
   styles={{
     self: css`margin-top: 16px;`,
     rowStyle: css`padding: 8px 0;`,
@@ -1309,10 +1335,9 @@ It supports predefined presets, flexible gaps, optional width/height, and indivi
 ```
 
 - Use `data` + `keys` + `keyLabels` to render object values automatically.
-- Use `renderer` for custom formatting or JSX output.
 - Fully styleable using the `styles` prop.
 - `Keynote.Point` can be used individually for custom rows.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:47:58 GMT</pubDate>
       </item>
     
 
@@ -1401,7 +1426,7 @@ It supports custom styling, pagination, draggable pages, and flexible section la
   </List.Group>
 </List>
 ```]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -1707,10 +1732,22 @@ optional currency dropdown.
   </PaperDialog.Content>
 </PaperDialog>
 ```
+🎨 Custom Icons
+You can override the default control icons (e.g. close and restore) by passing custom icon components:
+
+```tsx
+<PaperDialog
+  icons={{
+    closeIcon: { image: RiCloseLine },
+    restoreIcon: { image: RiSubtractLine }
+  }}
+/>
+```
 📝 Notes
 - Always include both `PaperDialog.Trigger` and `PaperDialog.Content` as children.
-- Use `styles` prop to override default styles.]]></description>
-        <pubDate>Wed, 15 Apr 2026 10:41:52 GMT</pubDate>
+- Use `styles` prop to override default styles.
+- Use the `icons` prop to override default icons.]]></description>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -1888,7 +1925,7 @@ Accessible via `ref`:
 - Notes / documentation tools
 - Internal CMS editors
 - Markdown-based content systems]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -2112,6 +2149,71 @@ When `strict` is enabled:
     
 
       <item>
+        <title>SplitPane - Coneto React UI</title>
+        <link>https://coneto.systatum.com/?path=/docs/content-splitpane</link>
+        <guid>a7d404bd324a2cd1dc6f792fe01215403a81586c</guid>
+        <description><![CDATA[SplitPane is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
+
+---
+✨ Features
+- ↔️ **Resizable cells**: Drag dividers to adjust the size of adjacent cells.
+- 🖥 **Orientation support**: Configure layout as "horizontal" (row) or "vertical" (column).
+- 🧩 **Flexible children**: Embed any ReactNode inside cells, including forms, tables, or custom components.
+- 🎨 **Customizable styles**: Override container styles (`self`) and divider styles (`dividerStyle`).
+- 🖱 **Cell actions**: Add buttons or icons in each cell with click handlers and optional visibility.
+- 📐 **Initial sizing**: Provide an initial size ratio array (e.g., `[0.3, 0.7]`) for each cell.
+- ⚡ **Performance-optimized**: Resize operations are throttled using `requestAnimationFrame` to ensure smooth dragging.
+- ⛔ **Disabled dragging**: Cells can ignore pointer events during dragging to prevent interaction conflicts.
+
+---
+📌 Usage
+```tsx
+<SplitPane
+  orientation="horizontal"
+  initialSizeRatio={[0.4, 0.6]}
+  styles={{
+    self: css`border: 1px solid #ccc; height: 300px;`,
+    dividerStyle: css`background-color: #e5e7eb;`,
+  }}
+  onResize={() => console.log("Resizing...")}
+  onResizeComplete={() => console.log("Resize complete")}
+>
+  <SplitPane.Cell
+    styles={{ self: css`background: #f9fafb;` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 1 close clicked"),
+      },
+    ]}
+  >
+    <div>Left content</div>
+  </SplitPane.Cell>
+  <SplitPane.Cell
+    styles={{ self: css`background: #fff;` }}
+    actions={[
+      {
+        icon: { image: RiCloseLine },
+        onClick: () => console.log("Cell 2 close clicked"),
+      },
+    ]}
+  >
+    <div>Right content</div>
+  </SplitPane.Cell>
+</SplitPane>
+```
+
+- Use `orientation` to control layout direction.
+- Provide `initialSizeRatio` to control starting sizes of cells.
+- Add any ReactNode as content for each `SplitPane.Cell`.
+- Use `actions` to attach buttons or icons inside a cell.
+- Fully styleable via the `styles` prop for both container and dividers.
+- Listen to `onResize` and `onResizeComplete` for drag events.]]></description>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
+      </item>
+    
+
+      <item>
         <title>StatefulForm - Coneto React UI</title>
         <link>https://coneto.systatum.com/?path=/docs/input-elements-statefulform</link>
         <guid>6bfe9b094b9d8b4017be5f5bb4a4b40668c3771b</guid>
@@ -2168,7 +2270,7 @@ const fields = [
 - Listen to `onChange` for live updates and `onValidityChange` to track form validity.
 - Customize appearance and spacing using `styles`.
 - Render fully custom inputs using `type="custom"` and the `render` prop.]]></description>
-        <pubDate>Wed, 15 Apr 2026 07:22:22 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -2436,7 +2538,7 @@ Grouped Row
 - Combine **pagination + infinite scroll** carefully (avoid overlap)
 - Provide meaningful **emptySlate** content for better UX
 - Use **summary rows** for totals or aggregated data]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -2482,7 +2584,7 @@ Grouped Row
 - Use `actions` to show buttons/icons inside the input.
 - Use `showError` and `errorMessage` for validation feedback.
 - Fully styleable via `styles.self`.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:07:57 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -2767,7 +2869,7 @@ It is commonly used for action menus, context menus, or inline tips.
 - Use `size` to change spacing and sizing for items.
 - Fully styleable via `styles.self`.
 - You can still pass custom children if needed.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:52:49 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -2906,7 +3008,7 @@ const subMenuList: ToolbarSubMenuList[] = [
 - Hover and active states are handled automatically, including special styles for dangerous actions.
 - Supports responsive behavior — captions are hidden for smaller screens if `icon` is provided.
 - Fully compatible with any React project using Styled Components.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:14:51 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 04:11:31 GMT</pubDate>
       </item>
     
 
@@ -3006,71 +3108,6 @@ Ideal for complex menus, file explorers, task lists, or any nested content visua
 - Provide `emptyItemSlate` for placeholder text when groups have no items.
 - Add `actions` for per-item or per-group interactive buttons.]]></description>
         <pubDate>Tue, 14 Apr 2026 08:22:16 GMT</pubDate>
-      </item>
-    
-
-      <item>
-        <title>SplitPane - Coneto React UI</title>
-        <link>https://coneto.systatum.com/?path=/docs/content-window</link>
-        <guid>d9404ddb82b788fa82259578022ad67471dc658c</guid>
-        <description><![CDATA[SplitPane is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
-
----
-✨ Features
-- ↔️ **Resizable cells**: Drag dividers to adjust the size of adjacent cells.
-- 🖥 **Orientation support**: Configure layout as "horizontal" (row) or "vertical" (column).
-- 🧩 **Flexible children**: Embed any ReactNode inside cells, including forms, tables, or custom components.
-- 🎨 **Customizable styles**: Override container styles (`self`) and divider styles (`dividerStyle`).
-- 🖱 **Cell actions**: Add buttons or icons in each cell with click handlers and optional visibility.
-- 📐 **Initial sizing**: Provide an initial size ratio array (e.g., `[0.3, 0.7]`) for each cell.
-- ⚡ **Performance-optimized**: Resize operations are throttled using `requestAnimationFrame` to ensure smooth dragging.
-- ⛔ **Disabled dragging**: Cells can ignore pointer events during dragging to prevent interaction conflicts.
-
----
-📌 Usage
-```tsx
-<SplitPane
-  orientation="horizontal"
-  initialSizeRatio={[0.4, 0.6]}
-  styles={{
-    self: css`border: 1px solid #ccc; height: 300px;`,
-    dividerStyle: css`background-color: #e5e7eb;`,
-  }}
-  onResize={() => console.log("Resizing...")}
-  onResizeComplete={() => console.log("Resize complete")}
->
-  <SplitPane.Cell
-    styles={{ self: css`background: #f9fafb;` }}
-    actions={[
-      {
-        icon: { image: RiCloseLine },
-        onClick: () => console.log("Cell 1 close clicked"),
-      },
-    ]}
-  >
-    <div>Left content</div>
-  </SplitPane.Cell>
-  <SplitPane.Cell
-    styles={{ self: css`background: #fff;` }}
-    actions={[
-      {
-        icon: { image: RiCloseLine },
-        onClick: () => console.log("Cell 2 close clicked"),
-      },
-    ]}
-  >
-    <div>Right content</div>
-  </SplitPane.Cell>
-</SplitPane>
-```
-
-- Use `orientation` to control layout direction.
-- Provide `initialSizeRatio` to control starting sizes of cells.
-- Add any ReactNode as content for each `SplitPane.Cell`.
-- Use `actions` to attach buttons or icons inside a cell.
-- Fully styleable via the `styles` prop for both container and dividers.
-- Listen to `onResize` and `onResizeComplete` for drag events.]]></description>
-        <pubDate>Wed, 15 Apr 2026 09:01:34 GMT</pubDate>
       </item>
     
   </channel>
