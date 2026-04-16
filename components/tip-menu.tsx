@@ -103,6 +103,7 @@ function TipMenu({
           variant={menu.variant ?? variant}
           caption={menu.caption}
           icon={menu.icon}
+          size={menu.size ?? size}
           className={menu.className}
           hidden={menu.hidden}
           onClick={(e) => {
