@@ -283,7 +283,7 @@ function buildItem({ title, url, guid, rawDescription, pubDate }) {
     <title>${escapeXml(title)}</title>
     <link>${url}</link>
     <guid isPermaLink="false">${guid}</guid>
-    <description>${summary}</description>
+    <description><![CDATA[${summary}]]></description>
     <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
     <pubDate>${pubDate.toUTCString()}</pubDate>
   </item>`;
@@ -381,8 +381,7 @@ async function main() {
   <channel>
     <title>${escapeXml(channelTitle)}</title>
     <link>${SITE_URL}</link>
-    <description>${escapeXml(makeSummary(channelDescription))}</description>
-    <content:encoded><![CDATA[${cleanDescription(channelDescription)}]]></content:encoded>
+    <description><![CDATA[${makeSummary(channelDescription)}]]></description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
     <atom:link href="${SITE_URL}/feed.xml" rel="self" type="application/rss+xml" />
