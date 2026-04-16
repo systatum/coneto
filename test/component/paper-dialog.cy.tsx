@@ -4,6 +4,7 @@ import {
   PaperDialog,
   PaperDialogProps,
   PaperDialogRef,
+  PaperDialogStyles,
 } from "./../../components/paper-dialog";
 import { ReactNode, useRef } from "react";
 import { generateSentence } from "./../../lib/text";
@@ -26,33 +27,37 @@ describe("PaperDialog", () => {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
 
-        <PaperDialog closable width="35vw" ref={dialogRef} {...props}>
-          <PaperDialog.Content
-            styles={{
-              self: css`
-                padding: 36px;
-                gap: 16px;
-              `,
-            }}
-          >
-            {props?.children ? (
-              props?.children
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
-              >
-                <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                  Escapable Feature
-                </h2>
-                <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                  {generateSentence()}
-                </p>
-                <p style={{ fontSize: "14px", color: "#4B5563" }}>
-                  {generateSentence()}
-                </p>
-              </div>
-            )}
-          </PaperDialog.Content>
+        <PaperDialog
+          closable
+          width="35vw"
+          ref={dialogRef}
+          {...props}
+          styles={{
+            ...props?.styles,
+            contentStyle: css`
+              padding: 36px;
+              gap: 16px;
+              ${props?.styles?.contentStyle}
+            `,
+          }}
+        >
+          {props?.children ? (
+            props?.children
+          ) : (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
+              <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                Escapable Feature
+              </h2>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                {generateSentence()}
+              </p>
+              <p style={{ fontSize: "14px", color: "#4B5563" }}>
+                {generateSentence()}
+              </p>
+            </div>
+          )}
         </PaperDialog>
       </div>
     );
@@ -436,6 +441,65 @@ describe("PaperDialog", () => {
               expect(el.scrollHeight).to.be.greaterThan(el.clientHeight);
             });
         });
+      });
+    });
+
+    const setup = (styles?: PaperDialogStyles) => {
+      cy.mount(<ProductPaperDialog closable={true} styles={styles} />);
+      cy.findAllByRole("button").eq(0).should("exist").click();
+    };
+
+    context("contentStyle", () => {
+      it("applies custom content style", () => {
+        setup({
+          contentStyle: { backgroundColor: "rgb(255, 0, 0)" },
+        });
+
+        cy.findByLabelText("paper-dialog-content")
+          .should("be.visible")
+          .and("have.css", "background-color", "rgb(255, 0, 0)");
+      });
+    });
+
+    context("overlayStyle", () => {
+      it("applies custom overlay style", () => {
+        setup({
+          overlayStyle: { backgroundColor: "rgba(0, 0, 255, 0.5)" },
+        });
+
+        cy.findByLabelText("overlay-blocker").should(
+          "have.css",
+          "background-color",
+          "rgba(0, 0, 255, 0.5)"
+        );
+      });
+    });
+
+    context("closeButtonStyle", () => {
+      it("applies custom close button style", () => {
+        setup({
+          closeButtonStyle: { backgroundColor: "rgb(255, 255, 0)" },
+        });
+
+        cy.findByLabelText("paper-dialog-toggle-close").should(
+          "have.css",
+          "background-color",
+          "rgb(255, 255, 0)"
+        );
+      });
+    });
+
+    context("minimizeButtonStyle", () => {
+      it("applies custom minimize button style", () => {
+        setup({
+          minimizeButtonStyle: { backgroundColor: "rgb(0, 255, 255)" },
+        });
+
+        cy.findByLabelText("paper-dialog-toggle-restore").should(
+          "have.css",
+          "background-color",
+          "rgb(0, 255, 255)"
+        );
       });
     });
   });

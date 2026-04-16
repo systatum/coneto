@@ -57,10 +57,10 @@ export interface PaperDialogIcons {
 }
 
 export interface PaperDialogStyles {
-  self?: CSSProp;
-  tabStyle?: CSSProp;
-  tabCloseStyle?: CSSProp;
-  paperDialogStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  minimizeButtonStyle?: CSSProp;
+  closeButtonStyle?: CSSProp;
+  overlayStyle?: CSSProp;
 }
 
 export interface PaperDialogTriggerProps {
@@ -86,7 +86,7 @@ export interface PaperDialogRef {
   minimizeDialog: () => void;
 }
 
-const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
+const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   (
     {
       position = "right",
@@ -151,130 +151,111 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     const childArray = Children.toArray(children);
 
-    const trigger = childArray.find(
-      (child): child is ReactElement<PaperDialogTriggerProps> =>
-        isValidElement(child) && child.type === PaperDialog.Trigger
-    );
-
-    const content = childArray.find(
-      (child): child is ReactElement<PaperDialogContentProps> =>
-        isValidElement(child) && child.type === PaperDialog.Content
-    );
-
     return (
-      <Fragment>
-        {trigger &&
-          cloneElement(trigger, {
-            setDialogState: async () => {
-              await setDialogState("restored");
-              await handleToggleDrawer("restored");
-            },
-          })}
+      dialogState !== "closed" && (
+        <DialogOverlay $dialogState={dialogState}>
+          {dialogState === "restored" && (
+            <OverlayBlocker
+              onClick={async ({ preventDefault, close }) => {
+                await preventDefault();
+                if (closable) {
+                  await setDialogState("closed");
+                  await close();
 
-        {dialogState !== "closed" && (
-          <DialogOverlay
-            $dialogState={dialogState}
-            $paperDialogStyle={styles?.paperDialogStyle}
-          >
-            {dialogState === "restored" && (
-              <OverlayBlocker
-                onClick={async ({ preventDefault, close }) => {
-                  await preventDefault();
-                  if (closable) {
-                    await setDialogState("closed");
-                    await close();
-
-                    if (onClosed) {
-                      await onClosed();
-                    }
+                  if (onClosed) {
+                    await onClosed();
                   }
-                }}
-                show={dialogState === "restored"}
-              />
-            )}
+                }
+              }}
+              styles={{
+                self: styles?.overlayStyle,
+              }}
+              show={dialogState === "restored"}
+            />
+          )}
 
-            <MotionDialog
-              aria-label="paper-dialog-wrapper"
-              $width={width}
-              initial={{ x: isLeft ? "-100%" : "100%" }}
-              animate={controls}
-              $isLeft={isLeft}
-              $style={styles?.self}
-              $theme={paperDialogTheme}
-            >
-              {closable && (
-                <CloseButtonWrapper
-                  $isLeft={isLeft}
-                  $tabStyle={styles?.tabCloseStyle}
-                >
-                  <IconButton
-                    $theme={paperDialogTheme}
-                    $isLeft={isLeft}
-                    aria-label="paper-dialog-toggle-close"
-                    onClick={() => {
-                      setDialogState("closed");
-                      if (onClosed) {
-                        onClosed();
-                      }
-                    }}
-                  >
-                    <Figure
-                      {...icons?.closeIcon}
-                      aria-label="paper-dialog-close-icon"
-                      image={icons?.closeIcon?.image ?? RiCloseLine}
-                      size={icons?.closeIcon?.size ?? 18}
-                    />
-                  </IconButton>
-                </CloseButtonWrapper>
-              )}
-
-              <MinimizeButtonWrapper
-                $isLeft={isLeft}
-                $tabStyle={styles?.tabStyle}
-              >
+          <MotionDialog
+            aria-label="paper-dialog-wrapper"
+            $width={width}
+            initial={{ x: isLeft ? "-100%" : "100%" }}
+            animate={controls}
+            $isLeft={isLeft}
+            $theme={paperDialogTheme}
+          >
+            {closable && (
+              <ActionButtonWrapper $top={4} $isLeft={isLeft}>
                 <IconButton
                   $theme={paperDialogTheme}
                   $isLeft={isLeft}
-                  aria-label="paper-dialog-toggle-restore"
-                  onClick={() =>
-                    handleToggleDrawer(
-                      dialogState === "minimized" ? "restored" : "minimized"
-                    )
-                  }
+                  $style={styles?.closeButtonStyle}
+                  aria-label="paper-dialog-toggle-close"
+                  onClick={() => {
+                    setDialogState("closed");
+                    if (onClosed) {
+                      onClosed();
+                    }
+                  }}
                 >
                   <Figure
-                    {...icons?.restoreIcon}
-                    image={
-                      icons?.restoreIcon?.image ??
-                      (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
-                    }
-                    aria-label="paper-dialog-restore-icon"
-                    size={icons?.restoreIcon?.size ?? 18}
-                    styles={{
-                      self: css`
-                        display: flex;
-                        transition: transform 0.5s ease-in-out;
-                        transform: ${dialogState === "restored"
-                          ? "rotate(180deg)"
-                          : "rotate(0deg)"};
-                      `,
-                    }}
+                    {...icons?.closeIcon}
+                    aria-label="paper-dialog-close-icon"
+                    image={icons?.closeIcon?.image ?? RiCloseLine}
+                    size={icons?.closeIcon?.size ?? 18}
                   />
                 </IconButton>
-              </MinimizeButtonWrapper>
+              </ActionButtonWrapper>
+            )}
 
-              <Fragment>{content}</Fragment>
-            </MotionDialog>
-          </DialogOverlay>
-        )}
-      </Fragment>
+            <ActionButtonWrapper $top={44} $isLeft={isLeft}>
+              <IconButton
+                $theme={paperDialogTheme}
+                $style={styles?.minimizeButtonStyle}
+                $isLeft={isLeft}
+                aria-label="paper-dialog-toggle-restore"
+                onClick={() =>
+                  handleToggleDrawer(
+                    dialogState === "minimized" ? "restored" : "minimized"
+                  )
+                }
+              >
+                <Figure
+                  {...icons?.restoreIcon}
+                  image={
+                    icons?.restoreIcon?.image ??
+                    (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+                  }
+                  aria-label="paper-dialog-restore-icon"
+                  size={icons?.restoreIcon?.size ?? 18}
+                  styles={{
+                    self: css`
+                      display: flex;
+                      transition: transform 0.5s ease-in-out;
+                      transform: ${dialogState === "restored"
+                        ? "rotate(180deg)"
+                        : "rotate(0deg)"};
+                    `,
+                  }}
+                />
+              </IconButton>
+            </ActionButtonWrapper>
+
+            <PaperDialogContent
+              $theme={paperDialogTheme}
+              aria-label="paper-dialog-content"
+              $style={styles?.contentStyle}
+            >
+              {children}
+            </PaperDialogContent>
+          </MotionDialog>
+        </DialogOverlay>
+      )
     );
   }
 );
 
 const DialogOverlay = styled.div<{
   $dialogState: PaperDialogState;
-  $paperDialogStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   position: fixed;
   z-index: 9991999;
@@ -284,7 +265,7 @@ const DialogOverlay = styled.div<{
       inset: 0;
     `}
 
-  ${({ $paperDialogStyle }) => $paperDialogStyle}
+  ${({ $style }) => $style}
 `;
 
 const MotionDialog = styled(motion.div)<{
@@ -319,12 +300,13 @@ const MotionDialog = styled(motion.div)<{
   ${({ $style }) => $style};
 `;
 
-const CloseButtonWrapper = styled.div<{
+const ActionButtonWrapper = styled.div<{
   $isLeft: boolean;
-  $tabStyle?: CSSProp;
+  $top: number;
+  $style?: CSSProp;
 }>`
   position: absolute;
-  top: 4px;
+  top: ${({ $top }) => `${$top}px`};
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -340,37 +322,12 @@ const CloseButtonWrapper = styled.div<{
           right: 100%;
           translate: 4px;
         `}
-
-  ${({ $tabStyle }) => $tabStyle}
-`;
-
-const MinimizeButtonWrapper = styled.div<{
-  $isLeft: boolean;
-  $tabStyle?: CSSProp;
-}>`
-  position: absolute;
-  z-index: 9999;
-  top: 44px;
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  ${({ $isLeft }) =>
-    $isLeft
-      ? css`
-          left: 100%;
-          translate: -4px;
-        `
-      : css`
-          right: 100%;
-          translate: 4px;
-        `}
-  ${({ $tabStyle }) => $tabStyle}
 `;
 
 const IconButton = styled.button<{
   $isLeft: boolean;
   $theme?: PaperDialogThemeConfig;
+  $style?: CSSProp;
 }>`
   position: relative;
   cursor: pointer;
@@ -396,50 +353,12 @@ const IconButton = styled.button<{
           border-top-width: 1px;
           border-bottom-width: 1px;
           border-radius: 0.75rem 0 0 0.75rem;
-        `}
+        `};
+
+  ${({ $style }) => $style}
 `;
 
-function PaperDialogTrigger({
-  children,
-  icon,
-  setDialogState,
-  variant = "default",
-  styles,
-}: PaperDialogTriggerProps) {
-  return (
-    <Button
-      variant={variant}
-      aria-label="paper-dialog-trigger"
-      onClick={() => {
-        setDialogState("restored");
-      }}
-      styles={styles}
-    >
-      {icon && <Figure {...icon} size={icon?.size ?? 20} />}
-      {children}
-    </Button>
-  );
-}
-
-export function PaperDialogContent({
-  children,
-  styles,
-}: PaperDialogContentProps) {
-  const { currentTheme } = useTheme();
-  const paperDialogTheme = currentTheme.paperDialog;
-
-  return (
-    <StyledDialogContent
-      $theme={paperDialogTheme}
-      aria-label="paper-dialog-content"
-      $style={styles?.self}
-    >
-      {children}
-    </StyledDialogContent>
-  );
-}
-
-const StyledDialogContent = styled.div<{
+const PaperDialogContent = styled.div<{
   $style?: CSSProp;
   $theme?: PaperDialogThemeConfig;
 }>`
@@ -456,10 +375,5 @@ const StyledDialogContent = styled.div<{
 
   ${({ $style }) => $style}
 `;
-
-const PaperDialog = Object.assign(PaperDialogBase, {
-  Trigger: PaperDialogTrigger,
-  Content: PaperDialogContent,
-});
 
 export { PaperDialog };
