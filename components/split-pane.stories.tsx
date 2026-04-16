@@ -1,21 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Window } from "./window";
+import { SplitPane } from "./split-pane";
 import { RiCloseFill } from "@remixicon/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { css } from "styled-components";
 import { Textarea } from "./textarea";
 import { TableColumn, Table } from "./table";
-import { useTheme } from "./../theme/provider";
+import { useTheme } from "../theme/provider";
 
-const meta: Meta<typeof Window> = {
-  title: "Content/Window",
-  component: Window,
+const meta: Meta<typeof SplitPane> = {
+  title: "Content/SplitPane",
+  component: SplitPane,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-Window is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
+SplitPane is a flexible container component that allows splitting content into resizable cells. It supports horizontal or vertical layouts, custom styles, draggable dividers, and cell-level actions such as buttons or icons. It’s ideal for dashboards, editors, or any UI requiring adjustable panels.
 
 ---
 
@@ -33,7 +33,7 @@ Window is a flexible container component that allows splitting content into resi
 
 ### 📌 Usage
 \`\`\`tsx
-<Window
+<SplitPane
   orientation="horizontal"
   initialSizeRatio={[0.4, 0.6]}
   styles={{
@@ -43,7 +43,7 @@ Window is a flexible container component that allows splitting content into resi
   onResize={() => console.log("Resizing...")}
   onResizeComplete={() => console.log("Resize complete")}
 >
-  <Window.Cell
+  <SplitPane.Cell
     styles={{ self: css\`background: #f9fafb;\` }}
     actions={[
       {
@@ -53,8 +53,8 @@ Window is a flexible container component that allows splitting content into resi
     ]}
   >
     <div>Left content</div>
-  </Window.Cell>
-  <Window.Cell
+  </SplitPane.Cell>
+  <SplitPane.Cell
     styles={{ self: css\`background: #fff;\` }}
     actions={[
       {
@@ -64,13 +64,13 @@ Window is a flexible container component that allows splitting content into resi
     ]}
   >
     <div>Right content</div>
-  </Window.Cell>
-</Window>
+  </SplitPane.Cell>
+</SplitPane>
 \`\`\`
 
 - Use \`orientation\` to control layout direction.
 - Provide \`initialSizeRatio\` to control starting sizes of cells.
-- Add any ReactNode as content for each \`Window.Cell\`.
+- Add any ReactNode as content for each \`SplitPane.Cell\`.
 - Use \`actions\` to attach buttons or icons inside a cell.
 - Fully styleable via the \`styles\` prop for both container and dividers.
 - Listen to \`onResize\` and \`onResizeComplete\` for drag events.
@@ -80,23 +80,23 @@ Window is a flexible container component that allows splitting content into resi
   },
   argTypes: {
     orientation: {
-      description: "Defines the layout orientation of the window cells.",
+      description: "Defines the layout orientation of the split pane cells.",
       control: { type: "radio" },
       options: ["horizontal", "vertical"],
     },
     children: {
       description:
-        "The content of the window. Can include one or more `Window.Cell` components.",
+        "The content of the split pane. Can include one or more `SplitPane.Cell` components.",
       control: { type: "object" },
     },
     styles: {
       self: {
-        description: "Custom CSS style applied to the window container.",
+        description: "Custom CSS style applied to the split pane container.",
         control: { type: "object" },
       },
       dividerself: {
         description:
-          "Custom CSS style applied to the dividers between window cells.",
+          "Custom CSS style applied to the dividers between split pane cells.",
         control: { type: "object" },
       },
     },
@@ -111,7 +111,7 @@ Window is a flexible container component that allows splitting content into resi
     },
     initialSizeRatio: {
       description:
-        "Initial size ratio for each window cell, e.g., `[0.3, 0.7]`. If not provided, sizes are automatically calculated for all children.",
+        "Initial size ratio for each split pane cell, e.g., `[0.3, 0.7]`. If not provided, sizes are automatically calculated for all children.",
       control: { type: "object" },
     },
   },
@@ -126,7 +126,7 @@ export const Default: Story = {
     const { mode } = useTheme();
 
     return (
-      <Window
+      <SplitPane
         orientation="vertical"
         styles={{
           self: css`
@@ -135,27 +135,27 @@ export const Default: Story = {
         }}
         {...args}
       >
-        <Window.Cell
+        <SplitPane.Cell
           styles={{
             self: css`
-              background-color: ${getWindowBg("Left", mode)};
+              background-color: ${getSplitPaneBg("Left", mode)};
               padding: 2.5rem;
             `,
           }}
         >
           Left
-        </Window.Cell>
-        <Window.Cell
+        </SplitPane.Cell>
+        <SplitPane.Cell
           styles={{
             self: css`
-              background-color: ${getWindowBg("Right", mode)};
+              background-color: ${getSplitPaneBg("Right", mode)};
               padding: 2.5rem;
             `,
           }}
         >
           Right
-        </Window.Cell>
-      </Window>
+        </SplitPane.Cell>
+      </SplitPane>
     );
   },
 };
@@ -165,7 +165,7 @@ export const Horizontal: Story = {
     const { mode } = useTheme();
 
     return (
-      <Window
+      <SplitPane
         orientation="horizontal"
         styles={{
           self: css`
@@ -174,27 +174,27 @@ export const Horizontal: Story = {
         }}
         {...args}
       >
-        <Window.Cell
+        <SplitPane.Cell
           styles={{
             self: css`
-              background-color: ${getWindowBg("Left", mode)};
+              background-color: ${getSplitPaneBg("Left", mode)};
               padding: 2.5rem;
             `,
           }}
         >
           Up
-        </Window.Cell>
-        <Window.Cell
+        </SplitPane.Cell>
+        <SplitPane.Cell
           styles={{
             self: css`
-              background-color: ${getWindowBg("Right", mode)};
+              background-color: ${getSplitPaneBg("Right", mode)};
               padding: 2.5rem;
             `,
           }}
         >
           Down
-        </Window.Cell>
-      </Window>
+        </SplitPane.Cell>
+      </SplitPane>
     );
   },
 };
@@ -203,7 +203,7 @@ export const Closable: Story = {
   render: (args) => {
     const { mode } = useTheme();
 
-    const baseWindows = useMemo(
+    const baseSplitPanes = useMemo(
       () => [
         { title: "Left", actions: false },
         { title: "Right", actions: true },
@@ -211,30 +211,30 @@ export const Closable: Story = {
       []
     );
 
-    const [windows, setWindows] = useState(baseWindows);
+    const [splitPanes, setSplitPanes] = useState(baseSplitPanes);
 
-    const styledWindows = useMemo(
+    const styledSplitPanes = useMemo(
       () =>
-        windows.map((w) => ({
-          ...w,
+        splitPanes.map((pane) => ({
+          ...pane,
           style: css`
-            background-color: ${getWindowBg(w.title, mode)};
+            background-color: ${getSplitPaneBg(pane.title, mode)};
             padding: 2.5rem;
           `,
         })),
-      [windows, mode]
+      [splitPanes, mode]
     );
 
     const WINDOW_ACTIONS = (title: string) => [
       {
         onClick: () =>
-          setWindows((prev) => prev.filter((item) => item.title !== title)),
+          setSplitPanes((prev) => prev.filter((item) => item.title !== title)),
         icon: { image: RiCloseFill },
       },
     ];
 
     return (
-      <Window
+      <SplitPane
         styles={{
           self: css`
             height: 400px;
@@ -242,16 +242,16 @@ export const Closable: Story = {
         }}
         {...args}
       >
-        {styledWindows.map((window) => (
-          <Window.Cell
-            key={window.title}
-            styles={{ self: window.style }}
-            actions={window.actions ? WINDOW_ACTIONS(window.title) : undefined}
+        {styledSplitPanes.map((pane) => (
+          <SplitPane.Cell
+            key={pane.title}
+            styles={{ self: pane.style }}
+            actions={pane.actions ? WINDOW_ACTIONS(pane.title) : undefined}
           >
-            {window.title}
-          </Window.Cell>
+            {pane.title}
+          </SplitPane.Cell>
         ))}
-      </Window>
+      </SplitPane>
     );
   },
 };
@@ -302,7 +302,7 @@ export const WithCellRef: Story = {
     ];
 
     return (
-      <Window
+      <SplitPane
         styles={{
           self: css`
             height: 100dvh;
@@ -319,10 +319,10 @@ export const WithCellRef: Story = {
           }
         }}
       >
-        <Window.Cell>
+        <SplitPane.Cell>
           <Table columns={columns}>{sampleRows}</Table>
-        </Window.Cell>
-        <Window.Cell
+        </SplitPane.Cell>
+        <SplitPane.Cell
           ref={secondCellRef}
           styles={{
             self: css`
@@ -340,13 +340,13 @@ export const WithCellRef: Story = {
             }}
             onChange={(e) => setValue(e.target.value)}
           />
-        </Window.Cell>
-      </Window>
+        </SplitPane.Cell>
+      </SplitPane>
     );
   },
 };
 
-const getWindowBg = (title: string, mode: "light" | "dark") => {
+const getSplitPaneBg = (title: string, mode: "light" | "dark") => {
   if (title === "Left") {
     return mode === "dark" ? "#7f1d1d" : "#fee2e2";
   } else if (title === "Right") {

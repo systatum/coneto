@@ -11,7 +11,7 @@ import { StatefulOnChangeType } from "./stateful-form";
 import { Button } from "./button";
 import { Textbox } from "./textbox";
 import styled, { css } from "styled-components";
-import { Window } from "./window";
+import { SplitPane } from "./split-pane";
 import { TableColumn, Table } from "./table";
 import { createPortal } from "react-dom";
 import { urlToBase64 } from "./../lib/base64";
@@ -358,7 +358,7 @@ export const PDF: Story = {
 
     return (
       <>
-        <Window
+        <SplitPane
           orientation="horizontal"
           styles={{
             self: css`
@@ -371,7 +371,7 @@ export const PDF: Story = {
             `,
           }}
         >
-          <Window.Cell>
+          <SplitPane.Cell>
             <DocumentViewer
               ref={ref}
               selectable
@@ -382,8 +382,8 @@ export const PDF: Story = {
               boundingBoxes={boundingBoxes}
               source={source}
             />
-          </Window.Cell>
-          <Window.Cell
+          </SplitPane.Cell>
+          <SplitPane.Cell
             styles={{
               self: css`
                 padding-top: 6px;
@@ -403,8 +403,8 @@ export const PDF: Story = {
                 </Table.Row>
               ))}
             </Table>
-          </Window.Cell>
-        </Window>
+          </SplitPane.Cell>
+        </SplitPane>
         {popupVisibility && createPortal(commentPopUp, document.body)}
       </>
     );

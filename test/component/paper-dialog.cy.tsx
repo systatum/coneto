@@ -8,6 +8,7 @@ import {
 } from "./../../components/paper-dialog";
 import { ReactNode, useRef } from "react";
 import { generateSentence } from "./../../lib/text";
+import { Ri4kLine } from "@remixicon/react";
 
 describe("PaperDialog", () => {
   function ProductPaperDialog(
@@ -61,6 +62,101 @@ describe("PaperDialog", () => {
       </div>
     );
   }
+
+  context("icons", () => {
+    context("restore icon", () => {
+      context("when not given", () => {
+        it("should renders with arrow icon (default)", () => {
+          cy.mount(
+            <ProductPaperDialog
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.findByLabelText("paper-dialog-restore-icon")
+            .find("path")
+            .invoke("attr", "d")
+            .should("include", "M10.8284");
+          // The default restore icon is has #M10.8284
+        });
+      });
+
+      context("when given another icon", () => {
+        it("should changes with customize icon", () => {
+          cy.mount(
+            <ProductPaperDialog
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+              icons={{
+                restoreIcon: {
+                  image: Ri4kLine,
+                },
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.findByLabelText("paper-dialog-restore-icon")
+            .find("path")
+            .invoke("attr", "d")
+            .should("not.include", "M10.8284");
+          // The default restore icon is has #M10.8284
+        });
+      });
+    });
+
+    context("close icon", () => {
+      context("when not given", () => {
+        it("should renders with close icon (default)", () => {
+          cy.mount(
+            <ProductPaperDialog
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.findByLabelText("paper-dialog-close-icon")
+            .find("path")
+            .invoke("attr", "d")
+            .should("include", "M11.9997");
+        });
+      });
+
+      context("when given another icon", () => {
+        it("should changes with customize icon", () => {
+          cy.mount(
+            <ProductPaperDialog
+              onClosed={() => {
+                console.log("the modal is closed");
+              }}
+              icons={{
+                closeIcon: {
+                  image: Ri4kLine,
+                },
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.findByLabelText("paper-dialog-close-icon")
+            .find("path")
+            .invoke("attr", "d")
+            .should("not.include", "M11.9997");
+          // The default close icon is has #M11.9997
+        });
+      });
+    });
+  });
 
   context("onClosed", () => {
     context("when pressing escape", () => {

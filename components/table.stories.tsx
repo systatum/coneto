@@ -732,7 +732,7 @@ export const Appendable: Story = {
             image: RiDeleteBin2Fill,
             color: "gray",
           },
-          isDangerous: true,
+          variant: "danger",
           onClick: () => {
             console.log(`${rowId} was deleted`);
           },
@@ -1856,7 +1856,7 @@ export const WithRowGroup: Story = {
           image: RiFileCopy2Line,
           color: "gray",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => {
           console.log(`${selected} copied to parent`);
         },
@@ -2823,7 +2823,7 @@ export const Draggable: Story = {
           image: RiFileCopy2Line,
           color: "gray",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => {
           console.log(`${selected} copied to parent`);
         },

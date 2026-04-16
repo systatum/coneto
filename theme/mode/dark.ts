@@ -63,8 +63,8 @@ import {
   createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
-  createWindowTheme,
   createTooltipTheme,
+  createSplitPaneTheme,
 } from "./creator";
 
 // Dark
@@ -704,14 +704,7 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-const darkTipMenu = createTipMenuTheme(darkBody, {
-  hoverBackgroundColor: "#2a2a2a",
-  activeBackgroundColor: "#333333",
-  backgroundColor: "inherit",
-  dangerousBackgroundColor: darkButton.danger.backgroundColor,
-  dangerousHoverBackgroundColor: darkButton.danger.hoverBackgroundColor,
-  dangerousActiveBackgroundColor: darkButton.danger.activeBackgroundColor,
-});
+const darkTipMenu = createTipMenuTheme(darkButton);
 
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",
@@ -758,7 +751,7 @@ const darkTreeList = createTreeListTheme(darkBody, {
   dividerHierarchySelectedColor: "#485c7d",
 });
 
-const darkWindow = createWindowTheme(darkBody, {
+const darkSplitPane = createSplitPaneTheme(darkBody, {
   backgroundColor: "#111827",
   textColor: "#f9fafb",
   dividerColor: "#374151",
@@ -820,6 +813,7 @@ export const darkTheme: AppTheme = {
   statusbar: darkStatusbar,
   statefulForm: darkStatefulForm,
   stepline: darkStepline,
+  splitPane: darkSplitPane,
   table: darkTable,
   textarea: darkTextarea,
   textbox: darkTextbox,
@@ -831,5 +825,4 @@ export const darkTheme: AppTheme = {
   toolbar: darkToolbar,
   tooltip: darkTooltip,
   treelist: darkTreeList,
-  window: darkWindow,
 };

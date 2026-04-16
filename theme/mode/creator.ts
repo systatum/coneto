@@ -50,6 +50,7 @@ import {
   SeparatorThemeConfig,
   SidebarThemeConfig,
   SignboxThemeConfig,
+  SplitPaneThemeConfig,
   StatefulFormThemeConfig,
   StatusbarThemeConfig,
   SteplineThemeConfig,
@@ -65,8 +66,8 @@ import {
   ToolbarThemeConfig,
   TooltipThemeConfig,
   TreeListThemeConfig,
-  WindowThemeConfig,
 } from "./../index";
+import { TipMenuVariant } from "./../../components/tip-menu";
 
 // body
 export function createBodyTheme(
@@ -1531,17 +1532,38 @@ export function createTimelineTheme(
 
 // tipmenu.tsx
 export function createTipMenuTheme(
-  body: BodyThemeConfig,
+  buttonTheme?: Record<Partial<ButtonVariants["variant"]>, ButtonThemeConfig>,
   customTheme: Partial<TipMenuThemeConfig> = {}
-): TipMenuThemeConfig {
-  const defaultTheme: TipMenuThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    textColor: body.textColor,
-
-    hoverBackgroundColor: "#f2f2f2",
-    activeBackgroundColor: "#e5e5e5",
-
-    focusBorderColor: "#4f9cff",
+): Record<TipMenuVariant, TipMenuThemeConfig> {
+  const defaultTheme: Record<TipMenuVariant, TipMenuThemeConfig> = {
+    default: {
+      focusBackgroundColor: buttonTheme?.ghost?.focusBackgroundColor,
+      backgroundColor: buttonTheme?.ghost?.backgroundColor,
+      textColor: buttonTheme?.ghost?.textColor,
+      activeBackgroundColor: buttonTheme?.ghost?.activeBackgroundColor,
+      hoverBackgroundColor: buttonTheme?.ghost?.hoverBackgroundColor,
+    },
+    danger: {
+      focusBackgroundColor: buttonTheme?.danger?.focusBackgroundColor,
+      backgroundColor: buttonTheme?.danger?.backgroundColor,
+      textColor: buttonTheme?.danger?.textColor,
+      activeBackgroundColor: buttonTheme?.danger?.activeBackgroundColor,
+      hoverBackgroundColor: buttonTheme?.danger?.hoverBackgroundColor,
+    },
+    success: {
+      focusBackgroundColor: buttonTheme?.success?.focusBackgroundColor,
+      backgroundColor: buttonTheme?.success?.backgroundColor,
+      textColor: buttonTheme?.success?.textColor,
+      activeBackgroundColor: buttonTheme?.success?.activeBackgroundColor,
+      hoverBackgroundColor: buttonTheme?.success?.hoverBackgroundColor,
+    },
+    primary: {
+      focusBackgroundColor: buttonTheme?.primary?.focusBackgroundColor,
+      backgroundColor: buttonTheme?.primary?.backgroundColor,
+      textColor: buttonTheme?.primary?.textColor,
+      activeBackgroundColor: buttonTheme?.primary?.activeBackgroundColor,
+      hoverBackgroundColor: buttonTheme?.primary?.hoverBackgroundColor,
+    },
   };
 
   return {
@@ -1683,12 +1705,12 @@ export function createTreeListTheme(
   };
 }
 
-// window.tsx
-export function createWindowTheme(
+// split-pane.tsx
+export function createSplitPaneTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<WindowThemeConfig> = {}
-): WindowThemeConfig {
-  const defaultTheme: WindowThemeConfig = {
+  customTheme: Partial<SplitPaneThemeConfig> = {}
+): SplitPaneThemeConfig {
+  const defaultTheme: SplitPaneThemeConfig = {
     backgroundColor: body?.backgroundColor || "#ffffff",
     textColor: body?.textColor || "#111827",
     dividerColor: "#d1d5db",

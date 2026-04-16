@@ -12,6 +12,7 @@ import { Boxbar } from "./boxbar";
 import { Button } from "./button";
 import { RichEditor, RichEditorRef } from "./rich-editor";
 import { useTheme } from "./../theme/provider";
+import { TipMenuItemProps } from "./tip-menu";
 
 const meta: Meta<typeof RichEditor> = {
   title: "Input Elements/RichEditor",
@@ -141,7 +142,7 @@ export const Default: Story = {
 
     const ref = useRef<RichEditorRef>(null);
 
-    const TIP_MENU_EMAIL = [
+    const TIP_MENU_EMAIL: TipMenuItemProps[] = [
       {
         caption: "Duplicate",
         icon: {
@@ -154,7 +155,7 @@ export const Default: Story = {
         icon: {
           image: RiDeleteBinLine,
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Junk reported"),
       },
     ];
@@ -276,7 +277,7 @@ export const Autogrow: Story = {
 
     const ref = useRef<RichEditorRef>(null);
 
-    const TIP_MENU_EMAIL = [
+    const TIP_MENU_EMAIL: TipMenuItemProps[] = [
       {
         caption: "Duplicate",
         icon: {
@@ -289,7 +290,7 @@ export const Autogrow: Story = {
         icon: {
           image: RiDeleteBinLine,
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Junk reported"),
       },
     ];

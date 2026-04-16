@@ -48,6 +48,12 @@ export interface PaperDialogProps {
   width?: string;
   styles?: PaperDialogStyles;
   onClosed?: () => void;
+  icons?: PaperDialogIcons;
+}
+
+export interface PaperDialogIcons {
+  closeIcon?: FigureProps;
+  restoreIcon?: FigureProps;
 }
 
 export interface PaperDialogStyles {
@@ -82,7 +88,15 @@ export interface PaperDialogRef {
 
 const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
   (
-    { position = "right", children, closable = true, width, styles, onClosed },
+    {
+      position = "right",
+      children,
+      closable = true,
+      width,
+      styles,
+      onClosed,
+      icons,
+    },
     ref
   ) => {
     const { currentTheme } = useTheme();
@@ -188,7 +202,7 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                     $theme={paperDialogTheme}
                     $isLeft={isLeft}
                     $style={styles?.closeButtonStyle}
-                    aria-label="button-close"
+                    aria-label="paper-dialog-toggle-close"
                     onClick={() => {
                       setDialogState("closed");
                       if (onClosed) {
@@ -196,7 +210,12 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                       }
                     }}
                   >
-                    <RiCloseLine size={20} />
+                    <Figure
+                      {...icons?.closeIcon}
+                      aria-label="paper-dialog-close-icon"
+                      image={icons?.closeIcon?.image ?? RiCloseLine}
+                      size={icons?.closeIcon?.size ?? 18}
+                    />
                   </IconButton>
                 </ActionButtonWrapper>
               )}
@@ -206,36 +225,31 @@ const PaperDialogBase = forwardRef<PaperDialogRef, PaperDialogProps>(
                   $theme={paperDialogTheme}
                   $style={styles?.minimizeButtonStyle}
                   $isLeft={isLeft}
-                  aria-label="paper-dialog-toggle"
+                  aria-label="paper-dialog-toggle-restore"
                   onClick={() =>
                     handleToggleDrawer(
                       dialogState === "minimized" ? "restored" : "minimized"
                     )
                   }
                 >
-                  {isLeft ? (
-                    <RiArrowRightSLine
-                      style={{
-                        transition: "transform 0.5s ease-in-out",
-                        transform:
-                          dialogState === "restored"
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                      }}
-                      size={20}
-                    />
-                  ) : (
-                    <RiArrowLeftSLine
-                      style={{
-                        transition: "transform 0.5s ease-in-out",
-                        transform:
-                          dialogState === "restored"
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
-                      }}
-                      size={20}
-                    />
-                  )}
+                  <Figure
+                    {...icons?.restoreIcon}
+                    image={
+                      icons?.restoreIcon?.image ??
+                      (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+                    }
+                    aria-label="paper-dialog-restore-icon"
+                    size={icons?.restoreIcon?.size ?? 18}
+                    styles={{
+                      self: css`
+                        display: flex;
+                        transition: transform 0.5s ease-in-out;
+                        transform: ${dialogState === "restored"
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)"};
+                      `,
+                    }}
+                  />
                 </IconButton>
               </ActionButtonWrapper>
 

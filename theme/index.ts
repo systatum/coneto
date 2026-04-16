@@ -2,6 +2,7 @@ import { MessageboxVariant } from "./../components/messagebox";
 import { ButtonVariants } from "./../components/button";
 import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
+import { TipMenuVariant } from "./../components/tip-menu";
 
 export type ThemeMode = "light" | "dark";
 
@@ -695,12 +696,7 @@ export interface TipMenuThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
-
-  dangerousBackgroundColor?: string;
-  dangerousHoverBackgroundColor?: string;
-  dangerousActiveBackgroundColor?: string;
-
-  focusBorderColor?: string;
+  focusBackgroundColor?: string;
 }
 
 // treelist.tsx
@@ -716,8 +712,8 @@ export interface TreeListThemeConfig
   dividerHierarchyRelatedColor?: string;
 }
 
-// window.tsx
-export interface WindowThemeConfig
+// split-pane.tsx
+export interface SplitPaneThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   dividerColor?: string;
 }
@@ -779,18 +775,18 @@ export interface AppTheme {
   statusbar: StatusbarThemeConfig;
   statefulForm: StatefulFormThemeConfig;
   stepline: SteplineThemeConfig;
+  splitPane: SplitPaneThemeConfig;
   table: TableThemeConfig;
   textbox: TextboxThemeConfig;
   textarea: TextareaThemeConfig;
   thumbField: ThumbFieldThemeConfig;
   timeline: TimelineThemeConfig;
-  tipmenu: TipMenuThemeConfig;
+  tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
   timebox: TimeboxThemeConfig;
   toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
-  window: WindowThemeConfig;
 }
 
 export * from "./provider";

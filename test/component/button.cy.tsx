@@ -35,7 +35,7 @@ describe("Button", () => {
     {
       caption: "Block Sender",
       icon: { image: RiShieldLine, color: "orange" },
-      isDangerous: true,
+      variant: "danger",
       onClick: () => console.log("Sender blocked"),
     },
     {
@@ -61,7 +61,7 @@ describe("Button", () => {
     {
       caption: "Share",
       icon: { image: RiShareLine, color: "indigo" },
-      isDangerous: true,
+      variant: "danger",
       onClick: () => console.log("Shared"),
     },
     {

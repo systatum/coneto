@@ -119,6 +119,7 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   onChange?: (args: { currentState: any }) => void;
   autoFocusField?: string;
   styles?: StatefulFormStyles;
+  disabled?: boolean;
 }
 
 export interface StatefulFormStyles {
@@ -208,8 +209,10 @@ function StatefulForm<Z extends ZodTypeAny>({
   onChange,
   styles,
   autoFocusField,
+  disabled,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
+    if (disabled) return;
     onChange?.({ currentState: { [name]: value } });
   };
 
@@ -333,6 +336,7 @@ function StatefulForm<Z extends ZodTypeAny>({
         fieldSize={fieldSize}
         control={control}
         fields={fields}
+        disabled={disabled}
         formValues={formValues}
         register={register}
         errors={errors}
@@ -413,6 +417,7 @@ interface FormFieldsProps<T extends FieldValues> {
   autoFocusField?: string;
   styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
+  disabled?: boolean;
 }
 
 function FormFields<T extends FieldValues>({
@@ -429,6 +434,7 @@ function FormFields<T extends FieldValues>({
   styles,
   autoFocusField,
   rowWithFrame,
+  disabled,
 }: FormFieldsProps<T>) {
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
@@ -532,6 +538,7 @@ function FormFields<T extends FieldValues>({
                         setValue={setValue}
                         onChange={onChange}
                         autoFocusField={autoFocusField}
+                        disabled={disabled}
                         styles={styles}
                         shouldShowError={shouldShowError}
                         rowWithFrame={true}
@@ -579,7 +586,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   {...field.textboxProps}
                   styles={{
                     ...field.textboxProps?.styles,
@@ -652,7 +659,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.pinboxProps}
                       styles={{
                         ...field.pinboxProps?.styles,
@@ -729,7 +736,7 @@ function FormFields<T extends FieldValues>({
                       field.onClick(e);
                     }
                   }}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                 >
                   {field.icon && (
                     <field.icon size={fieldSize ? parseInt(fieldSize) : 16} />
@@ -762,7 +769,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   {...field.timeboxProps}
                   styles={{
                     ...field.timeboxProps?.styles,
@@ -850,7 +857,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   {...field.textareaProps}
                   styles={{
                     ...field.textareaProps?.styles,
@@ -925,7 +932,7 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.checkboxProps}
                       styles={{
                         ...field.checkboxProps?.styles,
@@ -1021,7 +1028,7 @@ function FormFields<T extends FieldValues>({
                         }
                         field.onChange?.(e);
                       }}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.radioProps}
                       styles={{
                         ...field.radioProps?.styles,
@@ -1115,7 +1122,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.phoneboxProps}
                       styles={{
                         ...field.phoneboxProps?.styles,
@@ -1186,7 +1193,7 @@ function FormFields<T extends FieldValues>({
                       }}
                       showError={shouldShowError(field.name)}
                       errorMessage={fieldState.error?.message}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.colorboxProps}
                       styles={{
                         ...field.colorboxProps?.styles,
@@ -1237,7 +1244,7 @@ function FormFields<T extends FieldValues>({
                   helper={field.helper}
                   name={field.name}
                   required={field.required}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -1280,7 +1287,7 @@ function FormFields<T extends FieldValues>({
                   showError={shouldShowError(field.name)}
                   helper={field.helper}
                   name={field.name}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
@@ -1369,7 +1376,7 @@ function FormFields<T extends FieldValues>({
                     }
                   }}
                   label={field.title}
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   required={field.required}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
@@ -1441,7 +1448,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  disabled={field.disabled}
+                  disabled={field.disabled || disabled}
                   {...field.signboxProps}
                   styles={{
                     ...field.signboxProps?.styles,
@@ -1493,7 +1500,7 @@ function FormFields<T extends FieldValues>({
                       placeholder={field.placeholder}
                       value={rhf.value ?? ""}
                       required={field.required}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       onChange={(e) => {
                         const { name, value } = e.target;
 
@@ -1597,7 +1604,7 @@ function FormFields<T extends FieldValues>({
                       }}
                       placeholder={field.placeholder}
                       selectedDates={controllerField.value}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.dateProps}
                       styles={{
                         ...field?.dateProps?.styles,
@@ -1677,7 +1684,7 @@ function FormFields<T extends FieldValues>({
                         }
                       }}
                       selectedOptions={controllerField.value}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.comboboxProps}
                       strict={field?.comboboxProps?.strict ?? true}
                       styles={{
@@ -1732,7 +1739,7 @@ function FormFields<T extends FieldValues>({
                       labelPosition={field.labelPosition}
                       required={field.required}
                       filterPlaceholder={field.placeholder}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       inputValue={controllerField.value}
                       setInputValue={(e) => {
                         controllerField?.onChange(e);
@@ -1794,7 +1801,7 @@ function FormFields<T extends FieldValues>({
                       }}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.ratingProps}
                       styles={{
                         ...field.ratingProps?.styles,
@@ -1859,7 +1866,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.thumbFieldProps}
                       styles={{
                         ...field.thumbFieldProps?.styles,
@@ -1919,7 +1926,7 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       {...field.toggleProps}
                       title={field.title}
                       label={field.placeholder}
@@ -1980,7 +1987,7 @@ function FormFields<T extends FieldValues>({
                       required={field.required}
                       activeTab={controllerField.value}
                       helper={field.helper}
-                      disabled={field.disabled}
+                      disabled={field.disabled || disabled}
                       onTabChange={(e) => {
                         const inputValueEvent = {
                           target: { name: field.name, value: e },

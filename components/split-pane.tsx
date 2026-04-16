@@ -17,60 +17,60 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonStyles } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
-import { useTheme } from "./../theme/provider";
+import { useTheme } from "../theme/provider";
 
-export const WindowOrientation = {
+export const SplitPaneOrientation = {
   Horizontal: "horizontal",
   Vertical: "vertical",
 } as const;
 
-export type WindowOrientation =
-  (typeof WindowOrientation)[keyof typeof WindowOrientation];
+export type SplitPaneOrientation =
+  (typeof SplitPaneOrientation)[keyof typeof SplitPaneOrientation];
 
-export interface WindowProps {
-  orientation?: WindowOrientation;
+export interface SplitPaneProps {
+  orientation?: SplitPaneOrientation;
   children?: ReactNode;
   onResize?: () => void;
   onResizeComplete?: () => void;
   initialSizeRatio?: number[];
-  styles?: WindowStyles;
+  styles?: SplitPaneStyles;
 }
 
-export interface WindowStyles {
+export interface SplitPaneStyles {
   self?: CSSProp;
   dividerStyle?: CSSProp;
 }
 
-export interface WindowCellProps
+export interface SplitPaneCellProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
-  styles?: WindowCellStyles;
-  actions?: WindowAction[];
+  styles?: SplitPaneCellStyles;
+  actions?: SplitPaneAction[];
 }
 
-export interface WindowCellStyles {
+export interface SplitPaneCellStyles {
   self?: CSSProp;
 }
 
-export interface WindowAction {
+export interface SplitPaneAction {
   onClick?: () => void;
   icon?: FigureProps;
-  styles?: WindowActionStyles;
+  styles?: SplitPaneActionStyles;
   hidden?: boolean;
 }
 
-export type WindowActionStyles = ButtonStyles;
+export type SplitPaneActionStyles = ButtonStyles;
 
-function Window({
+function SplitPane({
   orientation = "vertical",
   children,
   styles,
   onResize,
   onResizeComplete,
   initialSizeRatio,
-}: WindowProps) {
+}: SplitPaneProps) {
   const { currentTheme } = useTheme();
-  const windowTheme = currentTheme.window;
+  const splitPaneTheme = currentTheme.splitPane;
 
   const isVertical = orientation === "vertical";
   const childrenArray = Children.toArray(children).filter(isValidElement);
@@ -176,9 +176,9 @@ function Window({
 
   return (
     <Container
-      $backgroundColor={windowTheme.backgroundColor}
-      $textColor={windowTheme.textColor}
-      aria-label="window"
+      $backgroundColor={splitPaneTheme.backgroundColor}
+      $textColor={splitPaneTheme.textColor}
+      aria-label="split-pane"
       ref={containerRef}
       $isVertical={isVertical}
       $style={styles?.self}
@@ -186,7 +186,9 @@ function Window({
       {childrenArray.map((child, index) => (
         <Fragment key={index}>
           {cloneElement(
-            child as ReactElement<WindowCellProps & WindowCellInternalProps>,
+            child as ReactElement<
+              SplitPaneCellProps & SplitPaneCellInternalProps
+            >,
             {
               size: sizes[index],
               isDragging: isDragging,
@@ -197,7 +199,7 @@ function Window({
             <Divider
               $style={styles?.dividerStyle}
               className="divider"
-              aria-label={`window-divider`}
+              aria-label={`split-pane-divider`}
               onMouseDown={startDrag(index)}
               $isVertical={isVertical}
             />
@@ -255,20 +257,20 @@ function useRafThrottle<T extends (...args: any[]) => void>(callback?: T) {
   return throttled;
 }
 
-interface WindowCellInternalProps {
+interface SplitPaneCellInternalProps {
   size: number;
   isDragging: boolean;
   isVertical: boolean;
 }
 
-const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
+const SplitPaneCell = forwardRef<HTMLDivElement, SplitPaneCellProps>(
   ({ children, styles, actions, ...props }, ref) => {
     const {
       size = 1,
       isDragging = false,
       isVertical = true,
       ...rest
-    } = props as WindowCellInternalProps;
+    } = props as SplitPaneCellInternalProps;
 
     const filteredActions = Array.isArray(actions)
       ? actions?.filter((action) => !action?.hidden)
@@ -284,7 +286,7 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
           width: isVertical ? `${size * 100}%` : "100%",
           height: !isVertical ? `${size * 100}%` : "100%",
         }}
-        aria-label="window-cell"
+        aria-label="split-pane-cell"
         $isDragging={isDragging}
         $style={styles?.self}
       >
@@ -294,7 +296,7 @@ const WindowCell = forwardRef<HTMLDivElement, WindowCellProps>(
               <Button
                 variant="ghost"
                 key={index}
-                aria-label="window-button"
+                aria-label="split-pane-button"
                 onClick={() => {
                   if (action.onClick) action.onClick();
                 }}
@@ -405,6 +407,6 @@ function normalizeSizes(sizes: number[]) {
   return sizes.map((s) => s / total);
 }
 
-Window.Cell = WindowCell;
+SplitPane.Cell = SplitPaneCell;
 
-export { Window };
+export { SplitPane };

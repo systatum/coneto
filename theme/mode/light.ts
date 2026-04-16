@@ -63,7 +63,7 @@ import {
   createToggleTheme,
   createToolbarTheme,
   createTreeListTheme,
-  createWindowTheme,
+  createSplitPaneTheme,
   createTooltipTheme,
 } from "./creator";
 
@@ -201,11 +201,7 @@ const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
 
 const lightTimeline = createTimelineTheme(lightBody);
 
-const lightTipMenu = createTipMenuTheme(lightBody, {
-  dangerousBackgroundColor: lightButton.danger.backgroundColor,
-  dangerousHoverBackgroundColor: lightButton.danger.hoverBackgroundColor,
-  dangerousActiveBackgroundColor: lightButton.danger.activeBackgroundColor,
-});
+const lightTipMenu = createTipMenuTheme(lightButton);
 
 const lightToggle = createToggleTheme(lightBody);
 
@@ -223,7 +219,7 @@ const lightThumbField = createThumbFieldTheme(lightBody);
 
 const lightTreeList = createTreeListTheme(lightBody);
 
-const lightWindow = createWindowTheme(lightBody);
+const lightSplitPane = createSplitPaneTheme(lightBody);
 
 export const lightTheme: AppTheme = {
   body: lightBody,
@@ -281,6 +277,7 @@ export const lightTheme: AppTheme = {
   statusbar: lightStatusbar,
   statefulForm: lightStatefulForm,
   stepline: lightStepline,
+  splitPane: lightSplitPane,
   table: lightTable,
   textarea: lightTextarea,
   textbox: lightTextbox,
@@ -292,5 +289,4 @@ export const lightTheme: AppTheme = {
   toolbar: lightToolbar,
   tooltip: lightTooltip,
   treelist: lightTreeList,
-  window: lightWindow,
 };

@@ -165,13 +165,11 @@ function BaseSignbox({
   };
 
   const startDrawing = (e: MouseEvent | TouchEvent) => {
-    if (disabled) return;
     isDrawing.current = true;
     lastPoint.current = getCoordinates(e);
   };
 
   const draw = (e: MouseEvent | TouchEvent) => {
-    if (disabled) return;
     if (!isDrawing.current) return;
 
     const ctx = canvasRef.current?.getContext("2d");
@@ -201,13 +199,11 @@ function BaseSignbox({
   };
 
   const stopDrawing = () => {
-    if (disabled) return;
     isDrawing.current = false;
     lastPoint.current = null;
   };
 
   const clearCanvas = (e?: React.MouseEvent) => {
-    if (disabled) return;
     e?.stopPropagation();
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
@@ -226,7 +222,6 @@ function BaseSignbox({
 
   return (
     <SignatureWrapper
-      $disabled={disabled}
       aria-label="signbox-canvas"
       $theme={signboxTheme}
       $error={showError}
@@ -234,17 +229,39 @@ function BaseSignbox({
       $height={height}
       $width={width}
       $cursor={cursor}
+      $disabled={disabled}
     >
       <SignatureCanvas
         ref={canvasRef}
         id={id}
-        onMouseDown={(e) => startDrawing(e.nativeEvent)}
-        onMouseMove={(e) => draw(e.nativeEvent)}
-        onMouseUp={stopDrawing}
-        onMouseLeave={stopDrawing}
-        onTouchStart={(e) => startDrawing(e.nativeEvent)}
-        onTouchMove={(e) => draw(e.nativeEvent)}
-        onTouchEnd={stopDrawing}
+        onMouseDown={(e) => {
+          if (disabled) return;
+          startDrawing(e.nativeEvent);
+        }}
+        onMouseMove={(e) => {
+          if (disabled) return;
+          draw(e.nativeEvent);
+        }}
+        onMouseUp={() => {
+          if (disabled) return;
+          stopDrawing();
+        }}
+        onMouseLeave={() => {
+          if (disabled) return;
+          stopDrawing();
+        }}
+        onTouchStart={(e) => {
+          if (disabled) return;
+          startDrawing(e.nativeEvent);
+        }}
+        onTouchMove={(e) => {
+          if (disabled) return;
+          draw(e.nativeEvent);
+        }}
+        onTouchEnd={() => {
+          if (disabled) return;
+          stopDrawing();
+        }}
       />
       {clearable && (
         <Button
@@ -257,13 +274,20 @@ function BaseSignbox({
             self: css`
               height: 22px;
               width: 22px;
-              cursor: pointer;
               padding: 2px;
               border-radius: 2px;
+              &:disabled {
+                background-color: transparent;
+                box-shadow: none;
+              }
             `,
           }}
           aria-label="signbox-clearable"
-          onClick={(e) => clearCanvas(e)}
+          onClick={(e) => {
+            if (disabled) return;
+            clearCanvas(e);
+          }}
+          disabled={disabled}
           variant="ghost"
           icon={{
             image: RiEraserLine,

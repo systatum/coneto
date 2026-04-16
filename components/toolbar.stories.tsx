@@ -44,7 +44,7 @@ It is suitable for building rich action bars, tool panels, or context menus in a
 \`\`\`tsx
 const subMenuList: ToolbarSubMenuList[] = [
   { caption: "Edit", icon: { image: RiEditLine, color: "yellow" }, onClick: () => console.log("Edit mode") },
-  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, isDangerous: true, onClick: () => console.log("Deleted") },
+  { caption: "Delete", icon: { image: RiForbid2Line, color: "red" }, variant: "danger", onClick: () => console.log("Deleted") },
 ];
 
 <Toolbar big>
@@ -74,11 +74,11 @@ const subMenuList: ToolbarSubMenuList[] = [
   - \`caption\`
   - \`icon\` (image + color)
   - \`onClick\` callback
-  - \`isDangerous\` for destructive actions.
 - **Variants** apply predefined colors and hover/active/focus states:
   - \`default\` — standard gray/white styles.
   - \`primary\` — emphasized with blue background and white text.
   - \`danger\` — red background for destructive actions.
+  - \`success\` — green background for successful actions.
 - **big** prop enlarges icons and vertically centers content for toolbars that require higher visibility.
 - **styles** prop allows CSS overrides for:
   - \`self\` — toolbar wrapper
@@ -149,7 +149,7 @@ export const Default: Story = {
           image: RiShieldLine,
           color: "orange",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Sender blocked"),
       },
       {
@@ -190,7 +190,7 @@ export const Default: Story = {
           image: RiShareLine,
           color: "indigo",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Shared"),
       },
       {
@@ -270,7 +270,7 @@ export const Big: Story = {
           image: RiShieldLine,
           color: "orange",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Sender blocked"),
       },
       {
@@ -311,7 +311,7 @@ export const Big: Story = {
           image: RiShareLine,
           color: "indigo",
         },
-        isDangerous: true,
+        variant: "danger",
         onClick: () => console.log("Shared"),
       },
       {
