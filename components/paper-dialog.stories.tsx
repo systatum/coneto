@@ -38,13 +38,15 @@ const meta: Meta<typeof PaperDialog> = {
 
 ### 🛠 Usage
 \`\`\`tsx
-<PaperDialog ref={dialogRef} position="right" closable width="400px">
-  <PaperDialog.Trigger>
-    Open Dialog
-  </PaperDialog.Trigger>
-  
-  <p>Your content here</p>
-</PaperDialog>
+<>
+  <Button onClick={() => dialogRef.current.openDialog()}>
+   Open Dialog
+  </Button>
+    
+  <PaperDialog ref={dialogRef} position="right" closable width="400px">
+    Your content here
+  </PaperDialog>
+</>
 \`\`\`
 
 ### 🎨 Custom Icons
@@ -60,7 +62,6 @@ You can override the default control icons (e.g. close and restore) by passing c
 \`\`\`
 
 ### 📝 Notes
-- Always include both \`PaperDialog.Trigger\` and \`PaperDialog.Content\` as children.
 - Use \`styles\` prop to override default styles.
 - Use the \`icons\` prop to override default icons.
         `,
@@ -98,7 +99,7 @@ Each icon accepts:
     },
     children: {
       description:
-        "Children of the dialog, should include `PaperDialog.Trigger` and `PaperDialog.Content`",
+        "Children of the dialog, you can use this to render any content inside the dialog. If you want to trigger the dialog externally, use the `ref` to call `openDialog()` or `closeDialog()` methods.",
       control: false,
     },
     styles: {
@@ -380,6 +381,8 @@ export const NonClosable: Story = {
 
 export const FixedLeft: Story = {
   render: () => {
+    const dialogRef = useRef<PaperDialogRef>(null);
+
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
     );
@@ -454,71 +457,75 @@ export const FixedLeft: Story = {
     ];
 
     return (
-      <PaperDialog
-        styles={{
-          contentStyle: {
-            padding: "36px",
-            gap: "16px",
-          },
-        }}
-        closable
-        position="left"
-        width="70vw"
-      >
-        <PaperDialog.Trigger>Trigger</PaperDialog.Trigger>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-          <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
-            Add New Employee
-          </h2>
-          <p style={{ fontSize: "14px", color: "#4B5563" }}>
-            Fill out the information below to add a new employee to your team.
-          </p>
-        </div>
-
-        <div
-          style={{
-            maxWidth: "400px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
+      <>
+        <Button onClick={() => dialogRef?.current?.openDialog()}>
+          Trigger
+        </Button>
+        <PaperDialog
+          styles={{
+            contentStyle: {
+              padding: "36px",
+              gap: "16px",
+            },
           }}
+          closable
+          position="left"
+          width="70vw"
+          ref={dialogRef}
         >
-          <StatefulForm
-            fields={EMPLOYEE_FIELDS}
-            formValues={value}
-            validationSchema={employeeSchema}
-            onValidityChange={setIsFormValid}
-            onChange={({ currentState }) =>
-              setValue((prev) => ({ ...prev, ...currentState }))
-            }
-            mode="onChange"
-          />
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <h2 style={{ fontSize: "24px", fontWeight: "bold" }}>
+              Add New Employee
+            </h2>
+            <p style={{ fontSize: "14px", color: "#4B5563" }}>
+              Fill out the information below to add a new employee to your team.
+            </p>
+          </div>
 
           <div
             style={{
+              maxWidth: "400px",
               display: "flex",
-              width: "100%",
-              flexDirection: "row",
-              justifyContent: "flex-end",
+              flexDirection: "column",
+              gap: "4px",
             }}
           >
-            <Button
-              disabled={!isFormValid}
-              styles={{
-                self: {
-                  width: "100%",
-                  cursor: "pointer",
-                  maxWidth: "180px",
-                },
+            <StatefulForm
+              fields={EMPLOYEE_FIELDS}
+              formValues={value}
+              validationSchema={employeeSchema}
+              onValidityChange={setIsFormValid}
+              onChange={({ currentState }) =>
+                setValue((prev) => ({ ...prev, ...currentState }))
+              }
+              mode="onChange"
+            />
+
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                flexDirection: "row",
+                justifyContent: "flex-end",
               }}
-              type="submit"
             >
-              Save
-            </Button>
+              <Button
+                disabled={!isFormValid}
+                styles={{
+                  self: {
+                    width: "100%",
+                    cursor: "pointer",
+                    maxWidth: "180px",
+                  },
+                }}
+                type="submit"
+              >
+                Save
+              </Button>
+            </div>
           </div>
-        </div>
-      </PaperDialog>
+        </PaperDialog>
+      </>
     );
   },
 };
