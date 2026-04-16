@@ -44,7 +44,7 @@ central square. That square is the user. The person everything is built for. A r
 that every interface ultimately connects back to you and the people your product serves.</description>
     <language>en</language>
     <generator>storybook-rss v2.5.2</generator>
-    <lastBuildDate>Thu, 16 Apr 2026 02:13:39 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 16 Apr 2026 02:52:49 GMT</lastBuildDate>
     
           <item>
           <title>Dark mode</title>
@@ -2733,8 +2733,8 @@ It is commonly used for action menus, context menus, or inline tips.
 ✨ Features
 - 🖱 **Clickable menu items**: Each item supports an onClick handler.
 - 🔍 **Optional search/filter**: Automatically filter menu items with `withFilter`.
-- 🎨 **Item variants**: Supports `sm` and `md` variants for spacing and size.
-- ⚠️ **Dangerous actions**: Items can be styled to indicate dangerous actions (e.g., delete).
+- 🎨 **Variants**: Supports multiple visual variants via variant prop (default, primary, success, danger) to represent different action types, including destructive actions.
+- 📏 **Sizes**: Supports sm and md variants for spacing and sizing.
 - 🖌 **Custom styles**: Full styling support via `styles` prop.
 - 📦 **Composable children**: Render additional custom content inside the menu.
 - 🎨 **Icon support**: Each menu item can have an optional icon rendered via the `Figure` component.
@@ -2767,7 +2767,7 @@ It is commonly used for action menus, context menus, or inline tips.
 - Use `size` to change spacing and sizing for items.
 - Fully styleable via `styles.self`.
 - You can still pass custom children if needed.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:13:39 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 02:52:49 GMT</pubDate>
       </item>
     
 
@@ -2906,7 +2906,7 @@ const subMenuList: ToolbarSubMenuList[] = [
 - Hover and active states are handled automatically, including special styles for dangerous actions.
 - Supports responsive behavior — captions are hidden for smaller screens if `icon` is provided.
 - Fully compatible with any React project using Styled Components.]]></description>
-        <pubDate>Thu, 16 Apr 2026 02:12:28 GMT</pubDate>
+        <pubDate>Thu, 16 Apr 2026 02:14:51 GMT</pubDate>
       </item>
     
 

@@ -44,8 +44,8 @@ It is commonly used for action menus, context menus, or inline tips.
 ### ✨ Features
 - 🖱 **Clickable menu items**: Each item supports an onClick handler.
 - 🔍 **Optional search/filter**: Automatically filter menu items with \`withFilter\`.
-- 🎨 **Item variants**: Supports \`sm\` and \`md\` variants for spacing and size.
-- ⚠️ **Dangerous actions**: Items can be styled to indicate dangerous actions (e.g., delete).
+- 🎨 **Variants**: Supports multiple visual variants via variant prop (default, primary, success, danger) to represent different action types, including destructive actions.
+- 📏 **Sizes**: Supports sm and md variants for spacing and sizing.
 - 🖌 **Custom styles**: Full styling support via \`styles\` prop.
 - 📦 **Composable children**: Render additional custom content inside the menu.
 - 🎨 **Icon support**: Each menu item can have an optional icon rendered via the \`Figure\` component.
