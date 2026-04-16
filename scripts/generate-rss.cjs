@@ -299,7 +299,7 @@ async function main() {
           <item>
           <title>${mdx.title}</title>
           <link>${SITE_URL}/?path=/docs/${slug}</link>
-          <guid>${hash(file)}</guid>
+          <guid isPermaLink="false">${hash(file)}</guid>
           <description><![CDATA[${cleanDescription(mdx.description)}]]></description>
           <content:encoded><![CDATA[
             ${cleanDescription(mdx.description)}
@@ -330,7 +330,7 @@ async function main() {
       <item>
         <title>${meta.title.split("/").pop()} - Coneto React UI</title>
         <link>${url}</link>
-        <guid>${guid}</guid>
+        <guid isPermaLink="false">${guid}</guid>
         <description><![CDATA[${cleanDescription(description)}]]></description>
         <content:encoded><![CDATA[
           ${cleanDescription(description)}
@@ -350,7 +350,8 @@ async function main() {
   <channel>
     <title>${channelTitle}</title>
     <link>${SITE_URL}</link>
-    <description>${channelDescription}</description>
+    <description><![CDATA[${channelDescription}]]></description>
+    <content:encoded><![CDATA[${channelDescription}]]></description>
     <language>en</language>
     <generator>storybook-rss v${version}</generator>
     <lastBuildDate>${lastModified.toUTCString()}</lastBuildDate>
