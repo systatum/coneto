@@ -64,7 +64,10 @@ function cleanDescription(input = "") {
   text = text.replace(/__(.+?)__/g, "<strong>$1</strong>");
 
   // 3. Underline: _text_ → <u>text</u>
-  text = text.replace(/_(.+?)_/g, "<u>$1</u>");
+  text = text.replace(
+    /_(.+?)_/g,
+    '<span style="text-decoration:underline">$1</span>'
+  );
 
   // 4 & 5. List handling — group consecutive list lines into <ul> or <ol>
   //
