@@ -481,7 +481,7 @@ describe("PaperDialog", () => {
           closeButtonStyle: { backgroundColor: "rgb(255, 255, 0)" },
         });
 
-        cy.findByLabelText("button-close").should(
+        cy.findByLabelText("paper-dialog-toggle-close").should(
           "have.css",
           "background-color",
           "rgb(255, 255, 0)"
@@ -495,7 +495,7 @@ describe("PaperDialog", () => {
           minimizeButtonStyle: { backgroundColor: "rgb(0, 255, 255)" },
         });
 
-        cy.findByLabelText("paper-dialog-toggle").should(
+        cy.findByLabelText("paper-dialog-toggle-restore").should(
           "have.css",
           "background-color",
           "rgb(0, 255, 255)"
