@@ -359,16 +359,17 @@ async function main() {
       }
 
       if (!mdx.description) {
-        mdx.description = code
-          .replace(/<[^>]+>/g, "")
-          .replace(/^\s*#+\s*/gm, "")
-          .trim();
+        mdx.description = code;
       }
 
       // Welcome.mdx → channel metadata only, not an item
       if (file.toLowerCase().endsWith("welcome.mdx")) {
         console.log("✅ FOUND WELCOME:", file);
-        channelDescription = mdx.description || "";
+        channelDescription =
+          mdx.description
+            .replace(/<[^>]+>/g, "")
+            .replace(/^\s*#+\s*/gm, "")
+            .trim() || "";
         continue;
       }
 
