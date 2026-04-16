@@ -24,7 +24,7 @@ describe("PaperDialog", () => {
         cy.findByLabelText("paper-dialog-wrapper").then(($drawer) => {
           const drawerRect = $drawer[0].getBoundingClientRect();
 
-          cy.findByLabelText("paper-dialog-toggle").then(($tab) => {
+          cy.findByLabelText("paper-dialog-toggle-restore").then(($tab) => {
             const tabRect = $tab[0].getBoundingClientRect();
 
             const isLeft = drawerRect.left === 0;
@@ -52,7 +52,7 @@ describe("PaperDialog", () => {
 
       cy.findByText("Add New Employee").should("exist");
 
-      cy.findByLabelText("button-close").click();
+      cy.findByLabelText("paper-dialog-toggle-close").click();
       cy.findByText("Add New Employee").should("not.exist");
     });
   });
