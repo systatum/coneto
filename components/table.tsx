@@ -511,6 +511,7 @@ function Table({
             {rowChildren.length > 0 ? (
               <TableBody
                 ref={tableBodyRef}
+                $theme={tableTheme}
                 aria-label="table-body"
                 $style={styles?.tableBodyStyle}
               >
@@ -773,7 +774,7 @@ const TableHeader = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const TableBody = styled.div<{ $style?: CSSProp }>`
+const TableBody = styled.div<{ $style?: CSSProp; $theme: TableThemeConfig }>`
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -787,15 +788,17 @@ const TableBody = styled.div<{ $style?: CSSProp }>`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(145, 142, 142, 0.3);
+    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
     border-radius: 2px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(168, 167, 167, 0.1);
+    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
   }
 
-  ${({ $style }) => $style}
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+
+  ${({ $style }) => $style};
 `;
 
 const TableSummary = styled.div<{

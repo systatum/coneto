@@ -69,7 +69,7 @@ import {
 
 // Dark
 const darkBody = createBodyTheme({
-  backgroundColor: "#111",
+  backgroundColor: "#1f2023",
   textColor: "#caced4",
   borderColor: "#4b5563",
 });
@@ -666,7 +666,6 @@ const darkStepline = createSteplineTheme(darkBody, darkButton, {
 });
 
 const darkTable = createTableTheme(darkBody, {
-  textColor: darkBody.textColor,
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
   headerActionBackgroundColor:
@@ -689,6 +688,9 @@ const darkTable = createTableTheme(darkBody, {
 
   summaryBackgroundColor: "linear-gradient(#29282b, #323232)",
   summaryBorderColor: "rgb(39, 39, 48)",
+
+  scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
+  scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
 
   toggleRowBackgroundColor: "#374151",
 });

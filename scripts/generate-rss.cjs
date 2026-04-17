@@ -24,7 +24,6 @@
 const fg = require("fast-glob");
 const fs = require("fs-extra");
 const path = require("path");
-const crypto = require("crypto");
 const { parse } = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -34,14 +33,6 @@ const OUTPUT = "public/feed.xml";
 
 const GLOB_PATTERNS = ["components/**/*.stories.tsx", "components/**/*.mdx"];
 
-/**
- * Stable GUID generator.
- * Avoid using URL directly because Storybook paths may change.
- */
-function hash(input) {
-  return crypto.createHash("sha1").update(input).digest("hex");
-}
-
 function escapeXml(input = "") {
   return input
     .replace(/&/g, "&amp;")
@@ -49,10 +40,6 @@ function escapeXml(input = "") {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
-}
-
-function stripHtml(input = "") {
-  return input.replace(/<[^>]+>/g, "");
 }
 
 /**
@@ -322,7 +309,7 @@ function buildItem({ title, url, guid, rawDescription, pubDate }) {
   <item>
     <title>${escapeXml(title)}</title>
     <link>${url}</link>
-    <guid isPermaLink="false">${guid}</guid>
+    <guid isPermaLink="true">${guid}</guid>
     <description><![CDATA[${summary}]]></description>
     <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
     <pubDate>${pubDate.toUTCString()}</pubDate>
@@ -374,12 +361,13 @@ async function main() {
       }
 
       const slug = toSlug(mdx.title);
+      const url = `${SITE_URL}/?path=/docs/${slug}`;
 
       items.push(
         buildItem({
           title: mdx.title,
-          url: `${SITE_URL}/?path=/docs/${slug}`,
-          guid: hash(file),
+          url: url,
+          guid: url,
           rawDescription: mdx.description,
           pubDate: stats.mtime,
         })
@@ -399,11 +387,13 @@ async function main() {
 
     const slug = toSlug(meta.title);
 
+    const url = `${SITE_URL}/?path=/docs/${slug}`;
+
     items.push(
       buildItem({
         title: `${meta.title.split("/").pop()} - Coneto React UI`,
-        url: `${SITE_URL}/?path=/docs/${slug}`,
-        guid: hash(file + meta.title),
+        url: url,
+        guid: url,
         rawDescription: description,
         pubDate: stats.mtime,
       })

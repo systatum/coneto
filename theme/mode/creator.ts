@@ -1439,6 +1439,7 @@ export function createTableTheme(
 ): TableThemeConfig {
   const defaultTheme: TableThemeConfig = {
     textColor: body.textColor || "#111827",
+    backgroundColor: body?.backgroundColor,
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
     headerActionBackgroundColor: "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
@@ -1460,6 +1461,9 @@ export function createTableTheme(
 
     summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
     summaryBorderColor: "#d1d5db",
+
+    scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+    scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
 
     toggleRowBackgroundColor: "#d4d4d4",
   };
