@@ -461,7 +461,7 @@ export function createChoiceGroupTheme(
     borderColor: "#e5e7eb",
     dividerColor: "#e5e7eb",
     labelColor: body.textColor,
-    backgroundColor: "#fff",
+    backgroundColor: body.backgroundColor || "#fff",
     descriptionColor: "#4b5563",
   };
 
@@ -644,13 +644,14 @@ export function createDrawerTabTheme(
 
 // error-slate.tsx
 export function createErrorSlateTheme(
+  body: BodyThemeConfig,
   custom: Partial<ErrorSlateThemeConfig> = {}
 ): ErrorSlateThemeConfig {
   return {
     cubeFaceBackground: "#dd0b0b",
     cubeFaceBorder: "#a80000",
     cubeFaceText: "#ffffff",
-    titleColor: "#111111",
+    titleColor: body?.textColor,
     ...custom,
   };
 }
@@ -971,7 +972,7 @@ export function createNavTabTheme(
   custom: Partial<NavTabThemeConfig> = {}
 ): NavTabThemeConfig {
   return {
-    backgroundColor: "#ffffff",
+    backgroundColor: body?.backgroundColor || "#ffffff",
     borderColor: "#e0e0e0",
     textColor: body.textColor,
 
