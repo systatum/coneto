@@ -1034,7 +1034,7 @@ export const WithSubcontent: Story = {
         name: "button",
         title: "Save",
         type: "button",
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
         onClick: () => {
           const current = inputValue.statefulValue.find((v) => v.id === itemId);
 
