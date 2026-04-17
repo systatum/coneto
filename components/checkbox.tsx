@@ -8,6 +8,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
+import { CheckboxThemeConfig } from "./../theme";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -75,10 +76,7 @@ function BaseCheckbox({
       $checked={isChecked}
       $style={styles?.inputWrapperStyle}
       $disabled={props.disabled}
-      $backgroundColor={checkboxTheme?.backgroundColor}
-      $checkedBorderColor={checkboxTheme?.checkedBorderColor}
-      $highlightBackgroundColor={checkboxTheme?.highlightBackgroundColor}
-      $highlightHoverColor={checkboxTheme?.highlightHoverColor}
+      $theme={checkboxTheme}
     >
       <InputContainer aria-label="input-container-checkbox">
         <CheckboxBox
@@ -239,10 +237,7 @@ const InputWrapper = styled.label<{
   $hasDescription: boolean;
   $highlight: boolean;
   $checked: boolean;
-  $backgroundColor?: string;
-  $highlightBackgroundColor?: string;
-  $highlightHoverColor?: string;
-  $checkedBorderColor?: string;
+  $theme: CheckboxThemeConfig;
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
@@ -254,29 +249,21 @@ const InputWrapper = styled.label<{
   padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
   cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
 
-  background-color: ${({
-    $highlight,
-    $checked,
-    $backgroundColor,
-    $highlightBackgroundColor,
-  }) =>
+  background-color: ${({ $highlight, $checked, $theme }) =>
     $highlight && $checked
-      ? ($highlightBackgroundColor ?? $backgroundColor ?? "#DBEAFE")
+      ? ($theme?.highlightCheckedBackgroundColor ??
+        $theme?.backgroundColor ??
+        "#DBEAFE")
       : "transparent"};
 
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${({
-      $highlight,
-      $highlightHoverColor,
-      $highlightBackgroundColor,
-      $checked,
-    }) => {
+    background-color: ${({ $highlight, $theme, $checked }) => {
       if ($highlight && $checked) {
-        return $highlightBackgroundColor ?? "#E7F2FC";
+        return $theme?.highlightCheckedBackgroundColor ?? "#E7F2FC";
       } else if ($highlight) {
-        return $highlightHoverColor;
+        return $theme?.highlightHoverBackgroundColor;
       } else {
         return "transparent";
       }
