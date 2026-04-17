@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { FieldLaneDropdownsOption, FieldLane } from "./field-lane";
+import { FieldLaneDropdownOption, FieldLane } from "./field-lane";
 import { useState } from "react";
 import { css } from "styled-components";
 import * as RemixIcons from "@remixicon/react";
@@ -164,7 +164,7 @@ export const Default: Story = {
       selectedOption: "2",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
       {
         text: "On-site",
         value: "1",
@@ -284,7 +284,7 @@ export const CustomRenderer: Story = {
       },
     };
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

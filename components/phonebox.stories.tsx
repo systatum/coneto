@@ -3,8 +3,11 @@ import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
 import { COUNTRY_CODES } from "./../constants/countries";
-import { FieldLaneDropdownsOption } from "./field-lane";
-import { CountryCodeProps, Phonebox } from "./phonebox";
+import {
+  PhoneboxCountryCode,
+  Phonebox,
+  PhoneboxDropdownOption,
+} from "./phonebox";
 import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta = {
@@ -59,7 +62,7 @@ export const DefaultPhonebox: Story = {
   render: (args) => {
     interface ValueProps {
       phone?: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
     }
 
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
@@ -104,7 +107,7 @@ export const WithDropdown: Story = {
       setValue((prev) => ({ ...prev, [name]: value }));
     };
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: PhoneboxDropdownOption[] = [
       {
         text: "On-site",
         value: "1",
@@ -185,7 +188,7 @@ export const PhoneboxWithError: Story = {
   render: (args) => {
     interface ValueProps {
       phone?: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
     }
 
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(

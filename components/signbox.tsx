@@ -1,7 +1,12 @@
 import { RiEraserLine } from "@remixicon/react";
 import React, { useRef, useEffect, ChangeEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SignboxThemeConfig } from "./../theme";
@@ -26,6 +31,8 @@ interface BaseSignboxProps {
 export interface SignboxStyles {
   self?: CSSProp;
 }
+
+export type SignboxDropdownOption = FieldLaneDropdownOption;
 
 function BaseSignbox({
   name = "signature",

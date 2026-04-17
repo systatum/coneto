@@ -13,9 +13,9 @@ import { SelectboxOption } from "./../../components/selectbox";
 import { CapsuleTab } from "./../../components/capsule";
 import { useMemo, useState } from "react";
 import {
-  OnCompleteFunction,
+  OnCompleteFunctionArgs,
   FileDropBox,
-  OnFileDroppedFunction,
+  OnFileDroppedFunctionArgs,
 } from "./../../components/file-drop-box";
 import { Table } from "./../../components/table";
 import { RiDeleteBin2Fill } from "@remixicon/react";
@@ -500,7 +500,7 @@ describe("StatefulForm", () => {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyPosition: "flex-end",
+          rowJustifyPosition: "end",
         },
       ];
 
@@ -1608,7 +1608,7 @@ describe("StatefulForm", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunction) => {
+      }: OnFileDroppedFunctionArgs) => {
         const file = files[0];
         setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
         setProgressLabel(`Uploading ${file.name}`);
@@ -1638,7 +1638,7 @@ describe("StatefulForm", () => {
         succeedFiles,
         hideProgressLabel,
         showUploaderForm,
-      }: OnCompleteFunction) => {
+      }: OnCompleteFunctionArgs) => {
         console.log(succeedFiles, "This is succeedFiles");
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
@@ -1757,7 +1757,7 @@ describe("StatefulForm", () => {
           type: "button",
           required: false,
           disabled: !isFormValid,
-          rowJustifyPosition: "flex-end",
+          rowJustifyPosition: "end",
         },
       ];
 
@@ -2358,7 +2358,7 @@ describe("StatefulForm", () => {
         required: true,
         placeholder: "Enter text",
         width: "15%",
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 

@@ -3,8 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownsOption } from "./field-lane";
-import { Signbox } from "./signbox";
+import { Signbox, SignboxDropdownOption } from "./signbox";
 import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Signbox> = {
@@ -117,7 +116,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: SignboxDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

@@ -10,7 +10,12 @@ import {
 } from "react";
 import { Button } from "./button";
 import { List } from "./list";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { MoneyboxThemeConfig } from "./../theme";
@@ -52,6 +57,8 @@ export interface MoneyboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
 }
+
+export type MoneyboxDropdownOption = FieldLaneDropdownOption;
 
 const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
   (

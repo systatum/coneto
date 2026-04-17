@@ -7,10 +7,13 @@ import { BadgeProps } from "./badge";
 import { Button } from "./button";
 import { CapsuleTab } from "./capsule";
 import { Card } from "./card";
-import { OnCompleteFunction, OnFileDroppedFunction } from "./file-drop-box";
+import {
+  OnCompleteFunctionArgs,
+  OnFileDroppedFunctionArgs,
+} from "./file-drop-box";
 import { Messagebox } from "./messagebox";
 import { MoneyboxCurrencyOption } from "./moneybox";
-import { CountryCodeProps } from "./phonebox";
+import { PhoneboxCountryCode } from "./phonebox";
 import { PinboxParts } from "./pinbox";
 import { SelectboxOption } from "./selectbox";
 import {
@@ -337,7 +340,7 @@ export const Default: Story = {
         required: true,
         disabled: !isFormValid,
         placeholder: "Enter text",
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -473,7 +476,7 @@ export const WithFrame: Story = {
         title: "Submit",
         type: "button",
         disabled: !isFormValid,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -653,7 +656,7 @@ export const ConditionalElement: Story = {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyPosition: "flex-end",
+          rowJustifyPosition: "end",
         },
       ] as FormFieldGroup[];
     }, [formFields.compEffort, formFields.quantType, isFormValid]);
@@ -687,7 +690,7 @@ export const LeftLabeled: Story = {
       name: string;
       email: string;
       phone: string;
-      country_code: CountryCodeProps;
+      country_code: PhoneboxCountryCode;
       password: string;
     }>({
       name: "",
@@ -987,7 +990,7 @@ export const AllCase: Story = {
       toggle: boolean;
       signature: string;
       capsule: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
       currency: string;
       pin: string;
     }
@@ -1199,7 +1202,7 @@ export const AllCase: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunction) => {
+    }: OnFileDroppedFunctionArgs) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -1226,7 +1229,7 @@ export const AllCase: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunction) => {
+    }: OnCompleteFunctionArgs) => {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
@@ -1479,7 +1482,7 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -1543,7 +1546,7 @@ export const AllCaseDisabled: Story = {
       togglebox: boolean;
       signature: string;
       capsule: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
       currency: string;
       pin: string;
     }
@@ -1824,7 +1827,7 @@ export const AllCaseDisabled: Story = {
         title: "Save",
         type: "button",
         required: true,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 

@@ -63,7 +63,7 @@ export interface FieldLaneAction {
 
 export interface FieldLaneDropdown {
   disabled?: boolean;
-  options?: FieldLaneDropdownsOption[];
+  options?: FieldLaneDropdownOption[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
@@ -82,7 +82,7 @@ export interface FieldLaneDropdownStyles {
   self?: CSSProp;
 }
 
-export interface FieldLaneDropdownsOption {
+export interface FieldLaneDropdownOption {
   text: string;
   value: string;
   icon?: FigureProps;

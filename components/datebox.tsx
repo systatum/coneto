@@ -13,7 +13,7 @@ import {
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
-import { FieldLaneProps } from "./field-lane";
+import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 
@@ -47,6 +47,8 @@ type CalendarDrawerProps = BaseCalendarProps &
       showError?: boolean;
     }
   >;
+
+export type DateboxDropdownOption = FieldLaneDropdownOption;
 
 export interface DateboxProps
   extends BaseDateboxProps,

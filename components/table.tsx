@@ -1026,7 +1026,7 @@ const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
     `}
 `;
 
-type TableRowAction = TipMenuItemProps;
+export type TableRowAction = TipMenuItemProps;
 
 export type TableRowContent = (string | ReactNode)[];
 

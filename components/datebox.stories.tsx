@@ -2,8 +2,7 @@ import * as RemixIcons from "@remixicon/react";
 import { Meta, StoryObj } from "@storybook/react";
 import { ReactElement, useState } from "react";
 import { css } from "styled-components";
-import { Datebox } from "./datebox";
-import { FieldLaneDropdownsOption } from "./field-lane";
+import { Datebox, DateboxDropdownOption } from "./datebox";
 import { Messagebox } from "./messagebox";
 
 const meta: Meta<typeof Datebox> = {
@@ -203,7 +202,7 @@ export const WithDropdown: Story = {
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
     ];
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: DateboxDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

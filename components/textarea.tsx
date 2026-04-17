@@ -5,7 +5,12 @@ import {
   forwardRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextareaThemeConfig } from "./../theme";
@@ -67,6 +72,8 @@ export interface TextareaProps
     Omit<FieldLaneProps, "styles"> {
   styles?: TextareaStyles & FieldLaneStyles;
 }
+
+export type TextareaDropdownOption = FieldLaneDropdownOption;
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ ...props }, ref) => {

@@ -6,7 +6,11 @@ import { Combobox } from "./combobox";
 import { Datebox } from "./datebox";
 import { Colorbox } from "./colorbox";
 import { formatMoneyboxNumber, Moneybox } from "./moneybox";
-import { CountryCodeProps, formatPhoneboxNumber, Phonebox } from "./phonebox";
+import {
+  PhoneboxCountryCode,
+  formatPhoneboxNumber,
+  Phonebox,
+} from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { CountryCode } from "libphonenumber-js/types.cjs";
 import { Timebox } from "./timebox";
@@ -843,7 +847,7 @@ export const WithPhonebox: Story = {
     const onChangeValue = (
       e:
         | ChangeEvent<HTMLInputElement>
-        | { target: { name: string; value: CountryCodeProps } },
+        | { target: { name: string; value: PhoneboxCountryCode } },
       type?: string
     ) => {
       const { name, value } = e.target;

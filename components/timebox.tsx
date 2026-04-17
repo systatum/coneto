@@ -9,7 +9,12 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
@@ -39,6 +44,8 @@ export interface TimeboxPlaceholder {
   minute?: string;
   second?: string;
 }
+
+export type TimeboxDropdownOption = FieldLaneDropdownOption;
 
 const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
   (
