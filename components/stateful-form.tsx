@@ -17,7 +17,7 @@ import {
   Path,
   UseFormRegister,
 } from "react-hook-form";
-import { Phonebox, CountryCodeProps, PhoneboxProps } from "./phonebox";
+import { Phonebox, PhoneboxCountryCode, PhoneboxProps } from "./phonebox";
 import { Checkbox, CheckboxProps } from "./checkbox";
 import { Textbox, TextboxProps } from "./textbox";
 import { Colorbox, ColorboxProps } from "./colorbox";
@@ -63,7 +63,7 @@ export type FormValueType =
   | File[]
   | null
   | undefined
-  | CountryCodeProps
+  | PhoneboxCountryCode
   | string[]
   | number[];
 
@@ -1103,7 +1103,7 @@ function FormFields<T extends FieldValues>({
                           | {
                               target: {
                                 name: string;
-                                value: CountryCodeProps;
+                                value: PhoneboxCountryCode;
                               };
                             }
                           | ChangeEvent<HTMLInputElement>

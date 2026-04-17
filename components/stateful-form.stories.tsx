@@ -13,7 +13,7 @@ import {
 } from "./file-drop-box";
 import { Messagebox } from "./messagebox";
 import { MoneyboxCurrencyOption } from "./moneybox";
-import { CountryCodeProps } from "./phonebox";
+import { PhoneboxCountryCode } from "./phonebox";
 import { PinboxParts } from "./pinbox";
 import { SelectboxOption } from "./selectbox";
 import {
@@ -690,7 +690,7 @@ export const LeftLabeled: Story = {
       name: string;
       email: string;
       phone: string;
-      country_code: CountryCodeProps;
+      country_code: PhoneboxCountryCode;
       password: string;
     }>({
       name: "",
@@ -990,7 +990,7 @@ export const AllCase: Story = {
       toggle: boolean;
       signature: string;
       capsule: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
       currency: string;
       pin: string;
     }
@@ -1546,7 +1546,7 @@ export const AllCaseDisabled: Story = {
       togglebox: boolean;
       signature: string;
       capsule: string;
-      country_code?: CountryCodeProps;
+      country_code?: PhoneboxCountryCode;
       currency: string;
       pin: string;
     }
