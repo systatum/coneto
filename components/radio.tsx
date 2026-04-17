@@ -268,10 +268,10 @@ const Label = styled.label<{
             : "transparent"};
 
     background-color: ${({ $highlight, $checked, $theme }) => {
-      if ($highlight) {
-        return $checked
-          ? $theme?.highlightBackgroundColor
-          : $theme?.highlightBackgroundColor || $theme?.backgroundColor;
+      if ($highlight && $checked) {
+        return $theme?.highlightCheckedBackgroundColor;
+      } else if ($highlight) {
+        return $theme?.highlightBackgroundColor || $theme?.backgroundColor;
       }
       return $theme?.backgroundColor;
     }};

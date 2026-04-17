@@ -329,8 +329,8 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
   iconColor: "#f9fafb",
   labelColor: "#f9fafb",
   descriptionColor: "#d1d5db",
-  highlightBackgroundColor: "#2563EB33",
-  highlightHoverColor: "#2563EB55",
+  highlightCheckedBackgroundColor: "#2563EB33",
+  highlightHoverBackgroundColor: "#2563EB55",
 });
 
 const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);

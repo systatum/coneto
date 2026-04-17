@@ -484,8 +484,8 @@ export function createCheckboxTheme(
     iconColor: "#ffffff",
     labelColor: body.textColor,
     descriptionColor: "#4b5563",
-    highlightBackgroundColor: "#DBEAFE",
-    highlightHoverColor: "#E7F2FC",
+    highlightCheckedBackgroundColor: "#DBEAFE",
+    highlightHoverBackgroundColor: "#E7F2FC",
   };
 
   return {
@@ -1115,9 +1115,9 @@ export function createRadioTheme(
     iconColor: "#ffffff",
     textColor: body.textColor,
     descriptionColor: "#4b5563",
-    highlightBackgroundColor: "#DBEAFE",
+    highlightBackgroundColor: "#E7F2FC",
     highlightBorderColor: "#e5e7eb",
-    highlightCheckedBackgroundColor: "#E7F2FC",
+    highlightCheckedBackgroundColor: "#DBEAFE",
     highlightCheckedBorderColor: "#e5e7eb",
   };
 
