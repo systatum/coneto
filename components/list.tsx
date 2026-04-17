@@ -916,7 +916,6 @@ export interface ListItemProps {
   groupId?: string;
   selectable?: boolean;
   onSelected?: (selected: ChangeEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
   rightSideContent?: ((prop: string) => ReactNode) | ReactNode;
   actions?: (id?: string) => ListItemAction[];
   children?: ReactNode;
@@ -931,6 +930,7 @@ export interface ListItemProps {
   hoverTextColor?: string;
   hoverBackgroundColor?: string;
   selected?: boolean;
+  onClick?: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLDivElement>) => void;
@@ -1048,9 +1048,10 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
           }
           $textColor={listTheme.textColor}
           draggable={draggable}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             if (onClick) {
-              onClick();
+              onClick(e);
             }
             if (openable) {
               setIsOpen(idFullname, "item");
@@ -1211,10 +1212,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                     ?.filter((action) => !action?.hidden)
                     .map((action) => ({
                       ...action,
-                      icon: {
-                        ...action?.icon,
-                        image: action?.icon?.image ?? RiArrowRightSLine,
-                      },
                       onClick: (e?: React.MouseEvent) => {
                         action?.onClick?.(e);
                         if (listActions?.length > 1) {

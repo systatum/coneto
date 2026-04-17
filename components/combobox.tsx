@@ -19,7 +19,7 @@ import {
   SelectboxStyles,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
-import { List, ListItemStyles } from "./list";
+import { List, ListItemAction, ListItemStyles } from "./list";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
@@ -65,7 +65,12 @@ export interface ComboboxGroupedOption {
   initialState?: ComboboxGroupInitialState;
 }
 
-export type ComboboxSingleOption = SelectboxOption;
+export type ComboboxSingleOption = SelectboxOption & ComboboxActionOption;
+export interface ComboboxActionOption {
+  actions?: (id?: string) => ComboboxItemAction[];
+}
+
+export type ComboboxItemAction = ListItemAction;
 
 export type ComboboxOption = ComboboxSingleOption | ComboboxGroupedOption;
 
@@ -452,7 +457,7 @@ function ComboboxDrawer({
     return { mapped, totalOptions };
   }, [options, openedCategoryGroup]);
 
-  function renderOption(option: SelectboxOption, index: number) {
+  function renderOption(option: ComboboxSingleOption, index: number) {
     const optionValue = String(option.value);
     const isSelected = finalSelectedOptions.includes(optionValue);
 
@@ -463,6 +468,7 @@ function ComboboxDrawer({
       <List.Item
         id={String(option.value)}
         title={option.render ? option.render : option.text}
+        actions={option?.actions}
         styles={{
           rowStyle: listItemRowStyle({
             shouldHighlight,
@@ -748,6 +754,7 @@ const listItemRowStyle = ({
   transition: background-color 0ms;
   background-color: ${theme.backgroundColor};
   color: ${theme.textColor};
+  min-height: 36px;
 
   ${interactionMode !== "mouse" &&
   css`

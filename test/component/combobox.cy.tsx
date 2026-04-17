@@ -1,6 +1,7 @@
 import {
   Combobox,
   ComboboxAction,
+  ComboboxItemAction,
   ComboboxOption,
   ComboboxProps,
   ComboboxSingleOption,
@@ -8,8 +9,10 @@ import {
 import { Button } from "./../../components/button";
 import {
   RiAddLine,
+  RiDeleteBack2Line,
   RiHome2Line,
   RiLogoutBoxLine,
+  RiRunLine,
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
@@ -23,6 +26,33 @@ const FRUIT_OPTIONS: ComboboxSingleOption[] = [
   { text: "Pineapple", value: "5" },
   { text: "Strawberry", value: "6" },
   { text: "Watermelon", value: "7" },
+];
+
+const OPTION_ACTIONS = (id: string | number): ComboboxItemAction[] => [
+  {
+    caption: "Run",
+    onClick: () => {
+      console.log(`run this ${id}`);
+    },
+    icon: { image: RiRunLine },
+  },
+  {
+    caption: "Delete",
+    onClick: () => {
+      console.log(`delete this ${id}`);
+    },
+    icon: { image: RiDeleteBack2Line },
+  },
+];
+
+const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxSingleOption[] = [
+  { text: "Apple", value: "1", actions: OPTION_ACTIONS },
+  { text: "Banana", value: "2", actions: OPTION_ACTIONS },
+  { text: "Orange", value: "3", actions: OPTION_ACTIONS },
+  { text: "Grape", value: "4", actions: OPTION_ACTIONS },
+  { text: "Pineapple", value: "5", actions: OPTION_ACTIONS },
+  { text: "Strawberry", value: "6", actions: OPTION_ACTIONS },
+  { text: "Watermelon", value: "7", actions: OPTION_ACTIONS },
 ];
 
 const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
@@ -101,6 +131,46 @@ describe("Combobox", () => {
       />
     );
   }
+
+  context("option with actions", () => {
+    context("with single option", () => {
+      beforeEach(() => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(<ProductCombobox options={FRUIT_OPTIONS_WITH_ACTIONS} />);
+        cy.findByLabelText("action-button").should("not.exist");
+
+        cy.findByPlaceholderText("Select a fruit...").click();
+        cy.findByText("Apple").trigger("mouseover");
+      });
+
+      it("renders the action in the combobox option", () => {
+        cy.findAllByLabelText("action-button").eq(0).should("exist");
+      });
+
+      context("with clicking the ellipsis", () => {
+        it("shows the tip menu option", () => {
+          cy.findAllByLabelText("action-button").eq(0).should("exist").click();
+          cy.findByText("Run").should("exist");
+          cy.findByText("Delete").should("exist");
+        });
+
+        context("when clicking the one of tip menu option", () => {
+          it("renders the console log", () => {
+            cy.findAllByLabelText("action-button")
+              .eq(0)
+              .should("exist")
+              .click();
+            cy.findByText("Run").should("exist").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "run this 1");
+          });
+        });
+      });
+    });
+  });
 
   context("style", () => {
     it("should render the height with 34px", () => {

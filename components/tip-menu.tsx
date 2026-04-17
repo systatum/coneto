@@ -122,7 +122,7 @@ function TipMenu({
 }
 
 export interface TipMenuItemProps {
-  caption: string;
+  caption?: string;
   icon?: FigureProps;
   onClick?: (e?: React.MouseEvent) => void;
   variant?: TipMenuVariant;
