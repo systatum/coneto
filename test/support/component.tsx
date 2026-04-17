@@ -26,6 +26,7 @@ const mountWithTheme = (
 };
 
 Cypress.Commands.add("mount", mountWithTheme);
+Cypress.Commands.add("mountWithoutTheme", mount);
 
 declare global {
   namespace Cypress {
@@ -34,6 +35,7 @@ declare global {
         component: ReactNode,
         options?: CustomMountOptions
       ): Cypress.Chainable;
+      mountWithoutTheme(component: ReactNode): Cypress.Chainable;
     }
   }
 }
