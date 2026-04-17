@@ -596,8 +596,7 @@ export interface StatefulFormThemeConfig
 }
 
 // table.tsx
-export interface TableThemeConfig {
-  textColor?: string;
+export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   boxShadow?: string;
 
   headerActionBackgroundColor?: string;
@@ -620,6 +619,9 @@ export interface TableThemeConfig {
   summaryBorderColor?: string;
 
   toggleRowBackgroundColor?: string;
+
+  scrollbarThumbColor?: string;
+  scrollbarTrackColor?: string;
 }
 
 // timebox.tsx
