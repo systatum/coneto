@@ -20,7 +20,7 @@ import {
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
-import { TipMenuContainerThemeConfig } from "./../theme";
+import { AppTheme, TipMenuContainerThemeConfig } from "./../theme";
 
 export const ButtonVariant = {
   Link: "link",
@@ -137,6 +137,9 @@ function Button({
   labelMode = "ellipsis",
   ...props
 }: ButtonProps) {
+  const { currentTheme } = useTheme();
+  const buttonTheme = currentTheme?.button;
+
   const [isOpenLocal, setIsOpenLocal] = React.useState(false);
 
   const isControlled = open !== undefined;
@@ -231,9 +234,11 @@ function Button({
       }}
       $style={styles?.containerStyle}
       $isOpen={isOpen}
+      $theme={buttonTheme}
       $variant={variant}
     >
       <BaseButton
+        $theme={buttonTheme}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
@@ -298,6 +303,7 @@ function Button({
           }}
         >
           <Divider
+            $theme={buttonTheme}
             aria-label="divider"
             $hovered={hovered === "main" || hovered === "dropdown" || isOpen}
             $variant={variant}
@@ -306,6 +312,7 @@ function Button({
           />
 
           <BaseButtonToggle
+            $theme={buttonTheme}
             aria-label="button-toggle"
             onClick={(e) => {
               e.stopPropagation();
@@ -471,6 +478,7 @@ const ButtonWrapper = styled.div<{
   $disabled?: boolean;
   $isOpen?: boolean;
   $variant?: ButtonVariants["variant"];
+  $theme: AppTheme["button"];
 }>`
   display: flex;
   position: relative;
@@ -486,8 +494,8 @@ const ButtonWrapper = styled.div<{
           cursor: pointer;
         `}
 
-  ${({ $isOpen, $variant }) => {
-    const { border } = getButtonColors($variant, $isOpen);
+  ${({ $isOpen, $variant, $theme }) => {
+    const { border } = getButtonColors($theme, $variant, $isOpen);
     return css`
       ${$variant?.startsWith("outline") &&
       css`
@@ -545,6 +553,7 @@ const BaseButton = styled.button<{
   $activeBackgroundColor?: string;
   $pressed?: boolean;
   $hoverBackgroundColor?: string;
+  $theme: AppTheme["button"];
 }>`
   display: flex;
   align-items: center;
@@ -574,8 +583,10 @@ const BaseButton = styled.button<{
     $activeBackgroundColor,
     $hoverBackgroundColor,
     $pressed,
+    $theme,
   }) => {
     const { backgroundColor, color, textDecoration } = getButtonColors(
+      $theme,
       $variant,
       $isOpen,
       $activeBackgroundColor
@@ -583,11 +594,11 @@ const BaseButton = styled.button<{
 
     const activeBg = $activeBackgroundColor
       ? $activeBackgroundColor
-      : getActiveColor($variant);
+      : getActiveColor($theme, $variant);
 
     const hoverBg = $hoverBackgroundColor
       ? $hoverBackgroundColor
-      : getHoverColor($variant);
+      : getHoverColor($theme, $variant);
 
     const textColor = getVariantTextColor($variant);
 
@@ -609,7 +620,7 @@ const BaseButton = styled.button<{
           overflow: hidden;
           box-shadow:
             inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-            inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+            inset 0 -0.5px 0.5px ${getActiveColor($theme, $variant)};
         }
       `}
 
@@ -619,7 +630,7 @@ const BaseButton = styled.button<{
             color: ${textColor};
             box-shadow:
               inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-              inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+              inset 0 -0.5px 0.5px ${getActiveColor($theme, $variant)};
           `
         : css`
             ${!$isOpen &&
@@ -634,11 +645,11 @@ const BaseButton = styled.button<{
               background-color: ${activeBg};
               box-shadow:
                 inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
-                inset 0 -0.5px 0.5px ${getActiveColor($variant)};
+                inset 0 -0.5px 0.5px ${getActiveColor($theme, $variant)};
             }
 
             &:focus-visible {
-              box-shadow: inset 0 0 0 2px ${getFocusColor($variant)};
+              box-shadow: inset 0 0 0 2px ${getFocusColor($theme, $variant)};
             }
           `};
     `;
@@ -675,6 +686,7 @@ const Divider = styled.div<{
   $variant: ButtonVariants["variant"];
   $isOpen?: boolean;
   $style?: CSSProp;
+  $theme: AppTheme["button"];
 }>`
   height: ${({ $hovered }) => ($hovered ? "100%" : "80%")};
   border-right: 2px solid;
@@ -682,8 +694,8 @@ const Divider = styled.div<{
   transition: height 100ms ease-in-out;
   right: 40px;
 
-  ${({ $variant, $isOpen }) => {
-    const { dividerColor } = getButtonColors($variant, $isOpen);
+  ${({ $variant, $isOpen, $theme }) => {
+    const { dividerColor } = getButtonColors($theme, $variant, $isOpen);
     return css`
       border-color: ${dividerColor};
     `;
@@ -693,21 +705,20 @@ const Divider = styled.div<{
 `;
 
 const getButtonColors = (
+  buttonTheme: AppTheme["button"],
   variant: ButtonVariants["variant"] = "default",
   isOpen?: boolean,
   customActiveColor?: string
 ) => {
-  const { currentTheme } = useTheme();
-
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   const baseVariant = outlineMatch
     ? (outlineMatch[1] as ButtonVariants["variant"])
     : variant;
 
   const themeButton =
-    currentTheme.button[variant] ||
-    currentTheme.button[baseVariant] ||
-    currentTheme.button.default;
+    buttonTheme?.[variant] ||
+    buttonTheme?.[baseVariant] ||
+    buttonTheme?.default;
 
   const backgroundColor = isOpen
     ? (customActiveColor ?? themeButton.activeBackgroundColor)
@@ -732,40 +743,43 @@ const getButtonColors = (
   };
 };
 
-const getHoverColor = (variant: ButtonVariants["variant"]) => {
-  const { currentTheme } = useTheme();
-
+const getHoverColor = (
+  buttonTheme: AppTheme["button"],
+  variant: ButtonVariants["variant"]
+) => {
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
-    return getHoverColor(baseVariant);
+    return getHoverColor(buttonTheme, baseVariant);
   }
 
-  return currentTheme.button[variant ?? "default"]?.hoverBackgroundColor;
+  return buttonTheme[variant ?? "default"]?.hoverBackgroundColor;
 };
 
-const getActiveColor = (variant: ButtonVariants["variant"]) => {
-  const { currentTheme } = useTheme();
-
+const getActiveColor = (
+  buttonTheme: AppTheme["button"],
+  variant: ButtonVariants["variant"]
+) => {
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
-    return getActiveColor(baseVariant);
+    return getActiveColor(buttonTheme, baseVariant);
   }
 
-  return currentTheme.button[variant ?? "default"]?.activeBackgroundColor;
+  return buttonTheme[variant ?? "default"]?.activeBackgroundColor;
 };
 
-const getFocusColor = (variant: ButtonVariants["variant"]) => {
-  const { currentTheme } = useTheme();
-
+const getFocusColor = (
+  buttonTheme: AppTheme["button"],
+  variant: ButtonVariants["variant"]
+) => {
   const outlineMatch = variant?.match(/^outline-(.+)$/);
   if (outlineMatch) {
     const baseVariant = outlineMatch[1] as ButtonVariants["variant"];
-    return getFocusColor(baseVariant);
+    return getFocusColor(buttonTheme, baseVariant);
   }
 
-  return currentTheme.button[variant ?? "default"]?.focusBackgroundColor;
+  return buttonTheme[variant ?? "default"]?.focusBackgroundColor;
 };
 
 Button.TipMenuContainer = ButtonTipMenuContainer;
