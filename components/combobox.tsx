@@ -20,7 +20,7 @@ import {
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import { List, ListItemStyles } from "./list";
-import { FieldLaneProps } from "./field-lane";
+import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
@@ -68,6 +68,8 @@ export interface ComboboxGroupedOption {
 export type ComboboxSingleOption = SelectboxOption;
 
 export type ComboboxOption = ComboboxSingleOption | ComboboxGroupedOption;
+
+export type ComboboxDropdownOption = FieldLaneDropdownOption;
 
 export interface ComboboxLabelsProps extends SelectboxLabels {}
 
