@@ -1211,10 +1211,6 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
                     ?.filter((action) => !action?.hidden)
                     .map((action) => ({
                       ...action,
-                      icon: {
-                        ...action?.icon,
-                        image: action?.icon?.image ?? RiArrowRightSLine,
-                      },
                       onClick: (e?: React.MouseEvent) => {
                         action?.onClick?.(e);
                         if (listActions?.length > 1) {
