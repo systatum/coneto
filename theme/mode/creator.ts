@@ -1391,7 +1391,7 @@ export function createTextareaTheme(
     errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
     errorTextColor: fieldLane?.errorForeground || "#991b1b",
 
-    disabledBorderColor: "#d1d5db",
+    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
     disabledTextColor: "#9ca3af",
 
     placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
