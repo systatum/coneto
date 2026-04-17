@@ -495,6 +495,7 @@ const darkModalDialog = createModalDialogTheme(darkBody, {
 });
 
 const darkNavTab = createNavTabTheme(darkBody, {
+  backgroundColor: "rgb(35, 35, 35)",
   borderColor: "rgb(26, 26, 26)",
 
   hoverBackgroundColor: "rgba(52, 52, 52, 0.5)",
