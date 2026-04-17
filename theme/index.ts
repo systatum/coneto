@@ -156,8 +156,8 @@ export interface CheckboxThemeConfig
   iconColor?: string;
   labelColor?: string;
   descriptionColor?: string;
-  highlightBackgroundColor?: string;
-  highlightHoverColor?: string;
+  highlightCheckedBackgroundColor?: string;
+  highlightHoverBackgroundColor?: string;
 }
 
 // combobox.tsx
