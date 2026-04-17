@@ -8,8 +8,8 @@ import { Button } from "./button";
 import { CapsuleTab } from "./capsule";
 import { Card } from "./card";
 import {
-  OnCompleteFunctionProps,
-  OnFileDroppedFunctionProps,
+  OnCompleteFunctionArgs,
+  OnFileDroppedFunctionArgs,
 } from "./file-drop-box";
 import { Messagebox } from "./messagebox";
 import { MoneyboxCurrencyOption } from "./moneybox";
@@ -1202,7 +1202,7 @@ export const AllCase: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunctionProps) => {
+    }: OnFileDroppedFunctionArgs) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -1229,7 +1229,7 @@ export const AllCase: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunctionProps) => {
+    }: OnCompleteFunctionArgs) => {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,

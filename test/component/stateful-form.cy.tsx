@@ -13,9 +13,9 @@ import { SelectboxOption } from "./../../components/selectbox";
 import { CapsuleTab } from "./../../components/capsule";
 import { useMemo, useState } from "react";
 import {
-  OnCompleteFunctionProps,
+  OnCompleteFunctionArgs,
   FileDropBox,
-  OnFileDroppedFunctionProps,
+  OnFileDroppedFunctionArgs,
 } from "./../../components/file-drop-box";
 import { Table } from "./../../components/table";
 import { RiDeleteBin2Fill } from "@remixicon/react";
@@ -1608,7 +1608,7 @@ describe("StatefulForm", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunctionProps) => {
+      }: OnFileDroppedFunctionArgs) => {
         const file = files[0];
         setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
         setProgressLabel(`Uploading ${file.name}`);
@@ -1638,7 +1638,7 @@ describe("StatefulForm", () => {
         succeedFiles,
         hideProgressLabel,
         showUploaderForm,
-      }: OnCompleteFunctionProps) => {
+      }: OnCompleteFunctionArgs) => {
         console.log(succeedFiles, "This is succeedFiles");
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
