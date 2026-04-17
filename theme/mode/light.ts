@@ -122,12 +122,7 @@ const lightDormantText = createDormantTextTheme(lightBody);
 
 const lightDrawerTab = createDrawerTabTheme(lightBody);
 
-const lightErrorSlate = createErrorSlateTheme({
-  cubeFaceBackground: "#dd0b0b",
-  cubeFaceBorder: "#a80000",
-  cubeFaceText: "#ffffff",
-  titleColor: "#111111",
-});
+const lightErrorSlate = createErrorSlateTheme(lightBody);
 
 const lightFileInputBox = createFileInputBoxTheme(lightBody, lightFieldLane);
 
