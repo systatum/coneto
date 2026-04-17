@@ -1,74 +1,73 @@
 import { css } from "styled-components";
 import { Keynote, KeynoteStyles } from "./../../components/keynote";
+import { ReactNode } from "react";
 
 describe("Keynote", () => {
   context("data", () => {
-    interface BenchmarkRecord {
-      id: number;
-      userId: number;
-      compilationId: number;
-      cpuOps: number;
-      cpuReorder: number;
-      dnaIP: number;
-      e2eNoSetInput: number;
-      pcieDMA: number;
-      setInput: number;
-      createdAt: Date;
-      updatedAt: Date;
+    interface KeynoteValueSample {
+      numberValue: number;
+      dateValue: Date;
+      booleanTrueValue: boolean;
+      booleanFalseValue: boolean;
+      objectValue: Record<string, unknown>;
+      nullValue: null;
+      undefinedValue?: undefined;
+      reactNode: ReactNode;
     }
 
-    const data: BenchmarkRecord = {
-      id: 1,
-      userId: 101,
-      compilationId: 5001,
-      cpuOps: 1200,
-      cpuReorder: 300,
-      dnaIP: 450,
-      e2eNoSetInput: 200,
-      pcieDMA: 800,
-      setInput: 150,
-      createdAt: new Date("2025-06-19"),
-      updatedAt: new Date("2025-06-20"),
+    const data: KeynoteValueSample = {
+      numberValue: 1200,
+      dateValue: new Date("2025-06-19"),
+      booleanTrueValue: true,
+      booleanFalseValue: false,
+      objectValue: { mode: "benchmark" },
+      nullValue: null,
+      undefinedValue: undefined,
+      reactNode: (
+        <div
+          aria-label="test"
+          style={{
+            backgroundColor: "red",
+          }}
+        >
+          Test the element
+        </div>
+      ),
     };
 
-    const keys: (keyof BenchmarkRecord)[] = [
-      "id",
-      "userId",
-      "compilationId",
-      "cpuOps",
-      "cpuReorder",
-      "dnaIP",
-      "e2eNoSetInput",
-      "pcieDMA",
-      "setInput",
-      "createdAt",
-      "updatedAt",
+    const keys: (keyof KeynoteValueSample)[] = [
+      "numberValue",
+      "dateValue",
+      "booleanTrueValue",
+      "booleanFalseValue",
+      "objectValue",
+      "nullValue",
+      "undefinedValue",
+      "reactNode",
     ];
 
-    const keyLabels: Record<keyof BenchmarkRecord, string> = {
-      id: "ID",
-      userId: "User ID",
-      compilationId: "Compilation ID",
-      cpuOps: "CPU Ops",
-      cpuReorder: "CPU Reorder",
-      dnaIP: "DNA IP",
-      e2eNoSetInput: "E2E No Set Input",
-      pcieDMA: "PCIe DMA",
-      setInput: "Set Input",
-      createdAt: "Created At",
-      updatedAt: "Updated At",
+    const keyLabels: Record<keyof KeynoteValueSample, string> = {
+      numberValue: "Number",
+      dateValue: "Date",
+      booleanTrueValue: "Boolean (true)",
+      booleanFalseValue: "Boolean (false)",
+      objectValue: "Object",
+      nullValue: "Null",
+      undefinedValue: "Undefined",
+      reactNode: "ReactNode",
     };
+    beforeEach(() => {
+      cy.mount(
+        <Keynote
+          data={data}
+          keys={keys}
+          keyLabels={keys?.map((key) => keyLabels[key])}
+        />
+      );
+    });
 
     context("when given typeof number", () => {
       it("should still rendered normally", () => {
-        cy.mount(
-          <Keynote
-            data={data}
-            keys={keys}
-            keyLabels={keys?.map((key) => keyLabels[key])}
-          />
-        );
-
         Object.values(data).map((value) => {
           if (typeof value === "number") {
             cy.findByText(value).should("exist");
@@ -77,19 +76,82 @@ describe("Keynote", () => {
       });
     });
 
+    context("when given typeof boolean", () => {
+      context("when given with true", () => {
+        it("renders the text with 'true' text", () => {
+          Object.values(data).map((value) => {
+            if (typeof value === "boolean") {
+              cy.findByText("true").should("exist");
+            }
+          });
+        });
+      });
+
+      context("when given with false", () => {
+        it("renders the text with 'false' text", () => {
+          Object.values(data).map((value) => {
+            if (typeof value === "boolean") {
+              cy.findByText("false").should("exist");
+            }
+          });
+        });
+      });
+    });
+
+    context("when given typeof number", () => {
+      it("should still rendered normally", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === "string") {
+            cy.findByText(value).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given typeof object", () => {
+      it("renders the object in the text", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === "object") {
+            cy.findByText('{"mode":"benchmark"}').should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given typeof React Element", () => {
+      it("should render the element", () => {
+        cy.findByLabelText("test")
+          .should("exist")
+          .and("have.text", "Test the element")
+          .and("have.css", "background-color", "rgb(255, 0, 0)");
+      });
+    });
+
     context("when given typeof date", () => {
       it("should convert to local date string", () => {
-        cy.mount(
-          <Keynote
-            data={data}
-            keys={keys}
-            keyLabels={keys?.map((key) => keyLabels[key])}
-          />
-        );
-
         Object.values(data).map((value) => {
           if (value instanceof Date) {
             cy.findByText(value?.toLocaleDateString()).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given undefined", () => {
+      it("should convert to '-' text", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === undefined) {
+            cy.findByText("-").should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given null", () => {
+      it("should convert to '-' text", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === null) {
+            cy.findByText("-").should("exist");
           }
         });
       });
