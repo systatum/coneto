@@ -1,8 +1,8 @@
 import { css } from "styled-components";
 import {
   FileDropBox,
-  OnCompleteFunction,
-  OnFileDroppedFunction,
+  OnCompleteFunctionProps,
+  OnFileDroppedFunctionProps,
 } from "./../../components/file-drop-box";
 import { Table } from "./../../components/table";
 import { useState } from "react";
@@ -19,7 +19,7 @@ describe("FileDropBox", () => {
           files,
           setProgressLabel,
           succeed,
-        }: OnFileDroppedFunction) => {
+        }: OnFileDroppedFunctionProps) => {
           const file = files[0];
           setFiles((prev) => [...prev, file]);
           setProgressLabel(`Uploading ${file.name}`);
@@ -49,7 +49,7 @@ describe("FileDropBox", () => {
           succeedFiles,
           hideProgressLabel,
           showUploaderForm,
-        }: OnCompleteFunction) => {
+        }: OnCompleteFunctionProps) => {
           console.log(succeedFiles, "This is succeedFiles");
           console.log(failedFiles, "This is failedFiles");
           await setProgressLabel(
@@ -144,7 +144,7 @@ describe("FileDropBox", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunction) => {
+      }: OnFileDroppedFunctionProps) => {
         const file = files[0];
         setProgressLabel(`Uploading ${file.name}`);
 
@@ -172,7 +172,7 @@ describe("FileDropBox", () => {
         setProgressLabel,
         succeedFiles,
         hideProgressLabel,
-      }: OnCompleteFunction) => {
+      }: OnCompleteFunctionProps) => {
         console.log(succeedFiles, "This is succeedFiles");
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
@@ -208,7 +208,7 @@ describe("FileDropBox", () => {
           files,
           setProgressLabel,
           succeed,
-        }: OnFileDroppedFunction) => {
+        }: OnFileDroppedFunctionProps) => {
           const file = files[0];
           setProgressLabel(`Uploading ${file.name}`);
 
@@ -237,7 +237,7 @@ describe("FileDropBox", () => {
           succeedFiles,
           hideProgressLabel,
           showUploaderForm,
-        }: OnCompleteFunction) => {
+        }: OnCompleteFunctionProps) => {
           console.log(succeedFiles, "This is succeedFiles");
           console.log(failedFiles, "This is failedFiles");
           await setProgressLabel(
@@ -292,7 +292,7 @@ describe("FileDropBox", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunction) => {
+      }: OnFileDroppedFunctionProps) => {
         const file = files[0];
         setProgressLabel(`Uploading ${file.name}`);
 
@@ -319,7 +319,7 @@ describe("FileDropBox", () => {
         failedFiles,
         setProgressLabel,
         succeedFiles,
-      }: OnCompleteFunction) => {
+      }: OnCompleteFunctionProps) => {
         console.log(succeedFiles, "This is succeedFiles");
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
@@ -365,7 +365,7 @@ describe("FileDropBox", () => {
         files,
         setProgressLabel,
         succeed,
-      }: OnFileDroppedFunction) => {
+      }: OnFileDroppedFunctionProps) => {
         const file = files[0];
         setProgressLabel(`Uploading ${file.name}`);
 
@@ -392,7 +392,7 @@ describe("FileDropBox", () => {
         failedFiles,
         setProgressLabel,
         succeedFiles,
-      }: OnCompleteFunction) => {
+      }: OnCompleteFunctionProps) => {
         console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
           `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`

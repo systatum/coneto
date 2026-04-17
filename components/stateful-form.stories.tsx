@@ -7,7 +7,10 @@ import { BadgeProps } from "./badge";
 import { Button } from "./button";
 import { CapsuleTab } from "./capsule";
 import { Card } from "./card";
-import { OnCompleteFunction, OnFileDroppedFunction } from "./file-drop-box";
+import {
+  OnCompleteFunctionProps,
+  OnFileDroppedFunctionProps,
+} from "./file-drop-box";
 import { Messagebox } from "./messagebox";
 import { MoneyboxCurrencyOption } from "./moneybox";
 import { CountryCodeProps } from "./phonebox";
@@ -337,7 +340,7 @@ export const Default: Story = {
         required: true,
         disabled: !isFormValid,
         placeholder: "Enter text",
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -473,7 +476,7 @@ export const WithFrame: Story = {
         title: "Submit",
         type: "button",
         disabled: !isFormValid,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -653,7 +656,7 @@ export const ConditionalElement: Story = {
           title: "Submit",
           type: "button",
           disabled: !isFormValid,
-          rowJustifyPosition: "flex-end",
+          rowJustifyPosition: "end",
         },
       ] as FormFieldGroup[];
     }, [formFields.compEffort, formFields.quantType, isFormValid]);
@@ -1199,7 +1202,7 @@ export const AllCase: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunction) => {
+    }: OnFileDroppedFunctionProps) => {
       const file = files[0];
       setProgressLabel(`Uploading ${file.name}`);
 
@@ -1226,7 +1229,7 @@ export const AllCase: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunction) => {
+    }: OnCompleteFunctionProps) => {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
@@ -1479,7 +1482,7 @@ export const AllCase: Story = {
         type: "button",
         required: true,
         disabled: !isFormValid,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 
@@ -1824,7 +1827,7 @@ export const AllCaseDisabled: Story = {
         title: "Save",
         type: "button",
         required: true,
-        rowJustifyPosition: "flex-end",
+        rowJustifyPosition: "end",
       },
     ];
 

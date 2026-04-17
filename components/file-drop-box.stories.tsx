@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import { css } from "styled-components";
 import {
   FileDropBox,
-  OnCompleteFunction,
-  OnFileDroppedFunction,
+  OnCompleteFunctionProps,
+  OnFileDroppedFunctionProps,
 } from "./file-drop-box";
 import { Table } from "./table";
 
@@ -179,7 +179,7 @@ export const Default: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunction) => {
+    }: OnFileDroppedFunctionProps) => {
       const file = files[0];
       setFiles((prev) => [...prev, file]);
       setProgressLabel(`Uploading ${file.name}`);
@@ -209,7 +209,7 @@ export const Default: Story = {
       succeedFiles,
       hideProgressLabel,
       showUploaderForm,
-    }: OnCompleteFunction) => {
+    }: OnCompleteFunctionProps) => {
       console.log(succeedFiles, "This is succeedFiles");
       console.log(failedFiles, "This is failedFiles");
       await setProgressLabel(
@@ -280,7 +280,7 @@ export const Error: Story = {
       files,
       setProgressLabel,
       succeed,
-    }: OnFileDroppedFunction) => {
+    }: OnFileDroppedFunctionProps) => {
       const file = files[0];
 
       if (allFilesRef.current.length === 0) {
@@ -316,7 +316,7 @@ export const Error: Story = {
       failedFiles,
       setProgressLabel,
       succeedFiles,
-    }: OnCompleteFunction) => {
+    }: OnCompleteFunctionProps) => {
       console.log(succeedFiles, "This is succeedFiles");
       console.log(failedFiles, "This is failedFiles");
 
