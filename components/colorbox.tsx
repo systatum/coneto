@@ -7,7 +7,12 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
@@ -145,6 +150,8 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
     );
   }
 );
+
+export type ColorboxDropdownOption = FieldLaneDropdownOption;
 
 export type ColorboxStyles = BaseColorboxStyles & FieldLaneStyles;
 export interface ColorboxProps
