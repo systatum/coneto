@@ -316,8 +316,6 @@ const darkChips = createChipsTheme(darkBody, {
 const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
   borderColor: "#374151",
   dividerColor: "#4b5563",
-  labelColor: "#f9fafb",
-  backgroundColor: "#1f2937",
   descriptionColor: "#d1d5db",
 });
 
@@ -327,7 +325,6 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
   checkedBorderColor: "rgb(21, 82, 164)",
   checkedBackgroundColor: "#1465d3bf",
   iconColor: "#f9fafb",
-  labelColor: "#f9fafb",
   descriptionColor: "#d1d5db",
   highlightBackgroundColor: "#2563EB33",
   highlightHoverColor: "#2563EB55",
@@ -380,11 +377,10 @@ const darkDrawerTab = createDrawerTabTheme(darkBody, {
   dividerColor: "#3f3f46",
 });
 
-const darkErrorSlate = createErrorSlateTheme({
+const darkErrorSlate = createErrorSlateTheme(darkBody, {
   cubeFaceBackground: "#ff4d4f",
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
-  titleColor: "#ffffff",
 });
 
 const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
@@ -444,8 +440,6 @@ const darkKeynote = createKeynoteTheme(darkBody, {
 });
 
 const darkList = createListTheme(darkBody, {
-  backgroundColor: "rgb(26, 26, 26)",
-  textColor: "#e5e7eb",
   hoverBackgroundColor: "#212c37",
   borderColor: "#1f2937",
   mutedTextColor: "#9ca3af",
@@ -496,15 +490,12 @@ const darkMoneybox = createMoneyboxTheme(darkBody, darkFieldLane);
 const darkModalDialog = createModalDialogTheme(darkBody, {
   backgroundColor: "#272727",
   borderColor: "#303030",
-  textColor: darkBody.textColor,
   subtitleColor: "#9ca3af",
   dividerColor: "rgb(60, 49, 110)",
 });
 
 const darkNavTab = createNavTabTheme(darkBody, {
-  backgroundColor: "rgb(35, 35, 35)",
   borderColor: "rgb(26, 26, 26)",
-  textColor: darkBody.textColor,
 
   hoverBackgroundColor: "rgba(52, 52, 52, 0.5)",
   activeBackgroundColor: "rgba(52, 52, 52, 0.8)",
@@ -577,8 +568,6 @@ const darkRichEditor = createRichEditorTheme(
   darkFieldLane,
   darkButton?.default,
   {
-    textColor: "#f9fafb",
-    borderColor: "#374151",
     scrollThumb: "#52525b",
     toolbarBackground: darkButton?.default?.backgroundColor,
     preBackgroundColor: "#2D2D2D",
@@ -754,7 +743,6 @@ const darkTreeList = createTreeListTheme(darkBody, {
 });
 
 const darkSplitPane = createSplitPaneTheme(darkBody, {
-  textColor: "#f9fafb",
   dividerColor: "#374151",
 });
 
