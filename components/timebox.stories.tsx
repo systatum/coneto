@@ -3,8 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownOption } from "./field-lane";
-import { Timebox } from "./timebox";
+import { Timebox, TimeboxDropdownOption } from "./timebox";
 
 const meta: Meta<typeof Timebox> = {
   title: "Input Elements/Timebox",
@@ -172,7 +171,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
+    const ATTENDANCE_OPTIONS: TimeboxDropdownOption[] = [
       {
         text: "On-site",
         value: "1",
