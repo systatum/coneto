@@ -2,6 +2,100 @@ import { css } from "styled-components";
 import { Keynote, KeynoteStyles } from "./../../components/keynote";
 
 describe("Keynote", () => {
+  context("data", () => {
+    interface BenchmarkRecord {
+      id: number;
+      userId: number;
+      compilationId: number;
+      cpuOps: number;
+      cpuReorder: number;
+      dnaIP: number;
+      e2eNoSetInput: number;
+      pcieDMA: number;
+      setInput: number;
+      createdAt: Date;
+      updatedAt: Date;
+    }
+
+    const data: BenchmarkRecord = {
+      id: 1,
+      userId: 101,
+      compilationId: 5001,
+      cpuOps: 1200,
+      cpuReorder: 300,
+      dnaIP: 450,
+      e2eNoSetInput: 200,
+      pcieDMA: 800,
+      setInput: 150,
+      createdAt: new Date("2025-06-19"),
+      updatedAt: new Date("2025-06-20"),
+    };
+
+    const keys: (keyof BenchmarkRecord)[] = [
+      "id",
+      "userId",
+      "compilationId",
+      "cpuOps",
+      "cpuReorder",
+      "dnaIP",
+      "e2eNoSetInput",
+      "pcieDMA",
+      "setInput",
+      "createdAt",
+      "updatedAt",
+    ];
+
+    const keyLabels: Record<keyof BenchmarkRecord, string> = {
+      id: "ID",
+      userId: "User ID",
+      compilationId: "Compilation ID",
+      cpuOps: "CPU Ops",
+      cpuReorder: "CPU Reorder",
+      dnaIP: "DNA IP",
+      e2eNoSetInput: "E2E No Set Input",
+      pcieDMA: "PCIe DMA",
+      setInput: "Set Input",
+      createdAt: "Created At",
+      updatedAt: "Updated At",
+    };
+
+    context("when given typeof number", () => {
+      it("should still rendered normally", () => {
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={keys}
+            keyLabels={keys?.map((key) => keyLabels[key])}
+          />
+        );
+
+        Object.values(data).map((value) => {
+          if (typeof value === "number") {
+            cy.findByText(value).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given typeof date", () => {
+      it("should convert to local date string", () => {
+        cy.mount(
+          <Keynote
+            data={data}
+            keys={keys}
+            keyLabels={keys?.map((key) => keyLabels[key])}
+          />
+        );
+
+        Object.values(data).map((value) => {
+          if (value instanceof Date) {
+            cy.findByText(value?.toLocaleDateString()).should("exist");
+          }
+        });
+      });
+    });
+  });
+
   context("rendered condition", () => {
     context("when not given keyLabels", () => {
       it("should still rendered with key", () => {
