@@ -18,7 +18,7 @@ import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
 
 export interface NavTabProps {
-  tabs?: NavTabTabProps[];
+  tabs?: NavTabTab[];
   activeTab?: string;
   activeColor?: string;
   children?: ReactNode;
@@ -50,7 +50,7 @@ export const NavTabSize = {
 
 export type NavTabSize = (typeof NavTabSize)[keyof typeof NavTabSize];
 
-export interface NavTabTabProps {
+export interface NavTabTab {
   id: string;
   title: string;
   content?: ReactNode;
