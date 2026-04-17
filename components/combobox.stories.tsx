@@ -9,7 +9,7 @@ import {
 import { SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
-import { FieldLaneDropdownsOption } from "./field-lane";
+import { FieldLaneDropdownOption } from "./field-lane";
 import * as RemixIcons from "@remixicon/react";
 
 const meta: Meta<typeof Combobox> = {
@@ -237,7 +237,7 @@ export const WithDropdown: Story = {
       { text: "Watermelon", value: "7" },
     ];
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

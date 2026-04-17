@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Calendar } from "./calendar";
-import { FieldLaneDropdownsOption } from "./field-lane";
+import { FieldLaneDropdownOption } from "./field-lane";
 import { Moneybox } from "./moneybox";
 
 const meta: Meta<typeof Moneybox> = {
@@ -230,7 +230,7 @@ export const WithDropdown: Story = {
       { text: "DEC", value: "12" },
     ];
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

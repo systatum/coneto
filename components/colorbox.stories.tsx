@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ChangeEvent, useState } from "react";
 import { css } from "styled-components";
 import { Colorbox } from "./colorbox";
-import { FieldLaneDropdownsOption } from "./field-lane";
+import { FieldLaneDropdownOption } from "./field-lane";
 
 const meta: Meta<typeof Colorbox> = {
   title: "Input Elements/Colorbox",
@@ -133,7 +133,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownsOption[] = [
+    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
       {
         text: "On-site",
         value: "1",
