@@ -16,17 +16,17 @@ instead of UI maintenance.
 Dark mode is enabled through the `Theme` provider. Set the `mode` to `"dark"`.
 
 ```tsx
-import { Theme, ThemeMode } from "@systatum/coneto/theme"
-import { Buton } from "@systatum/coneto/components/button"
+import { Theme, ThemeMode } from "@systatum/coneto/theme";
+import { Button } from "@systatum/coneto/button";
 
 function App() {
-  const mode: ThemeMode = "dark"
+  const mode: ThemeMode = "dark";
 
   return (
     <Theme mode={mode}>
-      <Button title="Save" />
+      <Button>Save</Button>
     </Theme>
-  )
+  );
 }
 ```
 
@@ -42,8 +42,6 @@ dark mode, it automatically gets the right background, text color, and hover or 
 states. Switch to light mode, and it adapts instantly without changing any props. That
 means way less conditional styling and no duplicated code.
 
-
-
 ## Theming and future extension
 
 Right now, we support two modes: light and dark. They work consistently across all
@@ -51,4 +49,3 @@ component categories. In the future, we plan to add other color schemes and let 
 define your own themes easily. That means you'll be able to use brand-specific design
 tokens or build your own custom color system. And the best part? You won't need to change
 how you use existing components when we add those features.
-
