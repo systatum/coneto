@@ -3,9 +3,8 @@ import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownOption } from "./field-lane";
 import { StatefulOnChangeType } from "./stateful-form";
-import { Textarea, TextareaProps } from "./textarea";
+import { Textarea, TextareaProps, TextareaDropdownOption } from "./textarea";
 
 const meta: Meta<typeof Textarea> = {
   title: "Input Elements/Textarea",
@@ -204,7 +203,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
+    const ATTENDANCE_OPTIONS: TextareaDropdownOption[] = [
       {
         text: "On-site",
         value: "1",
