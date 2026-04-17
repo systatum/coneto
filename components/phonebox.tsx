@@ -25,14 +25,19 @@ import {
 import { COUNTRY_CODES } from "../constants/countries";
 import { AsYouType, CountryCode } from "libphonenumber-js/max";
 import styled, { css, CSSProp } from "styled-components";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { Searchbox } from "./searchbox";
 import { PhoneboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 
-export interface CountryCodeProps {
+export interface PhoneboxCountryCode {
   id: string;
   code: string;
   name: string;
@@ -45,7 +50,7 @@ interface BasePhoneboxProps {
   value?: string;
   onChange?: (
     e:
-      | { target: { name: string; value: CountryCodeProps } }
+      | { target: { name: string; value: PhoneboxCountryCode } }
       | ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
@@ -55,7 +60,7 @@ interface BasePhoneboxProps {
   errorMessage?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
-  countryCodeValue?: CountryCodeProps;
+  countryCodeValue?: PhoneboxCountryCode;
   styles?: PhoneboxStyles;
   id?: string;
   required?: boolean;
@@ -66,6 +71,8 @@ export interface PhoneboxStyles {
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
 }
+
+export type PhoneboxDropdownOption = FieldLaneDropdownOption;
 
 const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
   (
@@ -93,7 +100,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCountry, setSelectedCountry] =
-      useState<CountryCodeProps>(countryCodeState);
+      useState<PhoneboxCountryCode>(countryCodeState);
     const [phoneNumber, setPhoneNumber] = useState("");
     const [highlightedIndex, setHighlightedIndex] = useState(0);
 
@@ -194,7 +201,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       }
     };
 
-    const handleSelectCountry = async (country: CountryCodeProps) => {
+    const handleSelectCountry = async (country: PhoneboxCountryCode) => {
       if (disabled) return;
 
       await setSelectedCountry(country);
