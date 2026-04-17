@@ -98,7 +98,7 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof number", () => {
+    context("when given typeof string", () => {
       it("should still rendered normally", () => {
         Object.values(data).map((value) => {
           if (typeof value === "string") {
