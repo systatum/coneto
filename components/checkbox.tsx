@@ -250,6 +250,10 @@ const InputWrapper = styled.label<{
   display: flex;
   flex-direction: column;
   font-size: 12px;
+
+  padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
+  cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
+
   background-color: ${({
     $highlight,
     $checked,
@@ -260,8 +264,6 @@ const InputWrapper = styled.label<{
       ? ($highlightBackgroundColor ?? $backgroundColor ?? "#DBEAFE")
       : "transparent"};
 
-  padding: ${({ $highlight }) => ($highlight ? "12px" : "0")};
-  cursor: ${({ $highlight }) => ($highlight ? "pointer" : "default")};
   transition: background-color 0.2s;
 
   &:hover {
@@ -269,10 +271,16 @@ const InputWrapper = styled.label<{
       $highlight,
       $highlightHoverColor,
       $highlightBackgroundColor,
-    }) =>
-      $highlight
-        ? ($highlightHoverColor ?? $highlightBackgroundColor ?? "#E7F2FC")
-        : "none"};
+      $checked,
+    }) => {
+      if ($highlight && $checked) {
+        return $highlightBackgroundColor ?? "#E7F2FC";
+      } else if ($highlight) {
+        return $highlightHoverColor;
+      } else {
+        return "transparent";
+      }
+    }};
   }
 
   ${({ $disabled }) =>
