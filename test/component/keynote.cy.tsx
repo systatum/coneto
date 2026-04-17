@@ -1,7 +1,163 @@
 import { css } from "styled-components";
 import { Keynote, KeynoteStyles } from "./../../components/keynote";
+import { ReactNode } from "react";
 
 describe("Keynote", () => {
+  context("data", () => {
+    interface KeynoteValueSample {
+      numberValue: number;
+      dateValue: Date;
+      booleanTrueValue: boolean;
+      booleanFalseValue: boolean;
+      objectValue: Record<string, unknown>;
+      nullValue: null;
+      undefinedValue?: undefined;
+      reactNode: ReactNode;
+    }
+
+    const data: KeynoteValueSample = {
+      numberValue: 1200,
+      dateValue: new Date("2025-06-19"),
+      booleanTrueValue: true,
+      booleanFalseValue: false,
+      objectValue: { mode: "benchmark" },
+      nullValue: null,
+      undefinedValue: undefined,
+      reactNode: (
+        <div
+          aria-label="test"
+          style={{
+            backgroundColor: "red",
+          }}
+        >
+          Test the element
+        </div>
+      ),
+    };
+
+    const keys: (keyof KeynoteValueSample)[] = [
+      "numberValue",
+      "dateValue",
+      "booleanTrueValue",
+      "booleanFalseValue",
+      "objectValue",
+      "nullValue",
+      "undefinedValue",
+      "reactNode",
+    ];
+
+    const keyLabels: Record<keyof KeynoteValueSample, string> = {
+      numberValue: "Number",
+      dateValue: "Date",
+      booleanTrueValue: "Boolean (true)",
+      booleanFalseValue: "Boolean (false)",
+      objectValue: "Object",
+      nullValue: "Null",
+      undefinedValue: "Undefined",
+      reactNode: "ReactNode",
+    };
+    beforeEach(() => {
+      cy.mount(
+        <Keynote
+          data={data}
+          keys={keys}
+          keyLabels={keys?.map((key) => keyLabels[key])}
+        />
+      );
+    });
+
+    context("when given a number", () => {
+      it("should still rendered normally", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === "number") {
+            cy.findByText(value).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given boolean", () => {
+      context("when it's true", () => {
+        it("renders the text with 'true' text", () => {
+          Object.values(data).map((value) => {
+            if (typeof value === "boolean") {
+              cy.findByText("true").should("exist");
+            }
+          });
+        });
+      });
+
+      context("when it's false", () => {
+        it("renders the text with 'false' text", () => {
+          Object.values(data).map((value) => {
+            if (typeof value === "boolean") {
+              cy.findByText("false").should("exist");
+            }
+          });
+        });
+      });
+    });
+
+    context("when given string", () => {
+      it("should still rendered normally", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === "string") {
+            cy.findByText(value).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given object", () => {
+      it("renders the object JSON representation", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === "object") {
+            cy.findByText('{"mode":"benchmark"}').should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given React Element", () => {
+      it("should render the element", () => {
+        cy.findByLabelText("test")
+          .should("exist")
+          .and("have.text", "Test the element")
+          .and("have.css", "background-color", "rgb(255, 0, 0)");
+      });
+    });
+
+    context("when given date", () => {
+      it("should convert to local date string", () => {
+        Object.values(data).map((value) => {
+          if (value instanceof Date) {
+            cy.findByText(value?.toLocaleDateString()).should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given undefined", () => {
+      it("should convert to '-' text", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === undefined) {
+            cy.findByText("-").should("exist");
+          }
+        });
+      });
+    });
+
+    context("when given null", () => {
+      it("should convert to '-' text", () => {
+        Object.values(data).map((value) => {
+          if (typeof value === null) {
+            cy.findByText("-").should("exist");
+          }
+        });
+      });
+    });
+  });
+
   context("rendered condition", () => {
     context("when not given keyLabels", () => {
       it("should still rendered with key", () => {
