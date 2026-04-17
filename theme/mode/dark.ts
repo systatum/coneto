@@ -69,7 +69,7 @@ import {
 
 // Dark
 const darkBody = createBodyTheme({
-  backgroundColor: "#111",
+  backgroundColor: "#1f2023",
   textColor: "#caced4",
   borderColor: "#4b5563",
 });
