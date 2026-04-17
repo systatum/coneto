@@ -1,6 +1,7 @@
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ReactNode } from "react";
 import { useTheme } from "./../theme/provider";
+import { ErrorSlateThemeConfig } from "theme";
 
 export interface ErrorSlateProps {
   code?:
@@ -95,7 +96,9 @@ function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
         </Cube>
       </ErrorSlatePerspective>
 
-      <ErrorSlateTitle $style={styles?.titleStyle}>{title}</ErrorSlateTitle>
+      <ErrorSlateTitle $theme={errorSlateTheme} $style={styles?.titleStyle}>
+        {title}
+      </ErrorSlateTitle>
       {children}
     </ErrorSlateWrapper>
   );
@@ -149,8 +152,13 @@ const Face = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const ErrorSlateTitle = styled.span<{ $style?: CSSProp }>`
+const ErrorSlateTitle = styled.span<{
+  $style?: CSSProp;
+  $theme: ErrorSlateThemeConfig;
+}>`
   font-size: 90px;
+
+  color: ${({ $theme }) => $theme?.titleColor};
 
   ${({ $style }) => $style}
 `;
