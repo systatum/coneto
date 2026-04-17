@@ -133,9 +133,9 @@ export type FormFieldGroup = FormFieldProps | FormFieldProps[];
 
 export const FormFieldRowJustifyPosition = {
   Center: "center",
-  Start: "flex-start",
-  End: "flex-end",
-  Between: "space-between",
+  Start: "start",
+  End: "end",
+  SpaceBetween: "space-between",
 } as const;
 
 export type FormFieldRowJustifyPosition =
@@ -143,8 +143,8 @@ export type FormFieldRowJustifyPosition =
 
 export const FormFieldRowItemsAligment = {
   Center: "center",
-  Start: "flex-start",
-  End: "flex-end",
+  Start: "start",
+  End: "end",
   Stretch: "stretch",
 } as const;
 
