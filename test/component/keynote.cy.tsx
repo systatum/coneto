@@ -66,7 +66,7 @@ describe("Keynote", () => {
       );
     });
 
-    context("when given typeof number", () => {
+    context("when given a number", () => {
       it("should still rendered normally", () => {
         Object.values(data).map((value) => {
           if (typeof value === "number") {
@@ -76,8 +76,8 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof boolean", () => {
-      context("when given with true", () => {
+    context("when given boolean", () => {
+      context("when it's true", () => {
         it("renders the text with 'true' text", () => {
           Object.values(data).map((value) => {
             if (typeof value === "boolean") {
@@ -87,7 +87,7 @@ describe("Keynote", () => {
         });
       });
 
-      context("when given with false", () => {
+      context("when it's false", () => {
         it("renders the text with 'false' text", () => {
           Object.values(data).map((value) => {
             if (typeof value === "boolean") {
@@ -98,7 +98,7 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof string", () => {
+    context("when given string", () => {
       it("should still rendered normally", () => {
         Object.values(data).map((value) => {
           if (typeof value === "string") {
@@ -108,8 +108,8 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof object", () => {
-      it("renders the object in the text", () => {
+    context("when given object", () => {
+      it("renders the object JSON representation", () => {
         Object.values(data).map((value) => {
           if (typeof value === "object") {
             cy.findByText('{"mode":"benchmark"}').should("exist");
@@ -118,7 +118,7 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof React Element", () => {
+    context("when given React Element", () => {
       it("should render the element", () => {
         cy.findByLabelText("test")
           .should("exist")
@@ -127,7 +127,7 @@ describe("Keynote", () => {
       });
     });
 
-    context("when given typeof date", () => {
+    context("when given date", () => {
       it("should convert to local date string", () => {
         Object.values(data).map((value) => {
           if (value instanceof Date) {
