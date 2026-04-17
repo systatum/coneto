@@ -551,14 +551,12 @@ const PhoneInput = styled.input<{
   outline: none;
   height: 32px;
 
-  ${({ $disabled, $theme }) =>
-    $disabled
-      ? css`
-          cursor: not-allowed;
-        `
-      : css`
-          background-color: ${$theme?.backgroundColor};
-        `};
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+    `}
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   &::placeholder {
     color: ${({ $theme }) => $theme?.placeholderColor};
