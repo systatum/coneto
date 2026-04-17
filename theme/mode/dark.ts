@@ -566,7 +566,7 @@ const darkRadio = createRadioTheme(darkBody, {
 
 const darkRating = createRatingTheme(darkBody, darkFieldLane, {
   starFullColor: "#facc15",
-  starEmptyColor: "#111827",
+  starEmptyColor: darkBody?.backgroundColor,
   starBorderColor: "#fbbf24",
 
   hoverStarColor: "#f59e0b",
@@ -754,7 +754,6 @@ const darkTreeList = createTreeListTheme(darkBody, {
 });
 
 const darkSplitPane = createSplitPaneTheme(darkBody, {
-  backgroundColor: "#111827",
   textColor: "#f9fafb",
   dividerColor: "#374151",
 });
