@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { NavTab, NavTabTabProps } from "./nav-tab";
+import { NavTab, NavTabTab } from "./nav-tab";
 import { Textbox } from "./textbox";
 import { useState } from "react";
 import { StatefulOnChangeType } from "./stateful-form";
@@ -149,7 +149,7 @@ export const Default: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("2");
 
-    const TABS_ITEMS: NavTabTabProps[] = [
+    const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
         title: "Write",
@@ -182,7 +182,7 @@ export const Small: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("2");
 
-    const TABS_ITEMS: NavTabTabProps[] = [
+    const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
         title: "Write",
@@ -225,7 +225,7 @@ export const WithActions: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("3");
 
-    const TABS_ITEMS: NavTabTabProps[] = [
+    const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
         title: "Write",
@@ -338,7 +338,7 @@ export const WithSubItems: Story = {
       },
     ];
 
-    const TABS_ITEMS: NavTabTabProps[] = [
+    const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
         title: "Write",
