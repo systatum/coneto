@@ -3,8 +3,7 @@ import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { css } from "styled-components";
-import { FieldLaneDropdownOption } from "./field-lane";
-import { Textbox, TextboxProps } from "./textbox";
+import { Textbox, TextboxProps, TextboxDropdownOption } from "./textbox";
 
 const meta: Meta<typeof Textbox> = {
   title: "Input Elements/Textbox",
@@ -153,7 +152,7 @@ const meta: Meta<typeof Textbox> = {
         type: {
           summary: "FieldLaneDropdown[]",
           detail: `{
-  options?: FieldLaneDropdownOption[];
+  options?: TextboxDropdownOption[];
   caption?: string;
   onChange?: (id: string) => void;
   width?: string;
@@ -280,7 +279,7 @@ export const WithDropdown: Story = {
       value: "",
     });
 
-    const ATTENDANCE_OPTIONS: FieldLaneDropdownOption[] = [
+    const ATTENDANCE_OPTIONS: TextboxDropdownOption[] = [
       {
         text: "On-site",
         value: "1",

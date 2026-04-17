@@ -8,7 +8,12 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneDropdownOption,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextboxThemeConfig } from "./../theme";
@@ -101,6 +106,8 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
     );
   }
 );
+
+export type TextboxDropdownOption = FieldLaneDropdownOption;
 
 export interface TextboxProps
   extends Omit<BaseTextboxProps, "styles">,
