@@ -57,7 +57,7 @@ export const ComboboxGroupInitialState = {
 export type ComboboxGroupInitialState =
   (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
 
-export interface ComboboxGroupedOption extends ComboboxActionOption {
+export interface ComboboxGroupedOption {
   category?: string;
   options?: ComboboxSingleOption[];
   collapsible?: boolean;
