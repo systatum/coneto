@@ -16,7 +16,7 @@ import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileDropBoxThemeConfig } from "./../theme";
 
-export interface OnFileDroppedFunctionProps {
+export interface OnFileDroppedFunctionArgs {
   files: File[];
   succeed: (file: File) => void;
   error: (file: File, errorMessage: string) => void;
@@ -24,7 +24,7 @@ export interface OnFileDroppedFunctionProps {
   progressPercentage?: number;
 }
 
-export interface OnCompleteFunctionProps {
+export interface OnCompleteFunctionArgs {
   succeedFiles?: File[];
   failedFiles?: File[];
   setProgressLabel?: (label: string) => void;
@@ -36,8 +36,8 @@ export interface FileDropBoxProps {
   placeholder?: string;
   accept?: string;
   label?: string;
-  onFileDropped?: (props: OnFileDroppedFunctionProps) => void;
-  onComplete?: (props: OnCompleteFunctionProps) => void;
+  onFileDropped?: (props: OnFileDroppedFunctionArgs) => void;
+  onComplete?: (props: OnCompleteFunctionArgs) => void;
   progressPercentage?: number;
   helper?: string;
   children?: ReactNode;
