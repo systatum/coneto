@@ -58,6 +58,13 @@ License: MIT
 
 ------------------------------------------------------------
 
+### react-swipeable
+https://github.com/FormidableLabs/react-swipeable
+Copyright (c) Formidable Labs
+License: MIT
+
+------------------------------------------------------------
+
 ### pdfjs-dist (PDF.js)
 https://mozilla.github.io/pdf.js/
 Copyright Mozilla Foundation
