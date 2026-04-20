@@ -12,8 +12,7 @@
       "@/components/*": ["components/*"],
       "@/type/*": ["type/*"],
       "@/constants/*": ["constants/*"],
-      "@/lib/*": ["lib/*"],
-      "libphonenumber-js": ["./lib/libphonenumber-js/max"]
+      "@/lib/*": ["lib/*"]
     }
   },
   "include": ["**/*", ".storybook/**/*"]
