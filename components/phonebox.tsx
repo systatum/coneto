@@ -17,13 +17,9 @@ import {
   useInteractions,
   Placement,
 } from "@floating-ui/react";
-import {
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiSearchLine,
-} from "@remixicon/react";
+import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
-import { AsYouType, CountryCode } from "libphonenumber-js/max";
+import { AsYouType, CountryCode } from "libphonenumber-js";
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,

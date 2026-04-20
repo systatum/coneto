@@ -12,8 +12,8 @@ import {
   Phonebox,
 } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
-import { CountryCode } from "libphonenumber-js/types.cjs";
 import { Timebox } from "./timebox";
+import { CountryCode } from "libphonenumber-js";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
