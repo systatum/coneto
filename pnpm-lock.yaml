@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@floating-ui/react':
+        specifier: ^0.27.8
+        version: 0.27.15(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.2.1(react-hook-form@7.61.1(react@19.1.1))
@@ -26,6 +29,9 @@ importers:
       react-hook-form:
         specifier: ^7.56.3
         version: 7.61.1(react@19.1.1)
+      styled-components:
+        specifier: ^6.1.19
+        version: 6.1.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       zod:
         specifier: ^3.24.4
         version: 3.25.76
@@ -39,9 +45,6 @@ importers:
       '@eslint/js':
         specifier: ^9.26.0
         version: 9.32.0
-      '@floating-ui/react':
-        specifier: ^0.27.8
-        version: 0.27.15(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@remixicon/react':
         specifier: ^4.6.0
         version: 4.6.0(react@19.1.1)
@@ -123,9 +126,6 @@ importers:
       storybook:
         specifier: ^8.6.14
         version: 8.6.14(prettier@3.6.2)
-      styled-components:
-        specifier: ^6.1.19
-        version: 6.1.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       typescript:
         specifier: ^5.4.0
         version: 5.8.3
