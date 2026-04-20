@@ -81,6 +81,10 @@ export default function ContextMenu({
             action.onClick(e);
           }
         }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
         onOpen={onOpen}
         title={action.caption}
         className={action.className}
@@ -99,6 +103,10 @@ export default function ContextMenu({
       open={open}
       onClick={(e) => {
         e.stopPropagation();
+      }}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
       }}
       subMenu={({ list }) => list(actions)}
       icon={{
