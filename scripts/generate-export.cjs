@@ -48,6 +48,10 @@ const additionalExports = {
     import: "./dist/theme/*.js",
     types: "./dist/theme/*.d.ts",
   },
+  "./phone/*": {
+    import: "./dist/lib/phone/*.js",
+    types: "./dist/lib/phone/*.d.ts",
+  },
   "./code-color": {
     import: "./dist/lib/code-color.js",
     types: "./dist/lib/code-color.d.ts",
