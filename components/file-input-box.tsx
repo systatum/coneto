@@ -45,13 +45,8 @@ function BaseFileInputBox({
   const { currentTheme } = useTheme();
   const fileInputBoxTheme = currentTheme.fileInputBox;
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-
-  const handleBrowseClick = () => {
-    fileInputRef.current?.click();
-  };
 
   const handleDeleteFile = (index: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
@@ -100,10 +95,6 @@ function BaseFileInputBox({
       $style={styles?.self}
       $isDragging={!disabled && isDragging}
       $hasFile={selectedFiles.length > 0}
-      onClick={() => {
-        if (disabled) return;
-        handleBrowseClick();
-      }}
       onDrop={(e) => {
         if (disabled) return;
         handleDrop(e);
@@ -155,7 +146,6 @@ function BaseFileInputBox({
       )}
       <input
         {...props}
-        ref={fileInputRef}
         type="file"
         accept={accept}
         disabled={disabled}
