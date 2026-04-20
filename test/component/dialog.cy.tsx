@@ -40,14 +40,12 @@ describe("Dialog", () => {
 
       cy.findByLabelText("dialog-wrapper").should("not.exist");
       cy.findByRole("button").click();
-
-      cy.findByLabelText("dialog-wrapper").should("exist");
-      cy.findByText("Default Modal").should("exist");
-      cy.findByText("This is a subtitle").should("exist");
     });
 
     it("renders the modal dialog", () => {
-      // will covered by beforeEach
+      cy.findByLabelText("dialog-wrapper").should("exist");
+      cy.findByText("Default Modal").should("exist");
+      cy.findByText("This is a subtitle").should("exist");
     });
   });
 
@@ -56,6 +54,10 @@ describe("Dialog", () => {
       cy.window().then((win) => {
         cy.spy(win.console, "log").as("consoleLog");
       });
+
+      cy.findByLabelText("dialog-wrapper").should("exist");
+      cy.findByText("Default Modal").should("exist");
+      cy.findByText("This is a subtitle").should("exist");
 
       cy.findByText("Confirm").should("exist").click();
       cy.wait(300);
