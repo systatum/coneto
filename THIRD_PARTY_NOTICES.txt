@@ -1,0 +1,81 @@
+This project includes third-party software distributed under their respective licenses.
+
+------------------------------------------------------------
+## Runtime Dependencies
+------------------------------------------------------------
+
+### React
+https://react.dev
+Copyright Meta Platforms, Inc.
+License: MIT
+
+### React DOM
+https://react.dev
+Copyright Meta Platforms, Inc.
+License: MIT
+
+------------------------------------------------------------
+
+### styled-components
+https://styled-components.com
+Copyright (c) styled-components contributors
+License: MIT
+
+------------------------------------------------------------
+
+### framer-motion
+https://www.framer.com/motion/
+Copyright Framer B.V.
+License: MIT
+
+------------------------------------------------------------
+
+### zod
+https://github.com/colinhacks/zod
+Copyright (c) Colinhacks
+License: MIT
+
+------------------------------------------------------------
+
+### react-hook-form
+https://react-hook-form.com
+Copyright (c) Beier (RHF contributors)
+License: MIT
+
+------------------------------------------------------------
+
+### @hookform/resolvers
+https://github.com/react-hook-form/resolvers
+Copyright (c) React Hook Form contributors
+License: MIT
+
+------------------------------------------------------------
+
+### @floating-ui/react
+https://floating-ui.com
+Copyright Floating UI contributors
+License: MIT
+
+------------------------------------------------------------
+
+### pdfjs-dist (PDF.js)
+https://mozilla.github.io/pdf.js/
+Copyright Mozilla Foundation
+License: Apache License 2.0
+
+------------------------------------------------------------
+
+### @remixicon/react
+https://remixicon.com
+Copyright Remix Design
+License: Apache License 2.0
+
+------------------------------------------------------------
+
+## Notes
+
+- This list includes direct runtime dependencies used by the distributed package.
+- Transitive dependencies are not listed here. For full compliance, use:
+  - `pnpm licenses list`
+  - or `license-checker`
+  - or build-time license plugin.
