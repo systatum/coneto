@@ -15,7 +15,8 @@
       "@/components/*": ["components/*"],
       "@/type/*": ["type/*"],
       "@/constants/*": ["constants/*"],
-      "@/lib/*": ["lib/*"]
+      "@/lib/*": ["lib/*"],
+      "libphonenumber-js": ["./lib/libphonenumber-js/max"]
     },
     "skipLibCheck": true,
     "strict": false,
