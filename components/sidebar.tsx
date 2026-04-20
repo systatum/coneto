@@ -1,5 +1,10 @@
-import { ReactNode, useEffect, useLayoutEffect, useState } from "react";
-import { useSwipeable } from "react-swipeable";
+import React, {
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useAnimation } from "framer-motion";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
 import { motion } from "framer-motion";
@@ -45,6 +50,53 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
   const [isMobile, setIsMobile] = useState(true);
   const controls = useAnimation();
 
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = null;
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+
+    const distance = touchEndX.current - touchStartX.current;
+
+    const isLeftSwipe = distance < -minSwipeDistance;
+    const isRightSwipe = distance > minSwipeDistance;
+
+    if (!isMobile) return;
+
+    if (position === "left") {
+      if (isLeftSwipe) handleToggleSidebar(false);
+      if (isRightSwipe) handleToggleSidebar(true);
+    } else {
+      if (isRightSwipe) handleToggleSidebar(false);
+      if (isLeftSwipe) handleToggleSidebar(true);
+    }
+  };
+
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    touchEndX.current = null;
+    touchStartX.current = e.clientX;
+  };
+
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.buttons !== 1) return; // only when dragging
+    touchEndX.current = e.clientX;
+  };
+
+  const onMouseUp = () => {
+    onTouchEnd();
+  };
+
   useLayoutEffect(() => {
     if (typeof window !== "undefined") {
       const mobile = window.innerWidth < 768;
@@ -80,15 +132,6 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
     }
   };
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () =>
-      isMobile && handleToggleSidebar(position === "left" ? false : true),
-    onSwipedRight: () =>
-      isMobile && handleToggleSidebar(position === "left" ? true : false),
-    trackMouse: true,
-    trackTouch: true,
-  });
-
   return (
     <>
       {isSidebarOpen && isMobile && (
@@ -104,13 +147,18 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
         animate={isMobile ? controls : { x: 0 }}
         $position={position}
         $style={styles?.mobileStyle}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
       >
         {children}
       </MotionSidebar>
 
       {isMobile && !isSidebarOpen && (
         <ToggleButton
-          {...handlers}
           $theme={sidebarTheme}
           onClick={() => handleToggleSidebar(true)}
           $position={position}
