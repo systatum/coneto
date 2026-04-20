@@ -40,6 +40,10 @@ const additionalExports = {
     import: "./dist/constants/*.js",
     types: "./dist/constants/*.d.ts",
   },
+  "./theme": {
+    import: "./dist/theme/index.js",
+    types: "./dist/theme/index.d.ts",
+  },
   "./theme/*": {
     import: "./dist/theme/*.js",
     types: "./dist/theme/*.d.ts",
