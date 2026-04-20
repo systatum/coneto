@@ -19,7 +19,7 @@ import {
 } from "@floating-ui/react";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
-import { AsYouType, CountryCode } from "../lib/phone";
+import { CountryCode, groupDigits } from "../lib/phone";
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
@@ -628,35 +628,28 @@ function trimPhone(input: string): string {
   return onlyNumber.startsWith("0") ? onlyNumber.slice(1) : onlyNumber;
 }
 
-function formatWithSimplePattern(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
-}
-
+/**
+ * Formats a national phone number string for display.
+ *
+ * - Strips everything except digits (no leading + or dial code expected)
+ * - Groups digits using the country's real libphonenumber patterns
+ * - During partial input (typing), picks the largest pattern that fits
+ * - Falls back to a sane default if the country has no pattern
+ *
+ * @example
+ * formatPhoneboxNumber("081234567890", "ID")  // "0812-3456-7890"
+ * formatPhoneboxNumber("2025551234",   "US")  // "202-555-1234"
+ * formatPhoneboxNumber("0612345678",   "FR")  // "06-12-34-56-78"
+ */
 function formatPhoneboxNumber(
   phone: string,
   countryCode: CountryCode = "ID"
 ): string {
-  const cleaned = phone.replace(/[^\d+]/g, "");
+  // Keep digits only — no dial code, no +
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "";
 
-  const formatter = new AsYouType(countryCode);
-  formatter.input(cleaned);
-
-  const formattedInternational = formatter.getNumber()?.formatInternational();
-
-  if (!formattedInternational) {
-    return formatWithSimplePattern(cleaned);
-  }
-
-  const parts = formattedInternational.split(" ");
-  if (parts.length < 2) return formattedInternational;
-
-  const rest = parts.slice(1).join(" ");
-  const restWithDash = rest.replace(/ /g, "-");
-
-  return `${restWithDash}`;
+  return groupDigits(digits, countryCode).replace(/ /g, "-");
 }
 
 Phonebox.formatPhoneNumber = formatPhoneboxNumber;
