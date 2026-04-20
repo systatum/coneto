@@ -285,6 +285,10 @@
       "import": "./dist/theme/*.js",
       "types": "./dist/theme/*.d.ts"
     },
+    "./phone/*": {
+      "import": "./dist/lib/phone/*.js",
+      "types": "./dist/lib/phone/*.d.ts"
+    },
     "./code-color": {
       "import": "./dist/lib/code-color.js",
       "types": "./dist/lib/code-color.d.ts"
@@ -330,7 +334,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build": "pnpm build-ts && pnpm copyjs && node postbuild-inject.js && pnpm generate-rss",
+    "build": "pnpm prepare && pnpm build-ts && pnpm copyjs && node postbuild-inject.js && pnpm generate-rss",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
     "publish-coneto": "pnpm build && pnpm publish",
@@ -350,12 +354,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
-    "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.12.1",
-    "pdfjs-dist": "^5.4.54",
+    "pdfjs-dist": "5.4.54",
     "react-hook-form": "^7.56.3",
-    "react-responsive": "^10.0.1",
-    "react-swipeable": "^7.0.2",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -388,7 +389,6 @@
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.4",
     "globals": "^15.15.0",
-    "libphonenumber-js": "^1.12.8",
     "prettier": "^3.5.3",
     "storybook": "^8.6.14",
     "styled-components": "^6.1.19",

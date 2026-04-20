@@ -6,14 +6,10 @@ import { Combobox } from "./combobox";
 import { Datebox } from "./datebox";
 import { Colorbox } from "./colorbox";
 import { formatMoneyboxNumber, Moneybox } from "./moneybox";
-import {
-  PhoneboxCountryCode,
-  formatPhoneboxNumber,
-  Phonebox,
-} from "./phonebox";
+import { PhoneboxCountryCode, Phonebox } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
-import { CountryCode } from "libphonenumber-js/types.cjs";
 import { Timebox } from "./timebox";
+import { CountryCode } from "../lib/phone";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
@@ -821,19 +817,19 @@ export const WithPhonebox: Story = {
     const [value, setValue] = useState({
       normal: {
         country_code: DEFAULT_COUNTRY_CODES,
-        phone: "8123457890",
+        phone: "2025550143",
       },
       full: {
         country_code: DEFAULT_COUNTRY_CODES,
-        phone: "8123457890",
+        phone: "4158675309",
       },
       max: {
         country_code: DEFAULT_COUNTRY_CODES,
-        phone: "8123457890",
+        phone: "3051234567",
       },
       keydown: {
         country_code: DEFAULT_COUNTRY_CODES,
-        phone: "8123457890",
+        phone: "6469871234",
       },
     });
 
@@ -862,7 +858,7 @@ export const WithPhonebox: Story = {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <span style={{ fontWeight: 500 }}>Normal Width</span>
           <DormantText
-            content={`${value.normal.country_code.code} ${formatPhoneboxNumber(value.normal.phone, value.normal.country_code.id as CountryCode)}`}
+            content={`${value.normal.country_code.code} ${Phonebox.formatPhoneNumber(value.normal.phone, value.normal.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.normal}`);
             }}
@@ -878,7 +874,7 @@ export const WithPhonebox: Story = {
           <span style={{ fontWeight: 500 }}>Full Width</span>
           <DormantText
             fullWidth
-            content={`${value.full.country_code.code} ${formatPhoneboxNumber(value.full.phone, value.full.country_code.id as CountryCode)}`}
+            content={`${value.full.country_code.code} ${Phonebox.formatPhoneNumber(value.full.phone, value.full.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.full}`);
             }}
@@ -895,7 +891,7 @@ export const WithPhonebox: Story = {
           <span style={{ fontWeight: 500 }}>With Max. Width</span>
           <DormantText
             dormantedMaxWidth="150px"
-            content={`${value.max.country_code.code} ${formatPhoneboxNumber(value.max.phone, value.max.country_code.id as CountryCode)}`}
+            content={`${value.max.country_code.code} ${Phonebox.formatPhoneNumber(value.max.phone, value.max.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.max}`);
             }}
@@ -915,7 +911,7 @@ export const WithPhonebox: Story = {
           <DormantText
             fullWidth
             acceptChangeOn={"enter"}
-            content={`${value.keydown.country_code.code} ${formatPhoneboxNumber(value.keydown.phone, value.keydown.country_code.id as CountryCode)}`}
+            content={`${value.keydown.country_code.code} ${Phonebox.formatPhoneNumber(value.keydown.phone, value.keydown.country_code.id as CountryCode)}`}
             onActionClick={() => {
               console.log(`Selected value: ${value.keydown}`);
             }}
