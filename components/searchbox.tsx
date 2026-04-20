@@ -111,19 +111,21 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
           $style={styles?.self}
         />
 
-        <Button
-          onOpen={(prop: boolean) => setIsFocus(prop)}
-          open={isOpenShowMenu}
-          anchorRef={anchorRef}
-          showSubMenuOn="self"
-          styles={{
-            self: css`
-              display: none;
-            `,
-          }}
-          safeAreaAriaLabels={safeAriaLabelSubMenu}
-          subMenu={(props) => resultMenu?.(props)}
-        />
+        {resultMenu && (
+          <Button
+            onOpen={(prop: boolean) => setIsFocus(prop)}
+            open={isOpenShowMenu}
+            anchorRef={anchorRef}
+            showSubMenuOn="self"
+            styles={{
+              self: css`
+                display: none;
+              `,
+            }}
+            safeAreaAriaLabels={safeAriaLabelSubMenu}
+            subMenu={(props) => resultMenu?.(props)}
+          />
+        )}
 
         {valueLengthChecker && (
           <ClearIcon
