@@ -19,7 +19,7 @@ import {
 } from "@floating-ui/react";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
-import { AsYouType, CountryCode } from "libphonenumber-js";
+import { AsYouType, CountryCode } from "./../lib/libphonenumber-js";
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
@@ -39,6 +39,12 @@ export interface PhoneboxCountryCode {
   name: string;
   flag: string;
 }
+
+export type PhoneboxComponent = React.ForwardRefExoticComponent<
+  PhoneboxProps & React.RefAttributes<HTMLInputElement>
+> & {
+  formatPhoneNumber: typeof formatPhoneboxNumber;
+};
 
 interface BasePhoneboxProps {
   label?: string;
@@ -128,6 +134,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         setHighlightedIndex(0);
       }
     }, [isOpen]);
+
+    console.log(selectedCountry.id);
 
     useEffect(() => {
       if (!value) {
@@ -451,7 +459,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       </FieldLane>
     );
   }
-);
+) as PhoneboxComponent;
 
 const InputWrapper = styled.div<{
   $hasError?: boolean;
@@ -654,4 +662,6 @@ function formatPhoneboxNumber(
   return `${restWithDash}`;
 }
 
-export { Phonebox, formatPhoneboxNumber };
+Phonebox.formatPhoneNumber = formatPhoneboxNumber;
+
+export { Phonebox };
