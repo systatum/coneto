@@ -35,6 +35,43 @@ mode. No additional configuration is required.
 
 If no theme is provided, the default mode is `"light"`.
 
+## Using currentTheme (fully theme-driven styling)
+
+You can use `currentTheme` from `useTheme()` to automatically follow the design system tokens defined in AppTheme.
+
+This is useful when:
+
+- You want consistent UI across components
+- You want to follow your theme system (body, button, textbox, etc.)
+
+```tsx
+import { useTheme } from "@systatum/coneto/theme";
+
+function Content() {
+  const { currentTheme } = useTheme();
+
+  // base layout colors from body theme
+  const body = currentTheme.body;
+
+  // focus border color from fieldLane theme
+  const borderColor = currentTheme.fieldLane.focusedBorderColor;
+
+  return (
+    <div
+      style={{
+        backgroundColor: body.backgroundColor,
+        color: body.textColor,
+        padding: 16,
+        borderRadius: 8,
+        border: `1px solid ${borderColor}`,
+      }}
+    >
+      {"Your Content"}
+    </div>
+  );
+}
+```
+
 ## Automatic component adaptation
 
 Components just work with the theme out of the box. Take a `Button`, for example. In
