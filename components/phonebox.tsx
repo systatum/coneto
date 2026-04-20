@@ -19,7 +19,7 @@ import {
 } from "@floating-ui/react";
 import { RiArrowDownSLine, RiArrowUpSLine } from "@remixicon/react";
 import { COUNTRY_CODES } from "../constants/countries";
-import { AsYouType, CountryCode } from "./../lib/libphonenumber-js";
+import { AsYouType, CountryCode } from "../lib/phone";
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
@@ -134,8 +134,6 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         setHighlightedIndex(0);
       }
     }, [isOpen]);
-
-    console.log(selectedCountry.id);
 
     useEffect(() => {
       if (!value) {
@@ -333,8 +331,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
                 self: css`
                   border-radius: 2px;
                   max-height: 28px;
-                  width: 100%;
-                  min-width: 275px;
+                  width: 275px;
                 `,
               }}
               onKeyDown={handleDropdownKeyDown}

@@ -9,7 +9,7 @@ import { formatMoneyboxNumber, Moneybox } from "./moneybox";
 import { PhoneboxCountryCode, Phonebox } from "./phonebox";
 import { COUNTRY_CODES } from "./../constants/countries";
 import { Timebox } from "./timebox";
-import { CountryCode } from "./../lib/libphonenumber-js";
+import { CountryCode } from "../lib/phone";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
