@@ -17,7 +17,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
-import { Button, ButtonStyles, ButtonVariants } from "./button";
+import { ButtonStyles, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
@@ -102,8 +102,23 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
 
+    useImperativeHandle(ref, () => ({
+      openDialog: async () => {
+        await setDialogState("restored");
+      },
+      closeDialog: async () => {
+        await setDialogState("closed");
+        if (onClosed) {
+          await onClosed();
+        }
+      },
+      minimizeDialog: async () => {
+        await setDialogState("minimized");
+      },
+    }));
+
     const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
-    const controls = useAnimation();
+
     const isLeft = position === "left";
 
     const handleEscape = useCallback(
@@ -122,34 +137,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       document.addEventListener("keydown", handleEscape);
       return () => document.removeEventListener("keydown", handleEscape);
     }, [handleEscape]);
-
-    const handleToggleDrawer = (open: PaperDialogState) => {
-      setDialogState(open);
-      controls.start({
-        x: open === "minimized" ? (isLeft ? "-100%" : "100%") : 0,
-        transition: { type: "spring", stiffness: 400, damping: 40 },
-      });
-    };
-
-    useImperativeHandle(ref, () => ({
-      openDialog: async () => {
-        await setDialogState("restored");
-        await handleToggleDrawer("restored");
-      },
-      closeDialog: async () => {
-        await setDialogState("closed");
-        await handleToggleDrawer("closed");
-        if (onClosed) {
-          await onClosed();
-        }
-      },
-      minimizeDialog: async () => {
-        await setDialogState("minimized");
-        await handleToggleDrawer("minimized");
-      },
-    }));
-
-    const childArray = Children.toArray(children);
 
     return (
       dialogState !== "closed" && (
@@ -178,7 +165,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             aria-label="paper-dialog-wrapper"
             $width={width}
             initial={{ x: isLeft ? "-100%" : "100%" }}
-            animate={controls}
+            animate={
+              dialogState === "minimized"
+                ? { x: isLeft ? "-100%" : "100%" }
+                : { x: 0 }
+            }
+            transition={{ type: "spring", stiffness: 400, damping: 40 }}
             $isLeft={isLeft}
             $theme={paperDialogTheme}
           >
@@ -213,7 +205,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $isLeft={isLeft}
                 aria-label="paper-dialog-toggle-restore"
                 onClick={() =>
-                  handleToggleDrawer(
+                  setDialogState(
                     dialogState === "minimized" ? "restored" : "minimized"
                   )
                 }
