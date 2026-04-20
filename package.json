@@ -117,6 +117,10 @@
       "import": "./dist/components/grid.js",
       "types": "./dist/components/grid.d.ts"
     },
+    "./helper": {
+      "import": "./dist/components/helper.js",
+      "types": "./dist/components/helper.d.ts"
+    },
     "./imagebox": {
       "import": "./dist/components/imagebox.js",
       "types": "./dist/components/imagebox.d.ts"
@@ -209,6 +213,10 @@
       "import": "./dist/components/signbox.js",
       "types": "./dist/components/signbox.d.ts"
     },
+    "./split-pane": {
+      "import": "./dist/components/split-pane.js",
+      "types": "./dist/components/split-pane.d.ts"
+    },
     "./stateful-form": {
       "import": "./dist/components/stateful-form.js",
       "types": "./dist/components/stateful-form.d.ts"
@@ -220,10 +228,6 @@
     "./stepline": {
       "import": "./dist/components/stepline.js",
       "types": "./dist/components/stepline.d.ts"
-    },
-    "./split-pane": {
-      "import": "./dist/components/split-pane.js",
-      "types": "./dist/components/split-pane.d.ts"
     },
     "./table": {
       "import": "./dist/components/table.js",
@@ -272,6 +276,14 @@
     "./constants/*": {
       "import": "./dist/constants/*.js",
       "types": "./dist/constants/*.d.ts"
+    },
+    "./theme": {
+      "import": "./dist/theme/index.js",
+      "types": "./dist/theme/index.d.ts"
+    },
+    "./theme/*": {
+      "import": "./dist/theme/*.js",
+      "types": "./dist/theme/*.d.ts"
     },
     "./code-color": {
       "import": "./dist/lib/code-color.js",
