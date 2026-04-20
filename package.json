@@ -354,12 +354,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
-    "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.12.1",
-    "pdfjs-dist": "^5.4.54",
+    "pdfjs-dist": "5.4.54",
     "react-hook-form": "^7.56.3",
     "react-responsive": "^10.0.1",
-    "react-swipeable": "^7.0.2",
     "zod": "^3.24.4"
   },
   "devDependencies": {
