@@ -97,6 +97,9 @@ export default function ContextMenu({
       showSubMenuOn="self"
       onOpen={onOpen}
       open={open}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
       subMenu={({ list }) => list(actions)}
       icon={{
         image: RiMoreFill,

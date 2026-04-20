@@ -2,9 +2,11 @@ import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 
-export interface KeynoteProps<T extends Record<string, ReactNode>> {
+export type KeynoteKeys<T> = Extract<keyof T, string>;
+
+export interface KeynoteProps<T extends object> {
   data?: T;
-  keys?: (keyof T)[];
+  keys?: KeynoteKeys<T>[];
   keyLabels?: string[];
   children?: ReactNode;
   styles?: KeynoteStyles;
@@ -26,7 +28,7 @@ export interface KeynotePointStyles {
   rowValueStyle?: CSSProp;
 }
 
-function Keynote<T extends Record<string, ReactNode>>({
+function Keynote<T extends object>({
   data,
   keys,
   keyLabels,
@@ -52,7 +54,7 @@ function Keynote<T extends Record<string, ReactNode>>({
                 key={String(key)}
                 label={keyLabel}
               >
-                {value ?? "-"}
+                {renderValue(value)}
               </KeynotePoint>
             );
           })
@@ -61,6 +63,32 @@ function Keynote<T extends Record<string, ReactNode>>({
           )}
     </KeynoteWrapper>
   );
+}
+
+function renderValue(value: unknown): ReactNode {
+  if (value == null) return "-";
+
+  if (value instanceof Date) {
+    return value.toLocaleDateString();
+  }
+
+  if (typeof value === "string" || typeof value === "number") {
+    return value;
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+
+  if (isValidElement(value)) {
+    return value;
+  }
+
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return "-";
 }
 
 function KeynotePoint({ label, children, styles }: KeynotePointProps) {

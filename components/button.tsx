@@ -239,12 +239,13 @@ function Button({
     >
       <BaseButton
         $theme={buttonTheme}
-        onClick={(e) => {
+        onMouseDown={(e) => {
           if (onClick && showSubMenuOn === "caret") {
             onClick(e);
           }
-          if (subMenu && showSubMenuOn === "self") {
+          if (onClick && subMenu && showSubMenuOn === "self") {
             e.stopPropagation();
+            e.preventDefault();
             setIsOpen(!isOpen);
           } else {
             setIsOpen(false);

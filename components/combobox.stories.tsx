@@ -6,6 +6,7 @@ import {
   ComboboxOption,
   ComboboxSingleOption,
   ComboboxDropdownOption,
+  ComboboxItemAction,
 } from "./combobox";
 import { SelectboxSelectedOptions } from "./selectbox";
 import { RiAddLine } from "@remixicon/react";
@@ -348,14 +349,36 @@ export const WithActions: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
+    const OPTION_ACTIONS = (id: string): ComboboxItemAction[] => [
+      {
+        caption: "Run",
+        onClick: () => {
+          console.log(`run this ${id}`);
+        },
+      },
+      {
+        caption: "Delete",
+        onClick: () => {
+          console.log(`delete this ${id}`);
+        },
+        icon: { image: RemixIcons.RiDeleteBack2Line },
+      },
+      {
+        onClick: () => {
+          console.log(`delete this ${id}`);
+        },
+        icon: { image: RemixIcons.RiFileCopyLine },
+      },
+    ];
+
     const FRUIT_OPTIONS: ComboboxSingleOption[] = [
-      { text: "Apple", value: "1" },
-      { text: "Banana", value: "2" },
-      { text: "Orange", value: "3" },
-      { text: "Grape", value: "4" },
-      { text: "Pineapple", value: "5" },
-      { text: "Strawberry", value: "6" },
-      { text: "Watermelon", value: "7" },
+      { text: "Apple", value: "1", actions: OPTION_ACTIONS },
+      { text: "Banana", value: "2", actions: OPTION_ACTIONS },
+      { text: "Orange", value: "3", actions: OPTION_ACTIONS },
+      { text: "Grape", value: "4", actions: OPTION_ACTIONS },
+      { text: "Pineapple", value: "5", actions: OPTION_ACTIONS },
+      { text: "Strawberry", value: "6", actions: OPTION_ACTIONS },
+      { text: "Watermelon", value: "7", actions: OPTION_ACTIONS },
     ];
 
     const FRUIT_ACTIONS: ComboboxAction[] = [

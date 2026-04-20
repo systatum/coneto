@@ -407,7 +407,7 @@ function NavTab({
                       ...action?.styles,
                       self: css`
                         height: ${size === "sm" && "27px"};
-                        border-width: 2px;
+                        border-bottom-width: 2px;
 
                         ${action.active &&
                         css`
