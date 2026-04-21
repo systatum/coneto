@@ -1,6 +1,9 @@
 import styled, { css } from "styled-components";
 import { Combobox, ComboboxSingleOption } from "./combobox";
 import { useEffect, useRef, useState } from "react";
+import { CodeBlockThemeConfig, useTheme } from "./../theme";
+import { Button } from "./button";
+import { RiCloseLine } from "@remixicon/react";
 
 export const CodeBlockLanguage = {
   TypeScript: "typescript",
@@ -85,6 +88,9 @@ export function CodeBlock({
   onClosed,
   readOnly = false,
 }: CodeBlockProps) {
+  const { currentTheme, mode } = useTheme();
+  const codeBlockTheme = currentTheme?.codeBlock;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
   const [lang, setLang] = useState(initialLang);
@@ -101,7 +107,7 @@ export function CodeBlock({
       const editor = monaco.editor.create(containerRef.current, {
         value: value,
         language: initialLang,
-        theme: "vs-dark",
+        theme: mode === "dark" ? "vs-dark" : "vs",
         fontSize: 13,
         lineHeight: 20,
         fontFamily:
@@ -157,7 +163,7 @@ export function CodeBlock({
       editorRef.current?.dispose();
       editorRef.current = null;
     };
-  }, []);
+  }, [mode]);
 
   const handleLangChange = (newLang: CodeBlockLanguage) => {
     setLang(newLang);
@@ -206,8 +212,8 @@ export function CodeBlock({
   };
 
   return (
-    <BlockWrapper contentEditable={false}>
-      <BlockHeader>
+    <BlockWrapper $theme={codeBlockTheme} contentEditable={false}>
+      <BlockHeader $theme={codeBlockTheme}>
         <Combobox
           styles={{
             containerStyle: css`
@@ -230,50 +236,59 @@ export function CodeBlock({
         />
 
         {!readOnly && (
-          <DeleteBtn type="button" onClick={onClosed} title="Remove code block">
-            ✕
-          </DeleteBtn>
+          <Button
+            type="button"
+            variant="ghost"
+            styles={{
+              self: css`
+                padding: 4px;
+                height: 20px;
+              `,
+            }}
+            onClick={onClosed}
+            icon={{
+              image: RiCloseLine,
+              size: 14,
+            }}
+            title="Remove code block"
+          />
         )}
       </BlockHeader>
 
-      {!isLoaded && <Placeholder>Loading editor…</Placeholder>}
+      {!isLoaded && (
+        <Placeholder $theme={codeBlockTheme}>Loading editor…</Placeholder>
+      )}
       <MonacoContainer ref={containerRef} $visible={isLoaded} />
     </BlockWrapper>
   );
 }
 
-const BlockWrapper = styled.div`
+const BlockWrapper = styled.div<{ $theme: CodeBlockThemeConfig }>`
   border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid ${({ $theme }) => $theme.borderColor};
   margin: 8px 0;
-  background: #1e1e1e;
+  background: ${({ $theme }) => $theme.backgroundColor};
   user-select: none;
 `;
 
-const BlockHeader = styled.div`
+const BlockHeader = styled.div<{ $theme: CodeBlockThemeConfig }>`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 6px 12px;
-  background: #2d2d2d;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: ${({ $theme }) => $theme.headerBackground};
+  border-bottom: 1px solid ${({ $theme }) => $theme.borderColor};
 `;
 
-const DeleteBtn = styled.button`
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.3);
+const Placeholder = styled.div<{ $theme: CodeBlockThemeConfig }>`
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ $theme }) => $theme.placeholderColor};
   font-size: 12px;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 3px;
-  line-height: 1;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-  }
+  font-family: monospace;
 `;
 
 const MonacoContainer = styled.div<{ $visible: boolean }>`
@@ -281,14 +296,4 @@ const MonacoContainer = styled.div<{ $visible: boolean }>`
   height: 60px;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.15s;
-`;
-
-const Placeholder = styled.div`
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.25);
-  font-size: 12px;
-  font-family: monospace;
 `;
