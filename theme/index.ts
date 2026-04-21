@@ -190,6 +190,12 @@ export interface ColorboxThemeConfig extends BodyThemeConfig {
   boxBackgroundColor?: string;
 }
 
+// code-block.tsx
+export interface CodeBlockThemeConfig extends BodyThemeConfig {
+  headerBackground?: string;
+  placeholderColor?: string;
+}
+
 // crumb.tsx
 export interface CrumbThemeConfig
   extends Omit<BodyThemeConfig, "borderColor" | "backgroundColor"> {
@@ -740,6 +746,7 @@ export interface AppTheme {
   choiceGroup: ChoiceGroupThemeConfig;
   checkbox: CheckboxThemeConfig;
   colorbox: ColorboxThemeConfig;
+  codeBlock: CodeBlockThemeConfig;
   combobox: ComboboxThemeConfig;
   crumb: CrumbThemeConfig;
   dialog: DialogThemeConfig;
