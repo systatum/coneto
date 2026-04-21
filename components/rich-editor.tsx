@@ -10,6 +10,7 @@ import React, {
 import {
   RiBold,
   RiCheckboxLine,
+  RiCodeSSlashLine,
   RiH1,
   RiH2,
   RiH3,
@@ -25,6 +26,8 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import ReactDOM from "react-dom/client";
+import { CodeBlock, CodeBlockLanguage } from "./code-block";
 
 export interface RichEditorProps {
   value?: string;
@@ -101,7 +104,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
+    const turndownServiceRef = useRef<TurndownService>(new TurndownService());
     const turndownService = new TurndownService();
+
+    addFencedCodeRule(turndownService);
 
     turndownService.addRule("atxHeading", {
       filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
@@ -269,14 +275,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     const handleEditorChange = () => {
-      const html = editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-      const cleanedHTML = cleanupHtml(html);
-      const markdown = turndownService.turndown(cleanedHTML);
-      const cleanedMarkdown = cleanSpacing(markdown);
-
-      if (onChange) {
-        onChange(cleanedMarkdown);
-      }
+      serializeAndEmit(editorRef, turndownService, onChange);
     };
 
     useImperativeHandle(ref, () => ({
@@ -320,6 +319,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         sel?.addRange(range);
 
         handleFilteringCheckbox();
+
+        hydrateFencedCodeBlocks(
+          editorRef,
+          onChange,
+          turndownServiceRef,
+          mode === "view-only"
+        );
 
         handleEditorChange();
       },
@@ -447,6 +453,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           .forEach((node) => node.remove());
 
         handleFilteringCheckbox();
+
+        hydrateFencedCodeBlocks(
+          editorRef,
+          onChange,
+          turndownServiceRef,
+          mode === "view-only"
+        );
       };
 
       initializeEditor();
@@ -511,6 +524,48 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       });
     };
 
+    const insertCodeBlock = () => {
+      if (!editorRef.current) return;
+
+      const sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+
+      const range = sel.getRangeAt(0);
+
+      const id = nextBlockId();
+      const wrapper = document.createElement("div");
+      wrapper.dataset.monacoBlockId = id;
+      wrapper.contentEditable = "false";
+
+      // Insert a paragraph after the block so the user can keep typing
+      const after = document.createElement("p");
+      after.innerHTML = "<br>";
+
+      range.deleteContents();
+      range.insertNode(after);
+      range.insertNode(wrapper);
+
+      // Move cursor to the paragraph after the block
+      const newRange = document.createRange();
+      newRange.setStart(after, 0);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      RichEditorCodeBlock(
+        wrapper,
+        id,
+        "",
+        "typescript",
+        editorRef,
+        onChange,
+        turndownServiceRef,
+        false
+      );
+
+      handleEditorChange();
+    };
+
     const handleCommand = (
       command:
         | "bold"
@@ -518,9 +573,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         | "insertOrderedList"
         | "insertUnorderedList"
         | "checkbox"
+        | "codeBlock"
     ) => {
       if (!editorRef.current) return;
       editorRef.current.focus();
+
+      if (command === "codeBlock") {
+        insertCodeBlock();
+        return;
+      }
 
       const sel = window.getSelection();
 
@@ -1185,6 +1246,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                 />
 
                 <RichEditorToolbarButton
+                  icon={{ image: RiCodeSSlashLine }}
+                  onClick={() => handleCommand("codeBlock")}
+                />
+
+                <RichEditorToolbarButton
                   icon={{
                     image: RiHeading,
                   }}
@@ -1240,6 +1306,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               if (onChange) {
                 onChange(cleanedMarkdown);
               }
+
+              serializeAndEmit(editorRef, turndownService, onChange);
             }
           }}
           onKeyDown={handleOnKeyDown}
@@ -1248,6 +1316,138 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     );
   }
 ) as RichEditorComponent;
+
+interface RichEditorCodeBlock {
+  wrapper: HTMLElement;
+  code: string;
+  lang: string;
+}
+
+const codeBlockRegistry = new Map<string, RichEditorCodeBlock>();
+let blockIdCounter = 0;
+
+function nextBlockId() {
+  return `monaco-block-${++blockIdCounter}`;
+}
+
+function RichEditorCodeBlock(
+  wrapper: HTMLElement,
+  id: string,
+  code: string,
+  initialLang: CodeBlockLanguage,
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange: ((value: string) => void) | undefined,
+  turndownServiceRef: React.MutableRefObject<TurndownService>,
+  isViewOnly: boolean
+) {
+  codeBlockRegistry.set(id, { wrapper, code, lang: initialLang });
+
+  const root = ReactDOM.createRoot(wrapper);
+  root.render(
+    <CodeBlock
+      value={code}
+      initialLang={initialLang}
+      readOnly={isViewOnly}
+      onChange={(code, lang) => {
+        codeBlockRegistry.set(id, { wrapper, code, lang });
+        serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+      }}
+      onClosed={() => {
+        codeBlockRegistry.delete(id);
+        wrapper.remove();
+        serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+      }}
+    />
+  );
+}
+
+function serializeAndEmit(
+  editorRef: React.RefObject<HTMLDivElement>,
+  turndownService: TurndownService,
+  onChange: ((value: string) => void) | undefined
+) {
+  if (!editorRef.current || !onChange) return;
+
+  // Clone the editor DOM so we can mutate it safely
+  const clone = editorRef.current.cloneNode(true) as HTMLElement;
+
+  // Replace each Monaco wrapper in the clone with a <pre><code> block so
+  // turndown can convert it to fenced markdown
+  clone.querySelectorAll("[data-monaco-block-id]").forEach((node) => {
+    const id = (node as HTMLElement).dataset.monacoBlockId!;
+    const record = codeBlockRegistry.get(id);
+    if (!record) return;
+
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.className = `language-${record.lang}`;
+    code.textContent = record.code;
+    pre.appendChild(code);
+    node.parentNode?.replaceChild(pre, node);
+  });
+
+  const html = clone.innerHTML.replace(/\u00A0/g, "");
+  const cleanedHTML = cleanupHtml(html);
+  const markdown = turndownService.turndown(cleanedHTML);
+  const cleanedMarkdown = cleanSpacing(markdown);
+  onChange(cleanedMarkdown);
+}
+
+// Parse fenced code blocks from the editor HTML and mount Monaco widgets
+function hydrateFencedCodeBlocks(
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange: ((value: string) => void) | undefined,
+  turndownServiceRef: React.MutableRefObject<TurndownService>,
+  isViewOnly: boolean
+) {
+  if (!editorRef.current) return;
+
+  editorRef.current.querySelectorAll("pre").forEach((pre) => {
+    // Skip if already hydrated
+    if (pre.dataset.monacoHydrated) return;
+    pre.dataset.monacoHydrated = "true";
+
+    const codeEl = pre.querySelector("code");
+    const rawCode = codeEl?.textContent ?? pre.textContent ?? "";
+    const langClass = codeEl?.className ?? "";
+    const langMatch = langClass.match(/language-(\w+)/);
+    const lang = langMatch ? langMatch[1] : "plaintext";
+
+    const id = nextBlockId();
+    const wrapper = document.createElement("div");
+    wrapper.dataset.monacoBlockId = id;
+    wrapper.contentEditable = "false";
+
+    pre.replaceWith(wrapper);
+    RichEditorCodeBlock(
+      wrapper,
+      id,
+      rawCode,
+      lang as CodeBlockLanguage,
+      editorRef,
+      onChange,
+      turndownServiceRef,
+      isViewOnly
+    );
+  });
+}
+
+// Turndown rule for fenced code (must be registered before use)
+function addFencedCodeRule(ts: TurndownService) {
+  ts.addRule("fencedCode", {
+    filter: (node) => {
+      return (
+        node.nodeName === "PRE" && node.firstElementChild?.nodeName === "CODE"
+      );
+    },
+    replacement: (_content, node) => {
+      const codeEl = (node as HTMLElement).querySelector("code")!;
+      const lang = (codeEl.className.match(/language-(\w+)/) || [])[1] || "";
+      const code = codeEl.textContent || "";
+      return `\n\`\`\`${lang}\n${code}\n\`\`\`\n`;
+    },
+  });
+}
 
 function RichEditorToolbarButton({
   icon,
