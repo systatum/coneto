@@ -15,6 +15,7 @@ import {
   CheckboxThemeConfig,
   ChipsThemeConfig,
   ChoiceGroupThemeConfig,
+  CodeBlockThemeConfig,
   ColorboxThemeConfig,
   ComboboxThemeConfig,
   CrumbThemeConfig,
@@ -516,6 +517,22 @@ export function createColorboxTheme(
     prefixColor: fieldLane?.placeholderColor || "#6b7280",
 
     boxBackgroundColor: body.backgroundColor || "#ffffff",
+  };
+
+  return { ...defaultTheme, ...custom };
+}
+
+// code-block.tsx
+export function createCodeBlockTheme(
+  body: BodyThemeConfig,
+  custom: Partial<CodeBlockThemeConfig> = {}
+): CodeBlockThemeConfig {
+  const defaultTheme: CodeBlockThemeConfig = {
+    backgroundColor: body.backgroundColor || "#f9fafb",
+    headerBackground: "#f3f4f6",
+    textColor: body.textColor || "#111827",
+    borderColor: body.borderColor || "#d1d5db",
+    placeholderColor: "#9ca3af",
   };
 
   return { ...defaultTheme, ...custom };
