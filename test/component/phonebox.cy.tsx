@@ -166,7 +166,7 @@ describe("Phonebox", () => {
 
   context("country code drawer", () => {
     context("searchbox", () => {
-      it("renders correctly depends on the width (-8px)", () => {
+      it("renders correctly depends on the width (-8px from padding drawer)", () => {
         cy.mount(
           <Phonebox
             styles={{
