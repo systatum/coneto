@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@floating-ui/react':
+        specifier: ^0.27.8
+        version: 0.27.15(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.2.1(react-hook-form@7.61.1(react@19.1.1))
+      '@remixicon/react':
+        specifier: ^4.6.0
+        version: 4.6.0(react@19.1.1)
       framer-motion:
         specifier: ^12.12.1
         version: 12.23.12(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -26,6 +32,12 @@ importers:
       react-hook-form:
         specifier: ^7.56.3
         version: 7.61.1(react@19.1.1)
+      react-swipeable:
+        specifier: ^7.0.2
+        version: 7.0.2(react@19.1.1)
+      styled-components:
+        specifier: ^6.1.19
+        version: 6.1.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       zod:
         specifier: ^3.24.4
         version: 3.25.76
@@ -39,12 +51,6 @@ importers:
       '@eslint/js':
         specifier: ^9.26.0
         version: 9.32.0
-      '@floating-ui/react':
-        specifier: ^0.27.8
-        version: 0.27.15(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@remixicon/react':
-        specifier: ^4.6.0
-        version: 4.6.0(react@19.1.1)
       '@storybook/addon-essentials':
         specifier: ^8.6.14
         version: 8.6.14(@types/react@19.1.9)(storybook@8.6.14(prettier@3.6.2))
@@ -123,9 +129,6 @@ importers:
       storybook:
         specifier: ^8.6.14
         version: 8.6.14(prettier@3.6.2)
-      styled-components:
-        specifier: ^6.1.19
-        version: 6.1.19(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       typescript:
         specifier: ^5.4.0
         version: 5.8.3
@@ -2584,6 +2587,11 @@ packages:
   react-refresh@0.17.0:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
+
+  react-swipeable@7.0.2:
+    resolution: {integrity: sha512-v1Qx1l+aC2fdxKa9aKJiaU/ZxmJ5o98RMoFwUqAAzVWUcxgfHFXDDruCKXhw6zIYXm6V64JiHgP9f6mlME5l8w==}
+    peerDependencies:
+      react: ^16.8.3 || ^17 || ^18 || ^19.0.0 || ^19.0.0-rc
 
   react@19.1.1:
     resolution: {integrity: sha512-w8nqGImo45dmMIfljjMwOGtbmC/mk4CMYhWIicdSflH91J9TyCyczcPFXJzrZ/ZXcgGRFeP6BU0BEJTw6tZdfQ==}
@@ -5770,6 +5778,10 @@ snapshots:
   react-is@17.0.2: {}
 
   react-refresh@0.17.0: {}
+
+  react-swipeable@7.0.2(react@19.1.1):
+    dependencies:
+      react: 19.1.1
 
   react@19.1.1: {}
 

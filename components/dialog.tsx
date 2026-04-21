@@ -45,7 +45,7 @@ export interface DialogProps {
   onVisibilityChange?: (isOpen?: boolean) => void;
   closable?: boolean;
   styles?: DialogStyles;
-  onClick?: (args: { id: string; closeDialog: () => void }) => void;
+  onClick?: (args: { buttonId: string; closeDialog: () => void }) => void;
   buttons?: DialogButton[];
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -219,22 +219,22 @@ function Dialog({
 
         {buttons && (
           <Footer $style={styles?.buttonWrapperStyle}>
-            {buttons.map((props, index) => (
+            {buttons.map((button, index) => (
               <Button
                 key={index}
-                isLoading={props.isLoading}
-                disabled={props.disabled}
-                variant={props.variant}
-                onClick={() => onClick?.({ id: props.id, closeDialog })}
+                isLoading={button.isLoading}
+                disabled={button.disabled}
+                variant={button.variant}
+                onClick={() => onClick?.({ buttonId: button.id, closeDialog })}
                 styles={{
-                  ...props?.styles,
+                  ...button?.styles,
                   self: css`
                     min-width: 100px;
-                    ${props?.styles?.self}
+                    ${button?.styles?.self}
                   `,
                 }}
               >
-                {props.caption}
+                {button.caption}
               </Button>
             ))}
           </Footer>
@@ -415,8 +415,8 @@ function DialogProvider({
       onVisibilityChange={(open?: boolean) => {
         if (!open) closeDialog();
       }}
-      onClick={({ id }) => {
-        config.onClick({ id, closeDialog });
+      onClick={({ buttonId }) => {
+        config.onClick({ buttonId, closeDialog });
       }}
       onClosed={() => {
         config.onClosed?.();

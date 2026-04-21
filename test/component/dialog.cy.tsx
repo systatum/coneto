@@ -15,7 +15,7 @@ describe("Dialog", () => {
   }
 
   context("with Dialog.show()", () => {
-    it("renders the modal dialog", () => {
+    beforeEach(() => {
       cy.mount(
         <Button
           onClick={() =>
@@ -27,6 +27,10 @@ describe("Dialog", () => {
                 { id: "confirm", caption: "Confirm", variant: "primary" },
                 { id: "cancel", caption: "Cancel", variant: "default" },
               ],
+              onClick: ({ buttonId, closeDialog }) => {
+                console.log(`this is button ${buttonId}`);
+                closeDialog();
+              },
             })
           }
         >
@@ -36,10 +40,31 @@ describe("Dialog", () => {
 
       cy.findByLabelText("dialog-wrapper").should("not.exist");
       cy.findByRole("button").click();
+    });
+
+    it("renders the modal dialog", () => {
+      cy.findByLabelText("dialog-wrapper").should("exist");
+      cy.findByText("Default Modal").should("exist");
+      cy.findByText("This is a subtitle").should("exist");
+    });
+  });
+
+  context("when clicking button", () => {
+    it("should display console per id", () => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
 
       cy.findByLabelText("dialog-wrapper").should("exist");
       cy.findByText("Default Modal").should("exist");
       cy.findByText("This is a subtitle").should("exist");
+
+      cy.findByText("Confirm").should("exist").click();
+      cy.wait(300);
+      cy.get("@consoleLog").should(
+        "have.been.calledWith",
+        "this is button confirm"
+      );
     });
   });
 

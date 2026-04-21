@@ -353,18 +353,20 @@
     "react-dom": "^19.1.0"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.8",
     "@hookform/resolvers": "^5.0.1",
+    "@remixicon/react": "^4.6.0",
     "framer-motion": "^12.12.1",
     "pdfjs-dist": "5.4.54",
     "react-hook-form": "^7.56.3",
+    "react-swipeable": "^7.0.2",
+    "styled-components": "^6.1.19",
     "zod": "^3.24.4"
   },
   "devDependencies": {
     "@babel/parser": "^7.29.2",
     "@babel/traverse": "^7.29.0",
     "@eslint/js": "^9.26.0",
-    "@floating-ui/react": "^0.27.8",
-    "@remixicon/react": "^4.6.0",
     "@storybook/addon-essentials": "^8.6.14",
     "@storybook/addon-storysource": "^8.6.14",
     "@storybook/blocks": "^8.6.14",
@@ -391,7 +393,6 @@
     "globals": "^15.15.0",
     "prettier": "^3.5.3",
     "storybook": "^8.6.14",
-    "styled-components": "^6.1.19",
     "typescript": "^5.4.0",
     "vite": "^6.3.5"
   },
