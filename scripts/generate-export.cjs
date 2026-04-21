@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const IGNORED_COMPONENT_FILES = ["context-menu", "action-button"];
+const IGNORED_COMPONENT_FILES = ["context-menu", "action-button", "code-block"];
 
 function getFlatExportsFrom(dirPath, baseDistPath) {
   const abs = path.join(process.cwd(), dirPath);
