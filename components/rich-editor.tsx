@@ -6,6 +6,7 @@ import React, {
   RefObject,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -35,7 +36,8 @@ import {
 } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import ReactDOM from "react-dom/client";
-import { CodeBlock, CodeBlockLanguage } from "./code-block";
+import { CodeBlock, CodeBlockLanguage, CodeBlockOption } from "./code-block";
+import { Combobox } from "./combobox";
 
 export interface RichEditorProps {
   value?: string;
@@ -46,7 +48,54 @@ export interface RichEditorProps {
   toolbarPosition?: RichEditorToolbarPosition;
   autogrow?: boolean;
   height?: number;
+  allowedCodeLanguages?: RichEditorSupportedLanguages[];
+  initialLanguage?: RichEditorSupportedLanguages;
+  actions?: RichEditorActions[];
 }
+
+export type RichEditorActions = RichEditorToolbarButtonProps;
+
+export const RichEditorSupportedLanguages = {
+  ReactTypeScript: "tsx",
+  Python: "python",
+  Ruby: "ruby",
+  CPP: "cpp",
+  TypeScript: "typescript",
+  Javascript: "javascript",
+  SQL: "sql",
+  R: "r",
+  PHP: "php",
+  Go: "go",
+  Rust: "rust",
+  Java: "java",
+  HTML: "html",
+  CSS: "css",
+  Text: "plaintext",
+} as const;
+
+export type RichEditorSupportedLanguages =
+  (typeof RichEditorSupportedLanguages)[keyof typeof RichEditorSupportedLanguages];
+
+export const RichEditorSupportedLanguageNames: Record<
+  RichEditorSupportedLanguages,
+  string
+> = {
+  typescript: "TypeScript",
+  javascript: "JavaScript",
+  python: "Python",
+  ruby: "Ruby",
+  cpp: "C++",
+  sql: "SQL",
+  r: "R",
+  php: "PHP",
+  go: "Go",
+  rust: "Rust",
+  java: "Java",
+  html: "HTML",
+  css: "CSS",
+  plaintext: "Text",
+  tsx: "React Typescript",
+};
 
 export interface RichEditorStyles {
   editorStyle?: CSSProp;
@@ -90,6 +139,8 @@ interface RichEditorComponent
     RichEditorProps & React.RefAttributes<RichEditorRef>
   > {
   ToolbarButton: typeof RichEditorToolbarButton;
+  SupportedLanguage: typeof RichEditorSupportedLanguages;
+  SupportedLanguageName: typeof RichEditorSupportedLanguageNames;
 }
 
 export interface RichEditorRef {
@@ -108,11 +159,31 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       styles,
       autogrow = false,
       height = 200,
+      allowedCodeLanguages = Object.values(
+        RichEditorSupportedLanguages
+      ) as RichEditorSupportedLanguages[],
+      actions,
+      initialLanguage,
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
+
+    const [lang, setLang] = useState(
+      initialLanguage ?? allowedCodeLanguages[0]
+    );
+
+    const normalizedLanguages = useMemo(() => {
+      return Array.from(new Set(allowedCodeLanguages));
+    }, [allowedCodeLanguages]);
+
+    const OPTIONS_LANGUAGES: CodeBlockOption[] = normalizedLanguages.map(
+      (lang) => ({
+        text: RichEditorSupportedLanguageNames[lang],
+        value: lang,
+      })
+    );
 
     const turndownServiceRef = useRef<TurndownService>(new TurndownService());
     const turndownService = new TurndownService();
@@ -334,7 +405,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           editorRef,
           onChange,
           turndownServiceRef,
-          mode === "view-only"
+          mode === "view-only",
+          OPTIONS_LANGUAGES
         );
 
         handleEditorChange();
@@ -468,7 +540,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           editorRef,
           onChange,
           turndownServiceRef,
-          mode === "view-only"
+          mode === "view-only",
+          OPTIONS_LANGUAGES
         );
       };
 
@@ -566,11 +639,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         wrapper,
         id,
         "",
-        "typescript",
+        lang,
         editorRef,
         onChange,
         turndownServiceRef,
-        false
+        false,
+        OPTIONS_LANGUAGES
       );
 
       handleEditorChange();
@@ -1230,9 +1304,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
-    return mode === "code-editor" ? (
-      <CodeBlock value={value} onChange={(code) => onChange(code)} />
-    ) : (
+    return (
       <Wrapper
         $theme={richEditorTheme}
         aria-label="wrapper-editor"
@@ -1248,74 +1320,112 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               $theme={richEditorTheme}
               $toolbarPosition={toolbarPosition}
             >
-              <ToolbarGroup>
-                <RichEditorToolbarButton
-                  isActive={formatStates.bold}
-                  icon={{
-                    image: RiBold,
-                  }}
-                  onClick={() => handleCommand("bold")}
-                />
+              <ToolbarLeftPanel>
+                {mode !== "code-editor" && (
+                  <>
+                    <RichEditorToolbarButton
+                      isActive={formatStates.bold}
+                      icon={{
+                        image: RiBold,
+                      }}
+                      onClick={() => handleCommand("bold")}
+                    />
 
-                <RichEditorToolbarButton
-                  isActive={formatStates.italic}
-                  icon={{
-                    image: RiItalic,
-                  }}
-                  onClick={() => handleCommand("italic")}
-                />
+                    <RichEditorToolbarButton
+                      isActive={formatStates.italic}
+                      icon={{
+                        image: RiItalic,
+                      }}
+                      onClick={() => handleCommand("italic")}
+                    />
 
-                <RichEditorToolbarButton
-                  icon={{
-                    image: RiListOrdered,
-                  }}
-                  onClick={() => handleCommand("insertOrderedList")}
-                />
+                    <RichEditorToolbarButton
+                      icon={{
+                        image: RiListOrdered,
+                      }}
+                      onClick={() => handleCommand("insertOrderedList")}
+                    />
 
-                <RichEditorToolbarButton
-                  icon={{
-                    image: RiListUnordered,
-                  }}
-                  onClick={() => handleCommand("insertUnorderedList")}
-                />
+                    <RichEditorToolbarButton
+                      icon={{
+                        image: RiListUnordered,
+                      }}
+                      onClick={() => handleCommand("insertUnorderedList")}
+                    />
 
-                <RichEditorToolbarButton
-                  icon={{
-                    image: RiCheckboxLine,
-                  }}
-                  onClick={() => handleCommand("checkbox")}
-                />
-
+                    <RichEditorToolbarButton
+                      icon={{
+                        image: RiCheckboxLine,
+                      }}
+                      onClick={() => handleCommand("checkbox")}
+                    />
+                  </>
+                )}
                 {mode === "markdown-editor" && (
                   <RichEditorToolbarButton
                     icon={{ image: RiCodeSSlashLine }}
                     onClick={() => handleCommand("codeBlock")}
                   />
                 )}
-
-                <RichEditorToolbarButton
-                  icon={{
-                    image: RiHeading,
-                  }}
-                  isOpen={isOpen}
-                  onClick={() => {
-                    const sel = window.getSelection();
-                    if (sel && sel.rangeCount > 0) {
-                      savedSelection.current = sel.getRangeAt(0).cloneRange();
-                    }
-                    setIsOpen(!isOpen);
-                  }}
-                />
-
-                {isOpen && (
-                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                    <TipMenu
-                      setIsOpen={() => setIsOpen(false)}
-                      subMenuList={TIP_MENU_RICH_EDITOR}
+                {mode !== "code-editor" && (
+                  <>
+                    <RichEditorToolbarButton
+                      icon={{
+                        image: RiHeading,
+                      }}
+                      isOpen={isOpen}
+                      onClick={() => {
+                        const sel = window.getSelection();
+                        if (sel && sel.rangeCount > 0) {
+                          savedSelection.current = sel
+                            .getRangeAt(0)
+                            .cloneRange();
+                        }
+                        setIsOpen(!isOpen);
+                      }}
                     />
-                  </MenuWrapper>
+
+                    {isOpen && (
+                      <MenuWrapper
+                        ref={menuRef}
+                        $toolbarPosition={toolbarPosition}
+                      >
+                        <TipMenu
+                          setIsOpen={() => setIsOpen(false)}
+                          subMenuList={TIP_MENU_RICH_EDITOR}
+                        />
+                      </MenuWrapper>
+                    )}
+                  </>
                 )}
-              </ToolbarGroup>
+                {mode === "code-editor" && (
+                  <Combobox
+                    styles={{
+                      containerStyle: css`
+                        width: 150px;
+                        height: 25px;
+                      `,
+                      controlStyle: css`
+                        height: 25px;
+                      `,
+                      selectboxStyle: css`
+                        height: 25px;
+                      `,
+                      drawerStyle: css`
+                        max-height: 140px;
+                      `,
+                    }}
+                    selectedOptions={lang}
+                    onChange={(lang) => setLang(lang as CodeBlockLanguage)}
+                    options={OPTIONS_LANGUAGES}
+                  />
+                )}
+
+                {actions &&
+                  actions?.map((action) => (
+                    <RichEditorToolbarButton {...action} />
+                  ))}
+              </ToolbarLeftPanel>
               {toolbarRightPanel && (
                 <ToolbarRightPanel>{toolbarRightPanel}</ToolbarRightPanel>
               )}
@@ -1323,38 +1433,63 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           </ToolbarWrapper>
         )}
 
-        <EditorArea
-          ref={editorRef}
-          role="textbox"
-          $theme={richEditorTheme}
-          aria-label="rich-editor-content"
-          contentEditable
-          $editorStyle={styles?.editorStyle}
-          $toolbarPosition={toolbarPosition}
-          $mode={mode}
-          $height={height}
-          $autogrow={autogrow}
-          onInput={() => {
-            if (mode !== "view-only") {
-              if (editorRef.current) {
-                syncCheckboxStates(editorRef.current);
+        {mode === "code-editor" ? (
+          <CodeBlock
+            styles={{
+              self: css`
+                border: none;
+                padding: 0px;
+              `,
+              contentStyle: css`
+                min-height: 160px;
+                ${toolbarPosition === "top"
+                  ? css`
+                      margin-top: 37px;
+                    `
+                  : css`
+                      margin-bottom: 37px;
+                    `};
+              `,
+            }}
+            withToolbar={false}
+            value={value}
+            valueLang={lang}
+            onChange={(code) => onChange(code)}
+          />
+        ) : (
+          <EditorArea
+            ref={editorRef}
+            role="textbox"
+            $theme={richEditorTheme}
+            aria-label="rich-editor-content"
+            contentEditable
+            $editorStyle={styles?.editorStyle}
+            $toolbarPosition={toolbarPosition}
+            $mode={mode}
+            $height={height}
+            $autogrow={autogrow}
+            onInput={() => {
+              if (mode !== "view-only") {
+                if (editorRef.current) {
+                  syncCheckboxStates(editorRef.current);
+                }
+
+                const html =
+                  editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+                const cleanedHTML = cleanupHtml(html);
+
+                const markdown = turndownService.turndown(cleanedHTML);
+                const cleanedMarkdown = cleanSpacing(markdown);
+                if (onChange) {
+                  onChange(cleanedMarkdown);
+                }
+
+                serializeAndEmit(editorRef, turndownService, onChange);
               }
-
-              const html =
-                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-              const cleanedHTML = cleanupHtml(html);
-
-              const markdown = turndownService.turndown(cleanedHTML);
-              const cleanedMarkdown = cleanSpacing(markdown);
-              if (onChange) {
-                onChange(cleanedMarkdown);
-              }
-
-              serializeAndEmit(editorRef, turndownService, onChange);
-            }
-          }}
-          onKeyDown={handleOnKeyDown}
-        />
+            }}
+            onKeyDown={handleOnKeyDown}
+          />
+        )}
       </Wrapper>
     );
   }
@@ -1382,6 +1517,7 @@ function CodeBlockBridge({
   turndownServiceRef,
   isViewOnly,
   wrapper,
+  options,
 }: {
   id: string;
   code: string;
@@ -1391,6 +1527,7 @@ function CodeBlockBridge({
   turndownServiceRef: MutableRefObject<TurndownService>;
   isViewOnly: boolean;
   wrapper: HTMLElement;
+  options: CodeBlockOption[];
 }) {
   const [theme, setTheme] = useState(getThemeSnapshot());
 
@@ -1411,6 +1548,7 @@ function CodeBlockBridge({
           codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
           serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
         }}
+        options={options}
         onClosed={() => {
           codeBlockRegistry.delete(id);
           wrapper.remove();
@@ -1429,7 +1567,8 @@ function RichEditorCodeBlock(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange: ((value: string) => void) | undefined,
   turndownServiceRef: React.MutableRefObject<TurndownService>,
-  isViewOnly: boolean
+  isViewOnly: boolean,
+  options: CodeBlockOption[]
 ) {
   codeBlockRegistry.set(id, { wrapper, code, lang: initialLang });
 
@@ -1444,6 +1583,7 @@ function RichEditorCodeBlock(
       turndownServiceRef={turndownServiceRef}
       isViewOnly={isViewOnly}
       wrapper={wrapper}
+      options={options}
     />
   );
 }
@@ -1485,7 +1625,8 @@ function hydrateFencedCodeBlocks(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange: ((value: string) => void) | undefined,
   turndownServiceRef: React.MutableRefObject<TurndownService>,
-  isViewOnly: boolean
+  isViewOnly: boolean,
+  options: CodeBlockOption[]
 ) {
   if (!editorRef.current) return;
 
@@ -1514,7 +1655,8 @@ function hydrateFencedCodeBlocks(
       editorRef,
       onChange,
       turndownServiceRef,
-      isViewOnly
+      isViewOnly,
+      options
     );
   });
 }
@@ -1591,6 +1733,7 @@ const ToolbarWrapper = styled.div<{
 }>`
   position: absolute;
   width: 100%;
+  z-index: 200;
 
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
@@ -1630,7 +1773,7 @@ const Toolbar = styled.div<{
         `}
 `;
 
-const ToolbarGroup = styled.div`
+const ToolbarLeftPanel = styled.div`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -2058,5 +2201,7 @@ const preprocessMarkdown = (markdown: string) => {
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
+RichEditor.SupportedLanguage = RichEditorSupportedLanguages;
+RichEditor.SupportedLanguageName = RichEditorSupportedLanguageNames;
 
 export { RichEditor };
