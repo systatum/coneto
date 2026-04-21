@@ -218,13 +218,13 @@ export function CodeBlock({
           styles={{
             containerStyle: css`
               width: 150px;
-              height: 10px;
+              height: 25px;
             `,
             controlStyle: css`
-              height: 10px;
+              height: 25px;
             `,
             selectboxStyle: css`
-              height: 10px;
+              height: 25px;
             `,
           }}
           selectedOptions={lang}
