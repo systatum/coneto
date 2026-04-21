@@ -137,6 +137,10 @@ export function CodeBlock({
 
       editorRef.current = editor;
 
+      requestAnimationFrame(() => {
+        editor.focus();
+      });
+
       const updateHeight = () => {
         const lineCount = editor.getModel()?.getLineCount() ?? 1;
         const lineHeight = 20;
