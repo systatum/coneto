@@ -65,6 +65,7 @@ import {
   createTreeListTheme,
   createSplitPaneTheme,
   createTooltipTheme,
+  createCodeBlockTheme,
 } from "./creator";
 
 // Light
@@ -109,6 +110,8 @@ const lightChoiceGroup = createChoiceGroupTheme(lightBody);
 const lightCheckbox = createCheckboxTheme(lightBody);
 
 const lightColorbox = createColorboxTheme(lightBody, lightFieldLane);
+
+const lightCodeBlock = createCodeBlockTheme(lightBody);
 
 const lightCombobox = createComboboxTheme(lightBody, lightFieldLane);
 
@@ -235,6 +238,7 @@ export const lightTheme: AppTheme = {
   choiceGroup: lightChoiceGroup,
   checkbox: lightCheckbox,
   colorbox: lightColorbox,
+  codeBlock: lightCodeBlock,
   combobox: lightCombobox,
   crumb: lightCrumb,
   dialog: lightDialog,
