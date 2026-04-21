@@ -1,7 +1,9 @@
 import React, {
   forwardRef,
   KeyboardEvent,
+  MutableRefObject,
   ReactNode,
+  RefObject,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -24,7 +26,13 @@ import { marked } from "./../lib/marked/marked";
 import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
-import { RichEditorThemeConfig } from "./../theme";
+import {
+  getThemeSnapshot,
+  RichEditorThemeConfig,
+  subscribeTheme,
+  ThemeMode,
+  ThemeProvider,
+} from "./../theme";
 import { useTheme } from "./../theme/provider";
 import ReactDOM from "react-dom/client";
 import { CodeBlock, CodeBlockLanguage } from "./code-block";
@@ -101,7 +109,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     },
     ref
   ) => {
-    const { currentTheme } = useTheme();
+    const { currentTheme, mode: themeMode } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
     const turndownServiceRef = useRef<TurndownService>(new TurndownService());
@@ -807,6 +815,28 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           const beforeCaret = text.slice(0, caretPos);
           const afterCaret = text.slice(caretPos);
 
+          if (beforeCaret === "```") {
+            e.preventDefault();
+
+            const parent = node.parentElement;
+            if (parent && (parent.textContent ?? "").trim() === "```") {
+              const id = nextBlockId();
+
+              const wrapper = document.createElement("div");
+              wrapper.dataset.monacoBlockId = id;
+              wrapper.contentEditable = "false";
+
+              const after = document.createElement("p");
+              after.appendChild(document.createElement("br"));
+
+              node.textContent = "";
+
+              insertCodeBlock();
+              handleEditorChange();
+              return;
+            }
+          }
+
           const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
           const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
 
@@ -1330,6 +1360,53 @@ function nextBlockId() {
   return `monaco-block-${++blockIdCounter}`;
 }
 
+function CodeBlockBridge({
+  id,
+  code,
+  initialLang,
+  editorRef,
+  onChange,
+  turndownServiceRef,
+  isViewOnly,
+  wrapper,
+}: {
+  id: string;
+  code: string;
+  initialLang: CodeBlockLanguage;
+  editorRef: RefObject<HTMLDivElement>;
+  onChange: ((value: string) => void) | undefined;
+  turndownServiceRef: MutableRefObject<TurndownService>;
+  isViewOnly: boolean;
+  wrapper: HTMLElement;
+}) {
+  const [theme, setTheme] = useState(getThemeSnapshot());
+
+  useEffect(() => {
+    return subscribeTheme(() => {
+      setTheme(getThemeSnapshot());
+    });
+  }, []);
+
+  return (
+    <ThemeProvider mode={theme.mode} themes={theme.themes}>
+      <CodeBlock
+        value={codeBlockRegistry.get(id)?.code ?? code}
+        initialLang={initialLang}
+        readOnly={isViewOnly}
+        onChange={(newCode, lang) => {
+          codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
+          serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+        }}
+        onClosed={() => {
+          codeBlockRegistry.delete(id);
+          wrapper.remove();
+          serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+        }}
+      />
+    </ThemeProvider>
+  );
+}
+
 function RichEditorCodeBlock(
   wrapper: HTMLElement,
   id: string,
@@ -1344,19 +1421,15 @@ function RichEditorCodeBlock(
 
   const root = ReactDOM.createRoot(wrapper);
   root.render(
-    <CodeBlock
-      value={code}
+    <CodeBlockBridge
+      id={id}
+      code={code}
       initialLang={initialLang}
-      readOnly={isViewOnly}
-      onChange={(code, lang) => {
-        codeBlockRegistry.set(id, { wrapper, code, lang });
-        serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
-      }}
-      onClosed={() => {
-        codeBlockRegistry.delete(id);
-        wrapper.remove();
-        serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
-      }}
+      editorRef={editorRef}
+      onChange={onChange}
+      turndownServiceRef={turndownServiceRef}
+      isViewOnly={isViewOnly}
+      wrapper={wrapper}
     />
   );
 }
@@ -1644,7 +1717,7 @@ const EditorArea = styled.div<{
     margin: 0 !important;
   }
 
-  ul {
+  ul:not(#combo-list) {
     list-style-type: disc !important;
     list-style-position: outside !important;
     padding-left: 2.6rem !important;
@@ -1666,7 +1739,7 @@ const EditorArea = styled.div<{
     margin: 0.3em 0;
   }
 
-  h3 {
+  h3:not(#combo-list h3) {
     font-size: 1.3em;
     margin: 0.4em 0;
   }
