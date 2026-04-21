@@ -1,29 +1,13 @@
-import styled, { css } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { Combobox, ComboboxSingleOption } from "./combobox";
 import { useEffect, useRef, useState } from "react";
 import { CodeBlockThemeConfig, useTheme } from "./../theme";
 import { Button } from "./button";
 import { RiCloseLine } from "@remixicon/react";
+import { RichEditorSupportedLanguages } from "./rich-editor";
+import { useId } from "react";
 
-export const CodeBlockLanguage = {
-  TypeScript: "typescript",
-  JavaScript: "javascript",
-  ReactTSX: "tsx",
-  Python: "python",
-  Rust: "rust",
-  Go: "go",
-  Java: "java",
-  CSS: "css",
-  HTML: "html",
-  JSON: "json",
-  SQL: "sql",
-  Bash: "bash",
-  Markdown: "markdown",
-  PlainText: "plaintext",
-} as const;
-
-export type CodeBlockLanguage =
-  (typeof CodeBlockLanguage)[keyof typeof CodeBlockLanguage];
+export type CodeBlockLanguage = RichEditorSupportedLanguages;
 
 export interface CodeBlockProps {
   value?: string;
@@ -32,24 +16,18 @@ export interface CodeBlockProps {
   onClosed?: () => void;
   readOnly?: boolean;
   clearable?: boolean;
+  options?: CodeBlockOption[];
+  withToolbar?: boolean;
+  styles?: CodeBlockStyles;
+  valueLang?: CodeBlockLanguage;
 }
 
-const SUPPORTED_LANGS: ComboboxSingleOption[] = [
-  { text: "TypeScript", value: CodeBlockLanguage.TypeScript },
-  { text: "JavaScript", value: CodeBlockLanguage.JavaScript },
-  { text: "React TypeScript", value: CodeBlockLanguage.ReactTSX },
-  { text: "Python", value: CodeBlockLanguage.Python },
-  { text: "Rust", value: CodeBlockLanguage.Rust },
-  { text: "Go", value: CodeBlockLanguage.Go },
-  { text: "Java", value: CodeBlockLanguage.Java },
-  { text: "CSS", value: CodeBlockLanguage.CSS },
-  { text: "HTML", value: CodeBlockLanguage.HTML },
-  { text: "JSON", value: CodeBlockLanguage.JSON },
-  { text: "SQL", value: CodeBlockLanguage.SQL },
-  { text: "Bash", value: CodeBlockLanguage.Bash },
-  { text: "Markdown", value: CodeBlockLanguage.Markdown },
-  { text: "Plain Text", value: CodeBlockLanguage.PlainText },
-];
+interface CodeBlockStyles {
+  self?: CSSProp;
+  contentStyle?: CSSProp;
+}
+
+export type CodeBlockOption = ComboboxSingleOption;
 
 let monacoLoadPromise: Promise<typeof import("monaco-editor")> | null = null;
 
@@ -89,15 +67,28 @@ export function CodeBlock({
   onClosed,
   readOnly = false,
   clearable,
+  options = [],
+  withToolbar = true,
+  styles,
+  valueLang,
 }: CodeBlockProps) {
   const { currentTheme, mode } = useTheme();
   const codeBlockTheme = currentTheme?.codeBlock;
 
+  const uid = useId();
+  const comboboxId = `combobox-richeditor-${uid}`;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
-  const [lang, setLang] = useState(initialLang);
   const [isLoaded, setIsLoaded] = useState(false);
-  const langRef = useRef(lang);
+
+  const [langLocal, setLangLocal] = useState(
+    initialLang ?? (options[0]?.value as string)
+  );
+  const langRef = useRef(langLocal);
+
+  const lang = valueLang ? valueLang : langLocal;
+
   langRef.current = lang;
 
   useEffect(() => {
@@ -172,57 +163,60 @@ export function CodeBlock({
   }, [mode]);
 
   const handleLangChange = (newLang: CodeBlockLanguage) => {
-    setLang(newLang);
+    setLangLocal(newLang);
     if (editorRef.current) {
-      const monaco = (window as any).monaco;
-      if (!monaco) return;
+      applyLangToMonaco(newLang);
+    }
+    onChange?.(editorRef.current?.getValue() ?? "", newLang);
+  };
 
-      const actualLang = newLang === "tsx" ? "typescript" : newLang;
-      const currentValue = editorRef.current.getValue();
+  useEffect(() => {
+    if (!valueLang) return;
+    applyLangToMonaco(valueLang);
+  }, [valueLang, isLoaded]);
 
-      if (newLang === "tsx" || newLang === "typescript") {
-        // Set compiler options first
-        monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-          ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
-          jsx:
-            newLang === "tsx"
-              ? monaco.languages.typescript.JsxEmit.React
-              : monaco.languages.typescript.JsxEmit.None,
-          jsxFactory: "React.createElement",
-        });
+  const applyLangToMonaco = (newLang: CodeBlockLanguage) => {
+    const monaco = (window as any).monaco;
+    if (!monaco || !editorRef.current) return;
 
-        // Create a new model with the correct file extension so the TS worker
-        // can resolve the URI — this is what fixes "Could not find source file"
-        const ext = newLang === "tsx" ? "tsx" : "ts";
-        const newUri = monaco.Uri.parse(
-          `inmemory://model/${Date.now()}.${ext}`
-        );
-        const newModel = monaco.editor.createModel(
-          currentValue,
-          actualLang,
-          newUri
-        );
-        const oldModel = editorRef.current.getModel();
-        editorRef.current.setModel(newModel);
-        oldModel?.dispose();
-      } else {
-        // For non-TS languages, setModelLanguage is fine
-        monaco.editor.setModelLanguage(
-          editorRef.current.getModel(),
-          actualLang
-        );
-      }
+    const actualLang = newLang === "tsx" ? "typescript" : newLang;
+    const currentValue = editorRef.current.getValue();
 
-      onChange?.(currentValue, newLang);
+    if (newLang === "tsx" || newLang === "typescript") {
+      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+        ...monaco.languages.typescript.typescriptDefaults.getCompilerOptions(),
+        jsx:
+          newLang === "tsx"
+            ? monaco.languages.typescript.JsxEmit.React
+            : monaco.languages.typescript.JsxEmit.None,
+        jsxFactory: "React.createElement",
+      });
+      const ext = newLang === "tsx" ? "tsx" : "ts";
+      const newUri = monaco.Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
+      const newModel = monaco.editor.createModel(
+        currentValue,
+        actualLang,
+        newUri
+      );
+      const oldModel = editorRef.current.getModel();
+      editorRef.current.setModel(newModel);
+      oldModel?.dispose();
+    } else {
+      monaco.editor.setModelLanguage(editorRef.current.getModel(), actualLang);
     }
   };
 
   return (
-    <BlockWrapper $theme={codeBlockTheme} contentEditable={false}>
-      {!readOnly && (
+    <BlockWrapper
+      $style={styles?.self}
+      $theme={codeBlockTheme}
+      contentEditable={false}
+    >
+      {!readOnly && withToolbar && (
         <BlockHeader $theme={codeBlockTheme}>
           {!readOnly && (
             <Combobox
+              id={comboboxId}
               styles={{
                 containerStyle: css`
                   width: 150px;
@@ -239,7 +233,7 @@ export function CodeBlock({
                 `,
               }}
               selectedOptions={lang}
-              options={SUPPORTED_LANGS}
+              options={options}
               onChange={(selectedOption) =>
                 handleLangChange(selectedOption as CodeBlockLanguage)
               }
@@ -270,17 +264,26 @@ export function CodeBlock({
       {!isLoaded && (
         <Placeholder $theme={codeBlockTheme}>Loading editor…</Placeholder>
       )}
-      <MonacoContainer ref={containerRef} $visible={isLoaded} />
+      <MonacoContainer
+        ref={containerRef}
+        $visible={isLoaded}
+        $style={styles?.contentStyle}
+      />
     </BlockWrapper>
   );
 }
 
-const BlockWrapper = styled.div<{ $theme: CodeBlockThemeConfig }>`
+const BlockWrapper = styled.div<{
+  $theme: CodeBlockThemeConfig;
+  $style?: CSSProp;
+}>`
   border-radius: 2px;
   border: 1px solid ${({ $theme }) => $theme.borderColor};
-  margin: 8px 0;
+  margin-top: 8px;
   background: ${({ $theme }) => $theme.backgroundColor};
   user-select: none;
+
+  ${({ $style }) => $style}
 `;
 
 const BlockHeader = styled.div<{ $theme: CodeBlockThemeConfig }>`
@@ -303,9 +306,11 @@ const Placeholder = styled.div<{ $theme: CodeBlockThemeConfig }>`
   font-family: monospace;
 `;
 
-const MonacoContainer = styled.div<{ $visible: boolean }>`
+const MonacoContainer = styled.div<{ $visible: boolean; $style: CSSProp }>`
   width: 100%;
   height: 60px;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.15s;
+
+  ${({ $style }) => $style}
 `;
