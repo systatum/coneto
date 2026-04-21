@@ -230,6 +230,9 @@ export function CodeBlock({
             selectboxStyle: css`
               height: 25px;
             `,
+            drawerStyle: css`
+              max-height: 140px;
+            `,
           }}
           selectedOptions={lang}
           options={SUPPORTED_LANGS}
