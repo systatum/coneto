@@ -815,28 +815,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           const beforeCaret = text.slice(0, caretPos);
           const afterCaret = text.slice(caretPos);
 
-          if (beforeCaret === "```") {
-            e.preventDefault();
-
-            const parent = node.parentElement;
-            if (parent && (parent.textContent ?? "").trim() === "```") {
-              const id = nextBlockId();
-
-              const wrapper = document.createElement("div");
-              wrapper.dataset.monacoBlockId = id;
-              wrapper.contentEditable = "false";
-
-              const after = document.createElement("p");
-              after.appendChild(document.createElement("br"));
-
-              node.textContent = "";
-
-              insertCodeBlock();
-              handleEditorChange();
-              return;
-            }
-          }
-
           const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
           const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
 
@@ -952,6 +930,35 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             newRange.collapse(true);
             sel.removeAllRanges();
             sel.addRange(newRange);
+          }
+        }
+      }
+
+      if (e.key === "`") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        const node = range.startContainer;
+
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent ?? "";
+          const caretPos = range.startOffset;
+
+          const beforeCaret = text.slice(0, caretPos);
+
+          if ((beforeCaret + "`").endsWith("```")) {
+            e.preventDefault();
+
+            const parent = node.parentElement;
+
+            if (parent) {
+              node.textContent = beforeCaret.slice(0, -2);
+
+              insertCodeBlock();
+              handleEditorChange();
+              return;
+            }
           }
         }
       }
