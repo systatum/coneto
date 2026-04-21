@@ -65,6 +65,8 @@ export const RichEditorMode = {
   ViewOnly: "view-only",
   PageEditor: "page-editor",
   TextEditor: "text-editor",
+  CodeEditor: "code-editor",
+  MarkdownEditor: "markdown-editor",
 } as const;
 
 export type RichEditorMode =
@@ -109,7 +111,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     },
     ref
   ) => {
-    const { currentTheme, mode: themeMode } = useTheme();
+    const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
     const turndownServiceRef = useRef<TurndownService>(new TurndownService());
@@ -444,7 +446,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       let isMounted = true;
 
       const initializeEditor = async () => {
-        if (!editorRef.current || editorRef.current.innerHTML) return;
+        if (!editorRef.current || editorRef.current.innerHTML.trim()) return;
 
         let processedValue = preprocessMarkdown(value);
         let html = await marked.parse(processedValue);
@@ -934,7 +936,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       }
 
-      if (e.key === "`") {
+      if (e.key === "`" && mode === "markdown-editor") {
         const sel = window.getSelection();
         if (!sel || !sel.rangeCount) return;
 
@@ -1228,7 +1230,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
-    return (
+    return mode === "code-editor" ? (
+      <CodeBlock value={value} onChange={(code) => onChange(code)} />
+    ) : (
       <Wrapper
         $theme={richEditorTheme}
         aria-label="wrapper-editor"
@@ -1282,10 +1286,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   onClick={() => handleCommand("checkbox")}
                 />
 
-                <RichEditorToolbarButton
-                  icon={{ image: RiCodeSSlashLine }}
-                  onClick={() => handleCommand("codeBlock")}
-                />
+                {mode === "markdown-editor" && (
+                  <RichEditorToolbarButton
+                    icon={{ image: RiCodeSSlashLine }}
+                    onClick={() => handleCommand("codeBlock")}
+                  />
+                )}
 
                 <RichEditorToolbarButton
                   icon={{
@@ -1397,6 +1403,7 @@ function CodeBlockBridge({
   return (
     <ThemeProvider mode={theme.mode} themes={theme.themes}>
       <CodeBlock
+        clearable
         value={codeBlockRegistry.get(id)?.code ?? code}
         initialLang={initialLang}
         readOnly={isViewOnly}
@@ -2027,33 +2034,27 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
 
 // Processes all input provided in the editor
 const preprocessMarkdown = (markdown: string) => {
-  return (
-    markdown
-      // Replace multiple newlines with <br> (sometime marked can't like WYSIWYG)
-      // Example: "\n\n\n" => "\n\n<br>\n\n<br>"
+  // Split on fenced code blocks to avoid mangling their contents
+  const parts = markdown.split(/(```[\s\S]*?```)/g);
+
+  const processed = parts.map((part, i) => {
+    // Odd indices are the fenced blocks — leave them untouched
+    if (i % 2 === 1) return part;
+
+    return part
       .replace(/\n(\n+)/g, (_, extraNewlines) => {
         const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
         return "\n" + emptyParagraphs;
       })
-
-      // Ensure that a <br> followed by a line starts a new paragraph
-      // Example: "<br>\nsome text" => "<br>\n\nsome text"
       .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
-
-      // When same as element paragraph, but different line -> marked can't read this.
-      // without this, sometime paragraphs may merge into one
-      // Example: "Hello\nWorld" => "Hello\n\nWorld"
       .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
-
-      // Handle list items followed by normal text
-      // Ensures list item is separated with a blank line
-      // Example:
-      // "- item\nnext line" => "- item\n\nnext line"
       .replace(
         /^(\s*(?:[*\-+]|\d+\.)\s+[^\n]+)\n(?![\s*\-+\d<\n])([^\n]+)/gm,
         "$1\n\n$2"
-      )
-  );
+      );
+  });
+
+  return processed.join("");
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
