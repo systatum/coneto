@@ -31,6 +31,7 @@ export interface CodeBlockProps {
   onChange?: (code: string, lang: string) => void;
   onClosed?: () => void;
   readOnly?: boolean;
+  clearable?: boolean;
 }
 
 const SUPPORTED_LANGS: ComboboxSingleOption[] = [
@@ -87,6 +88,7 @@ export function CodeBlock({
   onChange,
   onClosed,
   readOnly = false,
+  clearable,
 }: CodeBlockProps) {
   const { currentTheme, mode } = useTheme();
   const codeBlockTheme = currentTheme?.codeBlock;
@@ -217,50 +219,53 @@ export function CodeBlock({
 
   return (
     <BlockWrapper $theme={codeBlockTheme} contentEditable={false}>
-      <BlockHeader $theme={codeBlockTheme}>
-        <Combobox
-          styles={{
-            containerStyle: css`
-              width: 150px;
-              height: 25px;
-            `,
-            controlStyle: css`
-              height: 25px;
-            `,
-            selectboxStyle: css`
-              height: 25px;
-            `,
-            drawerStyle: css`
-              max-height: 140px;
-            `,
-          }}
-          selectedOptions={lang}
-          options={SUPPORTED_LANGS}
-          onChange={(selectedOption) =>
-            handleLangChange(selectedOption as CodeBlockLanguage)
-          }
-          disabled={readOnly}
-        />
+      {!readOnly && (
+        <BlockHeader $theme={codeBlockTheme}>
+          {!readOnly && (
+            <Combobox
+              styles={{
+                containerStyle: css`
+                  width: 150px;
+                  height: 25px;
+                `,
+                controlStyle: css`
+                  height: 25px;
+                `,
+                selectboxStyle: css`
+                  height: 25px;
+                `,
+                drawerStyle: css`
+                  max-height: 140px;
+                `,
+              }}
+              selectedOptions={lang}
+              options={SUPPORTED_LANGS}
+              onChange={(selectedOption) =>
+                handleLangChange(selectedOption as CodeBlockLanguage)
+              }
+            />
+          )}
 
-        {!readOnly && (
-          <Button
-            type="button"
-            variant="ghost"
-            styles={{
-              self: css`
-                padding: 4px;
-                height: 20px;
-              `,
-            }}
-            onClick={onClosed}
-            icon={{
-              image: RiCloseLine,
-              size: 14,
-            }}
-            title="Remove code block"
-          />
-        )}
-      </BlockHeader>
+          {!readOnly && clearable && (
+            <Button
+              type="button"
+              variant="ghost"
+              styles={{
+                self: css`
+                  padding: 4px;
+                  height: 20px;
+                `,
+              }}
+              onClick={onClosed}
+              icon={{
+                image: RiCloseLine,
+                size: 14,
+              }}
+              title="Remove code block"
+            />
+          )}
+        </BlockHeader>
+      )}
 
       {!isLoaded && (
         <Placeholder $theme={codeBlockTheme}>Loading editor…</Placeholder>
