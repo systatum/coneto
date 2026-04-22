@@ -113,6 +113,10 @@
       "import": "./dist/components/frame.js",
       "types": "./dist/components/frame.d.ts"
     },
+    "./global.d": {
+      "import": "./dist/components/global.d.js",
+      "types": "./dist/components/global.d.d.ts"
+    },
     "./grid": {
       "import": "./dist/components/grid.js",
       "types": "./dist/components/grid.d.ts"
@@ -362,7 +366,6 @@
     "react-hook-form": "^7.56.3",
     "react-swipeable": "^7.0.2",
     "styled-components": "^6.1.19",
-    "vite-plugin-monaco-editor": "^1.1.0",
     "zod": "^3.24.4"
   },
   "devDependencies": {
