@@ -1460,7 +1460,6 @@ interface BaseRichEditorProps {
 }
 
 interface BaseRichEditorStyles {
-  self?: CSSProp;
   toolbarStyle?: CSSProp;
   actionStyle?: CSSProp;
   containerStyle?: CSSProp;
@@ -1485,42 +1484,45 @@ function BaseRichEditor({
       $containerStyle={styles?.containerStyle}
       $mode={mode}
     >
-      <ToolbarWrapper
-        aria-label="toolbar-content"
-        $toolbarPosition={toolbarPosition}
-        $mode={mode}
-      >
-        <Toolbar
-          $mode={mode}
-          $theme={richEditorTheme}
+      {(leftSidePanel || rightSidePanel) && (
+        <ToolbarWrapper
+          aria-label="toolbar-content"
           $toolbarPosition={toolbarPosition}
-          $style={styles?.toolbarStyle}
+          $mode={mode}
         >
-          <ToolbarLeftPanel $style={styles?.leftSideStyle}>
-            {leftSidePanel}
+          <Toolbar
+            $mode={mode}
+            $theme={richEditorTheme}
+            $toolbarPosition={toolbarPosition}
+            $style={styles?.toolbarStyle}
+          >
+            <ToolbarLeftPanel $style={styles?.leftSideStyle}>
+              {leftSidePanel}
 
-            {actions &&
-              actions?.map((action, index) => (
-                <RichEditorToolbarButton
-                  key={index}
-                  {...action}
-                  styles={{
-                    self: css`
-                      ${styles?.actionStyle}
+              {actions &&
+                actions?.map((action, index) => (
+                  <RichEditorToolbarButton
+                    key={index}
+                    {...action}
+                    styles={{
+                      self: css`
+                        ${styles?.actionStyle}
 
-                      ${action?.styles?.self}
-                    `,
-                  }}
-                />
-              ))}
-          </ToolbarLeftPanel>
-          {rightSidePanel && (
-            <ToolbarRightPanel $style={styles?.rightSideStyle}>
-              {rightSidePanel}
-            </ToolbarRightPanel>
-          )}
-        </Toolbar>
-      </ToolbarWrapper>
+                        ${action?.styles?.self}
+                      `,
+                    }}
+                  />
+                ))}
+            </ToolbarLeftPanel>
+            {rightSidePanel && (
+              <ToolbarRightPanel $style={styles?.rightSideStyle}>
+                {rightSidePanel}
+              </ToolbarRightPanel>
+            )}
+          </Toolbar>
+        </ToolbarWrapper>
+      )}
+
       {children}
     </Wrapper>
   );
