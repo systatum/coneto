@@ -182,16 +182,28 @@ function CodeBlock({
 
       if (!position || !model) return;
 
+      const lineNumber = position.lineNumber;
+      const column = position.column;
+
       const isFirstLine = position.lineNumber === 1;
       const isLastLine = position.lineNumber === model.getLineCount();
 
-      if (e.keyCode === monaco.KeyCode.UpArrow && isFirstLine) {
+      const lineMaxColumn = model.getLineMaxColumn(lineNumber);
+
+      const isAtLineStart = column === 1;
+      const isAtLineEnd = column === lineMaxColumn;
+
+      if (
+        e.keyCode === monaco.KeyCode.UpArrow &&
+        isFirstLine &&
+        isAtLineStart
+      ) {
         e.preventDefault();
         CodeBlock.exitToEditor(id, "above");
         return;
       }
 
-      if (e.keyCode === monaco.KeyCode.DownArrow && isLastLine) {
+      if (e.keyCode === monaco.KeyCode.DownArrow && isLastLine && isAtLineEnd) {
         e.preventDefault();
         CodeBlock.exitToEditor(id, "below");
         return;
@@ -569,58 +581,87 @@ function addFencedCodeRule(ts: TurndownService) {
   });
 }
 
+/**
+ * Moves the cursor focus out of a Monaco code block and into the
+ * adjacent rich-text editor content, either above or below the block.
+ *
+ * This is triggered when the user presses the Up arrow on the first line
+ * of the editor (exits above) or the Down arrow on the last line (exits below).
+ *
+ * @param id        - The Monaco block ID (`data-monaco-block-id` attribute).
+ * @param direction - "above" to move to the preceding sibling element,
+ *                    "below" to move to the following sibling element.
+ */
 function exitToEditor(id: string, direction: "above" | "below") {
   const wrapper = document.querySelector(`[data-monaco-block-id="${id}"]`);
-
   if (!wrapper) return;
 
+  // Resolve the adjacent sibling element in the requested direction.
   let target: HTMLElement | null =
     direction === "above"
       ? (wrapper.previousElementSibling as HTMLElement)
       : (wrapper.nextElementSibling as HTMLElement);
 
-  // If no element → create empty paragraph
+  // If no sibling exists, inject a new empty paragraph so the cursor
+  // always has a valid landing spot.
   if (!target) {
     const p = document.createElement("p");
     p.innerHTML = "<br>";
-
     if (direction === "above") {
       wrapper.parentNode?.insertBefore(p, wrapper);
     } else {
       wrapper.parentNode?.insertBefore(p, wrapper.nextSibling);
     }
-
     target = p;
   }
 
-  // Move cursor
-  const range = document.createRange();
-  range.setStart(target, 0);
-  range.collapse(true);
-
+  // --- Place the cursor inside the target element ---
+  //
+  // We avoid using TreeWalker(SHOW_TEXT) here because it is invisible to
+  // <br> nodes. A paragraph that contains only <br> (i.e. an empty/blank
+  // line) has no text nodes, so TreeWalker would return null and the cursor
+  // would land in the wrong position, effectively skipping the empty space.
+  // Instead we inspect firstChild / lastChild directly.
   const sel = window.getSelection();
+  const range = document.createRange();
+
+  if (direction === "above") {
+    // Target is above the block → place the cursor at the END of the element
+    // so it appears after all existing text and <br> nodes.
+    const lastChild = target.lastChild;
+    if (lastChild) {
+      if (lastChild.nodeType === Node.TEXT_NODE) {
+        // Land after the last character of the text node.
+        range.setStart(lastChild, lastChild.textContent?.length ?? 0);
+      } else {
+        // lastChild is a <br> or another element.
+        // Setting the offset to its index positions the cursor just before
+        // that trailing <br>, which is the last visible caret position.
+        const index = Array.from(target.childNodes).indexOf(
+          lastChild as ChildNode
+        );
+        range.setStart(target, index);
+      }
+    } else {
+      // Element is completely empty — place cursor at the very beginning.
+      range.setStart(target, 0);
+    }
+  } else {
+    // Target is below the block → place the cursor at the START of the element.
+    const firstChild = target.firstChild;
+    if (firstChild && firstChild.nodeType === Node.TEXT_NODE) {
+      // Land before the first character of the text node.
+      range.setStart(firstChild, 0);
+    } else {
+      // firstChild is a <br> or the element is empty — offset 0 is correct.
+      range.setStart(target, 0);
+    }
+  }
+
+  range.collapse(true);
   sel?.removeAllRanges();
   sel?.addRange(range);
-
-  (target as HTMLElement).focus();
-}
-
-function focusCodeBlock(id: string, position: "start" | "end") {
-  const record = codeBlockRegistry.get(id);
-  if (!record?.editor) return;
-
-  const editor = record.editor;
-  editor.focus();
-
-  const model = editor.getModel();
-  if (!model) return;
-
-  const line = position === "start" ? 1 : model.getLineCount();
-
-  editor.setPosition({
-    lineNumber: line,
-    column: 1,
-  });
+  target.focus();
 }
 
 CodeBlock.addFencedCodeRule = addFencedCodeRule;
@@ -629,6 +670,5 @@ CodeBlock.serializeAndEmit = serializeAndEmit;
 CodeBlock.Editor = CodeBlockEditor;
 CodeBlock.nextBlockId = nextBlockId;
 CodeBlock.exitToEditor = exitToEditor;
-CodeBlock.focusCodeBlock = focusCodeBlock;
 
 export { CodeBlock };
