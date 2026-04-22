@@ -31,6 +31,7 @@ export type CodeBlockLanguage = RichEditorSupportedLanguagesMonaco;
 export type CodeBlockAction = RichEditorAction;
 
 export interface CodeBlockProps {
+  id: string;
   value?: string;
   initialLang?: CodeBlockLanguage;
   onChange?: (code: string, lang: string) => void;
@@ -93,6 +94,7 @@ function CodeBlock({
   styles,
   actions,
   toolbarPosition = "top",
+  id,
 }: CodeBlockProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
@@ -151,6 +153,13 @@ function CodeBlock({
 
       editorRef.current = editor;
 
+      if (id) {
+        const record = codeBlockRegistry.get(id);
+        if (record) {
+          record.editor = editor;
+        }
+      }
+
       requestAnimationFrame(() => {
         editor.focus();
       });
@@ -171,6 +180,28 @@ function CodeBlock({
       editor.onDidChangeModelContent(() => {
         updateHeight();
         onChange?.(editor.getValue(), langRef.current);
+      });
+
+      editor.onKeyDown((e) => {
+        const position = editor.getPosition();
+        const model = editor.getModel();
+
+        if (!position || !model) return;
+
+        const isFirstLine = position.lineNumber === 1;
+        const isLastLine = position.lineNumber === model.getLineCount();
+
+        if (e.keyCode === monaco.KeyCode.UpArrow && isFirstLine) {
+          e.preventDefault();
+          CodeBlock.exitToEditor(id, "above");
+          return;
+        }
+
+        if (e.keyCode === monaco.KeyCode.DownArrow && isLastLine) {
+          e.preventDefault();
+          CodeBlock.exitToEditor(id, "below");
+          return;
+        }
       });
 
       setIsLoaded(true);
@@ -354,6 +385,7 @@ interface CodeBlockEditor {
   wrapper: HTMLElement;
   code: string;
   lang: string;
+  editor?: any;
 }
 
 const codeBlockRegistry = new Map<string, CodeBlockEditor>();
@@ -397,6 +429,7 @@ function CodeBlockBridge({
   return (
     <ThemeProvider mode={theme.mode} themes={theme.themes}>
       <CodeBlock
+        id={id}
         clearable
         value={codeBlockRegistry.get(id)?.code ?? code}
         initialLang={initialLang}
@@ -540,10 +573,66 @@ function addFencedCodeRule(ts: TurndownService) {
   });
 }
 
+function exitToEditor(id: string, direction: "above" | "below") {
+  const wrapper = document.querySelector(`[data-monaco-block-id="${id}"]`);
+
+  if (!wrapper) return;
+
+  let target: HTMLElement | null =
+    direction === "above"
+      ? (wrapper.previousElementSibling as HTMLElement)
+      : (wrapper.nextElementSibling as HTMLElement);
+
+  // If no element → create empty paragraph
+  if (!target) {
+    const p = document.createElement("p");
+    p.innerHTML = "<br>";
+
+    if (direction === "above") {
+      wrapper.parentNode?.insertBefore(p, wrapper);
+    } else {
+      wrapper.parentNode?.insertBefore(p, wrapper.nextSibling);
+    }
+
+    target = p;
+  }
+
+  // Move cursor
+  const range = document.createRange();
+  range.setStart(target, 0);
+  range.collapse(true);
+
+  const sel = window.getSelection();
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+
+  (target as HTMLElement).focus();
+}
+
+function focusCodeBlock(id: string, position: "start" | "end") {
+  const record = codeBlockRegistry.get(id);
+  if (!record?.editor) return;
+
+  const editor = record.editor;
+  editor.focus();
+
+  const model = editor.getModel();
+  if (!model) return;
+
+  const line = position === "start" ? 1 : model.getLineCount();
+
+  editor.setPosition({
+    lineNumber: line,
+    column: 1,
+  });
+}
+
 CodeBlock.addFencedCodeRule = addFencedCodeRule;
 CodeBlock.hydrateFencedCodeBlocks = hydrateFencedCodeBlocks;
 CodeBlock.serializeAndEmit = serializeAndEmit;
 CodeBlock.Editor = CodeBlockEditor;
 CodeBlock.nextBlockId = nextBlockId;
+CodeBlock.exitToEditor = exitToEditor;
+CodeBlock.focusCodeBlock = focusCodeBlock;
 
 export { CodeBlock };
