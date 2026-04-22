@@ -65,7 +65,6 @@ import {
   createTreeListTheme,
   createTooltipTheme,
   createSplitPaneTheme,
-  createCodeBlockTheme,
 } from "./creator";
 
 // Dark
@@ -577,11 +576,6 @@ const darkRichEditor = createRichEditorTheme(
   }
 );
 
-const darkCodeBlock = createCodeBlockTheme(darkBody, {
-  headerBackground: darkRichEditor.toolbarBackground,
-  placeholderColor: "rgba(255,255,255,0.25)",
-});
-
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
   textColor: darkBody.textColor,
@@ -773,7 +767,6 @@ export const darkTheme: AppTheme = {
   choiceGroup: darkChoiceGroup,
   checkbox: darkCheckbox,
   colorbox: darkColorbox,
-  codeBlock: darkCodeBlock,
   combobox: darkCombobox,
   crumb: darkCrumb,
   dialog: darkDialog,
