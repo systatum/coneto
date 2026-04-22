@@ -25,12 +25,32 @@ import {
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
-import {
-  languages,
-  Uri,
-  KeyCode,
-  initMonacoEnvironment,
-} from "./code-block-api";
+
+import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
+import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
+import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
+import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
+
+let initialized = false;
+
+function initMonacoEnvironment() {
+  if (initialized || typeof window === "undefined") return;
+
+  (window as any).MonacoEnvironment = {
+    getWorker(_: unknown, label: string) {
+      if (label === "json") return new JsonWorker();
+      if (label === "css" || label === "scss" || label === "less")
+        return new CssWorker();
+      if (label === "html") return new HtmlWorker();
+      if (label === "typescript" || label === "javascript")
+        return new TsWorker();
+      return new EditorWorker();
+    },
+  };
+
+  initialized = true;
+}
 
 let monacoPromise: Promise<
   typeof import("monaco-editor/esm/vs/editor/editor.main")
@@ -109,9 +129,9 @@ function CodeBlock({
     (async () => {
       if (!containerRef.current) return;
 
-      const monaco = await getMonaco();
+      const { KeyCode, editor } = await getMonaco();
 
-      const monacoEditor = monaco.editor.create(containerRef.current, {
+      const monacoEditor = editor.create(containerRef.current, {
         value,
         language: initialLang,
         theme: mode === "dark" ? "vs-dark" : "vs",
@@ -231,7 +251,7 @@ function CodeBlock({
   const applyLangToMonaco = async (newLang: CodeBlockLanguage) => {
     if (!editorRef.current) return;
 
-    const monaco = await getMonaco();
+    const { editor, languages, Uri } = await getMonaco();
 
     const actualLang = newLang === "tsx" ? "typescript" : newLang;
     const currentValue = editorRef.current.getValue();
@@ -247,16 +267,12 @@ function CodeBlock({
 
       const ext = newLang === "tsx" ? "tsx" : "ts";
       const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
-      const newModel = monaco.editor.createModel(
-        currentValue,
-        actualLang,
-        newUri
-      );
+      const newModel = editor.createModel(currentValue, actualLang, newUri);
       const oldModel = editorRef.current.getModel();
       editorRef.current.setModel(newModel);
       oldModel?.dispose();
     } else {
-      monaco.editor.setModelLanguage(editorRef.current.getModel(), actualLang);
+      editor.setModelLanguage(editorRef.current.getModel(), actualLang);
     }
   };
 
