@@ -19,14 +19,14 @@ import { RiCloseLine } from "@remixicon/react";
 import {
   RichEditor,
   RichEditorAction,
-  RichEditorSupportedLanguagesMonaco,
+  RichEditorAllowedCodeLanguagesMonaco,
   RichEditorToolbarPosition,
 } from "./rich-editor";
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 
-export type CodeBlockLanguage = RichEditorSupportedLanguagesMonaco;
+export type CodeBlockLanguage = RichEditorAllowedCodeLanguagesMonaco;
 
 export type CodeBlockAction = RichEditorAction;
 

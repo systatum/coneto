@@ -38,15 +38,15 @@ export interface RichEditorProps {
   toolbarPosition?: RichEditorToolbarPosition;
   autogrow?: boolean;
   height?: number;
-  allowedCodeLanguages?: RichEditorSupportedLanguages[];
-  initialLanguage?: RichEditorSupportedLanguages;
+  allowedCodeLanguages?: RichEditorAllowedCodeLanguages[];
+  language?: RichEditorAllowedCodeLanguages;
   actions?: RichEditorAction[];
   codeEditorActions?: RichEditorAction[];
 }
 
 export type RichEditorAction = RichEditorToolbarButtonProps;
 
-export const RichEditorSupportedLanguages = {
+export const RichEditorAllowedCodeLanguages = {
   ReactTypeScript: "tsx",
   TypeScript: "ts",
   JavaScript: "js",
@@ -64,11 +64,11 @@ export const RichEditorSupportedLanguages = {
   Text: "txt",
 } as const;
 
-export type RichEditorSupportedLanguages =
-  (typeof RichEditorSupportedLanguages)[keyof typeof RichEditorSupportedLanguages];
+export type RichEditorAllowedCodeLanguages =
+  (typeof RichEditorAllowedCodeLanguages)[keyof typeof RichEditorAllowedCodeLanguages];
 
 export const RichEditorSupportedLanguageNames: Record<
-  RichEditorSupportedLanguages,
+  RichEditorAllowedCodeLanguages,
   string
 > = {
   ts: "TypeScript",
@@ -88,7 +88,7 @@ export const RichEditorSupportedLanguageNames: Record<
   tsx: "React Typescript",
 };
 
-export const RichEditorSupportedLanguagesMonaco = {
+export const RichEditorAllowedCodeLanguagesMonaco = {
   tsx: "tsx",
   py: "python",
   rb: "ruby",
@@ -106,8 +106,8 @@ export const RichEditorSupportedLanguagesMonaco = {
   txt: "plaintext",
 } as const;
 
-export type RichEditorSupportedLanguagesMonaco =
-  (typeof RichEditorSupportedLanguagesMonaco)[keyof typeof RichEditorSupportedLanguagesMonaco];
+export type RichEditorAllowedCodeLanguagesMonaco =
+  (typeof RichEditorAllowedCodeLanguagesMonaco)[keyof typeof RichEditorAllowedCodeLanguagesMonaco];
 
 export interface RichEditorStyles extends BaseRichEditorStyles {
   editorStyle?: CSSProp;
@@ -151,7 +151,7 @@ interface RichEditorComponent
     RichEditorProps & React.RefAttributes<RichEditorRef>
   > {
   ToolbarButton: typeof RichEditorToolbarButton;
-  SupportedLanguage: typeof RichEditorSupportedLanguages;
+  SupportedLanguage: typeof RichEditorAllowedCodeLanguages;
   SupportedLanguageName: typeof RichEditorSupportedLanguageNames;
   Base: typeof BaseRichEditor;
   cleanupHtml: typeof cleanupHtml;
@@ -175,11 +175,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       autogrow = false,
       height = 200,
       allowedCodeLanguages = Object.values(
-        RichEditorSupportedLanguages
-      ) as RichEditorSupportedLanguages[],
+        RichEditorAllowedCodeLanguages
+      ) as RichEditorAllowedCodeLanguages[],
       actions,
       codeEditorActions,
-      initialLanguage = allowedCodeLanguages[0],
+      language = allowedCodeLanguages[0],
     },
     ref
   ) => {
@@ -193,7 +193,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const OPTIONS_LANGUAGES: CodeBlockOption[] = normalizedLanguages.map(
       (lang) => ({
         text: RichEditorSupportedLanguageNames[lang],
-        value: RichEditorSupportedLanguagesMonaco[lang],
+        value: RichEditorAllowedCodeLanguagesMonaco[lang],
       })
     );
 
@@ -653,7 +653,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         wrapper,
         id,
         "",
-        RichEditorSupportedLanguagesMonaco[initialLanguage],
+        RichEditorAllowedCodeLanguagesMonaco[language],
         editorRef,
         onChange,
         turndownServiceRef,
@@ -1378,7 +1378,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           toolbarPosition={toolbarPosition}
           actions={codeEditorActions}
           value={value}
-          initialLang={RichEditorSupportedLanguagesMonaco[initialLanguage]}
+          initialLang={RichEditorAllowedCodeLanguagesMonaco[language]}
           options={OPTIONS_LANGUAGES}
           onChange={(code) => onChange(code)}
         />
@@ -2147,7 +2147,7 @@ function getPreviousNode(node: Node): Node | null {
 }
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
-RichEditor.SupportedLanguage = RichEditorSupportedLanguages;
+RichEditor.SupportedLanguage = RichEditorAllowedCodeLanguages;
 RichEditor.SupportedLanguageName = RichEditorSupportedLanguageNames;
 RichEditor.Base = BaseRichEditor;
 RichEditor.cleanupHtml = cleanupHtml;
