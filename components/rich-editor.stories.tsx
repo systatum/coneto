@@ -183,7 +183,9 @@ This is with code-block
 \`\`\`tsx
 import { Button } from "@systatum/coneto/button"
 
-return <Button variant="primary">Your caption</Button>
+function Content(){
+  return <Button variant="primary">Your caption</Button>
+}
 \`\`\`
 `,
       },
@@ -325,7 +327,9 @@ This is with code-block
 \`\`\`tsx
 import { Button } from "@systatum/coneto/button"
 
-return <Button variant="primary">Your caption</Button>
+function Content(){
+  return <Button variant="primary">Your caption</Button>
+}
 \`\`\`
 `,
       },
@@ -562,7 +566,7 @@ export const MarkdownEditor: Story = {
           <h1>Multiple coding languages supported</h1>
           <RichEditor
             ref={ref2}
-            allowedCodeLanguages={["ts", "py", "rb", "cpp", "html"]}
+            allowedCodeLanguages={["tsx", "py", "rb", "cpp", "html"]}
             codeEditorActions={CODE_EDITOR_ACTIONS}
             mode="markdown-editor"
             onChange={(e) => setValue2(e)}
@@ -580,9 +584,20 @@ export const CodeEditor: Story = {
 
     const ref = useRef<RichEditorRef>(null);
 
+    const CODE_EDITOR_ACTIONS: RichEditorAction[] = [
+      {
+        icon: {
+          image: RiArrowRightSLine,
+        },
+        children: "Run",
+        onClick: () => console.log("run was clicked"),
+      },
+    ];
+
     return (
       <RichEditor
         ref={ref}
+        codeEditorActions={CODE_EDITOR_ACTIONS}
         mode="code-editor"
         initialLanguage="cpp"
         onChange={(e) => setValue(e)}
@@ -617,7 +632,9 @@ This is with code-block
 \`\`\`tsx
 import { Button } from "@systatum/coneto/button"
 
-return <Button variant="primary">Your caption</Button>
+function Content(){
+  return <Button variant="primary">Your caption</Button>
+}
 \`\`\`
 `
     );
