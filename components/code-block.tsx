@@ -25,7 +25,6 @@ import {
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
-import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.main";
 import {
   languages,
   Uri,
@@ -56,13 +55,13 @@ if (typeof window !== "undefined") {
   };
 }
 
-let monaco: typeof monacoEditor | null = null;
+let monacoPromise: Promise<typeof import("monaco-editor")> | null = null;
 
-export async function getMonaco() {
-  if (!monaco) {
-    monaco = monacoEditor;
+export function getMonaco() {
+  if (!monacoPromise) {
+    monacoPromise = import("monaco-editor/esm/vs/editor/editor.main");
   }
-  return monaco;
+  return monacoPromise;
 }
 
 export type CodeBlockLanguage = RichEditorAllowedCodeLanguagesMonaco;
