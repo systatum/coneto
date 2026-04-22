@@ -337,7 +337,7 @@
   ],
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
+    "build-storybook": "NODE_OPTIONS=--max_old_space_size=4096 storybook build",
     "build": "pnpm prepare && pnpm build-ts && pnpm copyjs && node postbuild-inject.js && pnpm generate-rss",
     "build-ts": "pnpm tsc -p tsconfig.build.json",
     "copyjs": "rsync -avm --include='*/' --include='*.js' --exclude='*' lib/ dist/lib/",
