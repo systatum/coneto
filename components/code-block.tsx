@@ -29,33 +29,12 @@ import {
   languages,
   Uri,
   KeyCode,
-} from "monaco-editor/esm/vs/editor/editor.api";
+  initMonacoEnvironment,
+} from "./code-block-api";
 
-// Real worker imports — Vite turns `?worker` imports into Worker constructors.
-// Each import below resolves to the actual language-service worker that ships
-// inside the monaco-editor package, so completions, diagnostics and
-// IntelliSense all work without any CDN or bundler plugin.
-import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
-import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
-import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
-import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
-
-if (typeof window !== "undefined") {
-  (window as any).MonacoEnvironment = {
-    getWorker(_: unknown, label: string) {
-      if (label === "json") return new JsonWorker();
-      if (label === "css" || label === "scss" || label === "less")
-        return new CssWorker();
-      if (label === "html") return new HtmlWorker();
-      if (label === "typescript" || label === "javascript")
-        return new TsWorker();
-      return new EditorWorker();
-    },
-  };
-}
-
-let monacoPromise: Promise<typeof import("monaco-editor")> | null = null;
+let monacoPromise: Promise<
+  typeof import("monaco-editor/esm/vs/editor/editor.main")
+> | null = null;
 
 export function getMonaco() {
   if (!monacoPromise) {
@@ -106,6 +85,10 @@ function CodeBlock({
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
 
+  useEffect(() => {
+    initMonacoEnvironment();
+  }, []);
+
   const uid = useId();
   const comboboxId = `combobox-richeditor-${uid}`;
 
@@ -124,11 +107,10 @@ function CodeBlock({
     let disposed = false;
 
     (async () => {
-      const editor = await getMonaco();
-
       if (!containerRef.current) return;
 
       const monaco = await getMonaco();
+
       const monacoEditor = monaco.editor.create(containerRef.current, {
         value,
         language: initialLang,
@@ -166,7 +148,7 @@ function CodeBlock({
       if (id) {
         const record = codeBlockRegistry.get(id);
         if (record) {
-          record.editor = editor;
+          record.editor = monacoEditor;
         }
       }
 
