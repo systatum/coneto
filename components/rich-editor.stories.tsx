@@ -599,7 +599,7 @@ export const CodeEditor: Story = {
         ref={ref}
         codeEditorActions={CODE_EDITOR_ACTIONS}
         mode="code-editor"
-        initialLanguage="cpp"
+        language="cpp"
         onChange={(e) => setValue(e)}
         value={value}
       />
