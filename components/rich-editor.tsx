@@ -1356,9 +1356,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         actions={actions}
         mode={mode}
         styles={{
+          ...styles,
           toolbarStyle: css`
             padding-left: 8px;
             padding-right: 8px;
+            ${styles?.toolbarStyle}
           `,
         }}
         leftSidePanel={
@@ -1505,7 +1507,7 @@ function BaseRichEditor({
   return (
     <Wrapper
       $theme={richEditorTheme}
-      aria-label="wrapper-editor"
+      aria-label="rich-editor-wrapper"
       $containerStyle={styles?.containerStyle}
       $mode={mode}
     >
@@ -1597,6 +1599,8 @@ const Wrapper = styled.div<{
       border-radius: 4px;
       overflow: hidden;
     `};
+
+  width: 100%;
 
   position: relative;
 
