@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
+import monacoEditorPlugin from "vite-plugin-monaco-editor";
 
 const config: StorybookConfig = {
   staticDirs: ["../public"],
@@ -12,6 +13,18 @@ const config: StorybookConfig = {
     options: {},
   },
   viteFinal: async (config) => {
+    config.plugins?.push(
+      monacoEditorPlugin({
+        languageWorkers: [
+          "editorWorkerService",
+          "typescript",
+          "json",
+          "css",
+          "html",
+        ],
+      })
+    );
+
     return config;
   },
 };

@@ -1,10 +1,18 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import monacoEditorPlugin from "vite-plugin-monaco-editor";
 
 export default defineConfig({
-  component: {
-    devServer: {
-      framework: "react",
-      bundler: "webpack",
-    },
-  },
+  plugins: [
+    react(),
+    monacoEditorPlugin({
+      languageWorkers: [
+        "editorWorkerService",
+        "typescript",
+        "json",
+        "css",
+        "html",
+      ],
+    }),
+  ],
 });
