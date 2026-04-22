@@ -26,7 +26,7 @@ import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.main";
 
 // Real worker imports — Vite turns `?worker` imports into Worker constructors.
 // Each import below resolves to the actual language-service worker that ships
@@ -52,7 +52,6 @@ if (typeof window !== "undefined") {
     },
   };
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
 export type CodeBlockLanguage = RichEditorAllowedCodeLanguagesMonaco;
 
@@ -242,9 +241,9 @@ function CodeBlock({
     if (newLang === "tsx" || newLang === "typescript") {
       const ts = monaco.languages.typescript as any;
 
-      ts.typescriptDefaults.setCompilerOptions({
-        ...ts.typescriptDefaults.getCompilerOptions(),
-        jsx: newLang === "tsx" ? ts.JsxEmit.React : ts.JsxEmit.None,
+      ts?.typescriptDefaults?.setCompilerOptions({
+        ...ts?.typescriptDefaults?.getCompilerOptions(),
+        jsx: newLang === "tsx" ? ts?.JsxEmit?.React : ts?.JsxEmit?.None,
         jsxFactory: "React.createElement",
       });
 
