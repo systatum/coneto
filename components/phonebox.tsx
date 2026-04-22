@@ -296,6 +296,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
         {isOpen && (
           <DropdownContainer
+            aria-label="phonebox-drawer"
             {...getFloatingProps({
               ref: refs.setFloating,
               id: "country-listbox",
@@ -320,22 +321,22 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
               }}
               styles={{
                 containerStyle: css`
-                  width: 100%;
                   position: sticky;
                   top: 0;
-                  padding: 8px;
-                  width: 100%;
+                  padding: 4px;
+                  margin: 0px;
                   min-width: 0;
+                  width: 100%;
                   background-color: ${phoneboxTheme?.backgroundColor};
                 `,
                 self: css`
                   border-radius: 2px;
                   max-height: 28px;
-                  width: 275px;
+                  width: 100%;
                 `,
               }}
               onKeyDown={handleDropdownKeyDown}
-              aria-label="search-countries"
+              aria-label="phonebox-search-countries"
               autoComplete="off"
             />
 

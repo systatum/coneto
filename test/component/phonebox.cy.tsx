@@ -6,6 +6,7 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
+import { css } from "styled-components";
 
 describe("Phonebox", () => {
   context("with dropdowns", () => {
@@ -159,6 +160,31 @@ describe("Phonebox", () => {
         cy.findByText("Drawer on Dropdown 2").should("not.exist");
         cy.findByText("Dropdown 2").click();
         cy.findByText("Drawer on Dropdown 2").should("exist");
+      });
+    });
+  });
+
+  context("country code drawer", () => {
+    context("searchbox", () => {
+      it("renders correctly depends on the width (-8px from padding drawer)", () => {
+        cy.mount(
+          <Phonebox
+            styles={{
+              controlStyle: css`
+                width: 260px;
+              `,
+            }}
+          />
+        );
+
+        cy.findByLabelText("phonebox-drawer").should("not.exist");
+        cy.findByRole("button").click();
+        cy.findByLabelText("phonebox-drawer")
+          .should("exist")
+          .and("have.css", "width", "260px");
+        cy.findByLabelText("textbox-search-wrapper")
+          .should("exist")
+          .and("have.css", "width", "252px");
       });
     });
   });
