@@ -1605,7 +1605,6 @@ const ToolbarWrapper = styled.div<{
 }>`
   position: ${({ $mode }) => ($mode === "page-editor" ? "fixed" : "absolute")};
   width: 100%;
-  z-index: 200;
 
   ${({ $toolbarPosition }) =>
     $toolbarPosition === "top"
