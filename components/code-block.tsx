@@ -206,7 +206,7 @@ function CodeBlock({
     };
     // Re-create the editor whenever the color-mode changes (same as before)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, lang]);
+  }, [mode]);
 
   const handleLangChange = (newLang: CodeBlockLanguage) => {
     setLang(newLang);
