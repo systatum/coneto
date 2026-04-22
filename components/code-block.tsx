@@ -1,13 +1,34 @@
 import styled, { css, CSSProp } from "styled-components";
 import { Combobox, ComboboxSingleOption } from "./combobox";
-import { useEffect, useRef, useState } from "react";
-import { CodeBlockThemeConfig, useTheme } from "./../theme";
+import {
+  MutableRefObject,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  RichEditorThemeConfig,
+  useTheme,
+  getThemeSnapshot,
+  subscribeTheme,
+  ThemeProvider,
+} from "./../theme";
 import { Button } from "./button";
 import { RiCloseLine } from "@remixicon/react";
-import { RichEditorSupportedLanguages } from "./rich-editor";
+import {
+  RichEditor,
+  RichEditorAction,
+  RichEditorSupportedLanguagesMonaco,
+  RichEditorToolbarPosition,
+} from "./rich-editor";
 import { useId } from "react";
+import ReactDOM from "react-dom/client";
+import TurndownService from "./../lib/turndown/turndown";
 
-export type CodeBlockLanguage = RichEditorSupportedLanguages;
+export type CodeBlockLanguage = RichEditorSupportedLanguagesMonaco;
+
+export type CodeBlockAction = RichEditorAction;
 
 export interface CodeBlockProps {
   value?: string;
@@ -17,9 +38,10 @@ export interface CodeBlockProps {
   readOnly?: boolean;
   clearable?: boolean;
   options?: CodeBlockOption[];
-  withToolbar?: boolean;
   styles?: CodeBlockStyles;
   valueLang?: CodeBlockLanguage;
+  actions?: CodeBlockAction[];
+  toolbarPosition?: RichEditorToolbarPosition;
 }
 
 interface CodeBlockStyles {
@@ -60,7 +82,7 @@ function loadMonaco(): Promise<typeof import("monaco-editor")> {
   return monacoLoadPromise;
 }
 
-export function CodeBlock({
+function CodeBlock({
   value = "",
   initialLang = "typescript",
   onChange,
@@ -68,12 +90,13 @@ export function CodeBlock({
   readOnly = false,
   clearable,
   options = [],
-  withToolbar = true,
   styles,
   valueLang,
+  actions,
+  toolbarPosition = "top",
 }: CodeBlockProps) {
   const { currentTheme, mode } = useTheme();
-  const codeBlockTheme = currentTheme?.codeBlock;
+  const richEditorTheme = currentTheme?.richEditor;
 
   const uid = useId();
   const comboboxId = `combobox-richeditor-${uid}`;
@@ -109,7 +132,7 @@ export function CodeBlock({
         minimap: { enabled: false },
         scrollBeyondLastLine: false,
         wordWrap: "off",
-        renderLineHighlight: "line",
+        renderLineHighlight: "none",
         cursorBlinking: "smooth",
         smoothScrolling: true,
         automaticLayout: true,
@@ -207,96 +230,91 @@ export function CodeBlock({
   };
 
   return (
-    <BlockWrapper
-      $style={styles?.self}
-      $theme={codeBlockTheme}
-      contentEditable={false}
+    <RichEditor.Base
+      actions={actions}
+      toolbarPosition={toolbarPosition}
+      theme={richEditorTheme}
+      styles={{
+        containerStyle: css`
+          overflow: visible;
+        `,
+        toolbarStyle: css`
+          padding-right: 6px;
+        `,
+        actionStyle: css`
+          margin: 0px;
+          padding-top: 2px;
+          padding-bottom: 2px;
+        `,
+      }}
+      leftSidePanel={
+        !readOnly && (
+          <Combobox
+            strict
+            id={comboboxId}
+            styles={{
+              containerStyle: css`
+                width: 150px;
+              `,
+              controlStyle: css``,
+              selectboxStyle: css`
+                border-top: none;
+                border-left: none;
+                border-bottom: none;
+                border-radius: 0px;
+                background-color: transparent;
+                &:focus-visible {
+                  box-shadow: none;
+                  border-bottom: none;
+                }
+              `,
+              drawerStyle: css`
+                max-height: 140px;
+              `,
+            }}
+            selectedOptions={lang}
+            onChange={(lang) => handleLangChange(lang as CodeBlockLanguage)}
+            options={options}
+          />
+        )
+      }
+      rightSidePanel={
+        !readOnly &&
+        clearable && (
+          <Button
+            type="button"
+            variant="ghost"
+            styles={{
+              self: css`
+                padding: 4px;
+                height: 20px;
+              `,
+            }}
+            onClick={onClosed}
+            icon={{
+              image: RiCloseLine,
+              size: 14,
+            }}
+            title="Remove code block"
+          />
+        )
+      }
     >
-      {!readOnly && withToolbar && (
-        <BlockHeader $theme={codeBlockTheme}>
-          {!readOnly && (
-            <Combobox
-              id={comboboxId}
-              styles={{
-                containerStyle: css`
-                  width: 150px;
-                  height: 25px;
-                `,
-                controlStyle: css`
-                  height: 25px;
-                `,
-                selectboxStyle: css`
-                  height: 25px;
-                `,
-                drawerStyle: css`
-                  max-height: 140px;
-                `,
-              }}
-              selectedOptions={lang}
-              options={options}
-              onChange={(selectedOption) =>
-                handleLangChange(selectedOption as CodeBlockLanguage)
-              }
-            />
-          )}
-
-          {!readOnly && clearable && (
-            <Button
-              type="button"
-              variant="ghost"
-              styles={{
-                self: css`
-                  padding: 4px;
-                  height: 20px;
-                `,
-              }}
-              onClick={onClosed}
-              icon={{
-                image: RiCloseLine,
-                size: 14,
-              }}
-              title="Remove code block"
-            />
-          )}
-        </BlockHeader>
-      )}
-
       {!isLoaded && (
-        <Placeholder $theme={codeBlockTheme}>Loading editor…</Placeholder>
+        <Placeholder $theme={richEditorTheme}>Loading editor…</Placeholder>
       )}
-      <MonacoContainer
+      <CodeEditor
+        $readOnly={readOnly}
+        $toolbarPosition={toolbarPosition}
         ref={containerRef}
         $visible={isLoaded}
         $style={styles?.contentStyle}
       />
-    </BlockWrapper>
+    </RichEditor.Base>
   );
 }
 
-const BlockWrapper = styled.div<{
-  $theme: CodeBlockThemeConfig;
-  $style?: CSSProp;
-}>`
-  border-radius: 2px;
-  border: 1px solid ${({ $theme }) => $theme.borderColor};
-  margin-top: 8px;
-  background: ${({ $theme }) => $theme.backgroundColor};
-  user-select: none;
-
-  ${({ $style }) => $style}
-`;
-
-const BlockHeader = styled.div<{ $theme: CodeBlockThemeConfig }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 6px 12px;
-  background-color: ${({ $theme }) => $theme.headerBackground};
-  border-bottom: 1px solid ${({ $theme }) => $theme.borderColor};
-`;
-
-const Placeholder = styled.div<{ $theme: CodeBlockThemeConfig }>`
+const Placeholder = styled.div<{ $theme: RichEditorThemeConfig }>`
   height: 60px;
   display: flex;
   align-items: center;
@@ -306,11 +324,228 @@ const Placeholder = styled.div<{ $theme: CodeBlockThemeConfig }>`
   font-family: monospace;
 `;
 
-const MonacoContainer = styled.div<{ $visible: boolean; $style: CSSProp }>`
+const CodeEditor = styled.div<{
+  $visible: boolean;
+  $style: CSSProp;
+  $toolbarPosition?: RichEditorToolbarPosition;
+  $readOnly: boolean;
+}>`
   width: 100%;
   height: 60px;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.15s;
+  border-radius: 4px;
+  clip-path: inset(0 round 4px);
+
+  ${({ $toolbarPosition, $readOnly }) =>
+    !$readOnly &&
+    css`
+      ${$toolbarPosition === "top"
+        ? css`
+            margin-top: 35px;
+          `
+        : css`
+            margin-bottom: 35px;
+          `}
+    `}
 
   ${({ $style }) => $style}
 `;
+
+interface CodeBlockEditor {
+  wrapper: HTMLElement;
+  code: string;
+  lang: string;
+}
+
+const codeBlockRegistry = new Map<string, CodeBlockEditor>();
+let blockIdCounter = 0;
+
+function nextBlockId() {
+  return `monaco-block-${++blockIdCounter}`;
+}
+
+function CodeBlockBridge({
+  id,
+  code,
+  initialLang,
+  editorRef,
+  onChange,
+  turndownServiceRef,
+  isViewOnly,
+  wrapper,
+  options,
+  actions,
+}: {
+  id: string;
+  code: string;
+  initialLang: CodeBlockLanguage;
+  editorRef: RefObject<HTMLDivElement>;
+  onChange: ((value: string) => void) | undefined;
+  turndownServiceRef: MutableRefObject<TurndownService>;
+  isViewOnly: boolean;
+  wrapper: HTMLElement;
+  options: CodeBlockOption[];
+  actions: CodeBlockAction[];
+}) {
+  const [theme, setTheme] = useState(getThemeSnapshot());
+
+  useEffect(() => {
+    return subscribeTheme(() => {
+      setTheme(getThemeSnapshot());
+    });
+  }, []);
+
+  return (
+    <ThemeProvider mode={theme.mode} themes={theme.themes}>
+      <CodeBlock
+        clearable
+        value={codeBlockRegistry.get(id)?.code ?? code}
+        initialLang={initialLang}
+        readOnly={isViewOnly}
+        onChange={(newCode, lang) => {
+          codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
+          serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+        }}
+        options={options}
+        onClosed={() => {
+          codeBlockRegistry.delete(id);
+          wrapper.remove();
+          serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
+        }}
+        actions={actions}
+      />
+    </ThemeProvider>
+  );
+}
+
+function CodeBlockEditor(
+  wrapper: HTMLElement,
+  id: string,
+  code: string,
+  initialLang: CodeBlockLanguage,
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange: ((value: string) => void) | undefined,
+  turndownServiceRef: React.MutableRefObject<TurndownService>,
+  isViewOnly: boolean,
+  options: CodeBlockOption[],
+  actions: CodeBlockAction[]
+) {
+  codeBlockRegistry.set(id, { wrapper, code, lang: initialLang });
+
+  const root = ReactDOM.createRoot(wrapper);
+  root.render(
+    <CodeBlockBridge
+      id={id}
+      code={code}
+      initialLang={initialLang}
+      editorRef={editorRef}
+      onChange={onChange}
+      turndownServiceRef={turndownServiceRef}
+      isViewOnly={isViewOnly}
+      wrapper={wrapper}
+      options={options}
+      actions={actions}
+    />
+  );
+}
+
+function serializeAndEmit(
+  editorRef: React.RefObject<HTMLDivElement>,
+  turndownService: TurndownService,
+  onChange: ((value: string) => void) | undefined
+) {
+  if (!editorRef.current || !onChange) return;
+
+  // Clone the editor DOM so we can mutate it safely
+  const clone = editorRef.current.cloneNode(true) as HTMLElement;
+
+  // Replace each Monaco wrapper in the clone with a <pre><code> block so
+  // turndown can convert it to fenced markdown
+  clone.querySelectorAll("[data-monaco-block-id]").forEach((node) => {
+    const id = (node as HTMLElement).dataset.monacoBlockId!;
+    const record = codeBlockRegistry.get(id);
+    if (!record) return;
+
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.className = `language-${record.lang}`;
+    code.textContent = record.code;
+    pre.appendChild(code);
+    node.parentNode?.replaceChild(pre, node);
+  });
+
+  const html = clone.innerHTML.replace(/\u00A0/g, "");
+  const cleanedHTML = RichEditor.cleanupHtml(html);
+  const markdown = turndownService.turndown(cleanedHTML);
+  const cleanedMarkdown = RichEditor.cleanSpacing(markdown);
+  onChange(cleanedMarkdown);
+}
+
+// Parse fenced code blocks from the editor HTML and mount Monaco widgets
+function hydrateFencedCodeBlocks(
+  editorRef: React.RefObject<HTMLDivElement>,
+  onChange: ((value: string) => void) | undefined,
+  turndownServiceRef: React.MutableRefObject<TurndownService>,
+  isViewOnly: boolean,
+  options: CodeBlockOption[],
+  actions: CodeBlockAction[]
+) {
+  if (!editorRef.current) return;
+
+  editorRef.current.querySelectorAll("pre").forEach((pre) => {
+    // Skip if already hydrated
+    if (pre.dataset.monacoHydrated) return;
+    pre.dataset.monacoHydrated = "true";
+
+    const codeEl = pre.querySelector("code");
+    const rawCode = codeEl?.textContent ?? pre.textContent ?? "";
+    const langClass = codeEl?.className ?? "";
+    const langMatch = langClass.match(/language-(\w+)/);
+    const lang = langMatch ? langMatch[1] : "plaintext";
+
+    const id = nextBlockId();
+    const wrapper = document.createElement("div");
+    wrapper.dataset.monacoBlockId = id;
+    wrapper.contentEditable = "false";
+
+    pre.replaceWith(wrapper);
+    CodeBlockEditor(
+      wrapper,
+      id,
+      rawCode,
+      lang as CodeBlockLanguage,
+      editorRef,
+      onChange,
+      turndownServiceRef,
+      isViewOnly,
+      options,
+      actions
+    );
+  });
+}
+
+// Turndown rule for fenced code (must be registered before use)
+function addFencedCodeRule(ts: TurndownService) {
+  ts.addRule("fencedCode", {
+    filter: (node) => {
+      return (
+        node.nodeName === "PRE" && node.firstElementChild?.nodeName === "CODE"
+      );
+    },
+    replacement: (_content, node) => {
+      const codeEl = (node as HTMLElement).querySelector("code")!;
+      const lang = (codeEl.className.match(/language-(\w+)/) || [])[1] || "";
+      const code = codeEl.textContent || "";
+      return `\n\`\`\`${lang}\n${code}\n\`\`\`\n`;
+    },
+  });
+}
+
+CodeBlock.addFencedCodeRule = addFencedCodeRule;
+CodeBlock.hydrateFencedCodeBlocks = hydrateFencedCodeBlocks;
+CodeBlock.serializeAndEmit = serializeAndEmit;
+CodeBlock.Editor = CodeBlockEditor;
+CodeBlock.nextBlockId = nextBlockId;
+
+export { CodeBlock };
