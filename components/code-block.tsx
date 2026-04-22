@@ -25,8 +25,12 @@ import {
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
-
-import * as monaco from "monaco-editor/esm/vs/editor/editor.main";
+import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.main";
+import {
+  languages,
+  Uri,
+  KeyCode,
+} from "monaco-editor/esm/vs/editor/editor.api";
 
 // Real worker imports — Vite turns `?worker` imports into Worker constructors.
 // Each import below resolves to the actual language-service worker that ships
@@ -44,13 +48,21 @@ if (typeof window !== "undefined") {
       if (label === "json") return new JsonWorker();
       if (label === "css" || label === "scss" || label === "less")
         return new CssWorker();
-      if (label === "html" || label === "handlebars" || label === "razor")
-        return new HtmlWorker();
+      if (label === "html") return new HtmlWorker();
       if (label === "typescript" || label === "javascript")
         return new TsWorker();
       return new EditorWorker();
     },
   };
+}
+
+let monaco: typeof monacoEditor | null = null;
+
+export async function getMonaco() {
+  if (!monaco) {
+    monaco = monacoEditor;
+  }
+  return monaco;
 }
 
 export type CodeBlockLanguage = RichEditorAllowedCodeLanguagesMonaco;
@@ -110,109 +122,112 @@ function CodeBlock({
   langRef.current = lang;
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    let disposed = false;
 
-    const editor = monaco.editor.create(containerRef.current, {
-      value,
-      language: initialLang,
-      theme: mode === "dark" ? "vs-dark" : "vs",
-      fontSize: 13,
-      lineHeight: 20,
-      fontFamily:
-        '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
-      fontLigatures: true,
-      minimap: { enabled: false },
-      scrollBeyondLastLine: false,
-      wordWrap: "off",
-      renderLineHighlight: "none",
-      cursorBlinking: "smooth",
-      smoothScrolling: true,
-      automaticLayout: true,
-      fixedOverflowWidgets: true,
-      tabSize: 2,
-      lineNumbers: "on",
-      glyphMargin: false,
-      folding: false,
-      readOnly,
-      scrollbar: {
-        verticalScrollbarSize: 4,
-        horizontalScrollbarSize: 4,
-        alwaysConsumeMouseWheel: false,
-      },
-      padding: { top: 10, bottom: 10 },
-      overviewRulerLanes: 0,
-      contextmenu: !readOnly,
-    });
+    (async () => {
+      const editor = await getMonaco();
 
-    editorRef.current = editor;
+      if (!containerRef.current) return;
 
-    if (id) {
-      const record = codeBlockRegistry.get(id);
-      if (record) {
-        record.editor = editor;
+      const monaco = await getMonaco();
+      const monacoEditor = monaco.editor.create(containerRef.current, {
+        value,
+        language: initialLang,
+        theme: mode === "dark" ? "vs-dark" : "vs",
+        fontSize: 13,
+        lineHeight: 20,
+        fontFamily:
+          '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
+        fontLigatures: true,
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: "off",
+        renderLineHighlight: "none",
+        cursorBlinking: "smooth",
+        smoothScrolling: true,
+        automaticLayout: true,
+        fixedOverflowWidgets: true,
+        tabSize: 2,
+        lineNumbers: "on",
+        glyphMargin: false,
+        folding: false,
+        readOnly,
+        scrollbar: {
+          verticalScrollbarSize: 4,
+          horizontalScrollbarSize: 4,
+          alwaysConsumeMouseWheel: false,
+        },
+        padding: { top: 10, bottom: 10 },
+        overviewRulerLanes: 0,
+        contextmenu: !readOnly,
+      });
+
+      editorRef.current = monacoEditor;
+
+      if (id) {
+        const record = codeBlockRegistry.get(id);
+        if (record) {
+          record.editor = editor;
+        }
       }
-    }
 
-    requestAnimationFrame(() => {
-      editor.focus();
-    });
+      requestAnimationFrame(() => {
+        monacoEditor.focus();
+      });
 
-    const updateHeight = () => {
-      const lineCount = editor.getModel()?.getLineCount() ?? 1;
-      const lineHeight = 20;
-      const padding = 20;
-      const newHeight = Math.max(60, lineCount * lineHeight + padding);
-      if (containerRef.current) {
-        containerRef.current.style.height = `${newHeight}px`;
-      }
-      editor.layout();
-    };
+      const updateHeight = () => {
+        const lineCount = monacoEditor.getModel()?.getLineCount() ?? 1;
+        const lineHeight = 20;
+        const padding = 20;
+        const newHeight = Math.max(60, lineCount * lineHeight + padding);
+        if (containerRef.current) {
+          containerRef.current.style.height = `${newHeight}px`;
+        }
+        monacoEditor.layout();
+      };
 
-    updateHeight();
-
-    editor.onDidChangeModelContent(() => {
       updateHeight();
-      onChange?.(editor.getValue(), langRef.current);
-    });
 
-    editor.onKeyDown((e) => {
-      const position = editor.getPosition();
-      const model = editor.getModel();
+      monacoEditor.onDidChangeModelContent(() => {
+        updateHeight();
+        onChange?.(monacoEditor.getValue(), langRef.current);
+      });
 
-      if (!position || !model) return;
+      monacoEditor.onKeyDown((e) => {
+        const position = monacoEditor.getPosition();
+        const model = monacoEditor.getModel();
 
-      const lineNumber = position.lineNumber;
-      const column = position.column;
+        if (!position || !model) return;
 
-      const isFirstLine = position.lineNumber === 1;
-      const isLastLine = position.lineNumber === model.getLineCount();
+        const lineNumber = position.lineNumber;
+        const column = position.column;
 
-      const lineMaxColumn = model.getLineMaxColumn(lineNumber);
+        const isFirstLine = position.lineNumber === 1;
+        const isLastLine = position.lineNumber === model.getLineCount();
 
-      const isAtLineStart = column === 1;
-      const isAtLineEnd = column === lineMaxColumn;
+        const lineMaxColumn = model.getLineMaxColumn(lineNumber);
 
-      if (
-        e.keyCode === monaco.KeyCode.UpArrow &&
-        isFirstLine &&
-        isAtLineStart
-      ) {
-        e.preventDefault();
-        CodeBlock.exitToEditor(id, "above");
-        return;
-      }
+        const isAtLineStart = column === 1;
+        const isAtLineEnd = column === lineMaxColumn;
 
-      if (e.keyCode === monaco.KeyCode.DownArrow && isLastLine && isAtLineEnd) {
-        e.preventDefault();
-        CodeBlock.exitToEditor(id, "below");
-        return;
-      }
-    });
+        if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
+          e.preventDefault();
+          CodeBlock.exitToEditor(id, "above");
+          return;
+        }
 
-    setIsLoaded(true);
+        if (e.keyCode === KeyCode.DownArrow && isLastLine && isAtLineEnd) {
+          e.preventDefault();
+          CodeBlock.exitToEditor(id, "below");
+          return;
+        }
+      });
+
+      setIsLoaded(true);
+    })();
 
     return () => {
-      editor.dispose();
+      disposed = true;
       editorRef.current = null;
     };
     // Re-create the editor whenever the color-mode changes (same as before)
@@ -232,14 +247,16 @@ function CodeBlock({
     applyLangToMonaco(lang);
   }, [lang, isLoaded]);
 
-  const applyLangToMonaco = (newLang: CodeBlockLanguage) => {
+  const applyLangToMonaco = async (newLang: CodeBlockLanguage) => {
     if (!editorRef.current) return;
+
+    const monaco = await getMonaco();
 
     const actualLang = newLang === "tsx" ? "typescript" : newLang;
     const currentValue = editorRef.current.getValue();
 
     if (newLang === "tsx" || newLang === "typescript") {
-      const ts = monaco.languages.typescript as any;
+      const ts = languages.typescript as any;
 
       ts?.typescriptDefaults?.setCompilerOptions({
         ...ts?.typescriptDefaults?.getCompilerOptions(),
@@ -248,7 +265,7 @@ function CodeBlock({
       });
 
       const ext = newLang === "tsx" ? "tsx" : "ts";
-      const newUri = monaco.Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
+      const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
       const newModel = monaco.editor.createModel(
         currentValue,
         actualLang,
