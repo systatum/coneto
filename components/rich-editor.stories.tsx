@@ -1,4 +1,5 @@
 import {
+  RiArrowRightSLine,
   RiDeleteBinLine,
   RiFileCopyLine,
   RiPrinterFill,
@@ -10,7 +11,7 @@ import { generateSentence } from "./../lib/text";
 import { Badge } from "./badge";
 import { Boxbar } from "./boxbar";
 import { Button } from "./button";
-import { RichEditor, RichEditorRef } from "./rich-editor";
+import { RichEditor, RichEditorAction, RichEditorRef } from "./rich-editor";
 import { useTheme } from "./../theme/provider";
 import { TipMenuItemProps } from "./tip-menu";
 
@@ -509,9 +510,21 @@ export const PageEditor: Story = {
 
 export const MarkdownEditor: Story = {
   render: () => {
-    const [value, setValue] = useState("");
+    const [value1, setValue1] = useState("");
+    const [value2, setValue2] = useState("");
 
-    const ref = useRef<RichEditorRef>(null);
+    const ref1 = useRef<RichEditorRef>(null);
+    const ref2 = useRef<RichEditorRef>(null);
+
+    const CODE_EDITOR_ACTIONS: RichEditorAction[] = [
+      {
+        icon: {
+          image: RiArrowRightSLine,
+        },
+        children: "Run",
+        onClick: () => console.log("run was clicked"),
+      },
+    ];
 
     return (
       <div
@@ -530,11 +543,12 @@ export const MarkdownEditor: Story = {
         >
           <h1>Only one coding language supported</h1>
           <RichEditor
-            ref={ref}
+            ref={ref1}
             allowedCodeLanguages={["cpp"]}
             mode="markdown-editor"
-            onChange={(e) => setValue(e)}
-            value={value}
+            codeEditorActions={CODE_EDITOR_ACTIONS}
+            onChange={(e) => setValue1(e)}
+            value={value1}
           />
         </div>
 
@@ -547,17 +561,12 @@ export const MarkdownEditor: Story = {
         >
           <h1>Multiple coding languages supported</h1>
           <RichEditor
-            ref={ref}
-            allowedCodeLanguages={[
-              "typescript",
-              "python",
-              "ruby",
-              "cpp",
-              "html",
-            ]}
+            ref={ref2}
+            allowedCodeLanguages={["ts", "py", "rb", "cpp", "html"]}
+            codeEditorActions={CODE_EDITOR_ACTIONS}
             mode="markdown-editor"
-            onChange={(e) => setValue(e)}
-            value={value}
+            onChange={(e) => setValue2(e)}
+            value={value2}
           />
         </div>
       </div>
@@ -575,6 +584,7 @@ export const CodeEditor: Story = {
       <RichEditor
         ref={ref}
         mode="code-editor"
+        initialLanguage="cpp"
         onChange={(e) => setValue(e)}
         value={value}
       />
