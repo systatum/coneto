@@ -735,6 +735,41 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           e.preventDefault();
         }
       }
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+        const container = range.startContainer;
+
+        let currentNode: Node | null =
+          container.nodeType === Node.TEXT_NODE
+            ? container.parentNode
+            : container;
+
+        if (!currentNode) return;
+
+        if (e.key === "ArrowDown") {
+          const next = getNextNode(currentNode);
+
+          if (next instanceof HTMLElement && next.dataset.monacoBlockId) {
+            e.preventDefault();
+            CodeBlock.focusCodeBlock(next.dataset.monacoBlockId, "start");
+            return;
+          }
+        }
+
+        if (e.key === "ArrowUp") {
+          const prev = getPreviousNode(currentNode);
+
+          if (prev instanceof HTMLElement && prev.dataset.monacoBlockId) {
+            e.preventDefault();
+            CodeBlock.focusCodeBlock(prev.dataset.monacoBlockId, "end");
+            return;
+          }
+        }
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
         e.preventDefault();
         return;
@@ -1319,9 +1354,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
+    const codeEditorId = CodeBlock.nextBlockId();
+
     if (mode === "code-editor") {
       return (
         <CodeBlock
+          id={codeEditorId}
           styles={{
             self: css`
               padding: 0px;
@@ -2083,6 +2121,30 @@ const preprocessMarkdown = (markdown: string) => {
 
   return processed.join("");
 };
+
+function getNextNode(node: Node): Node | null {
+  let next = node.nextSibling;
+  while (
+    next &&
+    next.nodeType === Node.TEXT_NODE &&
+    !next.textContent?.trim()
+  ) {
+    next = next.nextSibling;
+  }
+  return next;
+}
+
+function getPreviousNode(node: Node): Node | null {
+  let prev = node.previousSibling;
+  while (
+    prev &&
+    prev.nodeType === Node.TEXT_NODE &&
+    !prev.textContent?.trim()
+  ) {
+    prev = prev.previousSibling;
+  }
+  return prev;
+}
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 RichEditor.SupportedLanguage = RichEditorSupportedLanguages;
