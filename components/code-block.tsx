@@ -26,7 +26,7 @@ import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 
-import * as monaco from "monaco-editor";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 
 // Real worker imports — Vite turns `?worker` imports into Worker constructors.
 // Each import below resolves to the actual language-service worker that ships
