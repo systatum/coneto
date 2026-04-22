@@ -91,7 +91,6 @@ function CodeBlock({
   clearable,
   options = [],
   styles,
-  valueLang,
   actions,
   toolbarPosition = "top",
 }: CodeBlockProps) {
@@ -105,12 +104,10 @@ function CodeBlock({
   const editorRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [langLocal, setLangLocal] = useState(
-    initialLang ?? (options[0]?.value as string)
+  const [lang, setLang] = useState(
+    initialLang ?? (options[0]?.value as CodeBlockLanguage)
   );
-  const langRef = useRef(langLocal);
-
-  const lang = valueLang ? valueLang : langLocal;
+  const langRef = useRef(lang);
 
   langRef.current = lang;
 
@@ -136,6 +133,7 @@ function CodeBlock({
         cursorBlinking: "smooth",
         smoothScrolling: true,
         automaticLayout: true,
+        fixedOverflowWidgets: true,
         tabSize: 2,
         lineNumbers: "on",
         glyphMargin: false,
@@ -186,7 +184,7 @@ function CodeBlock({
   }, [mode]);
 
   const handleLangChange = (newLang: CodeBlockLanguage) => {
-    setLangLocal(newLang);
+    setLang(newLang);
     if (editorRef.current) {
       applyLangToMonaco(newLang);
     }
@@ -194,9 +192,9 @@ function CodeBlock({
   };
 
   useEffect(() => {
-    if (!valueLang) return;
-    applyLangToMonaco(valueLang);
-  }, [valueLang, isLoaded]);
+    if (!lang) return;
+    applyLangToMonaco(lang);
+  }, [lang, isLoaded]);
 
   const applyLangToMonaco = (newLang: CodeBlockLanguage) => {
     const monaco = (window as any).monaco;
@@ -236,7 +234,7 @@ function CodeBlock({
       theme={richEditorTheme}
       styles={{
         containerStyle: css`
-          overflow: visible;
+          overflow: unset;
         `,
         toolbarStyle: css`
           padding-right: 6px;
@@ -335,7 +333,7 @@ const CodeEditor = styled.div<{
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.15s;
   border-radius: 4px;
-  clip-path: inset(0 round 4px);
+  overflow: visible;
 
   ${({ $toolbarPosition, $readOnly }) =>
     !$readOnly &&
