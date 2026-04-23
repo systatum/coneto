@@ -66,9 +66,7 @@ export function getMonaco() {
 
 export type CodeEditorLanguage = RichEditorCodeLanguagesMonaco;
 
-export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
-  onClick: ({ content }: { content?: string }) => void;
-}
+export type CodeEditorAction = RichEditorAction;
 
 export interface CodeEditorProps {
   id: string;

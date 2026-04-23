@@ -48,7 +48,7 @@ export interface RichEditorCode {
   languageOptions?: RichEditorCodeLanguages[];
 }
 
-export type RichEditorCodeAction = CodeEditorAction;
+export type RichEditorCodeAction = RichEditorToolbarButtonProps;
 
 export type RichEditorAction = RichEditorToolbarButtonProps;
 
@@ -138,7 +138,7 @@ export type RichEditorMode =
 
 export interface RichEditorToolbarButtonProps {
   icon?: FigureProps;
-  onClick?: () => void;
+  onClick?: (props: { content?: string }) => void;
   children?: ReactNode;
   isOpen?: boolean;
   isActive?: boolean;
@@ -1365,6 +1365,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     return (
       <BaseRichEditor
         actions={actions}
+        value={value}
         mode={mode}
         styles={{
           ...styles,
@@ -1492,6 +1493,7 @@ interface BaseRichEditorProps {
   styles?: BaseRichEditorStyles;
   children?: ReactNode;
   mode?: RichEditorProps["mode"];
+  value?: string;
 }
 
 interface BaseRichEditorStyles {
@@ -1511,6 +1513,7 @@ function BaseRichEditor({
   styles,
   children,
   mode,
+  value,
 }: BaseRichEditorProps) {
   return (
     <Wrapper
@@ -1539,6 +1542,7 @@ function BaseRichEditor({
                   <RichEditorToolbarButton
                     key={index}
                     {...action}
+                    content={value}
                     styles={{
                       self: css`
                         ${styles?.actionStyle}
@@ -1571,7 +1575,8 @@ function RichEditorToolbarButton({
   isOpen,
   isActive,
   ariaLabel,
-}: RichEditorToolbarButtonProps) {
+  content,
+}: RichEditorToolbarButtonProps & { content?: string }) {
   const { currentTheme } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
 
@@ -1584,7 +1589,7 @@ function RichEditorToolbarButton({
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        onClick?.();
+        onClick?.({ content });
       }}
       $isActive={isActive}
       aria-label={ariaLabel ?? "rich-editor-toolbar-button"}
