@@ -81,6 +81,8 @@ export interface CodeEditorProps {
   styles?: CodeEditorStyles;
   actions?: CodeEditorAction[];
   toolbarPosition?: RichEditorToolbarPosition;
+  removeOnEmpty?: boolean;
+  onRemove?: () => void;
 }
 
 interface CodeEditorStyles {
@@ -102,6 +104,8 @@ function CodeEditor({
   actions,
   toolbarPosition = "top",
   id,
+  onRemove,
+  removeOnEmpty,
 }: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
@@ -216,6 +220,16 @@ function CodeEditor({
         if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
           e.preventDefault();
           CodeEditor.exitToEditor(id, "above");
+          return;
+        }
+
+        if (
+          e.keyCode === KeyCode.Backspace &&
+          removeOnEmpty &&
+          monacoEditor.getValue().length === 0
+        ) {
+          e.preventDefault();
+          onRemove?.();
           return;
         }
 
@@ -494,9 +508,20 @@ function CodeEditorBridge({
       <CodeEditor
         id={id}
         clearable
+        removeOnEmpty
         value={codeBlockRegistry.get(id)?.code ?? code}
         language={language}
         readOnly={isViewOnly}
+        onRemove={async () => {
+          await exitToEditor(id, "above");
+          await codeBlockRegistry.delete(id);
+          await wrapper.remove();
+          await serializeAndEmit(
+            editorRef,
+            turndownServiceRef.current,
+            onChange
+          );
+        }}
         onChange={(newCode, lang) => {
           codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
           serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
@@ -513,7 +538,7 @@ function CodeEditorBridge({
   );
 }
 
-function CodeEditorEditor(
+function RenderCodeEditor(
   wrapper: HTMLElement,
   id: string,
   code: string,
@@ -604,7 +629,7 @@ function hydrateFencedCodeEditors(
     wrapper.contentEditable = "false";
 
     pre.replaceWith(wrapper);
-    CodeEditorEditor(
+    RenderCodeEditor(
       wrapper,
       id,
       rawCode,
@@ -722,7 +747,7 @@ function exitToEditor(id: string, direction: "above" | "below") {
 CodeEditor.addFencedCodeRule = addFencedCodeRule;
 CodeEditor.hydrateFencedCodeEditors = hydrateFencedCodeEditors;
 CodeEditor.serializeAndEmit = serializeAndEmit;
-CodeEditor.Editor = CodeEditorEditor;
+CodeEditor.Editor = RenderCodeEditor;
 CodeEditor.nextBlockId = nextBlockId;
 CodeEditor.exitToEditor = exitToEditor;
 
