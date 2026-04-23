@@ -24,7 +24,8 @@ import {
 } from "./rich-editor";
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
-import TurndownService from "../lib/turndown/turndown";
+import TurndownService from "./../lib/turndown/turndown";
+import marked from "./../lib/marked/marked";
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
@@ -761,11 +762,42 @@ function exitToEditor(id: string, direction: "above" | "below") {
   target.focus();
 }
 
+function addFencedCodeMarkedExtension() {
+  marked.use({
+    gfm: false,
+    breaks: true,
+    extensions: [
+      {
+        name: "fencedCode",
+        level: "block",
+        start(src) {
+          return src.indexOf("```");
+        },
+        tokenizer(src) {
+          const match = src.match(/^```(\w*)\n([\s\S]*?)```/);
+          if (match) {
+            return {
+              type: "code",
+              raw: match[0],
+              lang: match[1],
+              text: match[2],
+            };
+          }
+        },
+        renderer(token) {
+          return `<pre><code class="language-${token.lang}">${token.text}</code></pre>`;
+        },
+      },
+    ],
+  });
+}
+
 CodeEditor.addFencedCodeRule = addFencedCodeRule;
 CodeEditor.hydrateFencedCodeEditors = hydrateFencedCodeEditors;
 CodeEditor.serializeAndEmit = serializeAndEmit;
 CodeEditor.Editor = RenderCodeEditor;
 CodeEditor.nextBlockId = nextBlockId;
 CodeEditor.exitToEditor = exitToEditor;
+CodeEditor.addFencedCodeMarkedExtension = addFencedCodeMarkedExtension;
 
 export { CodeEditor };
