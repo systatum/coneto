@@ -119,7 +119,7 @@ function CodeEditor({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [lang, setLang] = useState<CodeEditorLanguage>(
     language ?? (options[0]?.value as CodeEditorLanguage)
@@ -136,6 +136,8 @@ function CodeEditor({
       if (editorRef.current) return;
 
       const { KeyCode, editor } = await getMonaco();
+
+      if (disposed || !containerRef.current) return;
 
       const monacoEditor = editor.create(containerRef.current, {
         value,
@@ -179,7 +181,9 @@ function CodeEditor({
       }
 
       requestAnimationFrame(() => {
-        monacoEditor.focus();
+        if (!disposed) {
+          monacoEditor.focus();
+        }
       });
 
       const updateHeight = () => {
@@ -240,12 +244,15 @@ function CodeEditor({
         }
       });
 
-      setIsLoaded(true);
+      setIsLoading(true);
     })();
 
     return () => {
       disposed = true;
-      editorRef.current = null;
+      if (editorRef.current) {
+        editorRef.current.dispose();
+        editorRef.current = null;
+      }
     };
     // Re-create the editor whenever the color-mode changes (same as before)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -256,8 +263,12 @@ function CodeEditor({
     if (!editorRef.current) return;
 
     (async () => {
-      const { editor } = await getMonaco();
-      editor.setTheme(mode === "dark" ? "vs-dark" : "vs");
+      try {
+        const { editor } = await getMonaco();
+        editor.setTheme(mode === "dark" ? "vs-dark" : "vs");
+      } catch {
+        return;
+      }
     })();
   }, [mode]);
 
@@ -272,7 +283,7 @@ function CodeEditor({
   useEffect(() => {
     if (!lang) return;
     applyLangToMonaco(lang);
-  }, [lang, isLoaded]);
+  }, [lang, isLoading]);
 
   const applyLangToMonaco = async (newLang: CodeEditorLanguage) => {
     if (!editorRef.current) return;
@@ -381,7 +392,7 @@ function CodeEditor({
         )
       }
     >
-      {!isLoaded && (
+      {!isLoading && (
         <Placeholder
           $readOnly={readOnly}
           $toolbarPosition={toolbarPosition}
@@ -391,13 +402,14 @@ function CodeEditor({
         </Placeholder>
       )}
       <Editor
+        aria-label="rich-editor-code"
         $readOnly={readOnly}
         onKeyDown={(e) => {
           e.stopPropagation();
         }}
         $toolbarPosition={toolbarPosition}
         ref={containerRef}
-        $visible={isLoaded}
+        $visible={isLoading}
         $style={styles?.contentStyle}
       />
     </RichEditor.Base>
@@ -520,7 +532,7 @@ function CodeEditorBridge({
         onRemove={async () => {
           await exitToEditor(id, "above");
           await codeBlockRegistry.delete(id);
-          await wrapper.remove();
+          await wrapper?.remove();
           await serializeAndEmit(
             editorRef,
             turndownServiceRef.current,
@@ -534,7 +546,7 @@ function CodeEditorBridge({
         options={options}
         onClosed={() => {
           codeBlockRegistry.delete(id);
-          wrapper.remove();
+          wrapper?.remove();
           serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
         }}
         actions={actions}
