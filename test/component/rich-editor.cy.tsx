@@ -1,14 +1,35 @@
 import marked from "./../../lib/marked/marked";
-import { RichEditor, RichEditorProps } from "./../../components/rich-editor";
+import {
+  RichEditor,
+  RichEditorCodeAction,
+  RichEditorProps,
+} from "./../../components/rich-editor";
 import { useEffect, useState } from "react";
 import { generateSentence } from "./../../lib/text";
+import { RiArrowRightSLine } from "@remixicon/react";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
     const [value, setValue] = useState("test");
 
+    const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
+      {
+        icon: {
+          image: RiArrowRightSLine,
+        },
+        children: "Run",
+        onClick: ({ content }) =>
+          console.log(`compile the content: ${content}`),
+      },
+    ];
+
     return (
-      <RichEditor value={value} onChange={(val) => setValue(val)} {...props} />
+      <RichEditor
+        value={value}
+        onChange={(val) => setValue(val)}
+        codeEditor={{ actions: CODE_EDITOR_ACTIONS }}
+        {...props}
+      />
     );
   }
 
@@ -21,6 +42,37 @@ describe("RichEditor", () => {
 
       it("should renders code editor mode ", () => {
         cy.findAllByLabelText("rich-editor-code").should("exist");
+      });
+
+      context("when given actions", () => {
+        it("renders the button in the toolbar", () => {
+          cy.findAllByLabelText("rich-editor-code").should("exist");
+          cy.findAllByLabelText("rich-editor-toolbar-button").should(
+            "have.text",
+            "Run"
+          );
+        });
+
+        context("when clicking", () => {
+          it("renders the console with content in the toolbar ", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+            cy.mount(<ProductRichEditor mode="code-editor" value="" />);
+            cy.wait(400);
+            cy.realType("Test 123");
+            cy.findAllByLabelText("rich-editor-code").should("exist");
+
+            cy.findAllByLabelText("rich-editor-toolbar-button")
+              .should("have.text", "Run")
+              .click();
+
+            cy.get("@consoleLog").should(
+              "have.been.calledWith",
+              "compile the content: Test 123"
+            );
+          });
+        });
       });
 
       context("when initialize value", () => {
