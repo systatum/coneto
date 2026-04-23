@@ -1739,10 +1739,10 @@ const EditorArea = styled.div<{
     $mode !== "view-only"
       ? $toolbarPosition === "top"
         ? css`
-            margin-top: 37px;
+            padding-top: 45px;
           `
         : css`
-            margin-bottom: 37px;
+            padding-bottom: 45px;
           `
       : ""};
 
