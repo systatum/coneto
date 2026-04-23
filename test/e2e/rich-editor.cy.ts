@@ -59,7 +59,7 @@ describe("RichEditor", () => {
 <li>test</li>
 </ul>
 `;
-        cy.findByRole("textbox").should("contain.html", contentHTML);
+        cy.findAllByRole("textbox").eq(0).should("contain.html", contentHTML);
         cy.findAllByRole("button").eq(6).click();
 
         cy.get("pre")
