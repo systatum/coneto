@@ -56,9 +56,42 @@ function Separator({
         {title}
       </Title>
 
-      {actions?.map((action, index) => (
-        <SeparatorAction key={index} {...action} />
-      ))}
+      {actions?.map((action, index) => {
+        const base = 20;
+        const gap = 30;
+        const offset = base + index * gap;
+
+        return (
+          <SeparatorAction
+            key={index}
+            {...action}
+            alwaysShow={action?.alwaysShow ?? true}
+            styles={{
+              ...action?.styles,
+              arrowStyle: css`
+                ${textFloat === "right"
+                  ? css`
+                      right: 9px;
+                    `
+                  : css`
+                      left: 9px;
+                    `}
+
+                ${action?.styles?.arrowStyle}
+              `,
+              containerStyle: css`
+                ${textFloat === "right"
+                  ? css`
+                      left: ${offset}px;
+                    `
+                  : css`
+                      right: ${offset}px;
+                    `}
+              `,
+            }}
+          />
+        );
+      })}
     </SeparatorContainer>
   );
 }
@@ -113,11 +146,14 @@ export interface SeparatorAction {
   alwaysShow?: boolean;
   onClick?: () => void;
   hidden?: boolean;
-  styles?: SeparatorStyles;
+  styles?: SeparatorActionStyles;
 }
 
-export interface SeparatorStyles {
+export interface SeparatorActionStyles {
   self?: CSSProp;
+  containerStyle?: CSSProp;
+  drawerStyle?: CSSProp;
+  arrowStyle?: CSSProp;
 }
 
 function SeparatorAction({
@@ -138,11 +174,17 @@ function SeparatorAction({
     <Tooltip
       dialog={caption}
       styles={{
+        arrowStyle: styles?.arrowStyle,
         containerStyle: css`
           position: absolute;
           top: 50%;
           transform: translateY(-50%);
           right: 20px;
+
+          transition:
+            opacity 0.2s ease,
+            transform 0.2s ease;
+
           ${!alwaysShow &&
           css`
             opacity: 0;
@@ -153,7 +195,10 @@ function SeparatorAction({
             opacity: 1;
             pointer-events: auto;
           }
+
+          ${styles?.containerStyle}
         `,
+        drawerStyle: styles?.drawerStyle,
       }}
     >
       <Button
