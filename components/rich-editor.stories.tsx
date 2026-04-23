@@ -553,7 +553,7 @@ export const MarkdownEditor: Story = {
           <h1>Only one coding language supported</h1>
           <RichEditor
             ref={ref1}
-            codeEditorProps={{
+            codeEditor={{
               languageOptions: ["cpp"],
               actions: CODE_EDITOR_ACTIONS,
             }}
@@ -573,7 +573,7 @@ export const MarkdownEditor: Story = {
           <h1>Multiple coding languages supported</h1>
           <RichEditor
             ref={ref2}
-            codeEditorProps={{
+            codeEditor={{
               languageOptions: ["tsx", "py", "rb", "cpp", "html"],
               actions: CODE_EDITOR_ACTIONS,
             }}
@@ -607,7 +607,7 @@ export const CodeEditor: Story = {
     return (
       <RichEditor
         ref={ref}
-        codeEditorProps={{ actions: CODE_EDITOR_ACTIONS, language: "cpp" }}
+        codeEditor={{ actions: CODE_EDITOR_ACTIONS, language: "cpp" }}
         mode="code-editor"
         onChange={(e) => setValue(e)}
         value={value}

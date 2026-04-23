@@ -39,10 +39,10 @@ export interface RichEditorProps {
   autogrow?: boolean;
   height?: number;
   actions?: RichEditorAction[];
-  codeEditorProps?: RichEditorCodeProps;
+  codeEditor?: RichEditorCode;
 }
 
-export interface RichEditorCodeProps {
+export interface RichEditorCode {
   language?: RichEditorCodeLanguages;
   actions?: RichEditorCodeAction[];
   languageOptions?: RichEditorCodeLanguages[];
@@ -178,7 +178,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       autogrow = false,
       height = 200,
       actions,
-      codeEditorProps,
+      codeEditor,
     },
     ref
   ) => {
@@ -186,7 +186,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       languageOptions = Object.values(RichEditorCodeLanguages),
       language = languageOptions[0],
       actions: codeEditorActions,
-    } = codeEditorProps ?? {};
+    } = codeEditor ?? {};
 
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
