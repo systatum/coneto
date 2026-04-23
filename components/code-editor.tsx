@@ -13,18 +13,18 @@ import {
   getThemeSnapshot,
   subscribeTheme,
   ThemeProvider,
-} from "./../theme";
+} from "../theme";
 import { Button } from "./button";
 import { RiCloseLine } from "@remixicon/react";
 import {
   RichEditor,
   RichEditorAction,
-  RichEditorAllowedCodeLanguagesMonaco,
+  RichEditorCodeLanguagesMonaco,
   RichEditorToolbarPosition,
 } from "./rich-editor";
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
-import TurndownService from "./../lib/turndown/turndown";
+import TurndownService from "../lib/turndown/turndown";
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
@@ -63,35 +63,36 @@ export function getMonaco() {
   return monacoPromise;
 }
 
-export type CodeBlockLanguage = RichEditorAllowedCodeLanguagesMonaco;
+export type CodeEditorLanguage = RichEditorCodeLanguagesMonaco;
 
-export type CodeBlockAction = RichEditorAction;
+export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
+  onClick: ({ content }: { content?: string }) => void;
+}
 
-export interface CodeBlockProps {
+export interface CodeEditorProps {
   id: string;
   value?: string;
-  initialLang?: CodeBlockLanguage;
+  language?: CodeEditorLanguage;
   onChange?: (code: string, lang: string) => void;
   onClosed?: () => void;
   readOnly?: boolean;
   clearable?: boolean;
-  options?: CodeBlockOption[];
-  styles?: CodeBlockStyles;
-  valueLang?: CodeBlockLanguage;
-  actions?: CodeBlockAction[];
+  options?: CodeEditorOption[];
+  styles?: CodeEditorStyles;
+  actions?: CodeEditorAction[];
   toolbarPosition?: RichEditorToolbarPosition;
 }
 
-interface CodeBlockStyles {
+interface CodeEditorStyles {
   self?: CSSProp;
   contentStyle?: CSSProp;
 }
 
-export type CodeBlockOption = ComboboxSingleOption;
+export type CodeEditorOption = ComboboxSingleOption;
 
-function CodeBlock({
+function CodeEditor({
   value = "",
-  initialLang = "tsx",
+  language = "tsx",
   onChange,
   onClosed,
   readOnly = false,
@@ -101,7 +102,7 @@ function CodeBlock({
   actions,
   toolbarPosition = "top",
   id,
-}: CodeBlockProps) {
+}: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
 
@@ -116,8 +117,8 @@ function CodeBlock({
   const editorRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const [lang, setLang] = useState<CodeBlockLanguage>(
-    initialLang ?? (options[0]?.value as CodeBlockLanguage)
+  const [lang, setLang] = useState<CodeEditorLanguage>(
+    language ?? (options[0]?.value as CodeEditorLanguage)
   );
   const langRef = useRef(lang);
 
@@ -128,12 +129,13 @@ function CodeBlock({
 
     (async () => {
       if (!containerRef.current) return;
+      if (editorRef.current) return;
 
       const { KeyCode, editor } = await getMonaco();
 
       const monacoEditor = editor.create(containerRef.current, {
         value,
-        language: initialLang,
+        language,
         theme: mode === "dark" ? "vs-dark" : "vs",
         fontSize: 13,
         lineHeight: 20,
@@ -213,13 +215,13 @@ function CodeBlock({
 
         if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
           e.preventDefault();
-          CodeBlock.exitToEditor(id, "above");
+          CodeEditor.exitToEditor(id, "above");
           return;
         }
 
         if (e.keyCode === KeyCode.DownArrow && isLastLine && isAtLineEnd) {
           e.preventDefault();
-          CodeBlock.exitToEditor(id, "below");
+          CodeEditor.exitToEditor(id, "below");
           return;
         }
       });
@@ -233,9 +235,9 @@ function CodeBlock({
     };
     // Re-create the editor whenever the color-mode changes (same as before)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, []);
 
-  const handleLangChange = (newLang: CodeBlockLanguage) => {
+  const handleLangChange = (newLang: CodeEditorLanguage) => {
     setLang(newLang);
     if (editorRef.current) {
       applyLangToMonaco(newLang);
@@ -248,7 +250,7 @@ function CodeBlock({
     applyLangToMonaco(lang);
   }, [lang, isLoaded]);
 
-  const applyLangToMonaco = async (newLang: CodeBlockLanguage) => {
+  const applyLangToMonaco = async (newLang: CodeEditorLanguage) => {
     if (!editorRef.current) return;
 
     const { editor, languages, Uri } = await getMonaco();
@@ -276,9 +278,17 @@ function CodeBlock({
     }
   };
 
+  const filteredActions = actions?.map((action) => ({
+    ...action,
+    onClick: () =>
+      action?.onClick({
+        content: editorRef.current?.getValue(),
+      }),
+  }));
+
   return (
     <RichEditor.Base
-      actions={actions}
+      actions={filteredActions}
       toolbarPosition={toolbarPosition}
       theme={richEditorTheme}
       styles={{
@@ -320,7 +330,7 @@ function CodeBlock({
               `,
             }}
             selectedOptions={lang}
-            onChange={(lang) => handleLangChange(lang as CodeBlockLanguage)}
+            onChange={(lang) => handleLangChange(lang as CodeEditorLanguage)}
             options={options}
           />
         )
@@ -350,7 +360,7 @@ function CodeBlock({
       {!isLoaded && (
         <Placeholder $theme={richEditorTheme}>Loading editor…</Placeholder>
       )}
-      <CodeEditor
+      <Editor
         $readOnly={readOnly}
         onKeyDown={(e) => {
           e.stopPropagation();
@@ -374,7 +384,7 @@ const Placeholder = styled.div<{ $theme: RichEditorThemeConfig }>`
   font-family: monospace;
 `;
 
-const CodeEditor = styled.div<{
+const Editor = styled.div<{
   $visible: boolean;
   $style: CSSProp;
   $toolbarPosition?: RichEditorToolbarPosition;
@@ -402,24 +412,24 @@ const CodeEditor = styled.div<{
   ${({ $style }) => $style}
 `;
 
-interface CodeBlockEditor {
+interface CodeEditor {
   wrapper: HTMLElement;
   code: string;
   lang: string;
   editor?: any;
 }
 
-const codeBlockRegistry = new Map<string, CodeBlockEditor>();
+const codeBlockRegistry = new Map<string, CodeEditor>();
 let blockIdCounter = 0;
 
 function nextBlockId() {
   return `monaco-block-${++blockIdCounter}`;
 }
 
-function CodeBlockBridge({
+function CodeEditorBridge({
   id,
   code,
-  initialLang,
+  language,
   editorRef,
   onChange,
   turndownServiceRef,
@@ -430,14 +440,14 @@ function CodeBlockBridge({
 }: {
   id: string;
   code: string;
-  initialLang: CodeBlockLanguage;
+  language: CodeEditorLanguage;
   editorRef: RefObject<HTMLDivElement>;
   onChange: ((value: string) => void) | undefined;
   turndownServiceRef: MutableRefObject<TurndownService>;
   isViewOnly: boolean;
   wrapper: HTMLElement;
-  options: CodeBlockOption[];
-  actions: CodeBlockAction[];
+  options: CodeEditorOption[];
+  actions: CodeEditorAction[];
 }) {
   const [theme, setTheme] = useState(getThemeSnapshot());
 
@@ -449,11 +459,11 @@ function CodeBlockBridge({
 
   return (
     <ThemeProvider mode={theme.mode} themes={theme.themes}>
-      <CodeBlock
+      <CodeEditor
         id={id}
         clearable
         value={codeBlockRegistry.get(id)?.code ?? code}
-        initialLang={initialLang}
+        language={language}
         readOnly={isViewOnly}
         onChange={(newCode, lang) => {
           codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
@@ -471,26 +481,26 @@ function CodeBlockBridge({
   );
 }
 
-function CodeBlockEditor(
+function CodeEditorEditor(
   wrapper: HTMLElement,
   id: string,
   code: string,
-  initialLang: CodeBlockLanguage,
+  language: CodeEditorLanguage,
   editorRef: React.RefObject<HTMLDivElement>,
   onChange: ((value: string) => void) | undefined,
   turndownServiceRef: React.MutableRefObject<TurndownService>,
   isViewOnly: boolean,
-  options: CodeBlockOption[],
-  actions: CodeBlockAction[]
+  options: CodeEditorOption[],
+  actions: CodeEditorAction[]
 ) {
-  codeBlockRegistry.set(id, { wrapper, code, lang: initialLang });
+  codeBlockRegistry.set(id, { wrapper, code, lang: language });
 
   const root = ReactDOM.createRoot(wrapper);
   root.render(
-    <CodeBlockBridge
+    <CodeEditorBridge
       id={id}
       code={code}
-      initialLang={initialLang}
+      language={language}
       editorRef={editorRef}
       onChange={onChange}
       turndownServiceRef={turndownServiceRef}
@@ -535,13 +545,13 @@ function serializeAndEmit(
 }
 
 // Parse fenced code blocks from the editor HTML and mount Monaco widgets
-function hydrateFencedCodeBlocks(
+function hydrateFencedCodeEditors(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange: ((value: string) => void) | undefined,
   turndownServiceRef: React.MutableRefObject<TurndownService>,
   isViewOnly: boolean,
-  options: CodeBlockOption[],
-  actions: CodeBlockAction[]
+  options: CodeEditorOption[],
+  actions: CodeEditorAction[]
 ) {
   if (!editorRef.current) return;
 
@@ -562,11 +572,11 @@ function hydrateFencedCodeBlocks(
     wrapper.contentEditable = "false";
 
     pre.replaceWith(wrapper);
-    CodeBlockEditor(
+    CodeEditorEditor(
       wrapper,
       id,
       rawCode,
-      lang as CodeBlockLanguage,
+      lang as CodeEditorLanguage,
       editorRef,
       onChange,
       turndownServiceRef,
@@ -677,11 +687,11 @@ function exitToEditor(id: string, direction: "above" | "below") {
   target.focus();
 }
 
-CodeBlock.addFencedCodeRule = addFencedCodeRule;
-CodeBlock.hydrateFencedCodeBlocks = hydrateFencedCodeBlocks;
-CodeBlock.serializeAndEmit = serializeAndEmit;
-CodeBlock.Editor = CodeBlockEditor;
-CodeBlock.nextBlockId = nextBlockId;
-CodeBlock.exitToEditor = exitToEditor;
+CodeEditor.addFencedCodeRule = addFencedCodeRule;
+CodeEditor.hydrateFencedCodeEditors = hydrateFencedCodeEditors;
+CodeEditor.serializeAndEmit = serializeAndEmit;
+CodeEditor.Editor = CodeEditorEditor;
+CodeEditor.nextBlockId = nextBlockId;
+CodeEditor.exitToEditor = exitToEditor;
 
-export { CodeBlock };
+export { CodeEditor };
