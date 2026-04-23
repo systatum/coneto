@@ -443,6 +443,11 @@ const Editor = styled.div<{
   border-radius: 4px;
   overflow: visible;
 
+  & .monaco-editor,
+  & .monaco-editor .overflow-guard {
+    border-radius: 8px;
+  }
+
   ${({ $toolbarPosition, $readOnly }) =>
     !$readOnly &&
     css`
