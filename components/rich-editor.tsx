@@ -27,7 +27,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
-import { CodeBlock, CodeBlockOption } from "./code-block";
+import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
 
 export interface RichEditorProps {
   value?: string;
@@ -38,15 +38,21 @@ export interface RichEditorProps {
   toolbarPosition?: RichEditorToolbarPosition;
   autogrow?: boolean;
   height?: number;
-  allowedCodeLanguages?: RichEditorAllowedCodeLanguages[];
-  language?: RichEditorAllowedCodeLanguages;
   actions?: RichEditorAction[];
-  codeEditorActions?: RichEditorAction[];
+  codeEditorProps?: RichEditorCodeProps;
 }
+
+export interface RichEditorCodeProps {
+  language?: RichEditorCodeLanguages;
+  actions?: RichEditorCodeAction[];
+  languageOptions?: RichEditorCodeLanguages[];
+}
+
+export type RichEditorCodeAction = CodeEditorAction;
 
 export type RichEditorAction = RichEditorToolbarButtonProps;
 
-export const RichEditorAllowedCodeLanguages = {
+export const RichEditorCodeLanguages = {
   TypeScript: "tsx",
   JavaScript: "js",
   Python: "py",
@@ -63,11 +69,11 @@ export const RichEditorAllowedCodeLanguages = {
   Text: "txt",
 } as const;
 
-export type RichEditorAllowedCodeLanguages =
-  (typeof RichEditorAllowedCodeLanguages)[keyof typeof RichEditorAllowedCodeLanguages];
+export type RichEditorCodeLanguages =
+  (typeof RichEditorCodeLanguages)[keyof typeof RichEditorCodeLanguages];
 
 export const RichEditorSupportedLanguageNames: Record<
-  RichEditorAllowedCodeLanguages,
+  RichEditorCodeLanguages,
   string
 > = {
   tsx: "TypeScript",
@@ -86,7 +92,7 @@ export const RichEditorSupportedLanguageNames: Record<
   txt: "Text",
 };
 
-export const RichEditorAllowedCodeLanguagesMonaco = {
+export const RichEditorCodeLanguagesMonaco = {
   tsx: "tsx",
   py: "python",
   rb: "ruby",
@@ -103,8 +109,8 @@ export const RichEditorAllowedCodeLanguagesMonaco = {
   txt: "plaintext",
 } as const;
 
-export type RichEditorAllowedCodeLanguagesMonaco =
-  (typeof RichEditorAllowedCodeLanguagesMonaco)[keyof typeof RichEditorAllowedCodeLanguagesMonaco];
+export type RichEditorCodeLanguagesMonaco =
+  (typeof RichEditorCodeLanguagesMonaco)[keyof typeof RichEditorCodeLanguagesMonaco];
 
 export interface RichEditorStyles extends BaseRichEditorStyles {
   editorStyle?: CSSProp;
@@ -148,7 +154,7 @@ interface RichEditorComponent
     RichEditorProps & React.RefAttributes<RichEditorRef>
   > {
   ToolbarButton: typeof RichEditorToolbarButton;
-  SupportedLanguage: typeof RichEditorAllowedCodeLanguages;
+  SupportedLanguage: typeof RichEditorCodeLanguages;
   SupportedLanguageName: typeof RichEditorSupportedLanguageNames;
   Base: typeof BaseRichEditor;
   cleanupHtml: typeof cleanupHtml;
@@ -171,33 +177,35 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       styles,
       autogrow = false,
       height = 200,
-      allowedCodeLanguages = Object.values(
-        RichEditorAllowedCodeLanguages
-      ) as RichEditorAllowedCodeLanguages[],
       actions,
-      codeEditorActions,
-      language = allowedCodeLanguages[0],
+      codeEditorProps,
     },
     ref
   ) => {
+    const {
+      languageOptions = Object.values(RichEditorCodeLanguages),
+      language = languageOptions[0],
+      actions: codeEditorActions,
+    } = codeEditorProps ?? {};
+
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
     const normalizedLanguages = useMemo(() => {
-      return Array.from(new Set(allowedCodeLanguages));
-    }, [allowedCodeLanguages]);
+      return Array.from(new Set(languageOptions));
+    }, [languageOptions]);
 
-    const OPTIONS_LANGUAGES: CodeBlockOption[] = normalizedLanguages.map(
+    const OPTIONS_LANGUAGES: CodeEditorOption[] = normalizedLanguages.map(
       (lang) => ({
         text: RichEditorSupportedLanguageNames[lang],
-        value: RichEditorAllowedCodeLanguagesMonaco[lang],
+        value: RichEditorCodeLanguagesMonaco[lang],
       })
     );
 
     const turndownServiceRef = useRef<TurndownService>(new TurndownService());
     const turndownService = new TurndownService();
 
-    CodeBlock.addFencedCodeRule(turndownService);
+    CodeEditor.addFencedCodeRule(turndownService);
 
     turndownService.addRule("atxHeading", {
       filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
@@ -365,7 +373,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     const handleEditorChange = () => {
-      CodeBlock.serializeAndEmit(editorRef, turndownService, onChange);
+      CodeEditor.serializeAndEmit(editorRef, turndownService, onChange);
     };
 
     useImperativeHandle(ref, () => ({
@@ -410,7 +418,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        CodeBlock.hydrateFencedCodeBlocks(
+        CodeEditor.hydrateFencedCodeEditors(
           editorRef,
           onChange,
           turndownServiceRef,
@@ -546,7 +554,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         handleFilteringCheckbox();
 
-        CodeBlock.hydrateFencedCodeBlocks(
+        CodeEditor.hydrateFencedCodeEditors(
           editorRef,
           onChange,
           turndownServiceRef,
@@ -618,7 +626,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       });
     };
 
-    const insertCodeBlock = () => {
+    const insertCodeEditor = () => {
       if (!editorRef.current) return;
 
       const sel = window.getSelection();
@@ -626,7 +634,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const range = sel.getRangeAt(0);
 
-      const id = CodeBlock.nextBlockId();
+      const id = CodeEditor.nextBlockId();
       const wrapper = document.createElement("div");
       wrapper.dataset.monacoBlockId = id;
       wrapper.contentEditable = "false";
@@ -646,11 +654,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       sel.removeAllRanges();
       sel.addRange(newRange);
 
-      CodeBlock.Editor(
+      CodeEditor.Editor(
         wrapper,
         id,
         "",
-        RichEditorAllowedCodeLanguagesMonaco[language],
+        RichEditorCodeLanguagesMonaco[language],
         editorRef,
         onChange,
         turndownServiceRef,
@@ -675,7 +683,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       editorRef.current.focus();
 
       if (command === "codeBlock") {
-        insertCodeBlock();
+        insertCodeEditor();
         return;
       }
 
@@ -1044,7 +1052,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             if (parent) {
               node.textContent = beforeCaret.slice(0, -2);
 
-              insertCodeBlock();
+              insertCodeEditor();
               handleEditorChange();
               return;
             }
@@ -1317,11 +1325,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
-    const codeEditorId = CodeBlock.nextBlockId();
+    const codeEditorId = CodeEditor.nextBlockId();
 
     if (mode === "code-editor") {
       return (
-        <CodeBlock
+        <CodeEditor
           id={codeEditorId}
           styles={{
             self: css`
@@ -1341,7 +1349,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           toolbarPosition={toolbarPosition}
           actions={codeEditorActions}
           value={value}
-          initialLang={RichEditorAllowedCodeLanguagesMonaco[language]}
+          language={RichEditorCodeLanguagesMonaco[language]}
           options={OPTIONS_LANGUAGES}
           onChange={(code) => onChange(code)}
         />
@@ -1462,7 +1470,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                 onChange(cleanedMarkdown);
               }
 
-              CodeBlock.serializeAndEmit(editorRef, turndownService, onChange);
+              CodeEditor.serializeAndEmit(editorRef, turndownService, onChange);
             }
           }}
           onKeyDown={handleOnKeyDown}
@@ -1571,6 +1579,7 @@ function RichEditorToolbarButton({
       $isOpen={isOpen}
       onClick={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         onClick?.();
       }}
       $isActive={isActive}
@@ -2090,7 +2099,7 @@ const preprocessMarkdown = (markdown: string) => {
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
-RichEditor.SupportedLanguage = RichEditorAllowedCodeLanguages;
+RichEditor.SupportedLanguage = RichEditorCodeLanguages;
 RichEditor.SupportedLanguageName = RichEditorSupportedLanguageNames;
 RichEditor.Base = BaseRichEditor;
 RichEditor.cleanupHtml = cleanupHtml;
