@@ -524,7 +524,6 @@ const i = 0;
 \`\`\`
 
 See, how awesome is that?
-
 \`\`\`tsx
 const fruits = ["apples", "oranges", "banana", "kesemek"]
 fruits.forEach(fruit => {
