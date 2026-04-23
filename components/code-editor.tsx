@@ -118,7 +118,7 @@ function CodeEditor({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const [lang, setLang] = useState<CodeEditorLanguage>(
     language ?? (options[0]?.value as CodeEditorLanguage)
@@ -134,116 +134,120 @@ function CodeEditor({
       if (!containerRef.current) return;
       if (editorRef.current) return;
 
-      const { KeyCode, editor } = await getMonaco();
+      try {
+        const { KeyCode, editor } = await getMonaco();
 
-      if (disposed || !containerRef.current) return;
+        if (disposed || !containerRef.current) return;
 
-      const monacoEditor = editor.create(containerRef.current, {
-        value,
-        language,
-        theme: mode === "dark" ? "vs-dark" : "vs",
-        fontSize: 13,
-        lineHeight: 20,
-        fontFamily:
-          '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
-        fontLigatures: true,
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        wordWrap: "off",
-        renderLineHighlight: "none",
-        cursorBlinking: "smooth",
-        smoothScrolling: true,
-        automaticLayout: true,
-        fixedOverflowWidgets: true,
-        tabSize: 2,
-        lineNumbers: "on",
-        glyphMargin: false,
-        folding: false,
-        readOnly,
-        scrollbar: {
-          verticalScrollbarSize: 4,
-          horizontalScrollbarSize: 4,
-          alwaysConsumeMouseWheel: false,
-        },
-        padding: { top: 10, bottom: 10 },
-        overviewRulerLanes: 0,
-        contextmenu: !readOnly,
-      });
+        const monacoEditor = editor.create(containerRef.current, {
+          value,
+          language,
+          theme: mode === "dark" ? "vs-dark" : "vs",
+          fontSize: 13,
+          lineHeight: 20,
+          fontFamily:
+            '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
+          fontLigatures: true,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          wordWrap: "off",
+          renderLineHighlight: "none",
+          cursorBlinking: "smooth",
+          smoothScrolling: true,
+          automaticLayout: true,
+          fixedOverflowWidgets: true,
+          tabSize: 2,
+          lineNumbers: "on",
+          glyphMargin: false,
+          folding: false,
+          readOnly,
+          scrollbar: {
+            verticalScrollbarSize: 4,
+            horizontalScrollbarSize: 4,
+            alwaysConsumeMouseWheel: false,
+          },
+          padding: { top: 10, bottom: 10 },
+          overviewRulerLanes: 0,
+          contextmenu: !readOnly,
+        });
 
-      editorRef.current = monacoEditor;
+        editorRef.current = monacoEditor;
 
-      if (id) {
-        const record = codeBlockRegistry.get(id);
-        if (record) {
-          record.editor = monacoEditor;
+        if (id) {
+          const record = codeBlockRegistry.get(id);
+          if (record) {
+            record.editor = monacoEditor;
+          }
         }
-      }
 
-      requestAnimationFrame(() => {
-        if (!disposed) {
-          monacoEditor.focus();
-        }
-      });
+        requestAnimationFrame(() => {
+          if (!disposed) {
+            monacoEditor.focus();
+          }
+        });
 
-      const updateHeight = () => {
-        const lineCount = monacoEditor.getModel()?.getLineCount() ?? 1;
-        const lineHeight = 20;
-        const padding = 20;
-        const newHeight = Math.max(60, lineCount * lineHeight + padding);
-        if (containerRef.current) {
-          containerRef.current.style.height = `${newHeight}px`;
-        }
-        monacoEditor.layout();
-      };
+        const updateHeight = () => {
+          const lineCount = monacoEditor.getModel()?.getLineCount() ?? 1;
+          const lineHeight = 20;
+          const padding = 20;
+          const newHeight = Math.max(60, lineCount * lineHeight + padding);
+          if (containerRef.current) {
+            containerRef.current.style.height = `${newHeight}px`;
+          }
+          monacoEditor.layout();
+        };
 
-      updateHeight();
-
-      monacoEditor.onDidChangeModelContent(() => {
         updateHeight();
-        onChange?.(monacoEditor.getValue(), langRef.current);
-      });
 
-      monacoEditor.onKeyDown((e) => {
-        const position = monacoEditor.getPosition();
-        const model = monacoEditor.getModel();
+        monacoEditor.onDidChangeModelContent(() => {
+          updateHeight();
+          onChange?.(monacoEditor.getValue(), langRef.current);
+        });
 
-        if (!position || !model) return;
+        monacoEditor.onKeyDown((e) => {
+          const position = monacoEditor.getPosition();
+          const model = monacoEditor.getModel();
 
-        const lineNumber = position.lineNumber;
-        const column = position.column;
+          if (!position || !model) return;
 
-        const isFirstLine = position.lineNumber === 1;
-        const isLastLine = position.lineNumber === model.getLineCount();
+          const lineNumber = position.lineNumber;
+          const column = position.column;
 
-        const lineMaxColumn = model.getLineMaxColumn(lineNumber);
+          const isFirstLine = position.lineNumber === 1;
+          const isLastLine = position.lineNumber === model.getLineCount();
 
-        const isAtLineStart = column === 1;
-        const isAtLineEnd = column === lineMaxColumn;
+          const lineMaxColumn = model.getLineMaxColumn(lineNumber);
 
-        if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
-          e.preventDefault();
-          CodeEditor.exitToEditor(id, "above");
-          return;
-        }
+          const isAtLineStart = column === 1;
+          const isAtLineEnd = column === lineMaxColumn;
 
-        if (
-          e.keyCode === KeyCode.Backspace &&
-          removeOnEmpty &&
-          monacoEditor.getValue().length === 0
-        ) {
-          e.preventDefault();
-          onRemove?.();
-          return;
-        }
+          if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
+            e.preventDefault();
+            CodeEditor.exitToEditor(id, "above");
+            return;
+          }
 
-        if (e.keyCode === KeyCode.DownArrow && isLastLine && isAtLineEnd) {
-          e.preventDefault();
-          CodeEditor.exitToEditor(id, "below");
-          return;
-        }
-      });
+          if (
+            e.keyCode === KeyCode.Backspace &&
+            removeOnEmpty &&
+            monacoEditor.getValue().length === 0
+          ) {
+            e.preventDefault();
+            onRemove?.();
+            return;
+          }
 
-      setIsLoading(true);
+          if (e.keyCode === KeyCode.DownArrow && isLastLine && isAtLineEnd) {
+            e.preventDefault();
+            CodeEditor.exitToEditor(id, "below");
+            return;
+          }
+        });
+        setIsLoaded(true);
+      } catch (e: any) {
+        if (e?.message === "Canceled") return;
+        throw e;
+      }
     })();
 
     return () => {
@@ -271,44 +275,54 @@ function CodeEditor({
     })();
   }, [mode]);
 
+  useEffect(() => {
+    if (!lang) return;
+    applyLangToMonaco(lang).catch((e) => {
+      if (e?.message !== "Canceled") throw e;
+    });
+  }, [lang, isLoaded]);
+
   const handleLangChange = (newLang: CodeEditorLanguage) => {
     setLang(newLang);
     if (editorRef.current) {
-      applyLangToMonaco(newLang);
+      applyLangToMonaco(newLang).catch((e) => {
+        if (e?.message !== "Canceled") throw e;
+      });
     }
     onChange?.(editorRef.current?.getValue() ?? "", newLang);
   };
 
-  useEffect(() => {
-    if (!lang) return;
-    applyLangToMonaco(lang);
-  }, [lang, isLoading]);
-
   const applyLangToMonaco = async (newLang: CodeEditorLanguage) => {
     if (!editorRef.current) return;
 
-    const { editor, languages, Uri } = await getMonaco();
+    try {
+      const { editor, languages, Uri } = await getMonaco();
+      if (!editorRef.current) return;
 
-    const actualLang = newLang === "tsx" ? "typescript" : newLang;
-    const currentValue = editorRef.current.getValue();
+      const actualLang = newLang === "tsx" ? "typescript" : newLang;
+      const currentValue = editorRef.current.getValue();
 
-    if (newLang === "tsx") {
-      const ts = languages.typescript as any;
+      if (newLang === "tsx") {
+        const ts = languages.typescript as any;
 
-      ts?.typescriptDefaults?.setCompilerOptions({
-        ...ts?.typescriptDefaults?.getCompilerOptions(),
-        jsx: newLang === "tsx" ? ts?.JsxEmit?.React : ts?.JsxEmit?.None,
-        jsxFactory: "React.createElement",
-      });
+        ts?.typescriptDefaults?.setCompilerOptions({
+          ...ts?.typescriptDefaults?.getCompilerOptions(),
+          jsx: newLang === "tsx" ? ts?.JsxEmit?.React : ts?.JsxEmit?.None,
+          jsxFactory: "React.createElement",
+        });
 
-      const ext = newLang;
-      const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
-      const newModel = editor.createModel(currentValue, actualLang, newUri);
-      const oldModel = editorRef.current.getModel();
-      editorRef.current.setModel(newModel);
-      oldModel?.dispose();
-    } else {
-      editor.setModelLanguage(editorRef.current.getModel(), actualLang);
+        const ext = newLang;
+        const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
+        const newModel = editor.createModel(currentValue, actualLang, newUri);
+        const oldModel = editorRef.current.getModel();
+        editorRef.current.setModel(newModel);
+        oldModel?.dispose();
+      } else {
+        editor.setModelLanguage(editorRef.current.getModel(), actualLang);
+      }
+    } catch (e: any) {
+      if (e?.message === "Canceled") return;
+      throw e;
     }
   };
 
@@ -391,7 +405,7 @@ function CodeEditor({
         )
       }
     >
-      {!isLoading && (
+      {!isLoaded && (
         <Placeholder
           $readOnly={readOnly}
           $toolbarPosition={toolbarPosition}
@@ -408,7 +422,7 @@ function CodeEditor({
         }}
         $toolbarPosition={toolbarPosition}
         ref={containerRef}
-        $visible={isLoading}
+        $visible={isLoaded}
         $style={styles?.contentStyle}
       />
     </RichEditor.Base>
