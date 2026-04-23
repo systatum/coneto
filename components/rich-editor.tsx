@@ -367,7 +367,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    marked.use({ gfm: false, breaks: true });
+    marked.use({
+      gfm: false,
+      breaks: true,
+    });
+
+    CodeEditor.addFencedCodeMarkedExtension();
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
