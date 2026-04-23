@@ -518,7 +518,21 @@ export const PageEditor: Story = {
 
 export const MarkdownEditor: Story = {
   render: () => {
-    const [value1, setValue1] = useState("");
+    const valueEditor = `Type triple backticks to add a new code editor
+\`\`\`cpp
+const i = 0;
+\`\`\`
+
+See, how awesome is that?
+
+\`\`\`tsx
+const fruits = ["apples", "oranges", "banana", "kesemek"]
+fruits.forEach(fruit => {
+  console.log(fruit)
+})
+\`\`\`
+`;
+    const [value1, setValue1] = useState(valueEditor);
     const [value2, setValue2] = useState("");
 
     const ref1 = useRef<RichEditorRef>(null);
@@ -550,15 +564,16 @@ export const MarkdownEditor: Story = {
             flexDirection: "column",
           }}
         >
-          <h1>Only one coding language supported</h1>
+          <h1>Multiple coding languages supported</h1>
           <RichEditor
             ref={ref1}
+            height={300}
             codeEditor={{
-              languageOptions: ["cpp"],
+              languageOptions: ["tsx", "py", "rb", "cpp", "html"],
               actions: CODE_EDITOR_ACTIONS,
             }}
             mode="markdown-editor"
-            onChange={(e) => setValue1(e)}
+            onChange={(e) => setValue2(e)}
             value={value1}
           />
         </div>
@@ -570,15 +585,16 @@ export const MarkdownEditor: Story = {
             flexDirection: "column",
           }}
         >
-          <h1>Multiple coding languages supported</h1>
+          <h1>Only one coding language supported</h1>
           <RichEditor
             ref={ref2}
+            height={300}
             codeEditor={{
-              languageOptions: ["tsx", "py", "rb", "cpp", "html"],
+              languageOptions: ["cpp"],
               actions: CODE_EDITOR_ACTIONS,
             }}
             mode="markdown-editor"
-            onChange={(e) => setValue2(e)}
+            onChange={(e) => setValue1(e)}
             value={value2}
           />
         </div>
