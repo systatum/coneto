@@ -237,6 +237,16 @@ function CodeEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Update theme after change mode, to always synchronize.
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    (async () => {
+      const { editor } = await getMonaco();
+      editor.setTheme(mode === "dark" ? "vs-dark" : "vs");
+    })();
+  }, [mode]);
+
   const handleLangChange = (newLang: CodeEditorLanguage) => {
     setLang(newLang);
     if (editorRef.current) {
