@@ -21,7 +21,7 @@
     "strict": false,
     "forceConsistentCasingInFileNames": false
   },
-  "include": ["components", "lib", "constants", "type", "index.ts"],
+  "include": ["components", "lib", "constants", "type", "theme", "index.ts"],
   "exclude": [
     "node_modules",
     "dist",
