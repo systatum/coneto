@@ -368,7 +368,13 @@ function CodeEditor({
       }
     >
       {!isLoaded && (
-        <Placeholder $theme={richEditorTheme}>Loading editor…</Placeholder>
+        <Placeholder
+          $readOnly={readOnly}
+          $toolbarPosition={toolbarPosition}
+          $theme={richEditorTheme}
+        >
+          Loading editor…
+        </Placeholder>
       )}
       <Editor
         $readOnly={readOnly}
@@ -384,7 +390,11 @@ function CodeEditor({
   );
 }
 
-const Placeholder = styled.div<{ $theme: RichEditorThemeConfig }>`
+const Placeholder = styled.div<{
+  $theme: RichEditorThemeConfig;
+  $toolbarPosition?: RichEditorToolbarPosition;
+  $readOnly: boolean;
+}>`
   height: 60px;
   display: flex;
   align-items: center;
@@ -392,6 +402,18 @@ const Placeholder = styled.div<{ $theme: RichEditorThemeConfig }>`
   color: ${({ $theme }) => $theme.placeholderColor};
   font-size: 12px;
   font-family: monospace;
+
+  ${({ $toolbarPosition, $readOnly }) =>
+    !$readOnly &&
+    css`
+      ${$toolbarPosition === "top"
+        ? css`
+            margin-top: 35px;
+          `
+        : css`
+            margin-bottom: 35px;
+          `}
+    `}
 `;
 
 const Editor = styled.div<{
