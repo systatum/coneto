@@ -91,7 +91,7 @@ export type CodeBlockOption = ComboboxSingleOption;
 
 function CodeBlock({
   value = "",
-  initialLang = "typescript",
+  initialLang = "tsx",
   onChange,
   onClosed,
   readOnly = false,
@@ -256,7 +256,7 @@ function CodeBlock({
     const actualLang = newLang === "tsx" ? "typescript" : newLang;
     const currentValue = editorRef.current.getValue();
 
-    if (newLang === "tsx" || newLang === "typescript") {
+    if (newLang === "tsx") {
       const ts = languages.typescript as any;
 
       ts?.typescriptDefaults?.setCompilerOptions({
@@ -265,7 +265,7 @@ function CodeBlock({
         jsxFactory: "React.createElement",
       });
 
-      const ext = newLang === "tsx" ? "tsx" : "ts";
+      const ext = newLang;
       const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
       const newModel = editor.createModel(currentValue, actualLang, newUri);
       const oldModel = editorRef.current.getModel();

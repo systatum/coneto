@@ -47,8 +47,7 @@ export interface RichEditorProps {
 export type RichEditorAction = RichEditorToolbarButtonProps;
 
 export const RichEditorAllowedCodeLanguages = {
-  ReactTypeScript: "tsx",
-  TypeScript: "ts",
+  TypeScript: "tsx",
   JavaScript: "js",
   Python: "py",
   Ruby: "rb",
@@ -71,7 +70,7 @@ export const RichEditorSupportedLanguageNames: Record<
   RichEditorAllowedCodeLanguages,
   string
 > = {
-  ts: "TypeScript",
+  tsx: "TypeScript",
   js: "JavaScript",
   py: "Python",
   rb: "Ruby",
@@ -85,7 +84,6 @@ export const RichEditorSupportedLanguageNames: Record<
   html: "HTML",
   css: "CSS",
   txt: "Text",
-  tsx: "React Typescript",
 };
 
 export const RichEditorAllowedCodeLanguagesMonaco = {
@@ -93,7 +91,6 @@ export const RichEditorAllowedCodeLanguagesMonaco = {
   py: "python",
   rb: "ruby",
   cpp: "cpp",
-  ts: "typescript",
   js: "javascript",
   sql: "sql",
   r: "r",
