@@ -11,7 +11,7 @@ import { generateSentence } from "./../lib/text";
 import { Badge } from "./badge";
 import { Boxbar } from "./boxbar";
 import { Button } from "./button";
-import { RichEditor, RichEditorAction, RichEditorRef } from "./rich-editor";
+import { RichEditor, RichEditorRef, RichEditorCodeAction } from "./rich-editor";
 import { useTheme } from "./../theme/provider";
 import { TipMenuItemProps } from "./tip-menu";
 
@@ -186,6 +186,8 @@ import { Button } from "@systatum/coneto/button"
 function Content(){
   return <Button variant="primary">Your caption</Button>
 }
+
+export default Content
 \`\`\`
 `,
       },
@@ -330,6 +332,8 @@ import { Button } from "@systatum/coneto/button"
 function Content(){
   return <Button variant="primary">Your caption</Button>
 }
+
+export default Content
 \`\`\`
 `,
       },
@@ -520,13 +524,14 @@ export const MarkdownEditor: Story = {
     const ref1 = useRef<RichEditorRef>(null);
     const ref2 = useRef<RichEditorRef>(null);
 
-    const CODE_EDITOR_ACTIONS: RichEditorAction[] = [
+    const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
       {
         icon: {
           image: RiArrowRightSLine,
         },
         children: "Run",
-        onClick: () => console.log("run was clicked"),
+        onClick: ({ content }) =>
+          console.log(`compile the content: ${content}`),
       },
     ];
 
@@ -548,9 +553,11 @@ export const MarkdownEditor: Story = {
           <h1>Only one coding language supported</h1>
           <RichEditor
             ref={ref1}
-            allowedCodeLanguages={["cpp"]}
+            codeEditorProps={{
+              languageOptions: ["cpp"],
+              actions: CODE_EDITOR_ACTIONS,
+            }}
             mode="markdown-editor"
-            codeEditorActions={CODE_EDITOR_ACTIONS}
             onChange={(e) => setValue1(e)}
             value={value1}
           />
@@ -566,8 +573,10 @@ export const MarkdownEditor: Story = {
           <h1>Multiple coding languages supported</h1>
           <RichEditor
             ref={ref2}
-            allowedCodeLanguages={["tsx", "py", "rb", "cpp", "html"]}
-            codeEditorActions={CODE_EDITOR_ACTIONS}
+            codeEditorProps={{
+              languageOptions: ["tsx", "py", "rb", "cpp", "html"],
+              actions: CODE_EDITOR_ACTIONS,
+            }}
             mode="markdown-editor"
             onChange={(e) => setValue2(e)}
             value={value2}
@@ -584,22 +593,22 @@ export const CodeEditor: Story = {
 
     const ref = useRef<RichEditorRef>(null);
 
-    const CODE_EDITOR_ACTIONS: RichEditorAction[] = [
+    const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
       {
         icon: {
           image: RiArrowRightSLine,
         },
         children: "Run",
-        onClick: () => console.log("run was clicked"),
+        onClick: ({ content }) =>
+          console.log(`compile the content: ${content}`),
       },
     ];
 
     return (
       <RichEditor
         ref={ref}
-        codeEditorActions={CODE_EDITOR_ACTIONS}
+        codeEditorProps={{ actions: CODE_EDITOR_ACTIONS, language: "cpp" }}
         mode="code-editor"
-        language="cpp"
         onChange={(e) => setValue(e)}
         value={value}
       />
@@ -635,6 +644,8 @@ import { Button } from "@systatum/coneto/button"
 function Content(){
   return <Button variant="primary">Your caption</Button>
 }
+
+export default Content
 \`\`\`
 `
     );
