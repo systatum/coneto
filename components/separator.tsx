@@ -1,5 +1,8 @@
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { FigureProps } from "./figure";
+import { Button } from "./button";
+import { Tooltip } from "./tooltip";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -14,6 +17,7 @@ export interface SeparatorProps {
   textFloat?: SeparatorTextFloat;
   depth?: string;
   styles?: SeparatorStyles;
+  actions?: SeparatorAction[];
 }
 
 export interface SeparatorStyles {
@@ -27,6 +31,7 @@ function Separator({
   styles,
   textFloat = "left",
   depth = "20px",
+  actions,
 }: SeparatorProps) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme.separator;
@@ -36,7 +41,11 @@ function Separator({
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
     >
-      <Line $style={styles?.lineStyle} $color={separatorTheme.lineColor} $lineShadow={separatorTheme.lineShadow} />
+      <Line
+        $style={styles?.lineStyle}
+        $color={separatorTheme.lineColor}
+        $lineShadow={separatorTheme.lineShadow}
+      />
       <Title
         $style={styles?.titleStyle}
         $textFloat={textFloat}
@@ -46,6 +55,10 @@ function Separator({
       >
         {title}
       </Title>
+
+      {actions?.map((action, index) => (
+        <SeparatorAction key={index} {...action} />
+      ))}
     </SeparatorContainer>
   );
 }
@@ -58,7 +71,11 @@ const SeparatorContainer = styled.div<{ $style?: CSSProp; $color?: string }>`
   ${({ $style }) => $style}
 `;
 
-const Line = styled.span<{ $style?: CSSProp; $color?: string, $lineShadow?: string }>`
+const Line = styled.span<{
+  $style?: CSSProp;
+  $color?: string;
+  $lineShadow?: string;
+}>`
   position: absolute;
   width: 100%;
   height: 2px;
@@ -89,5 +106,79 @@ const Title = styled.span<{
 
   ${({ $style }) => $style}
 `;
+
+export interface SeparatorAction {
+  caption?: string;
+  icon: FigureProps;
+  alwaysShow?: boolean;
+  onClick?: () => void;
+  hidden?: boolean;
+  styles?: SeparatorStyles;
+}
+
+export interface SeparatorStyles {
+  self?: CSSProp;
+}
+
+function SeparatorAction({
+  icon,
+  alwaysShow,
+  caption,
+  hidden,
+  onClick,
+  styles,
+}: SeparatorAction) {
+  const { currentTheme } = useTheme();
+  const separatorTheme = currentTheme?.separator;
+
+  if (hidden) {
+    return;
+  }
+  return (
+    <Tooltip
+      dialog={caption}
+      styles={{
+        containerStyle: css`
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          right: 20px;
+          ${!alwaysShow &&
+          css`
+            opacity: 0;
+            pointer-events: none;
+          `}
+
+          ${SeparatorContainer}:hover & {
+            opacity: 1;
+            pointer-events: auto;
+          }
+        `,
+      }}
+    >
+      <Button
+        variant="outline-default"
+        icon={icon}
+        onClick={() => onClick?.()}
+        styles={{
+          containerStyle: css`
+            border-radius: 9999px;
+          `,
+          self: css`
+            border-radius: 9999px;
+            height: 24px;
+            width: 24px;
+            padding: 2px;
+            background-color: ${separatorTheme?.backgroundTitleColor};
+            &:hover {
+              color: inherit;
+            }
+            ${styles?.self}
+          `,
+        }}
+      />
+    </Tooltip>
+  );
+}
 
 export { Separator };
