@@ -1,5 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Separator } from "./separator";
+import { Separator, SeparatorAction } from "./separator";
+import {
+  RiFileList3Line,
+  RiGitBranchLine,
+  RiUserAddLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof Separator> = {
   title: "Stage/Separator",
@@ -73,5 +78,20 @@ export const RightSide: Story = {
   },
   render: (args) => {
     return <Separator {...args} />;
+  },
+};
+
+export const WithActions: Story = {
+  args: {
+    title: "Antrikan App Redesign",
+  },
+  render: (args) => {
+    const ACTIONS: SeparatorAction[] = [
+      { icon: { image: RiUserAddLine }, caption: "Invite" },
+      { icon: { image: RiGitBranchLine }, caption: "Branch" },
+      { icon: { image: RiFileList3Line }, caption: "Specs" },
+    ];
+
+    return <Separator {...args} actions={ACTIONS} />;
   },
 };
