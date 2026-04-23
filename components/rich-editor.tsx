@@ -1365,6 +1365,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           ...styles,
           toolbarStyle: css`
             padding-left: 8px;
+            z-index: 200;
             padding-right: 8px;
             ${styles?.toolbarStyle}
           `,

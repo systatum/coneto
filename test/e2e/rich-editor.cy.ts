@@ -21,7 +21,7 @@ describe("RichEditor", () => {
         cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
         cy.findByRole("textbox")
           .should("have.css", "min-height", "200px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
       });
     });
 
@@ -37,7 +37,7 @@ describe("RichEditor", () => {
         );
         cy.findByRole("textbox")
           .should("have.css", "min-height", "200px")
-          .and("have.css", "padding-bottom", "8px");
+          .and("have.css", "padding-bottom", "45px");
       });
     });
   });
@@ -134,7 +134,7 @@ describe("RichEditor", () => {
         cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
         cy.findByRole("textbox")
           .should("have.css", "min-height", "200px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
       });
     });
 
@@ -144,15 +144,15 @@ describe("RichEditor", () => {
         cy.viewport(1280, 800);
         cy.visit(getIdContent("input-elements-richeditor--page-editor"));
         cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
-        cy.findByLabelText("wrapper-editor")
+        cy.findByLabelText("rich-editor-wrapper")
           .should("not.have.css", "border", "1px solid #ececec")
           .and("not.have.css", "box-shadow", "0 1px 4px -3px #5b5b5b");
         cy.findByRole("textbox")
           .should("have.css", "min-height", "800px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
         cy.findByRole("textbox")
           .should("have.css", "max-height", "800px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
       });
     });
 
