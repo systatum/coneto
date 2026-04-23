@@ -296,30 +296,12 @@ function CodeEditor({
     if (!editorRef.current) return;
 
     try {
-      const { editor, languages, Uri } = await getMonaco();
+      const { editor } = await getMonaco();
       if (!editorRef.current) return;
 
       const actualLang = newLang === "tsx" ? "typescript" : newLang;
-      const currentValue = editorRef.current.getValue();
 
-      if (newLang === "tsx") {
-        const ts = languages.typescript as any;
-
-        ts?.typescriptDefaults?.setCompilerOptions({
-          ...ts?.typescriptDefaults?.getCompilerOptions(),
-          jsx: newLang === "tsx" ? ts?.JsxEmit?.React : ts?.JsxEmit?.None,
-          jsxFactory: "React.createElement",
-        });
-
-        const ext = newLang;
-        const newUri = Uri.parse(`inmemory://model/${Date.now()}.${ext}`);
-        const newModel = editor.createModel(currentValue, actualLang, newUri);
-        const oldModel = editorRef.current.getModel();
-        editorRef.current.setModel(newModel);
-        oldModel?.dispose();
-      } else {
-        editor.setModelLanguage(editorRef.current.getModel(), actualLang);
-      }
+      editor.setModelLanguage(editorRef.current.getModel(), actualLang);
     } catch (e: any) {
       if (e?.message === "Canceled") return;
       throw e;
