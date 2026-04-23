@@ -143,6 +143,7 @@ export interface RichEditorToolbarButtonProps {
   isOpen?: boolean;
   isActive?: boolean;
   styles?: RichEditorToolbarButtonStyles;
+  ariaLabel?: string;
 }
 
 export interface RichEditorToolbarButtonStyles {
@@ -1372,52 +1373,48 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           mode !== "view-only" && (
             <>
               <RichEditorToolbarButton
+                ariaLabel="rich-editor-toolbar-bold"
                 isActive={formatStates.bold}
-                icon={{
-                  image: RiBold,
-                }}
+                icon={{ image: RiBold }}
                 onClick={() => handleCommand("bold")}
               />
 
               <RichEditorToolbarButton
+                ariaLabel="rich-editor-toolbar-italic"
                 isActive={formatStates.italic}
-                icon={{
-                  image: RiItalic,
-                }}
+                icon={{ image: RiItalic }}
                 onClick={() => handleCommand("italic")}
               />
 
               <RichEditorToolbarButton
-                icon={{
-                  image: RiListOrdered,
-                }}
+                ariaLabel="rich-editor-toolbar-ordered-list"
+                icon={{ image: RiListOrdered }}
                 onClick={() => handleCommand("insertOrderedList")}
               />
 
               <RichEditorToolbarButton
-                icon={{
-                  image: RiListUnordered,
-                }}
+                ariaLabel="rich-editor-toolbar-unordered-list"
+                icon={{ image: RiListUnordered }}
                 onClick={() => handleCommand("insertUnorderedList")}
               />
 
               <RichEditorToolbarButton
-                icon={{
-                  image: RiCheckboxLine,
-                }}
+                ariaLabel="rich-editor-toolbar-checkbox"
+                icon={{ image: RiCheckboxLine }}
                 onClick={() => handleCommand("checkbox")}
               />
+
               {mode === "markdown-editor" && (
                 <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-code-block"
                   icon={{ image: RiCodeSSlashLine }}
                   onClick={() => handleCommand("codeBlock")}
                 />
               )}
 
               <RichEditorToolbarButton
-                icon={{
-                  image: RiHeading,
-                }}
+                ariaLabel="rich-editor-toolbar-heading-menu"
+                icon={{ image: RiHeading }}
                 isOpen={isOpen}
                 onClick={() => {
                   const sel = window.getSelection();
@@ -1567,6 +1564,7 @@ function RichEditorToolbarButton({
   styles,
   isOpen,
   isActive,
+  ariaLabel,
 }: RichEditorToolbarButtonProps) {
   const { currentTheme } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
@@ -1583,7 +1581,7 @@ function RichEditorToolbarButton({
         onClick?.();
       }}
       $isActive={isActive}
-      aria-label="rich-editor-toolbar-button"
+      aria-label={ariaLabel ?? "rich-editor-toolbar-button"}
       aria-pressed={isActive}
     >
       {icon && <Figure {...icon} />}
