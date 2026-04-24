@@ -464,7 +464,7 @@ export const WithBadge: Story = {
         title: "Role",
         type: "combo",
         required: false,
-        comboboxProps: {
+        combobox: {
           options: EMPLOYEE_OPTIONS,
         },
       },

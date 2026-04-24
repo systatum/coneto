@@ -997,7 +997,7 @@ export const CustomRenderer: Story = {
         title: "Role",
         type: "combo",
         required: false,
-        comboboxProps: {
+        combobox: {
           placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
           styles: {
