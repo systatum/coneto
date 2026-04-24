@@ -149,7 +149,7 @@ Extends the default text editor with support for embedded Monaco code blocks. Us
 \`\`\`tsx
 <RichEditor
   mode="markdown-editor"
-  value="# Hello\n\nSome text\n\n\`\`\`tsx\nconsole.log('hello')\n\`\`\`"
+  value="# Hello World."
   onChange={(value) => console.log(value)}
   codeEditor={{
     language: RichEditor.SupportedLanguage.TypeScript,
