@@ -112,6 +112,7 @@ export interface CodeEditorProps {
   actions?: CodeEditorAction[];
   toolbarPosition?: RichEditorToolbarPosition;
   removeOnEmpty?: boolean;
+  autoFocus?: boolean;
 }
 
 interface CodeEditorStyles {
@@ -122,6 +123,7 @@ interface CodeEditorStyles {
 export type CodeEditorOption = ComboboxSingleOption;
 
 function CodeEditor({
+  id,
   value = "",
   language = "tsx",
   onChange,
@@ -132,8 +134,8 @@ function CodeEditor({
   styles,
   actions,
   toolbarPosition = "top",
-  id,
   removeOnEmpty,
+  autoFocus,
 }: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
@@ -210,11 +212,13 @@ function CodeEditor({
           }
         }
 
-        requestAnimationFrame(() => {
-          if (!disposed) {
-            monacoEditor.focus();
-          }
-        });
+        if (autoFocus) {
+          requestAnimationFrame(() => {
+            if (!disposed) {
+              monacoEditor.focus();
+            }
+          });
+        }
 
         const updateHeight = () => {
           const lineCount = monacoEditor.getModel()?.getLineCount() ?? 1;
@@ -527,6 +531,7 @@ function CodeEditorBridge({
   wrapper,
   options,
   actions,
+  autoFocus,
 }: {
   id: string;
   code: string;
@@ -538,6 +543,7 @@ function CodeEditorBridge({
   wrapper: HTMLElement;
   options: CodeEditorOption[];
   actions: CodeEditorAction[];
+  autoFocus: boolean;
 }) {
   const [theme, setTheme] = useState(getThemeSnapshot());
 
@@ -553,6 +559,7 @@ function CodeEditorBridge({
         id={id}
         clearable
         removeOnEmpty
+        autoFocus={autoFocus}
         value={codeBlockRegistry.get(id)?.code ?? code}
         language={language}
         readOnly={isViewOnly}
@@ -587,7 +594,8 @@ function RenderCodeEditor(
   turndownServiceRef: React.MutableRefObject<TurndownService>,
   isViewOnly: boolean,
   options: CodeEditorOption[],
-  actions: CodeEditorAction[]
+  actions: CodeEditorAction[],
+  autoFocus: boolean
 ) {
   codeBlockRegistry.set(id, { wrapper, code, lang: language });
 
@@ -596,6 +604,7 @@ function RenderCodeEditor(
     <CodeEditorBridge
       id={id}
       code={code}
+      autoFocus={autoFocus}
       language={language}
       editorRef={editorRef}
       onChange={onChange}
@@ -659,7 +668,8 @@ function hydrateFencedCodeEditors(
   turndownServiceRef: React.MutableRefObject<TurndownService>,
   isViewOnly: boolean,
   options: CodeEditorOption[],
-  actions: CodeEditorAction[]
+  actions: CodeEditorAction[],
+  autoFocus: boolean
 ) {
   if (!editorRef.current) return;
 
@@ -690,7 +700,8 @@ function hydrateFencedCodeEditors(
       turndownServiceRef,
       isViewOnly,
       options,
-      actions
+      actions,
+      autoFocus
     );
   });
 }

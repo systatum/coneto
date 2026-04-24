@@ -427,7 +427,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           turndownServiceRef,
           mode === "view-only",
           OPTIONS_LANGUAGES,
-          codeEditorActions
+          codeEditorActions,
+          true
         );
 
         handleEditorChange();
@@ -563,7 +564,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           turndownServiceRef,
           mode === "view-only",
           OPTIONS_LANGUAGES,
-          codeEditorActions
+          codeEditorActions,
+          false
         );
       };
 
@@ -667,7 +669,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         turndownServiceRef,
         false,
         OPTIONS_LANGUAGES,
-        codeEditorActions
+        codeEditorActions,
+        true
       );
 
       handleEditorChange();
