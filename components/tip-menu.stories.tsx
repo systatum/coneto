@@ -413,6 +413,7 @@ export const NestedSubmenu: Story = {
         caption: "Edit Draft",
         icon: { image: RiEditLine },
         variant: "default",
+        disabled: true,
         subMenuList: [
           {
             caption: "Open in Editor",
