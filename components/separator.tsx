@@ -38,10 +38,12 @@ function Separator({
 
   return (
     <SeparatorContainer
+      aria-label="separator-container"
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
     >
       <Line
+        aria-label="separator-line"
         $style={styles?.lineStyle}
         $color={separatorTheme.lineColor}
         $lineShadow={separatorTheme.lineShadow}
@@ -204,6 +206,7 @@ function SeparatorAction({
       <Button
         variant="outline-default"
         icon={icon}
+        aria-label="separator-action"
         onClick={() => onClick?.()}
         styles={{
           containerStyle: css`
