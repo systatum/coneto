@@ -253,7 +253,7 @@ export const Default: Story = {
 
 export const NestedSubmenu: Story = {
   render: () => {
-    const TIP_MENU_LIST: TipMenuItemProps[] = [
+    const NESTED_TIP_MENU_ITEMS: TipMenuItemProps[] = [
       {
         caption: "Report Message",
         icon: { image: RiSpam2Line },
@@ -435,6 +435,6 @@ export const NestedSubmenu: Story = {
       },
     ];
 
-    return <TipMenu subMenuList={TIP_MENU_LIST} />;
+    return <TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />;
   },
 };
