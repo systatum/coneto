@@ -111,13 +111,17 @@ function TipMenu({
           styles={menu.styles}
           subMenuList={menu.subMenuList}
           hidden={menu.hidden}
+          disabled={menu.disabled}
           onClick={(e) => {
             e.stopPropagation();
 
             if (menu.onClick) {
               menu.onClick();
             }
-            setIsOpen?.();
+
+            if (!menu?.disabled) {
+              setIsOpen?.();
+            }
           }}
         />
       ))}
@@ -135,6 +139,7 @@ export interface TipMenuItemProps {
   hidden?: boolean;
   subMenuList?: TipMenuItemProps[];
   styles?: TipMenuItemStyles;
+  disabled?: boolean;
 }
 export interface TipMenuItemStyles {
   containerStyle?: CSSProp;
@@ -150,6 +155,7 @@ function TipMenuItem({
   hidden,
   subMenuList,
   styles,
+  disabled,
 }: TipMenuItemProps) {
   const { currentTheme } = useTheme();
   const tipMenuTheme = currentTheme.tipmenu;
@@ -164,8 +170,12 @@ function TipMenuItem({
       $variant={variant}
       $size={size}
       aria-label="tip-menu-item"
-      onMouseDown={onClick}
+      onMouseDown={(e) => {
+        if (disabled) return;
+        onClick?.(e);
+      }}
       $theme={tipMenuTheme}
+      $disabled={disabled}
       $style={styles?.containerStyle}
     >
       <TipMenuItemContent $size={size} $style={styles?.self}>
@@ -192,6 +202,10 @@ function TipMenuItem({
           `,
           drawerStyle: (placement) => css`
             padding: 0px;
+            ${disabled &&
+            css`
+              display: none;
+            `}
             ${placement?.startsWith("right")
               ? css`
                   right: 9px;
@@ -226,6 +240,7 @@ const TipMenuItemWrapper = styled.div<{
   $theme: Record<TipMenuVariant, TipMenuThemeConfig>;
   $size?: TipMenuSize;
   $style?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   align-items: center;
@@ -248,23 +263,32 @@ const TipMenuItemWrapper = styled.div<{
           padding: 8px;
         `};
 
-  &:hover {
-    background-color: ${({ $theme, $variant }) =>
-      $theme[$variant]?.hoverBackgroundColor};
-  }
+  ${({ $disabled, $theme, $variant }) =>
+    !$disabled &&
+    css`
+      &:hover {
+        background-color: ${$theme[$variant]?.hoverBackgroundColor};
+      }
 
-  &:active {
-    background-color: ${({ $theme, $variant }) =>
-      $theme[$variant]?.activeBackgroundColor};
+      &:active {
+        background-color: ${$theme[$variant]?.activeBackgroundColor};
 
-    box-shadow: inset 0 0.5px 4px rgba(0, 0, 0, 0.2);
-  }
+        box-shadow: inset 0 0.5px 4px rgba(0, 0, 0, 0.2);
+      }
 
-  &:focus-visible {
-    outline: none;
-    box-shadow: inset 0 0 0 2px
-      ${({ $theme, $variant }) => $theme[$variant]?.focusBackgroundColor};
-  }
+      &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px ${$theme[$variant]?.focusBackgroundColor};
+      }
+    `}
+
+  ${({ $disabled, $theme, $variant }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      filter: grayscale(80%) brightness(1.1) contrast(1);
+      color: ${$theme?.[$variant]?.disabledTextColor};
+    `}
 
   ${({ $style }) => $style}
 `;
@@ -275,8 +299,6 @@ const TipMenuItemContent = styled.div<{
 }>`
   display: flex;
   align-items: center;
-  cursor: pointer;
-  border-radius: 4px;
   width: 100%;
 
   ${({ $size }) =>
