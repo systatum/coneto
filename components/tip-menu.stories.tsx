@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TipMenu } from "./tip-menu";
+import { TipMenu, TipMenuItemProps } from "./tip-menu";
 import { useState } from "react";
 import {
   RiSpam2Line,
@@ -12,6 +12,20 @@ import {
   RiShareLine,
   RiEditLine,
   RiDeleteBinLine,
+  RiSaveLine,
+  RiEyeLine,
+  RiDriveLine,
+  RiAttachmentLine,
+  RiShareForwardLine,
+  RiFlagLine,
+  RiStarLine,
+  RiMailUnreadLine,
+  RiFolderLine,
+  RiArchiveLine,
+  RiMailCloseLine,
+  RiShieldCrossLine,
+  RiAlertLine,
+  RiMailForbidLine,
 } from "@remixicon/react";
 import { ModalDialog, ModalDialogButton } from "./modal-dialog";
 
@@ -234,5 +248,192 @@ export const Default: Story = {
         </ModalDialog>
       </>
     );
+  },
+};
+
+export const NestedSubmenu: Story = {
+  render: () => {
+    const TIP_MENU_LIST: TipMenuItemProps[] = [
+      {
+        caption: "Report Message",
+        icon: { image: RiSpam2Line },
+        variant: "primary",
+        subMenuList: [
+          {
+            caption: "Report Phishing Attempt",
+            icon: { image: RiSpam2Line },
+            variant: "primary",
+            onClick: () => console.log("Phishing reported"),
+          },
+          {
+            caption: "Report as Junk",
+            icon: { image: RiForbid2Line },
+            onClick: () => console.log("Junk reported"),
+          },
+          {
+            caption: "Report Suspicious Content",
+            icon: { image: RiMailForbidLine },
+            variant: "default",
+            onClick: () => console.log("Spam reported"),
+          },
+          {
+            caption: "Report Online Scam",
+            icon: { image: RiAlertLine },
+            onClick: () => console.log("Scam reported"),
+          },
+        ],
+      },
+      {
+        caption: "Block Contact",
+        icon: { image: RiShieldLine },
+        subMenuList: [
+          {
+            caption: "Block This Sender",
+            icon: { image: RiShieldLine },
+            variant: "danger",
+            onClick: () => console.log("Sender blocked"),
+          },
+          {
+            caption: "Block Entire Domain",
+            icon: { image: RiShieldCrossLine },
+            onClick: () => console.log("Domain blocked"),
+          },
+          {
+            caption: "Unsubscribe from Mailing List",
+            icon: { image: RiMailCloseLine },
+            variant: "default",
+            onClick: () => console.log("Unsubscribed"),
+          },
+        ],
+      },
+      {
+        caption: "Move Message",
+        icon: { image: RiInboxArchiveLine },
+        variant: "success",
+        subMenuList: [
+          {
+            caption: "Move to Spam Folder",
+            icon: { image: RiInboxArchiveLine },
+            onClick: () => console.log("Moved to spam"),
+          },
+          {
+            caption: "Move to Trash",
+            icon: { image: RiDeleteBinLine },
+            variant: "danger",
+            onClick: () => console.log("Moved to trash"),
+          },
+          {
+            caption: "Move to Specific Folder",
+            icon: { image: RiFolderLine },
+            onClick: () => console.log("Moved to folder"),
+          },
+          {
+            caption: "Archive This Message",
+            icon: { image: RiArchiveLine },
+            variant: "primary",
+            onClick: () => console.log("Archived"),
+          },
+        ],
+      },
+      {
+        caption: "Mark Status",
+        icon: { image: RiCheckLine },
+        subMenuList: [
+          {
+            caption: "Mark as Read",
+            icon: { image: RiCheckLine },
+            variant: "primary",
+            onClick: () => console.log("Marked as read"),
+          },
+          {
+            caption: "Mark as Unread",
+            icon: { image: RiMailUnreadLine },
+            onClick: () => console.log("Marked as unread"),
+          },
+          {
+            caption: "Mark as Important",
+            icon: { image: RiStarLine },
+            variant: "default",
+            onClick: () => console.log("Marked as important"),
+          },
+          {
+            caption: "Flag for Follow Up",
+            icon: { image: RiFlagLine },
+            onClick: () => console.log("Flagged"),
+          },
+        ],
+      },
+      {
+        caption: "Share Message",
+        icon: { image: RiShareLine },
+        variant: "danger",
+        subMenuList: [
+          {
+            caption: "Forward to Someone",
+            icon: { image: RiShareForwardLine },
+            onClick: () => console.log("Forwarded"),
+          },
+          {
+            caption: "Copy Shareable Link",
+            icon: { image: RiLink },
+            variant: "default",
+            onClick: () => console.log("Link copied"),
+          },
+          {
+            caption: "Share via Other Apps",
+            icon: { image: RiShareLine },
+            onClick: () => console.log("Shared"),
+          },
+        ],
+      },
+      {
+        caption: "Manage Attachments",
+        icon: { image: RiAttachmentLine },
+        subMenuList: [
+          {
+            caption: "Download All Attachments",
+            icon: { image: RiDownloadLine },
+            variant: "success",
+            onClick: () => console.log("Downloading all"),
+          },
+          {
+            caption: "Save to Google Drive",
+            icon: { image: RiDriveLine },
+            onClick: () => console.log("Saved to drive"),
+          },
+          {
+            caption: "Preview Attachment Files",
+            icon: { image: RiEyeLine },
+            variant: "default",
+            onClick: () => console.log("Previewing"),
+          },
+        ],
+      },
+      {
+        caption: "Edit Draft",
+        icon: { image: RiEditLine },
+        variant: "default",
+        subMenuList: [
+          {
+            caption: "Open in Editor",
+            icon: { image: RiEditLine },
+            onClick: () => console.log("Edit mode"),
+          },
+          {
+            caption: "Save as Draft",
+            icon: { image: RiSaveLine },
+            variant: "primary",
+            onClick: () => console.log("Saved as draft"),
+          },
+          {
+            caption: "Discard This Draft",
+            icon: { image: RiDeleteBinLine },
+            onClick: () => console.log("Discarded"),
+          },
+        ],
+      },
+    ];
+
+    return <TipMenu subMenuList={TIP_MENU_LIST} />;
   },
 };
