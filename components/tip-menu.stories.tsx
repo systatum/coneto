@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TipMenu } from "./tip-menu";
+import { TipMenu, TipMenuSubMenuList } from "./tip-menu";
 import { useState } from "react";
 import {
   RiSpam2Line,
@@ -12,6 +12,16 @@ import {
   RiShareLine,
   RiEditLine,
   RiDeleteBinLine,
+  RiSaveLine,
+  RiFlagLine,
+  RiStarLine,
+  RiMailUnreadLine,
+  RiFolderLine,
+  RiArchiveLine,
+  RiSendPlaneLine,
+  RiComputerLine,
+  RiCloudLine,
+  RiSmartphoneLine,
 } from "@remixicon/react";
 import { ModalDialog, ModalDialogButton } from "./modal-dialog";
 
@@ -176,7 +186,6 @@ export const Default: Story = {
               caption: "Download Attachment",
               icon: {
                 image: RiDownloadLine,
-                color: "teal",
               },
               variant: "success",
 
@@ -203,13 +212,13 @@ export const Default: Story = {
               caption: "Edit",
               icon: {
                 image: RiEditLine,
-                color: "yellow",
+                color: "orange",
               },
               onClick: () => console.log("Edit mode"),
             },
             {
               caption: "Delete",
-              icon: { image: RiDeleteBinLine, color: "red" },
+              icon: { image: RiDeleteBinLine },
               variant: "danger",
               onClick: () => setIsOpen(!isOpen),
             },
@@ -234,5 +243,139 @@ export const Default: Story = {
         </ModalDialog>
       </>
     );
+  },
+};
+
+export const NestedSubmenu: Story = {
+  render: () => {
+    const NESTED_TIP_MENU_ITEMS: TipMenuSubMenuList[] = [
+      {
+        caption: "Report Message",
+        icon: { image: RiSpam2Line },
+      },
+      {
+        caption: "Move Message",
+        icon: { image: RiInboxArchiveLine },
+        subMenuList: [
+          {
+            caption: "Move to Spam Folder",
+            icon: { image: RiInboxArchiveLine },
+            onClick: () => console.log("Moved to spam"),
+          },
+          {
+            caption: "Move to Trash",
+            icon: { image: RiDeleteBinLine },
+            onClick: () => console.log("Moved to trash"),
+          },
+          {
+            caption: "Move to Specific Folder",
+            icon: { image: RiFolderLine },
+            onClick: () => console.log("Moved to folder"),
+          },
+          {
+            caption: "Archive This Message",
+            icon: { image: RiArchiveLine },
+            onClick: () => console.log("Archived"),
+          },
+        ],
+      },
+      {
+        caption: "Mark Status",
+        icon: { image: RiCheckLine },
+        subMenuList: [
+          {
+            caption: "Mark as Read",
+            icon: { image: RiCheckLine },
+            onClick: () => console.log("Marked as read"),
+          },
+          {
+            caption: "Mark as Unread",
+            icon: { image: RiMailUnreadLine },
+            onClick: () => console.log("Marked as unread"),
+          },
+          {
+            caption: "Mark as Important",
+            icon: { image: RiStarLine },
+            onClick: () => console.log("Marked as important"),
+          },
+          {
+            caption: "Flag for Follow Up",
+            icon: { image: RiFlagLine },
+            onClick: () => console.log("Flagged"),
+          },
+        ],
+      },
+      {
+        caption: "Edit Draft",
+        icon: { image: RiEditLine },
+        disabled: true,
+        subMenuList: [
+          {
+            caption: "Open in Editor",
+            icon: { image: RiEditLine },
+            onClick: () => console.log("Edit mode"),
+          },
+          {
+            caption: "Save as Draft",
+            icon: { image: RiSaveLine },
+            onClick: () => console.log("Saved as draft"),
+          },
+          {
+            caption: "Discard This Draft",
+            icon: { image: RiDeleteBinLine },
+            onClick: () => console.log("Discarded"),
+          },
+        ],
+      },
+      {
+        caption: "Send to",
+        icon: { image: RiSendPlaneLine },
+        subMenuList: [
+          {
+            caption: "My computer",
+            icon: { image: RiComputerLine },
+            subMenuList: [
+              {
+                caption: "C:/My Documents",
+                icon: { image: RiFolderLine },
+                onClick: () => console.log("Open My Documents"),
+              },
+              {
+                caption: "C:/My Pictures",
+                icon: { image: RiFolderLine },
+                onClick: () => console.log("Open My Pictures"),
+              },
+            ],
+          },
+          {
+            caption: "Cloud storage",
+            icon: { image: RiCloudLine },
+            onClick: () => console.log("Open Cloud Storage"),
+          },
+          {
+            caption: "Smart Phone",
+            icon: { image: RiSmartphoneLine },
+            subMenuList: [
+              {
+                caption: "Blackberry Bold",
+                icon: { image: RiSmartphoneLine },
+                onClick: () => console.log("Blackberry Bold selected"),
+              },
+              {
+                caption: "Nokia N95",
+                onClick: () => console.log("Nokia N95 selected"),
+              },
+              {
+                caption: "Palm Pre 3",
+                icon: { image: RiSmartphoneLine },
+                onClick: () => console.log("Palm Pre 3 selected"),
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    return <TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />;
   },
 };

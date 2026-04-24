@@ -443,12 +443,12 @@ function ButtonTipMenuContainer({
 
   return (
     <TipMenuContainer
+      aria-label="button-tip-menu-container"
       {...props}
       $theme={buttonTipMenuContainer}
       onClick={(e) => {
         if (props.onClick) props.onClick?.(e);
       }}
-      aria-label="button-tip-menu-container"
       $style={styles?.self}
     >
       {children}

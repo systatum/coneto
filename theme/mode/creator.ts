@@ -1538,7 +1538,7 @@ export function createTimelineTheme(
 // tipmenu.tsx
 export function createTipMenuTheme(
   buttonTheme?: Record<Partial<ButtonVariants["variant"]>, ButtonThemeConfig>,
-  customTheme: Partial<TipMenuThemeConfig> = {}
+  customTheme: Partial<Record<TipMenuVariant, Partial<TipMenuThemeConfig>>> = {}
 ): Record<TipMenuVariant, TipMenuThemeConfig> {
   const defaultTheme: Record<TipMenuVariant, TipMenuThemeConfig> = {
     default: {
@@ -1547,6 +1547,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.ghost?.textColor,
       activeBackgroundColor: buttonTheme?.ghost?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.ghost?.hoverBackgroundColor,
+      ...customTheme?.default,
     },
     danger: {
       focusBackgroundColor: buttonTheme?.danger?.focusBackgroundColor,
@@ -1554,6 +1555,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.danger?.textColor,
       activeBackgroundColor: buttonTheme?.danger?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.danger?.hoverBackgroundColor,
+      ...customTheme?.danger,
     },
     success: {
       focusBackgroundColor: buttonTheme?.success?.focusBackgroundColor,
@@ -1561,6 +1563,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.success?.textColor,
       activeBackgroundColor: buttonTheme?.success?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.success?.hoverBackgroundColor,
+      ...customTheme?.success,
     },
     primary: {
       focusBackgroundColor: buttonTheme?.primary?.focusBackgroundColor,
@@ -1568,12 +1571,12 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.primary?.textColor,
       activeBackgroundColor: buttonTheme?.primary?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.primary?.hoverBackgroundColor,
+      ...customTheme?.primary,
     },
   };
 
   return {
     ...defaultTheme,
-    ...customTheme,
   };
 }
 

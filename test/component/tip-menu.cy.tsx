@@ -1,9 +1,29 @@
 import { TipMenu, TipMenuItemProps } from "../../components/tip-menu";
 import {
+  RiSpam2Line,
   RiForbid2Line,
   RiShieldLine,
   RiCheckLine,
+  RiInboxArchiveLine,
   RiDownloadLine,
+  RiLink,
+  RiShareLine,
+  RiEditLine,
+  RiDeleteBinLine,
+  RiSaveLine,
+  RiEyeLine,
+  RiDriveLine,
+  RiAttachmentLine,
+  RiShareForwardLine,
+  RiFlagLine,
+  RiStarLine,
+  RiMailUnreadLine,
+  RiFolderLine,
+  RiArchiveLine,
+  RiMailCloseLine,
+  RiShieldCrossLine,
+  RiAlertLine,
+  RiMailForbidLine,
 } from "@remixicon/react";
 
 describe("TipMenu", () => {
@@ -52,6 +72,233 @@ describe("TipMenu", () => {
       onClick: () => console.log("Mark as read clicked"),
     },
   ];
+
+  const NESTED_TIP_MENU_ITEMS: TipMenuItemProps[] = [
+    {
+      caption: "Report Message",
+      icon: { image: RiSpam2Line },
+      variant: "primary",
+      subMenuList: [
+        {
+          caption: "Report Phishing Attempt",
+          icon: { image: RiSpam2Line },
+          variant: "primary",
+          onClick: () => console.log("Phishing reported"),
+        },
+        {
+          caption: "Report as Junk",
+          icon: { image: RiForbid2Line },
+          onClick: () => console.log("Junk reported"),
+        },
+        {
+          caption: "Report Suspicious Content",
+          icon: { image: RiMailForbidLine },
+          variant: "default",
+          onClick: () => console.log("Spam reported"),
+        },
+        {
+          caption: "Report Online Scam",
+          icon: { image: RiAlertLine },
+          onClick: () => console.log("Scam reported"),
+        },
+      ],
+    },
+    {
+      caption: "Block Contact",
+      icon: { image: RiShieldLine },
+    },
+    {
+      caption: "Move Message",
+      icon: { image: RiInboxArchiveLine },
+      variant: "success",
+      subMenuList: [
+        {
+          caption: "Move to Spam Folder",
+          icon: { image: RiInboxArchiveLine },
+          onClick: () => console.log("Moved to spam"),
+        },
+        {
+          caption: "Move to Trash",
+          icon: { image: RiDeleteBinLine },
+          variant: "danger",
+          onClick: () => console.log("Moved to trash"),
+        },
+        {
+          caption: "Move to Specific Folder",
+          icon: { image: RiFolderLine },
+          onClick: () => console.log("Moved to folder"),
+        },
+        {
+          caption: "Archive This Message",
+          icon: { image: RiArchiveLine },
+          variant: "primary",
+          onClick: () => console.log("Archived"),
+        },
+      ],
+    },
+    {
+      caption: "Mark Status",
+      icon: { image: RiCheckLine },
+      subMenuList: [
+        {
+          caption: "Mark as Read",
+          icon: { image: RiCheckLine },
+          variant: "primary",
+          onClick: () => console.log("Marked as read"),
+        },
+        {
+          caption: "Mark as Unread",
+          icon: { image: RiMailUnreadLine },
+          onClick: () => console.log("Marked as unread"),
+        },
+        {
+          caption: "Mark as Important",
+          icon: { image: RiStarLine },
+          variant: "default",
+          onClick: () => console.log("Marked as important"),
+        },
+        {
+          caption: "Flag for Follow Up",
+          icon: { image: RiFlagLine },
+          onClick: () => console.log("Flagged"),
+        },
+      ],
+    },
+    {
+      caption: "Share Message",
+      icon: { image: RiShareLine },
+      variant: "danger",
+      subMenuList: [
+        {
+          caption: "Forward to Someone",
+          icon: { image: RiShareForwardLine },
+          onClick: () => console.log("Forwarded"),
+        },
+        {
+          caption: "Copy Shareable Link",
+          icon: { image: RiLink },
+          variant: "default",
+          onClick: () => console.log("Link copied"),
+        },
+        {
+          caption: "Share via Other Apps",
+          icon: { image: RiShareLine },
+          onClick: () => console.log("Shared"),
+        },
+      ],
+    },
+    {
+      caption: "Manage Attachments",
+      icon: { image: RiAttachmentLine },
+      subMenuList: [
+        {
+          caption: "Download All Attachments",
+          icon: { image: RiDownloadLine },
+          variant: "success",
+          onClick: () => console.log("Downloading all"),
+        },
+        {
+          caption: "Save to Google Drive",
+          icon: { image: RiDriveLine },
+          onClick: () => console.log("Saved to drive"),
+        },
+        {
+          caption: "Preview Attachment Files",
+          icon: { image: RiEyeLine },
+          variant: "default",
+          onClick: () => console.log("Previewing"),
+        },
+      ],
+    },
+    {
+      caption: "Edit Draft",
+      icon: { image: RiEditLine },
+      variant: "default",
+      disabled: true,
+      subMenuList: [
+        {
+          caption: "Open in Editor",
+          icon: { image: RiEditLine },
+          onClick: () => console.log("Edit mode"),
+        },
+        {
+          caption: "Save as Draft",
+          icon: { image: RiSaveLine },
+          variant: "primary",
+          onClick: () => console.log("Saved as draft"),
+        },
+        {
+          caption: "Discard This Draft",
+          icon: { image: RiDeleteBinLine },
+          onClick: () => console.log("Discarded"),
+        },
+      ],
+    },
+  ];
+
+  context("nested", () => {
+    it("should be render with arrow right", () => {
+      cy.mount(<TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />);
+      cy.findAllByLabelText("tip-menu-item")
+        .eq(0)
+        .then(($element) => {
+          cy.wrap($element)
+            .findByLabelText("tip-menu-item-arrow")
+            .should("exist");
+        });
+      cy.findAllByLabelText("tip-menu-item")
+        .eq(1)
+        .then(($element) => {
+          cy.wrap($element)
+            .findByLabelText("tip-menu-item-arrow")
+            .should("not.exist");
+        });
+    });
+
+    context("when hovering", () => {
+      it("should shows the items", () => {
+        cy.mount(<TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />);
+        NESTED_TIP_MENU_ITEMS[0]?.subMenuList?.map((menu) => {
+          cy.findByText(menu.caption).should("not.exist");
+        });
+
+        cy.findAllByLabelText("tip-menu-item").eq(0).realHover().wait(300);
+        NESTED_TIP_MENU_ITEMS[0]?.subMenuList?.map((menu) => {
+          cy.findByText(menu.caption).should("exist");
+        });
+      });
+    });
+    context("when disabled", () => {
+      context("when hovering", () => {
+        it("should not shows the items", () => {
+          cy.mount(<TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />);
+          NESTED_TIP_MENU_ITEMS[6]?.subMenuList?.map((menu) => {
+            cy.findByText(menu.caption).should("not.exist");
+          });
+
+          cy.findAllByLabelText("tip-menu-item").eq(6).realHover().wait(300);
+
+          NESTED_TIP_MENU_ITEMS[6]?.subMenuList?.map((menu) => {
+            cy.findByText(menu.caption).should("not.exist");
+          });
+        });
+      });
+    });
+  });
+
+  context("disabled", () => {
+    it("renders with grayscale and opacity 0.6", () => {
+      cy.mount(<TipMenu subMenuList={NESTED_TIP_MENU_ITEMS} />);
+      cy.findAllByLabelText("tip-menu-item")
+        .eq(6)
+        .should("have.css", "opacity", "0.6")
+        .and(
+          "have.css",
+          "filter",
+          "grayscale(0.8) brightness(1.1) contrast(1)"
+        );
+    });
+  });
 
   context("when given hidden action", () => {
     it("should render without hidden action", () => {
@@ -115,7 +362,7 @@ describe("TipMenu", () => {
         cy.findAllByLabelText("tip-menu-item")
           .eq(index)
           .realHover()
-          .wait(200)
+          .wait(400)
           .should("have.css", "background-color", theme.background)
           .and("have.css", "color", theme.color);
       });

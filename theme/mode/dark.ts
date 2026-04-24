@@ -696,7 +696,12 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-const darkTipMenu = createTipMenuTheme(darkButton);
+const darkTipMenu = createTipMenuTheme(darkButton, {
+  default: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  primary: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  danger: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  success: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+});
 
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",
