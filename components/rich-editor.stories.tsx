@@ -98,11 +98,10 @@ A standalone Monaco-based code editor. Useful when you want a pure code editing 
   value="const hello = 'world';"
   onChange={(value) => console.log(value)}
   codeEditor={{
-    language: RichEditor.SupportedLanguage.TypeScript,
+    language: RichEditor.CodeLanguage.TypeScript,
     languageOptions: [
-      RichEditor.SupportedLanguage.TypeScript,
-      RichEditor.SupportedLanguage.JavaScript,
-      RichEditor.SupportedLanguage.Python,
+      RichEditor.CodeLanguage.TypeScript,
+      RichEditor.CodeLanguage.Python,
     ],
   }}
 />
@@ -118,7 +117,6 @@ A standalone Monaco-based code editor. Useful when you want a pure code editing 
 | Key | Value | Display Name |
 |-----|-------|--------------|
 | \`TypeScript\` | \`tsx\` | TypeScript |
-| \`JavaScript\` | \`js\` | JavaScript |
 | \`Python\` | \`py\` | Python |
 | \`Ruby\` | \`rb\` | Ruby |
 | \`CPP\` | \`cpp\` | C++ |
@@ -152,10 +150,10 @@ Extends the default text editor with support for embedded Monaco code blocks. Us
   value="# Hello World."
   onChange={(value) => console.log(value)}
   codeEditor={{
-    language: RichEditor.SupportedLanguage.TypeScript,
+    language: RichEditor.CodeLanguage.TypeScript,
     languageOptions: [
-      RichEditor.SupportedLanguage.TypeScript,
-      RichEditor.SupportedLanguage.Python,
+      RichEditor.CodeLanguage.TypeScript,
+      RichEditor.CodeLanguage.Python,
     ],
   }}
 />
