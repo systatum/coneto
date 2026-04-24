@@ -1,11 +1,13 @@
 import styled, { css, CSSProp } from "styled-components";
 import { COLOR_STYLE_MAP } from "../constants/color-map";
-import React, { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useRef, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
+import { Tooltip, TooltipRef } from "./tooltip";
+import { RiArrowRightSFill } from "@remixicon/react";
 
 export const TipMenuVariant = {
   Default: "default",
@@ -64,7 +66,9 @@ function TipMenu({
   return (
     <Button.TipMenuContainer
       aria-label="tip-menu"
-      styles={{ self: styles?.self }}
+      styles={{
+        self: styles?.self,
+      }}
     >
       {withFilter && (
         <Searchbox
@@ -104,7 +108,8 @@ function TipMenu({
           caption={menu.caption}
           icon={menu.icon}
           size={menu.size ?? size}
-          className={menu.className}
+          styles={menu.styles}
+          subMenuList={menu.subMenuList}
           hidden={menu.hidden}
           onClick={(e) => {
             e.stopPropagation();
@@ -127,8 +132,13 @@ export interface TipMenuItemProps {
   onClick?: (e?: React.MouseEvent) => void;
   variant?: TipMenuVariant;
   size?: TipMenuSize;
-  className?: string;
   hidden?: boolean;
+  subMenuList?: TipMenuItemProps[];
+  styles?: TipMenuItemStyles;
+}
+export interface TipMenuItemStyles {
+  containerStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 function TipMenuItem({
@@ -137,35 +147,85 @@ function TipMenuItem({
   onClick,
   variant,
   size,
-  className,
   hidden,
+  subMenuList,
+  styles,
 }: TipMenuItemProps) {
   const { currentTheme } = useTheme();
   const tipMenuTheme = currentTheme.tipmenu;
+  const tooltipRef = useRef<TooltipRef>(null);
 
   if (hidden) {
     return;
   }
 
-  return (
-    <StyledTipMenuItem
+  const tipMenuElement = (
+    <TipMenuItemWrapper
       $variant={variant}
       $size={size}
       aria-label="tip-menu-item"
       onMouseDown={onClick}
       $theme={tipMenuTheme}
-      className={className}
+      $style={styles?.containerStyle}
     >
-      {icon && <Figure {...icon} aria-label="tip-menu-icon" />}
-      <StyledCaption>{caption}</StyledCaption>
-    </StyledTipMenuItem>
+      <TipMenuItemContent $size={size} $style={styles?.self}>
+        {icon && <Figure {...icon} aria-label="tip-menu-icon" />}
+        <StyledCaption>{caption}</StyledCaption>
+      </TipMenuItemContent>
+
+      {subMenuList && <Figure image={RiArrowRightSFill} />}
+    </TipMenuItemWrapper>
   );
+
+  if (subMenuList && subMenuList?.length > 0) {
+    return (
+      <Tooltip
+        ref={tooltipRef}
+        dialogPlacement="right-center"
+        safeAreaAriaLabels={["tip-menu"]}
+        styles={{
+          containerStyle: css`
+            width: 100%;
+          `,
+          triggerStyle: css`
+            width: 100%;
+          `,
+          drawerStyle: (placement) => css`
+            padding: 0px;
+            ${placement?.startsWith("right")
+              ? css`
+                  right: 9px;
+                `
+              : css`
+                  left: 9px;
+                `}
+          `,
+          arrowStyle: css`
+            display: none;
+          `,
+        }}
+        dialog={
+          <TipMenu
+            subMenuList={subMenuList}
+            variant={variant}
+            size={size}
+            setIsOpen={() => tooltipRef.current?.close()}
+          />
+        }
+      >
+        {tipMenuElement}
+      </Tooltip>
+    );
+  }
+
+  return tipMenuElement;
 }
 
-const StyledTipMenuItem = styled.div<{
+const TipMenuItemWrapper = styled.div<{
   $variant?: TipMenuVariant;
   $theme: Record<TipMenuVariant, TipMenuThemeConfig>;
   $size?: TipMenuSize;
+  $style?: CSSProp;
 }>`
   display: flex;
   align-items: center;
@@ -205,6 +265,30 @@ const StyledTipMenuItem = styled.div<{
     box-shadow: inset 0 0 0 2px
       ${({ $theme, $variant }) => $theme[$variant]?.focusBackgroundColor};
   }
+
+  ${({ $style }) => $style}
+`;
+
+const TipMenuItemContent = styled.div<{
+  $size?: TipMenuSize;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+
+  ${({ $size }) =>
+    $size === "sm"
+      ? css`
+          gap: 8px;
+        `
+      : css`
+          gap: 12px;
+        `};
+
+  ${({ $style }) => $style}
 `;
 
 const StyledCaption = styled.span`
