@@ -38,7 +38,7 @@ describe("Separator", () => {
     });
 
     context("with alwaysShows", () => {
-      context("when given true", () => {
+      context("with true", () => {
         it("should shows the actions", () => {
           cy.findAllByLabelText("separator-action")
             .should("exist")
@@ -46,7 +46,7 @@ describe("Separator", () => {
         });
       });
 
-      context("when given false", () => {
+      context("with false", () => {
         beforeEach(() => {
           cy.mount(
             <ProductSeparator
