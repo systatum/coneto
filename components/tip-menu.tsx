@@ -25,9 +25,11 @@ export const TipMenuSize = {
 
 export type TipMenuSize = (typeof TipMenuSize)[keyof typeof TipMenuSize];
 
+export type TipMenuSubMenuList = TipMenuItemProps;
+
 export interface TipMenuProps {
   children?: ReactNode;
-  subMenuList?: TipMenuItemProps[];
+  subMenuList?: TipMenuSubMenuList[];
   setIsOpen?: () => void;
   variant?: TipMenuVariant;
   size?: TipMenuSize;

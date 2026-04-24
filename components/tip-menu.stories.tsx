@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { TipMenu, TipMenuItemProps } from "./tip-menu";
+import { TipMenu, TipMenuSubMenuList } from "./tip-menu";
 import { useState } from "react";
 import {
   RiSpam2Line,
@@ -253,7 +253,7 @@ export const Default: Story = {
 
 export const NestedSubmenu: Story = {
   render: () => {
-    const NESTED_TIP_MENU_ITEMS: TipMenuItemProps[] = [
+    const NESTED_TIP_MENU_ITEMS: TipMenuSubMenuList[] = [
       {
         caption: "Report Message",
         icon: { image: RiSpam2Line },
