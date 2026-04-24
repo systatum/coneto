@@ -62,57 +62,58 @@ const meta: Meta<typeof RichEditor> = {
 - **Flexible layout**
   - Toolbar position: \`top\` or \`bottom\`
   - Modes:
-    - \`text-editor\` (default editing)
-    - \`page-editor\` (full height editor)
-    - \`view-only\` (read-only with selectable text)
-    - \`markdown-editor\` (text editor with embedded code blocks)
-    - \`code-editor\` (standalone Monaco-based code editor)
-
-- **Height control**
-  - \`autogrow\`: expands editor dynamically
-  - Fixed height with scroll support via \`height\`
+    - \`text-editor\`
+    - \`page-editor\`
+    - \`view-only\`
+    - \`markdown-editor\`
+    - \`code-editor\`
 
 ---
 
-### 🧩 Props
+### 🔀 Editor Modes & Behavior
 
-- \`value\` — Initial Markdown content
-- \`onChange\` — Callback returning cleaned Markdown output
-- \`mode\` — Editor mode: \`text-editor\` | \`page-editor\` | \`view-only\` | \`markdown-editor\` | \`code-editor\`
-- \`toolbarPosition\` — Position of toolbar: \`top\` | \`bottom\`
-- \`toolbarRightPanel\` — Custom React node for right-side toolbar
-- \`autogrow\` — Enable dynamic height
-- \`height\` — Fixed height (used when \`autogrow\` is false)
-- \`styles\` — Custom styling overrides
-- \`codeEditor\` — Code editor configuration (see below)
+#### 📝 \`text-editor\` (default)
+- Fully editable rich text
+- Supports headings, lists, checklists, bold, italic
+- Auto-formatting:
+  - \`1.\` → ordered list
+  - \`-\` / \`*\` → unordered list
+- Smart keyboard handling (Enter, Backspace)
+- Outputs clean Markdown
+- No Monaco editor
 
 ---
 
-### 💻 Code Editor Mode (\`mode="code-editor"\`)
+#### 📄 \`page-editor\`
+- Same as \`text-editor\`
+- Optimized for full-page writing
+- Expands to fill available height
+- Ideal for long-form content (blogs, docs)
 
-A standalone Monaco-based code editor. Useful when you want a pure code editing experience without rich text.
+---
 
-\`\`\`tsx
-<RichEditor
-  mode="code-editor"
-  value="const hello = 'world';"
-  onChange={(value) => console.log(value)}
-  codeEditor={{
-    language: RichEditor.CodeLanguage.TypeScript,
-    languageOptions: [
-      RichEditor.CodeLanguage.TypeScript,
-      RichEditor.CodeLanguage.Python,
-    ],
-  }}
-/>
-\`\`\`
+#### 👀 \`view-only\`
+- Read-only mode
+- No editing or toolbar interaction
+- Text is selectable
+- Markdown rendered as formatted content
+- Code blocks are displayed (non-editable)
 
-**\`codeEditor\` props:**
-- \`language\` — Default language for the editor (e.g. \`"tsx"\`, \`"py"\`, \`"sql"\`)
-- \`languageOptions\` — List of languages available in the language switcher dropdown
-- \`actions\` — Custom toolbar buttons rendered in the code editor toolbar
+---
 
-**Supported languages:**
+#### 💻 \`code-editor\`
+- Standalone Monaco editor
+- No rich text features
+- Supports:
+  - Syntax highlighting
+  - IntelliSense (with workers)
+  - Language switching
+  - Custom actions
+- Outputs raw code (not Markdown)
+- \`codeEditor.language\` — Default language (e.g. \`"tsx"\`, \`"py"\`, \`"sql"\`)
+- \`codeEditor.languageOptions\` — Languages available in the switcher dropdown
+- \`codeEditor.actions\` — Custom toolbar buttons rendered in the Monaco toolbar
+- Supported languages:
 
 | Key | Value | Display Name |
 |-----|-------|--------------|
@@ -130,113 +131,110 @@ A standalone Monaco-based code editor. Useful when you want a pure code editing 
 | \`CSS\` | \`css\` | CSS |
 | \`Text\` | \`txt\` | Text |
 
-**Features:**
-- Syntax highlighting and IntelliSense via Monaco Editor
-- Language switcher dropdown in the toolbar
-- Auto-resizes height based on line count
-- Keyboard navigation: Up arrow on first line / Down arrow on last line exits back to the surrounding rich text editor
-- Backspace on empty editor removes the block (when embedded)
-- Dark/light theme synced with the app theme
+---
+
+#### 🧩 \`markdown-editor\`
+- Rich text + embedded Monaco code blocks
+- Supports all \`text-editor\` features
+- Code block support:
+  - Type \`\`\` to insert
+  - Toolbar button
+- Each block:
+  - Has its own language
+  - Can be removed
+- Serialized as fenced Markdown:
+\`\`\`md
+\`\`\`tsx
+const x = 1;
+\`\`\`
+\`\`\`
+
+---
+
+### 🧩 Props
+
+- \`value\` — Initial Markdown content
+- \`onChange\` — Callback returning cleaned Markdown output
+- \`mode\` — Editor mode
+- \`toolbarPosition\` — \`top\` | \`bottom\`
+- \`toolbarRightPanel\` — Custom React node
+- \`autogrow\` — Enable dynamic height
+- \`height\` — Fixed height
+- \`styles\` — Custom styling overrides
+- \`codeEditor\` — Code editor configuration
+
+---
+
+### 💻 Code Editor Mode (\`mode="code-editor"\`)
+
+A standalone Monaco-based code editor.
+
+\`\`\`tsx
+<RichEditor
+  mode="code-editor"
+  value="const hello = 'world';"
+  onChange={(value) => console.log(value)}
+  codeEditor={{
+    language: RichEditor.codeLanguage.TypeScript,
+    languageOptions: [
+      RichEditor.codeLanguage.TypeScript,
+      RichEditor.codeLanguage.Python,
+    ],
+  }}
+/>
+\`\`\`
+
+**\`codeEditor\` props:**
+- \`language\` — sets the active Monaco language
+- \`languageOptions\` — restricts the language switcher to a subset
+- \`actions\` — custom buttons injected into the Monaco toolbar
 
 ---
 
 ### 📝 Markdown Editor Mode (\`mode="markdown-editor"\`)
 
-Extends the default text editor with support for embedded Monaco code blocks. Users can insert fenced code blocks directly into the rich text content.
+Supports embedded Monaco code blocks.
 
 \`\`\`tsx
 <RichEditor
   mode="markdown-editor"
   value="# Hello World."
   onChange={(value) => console.log(value)}
-  codeEditor={{
-    language: RichEditor.CodeLanguage.TypeScript,
-    languageOptions: [
-      RichEditor.CodeLanguage.TypeScript,
-      RichEditor.CodeLanguage.Python,
-    ],
-  }}
 />
-\`\`\`
-
-**Features:**
-- All standard rich text features (bold, italic, headings, lists, checkboxes)
-- Additional **code block** button in the toolbar
-- Type \`\`\`\`\`\` (three backticks) to instantly insert a code block
-- Each code block is a full Monaco editor instance embedded inline
-- Code blocks serialize back to fenced Markdown (\`\`\`\`\`\`lang\\n...\\n\`\`\`\`\`\`) on \`onChange\`
-- Language switcher per code block
-- Remove button to delete a code block
-- Keyboard navigation between code blocks and surrounding text
-
-**Serialization:**
-
-The editor always outputs clean Markdown. Embedded code blocks are serialized as standard fenced code blocks:
-
-\`\`\`md
-# My document
-
-Some rich text here.
-
-\`\`\`tsx
-const x = 1;
-\`\`\`
-
-More text below.
 \`\`\`
 
 ---
 
 ### 🎯 Imperative API
 
-Accessible via \`ref\`:
-
-- \`insertPlainText(text)\`  
-  Inserts raw text at cursor position
-
-- \`insertMarkdownContent(markdown)\`  
-  Parses Markdown → HTML and inserts into editor. Also hydrates any fenced code blocks found in the Markdown into live Monaco editors.
-
----
-
-### ⌨️ Keyboard Shortcuts
-
-- **Cmd/Ctrl + B** → Bold
-- **Cmd/Ctrl + I** → Italic
-- **Enter**
-  - Smart line break handling
-  - Proper heading/list splitting
-- **Space**
-  - Triggers list and checklist auto-format
-- **\`\`\`** (three backticks, markdown-editor only)
-  - Instantly inserts a Monaco code block
+- \`insertPlainText(text)\`
+- \`insertMarkdownContent(markdown)\`
 
 ---
 
 ### ⚙️ Notes
 
-- Built using \`document.execCommand\` for formatting
-- Includes custom DOM normalization to:
-  - Prevent invalid list wrapping
-  - Clean unnecessary \`span\` styles
-- Designed for predictable Markdown output rather than raw HTML editing
-- Monaco Editor workers are required for full IntelliSense and completions in code blocks. Add the following to your \`vite.config.ts\`:
-  \`\`\`ts
-  optimizeDeps: {
-    exclude: ["@systatum/coneto"],
-  }
-  \`\`\`
+- Built using \`document.execCommand\`
+- Includes DOM normalization
+- Designed for clean Markdown output
+- Monaco workers required (Vite config)
+
+\`\`\`ts
+optimizeDeps: {
+  exclude: ["@systatum/coneto"],
+}
+\`\`\`
 
 ---
 
 ### 🚀 Use Cases
 
 - Blog editors
-- Notes / documentation tools
-- Internal CMS editors
-- Markdown-based content systems
-- Technical documentation with embedded code examples
-        `,
+- Documentation tools
+- CMS editors
+- Markdown systems
+- Technical writing with code
+`,
       },
     },
   },
