@@ -61,6 +61,7 @@ describe("Separator", () => {
             />
           );
         });
+
         it("should not shows the actions", () => {
           cy.findAllByLabelText("separator-action")
             .should("not.be.visible")
