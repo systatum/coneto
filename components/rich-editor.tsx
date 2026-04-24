@@ -152,8 +152,8 @@ interface RichEditorComponent
     RichEditorProps & React.RefAttributes<RichEditorRef>
   > {
   ToolbarButton: typeof RichEditorToolbarButton;
-  CodeLanguage: typeof RichEditorCodeLanguage;
-  TranslatedRichEditorCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
+  codeLanguage: typeof RichEditorCodeLanguage;
+  translatedCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
   Base: typeof BaseRichEditor;
   cleanupHtml: typeof cleanupHtml;
   cleanSpacing: typeof cleanSpacing;
@@ -2106,8 +2106,8 @@ const preprocessMarkdown = (markdown: string) => {
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
-RichEditor.CodeLanguage = RichEditorCodeLanguage;
-RichEditor.TranslatedRichEditorCodeLanguage = TranslatedRichEditorCodeLanguage;
+RichEditor.codeLanguage = RichEditorCodeLanguage;
+RichEditor.translatedCodeLanguage = TranslatedRichEditorCodeLanguage;
 RichEditor.Base = BaseRichEditor;
 RichEditor.cleanupHtml = cleanupHtml;
 RichEditor.cleanSpacing = cleanSpacing;
