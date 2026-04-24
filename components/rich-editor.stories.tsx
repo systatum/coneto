@@ -65,6 +65,8 @@ const meta: Meta<typeof RichEditor> = {
     - \`text-editor\` (default editing)
     - \`page-editor\` (full height editor)
     - \`view-only\` (read-only with selectable text)
+    - \`markdown-editor\` (text editor with embedded code blocks)
+    - \`code-editor\` (standalone Monaco-based code editor)
 
 - **Height control**
   - \`autogrow\`: expands editor dynamically
@@ -76,12 +78,114 @@ const meta: Meta<typeof RichEditor> = {
 
 - \`value\` — Initial Markdown content
 - \`onChange\` — Callback returning cleaned Markdown output
-- \`mode\` — Editor mode: \`text-editor\` | \`page-editor\` | \`view-only\`
+- \`mode\` — Editor mode: \`text-editor\` | \`page-editor\` | \`view-only\` | \`markdown-editor\` | \`code-editor\`
 - \`toolbarPosition\` — Position of toolbar: \`top\` | \`bottom\`
 - \`toolbarRightPanel\` — Custom React node for right-side toolbar
 - \`autogrow\` — Enable dynamic height
 - \`height\` — Fixed height (used when \`autogrow\` is false)
 - \`styles\` — Custom styling overrides
+- \`codeEditor\` — Code editor configuration (see below)
+
+---
+
+### 💻 Code Editor Mode (\`mode="code-editor"\`)
+
+A standalone Monaco-based code editor. Useful when you want a pure code editing experience without rich text.
+
+\`\`\`tsx
+<RichEditor
+  mode="code-editor"
+  value="const hello = 'world';"
+  onChange={(value) => console.log(value)}
+  codeEditor={{
+    language: RichEditor.SupportedLanguage.TypeScript,
+    languageOptions: [
+      RichEditor.SupportedLanguage.TypeScript,
+      RichEditor.SupportedLanguage.JavaScript,
+      RichEditor.SupportedLanguage.Python,
+    ],
+  }}
+/>
+\`\`\`
+
+**\`codeEditor\` props:**
+- \`language\` — Default language for the editor (e.g. \`"tsx"\`, \`"py"\`, \`"sql"\`)
+- \`languageOptions\` — List of languages available in the language switcher dropdown
+- \`actions\` — Custom toolbar buttons rendered in the code editor toolbar
+
+**Supported languages:**
+
+| Key | Value | Display Name |
+|-----|-------|--------------|
+| \`TypeScript\` | \`tsx\` | TypeScript |
+| \`JavaScript\` | \`js\` | JavaScript |
+| \`Python\` | \`py\` | Python |
+| \`Ruby\` | \`rb\` | Ruby |
+| \`CPP\` | \`cpp\` | C++ |
+| \`SQL\` | \`sql\` | SQL |
+| \`R\` | \`r\` | R |
+| \`PHP\` | \`php\` | PHP |
+| \`Go\` | \`go\` | Go |
+| \`Rust\` | \`rs\` | Rust |
+| \`Java\` | \`java\` | Java |
+| \`HTML\` | \`html\` | HTML |
+| \`CSS\` | \`css\` | CSS |
+| \`Text\` | \`txt\` | Text |
+
+**Features:**
+- Syntax highlighting and IntelliSense via Monaco Editor
+- Language switcher dropdown in the toolbar
+- Auto-resizes height based on line count
+- Keyboard navigation: Up arrow on first line / Down arrow on last line exits back to the surrounding rich text editor
+- Backspace on empty editor removes the block (when embedded)
+- Dark/light theme synced with the app theme
+
+---
+
+### 📝 Markdown Editor Mode (\`mode="markdown-editor"\`)
+
+Extends the default text editor with support for embedded Monaco code blocks. Users can insert fenced code blocks directly into the rich text content.
+
+\`\`\`tsx
+<RichEditor
+  mode="markdown-editor"
+  value="# Hello\n\nSome text\n\n\`\`\`tsx\nconsole.log('hello')\n\`\`\`"
+  onChange={(value) => console.log(value)}
+  codeEditor={{
+    language: RichEditor.SupportedLanguage.TypeScript,
+    languageOptions: [
+      RichEditor.SupportedLanguage.TypeScript,
+      RichEditor.SupportedLanguage.Python,
+    ],
+  }}
+/>
+\`\`\`
+
+**Features:**
+- All standard rich text features (bold, italic, headings, lists, checkboxes)
+- Additional **code block** button in the toolbar
+- Type \`\`\`\`\`\` (three backticks) to instantly insert a code block
+- Each code block is a full Monaco editor instance embedded inline
+- Code blocks serialize back to fenced Markdown (\`\`\`\`\`\`lang\\n...\\n\`\`\`\`\`\`) on \`onChange\`
+- Language switcher per code block
+- Remove button to delete a code block
+- Keyboard navigation between code blocks and surrounding text
+
+**Serialization:**
+
+The editor always outputs clean Markdown. Embedded code blocks are serialized as standard fenced code blocks:
+
+\`\`\`md
+# My document
+
+Some rich text here.
+
+\`\`\`tsx
+const x = 1;
+\`\`\`
+
+More text below.
+\`\`\`
 
 ---
 
@@ -93,7 +197,7 @@ Accessible via \`ref\`:
   Inserts raw text at cursor position
 
 - \`insertMarkdownContent(markdown)\`  
-  Parses Markdown → HTML and inserts into editor
+  Parses Markdown → HTML and inserts into editor. Also hydrates any fenced code blocks found in the Markdown into live Monaco editors.
 
 ---
 
@@ -106,6 +210,8 @@ Accessible via \`ref\`:
   - Proper heading/list splitting
 - **Space**
   - Triggers list and checklist auto-format
+- **\`\`\`** (three backticks, markdown-editor only)
+  - Instantly inserts a Monaco code block
 
 ---
 
@@ -116,6 +222,12 @@ Accessible via \`ref\`:
   - Prevent invalid list wrapping
   - Clean unnecessary \`span\` styles
 - Designed for predictable Markdown output rather than raw HTML editing
+- Monaco Editor workers are required for full IntelliSense and completions in code blocks. Add the following to your \`vite.config.ts\`:
+  \`\`\`ts
+  optimizeDeps: {
+    exclude: ["@systatum/coneto"],
+  }
+  \`\`\`
 
 ---
 
@@ -125,8 +237,8 @@ Accessible via \`ref\`:
 - Notes / documentation tools
 - Internal CMS editors
 - Markdown-based content systems
-
-      `,
+- Technical documentation with embedded code examples
+        `,
       },
     },
   },
