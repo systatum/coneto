@@ -31,9 +31,6 @@ The \`actions\` prop allows you to attach interactive elements (such as icon but
 
 These actions are typically displayed on the opposite side of the title and can be used for quick operations like edit, copy, or open menus.
 
----
-
-#### 🧱 Action Structure
 Each item in \`actions\` follows this shape:
 
 - \`icon\` (**required**) → Icon configuration (FigureProps)
