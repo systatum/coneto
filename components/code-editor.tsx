@@ -27,11 +27,35 @@ import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 import marked from "./../lib/marked/marked";
 
+/**
+ * Monaco Editor uses Web Workers to run language services
+ * (like TypeScript, JSON validation, IntelliSense, etc.) in a separate thread.
+ *
+ * In environments like Vite, workers are NOT automatically bundled or resolved.
+ * So we must explicitly import each worker using the `?worker` suffix.
+ *
+ * The `?worker` tells Vite to:
+ * - Treat the file as a Web Worker
+ * - Bundle it separately
+ * - Return a Worker constructor we can instantiate
+ *
+ * Without this setup:
+ * - Monaco will fail to load language features
+ * - You may see errors like:
+ *   "Cannot read file ... json.worker.js"
+ * - IntelliSense / syntax validation will not work
+ */
+
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
 import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
 import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
 import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
+
+/**
+ * Registers the Monaco web worker factory on `window.MonacoEnvironment`.
+ * Must be called before any editor instance is created. Safe to call multiple times.
+ */
 
 let initialized = false;
 
@@ -44,8 +68,7 @@ function initMonacoEnvironment() {
       if (label === "css" || label === "scss" || label === "less")
         return new CssWorker();
       if (label === "html") return new HtmlWorker();
-      if (label === "typescript" || label === "javascript")
-        return new TsWorker();
+      if (label === "typescript") return new TsWorker();
       return new EditorWorker();
     },
   };
@@ -53,11 +76,17 @@ function initMonacoEnvironment() {
   initialized = true;
 }
 
+// Cached promise so the Monaco bundle is only imported once.
 let monacoPromise: Promise<
   typeof import("monaco-editor/esm/vs/editor/editor.main")
 > | null = null;
 
-export function getMonaco() {
+/**
+ * Lazily imports and caches the Monaco editor module.
+ * @returns Promise resolving to the Monaco editor namespace.
+ */
+
+export function getMonacoEditor() {
   if (!monacoPromise) {
     monacoPromise = import("monaco-editor/esm/vs/editor/editor.main");
   }
@@ -66,7 +95,9 @@ export function getMonaco() {
 
 export type CodeEditorLanguage = RichEditorCodeLanguagesMonaco;
 
-export type CodeEditorAction = RichEditorAction;
+export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
+  onClick?: (props: { code?: string }) => void;
+}
 
 export interface CodeEditorProps {
   id: string;
@@ -81,7 +112,6 @@ export interface CodeEditorProps {
   actions?: CodeEditorAction[];
   toolbarPosition?: RichEditorToolbarPosition;
   removeOnEmpty?: boolean;
-  onRemove?: () => void;
 }
 
 interface CodeEditorStyles {
@@ -103,18 +133,18 @@ function CodeEditor({
   actions,
   toolbarPosition = "top",
   id,
-  onRemove,
   removeOnEmpty,
 }: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
+  const editorTheme = mode === "dark" ? "vs-dark" : "vs";
 
   useEffect(() => {
     initMonacoEnvironment();
   }, []);
 
   const uid = useId();
-  const comboboxId = `combobox-richeditor-${uid}`;
+  const comboboxId = `codeed-combo-${uid}`;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<any>(null);
@@ -135,14 +165,14 @@ function CodeEditor({
       if (editorRef.current) return;
 
       try {
-        const { KeyCode, editor } = await getMonaco();
+        const { KeyCode, editor } = await getMonacoEditor();
 
         if (disposed || !containerRef.current) return;
 
         const monacoEditor = editor.create(containerRef.current, {
           value,
           language,
-          theme: mode === "dark" ? "vs-dark" : "vs",
+          theme: editorTheme,
           fontSize: 13,
           lineHeight: 20,
           fontFamily:
@@ -233,7 +263,7 @@ function CodeEditor({
             monacoEditor.getValue().length === 0
           ) {
             e.preventDefault();
-            onRemove?.();
+            onClosed?.();
             return;
           }
 
@@ -267,13 +297,13 @@ function CodeEditor({
 
     (async () => {
       try {
-        const { editor } = await getMonaco();
-        editor.setTheme(mode === "dark" ? "vs-dark" : "vs");
+        const { editor } = await getMonacoEditor();
+        editor.setTheme(editorTheme);
       } catch {
         return;
       }
     })();
-  }, [mode]);
+  }, [mode, editorTheme]);
 
   useEffect(() => {
     if (!lang) return;
@@ -284,11 +314,6 @@ function CodeEditor({
 
   const handleLangChange = (newLang: CodeEditorLanguage) => {
     setLang(newLang);
-    if (editorRef.current) {
-      applyLangToMonaco(newLang).catch((e) => {
-        if (e?.message !== "Canceled") throw e;
-      });
-    }
     onChange?.(editorRef.current?.getValue() ?? "", newLang);
   };
 
@@ -296,8 +321,7 @@ function CodeEditor({
     if (!editorRef.current) return;
 
     try {
-      const { editor } = await getMonaco();
-      if (!editorRef.current) return;
+      const { editor } = await getMonacoEditor();
 
       const actualLang = newLang === "tsx" ? "typescript" : newLang;
 
@@ -312,7 +336,7 @@ function CodeEditor({
     ...action,
     onClick: () =>
       action?.onClick({
-        content: editorRef.current?.getValue(),
+        code: editorRef.current?.getValue(),
       }),
   }));
 
@@ -470,6 +494,9 @@ const Editor = styled.div<{
   ${({ $style }) => $style}
 `;
 
+// ── Code block registry ──
+// Tracks every mounted Monaco block by ID. Used during serialization to read
+// the current code and language for each block.
 interface CodeEditor {
   wrapper: HTMLElement;
   code: string;
@@ -480,10 +507,15 @@ interface CodeEditor {
 const codeBlockRegistry = new Map<string, CodeEditor>();
 let blockIdCounter = 0;
 
+/** Returns the next unique block ID (e.g. "monaco-block-1"). */
 function nextBlockId() {
   return `monaco-block-${++blockIdCounter}`;
 }
 
+// ── CodeEditorBridge ──
+// Rendered into each isolated React root (one per Monaco block).
+// Subscribes to the global theme store so the nested CodeEditor stays in sync
+// even though it lives outside the main React tree.
 function CodeEditorBridge({
   id,
   code,
@@ -524,22 +556,13 @@ function CodeEditorBridge({
         value={codeBlockRegistry.get(id)?.code ?? code}
         language={language}
         readOnly={isViewOnly}
-        onRemove={async () => {
-          await exitToEditor(id, "above");
-          await codeBlockRegistry.delete(id);
-          await wrapper?.remove();
-          await serializeAndEmit(
-            editorRef,
-            turndownServiceRef.current,
-            onChange
-          );
-        }}
         onChange={(newCode, lang) => {
           codeBlockRegistry.set(id, { wrapper, code: newCode, lang });
           serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
         }}
         options={options}
         onClosed={() => {
+          exitToEditor(id, "above");
           codeBlockRegistry.delete(id);
           wrapper?.remove();
           serializeAndEmit(editorRef, turndownServiceRef.current, onChange);
@@ -550,6 +573,10 @@ function CodeEditorBridge({
   );
 }
 
+/**
+ * Mounts a CodeEditorBridge into `wrapper` using an isolated React root
+ * and registers an initial entry in the code block registry.
+ */
 function RenderCodeEditor(
   wrapper: HTMLElement,
   id: string,
@@ -581,6 +608,15 @@ function RenderCodeEditor(
   );
 }
 
+/**
+ * Serializes the full editor content (rich text + Monaco blocks) to Markdown
+ * and delivers it via `onChange`.
+ *
+ * Steps:
+ * 1. Clone the editor DOM to avoid mutating live nodes.
+ * 2. Replace each Monaco wrapper with a `<pre><code>` element from the registry.
+ * 3. Convert HTML → Markdown via Turndown, then clean up spacing.
+ */
 function serializeAndEmit(
   editorRef: React.RefObject<HTMLDivElement>,
   turndownService: TurndownService,
@@ -613,7 +649,10 @@ function serializeAndEmit(
   onChange(cleanedMarkdown);
 }
 
-// Parse fenced code blocks from the editor HTML and mount Monaco widgets
+/**
+ * Scans the editor for unhydrated `<pre>` elements and replaces each with
+ * a live Monaco widget. Called after `marked` renders Markdown into HTML.
+ */
 function hydrateFencedCodeEditors(
   editorRef: React.RefObject<HTMLDivElement>,
   onChange: ((value: string) => void) | undefined,
@@ -656,7 +695,11 @@ function hydrateFencedCodeEditors(
   });
 }
 
-// Turndown rule for fenced code (must be registered before use)
+/**
+ * Registers a Turndown rule that converts `<pre><code>` elements to
+ * fenced Markdown code blocks. Must be called once when the Turndown
+ * service is created.
+ */
 function addFencedCodeRule(ts: TurndownService) {
   ts.addRule("fencedCode", {
     filter: (node) => {
@@ -756,6 +799,16 @@ function exitToEditor(id: string, direction: "above" | "below") {
   target.focus();
 }
 
+/**
+ * Registers a custom `marked` block extension for fenced code blocks.
+ * Must be called once before any Markdown is parsed.
+ *
+ * Converts:
+ * ```ts
+ * const x = 1;
+ * ```
+ * → `<pre><code class="language-ts">const x = 1;</code></pre>`
+ */
 function addFencedCodeMarkedExtension() {
   marked.use({
     gfm: false,
