@@ -699,6 +699,7 @@ export interface TipMenuThemeConfig
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
+  disabledTextColor?: string;
 }
 
 // treelist.tsx
