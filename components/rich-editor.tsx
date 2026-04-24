@@ -43,18 +43,17 @@ export interface RichEditorProps {
 }
 
 export interface RichEditorCode {
-  language?: RichEditorCodeLanguages;
+  language?: RichEditorCodeLanguage;
   actions?: RichEditorCodeAction[];
-  languageOptions?: RichEditorCodeLanguages[];
+  languageOptions?: RichEditorCodeLanguage[];
 }
 
-export type RichEditorCodeAction = RichEditorToolbarButtonProps;
+export type RichEditorCodeAction = CodeEditorAction;
 
 export type RichEditorAction = RichEditorToolbarButtonProps;
 
-export const RichEditorCodeLanguages = {
+export const RichEditorCodeLanguage = {
   TypeScript: "tsx",
-  JavaScript: "js",
   Python: "py",
   Ruby: "rb",
   CPP: "cpp",
@@ -69,15 +68,14 @@ export const RichEditorCodeLanguages = {
   Text: "txt",
 } as const;
 
-export type RichEditorCodeLanguages =
-  (typeof RichEditorCodeLanguages)[keyof typeof RichEditorCodeLanguages];
+export type RichEditorCodeLanguage =
+  (typeof RichEditorCodeLanguage)[keyof typeof RichEditorCodeLanguage];
 
-export const RichEditorSupportedLanguageNames: Record<
-  RichEditorCodeLanguages,
+export const TranslatedRichEditorCodeLanguage: Record<
+  RichEditorCodeLanguage,
   string
 > = {
   tsx: "TypeScript",
-  js: "JavaScript",
   py: "Python",
   rb: "Ruby",
   cpp: "C++",
@@ -92,12 +90,11 @@ export const RichEditorSupportedLanguageNames: Record<
   txt: "Text",
 };
 
-export const RichEditorCodeLanguagesMonaco = {
+export const MonacoCodeLanguageEquivalent = {
   tsx: "tsx",
   py: "python",
   rb: "ruby",
   cpp: "cpp",
-  js: "javascript",
   sql: "sql",
   r: "r",
   php: "php",
@@ -109,8 +106,8 @@ export const RichEditorCodeLanguagesMonaco = {
   txt: "plaintext",
 } as const;
 
-export type RichEditorCodeLanguagesMonaco =
-  (typeof RichEditorCodeLanguagesMonaco)[keyof typeof RichEditorCodeLanguagesMonaco];
+export type MonacoCodeLanguageEquivalent =
+  (typeof MonacoCodeLanguageEquivalent)[keyof typeof MonacoCodeLanguageEquivalent];
 
 export interface RichEditorStyles extends BaseRichEditorStyles {
   editorStyle?: CSSProp;
@@ -155,8 +152,8 @@ interface RichEditorComponent
     RichEditorProps & React.RefAttributes<RichEditorRef>
   > {
   ToolbarButton: typeof RichEditorToolbarButton;
-  SupportedLanguage: typeof RichEditorCodeLanguages;
-  SupportedLanguageName: typeof RichEditorSupportedLanguageNames;
+  CodeLanguage: typeof RichEditorCodeLanguage;
+  TranslatedRichEditorCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
   Base: typeof BaseRichEditor;
   cleanupHtml: typeof cleanupHtml;
   cleanSpacing: typeof cleanSpacing;
@@ -184,22 +181,22 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     ref
   ) => {
     const {
-      languageOptions = Object.values(RichEditorCodeLanguages),
-      language = languageOptions[0],
+      languageOptions: _languageOptions = Object.values(RichEditorCodeLanguage),
+      language = _languageOptions[0],
       actions: codeEditorActions,
     } = codeEditor ?? {};
 
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
-    const normalizedLanguages = useMemo(() => {
-      return Array.from(new Set(languageOptions));
-    }, [languageOptions]);
+    const languagesOptions = useMemo(() => {
+      return Array.from(new Set(_languageOptions));
+    }, [_languageOptions]);
 
-    const OPTIONS_LANGUAGES: CodeEditorOption[] = normalizedLanguages.map(
+    const OPTIONS_LANGUAGES: CodeEditorOption[] = languagesOptions.map(
       (lang) => ({
-        text: RichEditorSupportedLanguageNames[lang],
-        value: RichEditorCodeLanguagesMonaco[lang],
+        text: TranslatedRichEditorCodeLanguage[lang],
+        value: MonacoCodeLanguageEquivalent[lang],
       })
     );
 
@@ -664,7 +661,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         wrapper,
         id,
         "",
-        RichEditorCodeLanguagesMonaco[language],
+        MonacoCodeLanguageEquivalent[language],
         editorRef,
         onChange,
         turndownServiceRef,
@@ -1356,7 +1353,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           toolbarPosition={toolbarPosition}
           actions={codeEditorActions}
           value={value}
-          language={RichEditorCodeLanguagesMonaco[language]}
+          language={MonacoCodeLanguageEquivalent[language]}
           options={OPTIONS_LANGUAGES}
           onChange={(code) => onChange(code)}
         />
@@ -2109,8 +2106,8 @@ const preprocessMarkdown = (markdown: string) => {
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
-RichEditor.SupportedLanguage = RichEditorCodeLanguages;
-RichEditor.SupportedLanguageName = RichEditorSupportedLanguageNames;
+RichEditor.CodeLanguage = RichEditorCodeLanguage;
+RichEditor.TranslatedRichEditorCodeLanguage = TranslatedRichEditorCodeLanguage;
 RichEditor.Base = BaseRichEditor;
 RichEditor.cleanupHtml = cleanupHtml;
 RichEditor.cleanSpacing = cleanSpacing;
