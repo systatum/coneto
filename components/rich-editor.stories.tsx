@@ -655,8 +655,7 @@ fruits.forEach(fruit => {
           image: RiArrowRightSLine,
         },
         children: "Run",
-        onClick: ({ content }) =>
-          console.log(`compile the content: ${content}`),
+        onClick: ({ code }) => console.log(`compile the content: ${code}`),
       },
     ];
 
@@ -726,8 +725,7 @@ export const CodeEditor: Story = {
           image: RiArrowRightSLine,
         },
         children: "Run",
-        onClick: ({ content }) =>
-          console.log(`compile the content: ${content}`),
+        onClick: ({ code }) => console.log(`compile the content: ${code}`),
       },
     ];
 
