@@ -1056,7 +1056,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             const parent = node.parentElement;
 
             if (parent) {
-              node.textContent = beforeCaret.slice(0, -2);
+              range.setStart(node, caretPos - 2);
+              range.deleteContents();
 
               insertCodeEditor();
               handleEditorChange();
