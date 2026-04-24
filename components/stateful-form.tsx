@@ -174,28 +174,28 @@ export interface FormFieldProps {
   rowItemsAlignment?: FormFieldRowItemsAligment;
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
-  textboxProps?: TextboxProps;
-  textareaProps?: TextareaProps;
-  checkboxProps?: CheckboxProps;
-  radioProps?: RadioProps;
-  phoneboxProps?: PhoneboxProps;
-  colorboxProps?: ColorboxProps;
-  moneyProps?: MoneyboxProps;
-  fileDropBoxProps?: FileDropBoxProps;
-  fileInputBoxProps?: FileInputBoxProps;
-  imageboxProps?: ImageboxProps;
-  signboxProps?: SignboxProps;
-  dateProps?: DateboxProps;
-  comboboxProps?: ComboboxProps;
-  chipsProps?: ChipsProps;
-  ratingProps?: RatingProps;
-  thumbFieldProps?: ThumbFieldProps;
-  toggleProps?: ToggleProps;
-  capsuleProps?: CapsuleProps;
-  timeboxProps?: TimeboxProps;
-  buttonProps?: ButtonProps;
-  pinboxProps?: PinboxProps;
-  frameProps?: FrameProps;
+  textbox?: TextboxProps;
+  textarea?: TextareaProps;
+  checkbox?: CheckboxProps;
+  radio?: RadioProps;
+  phonebox?: PhoneboxProps;
+  colorbox?: ColorboxProps;
+  money?: MoneyboxProps;
+  fileDropBox?: FileDropBoxProps;
+  fileInputBox?: FileInputBoxProps;
+  imagebox?: ImageboxProps;
+  signbox?: SignboxProps;
+  date?: DateboxProps;
+  combobox?: ComboboxProps;
+  chips?: ChipsProps;
+  rating?: RatingProps;
+  thumbField?: ThumbFieldProps;
+  toggle?: ToggleProps;
+  capsule?: CapsuleProps;
+  timebox?: TimeboxProps;
+  button?: ButtonProps;
+  pinbox?: PinboxProps;
+  frame?: FrameProps;
 }
 
 function StatefulForm<Z extends ZodTypeAny>({
@@ -509,20 +509,20 @@ function FormFields<T extends FieldValues>({
                   <Frame
                     key={index}
                     title={field.title}
-                    {...field?.frameProps}
+                    {...field?.frame}
                     styles={{
                       containerStyle: css`
                         margin-top: 10px;
                         min-width: 0;
                         ${styles?.frameContainerStyle}
-                        ${field?.frameProps?.styles?.containerStyle}
+                        ${field?.frame?.styles?.containerStyle}
                       `,
                       titleStyle: css`
                         font-size: 12px;
                         color: black;
                         margin-top: 2px;
                         ${styles?.frameTitleStyle}
-                        ${field?.frameProps?.styles?.titleStyle}
+                        ${field?.frame?.styles?.titleStyle}
                       `,
                     }}
                   >
@@ -587,15 +587,15 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled || disabled}
-                  {...field.textboxProps}
+                  {...field.textbox}
                   styles={{
-                    ...field.textboxProps?.styles,
+                    ...field.textbox?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.textboxProps?.styles?.labelStyle}
+                      ${field.textbox?.styles?.labelStyle}
                     `,
                     self: css`
                       ${fieldSize &&
@@ -603,14 +603,14 @@ function FormFields<T extends FieldValues>({
                         font-size: ${fieldSize};
                       `}
                       height: 34px;
-                      ${field.textboxProps?.styles?.self}
+                      ${field.textbox?.styles?.self}
                     `,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.textboxProps?.styles?.containerStyle}
+                      ${field.textbox?.styles?.containerStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -620,7 +620,7 @@ function FormFields<T extends FieldValues>({
                         justify-content: end;
                       `}
 
-                      ${field.textboxProps?.styles?.bodyStyle}
+                      ${field.textbox?.styles?.bodyStyle}
                     `,
                   }}
                 />
@@ -660,22 +660,22 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       disabled={field.disabled || disabled}
-                      {...field.pinboxProps}
+                      {...field.pinbox}
                       styles={{
-                        ...field.pinboxProps?.styles,
+                        ...field.pinbox?.styles,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.pinboxProps?.styles?.containerStyle}
+                          ${field.pinbox?.styles?.containerStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.pinboxProps?.styles?.labelStyle}
+                          ${field.pinbox?.styles?.labelStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -684,7 +684,7 @@ function FormFields<T extends FieldValues>({
                             margin-top: 30px;
                             justify-content: end;
                           `}
-                          ${field.pinboxProps?.styles?.bodyStyle}
+                          ${field.pinbox?.styles?.bodyStyle}
                         `,
                       }}
                       ref={controllerField.ref}
@@ -694,15 +694,15 @@ function FormFields<T extends FieldValues>({
               ) : field.type === "button" ? (
                 <Button
                   key={index}
-                  {...field.buttonProps}
+                  {...field.button}
                   id={field.id}
                   title={
-                    field.buttonProps?.title
-                      ? field.buttonProps?.title
+                    field.button?.title
+                      ? field.button?.title
                       : field.placeholder
                   }
                   styles={{
-                    ...field.buttonProps?.styles,
+                    ...field.button?.styles,
                     self: css`
                       ${field.icon &&
                       css`
@@ -711,7 +711,7 @@ function FormFields<T extends FieldValues>({
                       width:100%;
                       height: 34px;
                       font-size: ${labelSize ?? "12px"};
-                      ${field.buttonProps?.styles?.self};
+                      ${field.button?.styles?.self};
                     `,
                     containerStyle: css`
                       ${field.width &&
@@ -726,12 +726,12 @@ function FormFields<T extends FieldValues>({
                         align-items: end;
                       `}
 
-                      ${field.buttonProps?.styles?.containerStyle};
+                      ${field.button?.styles?.containerStyle};
                     `,
                   }}
                   onClick={(e) => {
-                    if (field?.buttonProps?.onClick) {
-                      field?.buttonProps?.onClick(e);
+                    if (field?.button?.onClick) {
+                      field?.button?.onClick(e);
                     } else {
                       field.onClick(e);
                     }
@@ -770,9 +770,9 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled || disabled}
-                  {...field.timeboxProps}
+                  {...field.timebox}
                   styles={{
-                    ...field.timeboxProps?.styles,
+                    ...field.timebox?.styles,
                     self: css`
                       ${fieldSize &&
                       css`
@@ -785,11 +785,11 @@ function FormFields<T extends FieldValues>({
                       height: 32px;
                       max-height: 32px;
 
-                      ${field.timeboxProps?.styles?.self};
+                      ${field.timebox?.styles?.self};
                     `,
                     inputWrapperStyle: css`
                       width: 100%;
-                      ${field.timeboxProps?.styles?.inputWrapperStyle};
+                      ${field.timebox?.styles?.inputWrapperStyle};
                     `,
 
                     containerStyle: css`
@@ -799,14 +799,14 @@ function FormFields<T extends FieldValues>({
                       css`
                         width: ${field.width};
                       `}
-                      ${field.timeboxProps?.styles?.containerStyle}
+                      ${field.timebox?.styles?.containerStyle}
                     `,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.timeboxProps?.styles?.labelStyle}
+                      ${field.timebox?.styles?.labelStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -816,7 +816,7 @@ function FormFields<T extends FieldValues>({
                         justify-content: end;
                       `}
 
-                      ${field.timeboxProps?.styles?.bodyStyle}
+                      ${field.timebox?.styles?.bodyStyle}
                     `,
                   }}
                   ref={(el) => {
@@ -858,29 +858,29 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled || disabled}
-                  {...field.textareaProps}
+                  {...field.textarea}
                   styles={{
-                    ...field.textareaProps?.styles,
+                    ...field.textarea?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.textareaProps?.styles?.labelStyle}
+                      ${field.textarea?.styles?.labelStyle}
                     `,
                     self: css`
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
                       `}
-                      ${field.textareaProps?.styles?.self}
+                      ${field.textarea?.styles?.self}
                     `,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.textareaProps?.styles?.containerStyle}
+                      ${field.textarea?.styles?.containerStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -889,7 +889,7 @@ function FormFields<T extends FieldValues>({
                         min-height: 60px;
                         justify-content: end;
 
-                        ${field.textareaProps?.styles?.bodyStyle}
+                        ${field.textarea?.styles?.bodyStyle}
                       `}
                     `,
                   }}
@@ -933,22 +933,22 @@ function FormFields<T extends FieldValues>({
                         field.onChange?.(e);
                       }}
                       disabled={field.disabled || disabled}
-                      {...field.checkboxProps}
+                      {...field.checkbox}
                       styles={{
-                        ...field.checkboxProps?.styles,
+                        ...field.checkbox?.styles,
                         titleStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.checkboxProps?.styles?.titleStyle}
+                          ${field.checkbox?.styles?.titleStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.checkboxProps?.styles?.labelStyle}
+                          ${field.checkbox?.styles?.labelStyle}
                         `,
                         self: css`
                           ${labelSize &&
@@ -956,7 +956,7 @@ function FormFields<T extends FieldValues>({
                             width: calc(${labelSize} + 2px);
                             height: calc(${labelSize} + 2px);
                           `}
-                          ${field.checkboxProps?.styles?.self}
+                          ${field.checkbox?.styles?.self}
                         `,
                         iconStyle: css`
                           ${labelSize &&
@@ -964,7 +964,7 @@ function FormFields<T extends FieldValues>({
                             width: calc(${labelSize} - 4px);
                             height: calc(${labelSize} - 4px);
                           `}
-                          ${field.checkboxProps?.styles?.iconStyle}
+                          ${field.checkbox?.styles?.iconStyle}
                         `,
                         containerStyle: css`
                           width: 100%;
@@ -972,7 +972,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             width: ${field.width};
                           `}
-                          ${field.checkboxProps?.styles?.containerStyle}
+                          ${field.checkbox?.styles?.containerStyle}
                         `,
                         boxStyle: css`
                           ${labelSize &&
@@ -980,7 +980,7 @@ function FormFields<T extends FieldValues>({
                             width: calc(${labelSize} + 2px);
                             height: calc(${labelSize} + 2px);
                           `}
-                          ${field.checkboxProps?.styles?.boxStyle}
+                          ${field.checkbox?.styles?.boxStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -990,7 +990,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.checkboxProps?.styles?.bodyStyle}
+                          ${field.checkbox?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1029,22 +1029,22 @@ function FormFields<T extends FieldValues>({
                         field.onChange?.(e);
                       }}
                       disabled={field.disabled || disabled}
-                      {...field.radioProps}
+                      {...field.radio}
                       styles={{
-                        ...field.radioProps?.styles,
+                        ...field.radio?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.radioProps?.styles?.labelStyle}
+                          ${field.radio?.styles?.labelStyle}
                         `,
                         titleStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.radioProps?.styles?.titleStyle}
+                          ${field.radio?.styles?.titleStyle}
                         `,
                         self: css`
                           ${fieldSize &&
@@ -1052,7 +1052,7 @@ function FormFields<T extends FieldValues>({
                             width: ${fieldSize};
                             height: ${fieldSize};
                           `}
-                          ${field.radioProps?.styles?.self}
+                          ${field.radio?.styles?.self}
                         `,
                         containerStyle: css`
                           width: 100%;
@@ -1060,7 +1060,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             width: ${field.width};
                           `}
-                          ${field.radioProps?.styles?.containerStyle}
+                          ${field.radio?.styles?.containerStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1070,7 +1070,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.radioProps?.styles?.bodyStyle}
+                          ${field.radio?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1123,29 +1123,29 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       disabled={field.disabled || disabled}
-                      {...field.phoneboxProps}
+                      {...field.phonebox}
                       styles={{
-                        ...field.phoneboxProps?.styles,
+                        ...field.phonebox?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.phoneboxProps?.styles?.labelStyle}
+                          ${field.phonebox?.styles?.labelStyle}
                         `,
                         self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.phoneboxProps?.styles?.inputWrapperStyle}
+                          ${field.phonebox?.styles?.inputWrapperStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.phoneboxProps?.styles?.containerStyle}
+                          ${field.phonebox?.styles?.containerStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1155,7 +1155,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.phoneboxProps?.styles?.bodyStyle}
+                          ${field.phonebox?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1194,29 +1194,29 @@ function FormFields<T extends FieldValues>({
                       showError={shouldShowError(field.name)}
                       errorMessage={fieldState.error?.message}
                       disabled={field.disabled || disabled}
-                      {...field.colorboxProps}
+                      {...field.colorbox}
                       styles={{
-                        ...field.colorboxProps?.styles,
+                        ...field.colorbox?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.colorboxProps?.styles?.labelStyle}
+                          ${field.colorbox?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.colorboxProps?.styles?.containerStyle}
+                          ${field.colorbox?.styles?.containerStyle}
                         `,
                         self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.colorboxProps?.styles?.self}
+                          ${field.colorbox?.styles?.self}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1226,7 +1226,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.colorboxProps?.styles?.bodyStyle}
+                          ${field.colorbox?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1255,22 +1255,22 @@ function FormFields<T extends FieldValues>({
                       }
                     },
                   })}
-                  {...field.fileDropBoxProps}
+                  {...field.fileDropBox}
                   styles={{
-                    ...field.fileDropBoxProps?.styles,
+                    ...field.fileDropBox?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.fileDropBoxProps?.styles?.labelStyle}
+                      ${field.fileDropBox?.styles?.labelStyle}
                     `,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.fileDropBoxProps?.styles?.containerStyle}
+                      ${field.fileDropBox?.styles?.containerStyle}
                     `,
                   }}
                 />
@@ -1291,7 +1291,7 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  {...field.fileInputBoxProps}
+                  {...field.fileInputBox}
                   onFilesSelected={(files: File[]) => {
                     if (files && files.length > 0) {
                       setValue(field.name as Path<T>, files as any, {
@@ -1318,20 +1318,20 @@ function FormFields<T extends FieldValues>({
                     }
                   }}
                   styles={{
-                    ...field.fileInputBoxProps?.styles,
+                    ...field.fileInputBox?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.fileInputBoxProps?.styles?.labelStyle}
+                      ${field.fileInputBox?.styles?.labelStyle}
                     `,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.fileInputBoxProps?.styles?.containerStyle}
+                      ${field.fileInputBox?.styles?.containerStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -1341,7 +1341,7 @@ function FormFields<T extends FieldValues>({
                         justify-content: end;
                       `}
 
-                      ${field.fileInputBoxProps?.styles?.bodyStyle}
+                      ${field.fileInputBox?.styles?.bodyStyle}
                     `,
                   }}
                 />
@@ -1392,22 +1392,22 @@ function FormFields<T extends FieldValues>({
                   errorMessage={
                     errors[field.name as keyof T]?.message as string | undefined
                   }
-                  {...field.imageboxProps}
+                  {...field.imagebox}
                   styles={{
-                    ...field.imageboxProps?.styles,
+                    ...field.imagebox?.styles,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.imageboxProps?.styles?.containerStyle}
+                      ${field.imagebox?.styles?.containerStyle}
                     `,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.imageboxProps?.styles?.labelStyle}
+                      ${field.imagebox?.styles?.labelStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -1417,7 +1417,7 @@ function FormFields<T extends FieldValues>({
                         justify-content: end;
                       `}
 
-                      ${field.imageboxProps?.styles?.bodyStyle}
+                      ${field.imagebox?.styles?.bodyStyle}
                     `,
                   }}
                 />
@@ -1449,22 +1449,22 @@ function FormFields<T extends FieldValues>({
                     errors[field.name as keyof T]?.message as string | undefined
                   }
                   disabled={field.disabled || disabled}
-                  {...field.signboxProps}
+                  {...field.signbox}
                   styles={{
-                    ...field.signboxProps?.styles,
+                    ...field.signbox?.styles,
                     labelStyle: css`
                       ${labelSize &&
                       css`
                         font-size: ${labelSize};
                       `}
-                      ${field.signboxProps?.styles?.labelStyle}
+                      ${field.signbox?.styles?.labelStyle}
                     `,
                     containerStyle: css`
                       ${field.width &&
                       css`
                         width: ${field.width};
                       `}
-                      ${field.signboxProps?.styles?.containerStyle}
+                      ${field.signbox?.styles?.containerStyle}
                     `,
                     bodyStyle: css`
                       ${!field.title &&
@@ -1474,7 +1474,7 @@ function FormFields<T extends FieldValues>({
                         justify-content: end;
                       `}
 
-                      ${field.signboxProps?.styles?.bodyStyle}
+                      ${field.signbox?.styles?.bodyStyle}
                     `,
                   }}
                 />
@@ -1522,33 +1522,33 @@ function FormFields<T extends FieldValues>({
                       onBlur={rhf.onBlur}
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
-                      {...field.moneyProps}
+                      {...field.money}
                       styles={{
-                        ...field.moneyProps?.styles,
+                        ...field.money?.styles,
                         inputWrapperStyle: css`
                           height: 34px;
-                          ${field.moneyProps?.styles?.inputWrapperStyle}
+                          ${field.money?.styles?.inputWrapperStyle}
                         `,
                         self: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.moneyProps?.styles?.self}
+                          ${field.money?.styles?.self}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.moneyProps?.styles?.labelStyle}
+                          ${field.money?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.moneyProps?.styles?.containerStyle}
+                          ${field.money?.styles?.containerStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1558,7 +1558,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.moneyProps?.styles?.bodyStyle}
+                          ${field.money?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1605,32 +1605,32 @@ function FormFields<T extends FieldValues>({
                       placeholder={field.placeholder}
                       selectedDates={controllerField.value}
                       disabled={field.disabled || disabled}
-                      {...field.dateProps}
+                      {...field.date}
                       styles={{
-                        ...field?.dateProps?.styles,
+                        ...field?.date?.styles,
                         selectboxStyle: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
 
-                          ${field?.dateProps?.styles?.selectboxStyle}
+                          ${field?.date?.styles?.selectboxStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.dateProps?.styles?.labelStyle}
+                          ${field.date?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.dateProps?.styles?.containerStyle}
+                          ${field.date?.styles?.containerStyle}
                         `,
-                        self: field?.dateProps?.styles?.self,
+                        self: field?.date?.styles?.self,
                         bodyStyle: css`
                           ${!field.title &&
                           hasFieldTitle &&
@@ -1639,7 +1639,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.dateProps?.styles?.bodyStyle}
+                          ${field.date?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -1685,10 +1685,10 @@ function FormFields<T extends FieldValues>({
                       }}
                       selectedOptions={controllerField.value}
                       disabled={field.disabled || disabled}
-                      {...field.comboboxProps}
-                      strict={field?.comboboxProps?.strict ?? true}
+                      {...field.combobox}
+                      strict={field?.combobox?.strict ?? true}
                       styles={{
-                        ...field?.comboboxProps?.styles,
+                        ...field?.combobox?.styles,
                         bodyStyle: css`
                           ${!field.title &&
                           hasFieldTitle &&
@@ -1697,7 +1697,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.comboboxProps?.styles?.bodyStyle}
+                          ${field.combobox?.styles?.bodyStyle}
                         `,
                         selectboxStyle: css`
                           ${fieldSize &&
@@ -1705,21 +1705,21 @@ function FormFields<T extends FieldValues>({
                             font-size: ${fieldSize};
                           `}
 
-                          ${field?.comboboxProps?.styles?.selectboxStyle}
+                          ${field?.combobox?.styles?.selectboxStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.comboboxProps?.styles?.containerStyle}
+                          ${field.combobox?.styles?.containerStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.comboboxProps?.styles?.labelStyle}
+                          ${field.combobox?.styles?.labelStyle}
                         `,
                       }}
                     />
@@ -1746,29 +1746,29 @@ function FormFields<T extends FieldValues>({
                         controllerField?.onBlur();
                         field.onChange?.(e);
                       }}
-                      {...field.chipsProps}
+                      {...field.chips}
                       styles={{
-                        ...field.chipsProps?.styles,
+                        ...field.chips?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.chipsProps?.styles?.labelStyle}
+                          ${field.chips?.styles?.labelStyle}
                         `,
                         chipSelectedStyle: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.chipsProps?.styles?.chipSelectedStyle}
+                          ${field.chips?.styles?.chipSelectedStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.chipsProps?.styles?.containerStyle}
+                          ${field.chips?.styles?.containerStyle}
                         `,
                       }}
                     />
@@ -1802,15 +1802,15 @@ function FormFields<T extends FieldValues>({
                       showError={!!fieldState.error}
                       errorMessage={fieldState.error?.message}
                       disabled={field.disabled || disabled}
-                      {...field.ratingProps}
+                      {...field.rating}
                       styles={{
-                        ...field.ratingProps?.styles,
+                        ...field.rating?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.ratingProps?.styles?.labelStyle}
+                          ${field.rating?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${fieldSize &&
@@ -1821,7 +1821,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             width: ${field.width};
                           `}
-                          ${field.ratingProps?.styles?.containerStyle}
+                          ${field.rating?.styles?.containerStyle}
                         `,
                       }}
                     />
@@ -1867,29 +1867,29 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       disabled={field.disabled || disabled}
-                      {...field.thumbFieldProps}
+                      {...field.thumbField}
                       styles={{
-                        ...field.thumbFieldProps?.styles,
+                        ...field.thumbField?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.thumbFieldProps?.styles?.labelStyle}
+                          ${field.thumbField?.styles?.labelStyle}
                         `,
                         triggerWrapperStyle: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
-                          ${field.thumbFieldProps?.styles?.triggerWrapperStyle}
+                          ${field.thumbField?.styles?.triggerWrapperStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.thumbFieldProps?.styles?.containerStyle}
+                          ${field.thumbField?.styles?.containerStyle}
                         `,
                       }}
                     />
@@ -1927,35 +1927,35 @@ function FormFields<T extends FieldValues>({
                           | undefined
                       }
                       disabled={field.disabled || disabled}
-                      {...field.toggleProps}
+                      {...field.toggle}
                       title={field.title}
                       label={field.placeholder}
                       styles={{
-                        ...field.toggleProps?.styles,
+                        ...field.toggle?.styles,
                         titleStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.toggleProps?.styles?.titleStyle}
+                          ${field.toggle?.styles?.titleStyle}
                         `,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.toggleProps?.styles?.labelStyle}
+                          ${field.toggle?.styles?.labelStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
                           css`
                             width: ${field.width};
                           `}
-                          ${field.toggleProps?.styles?.containerStyle}
+                          ${field.toggle?.styles?.containerStyle}
                         `,
                         controlStyle: css`
                           min-height: 34px;
-                          ${field.toggleProps?.styles?.controlStyle}
+                          ${field.toggle?.styles?.controlStyle}
                         `,
                         bodyStyle: css`
                           ${!field.title &&
@@ -1965,7 +1965,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.toggleProps?.styles?.bodyStyle}
+                          ${field.toggle?.styles?.bodyStyle}
                         `,
                       }}
                     />
@@ -2005,19 +2005,19 @@ function FormFields<T extends FieldValues>({
                           | string
                           | undefined
                       }
-                      {...field.capsuleProps}
+                      {...field.capsule}
                       styles={{
-                        ...field.capsuleProps?.styles,
+                        ...field.capsule?.styles,
                         labelStyle: css`
                           ${labelSize &&
                           css`
                             font-size: ${labelSize};
                           `}
-                          ${field.capsuleProps?.styles?.labelStyle}
+                          ${field.capsule?.styles?.labelStyle}
                         `,
                         capsuleWrapperStyle: css`
                           height: 34px;
-                          ${field.capsuleProps?.styles?.capsuleWrapperStyle}
+                          ${field.capsule?.styles?.capsuleWrapperStyle}
                         `,
                         containerStyle: css`
                           ${field.width &&
@@ -2032,7 +2032,7 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
 
-                          ${field.capsuleProps?.styles?.containerStyle}
+                          ${field.capsule?.styles?.containerStyle}
                         `,
                       }}
                     />
