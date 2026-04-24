@@ -145,7 +145,7 @@ export const WithActions: Story = {
     const ACTIONS: SeparatorAction[] = [
       { icon: { image: RiUserAddLine }, caption: "Invite" },
       { icon: { image: RiGitBranchLine }, caption: "Branch" },
-      { icon: { image: RiFileList3Line }, caption: "Specs" },
+      { icon: { image: RiFileList3Line }, caption: "Specs", alwaysShow: false },
     ];
 
     return <Separator {...args} actions={ACTIONS} />;
