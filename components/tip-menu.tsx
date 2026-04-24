@@ -1,5 +1,4 @@
 import styled, { css, CSSProp } from "styled-components";
-import { COLOR_STYLE_MAP } from "../constants/color-map";
 import React, { ReactNode, useMemo, useRef, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
@@ -183,7 +182,9 @@ function TipMenuItem({
         <StyledCaption>{caption}</StyledCaption>
       </TipMenuItemContent>
 
-      {subMenuList && <Figure image={RiArrowRightSFill} />}
+      {subMenuList && (
+        <Figure aria-label="tip-menu-item-arrow" image={RiArrowRightSFill} />
+      )}
     </TipMenuItemWrapper>
   );
 
