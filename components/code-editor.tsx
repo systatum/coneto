@@ -19,7 +19,7 @@ import { RiCloseLine } from "@remixicon/react";
 import {
   RichEditor,
   RichEditorAction,
-  RichEditorCodeLanguagesMonaco,
+  MonacoCodeLanguageEquivalent,
   RichEditorToolbarPosition,
 } from "./rich-editor";
 import { useId } from "react";
@@ -93,7 +93,7 @@ export function getMonacoEditor() {
   return monacoPromise;
 }
 
-export type CodeEditorLanguage = RichEditorCodeLanguagesMonaco;
+export type CodeEditorLanguage = MonacoCodeLanguageEquivalent;
 
 export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
   onClick?: (props: { code?: string }) => void;
