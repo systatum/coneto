@@ -286,6 +286,7 @@ const TipMenuItemWrapper = styled.div<{
     $disabled &&
     css`
       cursor: not-allowed;
+      opacity: 0.6;
       filter: grayscale(80%) brightness(1.1) contrast(1);
       color: ${$theme?.[$variant]?.disabledTextColor};
     `}
