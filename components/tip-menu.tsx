@@ -113,6 +113,7 @@ function TipMenu({
           subMenuList={menu.subMenuList}
           hidden={menu.hidden}
           disabled={menu.disabled}
+          setIsOpen={setIsOpen}
           onClick={(e) => {
             e.stopPropagation();
 
@@ -157,7 +158,10 @@ function TipMenuItem({
   subMenuList,
   styles,
   disabled,
-}: TipMenuItemProps) {
+  setIsOpen,
+}: TipMenuItemProps & {
+  setIsOpen?: () => void;
+}) {
   const { currentTheme } = useTheme();
   const tipMenuTheme = currentTheme.tipmenu;
   const tooltipRef = useRef<TooltipRef>(null);
@@ -226,7 +230,10 @@ function TipMenuItem({
             subMenuList={subMenuList}
             variant={variant}
             size={size}
-            setIsOpen={() => tooltipRef.current?.close()}
+            setIsOpen={() => {
+              tooltipRef.current?.close();
+              setIsOpen?.();
+            }}
           />
         }
       >
