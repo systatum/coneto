@@ -102,7 +102,10 @@ const SeparatorContainer = styled.div<{ $style?: CSSProp; $color?: string }>`
   position: relative;
   width: 100%;
   display: flex;
+  height: 24px;
+  align-items: center;
   color: ${({ $color }) => $color};
+
   ${({ $style }) => $style}
 `;
 
