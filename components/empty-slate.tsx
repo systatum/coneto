@@ -1,10 +1,11 @@
 import { BaseAction } from "@/constants/action";
 import { ReactNode } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonVariant } from "./button";
+import { Figure, FigureProps } from "./figure";
 
 export interface EmptySlateProps {
-  imageUrl: string;
+  icon: FigureProps;
   title: string;
   subtitle?: string;
   actions?: EmptySlateAction[];
@@ -24,7 +25,7 @@ export interface EmptySlateStyles {
 }
 
 function EmptySlate({
-  imageUrl,
+  icon,
   title,
   subtitle,
   actions,
@@ -32,13 +33,14 @@ function EmptySlate({
 }: EmptySlateProps) {
   return (
     <Container $style={styles?.containerStyle}>
-      {imageUrl && (
-        <ImageWrapper $style={styles?.imageStyle}>
-          <StyledImage
-            src={imageUrl}
-            alt="Image for Empty Slate Coneto Product from Systatum."
-          />
-        </ImageWrapper>
+      {icon && (
+        <Figure
+          size={icon?.size ?? 200}
+          styles={{
+            self: icon?.styles?.self,
+          }}
+          {...icon}
+        />
       )}
       <Content $style={styles?.contentStyle}>
         <Title $style={styles?.titleStyle}>{title}</Title>
@@ -69,29 +71,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   padding-top: 5rem;
   padding-bottom: 5rem;
   ${({ $style }) => $style}
-`;
-
-const ImageWrapper = styled.div<{ $style?: CSSProp }>`
-  width: 250px;
-  height: 150px;
-
-  @media (min-width: 640px) {
-    width: 350px;
-    height: 180px;
-  }
-
-  @media (min-width: 768px) {
-    width: 400px;
-    height: 200px;
-  }
-
-  ${({ $style }) => $style}
-`;
-
-const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const Content = styled.div<{ $style?: CSSProp }>`
