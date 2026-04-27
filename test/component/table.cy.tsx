@@ -186,6 +186,7 @@ describe("Table", () => {
           <BasicTable
             actions={[
               {
+                id: "button",
                 caption: "Test Button",
               },
             ]}
@@ -205,6 +206,7 @@ describe("Table", () => {
           <BasicTable
             actions={[
               {
+                id: "button",
                 caption: "Test Button",
                 type: "button",
               },
@@ -226,6 +228,7 @@ describe("Table", () => {
           <BasicTable
             actions={[
               {
+                id: "button",
                 caption: "Test Button",
                 type: "button",
                 capsuleProps: {
@@ -249,6 +252,7 @@ describe("Table", () => {
           <BasicTable
             actions={[
               {
+                id: "capsule",
                 type: "capsule",
                 capsuleProps: {
                   activeTab: "1",
@@ -430,6 +434,7 @@ describe("Table", () => {
 
     const DEFAULT_TOP_ACTIONS: TableAction[] = [
       {
+        id: "copy",
         caption: "Copy",
         icon: { image: RiArrowUpSLine },
         onClick: () => {
@@ -826,6 +831,7 @@ describe("Table", () => {
 
   const TOP_ACTIONS: TableAction[] = [
     {
+      id: "delete",
       caption: "Delete",
       icon: { image: RiDeleteBin2Line },
       onClick: () => {
@@ -833,6 +839,7 @@ describe("Table", () => {
       },
     },
     {
+      id: "copy",
       caption: "Copy",
       icon: { image: RiClipboardFill },
       onClick: () => {
@@ -867,6 +874,7 @@ describe("Table", () => {
   const ONE_ROW_ACTION = (rowId: string): TipMenuItemProps[] => {
     return [
       {
+        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
@@ -879,6 +887,7 @@ describe("Table", () => {
   const ROW_ACTIONS = (rowId: string): TableSubMenuList[] => {
     return [
       {
+        id: "edit",
         caption: "Edit",
         icon: { image: RiArrowUpSLine, color: "gray" },
         onClick: () => {
@@ -886,6 +895,7 @@ describe("Table", () => {
         },
       },
       {
+        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBin2Fill, color: "gray" },
         onClick: () => {
@@ -893,8 +903,9 @@ describe("Table", () => {
         },
       },
       {
+        id: "archive",
         hidden: true,
-        caption: "Arhive",
+        caption: "Archive",
         icon: { image: RiArchive2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was archive`);
@@ -1444,6 +1455,7 @@ describe("Table", () => {
     context("when given default", () => {
       const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
+          id: "copy",
           caption: "Copy",
           icon: { image: RiArrowUpSLine },
           onClick: () => {
@@ -1502,11 +1514,13 @@ describe("Table", () => {
     context("when given subMenu", () => {
       const TIP_MENU_ITEMS = [
         {
+          id: "report_phishing",
           caption: "Report Phishing",
           icon: { image: RiSpam2Line, color: "blue" },
           onClick: () => console.log("Phishing reported"),
         },
         {
+          id: "report_junk",
           caption: "Report Junk",
           icon: { image: RiForbid2Line, color: "red" },
           onClick: () => console.log("Junk reported"),
@@ -1515,6 +1529,7 @@ describe("Table", () => {
 
       const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
+          id: "copy",
           caption: "Copy",
           onClick: () => {
             console.log("Copy clicked");
@@ -1584,6 +1599,7 @@ describe("Table", () => {
 
       const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
+          id: "capsule",
           type: "capsule",
           capsuleProps: {
             activeTab: "new",
@@ -1650,6 +1666,7 @@ describe("Table", () => {
 
         const DEFAULT_TOP_ACTIONS: TableAction[] = [
           {
+            id: "capsule",
             type: "capsule",
             capsuleProps: {
               activeTab: "new",

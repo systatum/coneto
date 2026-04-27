@@ -115,6 +115,7 @@ function TipMenu({
           subMenuList={menu.subMenuList}
           hidden={menu.hidden}
           disabled={menu.disabled}
+          className={menu.className}
           setIsOpen={setIsOpen}
           onClick={(e) => {
             e.stopPropagation();
@@ -139,6 +140,7 @@ export interface TipMenuItemProps extends BaseAction {
   size?: TipMenuSize;
   subMenuList?: TipMenuItemProps[];
   styles?: TipMenuItemStyles;
+  className?: string;
 }
 
 export interface TipMenuItemStyles {
@@ -158,6 +160,7 @@ function TipMenuItem({
   disabled,
   setIsOpen,
   id,
+  className,
 }: TipMenuItemProps & {
   setIsOpen?: () => void;
 }) {
@@ -179,6 +182,7 @@ function TipMenuItem({
         if (disabled) return;
         onClick?.(e);
       }}
+      className={className}
       $theme={tipMenuTheme}
       $disabled={disabled}
       $style={styles?.containerStyle}

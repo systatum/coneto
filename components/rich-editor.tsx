@@ -1082,6 +1082,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     const TIP_MENU_RICH_EDITOR: TipMenuItemProps[] = [
       {
+        id: "heading_1",
         caption: "Heading 1",
         icon: {
           image: RiH1,
@@ -1092,6 +1093,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         },
       },
       {
+        id: "heading_2",
         caption: "Heading 2",
         icon: {
           image: RiH2,
@@ -1102,6 +1104,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         },
       },
       {
+        id: "heading_3",
         caption: "Heading 3",
         icon: {
           image: RiH3,

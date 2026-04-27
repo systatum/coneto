@@ -144,6 +144,7 @@ export const Default: Story = {
 
     const TIP_MENU_EMAIL: TipMenuItemProps[] = [
       {
+        id: "duplicate",
         caption: "Duplicate",
         icon: {
           image: RiFileCopyLine,
@@ -151,6 +152,7 @@ export const Default: Story = {
         onClick: () => console.log("Phishing reported"),
       },
       {
+        id: "report_junk",
         caption: "Report Junk",
         icon: {
           image: RiDeleteBinLine,
@@ -279,6 +281,7 @@ export const Autogrow: Story = {
 
     const TIP_MENU_EMAIL: TipMenuItemProps[] = [
       {
+        id: "duplicate",
         caption: "Duplicate",
         icon: {
           image: RiFileCopyLine,
@@ -286,6 +289,7 @@ export const Autogrow: Story = {
         onClick: () => console.log("Phishing reported"),
       },
       {
+        id: "report_junk",
         caption: "Report Junk",
         icon: {
           image: RiDeleteBinLine,

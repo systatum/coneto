@@ -53,6 +53,7 @@ describe("context-menu", () => {
   context("when given in List component", () => {
     const LIST_ACTION_ITEMS_PROPS = (id: string): ListItemAction[] => [
       {
+        id: "add",
         caption: "Add",
         icon: { image: RiArrowRightSLine },
         onClick: () => {
@@ -118,6 +119,7 @@ describe("context-menu", () => {
 
     const ROW_ACTIONS = (id: string): ListItemAction[] => [
       {
+        id: "edit",
         className: "test-classname",
         caption: "Edit",
         icon: { image: RiEdit2Line },
@@ -126,6 +128,7 @@ describe("context-menu", () => {
         },
       },
       {
+        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBack2Line },
         onClick: () => {
@@ -346,6 +349,7 @@ describe("context-menu", () => {
   context("when given in TreeList component", () => {
     const ITEM_ACTIONS: TreeListItemAction[] = [
       {
+        id: "edit",
         className: "editable-action-tip",
         caption: "Edit",
         icon: { image: RiEdit2Line, color: "gray" },
@@ -354,6 +358,7 @@ describe("context-menu", () => {
         },
       },
       {
+        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBin2Line, color: "gray" },
         onClick: (id: string) => {
@@ -361,6 +366,7 @@ describe("context-menu", () => {
         },
       },
       {
+        id: "copy",
         caption: "Copy",
         icon: { image: RiFileCopyLine, color: "gray" },
         onClick: (id: string) => {
@@ -368,6 +374,7 @@ describe("context-menu", () => {
         },
       },
       {
+        id: "share",
         caption: "Share",
         icon: { image: RiShareForwardLine, color: "gray" },
         onClick: (id: string) => {
@@ -529,6 +536,7 @@ describe("context-menu", () => {
     const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
         {
+          id: "edit",
           caption: "Edit",
           className: "table-editable",
           icon: { image: RiEdit2Line, color: "gray" },
@@ -537,6 +545,7 @@ describe("context-menu", () => {
           },
         },
         {
+          id: "delete",
           caption: "Delete",
           icon: { image: RiDeleteBin2Line, color: "gray" },
           onClick: () => {
@@ -682,6 +691,7 @@ describe("context-menu", () => {
   context("when given in Navtab component", () => {
     const SUB_MENU: NavTabTabAction[] = [
       {
+        id: "discover",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -690,6 +700,7 @@ describe("context-menu", () => {
         className: "discover-action",
       },
       {
+        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");

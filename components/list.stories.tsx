@@ -732,6 +732,7 @@ export const ReactNodeTitle: Story = {
 
     const LIST_GROUP_ACTIONS: ListGroupaction[] = [
       {
+        id: "add",
         caption: "Add",
         onClick: () =>
           setGroups((prev) => {
@@ -757,6 +758,7 @@ export const ReactNodeTitle: Story = {
       const selectedByFormFieldsGroup = id.split("form-fields-");
       return [
         {
+          id: "delete",
           caption: "Delete",
           icon: { image: RiDeleteBin2Fill },
           onClick: () => {
@@ -1056,6 +1058,7 @@ export const WithSubcontent: Story = {
       setGroups: React.Dispatch<React.SetStateAction<ListGroupContent[]>>
     ): ListGroupaction[] => [
       {
+        id: "add",
         caption: "Add",
         onClick: () =>
           setGroups((prev) => {
@@ -1084,6 +1087,7 @@ export const WithSubcontent: Story = {
 
       return [
         {
+          id: "delete",
           caption: "Delete",
           variant: "danger",
           icon: { image: RiDeleteBin2Fill },
@@ -1580,17 +1584,16 @@ export const WithBadge: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
-                actions={
-                  isOpen &&
-                  [
-                    {
-                      caption: "Back",
-                      onClick: () => {
-                        setIsOpen(false);
-                      },
+                actions={[
+                  {
+                    id: "back",
+                    caption: "Back",
+                    onClick: () => {
+                      setIsOpen(false);
                     },
-                  ].filter(Boolean)
-                }
+                    hidden: !isOpen,
+                  },
+                ]}
               >
                 {isOpen ? (
                   <ShowContent />
@@ -1648,6 +1651,7 @@ export const CustomOpener: Story = {
 
     const ACTIONS_GROUPS: ListGroupaction[] = [
       {
+        id: "add",
         caption: "Add",
         onClick: (id: string) => {
           console.log(`action was added ${id}`);
@@ -1871,6 +1875,7 @@ export const CustomOpener: Story = {
                     onSelected={onChangeValue}
                     actions={(id: string) => [
                       {
+                        id: "edit",
                         caption: "Edit",
                         icon: {
                           image: RiEdit2Line,
@@ -1880,6 +1885,7 @@ export const CustomOpener: Story = {
                         },
                       },
                       {
+                        id: "delete",
                         caption: "Delete",
                         variant: "danger",
                         icon: {
@@ -2007,6 +2013,7 @@ export const WithMaxItems: Story = {
         subtitle="Fueling innovation with every bite."
         headerActions={[
           {
+            id: "edit",
             caption: "Edit fields",
             disabled: value.checked.length === 0,
             icon: {
@@ -2088,6 +2095,7 @@ export const Accordion: Story = {
   render: () => {
     const ACTIONS_GROUPS: ListGroupaction[] = [
       {
+        id: "refresh",
         caption: "Refresh",
         onClick: (id: string) => {
           console.log(`action was added ${id}`);

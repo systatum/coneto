@@ -23,48 +23,57 @@ import { FigureProps } from "./../../components/figure";
 describe("Button", () => {
   const TIP_MENU_ITEMS: TipMenuItemProps[] = [
     {
+      id: "report_phishing",
       caption: "Report Phishing",
       icon: { image: RiSpam2Line, color: "blue" },
       onClick: () => console.log("Phishing reported"),
     },
     {
+      id: "report_junk",
       caption: "Report Junk",
       icon: { image: RiForbid2Line, color: "red" },
       onClick: () => console.log("Junk reported"),
     },
     {
+      id: "block_sender",
       caption: "Block Sender",
       icon: { image: RiShieldLine, color: "orange" },
       variant: "danger",
       onClick: () => console.log("Sender blocked"),
     },
     {
+      id: "mark_as_read",
       caption: "Mark as Read",
       icon: { image: RiCheckLine, color: "green" },
       onClick: () => console.log("Marked as read"),
     },
     {
+      id: "move_to_spam",
       caption: "Move to Spam",
       icon: { image: RiInboxArchiveLine, color: "purple" },
       onClick: () => console.log("Moved to spam"),
     },
     {
+      id: "download_attachment",
       caption: "Download Attachment",
       icon: { image: RiDownloadLine, color: "teal" },
       onClick: () => console.log("Downloading"),
     },
     {
+      id: "copy_link",
       caption: "Copy Link",
       icon: { image: RiLink, color: "gray" },
       onClick: () => console.log("Link copied"),
     },
     {
+      id: "share",
       caption: "Share",
       icon: { image: RiShareLine, color: "indigo" },
       variant: "danger",
       onClick: () => console.log("Shared"),
     },
     {
+      id: "edit",
       caption: "Edit",
       icon: { image: RiEditLine, color: "yellow" },
       onClick: () => console.log("Edit mode"),

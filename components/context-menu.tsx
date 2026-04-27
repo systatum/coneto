@@ -15,6 +15,7 @@ export interface ContextMenuProps {
   iconSize?: number;
   open?: boolean;
   styles?: ContextMenuStyles;
+  className?: string;
 }
 
 export interface ContextMenuStyles {

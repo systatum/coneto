@@ -128,6 +128,7 @@ export const Default: Story = {
   render: () => {
     const subMenuList: ToolbarSubMenuList[] = [
       {
+        id: "report_phishing",
         caption: "Report Phishing",
         icon: {
           image: RiSpam2Line,
@@ -136,6 +137,7 @@ export const Default: Story = {
         onClick: () => console.log("Phishing reported"),
       },
       {
+        id: "report_junk",
         caption: "Report Junk",
         icon: {
           image: RiForbid2Line,
@@ -144,6 +146,7 @@ export const Default: Story = {
         onClick: () => console.log("Junk reported"),
       },
       {
+        id: "block_sender",
         caption: "Block Sender",
         icon: {
           image: RiShieldLine,
@@ -153,6 +156,7 @@ export const Default: Story = {
         onClick: () => console.log("Sender blocked"),
       },
       {
+        id: "mark_as_read",
         caption: "Mark as Read",
         icon: {
           image: RiCheckLine,
@@ -161,6 +165,7 @@ export const Default: Story = {
         onClick: () => console.log("Marked as read"),
       },
       {
+        id: "move_to_spam",
         caption: "Move to Spam",
         icon: {
           image: RiInboxArchiveLine,
@@ -169,6 +174,7 @@ export const Default: Story = {
         onClick: () => console.log("Moved to spam"),
       },
       {
+        id: "download_attachment",
         caption: "Download Attachment",
         icon: {
           image: RiDownloadLine,
@@ -177,6 +183,7 @@ export const Default: Story = {
         onClick: () => console.log("Downloading"),
       },
       {
+        id: "copy_link",
         caption: "Copy Link",
         icon: {
           image: RiLink,
@@ -185,6 +192,7 @@ export const Default: Story = {
         onClick: () => console.log("Link copied"),
       },
       {
+        id: "share",
         caption: "Share",
         icon: {
           image: RiShareLine,
@@ -194,6 +202,7 @@ export const Default: Story = {
         onClick: () => console.log("Shared"),
       },
       {
+        id: "edit",
         caption: "Edit",
         icon: {
           image: RiEditLine,
@@ -202,7 +211,6 @@ export const Default: Story = {
         onClick: () => console.log("Edit mode"),
       },
     ];
-
     return (
       <Toolbar>
         <Toolbar.Menu
@@ -249,6 +257,7 @@ export const Big: Story = {
   render: () => {
     const subMenuList: ToolbarSubMenuList[] = [
       {
+        id: "report_phishing",
         caption: "Report Phishing",
         icon: {
           image: RiSpam2Line,
@@ -257,6 +266,7 @@ export const Big: Story = {
         onClick: () => console.log("Phishing reported"),
       },
       {
+        id: "report_junk",
         caption: "Report Junk",
         icon: {
           image: RiForbid2Line,
@@ -265,6 +275,7 @@ export const Big: Story = {
         onClick: () => console.log("Junk reported"),
       },
       {
+        id: "block_sender",
         caption: "Block Sender",
         icon: {
           image: RiShieldLine,
@@ -274,6 +285,7 @@ export const Big: Story = {
         onClick: () => console.log("Sender blocked"),
       },
       {
+        id: "mark_as_read",
         caption: "Mark as Read",
         icon: {
           image: RiCheckLine,
@@ -282,6 +294,7 @@ export const Big: Story = {
         onClick: () => console.log("Marked as read"),
       },
       {
+        id: "move_to_spam",
         caption: "Move to Spam",
         icon: {
           image: RiInboxArchiveLine,
@@ -290,6 +303,7 @@ export const Big: Story = {
         onClick: () => console.log("Moved to spam"),
       },
       {
+        id: "download_attachment",
         caption: "Download Attachment",
         icon: {
           image: RiDownloadLine,
@@ -298,6 +312,7 @@ export const Big: Story = {
         onClick: () => console.log("Downloading"),
       },
       {
+        id: "copy_link",
         caption: "Copy Link",
         icon: {
           image: RiLink,
@@ -306,6 +321,7 @@ export const Big: Story = {
         onClick: () => console.log("Link copied"),
       },
       {
+        id: "share",
         caption: "Share",
         icon: {
           image: RiShareLine,
@@ -315,6 +331,7 @@ export const Big: Story = {
         onClick: () => console.log("Shared"),
       },
       {
+        id: "edit",
         caption: "Edit",
         icon: {
           image: RiEditLine,
