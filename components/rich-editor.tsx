@@ -1961,7 +1961,7 @@ const EditorArea = styled.div<{
           `}
 
   ${({ $toolbarPosition, $mode }) =>
-    $mode !== "view-only"
+    $mode === "page-editor"
       ? $toolbarPosition === "top"
         ? css`
             padding-top: 45px;
@@ -1969,7 +1969,15 @@ const EditorArea = styled.div<{
         : css`
             padding-bottom: 45px;
           `
-      : ""};
+      : $mode !== "view-only"
+        ? $toolbarPosition === "top"
+          ? css`
+              margin-top: 37px;
+            `
+          : css`
+              margin-bottom: 37px;
+            `
+        : ""};
 
   ${({ $mode }) =>
     $mode === "view-only" &&
