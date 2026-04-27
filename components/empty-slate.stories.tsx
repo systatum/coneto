@@ -31,14 +31,14 @@ EmptySlate is a versatile component to display a visually appealing empty state 
   title="No Items Found"
   subtitle="Try adjusting your filters or adding a new item."
   actions={[
-              {
-                caption: "Add Item",
-              },
-              {
-                caption: "Learn More",
-                variant: "primary",
-              },
-           ]}
+    {
+      caption: "Add Item",
+    },
+    {
+      caption: "Learn More",
+      variant: "primary",
+    },
+  ]}
   styles={{
     containerStyle: css\`padding: 2rem; text-align: center;\`,
     imageStyle: css\`max-width: 200px; margin: 0 auto;\`,
