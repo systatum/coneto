@@ -27,15 +27,18 @@ EmptySlate is a versatile component to display a visually appealing empty state 
 ### 📌 Usage
 \`\`\`tsx
 <EmptySlate
-  imageUrl="/images/empty-state.svg"
+  icon={{ icon:"/images/empty-state.svg" }}
   title="No Items Found"
   subtitle="Try adjusting your filters or adding a new item."
-  actions={
-    <>
-        <Button variant="default">Add Item</Button>
-        <Button variant="primary">Learn More</Button>
-      </>
-  }
+  actions={[
+              {
+                caption: "Add Item",
+              },
+              {
+                caption: "Learn More",
+                variant: "primary",
+              },
+           ]}
   styles={{
     containerStyle: css\`padding: 2rem; text-align: center;\`,
     imageStyle: css\`max-width: 200px; margin: 0 auto;\`,
@@ -56,7 +59,7 @@ EmptySlate is a versatile component to display a visually appealing empty state 
     },
   },
   argTypes: {
-    imageUrl: {
+    icon: {
       control: "text",
       description: "URL of the image to display as visual context.",
     },
@@ -97,7 +100,7 @@ type Story = StoryObj<typeof EmptySlate>;
 
 export const Default: Story = {
   args: {
-    imageUrl: "https://picsum.photos/200?random=1",
+    icon: { image: "https://picsum.photos/200?random=1" },
     title: "Manage your inventory transfers",
     subtitle: "Track and receive your incoming inventory from suppliers.",
     actions: [
