@@ -977,7 +977,7 @@ export type CalendarStyles = BaseCalendarStyles & FieldLaneStyles;
 
 export interface CalendarProps
   extends Omit<BaseCalendarProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CalendarStyles;
 }
 
@@ -986,7 +986,6 @@ function Calendar({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -1015,7 +1014,6 @@ function Calendar({
       errorMessage={errorMessage}
       labelPosition={labelPosition}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       required={rest.required}

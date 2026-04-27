@@ -383,7 +383,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
 export interface PhoneboxProps
   extends Omit<BasePhoneboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "onChange"> {
+    Omit<FieldLaneProps, "styles" | "onChange" | "actions"> {
   styles?: PhoneboxStyles & FieldLaneStyles;
 }
 
@@ -395,7 +395,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       showError,
       styles,
       errorMessage,
-      actions,
       type,
       helper,
       disabled,
@@ -422,7 +421,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         showError={showError}
         errorMessage={errorMessage}
         label={label}
-        actions={actions}
         type={type}
         helper={helper}
         disabled={disabled}

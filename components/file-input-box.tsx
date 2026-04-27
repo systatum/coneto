@@ -162,7 +162,7 @@ export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: FileInputBoxStyles;
 }
 
@@ -171,7 +171,6 @@ function FileInputBox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -204,7 +203,6 @@ function FileInputBox({
       labelPosition={labelPosition}
       errorMessage={errorMessage}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       required={rest.required}
