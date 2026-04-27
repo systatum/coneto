@@ -9,6 +9,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -159,6 +160,8 @@ export interface ColorboxProps
     Omit<FieldLaneProps, "styles" | "type"> {
   styles?: ColorboxStyles;
 }
+
+export type ColorboxAction = FieldLaneAction;
 
 const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
   ({ ...props }, ref) => {
