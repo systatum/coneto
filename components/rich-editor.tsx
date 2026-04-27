@@ -800,6 +800,83 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         return;
       }
 
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+
+        const range = sel.getRangeAt(0);
+
+        // Find current block-level element
+        let currentBlock: HTMLElement | null = null;
+        let node: Node = range.startContainer;
+        while (node && node !== editorRef.current) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            currentBlock = node as HTMLElement;
+            break;
+          }
+          node = node.parentNode!;
+        }
+
+        if (!currentBlock) return;
+
+        const targetSibling =
+          e.key === "ArrowDown"
+            ? currentBlock.nextElementSibling
+            : currentBlock.previousElementSibling;
+
+        if (!targetSibling?.hasAttribute("data-monaco-block-id")) return;
+
+        // Is caret on the edge line facing Monaco?
+        const blockRect = currentBlock.getBoundingClientRect();
+
+        // Build a single-char range to get accurate caret Y in Chrome
+        let caretTop: number;
+        let caretBottom: number;
+
+        const textNode = range.startContainer;
+        if (textNode.nodeType === Node.TEXT_NODE) {
+          const charRange = document.createRange();
+          const offset = range.startOffset;
+          const len = (textNode.textContent || "").length;
+
+          if (offset < len) {
+            charRange.setStart(textNode, offset);
+            charRange.setEnd(textNode, offset + 1);
+          } else if (offset > 0) {
+            charRange.setStart(textNode, offset - 1);
+            charRange.setEnd(textNode, offset);
+          } else {
+            // empty text node fallback
+            caretTop = blockRect.top;
+            caretBottom = blockRect.bottom;
+          }
+
+          if (!caretTop) {
+            const rects = charRange.getClientRects();
+            caretTop = rects[0]?.top ?? blockRect.top;
+            caretBottom = rects[0]?.bottom ?? blockRect.bottom;
+          }
+        } else {
+          // <br> or empty block
+          caretTop = blockRect.top;
+          caretBottom = blockRect.bottom;
+        }
+
+        const isOnEdgeLine =
+          e.key === "ArrowDown"
+            ? caretBottom >= blockRect.bottom - 5
+            : caretTop <= blockRect.top + 5;
+
+        if (isOnEdgeLine) {
+          e.preventDefault();
+          const focusTarget =
+            targetSibling.querySelector<HTMLElement>(".native-edit-context") ??
+            targetSibling.querySelector<HTMLElement>(".monaco-editor textarea");
+
+          focusTarget?.focus();
+        }
+      }
+
       // This logic use for handle space for orderedlist/unorderedlist, and heading.
       if (e.key === "Enter") {
         const sel = window.getSelection();
