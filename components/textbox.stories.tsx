@@ -380,12 +380,13 @@ export const WithAction: Story = {
         value={args.value}
         actions={[
           {
+            id: "send-message",
             icon: { image: RemixIcons.RiSendPlaneFill },
             onClick: () => console.log(`Send message has been successful.`),
             title: "Send message",
           },
-
           {
+            id: "delete-message",
             icon: { image: RemixIcons.RiCloseLine },
             onClick: () => setUpdateArgs({ value: "" }),
             title: "Delete message",
