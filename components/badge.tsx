@@ -5,6 +5,7 @@ import { FigureProps } from "./figure";
 import { Button, ButtonStyles } from "./button";
 import { useTheme } from "./../theme/provider";
 import { BadgeThemeConfig } from "./../theme";
+import { BaseAction } from "./../constants/action";
 
 export const BadgeVariant = {
   Neutral: "neutral",
@@ -37,14 +38,11 @@ export interface BadgeStyles {
   actionWrapperStyle?: CSSProp;
 }
 
-export interface BadgeAction {
-  icon?: FigureProps;
+export interface BadgeAction extends Omit<BaseAction, "onClick" | "caption"> {
   onClick?: (badge?: BadgeProps) => void;
-  disabled?: boolean;
   size?: number;
   styles?: ButtonStyles;
   title?: string;
-  hidden?: boolean;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
