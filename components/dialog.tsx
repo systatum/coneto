@@ -23,7 +23,7 @@ import {
   useTheme,
 } from "./../theme/provider";
 import { DialogThemeConfig } from "./../theme";
-import { BaseAction } from "./../lib/action";
+import { BaseAction } from "../constants/action";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
