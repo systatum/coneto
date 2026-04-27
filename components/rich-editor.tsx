@@ -397,14 +397,19 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html = await marked.parse(processedValue);
 
         html = splitBrIntoParagraphs(html);
+
         html = html.replace(
           new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
           "<p><br></p>"
         );
-        // Also strip any placeholder that leaked into a text paragraph
-        html = html.replace(new RegExp(EMPTY_P_PLACEHOLDER, "g"), "");
 
-        const temp = document.createElement("div");
+        // Also strip any placeholder that leaked into a text paragraph
+        html = html.replace(
+          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
+          "<br></p><p>"
+        );
+
+        const temp = document.createElement("p");
         temp.innerHTML = html;
 
         const nodes = Array.from(temp.childNodes);

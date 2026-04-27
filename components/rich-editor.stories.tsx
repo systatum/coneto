@@ -286,17 +286,6 @@ This is ordered list
 This is unordered list
 * test
 * test
-
-This is with code-block
-\`\`\`tsx
-import { Button } from "@systatum/coneto/button"
-
-function Content(){
-  return <Button variant="primary">Your caption</Button>
-}
-
-export default Content
-\`\`\`
 `,
       },
       { title: "Sender Name", content: "Sender Name" },
