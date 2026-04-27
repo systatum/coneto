@@ -431,8 +431,13 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                 $isStatic={isStatic}
                 $fontSize={fontSize}
                 $isAnimate={isAnimate}
+                autoComplete="off"
               />
-              <PinboxIndicator $theme={pinboxTheme} $error={showError} />
+              <PinboxIndicator
+                aria-label="pinbox-indicator"
+                $theme={pinboxTheme}
+                $error={showError}
+              />
             </PinboxInputContent>
           );
         })}
