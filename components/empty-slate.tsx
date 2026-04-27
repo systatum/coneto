@@ -1,12 +1,18 @@
+import { BaseAction } from "@/constants/action";
 import { ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
+import { Button, ButtonVariant } from "./button";
 
 export interface EmptySlateProps {
   imageUrl: string;
   title: string;
   subtitle?: string;
-  actions?: ReactNode;
+  actions?: EmptySlateAction[];
   styles?: EmptySlateStyles;
+}
+
+export interface EmptySlateAction extends BaseAction {
+  variant?: ButtonVariant;
 }
 
 export interface EmptySlateStyles {
@@ -39,7 +45,16 @@ function EmptySlate({
         {subtitle && (
           <Subtitle $style={styles?.titleStyle}>{subtitle}</Subtitle>
         )}
-        {actions && <Actions>{actions}</Actions>}
+        {actions && (
+          <Actions>
+            {actions?.map((action) => {
+              if (action?.hidden) {
+                return;
+              }
+              return <Button {...action}>{action?.caption}</Button>;
+            })}
+          </Actions>
+        )}
       </Content>
     </Container>
   );
