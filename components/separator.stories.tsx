@@ -1,5 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Separator } from "./separator";
+import { Separator, SeparatorAction } from "./separator";
+import {
+  RiFileList3Line,
+  RiGitBranchLine,
+  RiUserAddLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof Separator> = {
   title: "Stage/Separator",
@@ -19,6 +24,46 @@ Separator is a visual divider component that separates content into sections wit
 - ↔️ **Text float**: Title can float left or right.
 - 🧱 **Custom depth**: Adjust distance of the title from the container edge.
 - 🎨 **Customizable styles**: Supports container, line, and title styling via CSS props.
+
+### ⚡ Actions
+
+The \`actions\` prop allows you to attach interactive elements (such as icon buttons) to the separator.
+
+These actions are typically displayed on the opposite side of the title and can be used for quick operations like edit, copy, or open menus.
+
+Each item in \`actions\` follows this shape:
+
+- \`icon\` (**required**) → Icon configuration (FigureProps)
+- \`caption\` → Tooltip text
+- \`onClick\` → Click handler
+- \`alwaysShow\` → Control visibility behavior (default: true)
+- \`hidden\` → Hide action completely
+- \`styles\` → Custom styles for button, tooltip, and positioning
+
+---
+
+#### 📌 Example
+\`\`\`tsx
+const actions = [
+  {
+    icon: { image: RiEditLine },
+    caption: "Edit",
+    onClick: () => console.log("Edit clicked"),
+  },
+  {
+    icon: { image: RiDeleteBinLine },
+    caption: "Delete",
+    alwaysShow: false,
+  },
+];
+\`\`\`
+
+---
+
+#### 🎯 Behavior Notes
+- Actions are automatically positioned with spacing.
+- Position adjusts based on \`textFloat\` (left or right).
+- Hovering the separator reveals actions when \`alwaysShow\` is false.
         `,
       },
     },
@@ -41,6 +86,19 @@ Separator is a visual divider component that separates content into sections wit
       control: false,
       description:
         "Custom styles object for container, line, and title. Not editable via controls.",
+    },
+    actions: {
+      control: false,
+      description: `
+List of action items displayed on the separator.
+
+Each action can include an icon, tooltip (caption), click handler, visibility control, and custom styles.
+
+- Supports hover-based visibility using \`alwaysShow\`
+- Automatically positioned based on \`textFloat\`
+- Can be hidden using \`hidden\`
+- Fully customizable via \`styles\` inside each action
+  `,
     },
   },
 };
@@ -73,5 +131,20 @@ export const RightSide: Story = {
   },
   render: (args) => {
     return <Separator {...args} />;
+  },
+};
+
+export const WithActions: Story = {
+  args: {
+    title: "Antrikan App Redesign",
+  },
+  render: (args) => {
+    const ACTIONS: SeparatorAction[] = [
+      { icon: { image: RiUserAddLine }, caption: "Invite" },
+      { icon: { image: RiGitBranchLine }, caption: "Branch" },
+      { icon: { image: RiFileList3Line }, caption: "Specs", alwaysShow: false },
+    ];
+
+    return <Separator {...args} actions={ACTIONS} />;
   },
 };
