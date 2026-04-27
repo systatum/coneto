@@ -247,6 +247,7 @@ export const Nested: Story = {
 
     const HEADER_ACTIONS: TreeListContentAction[] = [
       {
+        id: "new",
         caption: "New Folder",
         onClick: () => console.log("first"),
         icon: {
@@ -592,6 +593,7 @@ export const WithActions: Story = {
 
     const ITEM_ACTIONS: TreeListItemAction[] = [
       {
+        id: "edit",
         caption: "Edit",
         icon: { image: RiEdit2Line },
         onClick: (id: string) => {
@@ -599,6 +601,7 @@ export const WithActions: Story = {
         },
       },
       {
+        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBin2Line },
         onClick: (id: string) => {
@@ -606,6 +609,7 @@ export const WithActions: Story = {
         },
       },
       {
+        id: "copy",
         caption: "Copy",
         icon: { image: RiFileCopyLine },
         onClick: (id: string) => {
@@ -613,6 +617,7 @@ export const WithActions: Story = {
         },
       },
       {
+        id: "share",
         caption: "Share",
         icon: { image: RiShareForwardLine },
         onClick: (id: string) => {

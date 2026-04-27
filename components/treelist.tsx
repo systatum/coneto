@@ -15,6 +15,7 @@ import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { TreeListThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
 
 export interface TreeListProps
   extends Omit<
@@ -102,14 +103,10 @@ export interface TreeListItemOnClick {
   preventDefault?: () => void;
 }
 
-export interface TreeListAction {
-  id: string;
-  caption?: string;
+export interface TreeListAction extends Omit<BaseAction, "onClick"> {
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
-  icon?: FigureProps;
   styles?: { self?: CSSProp };
   subMenu?: (props: TreeListSubMenu) => ReactNode;
-  hidden?: boolean;
 }
 
 type TreeListSubMenu = Omit<ButtonSubMenu, "list">;
@@ -299,6 +296,9 @@ function TreeList({
                       {...tooltipBaseProps}
                       dialog={children}
                       styles={{
+                        triggerStyle: css`
+                          width: 100%;
+                        `,
                         arrowStyle: (placement) => {
                           return (
                             withArrow &&
@@ -327,6 +327,9 @@ function TreeList({
                           color: black;
                           border: 1px solid #e5e7eb;
                           ${drawerStyle}
+                        `,
+                        containerStyle: css`
+                          width: 100%;
                         `,
                       }}
                     >
