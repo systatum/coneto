@@ -59,7 +59,6 @@ interface BaseSelectboxProps
   showError?: boolean;
   maxSelectableItems?: number | undefined;
   isLoading?: boolean;
-  controlled?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -141,7 +140,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
-      controlled,
       ...props
     },
     ref
@@ -153,25 +151,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       () => (Array.isArray(options) ? options : []),
       [options]
     );
-
-    useEffect(() => {
-      if (!controlled) return;
-
-      const matched = finalOptions.find(
-        (opt) => String(opt.value) === finalSelectedOptions?.[0]
-      );
-
-      if (matched) {
-        setSelectedOptionsLocal(matched);
-      } else if (finalSelectedOptions?.[0]) {
-        setSelectedOptionsLocal({
-          text: finalSelectedOptions[0],
-          value: finalSelectedOptions[0],
-        });
-      } else {
-        setSelectedOptionsLocal({ text: "", value: "0" });
-      }
-    }, [selectedOptions, controlled, finalOptions]);
 
     const finalSelectedOptions = useMemo(() => {
       if (Array.isArray(selectedOptions)) {
@@ -819,7 +798,9 @@ const ClearIcon = styled(RiCloseLine)<{
   border-radius: 2px;
   padding: 2px;
 
-  &&:hover {
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
     background-color: ${({ $theme }) =>
       $theme.clearIconHoverBackground || "#e5e7eb"};
   }
