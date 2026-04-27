@@ -21,10 +21,11 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import { List, ListItemAction, ListItemStyles } from "./list";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
-import { Figure, FigureProps } from "./figure";
+import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -84,12 +85,8 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   labelStyle?: CSSProp;
 }
 
-export interface ComboboxAction {
-  onClick?: () => void;
-  icon?: FigureProps;
-  title: string;
+export interface ComboboxAction extends BaseAction {
   styles?: ComboboxActionStyles;
-  hidden?: boolean;
 }
 
 export type ComboboxActionStyles = ListItemStyles;
@@ -611,10 +608,14 @@ function ComboboxDrawer({
               const shouldHighlight = highlightedIndex === index;
               const isLast = index === actions?.length - 1;
 
+              if (action.hidden) {
+                return;
+              }
+
               return (
                 <Fragment key={index}>
                   <List.Item
-                    id={`action-${index}`}
+                    id={`action-${action.id}`}
                     ref={(el) => {
                       listRef.current[index] = el;
                     }}
@@ -643,7 +644,7 @@ function ComboboxDrawer({
                     }}
                     title={
                       <>
-                        {action.title}
+                        {action.caption}
                         {action.icon && <Figure {...action.icon} />}
                       </>
                     }
