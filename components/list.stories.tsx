@@ -1514,12 +1514,15 @@ export const WithBadge: Story = {
           imageUrl="https://picsum.photos/200?random=2"
           title="No employees found"
           subtitle="It looks like there are no employees in this category yet."
-          actions={
-            <>
-              <Button variant="default">Add Employee</Button>
-              <Button variant="primary">Learn More</Button>
-            </>
-          }
+          actions={[
+            {
+              caption: "Add Employee",
+              variant: "primary",
+            },
+            {
+              caption: "Learn More",
+            },
+          ]}
           styles={{
             containerStyle: css`
               text-align: center;

@@ -897,12 +897,15 @@ export const WithEmptySlate: Story = {
                 `,
               }}
               subtitle="Track and receive your incoming inventory from suppliers."
-              actions={
-                <>
-                  <Button variant="default">Add Item</Button>
-                  <Button variant="primary">Learn More</Button>
-                </>
-              }
+              actions={[
+                {
+                  caption: "Add Item",
+                },
+                {
+                  caption: "Learn More",
+                  variant: "primary",
+                },
+              ]}
             />
           }
         />
