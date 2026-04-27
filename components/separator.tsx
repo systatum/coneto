@@ -3,6 +3,7 @@ import { useTheme } from "./../theme/provider";
 import { FigureProps } from "./figure";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
+import { BaseAction } from "../constants/action";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -145,12 +146,8 @@ const Title = styled.span<{
   ${({ $style }) => $style}
 `;
 
-export interface SeparatorAction {
-  caption?: string;
-  icon: FigureProps;
+export interface SeparatorAction extends BaseAction {
   alwaysShow?: boolean;
-  onClick?: () => void;
-  hidden?: boolean;
   styles?: SeparatorActionStyles;
 }
 
@@ -168,6 +165,8 @@ function SeparatorAction({
   hidden,
   onClick,
   styles,
+  id,
+  disabled,
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme?.separator;
@@ -207,10 +206,12 @@ function SeparatorAction({
       }}
     >
       <Button
+        id={id}
         variant="outline-default"
         icon={icon}
         aria-label="separator-action"
-        onClick={() => onClick?.()}
+        onClick={(e) => onClick?.(e)}
+        disabled={disabled}
         styles={{
           containerStyle: css`
             border-radius: 9999px;
