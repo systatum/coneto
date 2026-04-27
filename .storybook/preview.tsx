@@ -4,6 +4,11 @@ import { ThemeProvider } from "./../theme/provider";
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: {
+        order: ["Welcome", "*"],
+      },
+    },
     backgrounds: { disable: true },
     controls: {
       matchers: {
