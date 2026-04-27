@@ -748,9 +748,12 @@ function exitToEditor(id: string, direction: "above" | "below") {
       ? (wrapper.previousElementSibling as HTMLElement)
       : (wrapper.nextElementSibling as HTMLElement);
 
+  const isMonaco = (el: HTMLElement | null) =>
+    el?.dataset.monacoBlockId !== undefined;
+
   // If no sibling exists, inject a new empty paragraph so the cursor
   // always has a valid landing spot.
-  if (!target) {
+  if (!target || isMonaco(target)) {
     const p = document.createElement("p");
     p.innerHTML = "<br>";
     if (direction === "above") {
