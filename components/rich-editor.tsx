@@ -396,7 +396,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         let html = await marked.parse(processedValue);
 
-        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+        html = splitBrIntoParagraphs(html);
+        html = html.replace(
+          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
+          "<p><br></p>"
+        );
+        // Also strip any placeholder that leaked into a text paragraph
+        html = html.replace(new RegExp(EMPTY_P_PLACEHOLDER, "g"), "");
 
         const temp = document.createElement("div");
         temp.innerHTML = html;
@@ -547,7 +553,16 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         if (!isMounted || !editorRef.current) return;
 
-        html = html.replace(/<p>&nbsp;<\/p>/g, "<p><br></p>");
+        html = splitBrIntoParagraphs(html);
+
+        html = html.replace(
+          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
+          "<p><br></p>"
+        );
+        html = html.replace(
+          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
+          "<br></p><p>"
+        );
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -892,7 +907,63 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           sel.addRange(newRange);
         } else {
           e.preventDefault();
-          document.execCommand("insertLineBreak");
+
+          const sel = window.getSelection();
+          if (!sel || !sel.rangeCount) return;
+
+          const range = sel.getRangeAt(0);
+
+          // Find the current block-level parent (p or root)
+          let currentBlock: HTMLElement | null = null;
+          let node: Node = range.startContainer;
+
+          while (node && node !== editorRef.current) {
+            if (
+              node.nodeType === Node.ELEMENT_NODE &&
+              (node as HTMLElement).tagName === "P"
+            ) {
+              currentBlock = node as HTMLElement;
+              break;
+            }
+            node = node.parentNode!;
+          }
+
+          const newP = document.createElement("p");
+          newP.innerHTML = "<br>";
+
+          if (currentBlock) {
+            // Split the current <p> at the caret position
+            const afterRange = document.createRange();
+            afterRange.setStart(range.startContainer, range.startOffset);
+            afterRange.setEndAfter(currentBlock.lastChild!);
+            const afterFragment = afterRange.extractContents();
+
+            // If the extracted fragment has real content, put it in the new <p>
+            const tempDiv = document.createElement("div");
+            tempDiv.appendChild(afterFragment);
+            const extractedText = tempDiv.textContent || "";
+            if (extractedText.trim()) {
+              newP.innerHTML = tempDiv.innerHTML;
+            }
+
+            // If current block is now empty, ensure it has a <br>
+            if (
+              !currentBlock.textContent?.trim() &&
+              !currentBlock.querySelector("input")
+            ) {
+              currentBlock.innerHTML = "<br>";
+            }
+
+            currentBlock.insertAdjacentElement("afterend", newP);
+          } else {
+            range.insertNode(newP);
+          }
+
+          const newRange = document.createRange();
+          newRange.setStart(newP, 0);
+          newRange.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(newRange);
         }
 
         setTimeout(() => {
@@ -1808,6 +1879,10 @@ const EditorArea = styled.div<{
     margin: 0.4em 0;
   }
 
+  p {
+    min-height: 24px;
+  }
+
   ${({ $editorStyle }) => $editorStyle};
 `;
 
@@ -2084,21 +2159,31 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
 };
 
 // Processes all input provided in the editor
+const EMPTY_P_PLACEHOLDER = "EMPTY_PARAGRAPH_PLACEHOLDER";
+
 const preprocessMarkdown = (markdown: string) => {
-  // Split on fenced code blocks to avoid mangling their contents
   const parts = markdown.split(/(```[\s\S]*?```)/g);
 
   const processed = parts.map((part, i) => {
-    // Odd indices are the fenced blocks — leave them untouched
     if (i % 2 === 1) return part;
 
-    return part
+    let result = part;
+
+    // After a code block, strip all leading newlines and replace with
+    // a clean placeholder separator so marked puts them in separate <p>s
+
+    return result
       .replace(/\n(\n+)/g, (_, extraNewlines) => {
-        const emptyParagraphs = "\n\n<br>".repeat(extraNewlines.length);
+        const emptyParagraphs = `\n\n${EMPTY_P_PLACEHOLDER}`.repeat(
+          extraNewlines.length
+        );
         return "\n" + emptyParagraphs;
       })
-      .replace(/<br>\n([^\s\n<][^\n]*)/g, "<br>\n\n$1")
       .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
+      .replace(
+        new RegExp(`(${EMPTY_P_PLACEHOLDER})\n([a-zA-Z])`, "g"),
+        `$1\n\n$2`
+      )
       .replace(
         /^(\s*(?:[*\-+]|\d+\.)\s+[^\n]+)\n(?![\s*\-+\d<\n])([^\n]+)/gm,
         "$1\n\n$2"
@@ -2106,6 +2191,68 @@ const preprocessMarkdown = (markdown: string) => {
   });
 
   return processed.join("");
+};
+
+const splitBrIntoParagraphs = (html: string): string => {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+
+  // Convert bare root-level <br> to <p><br></p>
+  Array.from(container.childNodes).forEach((node) => {
+    if (node.nodeName === "BR") {
+      const p = document.createElement("p");
+      p.innerHTML = "<br>";
+      container.replaceChild(p, node);
+    }
+  });
+
+  // Insert <p><br></p> between a list and the next sibling when they are
+  // directly adjacent with no paragraph separator
+  Array.from(container.childNodes).forEach((node) => {
+    if (node.nodeName === "UL" || node.nodeName === "OL") {
+      const next = (node as Element).nextElementSibling;
+      if (
+        next &&
+        next.nodeName !== "P" &&
+        next.nodeName !== "UL" &&
+        next.nodeName !== "OL"
+      ) {
+        const p = document.createElement("p");
+        p.innerHTML = "<br>";
+        container.insertBefore(p, next);
+      }
+    }
+  });
+
+  container.querySelectorAll("p").forEach((p) => {
+    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, pre, input")) return;
+
+    const fragments: Node[][] = [[]];
+
+    p.childNodes.forEach((node) => {
+      if (node.nodeName === "BR") {
+        fragments.push([]);
+      } else {
+        fragments[fragments.length - 1].push(node.cloneNode(true));
+      }
+    });
+
+    if (fragments.length <= 1) return;
+
+    const newNodes = fragments.map((nodes) => {
+      const newP = document.createElement("p");
+      if (nodes.length === 0) {
+        newP.innerHTML = "<br>";
+      } else {
+        nodes.forEach((n) => newP.appendChild(n));
+      }
+      return newP;
+    });
+
+    p.replaceWith(...newNodes);
+  });
+
+  return container.innerHTML;
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
