@@ -18,6 +18,7 @@ import { Button, ButtonStyles } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
+import { BaseAction } from "./../constants/action";
 
 export const SplitPaneOrientation = {
   Horizontal: "horizontal",
@@ -52,11 +53,8 @@ export interface SplitPaneCellStyles {
   self?: CSSProp;
 }
 
-export interface SplitPaneAction {
-  onClick?: () => void;
-  icon?: FigureProps;
+export interface SplitPaneAction extends BaseAction {
   styles?: SplitPaneActionStyles;
-  hidden?: boolean;
 }
 
 export type SplitPaneActionStyles = ButtonStyles;
@@ -294,11 +292,12 @@ const SplitPaneCell = forwardRef<HTMLDivElement, SplitPaneCellProps>(
           <ActionContainer>
             {filteredActions.map((action, index) => (
               <Button
+                {...action}
                 variant="ghost"
                 key={index}
                 aria-label="split-pane-button"
-                onClick={() => {
-                  if (action.onClick) action.onClick();
+                onClick={(e) => {
+                  if (action.onClick) action.onClick(e);
                 }}
                 styles={{
                   ...action?.styles,
