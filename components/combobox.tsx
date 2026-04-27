@@ -46,7 +46,6 @@ interface BaseComboboxProps {
   options: ComboboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
-  controlled?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -148,7 +147,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       required,
       isLoading,
       labels,
-      controlled = false,
     },
     ref
   ) => {
@@ -195,7 +193,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         showError={showError}
         errorMessage={errorMessage}
         labelGap={labelGap}
-        controlled={controlled}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
         label={label}

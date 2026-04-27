@@ -146,10 +146,6 @@ Each field accepts a \`CSSProp\` (styled-components compatible) and can be used 
       control: "text",
       description: "Name/id used for accessibility and aria-label.",
     },
-    controlled: {
-      description: "Enable controlled mode (external state management)",
-      control: "boolean",
-    },
   },
 };
 
