@@ -654,18 +654,47 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const range = sel.getRangeAt(0);
 
+      // Find the closest block-level element
+      let anchorNode: Node | null = range.startContainer;
+      while (
+        anchorNode &&
+        anchorNode !== editorRef.current &&
+        !(anchorNode as Element).matches?.(
+          "p, div, h1, h2, h3, h4, h5, h6, li, blockquote"
+        )
+      ) {
+        anchorNode = anchorNode.parentNode;
+      }
+
+      const insertAfter =
+        anchorNode && anchorNode !== editorRef.current
+          ? anchorNode
+          : editorRef.current.lastChild;
+
       const id = CodeEditor.nextBlockId();
       const wrapper = document.createElement("div");
       wrapper.dataset.monacoBlockId = id;
       wrapper.contentEditable = "false";
 
-      // Insert a paragraph after the block so the user can keep typing
       const after = document.createElement("p");
       after.innerHTML = "<br>";
 
-      range.deleteContents();
-      range.insertNode(after);
-      range.insertNode(wrapper);
+      const parent = insertAfter?.parentNode ?? editorRef.current;
+      const sibling = insertAfter?.nextSibling ?? null;
+
+      // If the current block is an empty <p>, replace it with the monaco block
+      const isEmptyParagraph =
+        insertAfter instanceof HTMLElement &&
+        insertAfter.tagName === "P" &&
+        (!insertAfter.textContent || insertAfter.textContent.trim() === "");
+
+      if (isEmptyParagraph) {
+        parent.replaceChild(wrapper, insertAfter);
+        parent.insertBefore(after, wrapper.nextSibling);
+      } else {
+        parent.insertBefore(wrapper, sibling);
+        parent.insertBefore(after, wrapper.nextSibling);
+      }
 
       // Move cursor to the paragraph after the block
       const newRange = document.createRange();
@@ -1223,6 +1252,44 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         if (!range.collapsed) return;
 
         const container = range.startContainer;
+
+        // Delete monaco block when caret is at start of block right after it
+        const currentBlock =
+          container.nodeType === Node.TEXT_NODE
+            ? (container.parentNode as HTMLElement)?.closest(
+                "p, h1, h2, h3, h4, h5, h6, li"
+              )
+            : (container as HTMLElement)?.closest(
+                "p, h1, h2, h3, h4, h5, h6, li"
+              );
+
+        if (currentBlock && range.startOffset === 0) {
+          const prevSibling = currentBlock.previousElementSibling;
+          if (
+            prevSibling instanceof HTMLElement &&
+            prevSibling.dataset.monacoBlockId !== undefined
+          ) {
+            e.preventDefault();
+            prevSibling.remove();
+            handleEditorChange();
+            return;
+          }
+        }
+
+        // Fallback: caret is at root editor level directly after monaco block
+        if (container === editorRef.current) {
+          const nodeBefore =
+            editorRef.current.childNodes[range.startOffset - 1];
+          if (
+            nodeBefore instanceof HTMLElement &&
+            nodeBefore.dataset.monacoBlockId !== undefined
+          ) {
+            e.preventDefault();
+            nodeBefore.remove();
+            handleEditorChange();
+            return;
+          }
+        }
 
         let li: HTMLElement | null = null;
 
