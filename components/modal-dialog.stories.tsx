@@ -72,7 +72,7 @@ ModalDialog is a versatile modal component for displaying important content, for
         type: { summary: "ReactNode" },
       },
     },
-    buttons: {
+    actions: {
       control: false,
       description: `
 List of action buttons displayed in the modal footer.
@@ -110,7 +110,7 @@ export const Default: Story = {
     title: "Default Modal",
     closable: true,
     isOpen: false,
-    buttons: [
+    actions: [
       {
         id: "confirm",
         caption: "Confirm",
@@ -179,7 +179,7 @@ export const WithSubtitle: Story = {
     subtitle: generateSentence({ minLen: 30, maxLen: 40 }),
     closable: true,
     isOpen: false,
-    buttons: [
+    actions: [
       {
         id: "confirm",
         caption: "Confirm",
@@ -257,7 +257,7 @@ export const NonClosable: Story = {
     const args: ModalDialogProps = {
       title: "Non Closable",
       subtitle: "This modal cannot be closed using the Escape key",
-      buttons: [
+      actions: [
         {
           id: "ok",
           caption: "OK",
