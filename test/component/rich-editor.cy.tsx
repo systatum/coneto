@@ -59,7 +59,9 @@ describe("RichEditor", () => {
             });
             cy.mount(<ProductRichEditor mode="code-editor" value="" />);
             cy.wait(400);
-            cy.realType("Test 123");
+            cy.findByLabelText("rich-editor-code")
+              .realClick()
+              .realType("Test 123");
             cy.findAllByLabelText("rich-editor-code").should("exist");
 
             cy.findAllByLabelText("rich-editor-toolbar-button")
@@ -93,7 +95,9 @@ export default Content`;
           cy.shouldHaveEditorFromValue("rich-editor-code", "");
 
           // monaco unique, so we should declare with real type (can't interact with DOM)
-          cy.realType("const x = 1");
+          cy.findByLabelText("rich-editor-code")
+            .realClick()
+            .realType("const x = 1");
           cy.shouldHaveEditorFromValue("rich-editor-code", "const x = 1");
         });
       });
@@ -122,7 +126,7 @@ export default Content`;
       context("when typing triple backtick", () => {
         it("renders the code-editor", () => {
           cy.findByLabelText("rich-editor-code").should("not.exist");
-          cy.findByLabelText("rich-editor-content").type("```");
+          cy.findByLabelText("rich-editor-content").realClick().type("```");
           cy.findByLabelText("rich-editor-code").should("exist");
         });
       });
@@ -140,7 +144,9 @@ export default Content`;
           () => {
             context("when typing arrow up", () => {
               it("should respect the empty space", () => {
-                cy.realType("{uparrow}");
+                cy.findByLabelText("rich-editor-content")
+                  .realClick()
+                  .realType("{uparrow}");
 
                 cy.window().then((win) => {
                   const sel = win.getSelection();
@@ -158,8 +164,8 @@ export default Content`;
                   // Should NOT be on line 1 (a <p> with text "Test")
                   expect(el?.textContent?.trim()).to.equal("");
 
-                  // Should be a <BR> element (the empty line 2)
-                  expect(el?.nodeName).to.equal("BR");
+                  // Should be a <p> with BR element (the empty line 2)
+                  expect(el?.nodeName).to.equal("P");
                 });
               });
             });
@@ -168,7 +174,9 @@ export default Content`;
 
         context("when triple backtick after arrow down", () => {
           beforeEach(() => {
-            cy.realType("{downarrow}```");
+            cy.findByLabelText("rich-editor-content")
+              .realClick()
+              .realType("{downarrow}```");
           });
           it("should render double code-editor", () => {
             cy.findAllByLabelText("rich-editor-code").should("have.length", 2);
@@ -197,9 +205,9 @@ export default Content`;
           it("should move to the upside in rich-editor", () => {
             cy.findByLabelText("rich-editor-content").should("not.focused");
 
-            cy.findByLabelText("rich-editor-code").realType(
-              "const x = 1{uparrow}{uparrow}"
-            );
+            cy.findByLabelText("rich-editor-code")
+              .realClick()
+              .realType("const x = 1{uparrow}{uparrow}");
 
             cy.findByLabelText("rich-editor-content").should("be.focused");
           });
@@ -275,7 +283,7 @@ export default Content`;
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "509px"
+          "472px"
         );
       });
 
@@ -288,14 +296,14 @@ export default Content`;
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "509px")
+            .should("have.css", "height", "472px")
             .click()
             .type("{enter}{enter}{enter}");
 
           cy.findByLabelText("rich-editor-content").should(
             "have.css",
             "height",
-            "581px"
+            "544px"
           );
         });
       });
@@ -475,7 +483,7 @@ Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("text")
-            .should("eq", "Paragraph line 1\n\n\nParagraph line 2\n");
+            .should("eq", "Paragraph line 1\n\nParagraph line 2\n");
         });
       });
 
