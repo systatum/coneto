@@ -259,6 +259,7 @@ export interface FieldLaneThemeConfig
 
   actionColor?: string;
   actionHoverColor?: string;
+  actionHoverBackgroundColor?: string;
 
   errorColor?: string;
   errorBackground?: string;
