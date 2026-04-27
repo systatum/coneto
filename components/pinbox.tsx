@@ -573,12 +573,11 @@ const PinboxIndicator = styled.div<{
   transform: translateX(-50%);
   position: absolute;
   display: none;
+  border-bottom-width: 0.5px;
 
   border-color: ${({ $theme, $error }) =>
     $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
-  box-shadow: 0 0 0 0.5px
-    ${({ $theme, $error }) =>
-      $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
+
   color: ${({ $theme, $error }) =>
     $error ? $theme.errorTextColor : $theme.textColor};
   z-index: 9999;
