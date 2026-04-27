@@ -44,6 +44,7 @@ export type TooltipProps = {
   showDelayPeriod?: number;
   styles?: TooltipStyles;
   onClick?: (e: React.MouseEvent) => void;
+  id?: string;
 };
 
 export interface TooltipStyles {
@@ -72,6 +73,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       showDelayPeriod = 0,
       styles,
       onClick,
+      id,
     },
     ref
   ) => {
@@ -166,6 +168,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
         ref={refs.setReference}
       >
         <ContentTrigger
+          id={id}
           aria-label="tooltip-trigger"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
