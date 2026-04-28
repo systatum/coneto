@@ -12,6 +12,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileInputBoxThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -196,10 +197,15 @@ function FileInputBox({
     ...baseFileInputBoxtyles
   } = styles ?? {};
 
+  const fileInputBoxClassName = applyConetoClassName(
+    "file-input-box",
+    className
+  );
+
   return (
     <FieldLane
       id={inputId}
-      className={`coneto-file-input-box${className ? ` ${className}` : ""}`}
+      className={fileInputBoxClassName}
       showError={showError}
       labelGap={labelGap}
       labelWidth={labelWidth}

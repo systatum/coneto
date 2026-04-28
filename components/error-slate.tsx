@@ -2,6 +2,7 @@ import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ReactNode } from "react";
 import { useTheme } from "./../theme/provider";
 import { ErrorSlateThemeConfig } from "theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface ErrorSlateProps {
   code?:
@@ -85,11 +86,10 @@ function ErrorSlate({
     { face: "bottom", content: code[2] },
   ] as const;
 
+  const errorSlateClassName = applyConetoClassName("error-slate", className);
+
   return (
-    <ErrorSlateWrapper
-      id={id}
-      className={`coneto-error-slate${className ? ` ${className}` : ""}`}
-    >
+    <ErrorSlateWrapper id={id} className={errorSlateClassName}>
       <ErrorSlatePerspective>
         <Cube>
           {FACE_DATA.map(({ face, content }, i) => (

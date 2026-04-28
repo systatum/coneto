@@ -16,6 +16,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -185,6 +186,8 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       id: props.id,
     });
 
+    const colorboxClassName = applyConetoClassName("colorbox", className);
+
     return (
       <FieldLane
         id={inputId}
@@ -200,7 +203,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
-        className={`coneto-colorbox${className ? ` ${className}` : ""}`}
+        className={colorboxClassName}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,

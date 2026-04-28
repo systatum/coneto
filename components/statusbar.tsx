@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
 import { useTheme } from "./../theme/provider";
 import { StatusbarThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface StatusbarProps {
   styles?: StatusbarStyles;
@@ -41,10 +42,12 @@ function Statusbar({
   const { currentTheme } = useTheme();
   const statusbarTheme = currentTheme.statusbar;
 
+  const statusBarClassName = applyConetoClassName("status-bar", className);
+
   return (
     <StatusbarWrapper
       id={id}
-      className={`coneto-status-bar${className ? ` ${className}` : ""}`}
+      className={statusBarClassName}
       $theme={statusbarTheme}
       aria-label="statusbar-wrapper"
       $transparent={transparent}

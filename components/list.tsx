@@ -32,6 +32,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { ListThemeConfig } from "theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const ListOpenerBehavior = {
   Any: "any",
@@ -243,6 +244,8 @@ function List({
   const isOpen = (id: string, level: "group" | "item" = "item") =>
     level === "group" ? openedGroupIds.has(id) : openedItemIds.has(id);
 
+  const listClassName = applyConetoClassName("list", className);
+
   return (
     <OpenedContext.Provider
       value={{
@@ -255,7 +258,7 @@ function List({
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
         <ListContainer
           id={id}
-          className={`coneto-list${className ? ` ${className}` : ""}`}
+          className={listClassName}
           $backgroundColor={listTheme.backgroundColor}
           aria-label="list-container"
           $containerStyle={styles?.containerStyle}
@@ -511,10 +514,12 @@ function ListGroup({
     setIsOpen(id, "group");
   };
 
+  const listGroupClassName = applyConetoClassName("list-group", className);
+
   return (
     <ListGroupContainer
       id={id}
-      className={`coneto-list-group${className ? ` ${className}` : ""}`}
+      className={listGroupClassName}
       $containerStyle={styles?.containerStyle}
     >
       <HeaderButton
@@ -1025,11 +1030,13 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
       return isOpen(idFullname, "item");
     }, [isOpen, idFullname]);
 
+    const listItemClassName = applyConetoClassName("list-item", className);
+
     return (
       <ListItemWrapper
         ref={ref}
         id={id}
-        className={`coneto-list-item${className ? ` ${className}` : ""}`}
+        className={listItemClassName}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}

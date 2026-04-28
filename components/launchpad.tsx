@@ -10,6 +10,7 @@ import { Separator } from "./separator";
 import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
 import styled, { CSSProp } from "styled-components";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface LaunchpadProps {
   children: ReactNode;
@@ -103,11 +104,13 @@ function Launchpad({
   const x = useMotionValue(0);
   const dragControls = useDragControls();
 
+  const launchpadClassName = applyConetoClassName("launchpad", className);
+
   return (
     <LaunchpadContainer
       ref={containerRef}
       id={id}
-      className={`coneto-launchpad${className ? ` ${className}` : ""}`}
+      className={launchpadClassName}
       onPointerDown={(e) => dragControls.start(e)}
       $containerStyle={containerStyle}
     >

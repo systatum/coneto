@@ -1,3 +1,4 @@
+import { applyConetoClassName } from "./../constants/classname";
 import { ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -28,10 +29,12 @@ function EmptySlate({
   className,
   id,
 }: EmptySlateProps) {
+  const emptySlateClassName = applyConetoClassName("empty-slate", className);
+
   return (
     <Container
       id={id}
-      className={`coneto-empty-slate${className ? ` ${className}` : ""}`}
+      className={emptySlateClassName}
       $style={styles?.containerStyle}
     >
       {imageUrl && (

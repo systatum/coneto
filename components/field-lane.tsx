@@ -7,6 +7,7 @@ import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const FieldLaneErrorIconPosition = {
   Absolute: "absolute",
@@ -375,15 +376,13 @@ function FieldLane({
     className?.includes(cls)
   );
 
-  console.log(hasCustomConetoClass);
-
-  const filteredClassName = hasCustomConetoClass
+  const fieldLaneClassName = hasCustomConetoClass
     ? className
-    : ["coneto-field-lane", className].filter(Boolean).join(" ");
+    : applyConetoClassName("field-lane", className);
 
   return (
     <Container
-      className={filteredClassName}
+      className={fieldLaneClassName}
       $disabled={disabled}
       $style={css`
         ${styles?.containerStyle}

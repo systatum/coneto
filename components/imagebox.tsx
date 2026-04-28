@@ -5,6 +5,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ImageboxThemeConfig } from "theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const ImageboxSize = {
   ExtraSmall: "xs",
@@ -248,12 +249,14 @@ function Imagebox({
     ...ImageboxStyles
   } = styles ?? {};
 
+  const imageboxClassName = applyConetoClassName("imagebox", className);
+
   return (
     <FieldLane
       id={inputId}
       labelGap={labelGap}
       labelWidth={labelWidth}
-      className={`coneto-imagebox${className ? ` ${className}` : ""}`}
+      className={imageboxClassName}
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}

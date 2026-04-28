@@ -32,6 +32,7 @@ import { StatefulForm } from "./stateful-form";
 import { Searchbox } from "./searchbox";
 import { PhoneboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface PhoneboxCountryCode {
   id: string;
@@ -413,6 +414,8 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       id: props.id,
     });
 
+    const phoneboxClassName = applyConetoClassName("phonebox", className);
+
     return (
       <FieldLane
         id={inputId}
@@ -427,7 +430,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
-        className={`coneto-phonebox${className ? ` ${className}` : ""}`}
+        className={phoneboxClassName}
         required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,

@@ -17,6 +17,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextboxThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseTextboxProps
   extends Omit<
@@ -140,6 +141,8 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       id: props.id,
     });
 
+    const textboxClassName = applyConetoClassName("textbox", className);
+
     return (
       <FieldLane
         id={inputId}
@@ -155,7 +158,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelPosition={labelPosition}
         disabled={disabled}
         required={rest.required}
-        className={`coneto-textbox${className ? ` ${className}` : ""}`}
+        className={textboxClassName}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

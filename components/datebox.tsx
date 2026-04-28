@@ -16,6 +16,7 @@ import { forwardRef, ReactNode } from "react";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -85,6 +86,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     id,
   });
 
+  const dateboxClassName = applyConetoClassName("datebox", className);
+
   return (
     <Selectbox
       {...rest}
@@ -92,7 +95,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       labels={labels}
       labelGap={labelGap}
       labelWidth={labelWidth}
-      className={`coneto-datebox${className ? ` ${className}` : ""}`}
+      className={dateboxClassName}
       labelPosition={labelPosition}
       id={inputId}
       showError={showError}

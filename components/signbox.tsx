@@ -11,6 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SignboxThemeConfig } from "./../theme";
 import { Button } from "./button";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseSignboxProps {
   name?: string;
@@ -341,6 +342,8 @@ function Signbox({
     id,
   });
 
+  const signboxClassName = applyConetoClassName("signbox", className);
+
   return (
     <FieldLane
       id={inputId}
@@ -356,7 +359,7 @@ function Signbox({
       errorIconPosition={errorIconPosition}
       disabled={disabled}
       required={required}
-      className={`coneto-signbox${className ? ` ${className}` : ""}`}
+      className={signboxClassName}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,

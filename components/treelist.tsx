@@ -15,6 +15,7 @@ import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { TreeListThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface TreeListProps
   extends Omit<
@@ -245,13 +246,15 @@ function TreeList({
 
   const hasActions = filteredActions.length > 0;
 
+  const treelistClassName = applyConetoClassName("tree-list", className);
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TreeListWrapper
         {...props}
         aria-label="tree-list-wrapper"
         id={id}
-        className={`coneto-tree-list${className ? ` ${className}` : ""}`}
+        className={treelistClassName}
         $containerStyle={styles?.containerStyle}
         $textColor={treeListTheme.textColor}
       >

@@ -30,6 +30,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export type ChipAction = BadgeAction;
 
@@ -528,6 +529,8 @@ function Chips({
     ...baseChipStyles
   } = styles ?? {};
 
+  const chipsClassName = applyConetoClassName("chips", className);
+
   return (
     <FieldLane
       id={inputId}
@@ -540,7 +543,7 @@ function Chips({
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
-      className={`coneto-chips${className ? ` ${className}` : ""}`}
+      className={chipsClassName}
       required={rest.required}
       styles={{
         bodyStyle: css`

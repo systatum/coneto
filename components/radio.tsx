@@ -5,6 +5,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RadioThemeConfig } from "theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const RadioMode = {
   Radio: "radio",
@@ -172,6 +173,8 @@ function Radio({
     ...baseRadiotyles
   } = styles ?? {};
 
+  const radioClassName = applyConetoClassName("radio", className);
+
   return (
     <FieldLane
       id={inputId}
@@ -184,7 +187,7 @@ function Radio({
       actions={actions}
       helper={helper}
       disabled={disabled}
-      className={`coneto-radio${className ? ` ${className}` : ""}`}
+      className={radioClassName}
       required={rest.required}
       styles={{
         bodyStyle: css`

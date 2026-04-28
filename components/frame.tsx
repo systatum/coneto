@@ -2,6 +2,7 @@ import React, { HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { FrameThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface FrameProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -26,12 +27,14 @@ function Frame({
   const { currentTheme } = useTheme();
   const frameTheme = currentTheme?.frame;
 
+  const frameClassName = applyConetoClassName("frame", className);
+
   return (
     <FrameContainer
       aria-label="frame"
       {...props}
       id={id}
-      className={`coneto-frame${className ? ` ${className}` : ""}`}
+      className={frameClassName}
       $style={styles?.containerStyle}
       $theme={frameTheme}
     >

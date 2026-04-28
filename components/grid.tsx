@@ -2,6 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface GridProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
@@ -42,11 +43,13 @@ function Grid({
     gap: typeof gap === "number" ? `${gap}px` : gap,
   };
 
+  const gridClassName = applyConetoClassName("grid", className);
+
   return (
     <GridBase
       {...props}
       id={id}
-      className={`coneto-grid${className ? ` ${className}` : ""}`}
+      className={gridClassName}
       style={style}
       aria-label="grid"
       $style={css`

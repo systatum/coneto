@@ -5,6 +5,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
 import { PaginationThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface PaginationProps {
   currentPage: number;
@@ -60,10 +61,12 @@ function Pagination({
     setCurrentPageLocal([String(safePage)]);
   }, []);
 
+  const paginationClassName = applyConetoClassName("pagination", className);
+
   return (
     <PaginationWrapper
       id={id}
-      className={`coneto-pagination${className ? ` ${className}` : ""}`}
+      className={paginationClassName}
       $style={styles?.containerStyle}
     >
       <PaginationButton

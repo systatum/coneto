@@ -5,6 +5,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DrawerTabThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const DrawerTabPosition = {
   Left: "left",
@@ -69,11 +70,13 @@ function DrawerTab({
     return null;
   }
 
+  const drawerTabClassName = applyConetoClassName("drawer-tab", className);
+
   return (
     <DrawerTabContainer
       initial={{ x: isLeft ? "-100%" : "+100%" }}
       id={id}
-      className={`coneto-drawer-tab${className ? ` ${className}` : ""}`}
+      className={drawerTabClassName}
       animate={controls}
       $position={position}
       $style={styles?.drawerTabStyle}

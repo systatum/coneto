@@ -15,6 +15,7 @@ import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileDropBoxThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface OnFileDroppedFunctionArgs {
   files: File[];
@@ -274,9 +275,11 @@ function FileDropBox({
     </DropArea>
   );
 
+  const fileDropBoxClassName = applyConetoClassName("file-drop-box", className);
+
   return (
     <InputWrapper
-      className={`coneto-file-drop-box${className ? ` ${className}` : ""}`}
+      className={fileDropBoxClassName}
       $disabled={disabled}
       $labelPosition={labelPosition}
       aria-label="file-drop-box-container"

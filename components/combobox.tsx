@@ -25,6 +25,7 @@ import { Figure, FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -185,10 +186,12 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         ?.filter((option) => !option.hidden);
     }, [options, openedCategoryGroup]);
 
+    const comboboxClassName = applyConetoClassName("colorbox", className);
+
     return (
       <Selectbox
         ref={ref}
-        className={`coneto-combobox${className ? ` ${className}` : ""};`}
+        className={comboboxClassName}
         isLoading={isLoading}
         helper={helper}
         errorIconPosition={errorIconPosition}

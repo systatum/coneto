@@ -16,6 +16,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface NavTabProps {
   tabs?: NavTabTab[];
@@ -187,10 +188,12 @@ function NavTab({
         .some((item) => item.id === selected)
   );
 
+  const navTabClassName = applyConetoClassName("nav-tab", className);
+
   return (
     <NavTabContainer
       id={id}
-      className={`coneto-nav-tab${className ? ` ${className}` : ""}`}
+      className={navTabClassName}
       $style={styles?.containerStyle}
     >
       <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
@@ -224,13 +227,18 @@ function NavTab({
           />
 
           {visibleTabs.map((tab, index) => {
+            const navTabTabClassName = applyConetoClassName(
+              "nav-tab-tab",
+              tab?.className
+            );
+
             return (
               <Tooltip
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
                 id={tab.id}
-                className={`coneto-nav-tab-tab${tab?.className ? ` ${tab?.className}` : ""}`}
+                className={navTabTabClassName}
                 key={index}
                 styles={{
                   arrowStyle: css`
@@ -269,33 +277,41 @@ function NavTab({
                     {tab.subItems &&
                       tab.subItems
                         ?.filter((item) => !item?.hidden)
-                        ?.map((item, idx) => (
-                          <NavTabTab
-                            key={idx}
-                            id={item?.id}
-                            className={`coneto-nav-tab-sub-item${item?.className ? ` ${item?.className}` : ""}`}
-                            $theme={navTheme}
-                            $style={item?.styles?.self}
-                            onClick={() => {
-                              if (item.content) {
-                                setSelectedLocal(item.id);
-                              }
-                              if (onChange) {
-                                onChange(item.id);
-                              }
-                              tooltipRefs.current.forEach((ref) => {
-                                ref?.close();
-                              });
-                              if (item.onClick) {
-                                item.onClick();
-                              }
-                            }}
-                            $subMenu={true}
-                          >
-                            {item.icon && <Figure {...item.icon} />}
-                            {item.caption}
-                          </NavTabTab>
-                        ))}
+                        ?.map((item, idx) => {
+                          const navTabTabSubItemClassName =
+                            applyConetoClassName(
+                              "nav-tab-sub-item",
+                              item?.className
+                            );
+
+                          return (
+                            <NavTabTab
+                              key={idx}
+                              id={item?.id}
+                              className={navTabTabSubItemClassName}
+                              $theme={navTheme}
+                              $style={item?.styles?.self}
+                              onClick={() => {
+                                if (item.content) {
+                                  setSelectedLocal(item.id);
+                                }
+                                if (onChange) {
+                                  onChange(item.id);
+                                }
+                                tooltipRefs.current.forEach((ref) => {
+                                  ref?.close();
+                                });
+                                if (item.onClick) {
+                                  item.onClick();
+                                }
+                              }}
+                              $subMenu={true}
+                            >
+                              {item.icon && <Figure {...item.icon} />}
+                              {item.caption}
+                            </NavTabTab>
+                          );
+                        })}
                   </>
                 }
               >

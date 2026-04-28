@@ -7,6 +7,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { OverlayBlocker } from "./overlay-blocker";
 import { SidebarThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const SidebarPosition = {
   Left: "left",
@@ -97,6 +98,8 @@ function Sidebar({
     trackTouch: true,
   });
 
+  const sidebarClassName = applyConetoClassName("sidebar", className);
+
   return (
     <>
       {isSidebarOpen && isMobile && (
@@ -108,7 +111,7 @@ function Sidebar({
 
       <MotionSidebar
         id={id}
-        className={`coneto-sidebar${className ? ` ${className}` : ""}`}
+        className={sidebarClassName}
         $theme={sidebarTheme}
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
@@ -131,7 +134,7 @@ function Sidebar({
 
       <DesktopSidebar
         id={id}
-        className={`coneto-sidebar${className ? ` ${className}` : ""}`}
+        className={sidebarClassName}
         $theme={sidebarTheme}
         $position={position}
         $style={styles?.desktopStyle}

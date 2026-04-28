@@ -28,6 +28,7 @@ import { Figure, FigureProps } from "./figure";
 import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface RichEditorProps {
   value?: string;
@@ -1592,13 +1593,15 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       );
     }
 
+    const richEditorClassName = applyConetoClassName("rich-editor", className);
+
     return (
       <BaseRichEditor
         actions={actions}
         value={value}
         mode={mode}
         id={id}
-        className={`coneto-rich-editor${className ? ` ${className}` : ""}`}
+        className={richEditorClassName}
         styles={{
           ...styles,
           toolbarStyle: css`
@@ -1753,7 +1756,7 @@ function BaseRichEditor({
   return (
     <Wrapper
       $theme={richEditorTheme}
-      className={`coneto-selectbox${className ? ` ${className}` : ""}`}
+      className={className}
       aria-label="rich-editor-wrapper"
       $containerStyle={styles?.containerStyle}
       $mode={mode}

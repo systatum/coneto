@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { BoxbarThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export interface BoxbarProps {
   children: ReactNode;
@@ -69,11 +70,13 @@ function Boxbar({ styles, children, className, id }: BoxbarProps) {
 
   const shouldShowToggle = contentHeight > collapsedHeight;
 
+  const boxbarClassName = applyConetoClassName("boxbar", className);
+
   return (
     <BaseBoxbar
       ref={contentRef}
       id={id}
-      className={`coneto-boxbar${className ? ` ${className}` : ""}`}
+      className={boxbarClassName}
       initial={{ height: collapsedHeight }}
       animate={{ height: isOpen ? contentHeight : collapsedHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}

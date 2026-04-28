@@ -5,6 +5,7 @@ import { FigureProps } from "./figure";
 import { Button, ButtonStyles } from "./button";
 import { useTheme } from "./../theme/provider";
 import { BadgeThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const BadgeVariant = {
   Neutral: "neutral",
@@ -192,11 +193,13 @@ function Badge({
 
   const hasActions = actionsWithStyles && actionsWithStyles.length > 0;
 
+  const badgeClassName = applyConetoClassName("badge", className);
+
   return (
     <BadgeWrapper
       {...props}
       id={String(id)}
-      className={`coneto-badge${className ? ` ${className}` : ""}`}
+      className={badgeClassName}
       onClick={onClick}
       aria-label="badge"
       $theme={badgeTheme}

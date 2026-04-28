@@ -5,6 +5,7 @@ import { Button } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { MessageboxThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const MessageboxVariant = {
   Primary: "primary",
@@ -66,10 +67,12 @@ function Messagebox({
   const messageboxTheme = currentTheme.messagebox;
   const variantStyle = messageboxTheme[variant];
 
+  const messageboxClassName = applyConetoClassName("messagebox", className);
+
   return (
     <Wrapper
       id={id}
-      className={`coneto-messagebox${className ? ` ${className}` : ""}`}
+      className={messageboxClassName}
       $theme={messageboxTheme}
       $variant={variant}
       $style={styles?.containerStyle}

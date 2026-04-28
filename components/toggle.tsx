@@ -7,6 +7,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "../theme/provider";
 import { ToggleThemeConfig } from "../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 interface BaseToggleProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -176,10 +177,12 @@ function Toggle({
     ...toggleStyles
   } = styles ?? {};
 
+  const toggleClassName = applyConetoClassName("toggle", className);
+
   return (
     <FieldLane
       id={inputId}
-      className={`coneto-toggle${className ? ` ${className}` : ""}`}
+      className={toggleClassName}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

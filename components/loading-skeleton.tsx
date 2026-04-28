@@ -8,6 +8,7 @@ import {
 } from "react";
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const FlashDirection = {
   LeftToRight: "left-to-right",
@@ -73,12 +74,17 @@ function LoadingSkeleton({
 
   const childArray = Children.toArray(children).filter(isValidElement);
 
+  const loadingSkeletonClassName = applyConetoClassName(
+    "loading-skeleton",
+    className
+  );
+
   return (
     <LoadingSkeletonWrapper
       aria-label="loading-skeleton-wrapper"
       {...props}
       id={id}
-      className={`coneto-loading-skeleton${className ? ` ${className}` : ""}`}
+      className={loadingSkeletonClassName}
       $style={styles?.self}
     >
       {childArray.map((child, index) => {

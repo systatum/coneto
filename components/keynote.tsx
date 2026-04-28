@@ -1,6 +1,7 @@
 import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { applyConetoClassName } from "./../constants/classname";
 
 export type KeynoteKeys<T> = Extract<keyof T, string>;
 
@@ -18,6 +19,8 @@ export interface KeynotePointProps {
   label: string;
   children: ReactNode;
   styles?: KeynotePointStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface KeynoteStyles extends KeynotePointStyles {
@@ -41,10 +44,12 @@ function Keynote<T extends object>({
 }: KeynoteProps<T>) {
   const shouldRenderFromData = data && keys;
 
+  const keynoteClassName = applyConetoClassName("keynote", className);
+
   return (
     <KeynoteWrapper
       id={id}
-      className={`coneto-keynote${className ? ` ${className}` : ""}`}
+      className={keynoteClassName}
       aria-label="keynote-wrapper"
       $style={styles?.self}
     >
@@ -100,12 +105,25 @@ function renderValue(value: unknown): ReactNode {
   return "-";
 }
 
-function KeynotePoint({ label, children, styles }: KeynotePointProps) {
+function KeynotePoint({
+  label,
+  children,
+  styles,
+  className,
+  id,
+}: KeynotePointProps) {
   const { currentTheme } = useTheme();
   const keynoteTheme = currentTheme.keynote;
 
+  const keynotePointClassName = applyConetoClassName(
+    "keynote-point",
+    className
+  );
+
   return (
     <KeynotePointWrapper
+      id={id}
+      className={keynotePointClassName}
       aria-label="keynote-point-wrapper"
       $style={styles?.rowStyle}
     >

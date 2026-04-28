@@ -4,6 +4,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RatingThemeConfig } from "./../theme";
+import { applyConetoClassName } from "./../constants/classname";
 
 export const RatingSize = {
   Small: "sm",
@@ -207,6 +208,8 @@ function Rating({
     ...RatingStyles
   } = styles ?? {};
 
+  const ratingClassName = applyConetoClassName("rating", className);
+
   return (
     <FieldLane
       id={inputId}
@@ -220,7 +223,7 @@ function Rating({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
-      className={`coneto-rating${className ? ` ${className}` : ""}`}
+      className={ratingClassName}
       required={rest.required}
       styles={{
         bodyStyle,

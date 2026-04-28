@@ -1,3 +1,4 @@
+import { applyConetoClassName } from "./../constants/classname";
 import { ComponentType, HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -24,12 +25,10 @@ function Figure({
 }: FigureProps) {
   if (!Icon) return null;
 
+  const figureClassName = applyConetoClassName("figure", className);
+
   return (
-    <Wrapper
-      {...rest}
-      className={`coneto-figure${className ? ` ${className}` : ""}`}
-      $style={styles?.self}
-    >
+    <Wrapper {...rest} className={figureClassName} $style={styles?.self}>
       {typeof Icon === "string" ? (
         <img
           alt="figure-icon"
