@@ -1,4 +1,5 @@
 import {
+  RiArrowRightSLine,
   RiDeleteBinLine,
   RiFileCopyLine,
   RiPrinterFill,
@@ -10,7 +11,7 @@ import { generateSentence } from "./../lib/text";
 import { Badge } from "./badge";
 import { Boxbar } from "./boxbar";
 import { Button } from "./button";
-import { RichEditor, RichEditorRef } from "./rich-editor";
+import { RichEditor, RichEditorRef, RichEditorCodeAction } from "./rich-editor";
 import { useTheme } from "./../theme/provider";
 import { TipMenuItemProps } from "./tip-menu";
 
@@ -61,13 +62,92 @@ const meta: Meta<typeof RichEditor> = {
 - **Flexible layout**
   - Toolbar position: \`top\` or \`bottom\`
   - Modes:
-    - \`text-editor\` (default editing)
-    - \`page-editor\` (full height editor)
-    - \`view-only\` (read-only with selectable text)
+    - \`text-editor\`
+    - \`page-editor\`
+    - \`view-only\`
+    - \`markdown-editor\`
+    - \`code-editor\`
 
-- **Height control**
-  - \`autogrow\`: expands editor dynamically
-  - Fixed height with scroll support via \`height\`
+---
+
+### 🔀 Editor Modes & Behavior
+
+#### 📝 \`text-editor\` (default)
+- Fully editable rich text
+- Supports headings, lists, checklists, bold, italic
+- Auto-formatting:
+  - \`1.\` → ordered list
+  - \`-\` / \`*\` → unordered list
+- Smart keyboard handling (Enter, Backspace)
+- Outputs clean Markdown
+- No Monaco editor
+
+---
+
+#### 📄 \`page-editor\`
+- Same as \`text-editor\`
+- Optimized for full-page writing
+- Expands to fill available height
+- Ideal for long-form content (blogs, docs)
+
+---
+
+#### 👀 \`view-only\`
+- Read-only mode
+- No editing or toolbar interaction
+- Text is selectable
+- Markdown rendered as formatted content
+- Code blocks are displayed (non-editable)
+
+---
+
+#### 💻 \`code-editor\`
+- Standalone Monaco editor
+- No rich text features
+- Supports:
+  - Syntax highlighting
+  - IntelliSense (with workers)
+  - Language switching
+  - Custom actions
+- Outputs raw code (not Markdown)
+- \`codeEditor.language\` — Default language (e.g. \`"tsx"\`, \`"py"\`, \`"sql"\`)
+- \`codeEditor.languageOptions\` — Languages available in the switcher dropdown
+- \`codeEditor.actions\` — Custom toolbar buttons rendered in the Monaco toolbar
+- Supported languages:
+
+| Key | Value | Display Name |
+|-----|-------|--------------|
+| \`TypeScript\` | \`tsx\` | TypeScript |
+| \`Python\` | \`py\` | Python |
+| \`Ruby\` | \`rb\` | Ruby |
+| \`CPP\` | \`cpp\` | C++ |
+| \`SQL\` | \`sql\` | SQL |
+| \`R\` | \`r\` | R |
+| \`PHP\` | \`php\` | PHP |
+| \`Go\` | \`go\` | Go |
+| \`Rust\` | \`rs\` | Rust |
+| \`Java\` | \`java\` | Java |
+| \`HTML\` | \`html\` | HTML |
+| \`CSS\` | \`css\` | CSS |
+| \`Text\` | \`txt\` | Text |
+
+---
+
+#### 🧩 \`markdown-editor\`
+- Rich text + embedded Monaco code blocks
+- Supports all \`text-editor\` features
+- Code block support:
+  - Type \`\`\` to insert
+  - Toolbar button
+- Each block:
+  - Has its own language
+  - Can be removed
+- Serialized as fenced Markdown:
+\`\`\`md
+\`\`\`tsx
+const x = 1;
+\`\`\`
+\`\`\`
 
 ---
 
@@ -75,57 +155,86 @@ const meta: Meta<typeof RichEditor> = {
 
 - \`value\` — Initial Markdown content
 - \`onChange\` — Callback returning cleaned Markdown output
-- \`mode\` — Editor mode: \`text-editor\` | \`page-editor\` | \`view-only\`
-- \`toolbarPosition\` — Position of toolbar: \`top\` | \`bottom\`
-- \`toolbarRightPanel\` — Custom React node for right-side toolbar
+- \`mode\` — Editor mode
+- \`toolbarPosition\` — \`top\` | \`bottom\`
+- \`toolbarRightPanel\` — Custom React node
 - \`autogrow\` — Enable dynamic height
-- \`height\` — Fixed height (used when \`autogrow\` is false)
+- \`height\` — Fixed height
 - \`styles\` — Custom styling overrides
+- \`codeEditor\` — Code editor configuration
+
+---
+
+### 💻 Code Editor Mode (\`mode="code-editor"\`)
+
+A standalone Monaco-based code editor.
+
+\`\`\`tsx
+<RichEditor
+  mode="code-editor"
+  value="const hello = 'world';"
+  onChange={(value) => console.log(value)}
+  codeEditor={{
+    language: RichEditor.codeLanguage.TypeScript,
+    languageOptions: [
+      RichEditor.codeLanguage.TypeScript,
+      RichEditor.codeLanguage.Python,
+    ],
+  }}
+/>
+\`\`\`
+
+**\`codeEditor\` props:**
+- \`language\` — sets the active Monaco language
+- \`languageOptions\` — restricts the language switcher to a subset
+- \`actions\` — custom buttons injected into the Monaco toolbar
+
+---
+
+### 📝 Markdown Editor Mode (\`mode="markdown-editor"\`)
+
+Supports embedded Monaco code blocks.
+
+\`\`\`tsx
+<RichEditor
+  mode="markdown-editor"
+  value="# Hello World."
+  onChange={(value) => console.log(value)}
+/>
+\`\`\`
 
 ---
 
 ### 🎯 Imperative API
 
-Accessible via \`ref\`:
-
-- \`insertPlainText(text)\`  
-  Inserts raw text at cursor position
-
-- \`insertMarkdownContent(markdown)\`  
-  Parses Markdown → HTML and inserts into editor
-
----
-
-### ⌨️ Keyboard Shortcuts
-
-- **Cmd/Ctrl + B** → Bold
-- **Cmd/Ctrl + I** → Italic
-- **Enter**
-  - Smart line break handling
-  - Proper heading/list splitting
-- **Space**
-  - Triggers list and checklist auto-format
+- \`insertPlainText(text)\`
+- \`insertMarkdownContent(markdown)\`
 
 ---
 
 ### ⚙️ Notes
 
-- Built using \`document.execCommand\` for formatting
-- Includes custom DOM normalization to:
-  - Prevent invalid list wrapping
-  - Clean unnecessary \`span\` styles
-- Designed for predictable Markdown output rather than raw HTML editing
+- Built using \`document.execCommand\`
+- Includes DOM normalization
+- Designed for clean Markdown output
+- Monaco workers required (Vite config)
+
+\`\`\`ts
+optimizeDeps: {
+  exclude: ["@systatum/coneto"],
+}
+\`\`\`
 
 ---
 
 ### 🚀 Use Cases
 
 - Blog editors
-- Notes / documentation tools
-- Internal CMS editors
-- Markdown-based content systems
-
-      `,
+- Documentation tools
+- CMS editors
+- Markdown systems
+- Technical writing with code
+`,
       },
     },
   },
@@ -311,7 +420,18 @@ This is ordered list
 
 This is unordered list
 * test
-* test  
+* test
+
+This is with code-block
+\`\`\`tsx
+import { Button } from "@systatum/coneto/button"
+
+function Content(){
+  return <Button variant="primary">Your caption</Button>
+}
+
+export default Content
+\`\`\`
 `,
       },
       { title: "Sender Name", content: "Sender Name" },
@@ -493,6 +613,119 @@ export const PageEditor: Story = {
   },
 };
 
+export const MarkdownEditor: Story = {
+  render: () => {
+    const valueEditor = `Type triple backticks to add a new code editor
+\`\`\`cpp
+const i = 0;
+\`\`\`
+
+See, how awesome is that?
+\`\`\`tsx
+const fruits = ["apples", "oranges", "banana", "kesemek"]
+fruits.forEach(fruit => {
+  console.log(fruit)
+})
+\`\`\`
+`;
+    const [value1, setValue1] = useState(valueEditor);
+    const [value2, setValue2] = useState("");
+
+    const ref1 = useRef<RichEditorRef>(null);
+    const ref2 = useRef<RichEditorRef>(null);
+
+    const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
+      {
+        icon: {
+          image: RiArrowRightSLine,
+        },
+        children: "Run",
+        onClick: ({ code }) => console.log(`compile the content: ${code}`),
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          gap: "10px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            gap: "10px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <h1>Multiple coding languages supported</h1>
+          <RichEditor
+            ref={ref1}
+            height={300}
+            codeEditor={{
+              languageOptions: ["tsx", "py", "rb", "cpp", "html"],
+              actions: CODE_EDITOR_ACTIONS,
+            }}
+            mode="markdown-editor"
+            onChange={(e) => setValue2(e)}
+            value={value1}
+          />
+        </div>
+
+        <div
+          style={{
+            gap: "10px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <h1>Only one coding language supported</h1>
+          <RichEditor
+            ref={ref2}
+            height={300}
+            codeEditor={{
+              languageOptions: ["cpp"],
+              actions: CODE_EDITOR_ACTIONS,
+            }}
+            mode="markdown-editor"
+            onChange={(e) => setValue1(e)}
+            value={value2}
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
+export const CodeEditor: Story = {
+  render: () => {
+    const [value, setValue] = useState("");
+
+    const ref = useRef<RichEditorRef>(null);
+
+    const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
+      {
+        icon: {
+          image: RiArrowRightSLine,
+        },
+        children: "Run",
+        onClick: ({ code }) => console.log(`compile the content: ${code}`),
+      },
+    ];
+
+    return (
+      <RichEditor
+        ref={ref}
+        codeEditor={{ actions: CODE_EDITOR_ACTIONS, language: "cpp" }}
+        mode="code-editor"
+        onChange={(e) => setValue(e)}
+        value={value}
+      />
+    );
+  },
+};
+
 export const ViewOnly: Story = {
   render: () => {
     const { currentTheme } = useTheme();
@@ -513,6 +746,17 @@ This is ordered list
 This is unordered list
 * test
 * test
+
+This is with code-block
+\`\`\`tsx
+import { Button } from "@systatum/coneto/button"
+
+function Content(){
+  return <Button variant="primary">Your caption</Button>
+}
+
+export default Content
+\`\`\`
 `
     );
 

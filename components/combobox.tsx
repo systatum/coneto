@@ -81,6 +81,7 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
+  drawerStyle?: CSSProp;
 }
 
 export interface ComboboxAction {
@@ -314,6 +315,7 @@ function ComboboxDrawer({
   setConfirmedValue,
   openedCategoryGroup,
   setOpenedCategoryGroup,
+  styles,
 }: ComboboxDrawerProps) {
   const { currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -550,6 +552,7 @@ function ComboboxDrawer({
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
+      $style={styles?.drawerStyle}
     >
       {(finalOptions || actions) && (
         <List
@@ -788,6 +791,7 @@ const listItemTitleWithRender = css`
 const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
+  $style?: CSSProp;
 }>`
   position: absolute;
   z-index: 9992999;
@@ -798,6 +802,17 @@ const DrawerWrapper = styled.ul<{
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) => $theme?.scrollThumbColor || "#3f3f46"};
+    border-radius: 999px;
+  }
+
+  ${({ $style }) => $style}
 `;
 
 const Divider = styled.div<{ $theme: ComboboxThemeConfig }>`
