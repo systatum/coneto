@@ -11,13 +11,22 @@ export interface SteplineProps {
   styles?: SteplineStyles;
   gap?: number;
   collapsed?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface SteplineStyles {
   self?: CSSProp;
 }
 
-function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
+function Stepline({
+  children,
+  styles,
+  gap,
+  collapsed,
+  className,
+  id,
+}: SteplineProps) {
   const { currentTheme } = useTheme();
   const steplineTheme = currentTheme.stepline;
 
@@ -25,6 +34,8 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
 
   return (
     <SteplineWrapper
+      id={id}
+      className={`coneto-stepline${className ? ` ${className}` : ""}`}
       aria-label="stepline-wrapper"
       $containerStyle={styles?.self}
       $gap={gap}
