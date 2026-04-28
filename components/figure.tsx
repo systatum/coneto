@@ -19,12 +19,17 @@ function Figure({
   color,
   styles,
   "aria-label": ariaLabel,
+  className,
   ...rest
 }: FigureProps) {
   if (!Icon) return null;
 
   return (
-    <Wrapper {...rest} $style={styles?.self}>
+    <Wrapper
+      {...rest}
+      className={`coneto-figure${className ? ` ${className}` : ""}`}
+      $style={styles?.self}
+    >
       {typeof Icon === "string" ? (
         <img
           alt="figure-icon"
