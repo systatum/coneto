@@ -46,6 +46,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
       resultMenu,
       showResultMenu,
       id,
+      className,
       ...props
     },
     ref
@@ -87,6 +88,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
         $style={styles?.containerStyle}
         onFocus={() => setIsFocus(true)}
         onBlur={handleBlur}
+        className={`coneto-searchbox${className ? ` ${className}` : ""}`}
       >
         <SearchIcon
           $theme={searchboxTheme}
