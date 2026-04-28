@@ -11,6 +11,8 @@ export interface CapsuleTabProps {
   styles?: CapsuleTabStyles;
   onTabChange?: (id: string) => void;
   children?: ReactNode;
+  id?: string;
+  className?: string;
 }
 
 export interface CapsuleTabStyles {
@@ -24,6 +26,7 @@ export interface CapsuleTabTab {
   id: string;
   title: string;
   content: ReactNode;
+  className?: string;
 }
 
 function CapsuleTab({
@@ -33,6 +36,8 @@ function CapsuleTab({
   activeBackgroundColor,
   onTabChange,
   children,
+  className,
+  id,
 }: CapsuleTabProps) {
   const { currentTheme } = useTheme();
   const capsuleTabTheme = currentTheme.capsuleTab;
@@ -59,6 +64,8 @@ function CapsuleTab({
       $theme={capsuleTabTheme}
       aria-label="capsule-tab-wrapper"
       $style={styles?.self}
+      className={`coneto-capsule-tab${className ? ` ${className}` : ""}`}
+      id={id}
     >
       <Capsule
         styles={{

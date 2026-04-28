@@ -12,6 +12,7 @@ export interface CapsuleTab {
   title?: string;
   content?: ReactNode;
   icon?: FigureProps;
+  className?: string;
 }
 
 interface BaseCapsuleProps {
@@ -217,6 +218,8 @@ function BaseCapsule({
             $disabled={disabled}
             role="tab"
             key={index}
+            className={`coneto-capsule-pill${tab?.className ? ` ${tab?.className}` : ""}`}
+            id={tab?.id}
             ref={setTabRef(index)}
             $activeTabStyle={styles?.tabStyle}
             onMouseEnter={() => !disabled && setHovered(tab.id)}
@@ -260,6 +263,7 @@ function Capsule({
   labelPosition,
   labelGap,
   labelWidth,
+  className,
   ...rest
 }: CapsuleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -271,6 +275,7 @@ function Capsule({
   return (
     <FieldLane
       id={inputId}
+      className={`coneto-capsule${className ? ` ${className}` : ""}`}
       showError={showError}
       errorMessage={errorMessage}
       labelPosition={labelPosition}
