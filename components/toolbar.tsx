@@ -158,6 +158,8 @@ export interface ToolbarMenuProps {
   styles?: ToolbarMenuStyles;
   variant?: ToolbarVariant;
   iconSize?: number;
+  className?: string;
+  id?: string;
 }
 
 export type ToolbarSubMenuList = TipMenuItemProps;
@@ -180,6 +182,8 @@ function ToolbarMenu({
   onClick,
   styles,
   variant = "default",
+  className,
+  id,
 }: ToolbarMenuProps) {
   const { VARIANT_COLORS } = useVariantToolbar();
   const toolbarTheme = VARIANT_COLORS[variant];
@@ -279,7 +283,12 @@ function ToolbarMenu({
   `;
 
   return (
-    <ToolbarContainer aria-label="toolbar-menu" ref={containerRef}>
+    <ToolbarContainer
+      id={id}
+      className={`coneto-toolbar-menu${className ? ` ${className}` : ""}`}
+      aria-label="toolbar-menu"
+      ref={containerRef}
+    >
       <MenuWrapper
         ref={refs.setReference}
         $style={css`
