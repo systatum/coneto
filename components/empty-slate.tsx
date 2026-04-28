@@ -7,6 +7,8 @@ export interface EmptySlateProps {
   subtitle?: string;
   actions?: ReactNode;
   styles?: EmptySlateStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface EmptySlateStyles {
@@ -23,9 +25,15 @@ function EmptySlate({
   subtitle,
   actions,
   styles,
+  className,
+  id,
 }: EmptySlateProps) {
   return (
-    <Container $style={styles?.containerStyle}>
+    <Container
+      id={id}
+      className={`coneto-empty-slate${className ? ` ${className}` : ""}`}
+      $style={styles?.containerStyle}
+    >
       {imageUrl && (
         <ImageWrapper $style={styles?.imageStyle}>
           <StyledImage
