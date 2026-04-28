@@ -34,6 +34,8 @@ function Grid({
   gap = 8,
   styles,
   preset = "1-to-4",
+  id,
+  className,
   ...props
 }: GridProps) {
   const style: CSSProperties = {
@@ -43,6 +45,8 @@ function Grid({
   return (
     <GridBase
       {...props}
+      id={id}
+      className={`coneto-grid${className ? ` ${className}` : ""}`}
       style={style}
       aria-label="grid"
       $style={css`
