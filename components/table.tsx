@@ -858,6 +858,17 @@ export interface TableRowGroupProps {
   subtitle?: string;
   selectable?: boolean;
   className?: string;
+  styles?: TableRowGroupStyles;
+}
+
+export interface TableRowGroupStyles {
+  containerStyle?: CSSProp;
+  headerStyle?: CSSProp;
+  bodyStyle?: CSSProp;
+  chevronStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  titleStyle?: CSSProp;
 }
 
 export interface TableRowCellProps {
@@ -881,6 +892,7 @@ function TableRowGroup({
   onLastRowReached,
   draggable,
   className,
+  styles,
   ...props
 }: TableRowGroupProps & {
   selectedData?: string[];
@@ -949,65 +961,89 @@ function TableRowGroup({
     <TableRowGroupContainer
       id={id}
       className={applyClassName("table-row-group", className)}
+      $style={styles?.containerStyle}
     >
       <TableRowGroupSticky
         $theme={tableTheme}
         onClick={() => setIsOpen(!isOpen)}
+        $style={styles?.headerStyle}
       >
-        <RotatingIcon $isOpen={isOpen}>
+        <RotatingIcon $isOpen={isOpen} $style={styles?.chevronStyle}>
           <RiArrowDownSLine />
         </RotatingIcon>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {title && <span>{title}</span>}
+        <TableRowGroupTextWrapper $style={styles?.textWrapperStyle}>
+          {title && (
+            <TableRowGroupTitle $style={styles?.titleStyle}>
+              {title}
+            </TableRowGroupTitle>
+          )}
           {subtitle && (
-            <span
-              style={{
-                fontSize: "14px",
-                color: tableTheme?.rowSubtitleTextColor || "#1f2937",
-              }}
+            <TableRowGroupSubtitle
+              $style={styles?.subtitleStyle}
+              color={tableTheme?.rowSubtitleTextColor}
             >
               {subtitle}
-            </span>
+            </TableRowGroupSubtitle>
           )}
-        </div>
+        </TableRowGroupTextWrapper>
       </TableRowGroupSticky>
 
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
+          <TableRowGroupBody
+            $style={styles?.bodyStyle}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {rowChildren}
-          </motion.div>
+          </TableRowGroupBody>
         )}
       </AnimatePresence>
     </TableRowGroupContainer>
   );
 }
 
-const TableRowGroupContainer = styled.div`
+const TableRowGroupTextWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupTitle = styled.span<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupSubtitle = styled.span<{
+  $color?: string;
+  $style?: CSSProp;
+}>`
+  font-size: 14px;
+  color: ${({ $color }) => $color || "#1f2937"};
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   position: relative;
   width: 100%;
   height: 100%;
   overflow-y: visible;
+  ${({ $style }) => $style}
 `;
 
-const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
+const TableRowGroupBody = styled(motion.div)<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupSticky = styled.div<{
+  $theme?: TableThemeConfig;
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -1030,16 +1066,20 @@ const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
   contain: layout style paint;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
+
+  ${({ $style }) => $style}
 `;
 
-const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
+const RotatingIcon = styled.span<{ $isOpen?: boolean; $style?: CSSProp }>`
   transition: transform 300ms;
   margin-left: 2px;
   ${(props) =>
     props.$isOpen &&
     css`
       transform: rotate(-180deg);
-    `}
+    `};
+
+  ${({ $style }) => $style}
 `;
 
 export type TableRowAction = TipMenuItemProps;
