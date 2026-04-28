@@ -11,6 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { PinboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BasePinboxProps {
   fontSize?: number;
@@ -475,6 +476,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     },
     ref
@@ -504,6 +506,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         helper={helper}
         disabled={disabled}
         label={label}
+        className={applyClassName("pinbox", className)}
         errorIconPosition="none"
         required={rest.required}
         styles={{

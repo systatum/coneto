@@ -12,6 +12,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { CrumbThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface CrumbProps {
   children?: ReactNode;
@@ -23,6 +24,8 @@ export interface CrumbProps {
   lastTextColor?: string;
   arrowColor?: string;
   styles?: CrumbStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface CrumbStyles {
@@ -39,6 +42,8 @@ function Crumb({
   textColor,
   lastTextColor,
   arrowColor,
+  className,
+  id,
 }: CrumbProps) {
   const { currentTheme } = useTheme();
   const crumbTheme = currentTheme.crumb;
@@ -89,7 +94,11 @@ function Crumb({
   }
 
   return (
-    <CrumbNav aria-label="crumb">
+    <CrumbNav
+      aria-label="crumb"
+      id={id}
+      className={applyClassName("crumb", className)}
+    >
       <AnimatePresence initial={false} mode="popLayout">
         {shownItems.map((data, index) => {
           const isEllipsis = data === "ellipsis";
@@ -192,6 +201,8 @@ export interface CrumbItemProps {
   textColor?: string;
   hoverColor?: string;
   lastTextColor?: string;
+  className?: string;
+  id?: string;
 }
 
 export interface CrumbItemStyles {
@@ -208,6 +219,8 @@ function CrumbItem({
   hoverColor,
   textColor,
   lastTextColor,
+  className,
+  id,
 }: CrumbItemProps) {
   const { currentTheme } = useTheme();
   const crumbTheme = currentTheme.crumb;
@@ -215,6 +228,8 @@ function CrumbItem({
   return path ? (
     <CrumbItemLink
       $theme={crumbTheme}
+      id={id}
+      className={applyClassName("crumb-item", className)}
       aria-label="crumb-item-link"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
@@ -229,6 +244,8 @@ function CrumbItem({
   ) : (
     <CrumbItemSpan
       $theme={crumbTheme}
+      id={id}
+      className={applyClassName("crumb-item", className)}
       aria-label="crumb-item-span"
       $fontSize={fontSize}
       $hoverColor={hoverColor}

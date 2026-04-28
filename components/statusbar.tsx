@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Button, ButtonProps } from "./button";
 import { useTheme } from "./../theme/provider";
 import { StatusbarThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface StatusbarProps {
   styles?: StatusbarStyles;
@@ -12,6 +13,8 @@ export interface StatusbarProps {
   hoverBackgroundColor?: string;
   transparent?: boolean;
   size?: number;
+  className?: string;
+  id?: string;
 }
 
 export interface StatusbarContent {
@@ -33,12 +36,16 @@ function Statusbar({
   hoverBackgroundColor,
   transparent,
   size = 11,
+  className,
+  id,
 }: StatusbarProps) {
   const { currentTheme } = useTheme();
   const statusbarTheme = currentTheme.statusbar;
 
   return (
     <StatusbarWrapper
+      id={id}
+      className={applyClassName("status-bar", className)}
       $theme={statusbarTheme}
       aria-label="statusbar-wrapper"
       $transparent={transparent}

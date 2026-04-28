@@ -33,7 +33,6 @@ Combobox makes use of the base Selectbox, featuring searchability, options-group
 - ⚡ Dynamic filtering based on user input
 - 🧩 Custom **actions** inside dropdown
 - 🚫 Handles **disabled** and **hidden** options
-- 📊 Supports **controlled and uncontrolled** modes
 
 ---
 
@@ -62,7 +61,6 @@ Combobox makes use of the base Selectbox, featuring searchability, options-group
 ### 📌 Usage Guidelines
 - Use **grouped options** for large datasets
 - Enable \`multiple\` for multi-select use cases
-- Use **controlled mode** to keep the value synchronized with the input and ensure it is consistently validated.
 - Use \`maxSelectableItems\` to limit selections
         `,
       },
@@ -145,10 +143,6 @@ Each field accepts a \`CSSProp\` (styled-components compatible) and can be used 
     name: {
       control: "text",
       description: "Name/id used for accessibility and aria-label.",
-    },
-    controlled: {
-      description: "Enable controlled mode (external state management)",
-      control: "boolean",
     },
   },
 };

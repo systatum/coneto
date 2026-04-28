@@ -19,6 +19,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -406,6 +407,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -432,6 +434,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("timebox", className)}
         errorIconPosition="relative"
         styles={{
           bodyStyle,

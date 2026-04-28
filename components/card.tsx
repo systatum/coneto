@@ -11,6 +11,7 @@ import { Toggle } from "./toggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const CardShadow = {
   None: "none",
@@ -94,6 +95,8 @@ function Card({
   toggleable,
   onToggleChange,
   open = true,
+  id,
+  className,
   ...props
 }: CardProps) {
   const { currentTheme } = useTheme();
@@ -111,6 +114,8 @@ function Card({
       $shadow={shadow}
       $radius={radius}
       $padding={padding}
+      id={id}
+      className={applyClassName("card", className)}
       $containerStyle={styles?.containerStyle}
       $theme={cardTheme}
     >

@@ -19,6 +19,7 @@ import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
 import { BaseAction } from "./../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const SplitPaneOrientation = {
   Horizontal: "horizontal",
@@ -35,6 +36,8 @@ export interface SplitPaneProps {
   onResizeComplete?: () => void;
   initialSizeRatio?: number[];
   styles?: SplitPaneStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface SplitPaneStyles {
@@ -66,6 +69,8 @@ function SplitPane({
   onResize,
   onResizeComplete,
   initialSizeRatio,
+  className,
+  id,
 }: SplitPaneProps) {
   const { currentTheme } = useTheme();
   const splitPaneTheme = currentTheme.splitPane;
@@ -174,6 +179,8 @@ function SplitPane({
 
   return (
     <Container
+      id={id}
+      className={applyClassName("split-pane", className)}
       $backgroundColor={splitPaneTheme.backgroundColor}
       $textColor={splitPaneTheme.textColor}
       aria-label="split-pane"

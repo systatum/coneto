@@ -12,6 +12,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileInputBoxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -178,6 +179,7 @@ function FileInputBox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -197,6 +199,7 @@ function FileInputBox({
   return (
     <FieldLane
       id={inputId}
+      className={applyClassName("file-input-box", className)}
       showError={showError}
       labelGap={labelGap}
       labelWidth={labelWidth}

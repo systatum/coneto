@@ -8,6 +8,7 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const FieldLaneErrorIconPosition = {
   Absolute: "absolute",
@@ -36,13 +37,14 @@ export interface FieldLaneProps {
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
-  id?: string;
   actions?: FieldLaneAction[];
   type?: string;
   labelPosition?: FieldLaneLabelPosition;
   labelWidth?: string;
   labelGap?: number;
   required?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface FieldLaneStyles {
@@ -100,6 +102,7 @@ function FieldLane({
   labelGap,
   labelWidth,
   required,
+  className,
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
@@ -341,8 +344,41 @@ function FieldLane({
     </InputWrapper>
   );
 
+  const CONETO_CLASSES = [
+    "coneto-textarea",
+    "coneto-calendar",
+    "coneto-capsule",
+    "coneto-checkbox",
+    "coneto-chips",
+    "coneto-colorbox",
+    "coneto-combobox",
+    "coneto-datebox",
+    "coneto-file-input-box",
+    "coneto-imagebox",
+    "coneto-moneybox",
+    "coneto-phonebox",
+    "coneto-pinbox",
+    "coneto-rating",
+    "coneto-radio",
+    "coneto-signbox",
+    "coneto-selectbox",
+    "coneto-thumb-field",
+    "coneto-toggle",
+    "coneto-timebox",
+    "coneto-textbox",
+  ];
+
+  const hasCustomConetoClass = CONETO_CLASSES.some((cls) =>
+    className?.includes(cls)
+  );
+
   return (
     <Container
+      className={
+        hasCustomConetoClass
+          ? className
+          : applyClassName("field-lane", className)
+      }
       $disabled={disabled}
       $style={css`
         ${styles?.containerStyle}

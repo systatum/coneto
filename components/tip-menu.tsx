@@ -8,6 +8,7 @@ import { TipMenuThemeConfig } from "./../theme";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { RiArrowRightSFill } from "@remixicon/react";
 import { BaseAction } from "../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const TipMenuVariant = {
   Default: "default",
@@ -36,6 +37,8 @@ export interface TipMenuProps {
   size?: TipMenuSize;
   withFilter?: boolean;
   styles?: TipMenuStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface TipMenuStyles {
@@ -50,6 +53,8 @@ function TipMenu({
   variant = "default",
   size = "md",
   withFilter,
+  className,
+  id,
 }: TipMenuProps) {
   const [search, setSearch] = useState<string>("");
   const [isHasInteracted, setHasInteracted] = useState<boolean>(false);
@@ -67,6 +72,8 @@ function TipMenu({
 
   return (
     <Button.TipMenuContainer
+      id={id}
+      className={applyClassName("tip-menu", className)}
       aria-label="tip-menu"
       styles={{
         self: styles?.self,
@@ -141,6 +148,8 @@ export interface TipMenuItemProps extends BaseAction {
   subMenuList?: TipMenuItemProps[];
   styles?: TipMenuItemStyles;
   className?: string;
+  disabled?: boolean;
+  id?: string;
 }
 
 export interface TipMenuItemStyles {
@@ -159,8 +168,8 @@ function TipMenuItem({
   styles,
   disabled,
   setIsOpen,
-  id,
   className,
+  id,
 }: TipMenuItemProps & {
   setIsOpen?: () => void;
 }) {
@@ -175,6 +184,7 @@ function TipMenuItem({
   const tipMenuElement = (
     <TipMenuItemWrapper
       id={id}
+      className={applyClassName("tip-menu-item", className)}
       $variant={variant}
       $size={size}
       aria-label="tip-menu-item"
@@ -182,7 +192,6 @@ function TipMenuItem({
         if (disabled) return;
         onClick?.(e);
       }}
-      className={className}
       $theme={tipMenuTheme}
       $disabled={disabled}
       $style={styles?.containerStyle}

@@ -44,6 +44,7 @@ import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
 import { Frame, FrameProps } from "./frame";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -120,6 +121,8 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   autoFocusField?: string;
   styles?: StatefulFormStyles;
   disabled?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface StatefulFormStyles {
@@ -154,6 +157,7 @@ export type FormFieldRowItemsAligment =
 export interface FormFieldProps {
   name: string;
   id?: string;
+  className?: string;
   title?: string;
   helper?: string;
   required?: boolean;
@@ -210,6 +214,8 @@ function StatefulForm<Z extends ZodTypeAny>({
   styles,
   autoFocusField,
   disabled,
+  className,
+  id,
 }: StatefulFormProps<Z>) {
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
     if (disabled) return;
@@ -332,6 +338,8 @@ function StatefulForm<Z extends ZodTypeAny>({
   return (
     <>
       <FormFields
+        id={id}
+        className={className}
         labelSize={labelSize}
         fieldSize={fieldSize}
         control={control}
@@ -418,6 +426,8 @@ interface FormFieldsProps<T extends FieldValues> {
   styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
   disabled?: boolean;
+  className?: string;
+  id?: string;
 }
 
 function FormFields<T extends FieldValues>({
@@ -435,6 +445,8 @@ function FormFields<T extends FieldValues>({
   autoFocusField,
   rowWithFrame,
   disabled,
+  className,
+  id,
 }: FormFieldsProps<T>) {
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
@@ -451,7 +463,11 @@ function FormFields<T extends FieldValues>({
   }, []);
 
   return (
-    <ContainerFormField $style={styles?.containerStyle}>
+    <ContainerFormField
+      id={id}
+      className={applyClassName("stateful-form", className)}
+      $style={styles?.containerStyle}
+    >
       {fields.map((group: FormFieldGroup, indexGroup: number) => {
         const visibleFields = (Array.isArray(group) ? group : [group]).filter(
           (field) => !field.hidden
@@ -510,6 +526,7 @@ function FormFields<T extends FieldValues>({
                     key={index}
                     title={field.title}
                     {...field?.frame}
+                    className={field?.className}
                     styles={{
                       containerStyle: css`
                         margin-top: 10px;
@@ -559,6 +576,7 @@ function FormFields<T extends FieldValues>({
                   key={index}
                   id={field.id}
                   label={field.title}
+                  className={field?.className}
                   type={field.type}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
@@ -634,6 +652,7 @@ function FormFields<T extends FieldValues>({
                       key={index}
                       id={field.id}
                       name={field.name}
+                      className={field?.className}
                       labelPosition={field.labelPosition}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
@@ -695,6 +714,7 @@ function FormFields<T extends FieldValues>({
                 <Button
                   key={index}
                   {...field.button}
+                  className={field?.className}
                   id={field.id}
                   title={
                     field.button?.title
@@ -755,6 +775,7 @@ function FormFields<T extends FieldValues>({
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   helper={field.helper}
+                  className={field?.className}
                   {...register(field.name as Path<T>, {
                     onChange: (e) => {
                       if (field.onChange) {
@@ -835,6 +856,7 @@ function FormFields<T extends FieldValues>({
                   labelWidth={field.labelWidth}
                   labelPosition={field.labelPosition}
                   placeholder={field.placeholder}
+                  className={field?.className}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   helper={field.helper}
@@ -907,6 +929,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       name={field.name}
                       value={field.name}
                       placeholder={field.placeholder}
@@ -1008,6 +1031,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       name={field.name}
                       title={field.title}
                       placeholder={field.placeholder}
@@ -1089,6 +1113,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       required={field.required}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1173,6 +1198,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       required={field.required}
                       placeholder={field.placeholder}
+                      className={field?.className}
                       helper={field.helper}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
@@ -1238,6 +1264,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   label={field.title}
                   placeholder={field.placeholder}
+                  className={field?.className}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
                   labelPosition={field.labelPosition}
@@ -1281,6 +1308,7 @@ function FormFields<T extends FieldValues>({
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
                   labelPosition={field.labelPosition}
+                  className={field?.className}
                   label={field.title}
                   placeholder={field.placeholder}
                   required={field.required}
@@ -1352,6 +1380,7 @@ function FormFields<T extends FieldValues>({
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
                   labelPosition={field.labelPosition}
+                  className={field?.className}
                   name={field.name}
                   helper={field.helper}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -1431,6 +1460,7 @@ function FormFields<T extends FieldValues>({
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
                   labelPosition={field.labelPosition}
+                  className={field?.className}
                   helper={field.helper}
                   required={field.required}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -1490,6 +1520,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
                         rhf.ref(el);
@@ -1577,6 +1608,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       helper={field.helper}
                       required={field.required}
+                      className={field?.className}
                       showError={shouldShowError(field.name)}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
@@ -1658,6 +1690,7 @@ function FormFields<T extends FieldValues>({
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
                       placeholder={field.placeholder}
+                      className={field?.className}
                       label={field.title}
                       required={field.required}
                       showError={shouldShowError(field.name)}
@@ -1737,6 +1770,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       required={field.required}
                       filterPlaceholder={field.placeholder}
                       disabled={field.disabled || disabled}
@@ -1786,6 +1820,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       label={field.title}
                       helper={field.helper}
                       required={field.required}
@@ -1839,6 +1874,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       value={controllerField.value ?? false}
                       required={field.required}
                       helper={field.helper}
@@ -1907,6 +1943,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
                       required={field.required}
@@ -1984,6 +2021,7 @@ function FormFields<T extends FieldValues>({
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       labelPosition={field.labelPosition}
+                      className={field?.className}
                       required={field.required}
                       activeTab={controllerField.value}
                       helper={field.helper}
@@ -2066,12 +2104,16 @@ function StatefulFormLabel({
   labelPosition,
   labelWidth,
   disabled,
+  className,
+  id,
   ...props
 }: StatefulFormLabelProps) {
   return (
     <Label
       {...props}
       $disabled={disabled}
+      id={id}
+      className={applyClassName("label", className)}
       $labelPosition={labelPosition}
       $labelWidth={labelWidth}
       $style={styles?.self}

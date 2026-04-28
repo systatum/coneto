@@ -4,6 +4,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RatingThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const RatingSize = {
   Small: "sm",
@@ -189,6 +190,7 @@ function Rating({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: RatingProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -217,6 +219,7 @@ function Rating({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      className={applyClassName("rating", className)}
       required={rest.required}
       styles={{
         bodyStyle,

@@ -173,6 +173,8 @@ export interface ComboboxThemeConfig extends BodyThemeConfig {
 
   dividerColor?: string;
   boxShadow?: string;
+
+  scrollThumbColor?: string;
 }
 
 // colorbox.tsx
@@ -259,6 +261,7 @@ export interface FieldLaneThemeConfig
 
   actionColor?: string;
   actionHoverColor?: string;
+  actionHoverBackgroundColor?: string;
 
   errorColor?: string;
   errorBackground?: string;

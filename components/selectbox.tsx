@@ -36,6 +36,7 @@ import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTheme } from "./../theme/provider";
 import { SelectboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -59,7 +60,6 @@ interface BaseSelectboxProps
   showError?: boolean;
   maxSelectableItems?: number | undefined;
   isLoading?: boolean;
-  controlled?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -141,7 +141,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
-      controlled,
+      className,
       ...props
     },
     ref
@@ -153,25 +153,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       () => (Array.isArray(options) ? options : []),
       [options]
     );
-
-    useEffect(() => {
-      if (!controlled) return;
-
-      const matched = finalOptions.find(
-        (opt) => String(opt.value) === finalSelectedOptions?.[0]
-      );
-
-      if (matched) {
-        setSelectedOptionsLocal(matched);
-      } else if (finalSelectedOptions?.[0]) {
-        setSelectedOptionsLocal({
-          text: finalSelectedOptions[0],
-          value: finalSelectedOptions[0],
-        });
-      } else {
-        setSelectedOptionsLocal({ text: "", value: "0" });
-      }
-    }, [selectedOptions, controlled, finalOptions]);
 
     const finalSelectedOptions = useMemo(() => {
       if (Array.isArray(selectedOptions)) {
@@ -639,6 +620,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -647,12 +629,20 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
     });
 
+    const hasCombo = className?.includes("coneto-combobox");
+    const hasDatebox = className?.includes("coneto-datebox");
+
     return (
       <FieldLane
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
+        className={
+          hasCombo || hasDatebox
+            ? className
+            : applyClassName("selectbox", className)
+        }
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -819,7 +809,9 @@ const ClearIcon = styled(RiCloseLine)<{
   border-radius: 2px;
   padding: 2px;
 
-  &&:hover {
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
     background-color: ${({ $theme }) =>
       $theme.clearIconHoverBackground || "#e5e7eb"};
   }

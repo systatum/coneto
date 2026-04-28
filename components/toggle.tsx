@@ -7,6 +7,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "../theme/provider";
 import { ToggleThemeConfig } from "../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseToggleProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -158,6 +159,7 @@ function Toggle({
   labelWidth,
   labelPosition,
   disabled,
+  className,
   ...rest
 }: ToggleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -177,6 +179,7 @@ function Toggle({
   return (
     <FieldLane
       id={inputId}
+      className={applyClassName("toggle", className)}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

@@ -5,6 +5,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { clamp } from "./../lib/math";
 import { PaginationThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface PaginationProps {
   currentPage: number;
@@ -12,6 +13,8 @@ export interface PaginationProps {
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
   styles?: PaginationStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface PaginationStyles {
@@ -26,6 +29,8 @@ function Pagination({
   onPageChange,
   showNumbers = true,
   styles,
+  className,
+  id,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<string[]>([]);
 
@@ -57,7 +62,11 @@ function Pagination({
   }, []);
 
   return (
-    <PaginationWrapper $style={styles?.containerStyle}>
+    <PaginationWrapper
+      id={id}
+      className={applyClassName("pagination", className)}
+      $style={styles?.containerStyle}
+    >
       <PaginationButton
         styles={{ self: styles?.buttonStyle }}
         onClick={handlePrevious}
@@ -145,7 +154,7 @@ const PaginationItem = ({
       {totalPages > threshold ? (
         <>
           <Combobox
-            controlled
+            key={`${currentPageLocal}`}
             highlightOnMatch={highlightOnMatch}
             options={comboBoxPages.map((data) => formatOption(String(data)))}
             selectedOptions={currentPageLocal}

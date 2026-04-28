@@ -16,6 +16,7 @@ import styled, { CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DormantTextThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const DormantTextAcceptChangeOn = {
   Enter: "enter",
@@ -38,6 +39,8 @@ export interface DormantTextProps {
   onCancelRequested?: () => void;
   dormantedMaxWidth?: string;
   styles?: DormantTextStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface DormantTextIconsProps {
@@ -68,6 +71,8 @@ function DormantText({
   onActive,
   onCancelRequested,
   dormantedMaxWidth,
+  className,
+  id,
 }: DormantTextProps) {
   const { currentTheme } = useTheme();
   const dormantTextTheme = currentTheme.dormantText;
@@ -145,6 +150,8 @@ function DormantText({
 
   return dormantedLocal ? (
     <DormantLabel
+      id={id}
+      className={applyClassName("dormant-text", className)}
       $theme={dormantTextTheme}
       aria-label="dormant-wrapper"
       ref={measureLabelSize}

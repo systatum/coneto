@@ -17,6 +17,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -178,6 +179,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -202,6 +204,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("colorbox", className)}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,

@@ -1,5 +1,6 @@
 "use client";
 
+import { applyClassName } from "./../constants/classname";
 import { ModalDialogThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import {
@@ -27,6 +28,8 @@ function ModalDialog({
   onClosed,
   closable = true,
   icon,
+  className,
+  id,
 }: ModalDialogProps) {
   const { currentTheme } = useTheme();
   const modalDialogTheme = currentTheme.modalDialog;
@@ -51,6 +54,8 @@ function ModalDialog({
   }));
   return (
     <Dialog
+      id={id}
+      className={applyClassName("modal-dialog", className)}
       closable={closable}
       isOpen={isOpen}
       buttons={customizeButtons}

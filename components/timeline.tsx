@@ -9,13 +9,21 @@ import { BaseSteplineItem } from "./../constants/step-component-util";
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "../theme/provider";
 import { TimelineThemeConfig } from "../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface TimelineProps {
   children?: ReactNode;
   isClickable?: boolean;
+  className?: string;
+  id?: string;
 }
 
-function Timeline({ children, isClickable = false }: TimelineProps) {
+function Timeline({
+  children,
+  isClickable = false,
+  className,
+  id,
+}: TimelineProps) {
   const { currentTheme } = useTheme();
   const timelineTheme = currentTheme.timeline;
 
@@ -23,7 +31,7 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <TimelineWrapper>
+    <TimelineWrapper id={id} className={applyClassName("timeline", className)}>
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -238,12 +246,14 @@ function TimelineItem({
   styles,
   id,
   variant,
+  className,
 }: TimelineItemProps) {
   const { currentTheme } = useTheme();
   const timelineTheme = currentTheme.timeline;
 
   return (
     <TimelineContainer
+      className={applyClassName("timeline-item", className)}
       aria-label={`timeline-item-${id}`}
       id={String(id)}
       $theme={timelineTheme}

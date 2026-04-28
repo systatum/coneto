@@ -26,6 +26,7 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -47,7 +48,6 @@ interface BaseComboboxProps {
   options: ComboboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
-  controlled?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -83,6 +83,7 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
   labelStyle?: CSSProp;
+  drawerStyle?: CSSProp;
 }
 
 export interface ComboboxAction extends BaseAction {
@@ -145,7 +146,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       required,
       isLoading,
       labels,
-      controlled = false,
+      className,
     },
     ref
   ) => {
@@ -185,6 +186,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     return (
       <Selectbox
         ref={ref}
+        className={applyClassName("combobox", className)}
         isLoading={isLoading}
         helper={helper}
         errorIconPosition={errorIconPosition}
@@ -192,7 +194,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         showError={showError}
         errorMessage={errorMessage}
         labelGap={labelGap}
-        controlled={controlled}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
         label={label}
@@ -314,6 +315,7 @@ function ComboboxDrawer({
   setConfirmedValue,
   openedCategoryGroup,
   setOpenedCategoryGroup,
+  styles,
 }: ComboboxDrawerProps) {
   const { currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -550,6 +552,7 @@ function ComboboxDrawer({
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       style={{ ...floatingStyles }}
+      $style={styles?.drawerStyle}
     >
       {(finalOptions || actions) && (
         <List
@@ -792,6 +795,7 @@ const listItemTitleWithRender = css`
 const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
+  $style?: CSSProp;
 }>`
   position: absolute;
   z-index: 9992999;
@@ -802,6 +806,17 @@ const DrawerWrapper = styled.ul<{
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) => $theme?.scrollThumbColor || "#3f3f46"};
+    border-radius: 999px;
+  }
+
+  ${({ $style }) => $style}
 `;
 
 const Divider = styled.div<{ $theme: ComboboxThemeConfig }>`

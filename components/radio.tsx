@@ -5,6 +5,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RadioThemeConfig } from "theme";
+import { applyClassName } from "./../constants/classname";
 
 export const RadioMode = {
   Radio: "radio",
@@ -154,6 +155,7 @@ function Radio({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -181,6 +183,7 @@ function Radio({
       label={title}
       helper={helper}
       disabled={disabled}
+      className={applyClassName("radio", className)}
       required={rest.required}
       styles={{
         bodyStyle: css`

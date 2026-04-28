@@ -4,6 +4,7 @@ import { strToColor } from "./../lib/code-color";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface AvatarProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
@@ -50,6 +51,8 @@ function Avatar({
   styles,
   onChange,
   onClick,
+  className,
+  id,
   ...props
 }: AvatarProps) {
   const { currentTheme } = useTheme();
@@ -90,6 +93,8 @@ function Avatar({
       $backgroundColor={!isImageValid ? backgroundColor : undefined}
       $fontSize={fontSize}
       $frameSize={frameSize}
+      id={id}
+      className={applyClassName("avatar", className)}
       $borderColor={avatarTheme.borderColor}
       $textColor={avatarTheme.textColor}
       $style={styles?.self}

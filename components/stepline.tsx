@@ -5,19 +5,29 @@ import type { CSSProp } from "styled-components";
 import { Tooltip } from "./tooltip";
 import { useTheme } from "./../theme/provider";
 import { SteplineThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface SteplineProps {
   children?: ReactNode;
   styles?: SteplineStyles;
   gap?: number;
   collapsed?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface SteplineStyles {
   self?: CSSProp;
 }
 
-function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
+function Stepline({
+  children,
+  styles,
+  gap,
+  collapsed,
+  className,
+  id,
+}: SteplineProps) {
   const { currentTheme } = useTheme();
   const steplineTheme = currentTheme.stepline;
 
@@ -25,6 +35,8 @@ function Stepline({ children, styles, gap, collapsed }: SteplineProps) {
 
   return (
     <SteplineWrapper
+      id={id}
+      className={applyClassName("stepline", className)}
       aria-label="stepline-wrapper"
       $containerStyle={styles?.self}
       $gap={gap}
@@ -146,6 +158,7 @@ function SteplineItem({
   styles,
   id,
   active,
+  className,
   ...props
 }: SteplineItemProps) {
   const { currentTheme } = useTheme();
@@ -206,7 +219,11 @@ function SteplineItem({
   }
 
   return (
-    <StepItemWrapper id={String(id)} $style={styles?.containerStyle}>
+    <StepItemWrapper
+      className={applyClassName("stepline-item", className)}
+      id={String(id)}
+      $style={styles?.containerStyle}
+    >
       {collapsed ? (
         <Tooltip
           styles={{

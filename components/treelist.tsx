@@ -16,6 +16,7 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { TreeListThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export interface TreeListProps
   extends Omit<
@@ -37,6 +38,7 @@ export interface TreeListProps
   alwaysShowDragIcon?: boolean;
   onDragged?: (props: TreeListOnDragged) => void;
   styles?: TreeListStyles;
+  id?: string;
 }
 
 export interface TreeListStyles {
@@ -74,6 +76,7 @@ export interface TreeListContent {
   items?: TreeListItem[];
   initialState?: TreeListInitialState;
   actions?: TreeListContentAction[];
+  className?: string;
 }
 
 export interface TreeListContentAction
@@ -92,6 +95,7 @@ export interface TreeListItem {
   iconOnActive?: FigureProps["image"];
   iconColor?: string;
   initialState?: TreeListInitialState;
+  className?: string;
 }
 
 export interface TreeListItemAction extends Omit<ContextMenuAction, "onClick"> {
@@ -149,6 +153,8 @@ function TreeList({
   onDragged,
   alwaysShowDragIcon = true,
   styles,
+  className,
+  id,
   ...props
 }: TreeListProps) {
   const { currentTheme } = useTheme();
@@ -242,6 +248,8 @@ function TreeList({
       <TreeListWrapper
         {...props}
         aria-label="tree-list-wrapper"
+        id={id}
+        className={applyClassName("tree-list", className)}
         $containerStyle={styles?.containerStyle}
         $textColor={treeListTheme.textColor}
       >

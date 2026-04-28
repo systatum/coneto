@@ -14,6 +14,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextareaThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -90,6 +91,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -108,6 +110,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <FieldLane
+        className={applyClassName("textarea", className)}
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}

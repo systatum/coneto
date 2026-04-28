@@ -1,4 +1,5 @@
 import { BaseAction } from "@/constants/action";
+import { applyClassName } from "./../constants/classname";
 import { ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonVariant } from "./button";
@@ -10,6 +11,8 @@ export interface EmptySlateProps {
   subtitle?: string;
   actions?: EmptySlateAction[];
   styles?: EmptySlateStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface EmptySlateAction extends BaseAction {
@@ -30,9 +33,15 @@ function EmptySlate({
   subtitle,
   actions,
   styles,
+  className,
+  id,
 }: EmptySlateProps) {
   return (
-    <Container $style={styles?.containerStyle}>
+    <Container
+      id={id}
+      className={applyClassName("empty-slate", className)}
+      $style={styles?.containerStyle}
+    >
       {icon && (
         <Figure
           size={icon?.size ?? 200}

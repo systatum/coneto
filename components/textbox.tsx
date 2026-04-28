@@ -18,6 +18,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTextboxProps
   extends Omit<
@@ -133,6 +134,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelPosition,
       labelGap,
       labelWidth,
+      className,
       ...rest
     } = props;
 
@@ -157,6 +159,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelPosition={labelPosition}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("textbox", className)}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

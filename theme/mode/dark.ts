@@ -88,6 +88,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
 
   actionColor: "#cbd5e1",
   actionHoverColor: "#616161",
+  actionHoverBackgroundColor: "#4b4b4b",
 
   placeholderColor: "#9ca3af",
   focusedBorderColor: "rgb(105, 85, 193)",
@@ -335,6 +336,7 @@ const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
 const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   selectedTextColor: darkBody.textColor,
   groupBackgroundColor: "rgb(35 37 41)",
+  scrollThumbColor: "#52525b",
 });
 
 export const darkCrumb = createCrumbTheme(darkBody, {
