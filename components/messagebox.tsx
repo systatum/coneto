@@ -25,6 +25,8 @@ export interface MessageboxProps {
   closable?: boolean;
   onCloseRequest?: () => void;
   styles?: MessageboxStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface MessageboxStyles {
@@ -57,6 +59,8 @@ function Messagebox({
   onCloseRequest,
   closable = false,
   styles,
+  className,
+  id,
 }: MessageboxProps) {
   const { currentTheme } = useTheme();
   const messageboxTheme = currentTheme.messagebox;
@@ -64,6 +68,8 @@ function Messagebox({
 
   return (
     <Wrapper
+      id={id}
+      className={`coneto-messagebox${className ? ` ${className}` : ""}`}
       $theme={messageboxTheme}
       $variant={variant}
       $style={styles?.containerStyle}
