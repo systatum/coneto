@@ -347,9 +347,43 @@ function FieldLane({
     </InputWrapper>
   );
 
+  const CONETO_CLASSES = [
+    "coneto-textarea",
+    "coneto-calendar",
+    "coneto-capsule",
+    "coneto-checkbox",
+    "coneto-chips",
+    "coneto-colorbox",
+    "coneto-combobox",
+    "coneto-datebox",
+    "coneto-file-input-box",
+    "coneto-imagebox",
+    "coneto-moneybox",
+    "coneto-phonebox",
+    "coneto-pinbox",
+    "coneto-rating",
+    "coneto-radio",
+    "coneto-signbox",
+    "coneto-selectbox",
+    "coneto-thumb-field",
+    "coneto-toggle",
+    "coneto-timebox",
+    "coneto-textbox",
+  ];
+
+  const hasCustomConetoClass = CONETO_CLASSES.some((cls) =>
+    className?.includes(cls)
+  );
+
+  console.log(hasCustomConetoClass);
+
+  const filteredClassName = hasCustomConetoClass
+    ? className
+    : ["coneto-field-lane", className].filter(Boolean).join(" ");
+
   return (
     <Container
-      className={className ? className : "coneto-field-lane"}
+      className={filteredClassName}
       $disabled={disabled}
       $style={css`
         ${styles?.containerStyle}
