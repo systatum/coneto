@@ -10,6 +10,8 @@ export interface KeynoteProps<T extends object> {
   keyLabels?: string[];
   children?: ReactNode;
   styles?: KeynoteStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface KeynotePointProps {
@@ -34,11 +36,18 @@ function Keynote<T extends object>({
   keyLabels,
   children,
   styles,
+  className,
+  id,
 }: KeynoteProps<T>) {
   const shouldRenderFromData = data && keys;
 
   return (
-    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
+    <KeynoteWrapper
+      id={id}
+      className={`coneto-keynote${className ? ` ${className}` : ""}`}
+      aria-label="keynote-wrapper"
+      $style={styles?.self}
+    >
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const keyLabel = keyLabels?.[index] ?? String(key);
