@@ -175,6 +175,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -199,6 +200,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={`coneto-colorbox${className ? ` ${className}` : ""}`}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,
