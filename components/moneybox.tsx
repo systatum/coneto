@@ -280,6 +280,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -292,6 +293,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     return (
       <FieldLane
         id={inputId}
+        className={`coneto-moneybox${className ? ` ${className}` : ""}`}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
