@@ -35,13 +35,14 @@ export interface FieldLaneProps {
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
-  id?: string;
   actions?: FieldLaneAction[];
   type?: string;
   labelPosition?: FieldLaneLabelPosition;
   labelWidth?: string;
   labelGap?: number;
   required?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface FieldLaneStyles {
@@ -105,6 +106,7 @@ function FieldLane({
   labelGap,
   labelWidth,
   required,
+  className,
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
@@ -347,6 +349,7 @@ function FieldLane({
 
   return (
     <Container
+      className={className ? className : "coneto-field-lane"}
       $disabled={disabled}
       $style={css`
         ${styles?.containerStyle}
