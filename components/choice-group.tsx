@@ -14,6 +14,8 @@ import { useTheme } from "./../theme/provider";
 export interface ChoiceGroupProps {
   children: ReactNode;
   styles?: ChoiceGroupStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface ChoiceGroupStyles {
