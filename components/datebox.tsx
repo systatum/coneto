@@ -75,6 +75,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelPosition,
     isLoading,
     labels,
+    className,
     ...rest
   } = props;
 
@@ -91,6 +92,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       labels={labels}
       labelGap={labelGap}
       labelWidth={labelWidth}
+      className={`coneto-datebox${className ? ` ${className}` : ""}`}
       labelPosition={labelPosition}
       id={inputId}
       showError={showError}
