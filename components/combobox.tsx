@@ -615,7 +615,7 @@ function ComboboxDrawer({
               return (
                 <Fragment key={index}>
                   <List.Item
-                    id={`action-${action.id}`}
+                    id={action?.id}
                     ref={(el) => {
                       listRef.current[index] = el;
                     }}
