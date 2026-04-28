@@ -11,7 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { PinboxThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 interface BasePinboxProps {
   fontSize?: number;
@@ -496,8 +496,6 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       ...pinboxStyles
     } = styles ?? {};
 
-    const pinboxClassName = applyConetoClassName("pinbox", className);
-
     return (
       <FieldLane
         id={inputId}
@@ -510,7 +508,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         helper={helper}
         disabled={disabled}
         label={label}
-        className={pinboxClassName}
+        className={applyClassName("pinbox", className)}
         errorIconPosition="none"
         required={rest.required}
         styles={{

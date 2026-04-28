@@ -44,7 +44,7 @@ import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
 import { Frame, FrameProps } from "./frame";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -462,15 +462,10 @@ function FormFields<T extends FieldValues>({
     return () => clearTimeout(timer);
   }, []);
 
-  const statefulFormClassName = applyConetoClassName(
-    "stateful-form",
-    className
-  );
-
   return (
     <ContainerFormField
       id={id}
-      className={statefulFormClassName}
+      className={applyClassName("stateful-form", className)}
       $style={styles?.containerStyle}
     >
       {fields.map((group: FormFieldGroup, indexGroup: number) => {
@@ -2113,14 +2108,12 @@ function StatefulFormLabel({
   id,
   ...props
 }: StatefulFormLabelProps) {
-  const labelClassName = applyConetoClassName("label", className);
-
   return (
     <Label
       {...props}
       $disabled={disabled}
       id={id}
-      className={labelClassName}
+      className={applyClassName("label", className)}
       $labelPosition={labelPosition}
       $labelWidth={labelWidth}
       $style={styles?.self}

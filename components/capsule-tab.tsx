@@ -3,7 +3,7 @@ import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
 import { CapsuleTabThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabTab[];
@@ -61,14 +61,12 @@ function CapsuleTab({
 
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
-  const capsuleTabClassName = applyConetoClassName("capsule-tab", className);
-
   return (
     <CapsuleTabWrapper
       $theme={capsuleTabTheme}
       aria-label="capsule-tab-wrapper"
       $style={styles?.self}
-      className={capsuleTabClassName}
+      className={applyClassName("capsule-tab", className)}
       id={id}
     >
       <Capsule

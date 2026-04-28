@@ -12,7 +12,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { CrumbThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface CrumbProps {
   children?: ReactNode;
@@ -93,10 +93,12 @@ function Crumb({
     );
   }
 
-  const crumbClassName = applyConetoClassName("crumb", className);
-
   return (
-    <CrumbNav aria-label="crumb" id={id} className={crumbClassName}>
+    <CrumbNav
+      aria-label="crumb"
+      id={id}
+      className={applyClassName("crumb", className)}
+    >
       <AnimatePresence initial={false} mode="popLayout">
         {shownItems.map((data, index) => {
           const isEllipsis = data === "ellipsis";
@@ -223,13 +225,11 @@ function CrumbItem({
   const { currentTheme } = useTheme();
   const crumbTheme = currentTheme.crumb;
 
-  const crumbItemClassName = applyConetoClassName("crumb-item", className);
-
   return path ? (
     <CrumbItemLink
       $theme={crumbTheme}
       id={id}
-      className={crumbItemClassName}
+      className={applyClassName("crumb-item", className)}
       aria-label="crumb-item-link"
       $fontSize={fontSize}
       $hoverColor={hoverColor}
@@ -245,7 +245,7 @@ function CrumbItem({
     <CrumbItemSpan
       $theme={crumbTheme}
       id={id}
-      className={crumbItemClassName}
+      className={applyClassName("crumb-item", className)}
       aria-label="crumb-item-span"
       $fontSize={fontSize}
       $hoverColor={hoverColor}

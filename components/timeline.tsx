@@ -9,7 +9,7 @@ import { BaseSteplineItem } from "./../constants/step-component-util";
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "../theme/provider";
 import { TimelineThemeConfig } from "../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface TimelineProps {
   children?: ReactNode;
@@ -30,10 +30,8 @@ function Timeline({
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const childArray = Children.toArray(children).filter(isValidElement);
 
-  const timelineClassName = applyConetoClassName("timeline", className);
-
   return (
-    <TimelineWrapper id={id} className={timelineClassName}>
+    <TimelineWrapper id={id} className={applyClassName("timeline", className)}>
       {childArray.map((child, index) => {
         if (
           !isValidElement<
@@ -248,12 +246,14 @@ function TimelineItem({
   styles,
   id,
   variant,
+  className,
 }: TimelineItemProps) {
   const { currentTheme } = useTheme();
   const timelineTheme = currentTheme.timeline;
 
   return (
     <TimelineContainer
+      className={applyClassName("timeline-item", className)}
       aria-label={`timeline-item-${id}`}
       id={String(id)}
       $theme={timelineTheme}

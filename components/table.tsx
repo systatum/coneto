@@ -30,7 +30,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface TableColumn {
   caption: string;
@@ -325,14 +325,12 @@ function Table({
 
   const hasActions = filteredActions.length > 0;
 
-  const tableClassName = applyConetoClassName("table", className);
-
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
         <Wrapper
           id={id}
-          className={tableClassName}
+          className={applyClassName("table", className)}
           $containerStyle={styles?.containerStyle}
         >
           {((selectedData.length > 0 &&
@@ -947,13 +945,11 @@ function TableRowGroup({
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const tableRowGroupClassName = applyConetoClassName(
-    "table-row-group",
-    className
-  );
-
   return (
-    <TableRowGroupContainer id={id} className={tableRowGroupClassName}>
+    <TableRowGroupContainer
+      id={id}
+      className={applyClassName("table-row-group", className)}
+    >
       <TableRowGroupSticky
         $theme={tableTheme}
         onClick={() => setIsOpen(!isOpen)}
@@ -1108,8 +1104,6 @@ function TableRow({
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
 
-  const tableRowClassName = applyConetoClassName("table-row", className);
-
   const { setDragItem, dragItem } = useContext(DnDContext);
   const {
     openRowId,
@@ -1160,7 +1154,7 @@ function TableRow({
       <TableRowWrapper
         ref={rowRef}
         id={id}
-        className={tableRowClassName}
+        className={applyClassName("table-row", className)}
         $theme={tableTheme}
         $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
         $isSelected={isSelected}
@@ -1553,15 +1547,10 @@ function TableRowCell({
   Partial<{
     bold?: boolean;
   }>) {
-  const tableRowCellClassName = applyConetoClassName(
-    "table-row-cell",
-    className
-  );
-
   return (
     <CellContent
       id={id}
-      className={tableRowCellClassName}
+      className={applyClassName("table-row-cell", className)}
       onClick={() => {
         if (onClick) {
           onClick();

@@ -2,7 +2,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { CSSProperties, HTMLAttributes, ReactNode, useState } from "react";
 import { Checkbox } from "./checkbox";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface GridProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
@@ -43,13 +43,11 @@ function Grid({
     gap: typeof gap === "number" ? `${gap}px` : gap,
   };
 
-  const gridClassName = applyConetoClassName("grid", className);
-
   return (
     <GridBase
       {...props}
       id={id}
-      className={gridClassName}
+      className={applyClassName("grid", className)}
       style={style}
       aria-label="grid"
       $style={css`
@@ -69,6 +67,7 @@ function GridCard({
   onSelected,
   isSelected,
   selectable,
+  className,
   ...props
 }: GridCardProps) {
   const { currentTheme } = useTheme();
@@ -83,6 +82,7 @@ function GridCard({
       $style={styles?.self}
       $isSelected={isSelected}
       $selectable={selectable}
+      className={applyClassName("grid-card", className)}
       $backgroundColor={gridTheme.cardBackgroundColor}
       $hoverBackgroundColor={gridTheme.cardHoverBackgroundColor}
       $selectedBackgroundColor={gridTheme.cardSelectedBackgroundColor}

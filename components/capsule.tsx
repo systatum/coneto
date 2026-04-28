@@ -6,7 +6,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { CapsuleThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface CapsuleTab {
   id: string;
@@ -211,11 +211,6 @@ function BaseCapsule({
       {tabs.map((tab, index) => {
         const isActive = activeTab === tab.id;
 
-        const capsulePillClassName = applyConetoClassName(
-          "capsule-pill",
-          tab?.className
-        );
-
         return (
           <Tab
             $theme={capsuleTheme}
@@ -224,7 +219,7 @@ function BaseCapsule({
             $disabled={disabled}
             role="tab"
             key={index}
-            className={capsulePillClassName}
+            className={applyClassName("capsule-pill", tab?.className)}
             id={tab?.id}
             ref={setTabRef(index)}
             $activeTabStyle={styles?.tabStyle}
@@ -278,12 +273,10 @@ function Capsule({
     id,
   });
 
-  const capsuleClassName = applyConetoClassName("capsule", className);
-
   return (
     <FieldLane
       id={inputId}
-      className={capsuleClassName}
+      className={applyClassName("capsule", className)}
       showError={showError}
       errorMessage={errorMessage}
       labelPosition={labelPosition}

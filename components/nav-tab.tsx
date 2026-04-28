@@ -16,7 +16,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface NavTabProps {
   tabs?: NavTabTab[];
@@ -188,12 +188,10 @@ function NavTab({
         .some((item) => item.id === selected)
   );
 
-  const navTabClassName = applyConetoClassName("nav-tab", className);
-
   return (
     <NavTabContainer
       id={id}
-      className={navTabClassName}
+      className={applyClassName("nav-tab", className)}
       $style={styles?.containerStyle}
     >
       <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
@@ -227,18 +225,13 @@ function NavTab({
           />
 
           {visibleTabs.map((tab, index) => {
-            const navTabTabClassName = applyConetoClassName(
-              "nav-tab-tab",
-              tab?.className
-            );
-
             return (
               <Tooltip
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
                 id={tab.id}
-                className={navTabTabClassName}
+                className={applyClassName("nav-tab-tab", tab?.className)}
                 key={index}
                 styles={{
                   arrowStyle: css`
@@ -278,17 +271,14 @@ function NavTab({
                       tab.subItems
                         ?.filter((item) => !item?.hidden)
                         ?.map((item, idx) => {
-                          const navTabTabSubItemClassName =
-                            applyConetoClassName(
-                              "nav-tab-sub-item",
-                              item?.className
-                            );
-
                           return (
                             <NavTabTab
                               key={idx}
                               id={item?.id}
-                              className={navTabTabSubItemClassName}
+                              className={applyClassName(
+                                "nav-tab-sub-item",
+                                item?.className
+                              )}
                               $theme={navTheme}
                               $style={item?.styles?.self}
                               onClick={() => {

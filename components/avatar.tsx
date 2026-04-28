@@ -4,7 +4,7 @@ import { strToColor } from "./../lib/code-color";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface AvatarProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
@@ -81,8 +81,6 @@ function Avatar({
     }
   };
 
-  const avatarClassName = applyConetoClassName("avatar", className);
-
   return (
     <AvatarContainer
       {...props}
@@ -96,7 +94,7 @@ function Avatar({
       $fontSize={fontSize}
       $frameSize={frameSize}
       id={id}
-      className={avatarClassName}
+      className={applyClassName("avatar", className)}
       $borderColor={avatarTheme.borderColor}
       $textColor={avatarTheme.textColor}
       $style={styles?.self}

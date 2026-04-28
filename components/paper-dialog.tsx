@@ -23,7 +23,7 @@ import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { PaperDialogThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const PaperDialogState = {
   Restored: "restored",
@@ -143,16 +143,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       return () => document.removeEventListener("keydown", handleEscape);
     }, [handleEscape]);
 
-    const paperDialogClassName = applyConetoClassName(
-      "paper-dialog",
-      className
-    );
-
     return (
       dialogState !== "closed" && (
         <DialogOverlay
           id={id}
-          className={paperDialogClassName}
+          className={applyClassName("paper-dialog", className)}
           $dialogState={dialogState}
         >
           {dialogState === "restored" && (

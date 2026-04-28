@@ -1,6 +1,6 @@
 "use client";
 
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 import { ModalDialogThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import {
@@ -34,8 +34,6 @@ function ModalDialog({
   const { currentTheme } = useTheme();
   const modalDialogTheme = currentTheme.modalDialog;
 
-  const modalDialogClassName = applyConetoClassName("modal-dialog", className);
-
   const customizeButtons = buttons?.map((button) => ({
     ...button,
     styles: {
@@ -57,7 +55,7 @@ function ModalDialog({
   return (
     <Dialog
       id={id}
-      className={modalDialogClassName}
+      className={applyClassName("modal-dialog", className)}
       closable={closable}
       isOpen={isOpen}
       buttons={customizeButtons}

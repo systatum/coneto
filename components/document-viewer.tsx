@@ -13,7 +13,7 @@ import styled, { css, type CSSProp } from "styled-components";
 import { Combobox } from "./combobox";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 type ResolvedSource =
   | { type: "pdf"; src: string }
@@ -636,15 +636,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       setStart(null);
     };
 
-    const documentClassName = applyConetoClassName(
-      "document-viewer",
-      className
-    );
-
     return (
       <PDFViewerContainer
         id={id}
-        className={documentClassName}
+        className={applyClassName("document-viewer", className)}
         $backgroundColor={documentViewerTheme.backgroundColor}
       >
         <ToolbarWrapper

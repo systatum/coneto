@@ -14,7 +14,7 @@ import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SearchboxThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -82,8 +82,6 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
       id,
     });
 
-    const searchboxClassName = applyConetoClassName("searchbox", className);
-
     return (
       <SearchboxWrapper
         ref={anchorRef}
@@ -91,7 +89,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
         $style={styles?.containerStyle}
         onFocus={() => setIsFocus(true)}
         onBlur={handleBlur}
-        className={searchboxClassName}
+        className={applyClassName("searchbox", className)}
       >
         <SearchIcon
           $theme={searchboxTheme}

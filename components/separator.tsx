@@ -3,7 +3,7 @@ import { useTheme } from "./../theme/provider";
 import { FigureProps } from "./figure";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -41,12 +41,10 @@ function Separator({
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme.separator;
 
-  const separatorClassName = applyConetoClassName("separator", className);
-
   return (
     <SeparatorContainer
       id={id}
-      className={separatorClassName}
+      className={applyClassName("separator", className)}
       aria-label="separator-container"
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
@@ -189,15 +187,10 @@ function SeparatorAction({
     return;
   }
 
-  const separatorActionClassName = applyConetoClassName(
-    "separator-action",
-    className
-  );
-
   return (
     <Tooltip
       id={id}
-      className={separatorActionClassName}
+      className={applyClassName("separator-action", className)}
       dialog={caption}
       styles={{
         arrowStyle: styles?.arrowStyle,

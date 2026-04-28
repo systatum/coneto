@@ -51,7 +51,7 @@ import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker"
 import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
 import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
 import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 /**
  * Registers the Monaco web worker factory on `window.MonacoEnvironment`.
@@ -347,11 +347,9 @@ function CodeEditor({
       }),
   }));
 
-  const codeEditorClassName = applyConetoClassName("code-editor", className);
-
   return (
     <RichEditor.Base
-      className={codeEditorClassName}
+      className={applyClassName("code-editor", className)}
       actions={filteredActions}
       toolbarPosition={toolbarPosition}
       theme={richEditorTheme}

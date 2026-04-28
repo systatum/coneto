@@ -1,7 +1,7 @@
 import styled, { CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { LoadingSpinnerThemeConfig } from "theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface LoadingSpinnerProps {
   iconSize?: number;
@@ -30,15 +30,10 @@ function LoadingSpinner({
   const { currentTheme } = useTheme();
   const loadingSpinnerTheme = currentTheme.loadingSpinner;
 
-  const loadingSpinnerClassName = applyConetoClassName(
-    "loading-spinner",
-    className
-  );
-
   return (
     <SpinnerWrapper
       id={id}
-      className={loadingSpinnerClassName}
+      className={applyClassName("loading-spinner", className)}
       aria-label="loading-spinner"
       $style={styles?.containerStyle}
       $gap={gap}

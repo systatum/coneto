@@ -19,7 +19,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { MoneyboxThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const MoneyboxSeparator = {
   Dot: "dot",
@@ -291,12 +291,10 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       id: props.id,
     });
 
-    const moneyboxClassName = applyConetoClassName("moneybox", className);
-
     return (
       <FieldLane
         id={inputId}
-        className={moneyboxClassName}
+        className={applyClassName("moneybox", className)}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}

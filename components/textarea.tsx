@@ -14,7 +14,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextareaThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
@@ -108,11 +108,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       self: textareaStyles,
     } = styles ?? {};
 
-    const textareaClassName = applyConetoClassName("textarea", className);
-
     return (
       <FieldLane
-        className={textareaClassName}
+        className={applyClassName("textarea", className)}
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}

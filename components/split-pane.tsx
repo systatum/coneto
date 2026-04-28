@@ -18,7 +18,7 @@ import { Button, ButtonStyles } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const SplitPaneOrientation = {
   Horizontal: "horizontal",
@@ -179,12 +179,10 @@ function SplitPane({
     }
   }, [childrenArray.length]);
 
-  const splitPaneClassName = applyConetoClassName("split-pane", className);
-
   return (
     <Container
       id={id}
-      className={splitPaneClassName}
+      className={applyClassName("split-pane", className)}
       $backgroundColor={splitPaneTheme.backgroundColor}
       $textColor={splitPaneTheme.textColor}
       aria-label="split-pane"

@@ -21,7 +21,7 @@ import {
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { AppTheme, TipMenuContainerThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const ButtonVariant = {
   Link: "link",
@@ -225,8 +225,6 @@ function Button({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [safeAreaAriaLabelsLocal]);
 
-  const buttonClassName = applyConetoClassName("button", className);
-
   return (
     <ButtonWrapper
       $disabled={disabled}
@@ -240,7 +238,7 @@ function Button({
       $isOpen={isOpen}
       $theme={buttonTheme}
       $variant={variant}
-      className={buttonClassName}
+      className={applyClassName("button", className)}
     >
       <BaseButton
         $theme={buttonTheme}

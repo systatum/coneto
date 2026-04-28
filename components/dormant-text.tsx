@@ -16,7 +16,7 @@ import styled, { CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DormantTextThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const DormantTextAcceptChangeOn = {
   Enter: "enter",
@@ -148,12 +148,10 @@ function DormantText({
     });
   });
 
-  const dormantClassName = applyConetoClassName("dormant-text", className);
-
   return dormantedLocal ? (
     <DormantLabel
       id={id}
-      className={dormantClassName}
+      className={applyClassName("dormant-text", className)}
       $theme={dormantTextTheme}
       aria-label="dormant-wrapper"
       ref={measureLabelSize}

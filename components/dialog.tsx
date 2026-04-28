@@ -23,6 +23,7 @@ import {
   useTheme,
 } from "./../theme/provider";
 import { DialogThemeConfig } from "./../theme";
+import { applyClassName } from "@/constants/classname";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -94,12 +95,6 @@ function Dialog({
   const { currentTheme, mode } = useTheme();
   const dialogTheme = currentTheme.dialog;
 
-  const hasModalDialog = className?.includes("coneto-modal-dialog");
-
-  const filteredDialogClassName = hasModalDialog
-    ? className
-    : ["coneto-dialog", className].filter(Boolean).join(" ");
-
   const [isVisible, setIsVisible] = useState(false);
   const { mounted, target } = usePortal();
 
@@ -133,6 +128,8 @@ function Dialog({
     }
   }, [isOpen]);
 
+  const hasModalDialog = className?.includes("coneto-modal-dialog");
+
   if (!mounted || !target || !isVisible) return null;
 
   return ReactDOM.createPortal(
@@ -154,7 +151,9 @@ function Dialog({
       />
       <Wrapper
         id={id}
-        className={filteredDialogClassName}
+        className={
+          hasModalDialog ? className : applyClassName("dialog", className)
+        }
         $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}

@@ -11,7 +11,7 @@ import { Toggle } from "./toggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const CardShadow = {
   None: "none",
@@ -108,8 +108,6 @@ function Card({
 
   const hasActions = filteredHeaderActions.length > 0;
 
-  const cardClassName = applyConetoClassName("card", className);
-
   return (
     <CardContainer
       {...props}
@@ -117,7 +115,7 @@ function Card({
       $radius={radius}
       $padding={padding}
       id={id}
-      className={cardClassName}
+      className={applyClassName("card", className)}
       $containerStyle={styles?.containerStyle}
       $theme={cardTheme}
     >

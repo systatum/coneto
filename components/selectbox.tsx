@@ -36,6 +36,7 @@ import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTheme } from "./../theme/provider";
 import { SelectboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -631,18 +632,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     const hasCombo = className?.includes("coneto-combobox");
     const hasDatebox = className?.includes("coneto-datebox");
 
-    const filteredClassName =
-      hasCombo || hasDatebox
-        ? className
-        : ["coneto-selectbox", className].filter(Boolean).join(" ");
-
     return (
       <FieldLane
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
-        className={filteredClassName}
+        className={
+          hasCombo || hasDatebox
+            ? className
+            : applyClassName("selectbox", className)
+        }
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -661,7 +661,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       >
         <BaseSelectbox
           {...rest}
-          className={className}
           id={inputId}
           actions={actions}
           showError={showError}

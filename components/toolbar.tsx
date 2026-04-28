@@ -22,7 +22,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { ToolbarThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -135,11 +135,9 @@ function Toolbar({ children, styles, big, className, id }: ToolbarProps) {
     return child;
   });
 
-  const toolbarClassName = applyConetoClassName("toolbar", className);
-
   return (
     <ToolbarWrapper
-      className={toolbarClassName}
+      className={applyClassName("toolbar", className)}
       id={id}
       ref={toolbarRef}
       $style={styles?.self}
@@ -285,12 +283,10 @@ function ToolbarMenu({
     `}
   `;
 
-  const toolbarMenuClassName = applyConetoClassName("toolbar-menu", className);
-
   return (
     <ToolbarContainer
       id={id}
-      className={toolbarMenuClassName}
+      className={applyClassName("toolbar-menu", className)}
       aria-label="toolbar-menu"
       ref={containerRef}
     >

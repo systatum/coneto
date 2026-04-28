@@ -7,7 +7,7 @@ import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { RiArrowRightSFill } from "@remixicon/react";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export const TipMenuVariant = {
   Default: "default",
@@ -69,12 +69,10 @@ function TipMenu({
       );
   }, [search, subMenuList]);
 
-  const tipMenuClassName = applyConetoClassName("tip-menu", className);
-
   return (
     <Button.TipMenuContainer
       id={id}
-      className={tipMenuClassName}
+      className={applyClassName("tip-menu", className)}
       aria-label="tip-menu"
       styles={{
         self: styles?.self,
@@ -183,12 +181,10 @@ function TipMenuItem({
     return;
   }
 
-  const tipMenuItemClassName = applyConetoClassName("tip-menu-item", className);
-
   const tipMenuElement = (
     <TipMenuItemWrapper
       id={id}
-      className={tipMenuItemClassName}
+      className={applyClassName("tip-menu-item", className)}
       $variant={variant}
       $size={size}
       aria-label="tip-menu-item"

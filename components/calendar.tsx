@@ -19,7 +19,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { CalendarThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
   options?: CalendarOption[];
@@ -1010,8 +1010,6 @@ function Calendar({
     ...baseCalendartyles
   } = styles ?? {};
 
-  const calendarClassName = applyConetoClassName("calendar", className);
-
   return (
     <FieldLane
       id={inputId}
@@ -1019,7 +1017,7 @@ function Calendar({
       errorMessage={errorMessage}
       labelPosition={labelPosition}
       label={label}
-      className={calendarClassName}
+      className={applyClassName("calendar", className)}
       actions={actions}
       helper={helper}
       disabled={disabled}

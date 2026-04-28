@@ -1,7 +1,7 @@
 import { css } from "styled-components";
 import { Tooltip } from "./tooltip";
 import { RiInformationLine } from "@remixicon/react";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface HelperProps {
   value: string;
@@ -11,12 +11,10 @@ export interface HelperProps {
 }
 
 function Helper({ value, showDelayPeriod = 400, className, id }: HelperProps) {
-  const helperClassName = applyConetoClassName("helper", className);
-
   return (
     <Tooltip
       id={id}
-      className={helperClassName}
+      className={applyClassName("helper", className)}
       styles={{
         containerStyle: css`
           width: fit-content;

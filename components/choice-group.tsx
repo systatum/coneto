@@ -10,6 +10,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Radio, RadioProps } from "./radio";
 import { Checkbox, CheckboxProps } from "./checkbox";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface ChoiceGroupProps {
   children: ReactNode;
@@ -23,7 +24,7 @@ export interface ChoiceGroupStyles {
   dividerStyle?: CSSProp;
 }
 
-function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
+function ChoiceGroup({ children, styles, className, id }: ChoiceGroupProps) {
   const { currentTheme } = useTheme();
   const choiceGroupTheme = currentTheme.choiceGroup;
 
@@ -36,6 +37,8 @@ function ChoiceGroup({ children, styles }: ChoiceGroupProps) {
 
   return (
     <ChoiceGroupWrapper
+      id={id}
+      className={applyClassName("choice-group", className)}
       $isRowDirection={isRadioButton}
       $style={styles?.containerStyle}
       $borderColor={choiceGroupTheme.borderColor}

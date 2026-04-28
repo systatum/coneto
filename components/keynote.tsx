@@ -1,7 +1,7 @@
 import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export type KeynoteKeys<T> = Extract<keyof T, string>;
 
@@ -44,12 +44,10 @@ function Keynote<T extends object>({
 }: KeynoteProps<T>) {
   const shouldRenderFromData = data && keys;
 
-  const keynoteClassName = applyConetoClassName("keynote", className);
-
   return (
     <KeynoteWrapper
       id={id}
-      className={keynoteClassName}
+      className={applyClassName("keynote", className)}
       aria-label="keynote-wrapper"
       $style={styles?.self}
     >
@@ -115,15 +113,10 @@ function KeynotePoint({
   const { currentTheme } = useTheme();
   const keynoteTheme = currentTheme.keynote;
 
-  const keynotePointClassName = applyConetoClassName(
-    "keynote-point",
-    className
-  );
-
   return (
     <KeynotePointWrapper
       id={id}
-      className={keynotePointClassName}
+      className={applyClassName("keynote-point", className)}
       aria-label="keynote-point-wrapper"
       $style={styles?.rowStyle}
     >

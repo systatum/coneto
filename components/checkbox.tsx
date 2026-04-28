@@ -9,7 +9,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { CheckboxThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -194,8 +194,6 @@ function Checkbox({
     ...CheckboxStyles
   } = styles ?? {};
 
-  const checkboxClassName = applyConetoClassName("checkbox", className);
-
   return (
     <FieldLane
       id={inputId}
@@ -209,7 +207,7 @@ function Checkbox({
       disabled={disabled}
       label={title}
       required={rest.required}
-      className={checkboxClassName}
+      className={applyClassName("checkbox", className)}
       errorIconPosition="none"
       styles={{
         bodyStyle: css`

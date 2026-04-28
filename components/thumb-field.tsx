@@ -11,7 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ThumbFieldThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
@@ -182,8 +182,6 @@ function ThumbField({
     ...thumbFieldStyles
   } = styles ?? {};
 
-  const thumbFieldClassName = applyConetoClassName("thumb-field", className);
-
   return (
     <FieldLane
       id={inputId}
@@ -197,7 +195,7 @@ function ThumbField({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
-      className={thumbFieldClassName}
+      className={applyClassName("thumb-field", className)}
       required={rest.required}
       styles={{
         bodyStyle,

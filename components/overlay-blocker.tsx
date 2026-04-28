@@ -9,7 +9,7 @@ import {
 import styled, { CSSProp } from "styled-components";
 import { OverlayBlockerThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 export interface OverlayBlockerRef {
   close: () => void;
@@ -97,15 +97,10 @@ export const OverlayBlocker = forwardRef<
 
     if (!visible) return null;
 
-    const overlayBlockerClassName = applyConetoClassName(
-      "overlay-blocker",
-      className
-    );
-
     return (
       <StyledOverlay
         id={id}
-        className={overlayBlockerClassName}
+        className={applyClassName("overlay-blocker", className)}
         aria-label="overlay-blocker"
         $zIndex={zIndex}
         $theme={overlayBlockerTheme}

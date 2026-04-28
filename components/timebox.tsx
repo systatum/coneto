@@ -18,7 +18,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
-import { applyConetoClassName } from "./../constants/classname";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -417,8 +417,6 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     const { bodyStyle, containerStyle, controlStyle, labelStyle } =
       styles ?? {};
 
-    const timeboxClassName = applyConetoClassName("timebox", className);
-
     return (
       <FieldLane
         id={inputId}
@@ -433,7 +431,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
-        className={timeboxClassName}
+        className={applyClassName("timebox", className)}
         errorIconPosition="relative"
         styles={{
           bodyStyle,
