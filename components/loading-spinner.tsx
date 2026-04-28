@@ -8,6 +8,8 @@ export interface LoadingSpinnerProps {
   label?: string;
   gap?: number;
   styles?: LoadingSpinnerStyles;
+  className?: string;
+  id?: string;
 }
 export interface LoadingSpinnerStyles {
   containerStyle?: CSSProp;
@@ -21,12 +23,16 @@ function LoadingSpinner({
   label,
   gap = 2,
   styles,
+  className,
+  id,
 }: LoadingSpinnerProps) {
   const { currentTheme } = useTheme();
   const loadingSpinnerTheme = currentTheme.loadingSpinner;
 
   return (
     <SpinnerWrapper
+      id={id}
+      className={`coneto-messagebox${className ? ` ${className}` : ""}`}
       aria-label="loading-spinner"
       $style={styles?.containerStyle}
       $gap={gap}
