@@ -31,6 +31,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Figure } from "./figure";
 
 export interface TableColumn {
   caption: string;
@@ -963,22 +964,44 @@ function TableRowGroup({
       className={applyClassName("table-row-group", className)}
       $style={styles?.containerStyle}
     >
-      <TableRowGroupSticky
+      <TableRowGroupHeader
         $theme={tableTheme}
+        aria-label="table-row-group-header"
         onClick={() => setIsOpen(!isOpen)}
         $style={styles?.headerStyle}
       >
-        <RotatingIcon $isOpen={isOpen} $style={styles?.chevronStyle}>
-          <RiArrowDownSLine />
-        </RotatingIcon>
-        <TableRowGroupTextWrapper $style={styles?.textWrapperStyle}>
+        <Figure
+          styles={{
+            self: css`
+              transition: transform 300ms;
+              margin-left: 6px;
+              ${isOpen &&
+              css`
+                transform: rotate(-180deg);
+              `};
+              ${styles?.chevronStyle}
+            `,
+          }}
+          size={20}
+          aria-label="table-row-group-chevron"
+          image={RiArrowDownSLine}
+        />
+
+        <TableRowGroupTextWrapper
+          aria-label="table-row-group-text-wrapper"
+          $style={styles?.textWrapperStyle}
+        >
           {title && (
-            <TableRowGroupTitle $style={styles?.titleStyle}>
+            <TableRowGroupTitle
+              aria-label="table-row-group-title"
+              $style={styles?.titleStyle}
+            >
               {title}
             </TableRowGroupTitle>
           )}
           {subtitle && (
             <TableRowGroupSubtitle
+              aria-label="table-row-group-subtitle"
               $style={styles?.subtitleStyle}
               color={tableTheme?.rowSubtitleTextColor}
             >
@@ -986,11 +1009,12 @@ function TableRowGroup({
             </TableRowGroupSubtitle>
           )}
         </TableRowGroupTextWrapper>
-      </TableRowGroupSticky>
+      </TableRowGroupHeader>
 
       <AnimatePresence initial={false}>
         {isOpen && (
           <TableRowGroupBody
+            aria-label="table-row-group-body"
             $style={styles?.bodyStyle}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -1037,10 +1061,11 @@ const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
 const TableRowGroupBody = styled(motion.div)<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
-  ${({ $style }) => $style}
+
+  ${({ $style }) => $style};
 `;
 
-const TableRowGroupSticky = styled.div<{
+const TableRowGroupHeader = styled.div<{
   $theme?: TableThemeConfig;
   $style?: CSSProp;
 }>`
@@ -1066,18 +1091,6 @@ const TableRowGroupSticky = styled.div<{
   contain: layout style paint;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
-
-  ${({ $style }) => $style}
-`;
-
-const RotatingIcon = styled.span<{ $isOpen?: boolean; $style?: CSSProp }>`
-  transition: transform 300ms;
-  margin-left: 2px;
-  ${(props) =>
-    props.$isOpen &&
-    css`
-      transform: rotate(-180deg);
-    `};
 
   ${({ $style }) => $style}
 `;
