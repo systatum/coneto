@@ -51,6 +51,8 @@ export interface DialogProps {
   subtitle?: ReactNode;
   icon?: FigureProps;
   onClosed?: () => void;
+  className?: string;
+  id?: string;
 }
 
 export interface DialogStyles {
@@ -71,6 +73,7 @@ export interface DialogButton extends Pick<ButtonVariants, "variant"> {
   isLoading?: boolean;
   disabled?: boolean;
   styles?: ButtonStyles;
+  className?: string;
 }
 
 function Dialog({
@@ -85,9 +88,17 @@ function Dialog({
   onClick,
   icon,
   onClosed,
+  className,
+  id,
 }: DialogProps) {
   const { currentTheme, mode } = useTheme();
   const dialogTheme = currentTheme.dialog;
+
+  const hasModalDialog = className?.includes("coneto-modal-dialog");
+
+  const filteredDialogClassName = hasModalDialog
+    ? className
+    : ["coneto-dialog", className].filter(Boolean).join(" ");
 
   const [isVisible, setIsVisible] = useState(false);
   const { mounted, target } = usePortal();
@@ -142,6 +153,8 @@ function Dialog({
         }}
       />
       <Wrapper
+        id={id}
+        className={filteredDialogClassName}
         $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}
@@ -225,6 +238,8 @@ function Dialog({
                 isLoading={button.isLoading}
                 disabled={button.disabled}
                 variant={button.variant}
+                id={button.id}
+                className={button.className}
                 onClick={() => onClick?.({ buttonId: button.id, closeDialog })}
                 styles={{
                   ...button?.styles,
