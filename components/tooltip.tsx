@@ -44,6 +44,8 @@ export type TooltipProps = {
   showDelayPeriod?: number;
   styles?: TooltipStyles;
   onClick?: (e: React.MouseEvent) => void;
+  id?: string;
+  className?: string;
 };
 
 export interface TooltipStyles {
@@ -72,6 +74,8 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       showDelayPeriod = 0,
       styles,
       onClick,
+      id,
+      className,
     },
     ref
   ) => {
@@ -140,8 +144,18 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       };
     }, [isOpen, hideDialogOn, refs.floating, refs.reference]);
 
+    const hasHelper = className?.includes("coneto-helper");
+    const hasNavTabTab = className?.includes("coneto-nav-tab-tab");
+
+    const filteredClassName =
+      hasHelper || hasNavTabTab
+        ? className
+        : ["coneto-tooltip", className].filter(Boolean).join(" ");
+
     return (
       <Wrapper
+        id={id}
+        className={filteredClassName}
         $style={styles?.containerStyle}
         onMouseEnter={() => {
           if (showDialogOn === "hover") {
