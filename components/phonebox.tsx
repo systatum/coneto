@@ -403,6 +403,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -426,6 +427,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         type={type}
         helper={helper}
         disabled={disabled}
+        className={`coneto-phonebox${className ? ` ${className}` : ""}`}
         required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,
