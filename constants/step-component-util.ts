@@ -28,4 +28,5 @@ export interface BaseSteplineItem {
   active?: boolean;
   onClick?: () => void;
   id?: number | string;
+  className?: string;
 }
