@@ -26,6 +26,8 @@ export interface ErrorSlateProps {
   children?: ReactNode;
   title?: string;
   styles?: ErrorSlateStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface ErrorSlateStyles {
@@ -63,7 +65,14 @@ const transformStyles = {
   `,
 };
 
-function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
+function ErrorSlate({
+  code,
+  children,
+  title,
+  styles,
+  className,
+  id,
+}: ErrorSlateProps) {
   const { currentTheme } = useTheme();
   const errorSlateTheme = currentTheme.errorSlate;
 
@@ -77,7 +86,10 @@ function ErrorSlate({ code, children, title, styles }: ErrorSlateProps) {
   ] as const;
 
   return (
-    <ErrorSlateWrapper>
+    <ErrorSlateWrapper
+      id={id}
+      className={`coneto-error-slate${className ? ` ${className}` : ""}`}
+    >
       <ErrorSlatePerspective>
         <Cube>
           {FACE_DATA.map(({ face, content }, i) => (
