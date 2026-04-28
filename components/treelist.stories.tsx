@@ -23,7 +23,6 @@ import {
   RiTable2,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
@@ -247,7 +246,6 @@ export const Nested: Story = {
 
     const HEADER_ACTIONS: TreeListContentAction[] = [
       {
-        id: "new",
         caption: "New Folder",
         onClick: () => console.log("first"),
         icon: {
@@ -593,7 +591,6 @@ export const WithActions: Story = {
 
     const ITEM_ACTIONS: TreeListItemAction[] = [
       {
-        id: "edit",
         caption: "Edit",
         icon: { image: RiEdit2Line },
         onClick: (id: string) => {
@@ -601,7 +598,6 @@ export const WithActions: Story = {
         },
       },
       {
-        id: "delete",
         caption: "Delete",
         icon: { image: RiDeleteBin2Line },
         onClick: (id: string) => {
@@ -609,7 +605,6 @@ export const WithActions: Story = {
         },
       },
       {
-        id: "copy",
         caption: "Copy",
         icon: { image: RiFileCopyLine },
         onClick: (id: string) => {
@@ -617,7 +612,6 @@ export const WithActions: Story = {
         },
       },
       {
-        id: "share",
         caption: "Share",
         icon: { image: RiShareForwardLine },
         onClick: (id: string) => {
@@ -885,7 +879,7 @@ export const WithEmptySlate: Story = {
           actions={TREE_LIST_ACTIONS}
           emptySlate={
             <EmptySlate
-              imageUrl="https://picsum.photos/200?random=1"
+              icon={{ image: "https://picsum.photos/200?random=1" }}
               title="Manage your inventory transfers"
               styles={{
                 containerStyle: css`
