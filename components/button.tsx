@@ -135,6 +135,7 @@ function Button({
   icon,
   hoverBackgroundColor,
   labelMode = "ellipsis",
+  className,
   ...props
 }: ButtonProps) {
   const { currentTheme } = useTheme();
@@ -236,6 +237,7 @@ function Button({
       $isOpen={isOpen}
       $theme={buttonTheme}
       $variant={variant}
+      className={`coneto-button${className ? ` ${className}` : ""}`}
     >
       <BaseButton
         $theme={buttonTheme}
