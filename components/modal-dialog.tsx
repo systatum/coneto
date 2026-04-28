@@ -27,6 +27,8 @@ function ModalDialog({
   onClosed,
   closable = true,
   icon,
+  className,
+  id,
 }: ModalDialogProps) {
   const { currentTheme } = useTheme();
   const modalDialogTheme = currentTheme.modalDialog;
@@ -51,6 +53,8 @@ function ModalDialog({
   }));
   return (
     <Dialog
+      id={id}
+      className={`coneto-modal-dialog${className ? ` ${className}` : ""}`}
       closable={closable}
       isOpen={isOpen}
       buttons={customizeButtons}
