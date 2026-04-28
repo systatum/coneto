@@ -38,6 +38,8 @@ export interface DormantTextProps {
   onCancelRequested?: () => void;
   dormantedMaxWidth?: string;
   styles?: DormantTextStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface DormantTextIconsProps {
@@ -68,6 +70,8 @@ function DormantText({
   onActive,
   onCancelRequested,
   dormantedMaxWidth,
+  className,
+  id,
 }: DormantTextProps) {
   const { currentTheme } = useTheme();
   const dormantTextTheme = currentTheme.dormantText;
@@ -145,6 +149,8 @@ function DormantText({
 
   return dormantedLocal ? (
     <DormantLabel
+      id={id}
+      className={`coneto-dormant-text${className ? ` ${className}` : ""}`}
       $theme={dormantTextTheme}
       aria-label="dormant-wrapper"
       ref={measureLabelSize}
