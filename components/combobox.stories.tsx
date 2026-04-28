@@ -351,14 +351,12 @@ export const WithActions: Story = {
 
     const OPTION_ACTIONS = (id: string): ComboboxItemAction[] => [
       {
-        id: "run",
         caption: "Run",
         onClick: () => {
           console.log(`run this ${id}`);
         },
       },
       {
-        id: "delete",
         caption: "Delete",
         onClick: () => {
           console.log(`delete this ${id}`);
@@ -366,7 +364,6 @@ export const WithActions: Story = {
         icon: { image: RemixIcons.RiDeleteBack2Line },
       },
       {
-        id: "copy",
         onClick: () => {
           console.log(`copy this ${id}`);
         },
@@ -386,7 +383,6 @@ export const WithActions: Story = {
 
     const FRUIT_ACTIONS: ComboboxAction[] = [
       {
-        id: "add",
         caption: "Add Fruit",
         onClick: () => {
           console.log("New fruit added");
