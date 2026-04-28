@@ -430,7 +430,6 @@ describe("Table", () => {
 
     const DEFAULT_TOP_ACTIONS: TableAction[] = [
       {
-        id: "copy",
         caption: "Copy",
         icon: { image: RiArrowUpSLine },
         onClick: () => {
@@ -438,6 +437,7 @@ describe("Table", () => {
         },
       },
     ];
+
     const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
 
     function RowContent({
