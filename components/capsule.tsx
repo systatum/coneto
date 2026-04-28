@@ -212,7 +212,7 @@ function BaseCapsule({
         const isActive = activeTab === tab.id;
 
         const capsulePillClassName = applyConetoClassName(
-          "capsule-tab",
+          "capsule-pill",
           tab?.className
         );
 
