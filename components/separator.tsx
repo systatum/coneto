@@ -18,6 +18,8 @@ export interface SeparatorProps {
   depth?: string;
   styles?: SeparatorStyles;
   actions?: SeparatorAction[];
+  className?: string;
+  id?: string;
 }
 
 export interface SeparatorStyles {
@@ -32,12 +34,16 @@ function Separator({
   textFloat = "left",
   depth = "20px",
   actions,
+  className,
+  id,
 }: SeparatorProps) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme.separator;
 
   return (
     <SeparatorContainer
+      id={id}
+      className={`coneto-separator${className ? ` ${className}` : ""}`}
       aria-label="separator-container"
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
@@ -152,6 +158,8 @@ export interface SeparatorAction {
   onClick?: () => void;
   hidden?: boolean;
   styles?: SeparatorActionStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface SeparatorActionStyles {
@@ -168,6 +176,8 @@ function SeparatorAction({
   hidden,
   onClick,
   styles,
+  className,
+  id,
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme?.separator;
@@ -177,6 +187,8 @@ function SeparatorAction({
   }
   return (
     <Tooltip
+      id={id}
+      className={`coneto-separator-action${className ? ` ${className}` : ""}`}
       dialog={caption}
       styles={{
         arrowStyle: styles?.arrowStyle,
