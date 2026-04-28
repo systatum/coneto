@@ -192,6 +192,7 @@ The **Table** component is a powerful and flexible data display component design
     showPagination: false,
     columns: [],
     actions: [],
+    emptySlate: "No data available.",
     disableNextPageButton: false,
     disablePreviousPageButton: false,
   },
@@ -1279,7 +1280,7 @@ export const WithEmptySlate: Story = {
 
     const TableEmptySlate = (
       <EmptySlate
-        imageUrl="https://picsum.photos/200?random=1"
+        icon={{ image: "https://picsum.photos/200?random=1" }}
         title="Manage your inventory transfers"
         subtitle="Track and receive your incoming inventory from suppliers."
         actions={[
