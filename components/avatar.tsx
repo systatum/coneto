@@ -50,6 +50,8 @@ function Avatar({
   styles,
   onChange,
   onClick,
+  className,
+  id,
   ...props
 }: AvatarProps) {
   const { currentTheme } = useTheme();
@@ -90,6 +92,8 @@ function Avatar({
       $backgroundColor={!isImageValid ? backgroundColor : undefined}
       $fontSize={fontSize}
       $frameSize={frameSize}
+      id={id}
+      className={`coneto-avatar${className ? ` ${className}` : ""}`}
       $borderColor={avatarTheme.borderColor}
       $textColor={avatarTheme.textColor}
       $style={styles?.self}
