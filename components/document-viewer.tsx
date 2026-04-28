@@ -40,6 +40,8 @@ export interface DocumentViewerProps {
   selectable?: boolean;
   labels?: DocumentViewerLabels;
   title?: string;
+  className?: string;
+  id?: string;
 }
 
 export interface DocumentViewerLabels {
@@ -109,6 +111,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
       selectable,
       title,
+      className,
+      id,
     },
     ref
   ) => {
@@ -633,6 +637,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
     return (
       <PDFViewerContainer
+        id={id}
+        className={`coneto-document-viewer${className ? ` ${className}` : ""}`}
         $backgroundColor={documentViewerTheme.backgroundColor}
       >
         <ToolbarWrapper
