@@ -18,6 +18,8 @@ export interface DrawerTabProps {
   tabs: DrawerTabTab[];
   position?: DrawerTabPosition;
   styles?: DrawerTabStyles;
+  className?: string;
+  id?: string;
 }
 export interface DrawerTabStyles {
   tabStyle?: CSSProp;
@@ -31,7 +33,13 @@ export interface DrawerTabTab {
   content: ReactNode;
 }
 
-function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
+function DrawerTab({
+  tabs,
+  styles,
+  position = "right",
+  className,
+  id,
+}: DrawerTabProps) {
   const { currentTheme } = useTheme();
   const drawerTabTheme = currentTheme.drawerTab;
 
@@ -64,6 +72,8 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
   return (
     <DrawerTabContainer
       initial={{ x: isLeft ? "-100%" : "+100%" }}
+      id={id}
+      className={`coneto-drawer-tab${className ? ` ${className}` : ""}`}
       animate={controls}
       $position={position}
       $style={styles?.drawerTabStyle}
