@@ -55,6 +55,7 @@ interface BaseChipsProps {
   name?: string;
   id?: string;
   disabled?: boolean;
+  className?: string;
 }
 
 export interface BaseChipsStyles {
@@ -130,8 +131,10 @@ function BaseChips(props: BaseChipsProps) {
   return (
     <>
       <InputGroup
+        id={props?.id}
         aria-label="chip-input"
         $disabled={props?.disabled}
+        className={`coneto-chips${props?.className ? ` ${props?.className}` : ""}`}
         $containerStyle={props?.styles?.chipsContainerStyle}
       >
         {CLICKED_OPTIONS.map((badge) =>
