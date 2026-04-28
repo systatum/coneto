@@ -141,7 +141,6 @@ export const Default: Story = {
         <TipMenu
           subMenuList={[
             {
-              id: "report_phishing",
               caption: "Report Phishing",
               icon: {
                 image: RiSpam2Line,
@@ -151,7 +150,6 @@ export const Default: Story = {
               onClick: () => console.log("Phishing reported"),
             },
             {
-              id: "report_junk",
               caption: "Report Junk",
               icon: {
                 image: RiForbid2Line,
@@ -160,7 +158,6 @@ export const Default: Story = {
               onClick: () => console.log("Junk reported"),
             },
             {
-              id: "block_sender",
               caption: "Block Sender",
               icon: {
                 image: RiShieldLine,
@@ -169,7 +166,6 @@ export const Default: Story = {
               onClick: () => console.log("Sender blocked"),
             },
             {
-              id: "mark_as_read",
               caption: "Mark as Read",
               icon: {
                 image: RiCheckLine,
@@ -178,7 +174,6 @@ export const Default: Story = {
               onClick: () => console.log("Marked as read"),
             },
             {
-              id: "move_to_spam",
               caption: "Move to Spam",
               icon: {
                 image: RiInboxArchiveLine,
@@ -188,16 +183,15 @@ export const Default: Story = {
               onClick: () => console.log("Moved to spam"),
             },
             {
-              id: "download_attachment",
               caption: "Download Attachment",
               icon: {
                 image: RiDownloadLine,
               },
               variant: "success",
+
               onClick: () => console.log("Downloading"),
             },
             {
-              id: "copy_link",
               caption: "Copy Link",
               icon: {
                 image: RiLink,
@@ -207,7 +201,6 @@ export const Default: Story = {
               onClick: () => console.log("Link copied"),
             },
             {
-              id: "share",
               caption: "Share",
               icon: {
                 image: RiShareLine,
@@ -216,7 +209,6 @@ export const Default: Story = {
               onClick: () => console.log("Shared"),
             },
             {
-              id: "edit",
               caption: "Edit",
               icon: {
                 image: RiEditLine,
@@ -225,14 +217,12 @@ export const Default: Story = {
               onClick: () => console.log("Edit mode"),
             },
             {
-              id: "delete",
               caption: "Delete",
               icon: { image: RiDeleteBinLine },
               variant: "danger",
               onClick: () => setIsOpen(!isOpen),
             },
             {
-              id: "quit",
               caption: "Quit",
               variant: "default",
             },
@@ -260,35 +250,29 @@ export const NestedSubmenu: Story = {
   render: () => {
     const NESTED_TIP_MENU_ITEMS: TipMenuSubMenuList[] = [
       {
-        id: "report_message",
         caption: "Report Message",
         icon: { image: RiSpam2Line },
       },
       {
-        id: "move_message",
         caption: "Move Message",
         icon: { image: RiInboxArchiveLine },
         subMenuList: [
           {
-            id: "move_to_spam_folder",
             caption: "Move to Spam Folder",
             icon: { image: RiInboxArchiveLine },
             onClick: () => console.log("Moved to spam"),
           },
           {
-            id: "move_to_trash",
             caption: "Move to Trash",
             icon: { image: RiDeleteBinLine },
             onClick: () => console.log("Moved to trash"),
           },
           {
-            id: "move_to_specific_folder",
             caption: "Move to Specific Folder",
             icon: { image: RiFolderLine },
             onClick: () => console.log("Moved to folder"),
           },
           {
-            id: "archive_message",
             caption: "Archive This Message",
             icon: { image: RiArchiveLine },
             onClick: () => console.log("Archived"),
@@ -296,30 +280,25 @@ export const NestedSubmenu: Story = {
         ],
       },
       {
-        id: "mark_status",
         caption: "Mark Status",
         icon: { image: RiCheckLine },
         subMenuList: [
           {
-            id: "mark_as_read",
             caption: "Mark as Read",
             icon: { image: RiCheckLine },
             onClick: () => console.log("Marked as read"),
           },
           {
-            id: "mark_as_unread",
             caption: "Mark as Unread",
             icon: { image: RiMailUnreadLine },
             onClick: () => console.log("Marked as unread"),
           },
           {
-            id: "mark_as_important",
             caption: "Mark as Important",
             icon: { image: RiStarLine },
             onClick: () => console.log("Marked as important"),
           },
           {
-            id: "flag_follow_up",
             caption: "Flag for Follow Up",
             icon: { image: RiFlagLine },
             onClick: () => console.log("Flagged"),
@@ -327,25 +306,21 @@ export const NestedSubmenu: Story = {
         ],
       },
       {
-        id: "edit_draft",
         caption: "Edit Draft",
         icon: { image: RiEditLine },
         disabled: true,
         subMenuList: [
           {
-            id: "open_in_editor",
             caption: "Open in Editor",
             icon: { image: RiEditLine },
             onClick: () => console.log("Edit mode"),
           },
           {
-            id: "save_as_draft",
             caption: "Save as Draft",
             icon: { image: RiSaveLine },
             onClick: () => console.log("Saved as draft"),
           },
           {
-            id: "discard_draft",
             caption: "Discard This Draft",
             icon: { image: RiDeleteBinLine },
             onClick: () => console.log("Discarded"),
@@ -353,23 +328,19 @@ export const NestedSubmenu: Story = {
         ],
       },
       {
-        id: "send_to",
         caption: "Send to",
         icon: { image: RiSendPlaneLine },
         subMenuList: [
           {
-            id: "my_computer",
             caption: "My computer",
             icon: { image: RiComputerLine },
             subMenuList: [
               {
-                id: "c_my_documents",
                 caption: "C:/My Documents",
                 icon: { image: RiFolderLine },
                 onClick: () => console.log("Open My Documents"),
               },
               {
-                id: "c_my_pictures",
                 caption: "C:/My Pictures",
                 icon: { image: RiFolderLine },
                 onClick: () => console.log("Open My Pictures"),
@@ -377,29 +348,24 @@ export const NestedSubmenu: Story = {
             ],
           },
           {
-            id: "cloud_storage",
             caption: "Cloud storage",
             icon: { image: RiCloudLine },
             onClick: () => console.log("Open Cloud Storage"),
           },
           {
-            id: "smart_phone",
             caption: "Smart Phone",
             icon: { image: RiSmartphoneLine },
             subMenuList: [
               {
-                id: "blackberry_bold",
                 caption: "Blackberry Bold",
                 icon: { image: RiSmartphoneLine },
                 onClick: () => console.log("Blackberry Bold selected"),
               },
               {
-                id: "nokia_n95",
                 caption: "Nokia N95",
                 onClick: () => console.log("Nokia N95 selected"),
               },
               {
-                id: "palm_pre_3",
                 caption: "Palm Pre 3",
                 icon: { image: RiSmartphoneLine },
                 onClick: () => console.log("Palm Pre 3 selected"),

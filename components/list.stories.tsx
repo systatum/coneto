@@ -27,7 +27,6 @@ import { DormantText } from "./dormant-text";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
 import { generateSentence } from "./../lib/text";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -732,7 +731,6 @@ export const ReactNodeTitle: Story = {
 
     const LIST_GROUP_ACTIONS: ListGroupaction[] = [
       {
-        id: "add",
         caption: "Add",
         onClick: () =>
           setGroups((prev) => {
@@ -758,7 +756,6 @@ export const ReactNodeTitle: Story = {
       const selectedByFormFieldsGroup = id.split("form-fields-");
       return [
         {
-          id: "delete",
           caption: "Delete",
           icon: { image: RiDeleteBin2Fill },
           onClick: () => {
@@ -1058,7 +1055,6 @@ export const WithSubcontent: Story = {
       setGroups: React.Dispatch<React.SetStateAction<ListGroupContent[]>>
     ): ListGroupaction[] => [
       {
-        id: "add",
         caption: "Add",
         onClick: () =>
           setGroups((prev) => {
@@ -1087,7 +1083,6 @@ export const WithSubcontent: Story = {
 
       return [
         {
-          id: "delete",
           caption: "Delete",
           variant: "danger",
           icon: { image: RiDeleteBin2Fill },
@@ -1516,11 +1511,11 @@ export const WithBadge: Story = {
           subtitle="It looks like there are no employees in this category yet."
           actions={[
             {
-              caption: "Add Employee",
-              variant: "primary",
+              caption: "Add Item",
             },
             {
               caption: "Learn More",
+              variant: "primary",
             },
           ]}
           styles={{
@@ -1587,15 +1582,17 @@ export const WithBadge: Story = {
                 id={group.id}
                 subtitle={group.subtitle}
                 title={group.title}
-                actions={[
-                  {
-                    caption: "Back",
-                    onClick: () => {
-                      setIsOpen(false);
+                actions={
+                  isOpen &&
+                  [
+                    {
+                      caption: "Back",
+                      onClick: () => {
+                        setIsOpen(false);
+                      },
                     },
-                    hidden: !isOpen,
-                  },
-                ]}
+                  ].filter(Boolean)
+                }
               >
                 {isOpen ? (
                   <ShowContent />
@@ -1876,7 +1873,6 @@ export const CustomOpener: Story = {
                     onSelected={onChangeValue}
                     actions={(id: string) => [
                       {
-                        id: "edit",
                         caption: "Edit",
                         icon: {
                           image: RiEdit2Line,
@@ -1886,7 +1882,6 @@ export const CustomOpener: Story = {
                         },
                       },
                       {
-                        id: "delete",
                         caption: "Delete",
                         variant: "danger",
                         icon: {
@@ -2014,7 +2009,6 @@ export const WithMaxItems: Story = {
         subtitle="Fueling innovation with every bite."
         headerActions={[
           {
-            id: "edit",
             caption: "Edit fields",
             disabled: value.checked.length === 0,
             icon: {
@@ -2096,7 +2090,6 @@ export const Accordion: Story = {
   render: () => {
     const ACTIONS_GROUPS: ListGroupaction[] = [
       {
-        id: "refresh",
         caption: "Refresh",
         onClick: (id: string) => {
           console.log(`action was added ${id}`);
