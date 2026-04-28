@@ -85,10 +85,7 @@ function BaseThumbField({
   };
 
   return (
-    <InputGroup
-      className={`coneto-thumb-field${className ? ` ${className}` : ""}`}
-      $style={styles?.triggerWrapperStyle}
-    >
+    <InputGroup $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -197,6 +194,7 @@ function ThumbField({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      className={`coneto-thumb-field${className ? ` ${className}` : ""}`}
       required={rest.required}
       styles={{
         bodyStyle,

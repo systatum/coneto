@@ -61,7 +61,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       placeholder,
       styles,
       id,
-      className,
     },
     ref
   ) => {
@@ -243,7 +242,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 
     return (
       <InputGroup
-        className={`coneto-timebox${className ? ` ${className}` : ""}`}
         $style={styles?.inputWrapperStyle}
         $focused={isFocused}
         $error={!!showError}
@@ -405,6 +403,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -431,6 +430,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={`coneto-timebox${className ? ` ${className}` : ""}`}
         errorIconPosition="relative"
         styles={{
           bodyStyle,

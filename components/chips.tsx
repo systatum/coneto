@@ -55,7 +55,6 @@ interface BaseChipsProps {
   name?: string;
   id?: string;
   disabled?: boolean;
-  className?: string;
 }
 
 export interface BaseChipsStyles {
@@ -134,7 +133,6 @@ function BaseChips(props: BaseChipsProps) {
         id={props?.id}
         aria-label="chip-input"
         $disabled={props?.disabled}
-        className={`coneto-chips${props?.className ? ` ${props?.className}` : ""}`}
         $containerStyle={props?.styles?.chipsContainerStyle}
       >
         {CLICKED_OPTIONS.map((badge) =>
@@ -513,6 +511,7 @@ function Chips({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ChipsProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -541,6 +540,7 @@ function Chips({
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
+      className={`coneto-chips${className ? ` ${className}` : ""}`}
       required={rest.required}
       styles={{
         bodyStyle: css`

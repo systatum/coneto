@@ -52,7 +52,6 @@ function BaseCheckbox({
   indeterminate = false,
   styles,
   id,
-  className,
   ...props
 }: BaseCheckboxProps) {
   const { currentTheme } = useTheme();
@@ -72,7 +71,6 @@ function BaseCheckbox({
     <InputWrapper
       aria-label="input-wrapper-checkbox"
       htmlFor={props.disabled ? null : id}
-      className={`coneto-checkbox${className ? ` ${className}` : ""}`}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}
       $checked={isChecked}
@@ -178,6 +176,7 @@ function Checkbox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: CheckboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -207,6 +206,7 @@ function Checkbox({
       disabled={disabled}
       label={title}
       required={rest.required}
+      className={`coneto-checkbox${className ? ` ${className}` : ""}`}
       errorIconPosition="none"
       styles={{
         bodyStyle: css`
