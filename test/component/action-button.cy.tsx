@@ -29,7 +29,6 @@ describe("ActionButton", () => {
               subtitle="This is subtitle"
               headerActions={[
                 {
-                  id: "button",
                   caption: "Button",
                   variant: "primary",
                   className: "card-button-in-header",
@@ -58,7 +57,6 @@ describe("ActionButton", () => {
               subtitle="This is subtitle"
               headerActions={[
                 {
-                  id: "button",
                   caption: "Button",
                   variant: "primary",
                   className: "card-button-in-header",
@@ -86,7 +84,6 @@ describe("ActionButton", () => {
               subtitle="This is subtitle"
               headerActions={[
                 {
-                  id: "button",
                   caption: "Button",
                   variant: "primary",
                 },
@@ -114,7 +111,6 @@ describe("ActionButton", () => {
                 subtitle="This is subtitle"
                 headerActions={[
                   {
-                    id: "button",
                     caption: "Button",
                     variant: "primary",
                     subMenu: ({ list }) => list(LIST_OPTIONS),
@@ -143,7 +139,6 @@ describe("ActionButton", () => {
                 subtitle="This is subtitle"
                 headerActions={[
                   {
-                    id: "button",
                     showSubMenuOn: "self",
                     caption: "Button",
                     variant: "primary",
@@ -173,7 +168,6 @@ describe("ActionButton", () => {
                 subtitle="This is subtitle"
                 headerActions={[
                   {
-                    id: "button",
                     caption: "Button",
                     variant: "primary",
                     subMenu: ({ list }) => list(LIST_OPTIONS),
@@ -205,7 +199,6 @@ describe("ActionButton", () => {
             <NavTab
               actions={[
                 {
-                  id: "button",
                   caption: "Add",
                   icon: { image: RiAddBoxLine },
                   onClick: () => {},
@@ -233,7 +226,6 @@ describe("ActionButton", () => {
             <NavTab
               actions={[
                 {
-                  id: "button",
                   caption: "Add",
                   icon: { image: RiAddBoxLine },
                   onClick: () => {
@@ -263,7 +255,6 @@ describe("ActionButton", () => {
             <NavTab
               actions={[
                 {
-                  id: "add",
                   caption: "Add",
                   icon: { image: RiAddBoxLine },
                   onClick: () => {
@@ -293,7 +284,6 @@ describe("ActionButton", () => {
               <NavTab
                 actions={[
                   {
-                    id: "add",
                     caption: "Add",
                     icon: { image: RiAddBoxLine },
                     onClick: () => {
@@ -325,7 +315,6 @@ describe("ActionButton", () => {
               <NavTab
                 actions={[
                   {
-                    id: "add",
                     caption: "Add",
                     icon: { image: RiAddBoxLine },
                     onClick: () => {
@@ -357,7 +346,6 @@ describe("ActionButton", () => {
               <NavTab
                 actions={[
                   {
-                    id: "add",
                     caption: "Add",
                     icon: { image: RiAddBoxLine },
                     onClick: () => {
@@ -408,7 +396,6 @@ describe("ActionButton", () => {
                     title={group.title}
                     actions={[
                       {
-                        id: "back",
                         pressed: true,
                         caption: "Back",
                       },
@@ -471,7 +458,6 @@ describe("ActionButton", () => {
                     title={group.title}
                     actions={[
                       {
-                        id: "back",
                         className: "list-group-back-action",
                         caption: "Back",
                         onClick: () => {},
@@ -535,7 +521,6 @@ describe("ActionButton", () => {
                     title={group.title}
                     actions={[
                       {
-                        id: "back",
                         caption: "Back",
                         onClick: () => {},
                       },
@@ -599,7 +584,6 @@ describe("ActionButton", () => {
                       title={group.title}
                       actions={[
                         {
-                          id: "back",
                           caption: "Back",
                           onClick: () => {},
                           subMenu: ({ list }) => list(LIST_OPTIONS),
@@ -665,7 +649,6 @@ describe("ActionButton", () => {
                       title={group.title}
                       actions={[
                         {
-                          id: "back",
                           showSubMenuOn: "self",
                           caption: "Back",
                           onClick: () => {},
@@ -732,7 +715,6 @@ describe("ActionButton", () => {
                       title={group.title}
                       actions={[
                         {
-                          id: "back",
                           caption: "Back",
                           onClick: () => {},
                           subMenu: ({ list }) => list(LIST_OPTIONS),
@@ -1033,7 +1015,6 @@ describe("ActionButton", () => {
                 columns={columns}
                 actions={[
                   {
-                    id: "copy",
                     caption: "Copy",
                     icon: {
                       image: RiClipboardFill,
@@ -1144,7 +1125,6 @@ const LIST_GROUPS: ListGroupContent[] = [
 
 const TOP_ACTIONS: TableAction[] = [
   {
-    id: "delete",
     className: "table-delete-action",
     caption: "Delete",
     pressed: true,
@@ -1154,7 +1134,6 @@ const TOP_ACTIONS: TableAction[] = [
     onClick: () => {},
   },
   {
-    id: "copy",
     caption: "Copy",
     icon: {
       image: RiClipboardFill,
@@ -1180,7 +1159,6 @@ const TABS_ITEMS: NavTabTab[] = [
     },
     actions: [
       {
-        id: "disc",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -1200,7 +1178,6 @@ const TABS_ITEMS: NavTabTab[] = [
     },
     actions: [
       {
-        id: "disc",
         caption: "Discover",
         onClick: () => {
           console.log("Discover clicked");
@@ -1210,7 +1187,6 @@ const TABS_ITEMS: NavTabTab[] = [
         },
       },
       {
-        id: "mention",
         caption: "Mention",
         onClick: () => {
           console.log("Mention clicked");
@@ -1225,7 +1201,6 @@ const TABS_ITEMS: NavTabTab[] = [
 
 const LIST_OPTIONS: TipMenuItemProps[] = [
   {
-    id: "report_phishing",
     caption: "Report Phishing",
     icon: {
       image: RiSpam2Line,
@@ -1234,7 +1209,6 @@ const LIST_OPTIONS: TipMenuItemProps[] = [
     onClick: () => console.log("Phishing reported"),
   },
   {
-    id: "report_junk",
     caption: "Report Junk",
     icon: {
       image: RiForbid2Line,
@@ -1243,7 +1217,6 @@ const LIST_OPTIONS: TipMenuItemProps[] = [
     onClick: () => console.log("Junk reported"),
   },
   {
-    id: "block_sender",
     caption: "Block Sender",
     icon: {
       image: RiShieldLine,
@@ -1253,7 +1226,6 @@ const LIST_OPTIONS: TipMenuItemProps[] = [
     onClick: () => console.log("Sender blocked"),
   },
   {
-    id: "mark_as_read",
     caption: "Mark as Read",
     icon: {
       image: RiCheckLine,
@@ -1262,7 +1234,6 @@ const LIST_OPTIONS: TipMenuItemProps[] = [
     onClick: () => console.log("Marked as read"),
   },
   {
-    id: "move_to_spam",
     caption: "Move to Spam",
     icon: {
       image: RiInboxArchiveLine,
