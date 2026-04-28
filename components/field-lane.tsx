@@ -240,8 +240,9 @@ function FieldLane({
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 e.stopPropagation();
-                if (!disabled || !action?.disabled) return;
-                action?.onClick(e);
+                if (!disabled || !action?.disabled) {
+                  action?.onClick(e);
+                }
               }}
               disabled={disabled ? disabled : action.disabled}
               styles={{
