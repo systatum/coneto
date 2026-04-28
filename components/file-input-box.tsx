@@ -179,6 +179,7 @@ function FileInputBox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -198,6 +199,7 @@ function FileInputBox({
   return (
     <FieldLane
       id={inputId}
+      className={`coneto-file-input-box${className ? ` ${className}` : ""}`}
       showError={showError}
       labelGap={labelGap}
       labelWidth={labelWidth}
