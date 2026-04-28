@@ -22,6 +22,7 @@ interface BaseThumbFieldProps {
   styles?: BaseThumbFieldStyles;
   id?: string;
   showError?: boolean;
+  className?: string;
 }
 
 interface BaseThumbFieldStyles {
@@ -47,6 +48,7 @@ function BaseThumbField({
   showError,
   styles,
   id,
+  className,
 }: BaseThumbFieldProps) {
   const { currentTheme } = useTheme();
   const thumbFieldTheme = currentTheme.thumbField;
@@ -83,7 +85,10 @@ function BaseThumbField({
   };
 
   return (
-    <InputGroup $style={styles?.triggerWrapperStyle}>
+    <InputGroup
+      className={`coneto-thumb-field${className ? ` ${className}` : ""}`}
+      $style={styles?.triggerWrapperStyle}
+    >
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -162,6 +167,7 @@ function ThumbField({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
