@@ -5,6 +5,7 @@ import { FigureProps } from "./figure";
 import { Button, ButtonStyles } from "./button";
 import { useTheme } from "./../theme/provider";
 import { BadgeThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const BadgeVariant = {
   Neutral: "neutral",
@@ -111,6 +112,7 @@ function Badge({
   id = "badge",
   actions,
   metadata,
+  className,
   ...props
 }: BadgeProps) {
   const { currentTheme } = useTheme();
@@ -195,6 +197,7 @@ function Badge({
     <BadgeWrapper
       {...props}
       id={String(id)}
+      className={applyClassName("badge", className)}
       onClick={onClick}
       aria-label="badge"
       $theme={badgeTheme}

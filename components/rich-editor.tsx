@@ -28,6 +28,7 @@ import { Figure, FigureProps } from "./figure";
 import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
+import { applyClassName } from "./../constants/classname";
 
 export interface RichEditorProps {
   value?: string;
@@ -40,12 +41,16 @@ export interface RichEditorProps {
   height?: number;
   actions?: RichEditorAction[];
   codeEditor?: RichEditorCode;
+  id?: string;
+  className?: string;
 }
 
 export interface RichEditorCode {
   language?: RichEditorCodeLanguage;
   actions?: RichEditorCodeAction[];
   languageOptions?: RichEditorCodeLanguage[];
+  id?: string;
+  className?: string;
 }
 
 export type RichEditorCodeAction = CodeEditorAction;
@@ -177,6 +182,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       height = 200,
       actions,
       codeEditor,
+      className,
+      id,
     },
     ref
   ) => {
@@ -184,6 +191,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       languageOptions: _languageOptions = Object.values(RichEditorCodeLanguage),
       language = _languageOptions[0],
       actions: codeEditorActions,
+      className: codeClassName,
+      id: codeId,
     } = codeEditor ?? {};
 
     const { currentTheme } = useTheme();
@@ -353,7 +362,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         return (
           node.nodeName === "INPUT" &&
           (node as HTMLInputElement).type === "checkbox" &&
-          (node as HTMLElement).classList.contains("custom-checkbox-wrapper")
+          (node as HTMLElement).classList.contains("coneto-checkbox-wrapper")
         );
       },
       replacement: (_content, node) => {
@@ -1557,7 +1566,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     if (mode === "code-editor") {
       return (
         <CodeEditor
-          id={codeEditorId}
+          id={codeId ? codeId : codeEditorId}
           styles={{
             self: css`
               padding: 0px;
@@ -1573,6 +1582,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   `};
             `,
           }}
+          className={codeClassName}
           toolbarPosition={toolbarPosition}
           actions={codeEditorActions}
           value={value}
@@ -1588,6 +1598,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         actions={actions}
         value={value}
         mode={mode}
+        id={id}
+        className={applyClassName("rich-editor", className)}
         styles={{
           ...styles,
           toolbarStyle: css`
@@ -1715,6 +1727,8 @@ interface BaseRichEditorProps {
   children?: ReactNode;
   mode?: RichEditorProps["mode"];
   value?: string;
+  id?: string;
+  className?: string;
 }
 
 interface BaseRichEditorStyles {
@@ -1735,10 +1749,12 @@ function BaseRichEditor({
   children,
   mode,
   value,
+  className,
 }: BaseRichEditorProps) {
   return (
     <Wrapper
       $theme={richEditorTheme}
+      className={className}
       aria-label="rich-editor-wrapper"
       $containerStyle={styles?.containerStyle}
       $mode={mode}
@@ -2115,7 +2131,7 @@ function createCheckboxWrapper(
   const input = document.createElement("input");
   input.type = "checkbox";
   input.checked = isChecked;
-  input.className = "custom-checkbox-wrapper";
+  input.className = "coneto-checkbox-wrapper";
   input.contentEditable = "false";
   input.style.cursor = isViewOnly ? "default" : "pointer";
   input.dataset.checked = String(isChecked);

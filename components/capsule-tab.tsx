@@ -3,6 +3,7 @@ import { Capsule } from "./capsule";
 import styled, { css, CSSProp } from "styled-components";
 import { CapsuleTabThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface CapsuleTabProps {
   tabs: CapsuleTabTab[];
@@ -11,6 +12,8 @@ export interface CapsuleTabProps {
   styles?: CapsuleTabStyles;
   onTabChange?: (id: string) => void;
   children?: ReactNode;
+  id?: string;
+  className?: string;
 }
 
 export interface CapsuleTabStyles {
@@ -24,6 +27,7 @@ export interface CapsuleTabTab {
   id: string;
   title: string;
   content: ReactNode;
+  className?: string;
 }
 
 function CapsuleTab({
@@ -33,6 +37,8 @@ function CapsuleTab({
   activeBackgroundColor,
   onTabChange,
   children,
+  className,
+  id,
 }: CapsuleTabProps) {
   const { currentTheme } = useTheme();
   const capsuleTabTheme = currentTheme.capsuleTab;
@@ -52,6 +58,7 @@ function CapsuleTab({
     },
     [isControlled, onTabChange]
   );
+
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
   return (
@@ -59,6 +66,8 @@ function CapsuleTab({
       $theme={capsuleTabTheme}
       aria-label="capsule-tab-wrapper"
       $style={styles?.self}
+      className={applyClassName("capsule-tab", className)}
+      id={id}
     >
       <Capsule
         styles={{

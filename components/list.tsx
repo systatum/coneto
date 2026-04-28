@@ -32,6 +32,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { ListThemeConfig } from "theme";
+import { applyClassName } from "./../constants/classname";
 
 export const ListOpenerBehavior = {
   Any: "any",
@@ -64,6 +65,8 @@ export interface ListProps extends ListMaxItems {
   inputRef?: Ref<HTMLInputElement>;
   onSearchKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   labels?: ListLabels;
+  className?: string;
+  id?: string;
 }
 
 export interface ListLabels {
@@ -154,6 +157,8 @@ function List({
   maxItems,
   labels,
   maxItemsWithIcon,
+  className,
+  id,
 }: ListProps) {
   const { currentTheme } = useTheme();
   const listTheme = currentTheme.list;
@@ -250,6 +255,8 @@ function List({
     >
       <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
         <ListContainer
+          id={id}
+          className={applyClassName("list", className)}
           $backgroundColor={listTheme.backgroundColor}
           aria-label="list-container"
           $containerStyle={styles?.containerStyle}
@@ -411,6 +418,7 @@ export interface ListGroupProps {
   selectable?: boolean;
   styles?: ListGroupStyles;
   onClick?: ({ toggle }: { toggle: () => void }) => void;
+  className?: string;
 }
 
 interface ListGroupStyles {
@@ -434,6 +442,7 @@ export interface ListGroupContent {
   initialState?: ListGroupInitialState;
   items: ListItemProps[];
   styles?: ListGroupStyles;
+  className?: string;
 }
 
 function ListGroup({
@@ -449,6 +458,7 @@ function ListGroup({
   emptySlate,
   styles,
   onClick,
+  className,
   ...props
 }: ListGroupProps) {
   const { currentTheme } = useTheme();
@@ -503,7 +513,11 @@ function ListGroup({
   };
 
   return (
-    <ListGroupContainer $containerStyle={styles?.containerStyle}>
+    <ListGroupContainer
+      id={id}
+      className={applyClassName("list-group", className)}
+      $containerStyle={styles?.containerStyle}
+    >
       <HeaderButton
         $isOpen={opened}
         onMouseDown={(e) => {
@@ -930,6 +944,7 @@ export interface ListItemProps {
   hoverTextColor?: string;
   hoverBackgroundColor?: string;
   selected?: boolean;
+  className?: string;
   onClick?: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLDivElement>) => void;
   onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
@@ -975,6 +990,7 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
       hoverTextColor,
       hoverBackgroundColor,
       selected,
+      className,
       ...props
     },
     ref
@@ -1013,6 +1029,8 @@ const ListItem = forwardRef<HTMLLIElement, ListItemProps>(
     return (
       <ListItemWrapper
         ref={ref}
+        id={id}
+        className={applyClassName("list-item", className)}
         aria-label="list-item-wrapper"
         $openable={openable && isChildOpened}
         $style={styles?.containerStyle}

@@ -30,6 +30,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export type ChipAction = BadgeAction;
 
@@ -130,6 +131,7 @@ function BaseChips(props: BaseChipsProps) {
   return (
     <>
       <InputGroup
+        id={props?.id}
         aria-label="chip-input"
         $disabled={props?.disabled}
         $containerStyle={props?.styles?.chipsContainerStyle}
@@ -510,6 +512,7 @@ function Chips({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ChipsProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -538,6 +541,7 @@ function Chips({
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
+      className={applyClassName("chips", className)}
       required={rest.required}
       styles={{
         bodyStyle: css`

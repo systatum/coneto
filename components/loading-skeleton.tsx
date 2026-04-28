@@ -8,6 +8,7 @@ import {
 } from "react";
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export const FlashDirection = {
   LeftToRight: "left-to-right",
@@ -60,6 +61,8 @@ function LoadingSkeleton({
   flashDirection = "left-to-right",
   baseColor,
   highlightColor,
+  className,
+  id,
   ...props
 }: LoadingSkeletonProps) {
   const { currentTheme } = useTheme();
@@ -75,6 +78,8 @@ function LoadingSkeleton({
     <LoadingSkeletonWrapper
       aria-label="loading-skeleton-wrapper"
       {...props}
+      id={id}
+      className={applyClassName("loading-skeleton", className)}
       $style={styles?.self}
     >
       {childArray.map((child, index) => {

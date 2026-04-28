@@ -16,6 +16,7 @@ import { forwardRef, ReactNode } from "react";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 type BaseDateboxProps = BaseCalendarProps & {
   name?: string;
@@ -75,6 +76,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelPosition,
     isLoading,
     labels,
+    className,
     ...rest
   } = props;
 
@@ -91,6 +93,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       labels={labels}
       labelGap={labelGap}
       labelWidth={labelWidth}
+      className={applyClassName("datebox", className)}
       labelPosition={labelPosition}
       id={inputId}
       showError={showError}

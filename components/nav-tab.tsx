@@ -16,6 +16,7 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface NavTabProps {
   tabs?: NavTabTab[];
@@ -26,7 +27,8 @@ export interface NavTabProps {
   styles?: NavTabStyles;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
-  active?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface NavTabStyles {
@@ -58,6 +60,7 @@ export interface NavTabTab {
   actions?: NavTabTabAction[];
   subItems?: NavTabSubItem[];
   hidden?: boolean;
+  className?: string;
 }
 
 export interface NavTabSubItem {
@@ -68,6 +71,7 @@ export interface NavTabSubItem {
   content?: ReactNode;
   hidden?: boolean;
   styles?: NavTabSubItemStyles;
+  className?: string;
 }
 
 export interface NavTabSubItemStyles {
@@ -86,6 +90,8 @@ function NavTab({
   children,
   size = "md",
   onChange,
+  className,
+  id,
 }: NavTabProps) {
   const { currentTheme } = useTheme();
   const navTheme = currentTheme.navTab;
@@ -183,7 +189,11 @@ function NavTab({
   );
 
   return (
-    <NavTabContainer $style={styles?.containerStyle}>
+    <NavTabContainer
+      id={id}
+      className={applyClassName("nav-tab", className)}
+      $style={styles?.containerStyle}
+    >
       <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
         <NavTabTabsSection
           aria-label="nav-tab-tabs-sections"
@@ -220,7 +230,9 @@ function NavTab({
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
-                key={tab.id}
+                id={tab.id}
+                className={applyClassName("nav-tab-tab", tab?.className)}
+                key={index}
                 styles={{
                   arrowStyle: css`
                     opacity: 0;
@@ -258,37 +270,44 @@ function NavTab({
                     {tab.subItems &&
                       tab.subItems
                         ?.filter((item) => !item?.hidden)
-                        ?.map((item, idx) => (
-                          <NavTabTab
-                            key={idx}
-                            $theme={navTheme}
-                            $style={item?.styles?.self}
-                            onClick={() => {
-                              if (item.content) {
-                                setSelectedLocal(item.id);
-                              }
-                              if (onChange) {
-                                onChange(item.id);
-                              }
-                              tooltipRefs.current.forEach((ref) => {
-                                ref?.close();
-                              });
-                              if (item.onClick) {
-                                item.onClick();
-                              }
-                            }}
-                            $subMenu={true}
-                          >
-                            {item.icon && <Figure {...item.icon} />}
-                            {item.caption}
-                          </NavTabTab>
-                        ))}
+                        ?.map((item, idx) => {
+                          return (
+                            <NavTabTab
+                              key={idx}
+                              id={item?.id}
+                              className={applyClassName(
+                                "nav-tab-sub-item",
+                                item?.className
+                              )}
+                              $theme={navTheme}
+                              $style={item?.styles?.self}
+                              onClick={() => {
+                                if (item.content) {
+                                  setSelectedLocal(item.id);
+                                }
+                                if (onChange) {
+                                  onChange(item.id);
+                                }
+                                tooltipRefs.current.forEach((ref) => {
+                                  ref?.close();
+                                });
+                                if (item.onClick) {
+                                  item.onClick();
+                                }
+                              }}
+                              $subMenu={true}
+                            >
+                              {item.icon && <Figure {...item.icon} />}
+                              {item.caption}
+                            </NavTabTab>
+                          );
+                        })}
                   </>
                 }
               >
                 <NavTabTab
                   $theme={navTheme}
-                  key={tab.id}
+                  key={index}
                   $size={size}
                   aria-label="nav-tab-tab"
                   $style={styles?.tabStyle}

@@ -10,11 +10,14 @@ import { Separator } from "./separator";
 import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
 import styled, { CSSProp } from "styled-components";
+import { applyClassName } from "./../constants/classname";
 
 export interface LaunchpadProps {
   children: ReactNode;
   containerStyle?: CSSProp;
   maxSection?: number;
+  className?: string;
+  id?: string;
 }
 
 export interface LaunchpadSectionProps {
@@ -46,6 +49,8 @@ function Launchpad({
   children,
   containerStyle,
   maxSection = 3,
+  className,
+  id,
 }: LaunchpadProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -102,6 +107,8 @@ function Launchpad({
   return (
     <LaunchpadContainer
       ref={containerRef}
+      id={id}
+      className={applyClassName("launchpad", className)}
       onPointerDown={(e) => dragControls.start(e)}
       $containerStyle={containerStyle}
     >

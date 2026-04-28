@@ -3,6 +3,7 @@ import { useTheme } from "./../theme/provider";
 import { FigureProps } from "./figure";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
+import { applyClassName } from "./../constants/classname";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -18,6 +19,8 @@ export interface SeparatorProps {
   depth?: string;
   styles?: SeparatorStyles;
   actions?: SeparatorAction[];
+  className?: string;
+  id?: string;
 }
 
 export interface SeparatorStyles {
@@ -32,12 +35,16 @@ function Separator({
   textFloat = "left",
   depth = "20px",
   actions,
+  className,
+  id,
 }: SeparatorProps) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme.separator;
 
   return (
     <SeparatorContainer
+      id={id}
+      className={applyClassName("separator", className)}
       aria-label="separator-container"
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
@@ -152,6 +159,8 @@ export interface SeparatorAction {
   onClick?: () => void;
   hidden?: boolean;
   styles?: SeparatorActionStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface SeparatorActionStyles {
@@ -168,6 +177,8 @@ function SeparatorAction({
   hidden,
   onClick,
   styles,
+  className,
+  id,
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
   const separatorTheme = currentTheme?.separator;
@@ -175,8 +186,11 @@ function SeparatorAction({
   if (hidden) {
     return;
   }
+
   return (
     <Tooltip
+      id={id}
+      className={applyClassName("separator-action", className)}
       dialog={caption}
       styles={{
         arrowStyle: styles?.arrowStyle,

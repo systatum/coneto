@@ -15,6 +15,7 @@ import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileDropBoxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface OnFileDroppedFunctionArgs {
   files: File[];
@@ -49,6 +50,7 @@ export interface FileDropBoxProps {
   labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 export interface FileDropBoxStyles {
@@ -77,6 +79,7 @@ function FileDropBox({
   labelWidth,
   required,
   disabled,
+  className,
 }: FileDropBoxProps) {
   const { currentTheme } = useTheme();
   const fileDropBoxTheme = currentTheme.fileDropBox;
@@ -274,6 +277,7 @@ function FileDropBox({
 
   return (
     <InputWrapper
+      className={applyClassName("file-drop-box", className)}
       $disabled={disabled}
       $labelPosition={labelPosition}
       aria-label="file-drop-box-container"

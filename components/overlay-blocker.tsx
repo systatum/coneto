@@ -9,6 +9,7 @@ import {
 import styled, { CSSProp } from "styled-components";
 import { OverlayBlockerThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface OverlayBlockerRef {
   close: () => void;
@@ -26,6 +27,8 @@ export interface OverlayBlockerProps {
   onClick?: OverlayBlockerClickHandler;
   styles?: OverlayBlockerStyles;
   children?: ReactNode;
+  className?: string;
+  id?: string;
 }
 
 export interface OverlayBlockerStyles {
@@ -37,7 +40,15 @@ export const OverlayBlocker = forwardRef<
   OverlayBlockerProps
 >(
   (
-    { show = false, zIndex = 9991999, onClick = "close", styles, children },
+    {
+      show = false,
+      zIndex = 9991999,
+      onClick = "close",
+      styles,
+      children,
+      className,
+      id,
+    },
     ref
   ) => {
     const { currentTheme } = useTheme();
@@ -88,6 +99,8 @@ export const OverlayBlocker = forwardRef<
 
     return (
       <StyledOverlay
+        id={id}
+        className={applyClassName("overlay-blocker", className)}
         aria-label="overlay-blocker"
         $zIndex={zIndex}
         $theme={overlayBlockerTheme}

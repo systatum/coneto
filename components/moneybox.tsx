@@ -19,6 +19,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { MoneyboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const MoneyboxSeparator = {
   Dot: "dot",
@@ -280,6 +281,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -292,6 +294,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     return (
       <FieldLane
         id={inputId}
+        className={applyClassName("moneybox", className)}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}

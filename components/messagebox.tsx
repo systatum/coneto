@@ -5,6 +5,7 @@ import { Button } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { MessageboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const MessageboxVariant = {
   Primary: "primary",
@@ -25,6 +26,8 @@ export interface MessageboxProps {
   closable?: boolean;
   onCloseRequest?: () => void;
   styles?: MessageboxStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface MessageboxStyles {
@@ -57,6 +60,8 @@ function Messagebox({
   onCloseRequest,
   closable = false,
   styles,
+  className,
+  id,
 }: MessageboxProps) {
   const { currentTheme } = useTheme();
   const messageboxTheme = currentTheme.messagebox;
@@ -64,6 +69,8 @@ function Messagebox({
 
   return (
     <Wrapper
+      id={id}
+      className={applyClassName("messagebox", className)}
       $theme={messageboxTheme}
       $variant={variant}
       $style={styles?.containerStyle}

@@ -36,6 +36,7 @@ import { StatefulForm } from "./stateful-form";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTheme } from "./../theme/provider";
 import { SelectboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
@@ -140,6 +141,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
+      className,
       ...props
     },
     ref
@@ -618,6 +620,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -626,12 +629,20 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
     });
 
+    const hasCombo = className?.includes("coneto-combobox");
+    const hasDatebox = className?.includes("coneto-datebox");
+
     return (
       <FieldLane
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
+        className={
+          hasCombo || hasDatebox
+            ? className
+            : applyClassName("selectbox", className)
+        }
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}

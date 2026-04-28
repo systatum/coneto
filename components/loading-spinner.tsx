@@ -1,6 +1,7 @@
 import styled, { CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { LoadingSpinnerThemeConfig } from "theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface LoadingSpinnerProps {
   iconSize?: number;
@@ -8,6 +9,8 @@ export interface LoadingSpinnerProps {
   label?: string;
   gap?: number;
   styles?: LoadingSpinnerStyles;
+  className?: string;
+  id?: string;
 }
 export interface LoadingSpinnerStyles {
   containerStyle?: CSSProp;
@@ -21,12 +24,16 @@ function LoadingSpinner({
   label,
   gap = 2,
   styles,
+  className,
+  id,
 }: LoadingSpinnerProps) {
   const { currentTheme } = useTheme();
   const loadingSpinnerTheme = currentTheme.loadingSpinner;
 
   return (
     <SpinnerWrapper
+      id={id}
+      className={applyClassName("loading-spinner", className)}
       aria-label="loading-spinner"
       $style={styles?.containerStyle}
       $gap={gap}

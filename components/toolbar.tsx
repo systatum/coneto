@@ -22,11 +22,14 @@ import styled, { css, CSSProp } from "styled-components";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { ToolbarThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface ToolbarProps {
   children: ReactNode;
   big?: boolean;
   styles?: ToolbarStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface ToolbarStyles {
@@ -71,7 +74,7 @@ const useVariantToolbar = () => {
   return { VARIANT_COLORS };
 };
 
-function Toolbar({ children, styles, big }: ToolbarProps) {
+function Toolbar({ children, styles, big, className, id }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +136,12 @@ function Toolbar({ children, styles, big }: ToolbarProps) {
   });
 
   return (
-    <ToolbarWrapper ref={toolbarRef} $style={styles?.self}>
+    <ToolbarWrapper
+      className={applyClassName("toolbar", className)}
+      id={id}
+      ref={toolbarRef}
+      $style={styles?.self}
+    >
       {childrenWithProps}
     </ToolbarWrapper>
   );
@@ -151,6 +159,8 @@ export interface ToolbarMenuProps {
   styles?: ToolbarMenuStyles;
   variant?: ToolbarVariant;
   iconSize?: number;
+  className?: string;
+  id?: string;
 }
 
 export type ToolbarSubMenuList = TipMenuItemProps;
@@ -173,6 +183,8 @@ function ToolbarMenu({
   onClick,
   styles,
   variant = "default",
+  className,
+  id,
 }: ToolbarMenuProps) {
   const { VARIANT_COLORS } = useVariantToolbar();
   const toolbarTheme = VARIANT_COLORS[variant];
@@ -272,7 +284,12 @@ function ToolbarMenu({
   `;
 
   return (
-    <ToolbarContainer aria-label="toolbar-menu" ref={containerRef}>
+    <ToolbarContainer
+      id={id}
+      className={applyClassName("toolbar-menu", className)}
+      aria-label="toolbar-menu"
+      ref={containerRef}
+    >
       <MenuWrapper
         ref={refs.setReference}
         $style={css`
