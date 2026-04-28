@@ -231,6 +231,7 @@ function Imagebox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -252,6 +253,7 @@ function Imagebox({
       id={inputId}
       labelGap={labelGap}
       labelWidth={labelWidth}
+      className={`coneto-imagebox${className ? ` ${className}` : ""}`}
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
