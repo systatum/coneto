@@ -145,7 +145,7 @@ const PaginationItem = ({
       {totalPages > threshold ? (
         <>
           <Combobox
-            controlled
+            key={`${currentPageLocal}`}
             highlightOnMatch={highlightOnMatch}
             options={comboBoxPages.map((data) => formatOption(String(data)))}
             selectedOptions={currentPageLocal}

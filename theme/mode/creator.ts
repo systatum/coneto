@@ -677,6 +677,7 @@ export function createFieldLaneTheme(
 
     actionColor: "#6b7280",
     actionHoverColor: "#374151",
+    actionHoverBackgroundColor: "#e5e7eb",
 
     placeholderColor: "rgb(107, 114, 128)",
     focusedBorderColor: "#61A9F9",
@@ -1251,7 +1252,7 @@ export function createSelectboxTheme(
 
     clearIconColor: fieldLane.actionColor || "#9ca3af",
     clearIconBackground: "transparent",
-    clearIconHoverBackground: fieldLane.actionHoverColor || "#e5e7eb",
+    clearIconHoverBackground: fieldLane.actionHoverBackgroundColor || "#e5e7eb",
 
     dividerColor: fieldLane.dividerColor || "#9ca3af",
     disabledOpacity: fieldLane.disabledOpacity,

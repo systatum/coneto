@@ -88,6 +88,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
 
   actionColor: "#cbd5e1",
   actionHoverColor: "#616161",
+  actionHoverBackgroundColor: "#4b4b4b",
 
   placeholderColor: "#9ca3af",
   focusedBorderColor: "rgb(105, 85, 193)",
