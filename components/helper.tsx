@@ -5,11 +5,15 @@ import { RiInformationLine } from "@remixicon/react";
 export interface HelperProps {
   value: string;
   showDelayPeriod?: number;
+  className?: string;
+  id?: string;
 }
 
-function Helper({ value, showDelayPeriod = 400 }: HelperProps) {
+function Helper({ value, showDelayPeriod = 400, className, id }: HelperProps) {
   return (
     <Tooltip
+      id={id}
+      className={`coneto-helper${className ? ` ${className}` : ""}`}
       styles={{
         containerStyle: css`
           width: fit-content;
