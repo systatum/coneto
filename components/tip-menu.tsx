@@ -35,6 +35,8 @@ export interface TipMenuProps {
   size?: TipMenuSize;
   withFilter?: boolean;
   styles?: TipMenuStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface TipMenuStyles {
@@ -49,6 +51,8 @@ function TipMenu({
   variant = "default",
   size = "md",
   withFilter,
+  className,
+  id,
 }: TipMenuProps) {
   const [search, setSearch] = useState<string>("");
   const [isHasInteracted, setHasInteracted] = useState<boolean>(false);
@@ -66,6 +70,8 @@ function TipMenu({
 
   return (
     <Button.TipMenuContainer
+      id={id}
+      className={`coneto-tip-menu${className ? ` ${className}` : ""}`}
       aria-label="tip-menu"
       styles={{
         self: styles?.self,
@@ -142,6 +148,8 @@ export interface TipMenuItemProps {
   subMenuList?: TipMenuItemProps[];
   styles?: TipMenuItemStyles;
   disabled?: boolean;
+  className?: string;
+  id?: string;
 }
 export interface TipMenuItemStyles {
   containerStyle?: CSSProp;
@@ -159,6 +167,8 @@ function TipMenuItem({
   styles,
   disabled,
   setIsOpen,
+  className,
+  id,
 }: TipMenuItemProps & {
   setIsOpen?: () => void;
 }) {
@@ -172,6 +182,8 @@ function TipMenuItem({
 
   const tipMenuElement = (
     <TipMenuItemWrapper
+      id={id}
+      className={`coneto-tip-menu-item${className ? ` ${className}` : ""}`}
       $variant={variant}
       $size={size}
       aria-label="tip-menu-item"
