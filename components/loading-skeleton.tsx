@@ -60,6 +60,8 @@ function LoadingSkeleton({
   flashDirection = "left-to-right",
   baseColor,
   highlightColor,
+  className,
+  id,
   ...props
 }: LoadingSkeletonProps) {
   const { currentTheme } = useTheme();
@@ -75,6 +77,8 @@ function LoadingSkeleton({
     <LoadingSkeletonWrapper
       aria-label="loading-skeleton-wrapper"
       {...props}
+      id={id}
+      className={`coneto-loading-skeleton${className ? ` ${className}` : ""}`}
       $style={styles?.self}
     >
       {childArray.map((child, index) => {
