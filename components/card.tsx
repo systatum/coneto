@@ -94,6 +94,8 @@ function Card({
   toggleable,
   onToggleChange,
   open = true,
+  id,
+  className,
   ...props
 }: CardProps) {
   const { currentTheme } = useTheme();
@@ -111,6 +113,8 @@ function Card({
       $shadow={shadow}
       $radius={radius}
       $padding={padding}
+      id={id}
+      className={`coneto-card${className ? ` ${className}` : ""}`}
       $containerStyle={styles?.containerStyle}
       $theme={cardTheme}
     >
