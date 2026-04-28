@@ -12,6 +12,8 @@ export interface StatusbarProps {
   hoverBackgroundColor?: string;
   transparent?: boolean;
   size?: number;
+  className?: string;
+  id?: string;
 }
 
 export interface StatusbarContent {
@@ -33,12 +35,16 @@ function Statusbar({
   hoverBackgroundColor,
   transparent,
   size = 11,
+  className,
+  id,
 }: StatusbarProps) {
   const { currentTheme } = useTheme();
   const statusbarTheme = currentTheme.statusbar;
 
   return (
     <StatusbarWrapper
+      id={id}
+      className={`coneto-status-bar${className ? ` ${className}` : ""}`}
       $theme={statusbarTheme}
       aria-label="statusbar-wrapper"
       $transparent={transparent}
