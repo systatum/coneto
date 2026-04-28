@@ -1,6 +1,3 @@
-export function applyConetoClassName(
-  component: string = "",
-  className?: string
-) {
+export function applyClassName(component: string = "", className?: string) {
   return `coneto-${component}${className ? ` ${className}` : ""}`;
 }
