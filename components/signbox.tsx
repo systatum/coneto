@@ -333,6 +333,7 @@ function Signbox({
   labelWidth,
   labelPosition,
   required,
+  className,
 }: SignboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
@@ -355,6 +356,7 @@ function Signbox({
       errorIconPosition={errorIconPosition}
       disabled={disabled}
       required={required}
+      className={`coneto-signbox${className ? ` ${className}` : ""}`}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,

@@ -130,6 +130,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelPosition,
       labelGap,
       labelWidth,
+      className,
       ...rest
     } = props;
 
@@ -154,6 +155,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelPosition={labelPosition}
         disabled={disabled}
         required={rest.required}
+        className={`coneto-textbox${className ? ` ${className}` : ""}`}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

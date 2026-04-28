@@ -190,6 +190,7 @@ function Rating({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: RatingProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -219,6 +220,7 @@ function Rating({
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      className={`coneto-rating${className ? ` ${className}` : ""}`}
       required={rest.required}
       styles={{
         bodyStyle,

@@ -140,6 +140,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
+      className,
       ...props
     },
     ref
@@ -618,6 +619,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -626,12 +628,21 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       id,
     });
 
+    const hasCombo = className?.includes("coneto-combobox");
+    const hasDatebox = className?.includes("coneto-datebox");
+
+    const filteredClassName =
+      hasCombo || hasDatebox
+        ? className
+        : ["coneto-selectbox", className].filter(Boolean).join(" ");
+
     return (
       <FieldLane
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
+        className={filteredClassName}
         dropdowns={dropdowns}
         showError={showError}
         errorMessage={errorMessage}
@@ -650,6 +661,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       >
         <BaseSelectbox
           {...rest}
+          className={className}
           id={inputId}
           actions={actions}
           showError={showError}

@@ -159,6 +159,7 @@ function Toggle({
   labelWidth,
   labelPosition,
   disabled,
+  className,
   ...rest
 }: ToggleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -178,6 +179,7 @@ function Toggle({
   return (
     <FieldLane
       id={inputId}
+      className={`coneto-toggle${className ? ` ${className}` : ""}`}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

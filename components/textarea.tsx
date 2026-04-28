@@ -90,6 +90,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -108,6 +109,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     return (
       <FieldLane
+        className={`coneto-textarea${className ? ` ${className}` : ""}`}
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}

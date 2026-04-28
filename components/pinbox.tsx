@@ -476,6 +476,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     },
     ref
@@ -506,6 +507,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         helper={helper}
         disabled={disabled}
         label={label}
+        className={`coneto-pinbox${className ? ` ${className}` : ""}`}
         errorIconPosition="none"
         required={rest.required}
         styles={{

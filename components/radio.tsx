@@ -155,6 +155,7 @@ function Radio({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -162,8 +163,6 @@ function Radio({
     prefix: `radio-${rest.value ?? "value"}`,
     name,
   });
-
-  const isChecked = !!rest.checked;
 
   const {
     bodyStyle,
@@ -185,6 +184,7 @@ function Radio({
       actions={actions}
       helper={helper}
       disabled={disabled}
+      className={`coneto-radio${className ? ` ${className}` : ""}`}
       required={rest.required}
       styles={{
         bodyStyle: css`
