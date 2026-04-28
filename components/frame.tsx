@@ -15,7 +15,14 @@ export interface FrameStyles {
   titleStyle?: CSSProp;
 }
 
-function Frame({ title, children, styles, ...props }: FrameProps) {
+function Frame({
+  title,
+  children,
+  styles,
+  className,
+  id,
+  ...props
+}: FrameProps) {
   const { currentTheme } = useTheme();
   const frameTheme = currentTheme?.frame;
 
@@ -23,6 +30,8 @@ function Frame({ title, children, styles, ...props }: FrameProps) {
     <FrameContainer
       aria-label="frame"
       {...props}
+      id={id}
+      className={`coneto-frame${className ? ` ${className}` : ""}`}
       $style={styles?.containerStyle}
       $theme={frameTheme}
     >
