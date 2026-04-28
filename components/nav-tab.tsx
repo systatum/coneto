@@ -26,7 +26,8 @@ export interface NavTabProps {
   styles?: NavTabStyles;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
-  active?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface NavTabStyles {
@@ -58,6 +59,7 @@ export interface NavTabTab {
   actions?: NavTabTabAction[];
   subItems?: NavTabSubItem[];
   hidden?: boolean;
+  className?: string;
 }
 
 export interface NavTabSubItem {
@@ -68,6 +70,7 @@ export interface NavTabSubItem {
   content?: ReactNode;
   hidden?: boolean;
   styles?: NavTabSubItemStyles;
+  className?: string;
 }
 
 export interface NavTabSubItemStyles {
@@ -86,6 +89,8 @@ function NavTab({
   children,
   size = "md",
   onChange,
+  className,
+  id,
 }: NavTabProps) {
   const { currentTheme } = useTheme();
   const navTheme = currentTheme.navTab;
@@ -183,7 +188,11 @@ function NavTab({
   );
 
   return (
-    <NavTabContainer $style={styles?.containerStyle}>
+    <NavTabContainer
+      id={id}
+      className={`coneto-nav-tab${className ? ` ${className}` : ""}`}
+      $style={styles?.containerStyle}
+    >
       <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
         <NavTabTabsSection
           aria-label="nav-tab-tabs-sections"
@@ -220,7 +229,9 @@ function NavTab({
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
-                key={tab.id}
+                id={tab.id}
+                className={`coneto-nav-tab-tab${tab?.className ? ` ${tab?.className}` : ""}`}
+                key={index}
                 styles={{
                   arrowStyle: css`
                     opacity: 0;
@@ -261,6 +272,8 @@ function NavTab({
                         ?.map((item, idx) => (
                           <NavTabTab
                             key={idx}
+                            id={item?.id}
+                            className={`coneto-nav-tab-sub-item${item?.className ? ` ${item?.className}` : ""}`}
                             $theme={navTheme}
                             $style={item?.styles?.self}
                             onClick={() => {
@@ -288,7 +301,7 @@ function NavTab({
               >
                 <NavTabTab
                   $theme={navTheme}
-                  key={tab.id}
+                  key={index}
                   $size={size}
                   aria-label="nav-tab-tab"
                   $style={styles?.tabStyle}
