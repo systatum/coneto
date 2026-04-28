@@ -13,9 +13,16 @@ import { TimelineThemeConfig } from "../theme";
 export interface TimelineProps {
   children?: ReactNode;
   isClickable?: boolean;
+  className?: string;
+  id?: string;
 }
 
-function Timeline({ children, isClickable = false }: TimelineProps) {
+function Timeline({
+  children,
+  isClickable = false,
+  className,
+  id,
+}: TimelineProps) {
   const { currentTheme } = useTheme();
   const timelineTheme = currentTheme.timeline;
 
@@ -23,7 +30,10 @@ function Timeline({ children, isClickable = false }: TimelineProps) {
   const childArray = Children.toArray(children).filter(isValidElement);
 
   return (
-    <TimelineWrapper>
+    <TimelineWrapper
+      id={id}
+      className={`coneto-timeline${className ? ` ${className}` : ""}`}
+    >
       {childArray.map((child, index) => {
         if (
           !isValidElement<
