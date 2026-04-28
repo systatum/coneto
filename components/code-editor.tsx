@@ -100,7 +100,7 @@ export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
 }
 
 export interface CodeEditorProps {
-  id: string;
+  id?: string;
   value?: string;
   language?: CodeEditorLanguage;
   onChange?: (code: string, lang: string) => void;
@@ -113,6 +113,7 @@ export interface CodeEditorProps {
   toolbarPosition?: RichEditorToolbarPosition;
   removeOnEmpty?: boolean;
   autoFocus?: boolean;
+  className?: string;
 }
 
 interface CodeEditorStyles {
@@ -136,6 +137,7 @@ function CodeEditor({
   toolbarPosition = "top",
   removeOnEmpty,
   autoFocus,
+  className,
 }: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
@@ -346,6 +348,7 @@ function CodeEditor({
 
   return (
     <RichEditor.Base
+      className={`coneto-code-editor${className ? ` ${className}` : ""}`}
       actions={filteredActions}
       toolbarPosition={toolbarPosition}
       theme={richEditorTheme}
@@ -425,6 +428,7 @@ function CodeEditor({
         </Placeholder>
       )}
       <Editor
+        id={id}
         aria-label="rich-editor-code"
         $readOnly={readOnly}
         onKeyDown={(e) => {
