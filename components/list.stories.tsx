@@ -1511,7 +1511,7 @@ export const WithBadge: Story = {
         ))
       ) : (
         <EmptySlate
-          imageUrl="https://picsum.photos/200?random=2"
+          icon={{ image: "https://picsum.photos/200?random=2" }}
           title="No employees found"
           subtitle="It looks like there are no employees in this category yet."
           actions={[
@@ -1589,7 +1589,6 @@ export const WithBadge: Story = {
                 title={group.title}
                 actions={[
                   {
-                    id: "back",
                     caption: "Back",
                     onClick: () => {
                       setIsOpen(false);
@@ -1654,7 +1653,6 @@ export const CustomOpener: Story = {
 
     const ACTIONS_GROUPS: ListGroupaction[] = [
       {
-        id: "add",
         caption: "Add",
         onClick: (id: string) => {
           console.log(`action was added ${id}`);
