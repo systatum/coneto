@@ -27,6 +27,8 @@ export interface ToolbarProps {
   children: ReactNode;
   big?: boolean;
   styles?: ToolbarStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface ToolbarStyles {
@@ -71,7 +73,7 @@ const useVariantToolbar = () => {
   return { VARIANT_COLORS };
 };
 
-function Toolbar({ children, styles, big }: ToolbarProps) {
+function Toolbar({ children, styles, big, className, id }: ToolbarProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -133,7 +135,12 @@ function Toolbar({ children, styles, big }: ToolbarProps) {
   });
 
   return (
-    <ToolbarWrapper ref={toolbarRef} $style={styles?.self}>
+    <ToolbarWrapper
+      className={`coneto-toolbar${className ? ` ${className}` : ""}`}
+      id={id}
+      ref={toolbarRef}
+      $style={styles?.self}
+    >
       {childrenWithProps}
     </ToolbarWrapper>
   );
