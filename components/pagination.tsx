@@ -12,6 +12,8 @@ export interface PaginationProps {
   onPageChange: (page: number) => void;
   showNumbers?: boolean;
   styles?: PaginationStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface PaginationStyles {
@@ -26,6 +28,8 @@ function Pagination({
   onPageChange,
   showNumbers = true,
   styles,
+  className,
+  id,
 }: PaginationProps) {
   const [currentPageLocal, setCurrentPageLocal] = useState<string[]>([]);
 
@@ -57,7 +61,11 @@ function Pagination({
   }, []);
 
   return (
-    <PaginationWrapper $style={styles?.containerStyle}>
+    <PaginationWrapper
+      id={id}
+      className={`coneto-pagination${className ? ` ${className}` : ""}`}
+      $style={styles?.containerStyle}
+    >
       <PaginationButton
         styles={{ self: styles?.buttonStyle }}
         onClick={handlePrevious}
