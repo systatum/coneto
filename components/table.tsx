@@ -81,6 +81,8 @@ export interface TableProps {
   sumRow?: TableSummaryRowColumn[];
   styles?: TableStyles;
   searchbox?: TableSearchbox;
+  id?: string;
+  className?: string;
 }
 
 type TableSearchbox = SearchboxProps;
@@ -166,6 +168,8 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
+  className,
+  id,
 }: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
@@ -323,7 +327,11 @@ function Table({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
-        <Wrapper $containerStyle={styles?.containerStyle}>
+        <Wrapper
+          id={id}
+          className={`coneto-table${className ? ` ${className}` : ""}`}
+          $containerStyle={styles?.containerStyle}
+        >
           {((selectedData.length > 0 &&
             labels?.totalSelectedItemText !== null) ||
             showPagination ||
@@ -848,6 +856,7 @@ export interface TableRowGroupProps {
   title?: string;
   subtitle?: string;
   selectable?: boolean;
+  className?: string;
 }
 
 export interface TableRowCellProps {
@@ -855,6 +864,8 @@ export interface TableRowCellProps {
   contentStyle?: CSSProp;
   width?: string;
   onClick?: () => void;
+  className?: string;
+  id?: string;
 }
 
 function TableRowGroup({
@@ -868,6 +879,7 @@ function TableRowGroup({
   isLast,
   onLastRowReached,
   draggable,
+  className,
   ...props
 }: TableRowGroupProps & {
   selectedData?: string[];
@@ -933,7 +945,10 @@ function TableRowGroup({
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <TableRowGroupContainer>
+    <TableRowGroupContainer
+      id={id}
+      className={`coneto-table-row-group${className ? ` ${className}` : ""}`}
+    >
       <TableRowGroupSticky
         $theme={tableTheme}
         onClick={() => setIsOpen(!isOpen)}
@@ -1045,6 +1060,8 @@ export interface TableRowProps {
   }) => void;
   groupId?: string;
   styles?: TableRowStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface TableRowStyles {
@@ -1073,6 +1090,8 @@ function TableRow({
   groupId = "default",
   onDropItem,
   draggable,
+  className,
+  id,
   ...props
 }: TableRowProps &
   Partial<{
@@ -1133,6 +1152,8 @@ function TableRow({
     <RowWrapper $style={styles?.containerStyle}>
       <TableRowWrapper
         ref={rowRef}
+        id={id}
+        className={`coneto-table-row${className ? ` ${className}` : ""}`}
         $theme={tableTheme}
         $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
         $isSelected={isSelected}
@@ -1519,12 +1540,16 @@ function TableRowCell({
   width,
   onClick,
   bold,
+  id,
+  className,
 }: TableRowCellProps &
   Partial<{
     bold?: boolean;
   }>) {
   return (
     <CellContent
+      id={id}
+      className={`coneto-table-row-cell${className ? ` ${className}` : ""}`}
       onClick={() => {
         if (onClick) {
           onClick();
