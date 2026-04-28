@@ -8,13 +8,15 @@ import { BoxbarThemeConfig } from "./../theme";
 export interface BoxbarProps {
   children: ReactNode;
   styles?: BoxbarStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface BoxbarStyles {
   self: CSSProp;
 }
 
-function Boxbar({ styles, children }: BoxbarProps) {
+function Boxbar({ styles, children, className, id }: BoxbarProps) {
   const { currentTheme } = useTheme();
   const boxbarTheme = currentTheme.boxbar;
 
@@ -70,6 +72,8 @@ function Boxbar({ styles, children }: BoxbarProps) {
   return (
     <BaseBoxbar
       ref={contentRef}
+      id={id}
+      className={`coneto-boxbar${className ? ` ${className}` : ""}`}
       initial={{ height: collapsedHeight }}
       animate={{ height: isOpen ? contentHeight : collapsedHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
