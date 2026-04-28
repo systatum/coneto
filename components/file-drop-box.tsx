@@ -49,6 +49,7 @@ export interface FileDropBoxProps {
   labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 export interface FileDropBoxStyles {
@@ -77,6 +78,7 @@ function FileDropBox({
   labelWidth,
   required,
   disabled,
+  className,
 }: FileDropBoxProps) {
   const { currentTheme } = useTheme();
   const fileDropBoxTheme = currentTheme.fileDropBox;
@@ -274,6 +276,7 @@ function FileDropBox({
 
   return (
     <InputWrapper
+      className={`coneto-file-drop-box${className ? ` ${className}` : ""}`}
       $disabled={disabled}
       $labelPosition={labelPosition}
       aria-label="file-drop-box-container"
