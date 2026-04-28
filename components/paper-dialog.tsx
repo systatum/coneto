@@ -49,6 +49,8 @@ export interface PaperDialogProps {
   styles?: PaperDialogStyles;
   onClosed?: () => void;
   icons?: PaperDialogIcons;
+  id?: string;
+  className?: string;
 }
 
 export interface PaperDialogIcons {
@@ -96,6 +98,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       styles,
       onClosed,
       icons,
+      className,
+      id,
     },
     ref
   ) => {
@@ -140,7 +144,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     return (
       dialogState !== "closed" && (
-        <DialogOverlay $dialogState={dialogState}>
+        <DialogOverlay
+          id={id}
+          className={`coneto-paper-dialog${className ? ` ${className}` : ""}`}
+          $dialogState={dialogState}
+        >
           {dialogState === "restored" && (
             <OverlayBlocker
               onClick={async ({ preventDefault, close }) => {
