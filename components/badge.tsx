@@ -111,6 +111,7 @@ function Badge({
   id = "badge",
   actions,
   metadata,
+  className,
   ...props
 }: BadgeProps) {
   const { currentTheme } = useTheme();
@@ -195,6 +196,7 @@ function Badge({
     <BadgeWrapper
       {...props}
       id={String(id)}
+      className={`coneto-badge${className ? ` ${className}` : ""}`}
       onClick={onClick}
       aria-label="badge"
       $theme={badgeTheme}
