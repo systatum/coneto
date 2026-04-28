@@ -15,6 +15,8 @@ export interface LaunchpadProps {
   children: ReactNode;
   containerStyle?: CSSProp;
   maxSection?: number;
+  className?: string;
+  id?: string;
 }
 
 export interface LaunchpadSectionProps {
@@ -46,6 +48,8 @@ function Launchpad({
   children,
   containerStyle,
   maxSection = 3,
+  className,
+  id,
 }: LaunchpadProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -102,6 +106,8 @@ function Launchpad({
   return (
     <LaunchpadContainer
       ref={containerRef}
+      id={id}
+      className={`coneto-launchpad${className ? ` ${className}` : ""}`}
       onPointerDown={(e) => dragControls.start(e)}
       $containerStyle={containerStyle}
     >
