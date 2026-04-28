@@ -26,6 +26,8 @@ export interface OverlayBlockerProps {
   onClick?: OverlayBlockerClickHandler;
   styles?: OverlayBlockerStyles;
   children?: ReactNode;
+  className?: string;
+  id?: string;
 }
 
 export interface OverlayBlockerStyles {
@@ -37,7 +39,15 @@ export const OverlayBlocker = forwardRef<
   OverlayBlockerProps
 >(
   (
-    { show = false, zIndex = 9991999, onClick = "close", styles, children },
+    {
+      show = false,
+      zIndex = 9991999,
+      onClick = "close",
+      styles,
+      children,
+      className,
+      id,
+    },
     ref
   ) => {
     const { currentTheme } = useTheme();
@@ -88,6 +98,8 @@ export const OverlayBlocker = forwardRef<
 
     return (
       <StyledOverlay
+        id={id}
+        className={`coneto-overlay-blocker${className ? ` ${className}` : ""}`}
         aria-label="overlay-blocker"
         $zIndex={zIndex}
         $theme={overlayBlockerTheme}
