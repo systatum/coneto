@@ -148,6 +148,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       required,
       isLoading,
       labels,
+      className,
     },
     ref
   ) => {
@@ -187,6 +188,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     return (
       <Selectbox
         ref={ref}
+        className={`coneto-combobox${className ? ` ${className}` : ""};`}
         isLoading={isLoading}
         helper={helper}
         errorIconPosition={errorIconPosition}
