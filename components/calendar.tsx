@@ -992,6 +992,7 @@ function Calendar({
   name,
   id,
   labelPosition,
+  className,
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -1015,6 +1016,7 @@ function Calendar({
       errorMessage={errorMessage}
       labelPosition={labelPosition}
       label={label}
+      className={`coneto-calendar${className ? ` ${className}` : ""}`}
       actions={actions}
       helper={helper}
       disabled={disabled}
