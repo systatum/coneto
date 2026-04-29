@@ -1112,6 +1112,7 @@ function TreeListItem<T extends TreeListItem>({
             padding: 0px;
             gap: 10px;
             align-items: center;
+            width: 100%;
           `}
         >
           {typeof item.caption === "string"
