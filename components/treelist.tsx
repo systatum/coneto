@@ -42,7 +42,12 @@ export interface TreeListProps
 
 export interface TreeListStyles {
   containerStyle?: CSSProp;
+  emptySlateStyle?: CSSProp;
   emptyItemSlateStyle?: CSSProp;
+  actionWrapperStyle?: CSSProp;
+  arrowGroupStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
 }
 
 export interface TreeListOnDragged {
@@ -250,14 +255,17 @@ function TreeList({
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TreeListWrapper
         {...props}
-        aria-label="tree-list-wrapper"
         id={id}
+        aria-label="tree-list-wrapper"
         className={applyClassName("tree-list", className)}
-        $containerStyle={styles?.containerStyle}
+        $style={styles?.containerStyle}
         $textColor={treeListTheme.textColor}
       >
         {hasActions && (
-          <ActionsWrapper aria-label="tree-list-action-wrapper">
+          <ActionsWrapper
+            $style={styles?.actionWrapperStyle}
+            aria-label="tree-list-action-wrapper"
+          >
             {filteredActions.map((action, index) => {
               const isActiveAction = action.id === isActive;
               const isSelectedAction = action.id === isSelected;
@@ -379,8 +387,11 @@ function TreeList({
             <GroupWrapper key={index}>
               {item.caption && (
                 <GroupTitleWrapper
+                  $style={styles?.textWrapperStyle}
                   aria-label="treelist-group-title"
-                  onClick={() => {
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     if (collapsible) {
                       handleSelected(item.id);
                     }
@@ -393,7 +404,9 @@ function TreeList({
                     setIsHovered(item.id);
                   }}
                 >
-                  <GroupTitle>{item.caption}</GroupTitle>
+                  <GroupTitle $style={styles?.titleStyle}>
+                    {item.caption}
+                  </GroupTitle>
 
                   {item.actions &&
                     (() => {
@@ -434,9 +447,6 @@ function TreeList({
                             }}
                             open={openRowId === item.id}
                             maxActionsBeforeCollapsing={2}
-                            focusBackgroundColor="#d4d4d4"
-                            hoverBackgroundColor="#d4d4d4"
-                            activeBackgroundColor="#d4d4d4"
                             actions={actionsWithIcons}
                             styles={{
                               containerStyle: css`
@@ -464,113 +474,117 @@ function TreeList({
                       aria-label="arrow-icon"
                       aria-expanded={isOpen[item.id]}
                       size={20}
+                      $style={styles?.arrowGroupStyle}
                     />
                   )}
                 </GroupTitleWrapper>
               )}
 
               <AnimatePresence initial={false}>
-                <ItemsWrapper
-                  key={`items-wrapper-${index}`}
-                  animate={
-                    isOpen[item.id]
-                      ? { height: "auto", opacity: 1 }
-                      : { height: 0, opacity: 0 }
-                  }
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  $collapsed={!isOpen[item.id]}
-                >
-                  {(() => {
-                    const groupLoading = loadingByGroup[item.id];
+                {isOpen[item.id] && (
+                  <ItemsWrapper
+                    layout
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                  >
+                    {(() => {
+                      const groupLoading = loadingByGroup[item.id];
 
-                    return groupLoading?.isLoading ? (
-                      <LoadingSpinner
-                        styles={{
-                          containerStyle: css`
-                            padding-left: 20px;
-                            gap: 8px;
-                          `,
-                        }}
-                        label={groupLoading.caption}
-                      />
-                    ) : item.items?.length > 0 ? (
-                      item.items.map((val, index) => {
-                        return (
-                          <TreeListItem
-                            key={val.id}
-                            item={{ ...val }}
-                            canContainChildren={val.canContainChildren ?? true}
-                            isSelected={isSelected}
-                            onChange={handleOnChange}
-                            isLoading={loadingByGroup}
-                            searchTerm={searchTerm}
-                            draggable={draggable}
-                            showHierarchyLine={showHierarchyLine}
-                            collapsible={collapsible}
-                            isHavingContent={val.items?.length > 0}
-                            setIsOpen={handleSelected}
-                            isOpen={isOpen}
-                            emptyItemSlate={emptyItemSlate}
-                            emptyItemSlateStyle={styles?.emptyItemSlateStyle}
-                            selectedLevel={selectedLevel}
-                            groupId={item.id}
-                            parentGroupId={item.id}
-                            selectedGroupId={selectedGroupId}
-                            groupLength={item.items?.length}
-                            index={index}
-                            openRowId={openRowId}
-                            setOpenRowId={setOpenRowId}
-                            alwaysShowDragIcon={alwaysShowDragIcon}
-                          />
-                        );
-                      })
-                    ) : (
-                      emptyItemSlate !== null && (
-                        <EmptyContent
-                          key="drop-here"
-                          aria-label="tree-list-empty-slate"
-                          initial="open"
-                          animate={isOpen ? "open" : "collapsed"}
-                          $style={styles?.emptyItemSlateStyle}
-                          exit="collapsed"
-                          variants={{
-                            open: { opacity: 1, height: "auto" },
-                            collapsed: { opacity: 0, height: 0 },
+                      return groupLoading?.isLoading ? (
+                        <LoadingSpinner
+                          styles={{
+                            containerStyle: css`
+                              padding-left: 20px;
+                              gap: 8px;
+                            `,
                           }}
-                          transition={{ duration: 0.2, ease: "easeInOut" }}
-                          onDragOver={(e) => e.preventDefault()}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            if (dragItem && draggable) {
-                              const {
-                                id: draggedId,
-                                oldGroupId,
-                                oldPosition,
-                              } = dragItem;
+                          label={groupLoading.caption}
+                        />
+                      ) : item.items?.length > 0 ? (
+                        item.items.map((val, index) => {
+                          return (
+                            <TreeListItem
+                              key={val.id}
+                              item={{ ...val }}
+                              canContainChildren={
+                                val.canContainChildren ?? true
+                              }
+                              isSelected={isSelected}
+                              onChange={handleOnChange}
+                              isLoading={loadingByGroup}
+                              searchTerm={searchTerm}
+                              draggable={draggable}
+                              showHierarchyLine={showHierarchyLine}
+                              collapsible={collapsible}
+                              isHavingContent={val.items?.length > 0}
+                              setIsOpen={handleSelected}
+                              isOpen={isOpen}
+                              emptyItemSlate={emptyItemSlate}
+                              emptyItemSlateStyle={styles?.emptyItemSlateStyle}
+                              selectedLevel={selectedLevel}
+                              groupId={item.id}
+                              parentGroupId={item.id}
+                              selectedGroupId={selectedGroupId}
+                              groupLength={item.items?.length}
+                              index={index}
+                              openRowId={openRowId}
+                              setOpenRowId={setOpenRowId}
+                              alwaysShowDragIcon={alwaysShowDragIcon}
+                            />
+                          );
+                        })
+                      ) : (
+                        emptyItemSlate !== null && (
+                          <EmptyContent
+                            key="drop-here"
+                            aria-label="tree-list-empty-slate"
+                            initial="open"
+                            animate={isOpen ? "open" : "collapsed"}
+                            $style={styles?.emptyItemSlateStyle}
+                            exit="collapsed"
+                            variants={{
+                              open: { opacity: 1, height: "auto" },
+                              collapsed: { opacity: 0, height: 0 },
+                            }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              if (dragItem && draggable) {
+                                const {
+                                  id: draggedId,
+                                  oldGroupId,
+                                  oldPosition,
+                                } = dragItem;
 
-                              onDragged?.({
-                                id: draggedId,
-                                oldGroupId,
-                                newGroupId: item.id,
-                                oldPosition,
-                                newPosition: 0,
-                              });
+                                onDragged?.({
+                                  id: draggedId,
+                                  oldGroupId,
+                                  newGroupId: item.id,
+                                  oldPosition,
+                                  newPosition: 0,
+                                });
 
-                              setDragItem(null);
-                            }
-                          }}
-                        >
-                          {emptyItemSlate}
-                        </EmptyContent>
-                      )
-                    );
-                  })()}
-                </ItemsWrapper>
+                                setDragItem(null);
+                              }
+                            }}
+                          >
+                            {emptyItemSlate}
+                          </EmptyContent>
+                        )
+                      );
+                    })()}
+                  </ItemsWrapper>
+                )}
               </AnimatePresence>
             </GroupWrapper>
           ))
         ) : (
-          <div>{emptySlate}</div>
+          <EmptyContent $style={styles?.emptySlateStyle}>
+            {emptySlate}
+          </EmptyContent>
         )}
 
         {children}
@@ -1183,7 +1197,7 @@ function TreeListItem<T extends TreeListItem>({
 }
 
 const TreeListWrapper = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
   $textColor?: string;
 }>`
   display: flex;
@@ -1191,7 +1205,7 @@ const TreeListWrapper = styled.div<{
   width: 100%;
   color: ${({ $textColor }) => $textColor};
 
-  ${(props) => props.$containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const DraggableWrapper = styled.div<{
@@ -1252,11 +1266,13 @@ const DragLine = styled.div<{
   bottom: ${({ $position }) => ($position === "bottom" ? "0" : "auto")};
 `;
 
-const ActionsWrapper = styled.div`
+const ActionsWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   width: 100%;
   margin-bottom: 1em;
+
+  ${({ $style }) => $style}
 `;
 
 const ActionItem = styled.div<{
@@ -1285,15 +1301,16 @@ const ActionItem = styled.div<{
     $isActive &&
     css`
       background-color: ${$theme?.selectedBackgroundColor};
-    `}
+    `};
 
   ${({ $isSelected, $theme }) =>
     $isSelected &&
     css`
       background-color: ${$theme?.selectedBackgroundColor};
       border-left: 3px solid ${$theme?.dividerHierarchySelectedColor};
-    `}
-  ${(props) => props.$style}
+    `};
+
+  ${({ $style }) => $style};
 `;
 
 const Divider = styled.div`
@@ -1316,6 +1333,7 @@ const GroupWrapper = styled.div`
 `;
 
 const GroupTitleWrapper = styled.div<{
+  $style?: CSSProp;
   $collapsible?: boolean;
 }>`
   display: flex;
@@ -1330,13 +1348,19 @@ const GroupTitleWrapper = styled.div<{
     $collapsible &&
     css`
       cursor: pointer;
-    `}
+    `};
+
+  ${({ $style }) => $style};
 `;
 
-const GroupTitle = styled.span`
+const GroupTitle = styled.span<{
+  $style?: CSSProp;
+}>`
   font-weight: 500;
   padding: 2px 1rem;
   padding-left: 1.4rem;
+
+  ${({ $style }) => $style};
 `;
 
 const ArrowIcon = styled(RiArrowRightSLine)<{
@@ -1344,6 +1368,7 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
   $isSelected?: boolean;
   $showHierarchy?: boolean;
   $level?: number;
+  $style?: CSSProp;
 }>`
   position: absolute;
   top: 50%;
@@ -1361,23 +1386,18 @@ const ArrowIcon = styled(RiArrowRightSLine)<{
   &[aria-expanded="true"] {
     transform: translateY(-50%) rotate(90deg);
   }
+
+  ${({ $style }) => $style}
 `;
 
-const ItemsWrapper = styled(motion.ul)<{ $collapsed?: boolean }>`
+const ItemsWrapper = styled(motion.ul)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
   list-style: none;
   padding: 0;
-  padding-bottom: 0.5em;
   margin: 0;
-  cursor: pointer;
-
-  ${({ $collapsed }) =>
-    $collapsed &&
-    css`
-      display: none;
-    `};
+  min-height: 0;
 `;
 
 const TreeListHierarchyVerticalLine = styled.div<{
