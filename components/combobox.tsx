@@ -475,7 +475,7 @@ function ComboboxDrawer({
     const mapToContent = (option: ComboboxOption): TreeListContent => ({
       id: String(option.value),
       caption: option.render ?? option.text,
-      initialState: option?.groupSetting?.initialState ?? "opened",
+      initialState: option?.groupSetting?.initialState ?? "closed",
       collapsible:
         option?.groupSetting?.collapsible ??
         (option?.groupOptions?.length > 0 ? true : false),
