@@ -38,16 +38,23 @@ export interface TreeListProps
   onDragged?: (props: TreeListOnDragged) => void;
   styles?: TreeListStyles;
   id?: string;
+  arrowSize?: number;
 }
 
 export interface TreeListStyles {
+  actionWrapperStyle?: CSSProp;
+  actionStyle?: CSSProp;
   containerStyle?: CSSProp;
+  containerGroupStyle?: CSSProp;
   emptySlateStyle?: CSSProp;
   emptyItemSlateStyle?: CSSProp;
-  actionWrapperStyle?: CSSProp;
   arrowGroupStyle?: CSSProp;
+  arrowStyle?: CSSProp;
   titleStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
+  itemStyle?: CSSProp;
+  hierarchyLineStyle?: CSSProp;
+  dividerStyle?: CSSProp;
 }
 
 export interface TreeListOnDragged {
@@ -76,11 +83,12 @@ export type TreeListInitialState =
 
 export interface TreeListContent {
   id: string;
-  caption?: string;
+  caption?: ReactNode;
   items?: TreeListItem[];
   initialState?: TreeListInitialState;
   actions?: TreeListContentAction[];
   className?: string;
+  collapsible?: boolean;
 }
 
 export interface TreeListContentAction
@@ -90,7 +98,7 @@ export interface TreeListContentAction
 
 export interface TreeListItem {
   id: string;
-  caption?: string;
+  caption?: ReactNode;
   canContainChildren?: boolean;
   onClick?: (props: TreeListItemOnClick) => void;
   actions?: TreeListItemAction[];
@@ -100,6 +108,7 @@ export interface TreeListItem {
   iconColor?: string;
   initialState?: TreeListInitialState;
   className?: string;
+  collapsible?: boolean;
 }
 
 export interface TreeListItemAction extends Omit<ContextMenuAction, "onClick"> {
@@ -109,6 +118,7 @@ export interface TreeListItemAction extends Omit<ContextMenuAction, "onClick"> {
 export interface TreeListItemOnClick {
   item?: TreeListItem;
   preventDefault?: () => void;
+  withoutSelection?: () => void;
 }
 
 export interface TreeListAction {
@@ -163,6 +173,7 @@ function TreeList({
   styles,
   className,
   id,
+  arrowSize = 20,
   ...props
 }: TreeListProps) {
   const { currentTheme } = useTheme();
@@ -170,7 +181,7 @@ function TreeList({
 
   const [dragItem, setDragItem] = useState(null);
 
-  const [isSelected, setIsSelected] = useState(selectedItem);
+  const [isSelected, setIsSelected] = useState<string>(selectedItem);
   const [isActive, setIsActive] = useState<string | null>("");
   const [openRowId, setOpenRowId] = useState<string | null>("");
 
@@ -289,7 +300,11 @@ function TreeList({
                   onClick={handleActionClick}
                   caption={action.caption}
                   icon={action.icon}
-                  styles={{ self: action?.styles?.self }}
+                  styles={{
+                    self: `
+                    ${styles?.actionStyle}
+                    ${action?.styles?.self}`,
+                  }}
                 />
               );
 
@@ -378,25 +393,34 @@ function TreeList({
           </ActionsWrapper>
         )}
 
-        {content && actions && (
-          <Divider role="separator" aria-label="divider" />
+        {content?.length > 0 && actions?.length > 0 && (
+          <Divider
+            $style={styles?.dividerStyle}
+            role="separator"
+            aria-label="divider"
+          />
         )}
 
         {content.length > 0 ? (
           content.map((item, index) => (
-            <GroupWrapper key={index}>
+            <GroupWrapper $style={styles?.containerGroupStyle} key={index}>
               {item.caption && (
                 <GroupTitleWrapper
+                  data-has-options={item?.className?.includes(
+                    "has-group-options"
+                  )}
+                  data-selected={isSelected === item.id}
                   $style={styles?.textWrapperStyle}
                   aria-label="treelist-group-title"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (collapsible) {
+                    const isCollapsible = item.collapsible ?? collapsible;
+                    if (isCollapsible) {
                       handleSelected(item.id);
                     }
                   }}
-                  $collapsible={collapsible}
+                  $collapsible={item?.collapsible ?? collapsible}
                   onMouseLeave={() => {
                     setIsHovered(null);
                   }}
@@ -469,11 +493,11 @@ function TreeList({
                         </div>
                       );
                     })()}
-                  {collapsible && (
+                  {(item?.collapsible ?? collapsible) && (
                     <ArrowIcon
                       aria-label="arrow-icon"
                       aria-expanded={isOpen[item.id]}
-                      size={20}
+                      size={arrowSize}
                       $style={styles?.arrowGroupStyle}
                     />
                   )}
@@ -483,8 +507,6 @@ function TreeList({
               <AnimatePresence initial={false}>
                 {isOpen[item.id] && (
                   <ItemsWrapper
-                    layout
-                    initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
@@ -511,18 +533,26 @@ function TreeList({
                               canContainChildren={
                                 val.canContainChildren ?? true
                               }
+                              styles={{
+                                self: styles?.itemStyle,
+                                emptyItemSlateStyle:
+                                  styles?.emptyItemSlateStyle,
+                                arrowStyle: styles?.arrowStyle,
+                                hierarchyLineStyle: styles?.hierarchyLineStyle,
+                              }}
+                              arrowSize={arrowSize}
+                              alwaysShowDragIcon={alwaysShowDragIcon}
                               isSelected={isSelected}
                               onChange={handleOnChange}
                               isLoading={loadingByGroup}
                               searchTerm={searchTerm}
                               draggable={draggable}
                               showHierarchyLine={showHierarchyLine}
-                              collapsible={collapsible}
+                              collapsible={item?.collapsible ?? collapsible}
                               isHavingContent={val.items?.length > 0}
                               setIsOpen={handleSelected}
                               isOpen={isOpen}
                               emptyItemSlate={emptyItemSlate}
-                              emptyItemSlateStyle={styles?.emptyItemSlateStyle}
                               selectedLevel={selectedLevel}
                               groupId={item.id}
                               parentGroupId={item.id}
@@ -531,7 +561,6 @@ function TreeList({
                               index={index}
                               openRowId={openRowId}
                               setOpenRowId={setOpenRowId}
-                              alwaysShowDragIcon={alwaysShowDragIcon}
                             />
                           );
                         })
@@ -690,7 +719,7 @@ interface TreeListItemComponent<T extends TreeListItem> {
   onChange?: (item?: string) => void;
   isSelected?: string;
   showHierarchyLine?: boolean;
-  styles?: { self?: CSSProp };
+  styles?: TreeListItemStyles;
   level?: number;
   collapsible?: boolean;
   isHavingContent?: boolean;
@@ -705,9 +734,16 @@ interface TreeListItemComponent<T extends TreeListItem> {
   index?: number;
   draggable?: boolean;
   groupLength?: number;
-  emptyItemSlateStyle?: CSSProp;
   alwaysShowDragIcon?: boolean;
   canContainChildren?: boolean;
+  arrowSize?: number;
+}
+
+interface TreeListItemStyles {
+  self?: CSSProp;
+  emptyItemSlateStyle?: CSSProp;
+  arrowStyle?: CSSProp;
+  hierarchyLineStyle?: CSSProp;
 }
 
 interface TreeListOpenWithId {
@@ -774,12 +810,12 @@ function TreeListItem<T extends TreeListItem>({
   draggable,
   index,
   groupLength,
-  emptyItemSlateStyle,
   parentGroupId,
   alwaysShowDragIcon,
   openRowId,
   setOpenRowId,
   canContainChildren,
+  arrowSize,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
   const { currentTheme } = useTheme();
   const treeListTheme = currentTheme.treelist;
@@ -797,7 +833,9 @@ function TreeListItem<T extends TreeListItem>({
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
-  const parts = escapedTerm ? item.caption.split(regex) : [item.caption];
+  const parts = escapedTerm
+    ? String(item.caption).split(regex)
+    : [String(item.caption)];
 
   const setToggleItem = (id: string) => {
     setIsOpen(id);
@@ -825,22 +863,31 @@ function TreeListItem<T extends TreeListItem>({
         role="button"
         data-group-id={groupId}
         aria-label="tree-list-item"
+        $style={styles?.self}
+        data-selected={isSelected === item.id}
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
-        onClick={async () => {
+        onMouseDown={async (e) => {
+          e.preventDefault();
           let prevent = false;
-
-          if (onChange) {
-            await onChange(item.id);
-          }
+          let withoutSelection = false;
 
           if (item.onClick) {
             await item.onClick({
               item,
+              withoutSelection: () => {
+                withoutSelection = true;
+              },
               preventDefault: () => {
                 prevent = true;
               },
             });
+          }
+
+          if (!withoutSelection) {
+            if (onChange) {
+              await onChange(item.id);
+            }
           }
 
           if (!prevent) {
@@ -852,7 +899,6 @@ function TreeListItem<T extends TreeListItem>({
         $theme={treeListTheme}
         $isHovered={isHovered === item.id || openRowId === item.id}
         $isDropParent={dropIntent === "containment" && isOver}
-        $style={styles?.self}
         onDragStart={() =>
           setDragItem({
             id: item.id,
@@ -960,12 +1006,13 @@ function TreeListItem<T extends TreeListItem>({
             $showHierarchy={showHierarchyLine}
             $isSelected={isSelected === item.id}
             $isHovered={isHovered === item.id}
-            onClick={(e) => {
+            $style={styles?.arrowStyle}
+            onMouseDown={(e) => {
               e.stopPropagation();
               setToggleItem(item.id);
             }}
             aria-expanded={isOpen[item.id]}
-            size={20}
+            size={arrowSize}
           />
         )}
         <div
@@ -1063,6 +1110,10 @@ function TreeListItem<T extends TreeListItem>({
             aria-label="vertical-line"
             $level={level}
             $isSameLevel={isSameLevel}
+            $style={styles?.hierarchyLineStyle}
+            data-same-level={isSameLevel}
+            data-has-options={item?.className?.includes("has-group-options")}
+            data-selected={isSelected === item.id}
             $isSelected={isSelected === item.id}
           />
         )}
@@ -1080,14 +1131,19 @@ function TreeListItem<T extends TreeListItem>({
         Array.from({ length: level }).map((_, idx) => {
           const isSameLevelLine =
             selectedLevel === idx && selectedGroupId === parentGroupId;
-
           return (
             <TreeListHierarchyVerticalLine
               key={idx}
               $theme={treeListTheme}
               aria-label="vertical-line-level"
               $level={idx}
+              data-level={idx}
+              data-has-options={Boolean(
+                item?.className?.includes("has-group-options")
+              )}
               $isSameLevel={isSameLevelLine}
+              $style={styles?.hierarchyLineStyle}
+              data-selected={isSelected === item.id}
             />
           );
         })}
@@ -1095,13 +1151,10 @@ function TreeListItem<T extends TreeListItem>({
       <AnimatePresence initial={false}>
         {isOpen[item.id] && (
           <motion.div
-            style={{
-              position: "relative",
-            }}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
           >
             {(() => {
               const groupLoading = isLoading[item.id];
@@ -1122,6 +1175,13 @@ function TreeListItem<T extends TreeListItem>({
                 item.items?.map((child, index) => (
                   <TreeListItem
                     key={child.id}
+                    styles={{
+                      self: styles?.self,
+                      emptyItemSlateStyle: styles?.emptyItemSlateStyle,
+                      arrowStyle: styles?.arrowStyle,
+                      hierarchyLineStyle: styles?.hierarchyLineStyle,
+                    }}
+                    arrowSize={arrowSize}
                     item={child}
                     isSelected={isSelected}
                     onChange={onChange}
@@ -1129,7 +1189,7 @@ function TreeListItem<T extends TreeListItem>({
                     showHierarchyLine={showHierarchyLine}
                     level={level + 1}
                     isHavingContent={child?.items?.length > 0}
-                    collapsible={collapsible}
+                    collapsible={child?.collapsible ?? collapsible}
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}
                     emptyItemSlate={emptyItemSlate}
@@ -1154,7 +1214,7 @@ function TreeListItem<T extends TreeListItem>({
                     animate={isOpen ? "open" : "collapsed"}
                     $style={css`
                       margin-left: ${level * 20 + 12}px;
-                      ${emptyItemSlateStyle}
+                      ${styles?.emptyItemSlateStyle}
                     `}
                     exit="collapsed"
                     variants={{
@@ -1313,14 +1373,16 @@ const ActionItem = styled.div<{
   ${({ $style }) => $style};
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   height: 1px;
   border-bottom: 1px solid #d1d5db;
   margin-bottom: 1em;
+
+  ${({ $style }) => $style};
 `;
 
-const GroupWrapper = styled.div`
+const GroupWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -1330,6 +1392,8 @@ const GroupWrapper = styled.div`
   &:not(:last-child) {
     padding-bottom: 8px;
   }
+
+  ${({ $style }) => $style};
 `;
 
 const GroupTitleWrapper = styled.div<{
@@ -1481,7 +1545,7 @@ const TreeListItemWrapper = styled.li<{
       padding-left: ${$level * 12 + 8}px;
     `}
 
-  ${(props) => props.$style}
+  ${({ $style }) => $style}
 `;
 
 const HighlightedText = styled.span<{ $theme?: TreeListThemeConfig }>`
