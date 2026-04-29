@@ -526,7 +526,7 @@ function ComboboxDrawer({
                   position: sticky;
                   top: 0;
                   background-color: ${comboboxTheme?.backgroundColor};
-                  z-index: 30;
+                  z-index: 10000;
                   height: 38px;
                 `,
                 iconStyle: css`
