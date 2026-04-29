@@ -1,9 +1,8 @@
 import {
   forwardRef,
-  Fragment,
   KeyboardEvent,
+  ReactNode,
   Ref,
-  RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -33,6 +32,7 @@ import {
   TreeListItem,
 } from "./treelist";
 import { Searchbox } from "./searchbox";
+import { Checkbox } from "./checkbox";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -454,36 +454,116 @@ function ComboboxDrawer({
         }))
     : [];
 
-  const generateContent = (): TreeListContent[] => {
-    const mapToItem = (opt: ComboboxOption): TreeListItem => ({
-      id: String(opt.value),
-      caption: opt.render ?? opt.text,
-      collapsible:
-        opt?.groupSetting?.collapsible ??
-        (opt?.groupOptions?.length > 0 ? true : false),
-      className: opt?.groupOptions?.length > 0 ? "has-group-options" : "",
-      onClick: ({ withoutSelection }) => {
-        if (opt?.groupOptions?.length > 0) {
-          withoutSelection();
-        }
-      },
-      ...(opt?.groupOptions?.length > 0
-        ? { items: opt.groupOptions.map(mapToItem) }
-        : {}),
-    });
+  const indexRef = useRef(0);
+  const flatIndexMap = useRef<Record<string, number>>({});
+  const parentRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
-    const mapToContent = (option: ComboboxOption): TreeListContent => ({
-      id: String(option.value),
-      caption: option.render ?? option.text,
-      initialState: option?.groupSetting?.initialState ?? "closed",
-      collapsible:
-        option?.groupSetting?.collapsible ??
-        (option?.groupOptions?.length > 0 ? true : false),
-      className: option?.groupOptions?.length > 0 ? "has-group-options" : "",
-      ...(option?.groupOptions?.length > 0
-        ? { items: option.groupOptions.map(mapToItem) }
-        : {}),
-    });
+  const generateContent = (): TreeListContent[] => {
+    indexRef.current = 0;
+    flatIndexMap.current = {};
+
+    const hasVisibleChildren = (opt: ComboboxOption) =>
+      opt.groupOptions?.some((o) => !o.hidden);
+
+    const renderCaption = (opt: ComboboxOption): ReactNode => {
+      const label = opt.render ?? opt.text;
+      const hasChildren = Boolean(opt?.groupOptions?.length);
+
+      if (multiple && hasChildren) {
+        return label;
+      }
+
+      const isChecked = finalSelectedOptions.includes(String(opt.value));
+      return (
+        <>
+          {multiple && (
+            <Checkbox
+              styles={{
+                containerStyle: css`
+                  margin-top: 2px;
+                `,
+              }}
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => {}}
+            />
+          )}
+          {label}
+        </>
+      );
+    };
+
+    const assignIndex = (id: string) => {
+      flatIndexMap.current[id] = indexRef.current++;
+    };
+
+    const mapToItem = (
+      opt: ComboboxOption,
+      parentOpen = true
+    ): TreeListItem => {
+      const id = String(opt.value);
+      const hasChildren = Boolean(opt.groupOptions?.length);
+
+      const isVisible = parentOpen;
+
+      if (isVisible && !hasChildren) {
+        assignIndex(id);
+      }
+
+      const isOpen = openedCategoryGroup?.has(id);
+      return {
+        id,
+        caption: renderCaption(opt),
+        collapsible:
+          opt?.groupSetting?.collapsible ??
+          (opt?.groupOptions?.length > 0 ? true : false),
+        className: opt?.groupOptions?.length > 0 ? "has-group-options" : "",
+
+        onClick: ({ withoutSelection }) => {
+          if (opt?.groupOptions?.length > 0) {
+            withoutSelection();
+          }
+        },
+
+        ...(opt?.groupOptions?.length > 0
+          ? {
+              items: opt.groupOptions.map((child) =>
+                mapToItem(child, isVisible && isOpen)
+              ),
+            }
+          : {}),
+      };
+    };
+
+    const mapToContent = (option: ComboboxOption): TreeListContent => {
+      const id = String(option.value);
+      const isOpen = openedCategoryGroup?.has(id);
+
+      const hasChildren = Boolean(option.groupOptions?.length);
+
+      if (!hasChildren) {
+        assignIndex(id);
+      }
+
+      return {
+        id,
+        caption: renderCaption(option),
+        initialState: option?.groupSetting?.initialState ?? "closed",
+        collapsible:
+          option?.groupSetting?.collapsible ??
+          (option?.groupOptions?.length > 0 ? true : false),
+        className: option?.groupOptions?.length > 0 ? "has-group-options" : "",
+
+        ...(option?.groupOptions?.length > 0
+          ? {
+              items: option.groupOptions.map((child) =>
+                mapToItem(child, isOpen)
+              ),
+            }
+          : {}),
+      };
+    };
 
     return options.map(mapToContent);
   };
@@ -547,6 +627,19 @@ function ComboboxDrawer({
           <TreeList
             emptySlate={emptySlate}
             emptyItemSlate={emptySlate}
+            ref={({ el, item }) => {
+              parentRefs.current[item.id] = el;
+            }}
+            refItem={({ el, item }) => {
+              itemRefs.current[item.id] = el;
+            }}
+            onMouseEnter={() => {}}
+            onMouseEnterItem={({ item }) => {
+              const index = flatIndexMap.current[item.id];
+
+              setHighlightedIndex(index);
+              console.log(index);
+            }}
             onOpenChange={({ id }) => {
               setOpenedCategoryGroup((prev) => {
                 const next = new Set(prev);
@@ -582,6 +675,7 @@ function ComboboxDrawer({
                 &:not(:last-child) {
                   padding-bottom: 0px;
                 }
+                cursor: pointer;
               `,
               textWrapperStyle: css`
                 min-height: 36px;
@@ -593,8 +687,6 @@ function ComboboxDrawer({
                   display: flex;
                   justify-content: space-between;
                   align-items: center;
-                  padding-left: 18px;
-                  padding-right: 8px;
                   background-color: ${comboboxTheme?.groupBackgroundColor};
                 }
               `,
@@ -611,6 +703,9 @@ function ComboboxDrawer({
                 width: 100%;
                 font-weight: normal;
                 padding: 0px;
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
               `,
               arrowGroupStyle: css`
                 [data-has-options="true"] & {
@@ -668,22 +763,5 @@ const DrawerWrapper = styled.ul<{
 
   ${({ $style }) => $style}
 `;
-
-const Divider = styled.div<{ $theme: ComboboxThemeConfig }>`
-  width: 100%;
-  height: 1px;
-  border-bottom: 1px solid ${({ $theme }) => $theme.dividerColor};
-  margin: 2px 0;
-`;
-
-const EmptyState = styled.li<{ $theme: ComboboxThemeConfig }>`
-  padding: 0.5rem;
-  text-align: center;
-  color: ${({ $theme }) => $theme.emptyTextColor};
-`;
-
-function isGroupedOption(item: ComboboxOption): item is ComboboxOption {
-  return "options" in item && !("value" in item);
-}
 
 export { Combobox };
