@@ -746,54 +746,98 @@ export const Categorized: Story = {
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       {
-        category: "Sweet",
-        options: [
-          { text: "Banana", value: "2" },
-          { text: "Mango", value: "8" },
-          { text: "Papaya", value: "11" },
-          { text: "Lychee", value: "17" },
-          { text: "Guava", value: "15" },
+        text: "Watery",
+        value: "Watery",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "Watery-Sweet",
+            groupOptions: [
+              { text: "Watermelon", value: "7" },
+              { text: "Pear", value: "19" },
+              { text: "Grape", value: "4" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "Watery-Balanced",
+            groupOptions: [
+              { text: "Apple", value: "1" },
+              { text: "Papaya", value: "11" },
+            ],
+            groupSetting: { collapsible: true },
+          },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
       {
-        category: "Tangy",
-        options: [
-          { text: "Orange", value: "3" },
-          { text: "Kiwi", value: "10" },
-          { text: "Pineapple", value: "5" },
-          { text: "Pomegranate", value: "20" },
-          { text: "Cherry", value: "12" },
+        text: "Tangy",
+        value: "Tangy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "Tangy-Sweet",
+            groupOptions: [
+              { text: "Orange", value: "3" },
+              { text: "Pineapple", value: "5" },
+              { text: "Lychee", value: "17" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "Tangy-Balanced",
+            groupOptions: [
+              { text: "Kiwi", value: "10" },
+              { text: "Pomegranate", value: "20" },
+              { text: "Cherry", value: "12" },
+            ],
+            groupSetting: { collapsible: true },
+          },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
       {
-        category: "Watery",
-        options: [
-          { text: "Watermelon", value: "7" },
-          { text: "Apple", value: "1" },
-          { text: "Pear", value: "19" },
-          { text: "Grape", value: "4" },
-        ],
-        collapsible: true,
-      },
-      {
-        category: "Berry",
-        options: [
-          { text: "Strawberry", value: "6" },
-          { text: "Blueberry", value: "9" },
-          { text: "Raspberry", value: "16" },
-        ],
-        collapsible: true,
-      },
-      {
-        category: "Creamy",
-        options: [
+        text: "Creamy",
+        value: "Creamy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "Creamy-Sweet",
+            groupOptions: [
+              { text: "Banana", value: "2" },
+              { text: "Mango", value: "8" },
+              { text: "Peach", value: "13" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "Creamy-Balanced",
+            groupOptions: [{ text: "Plum", value: "14" }],
+            groupSetting: { collapsible: true },
+          },
           { text: "Coconut", value: "18" },
-          { text: "Peach", value: "13" },
-          { text: "Plum", value: "14" },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Berry",
+        value: "Berry",
+        groupOptions: [
+          {
+            text: "Balanced",
+            value: "Berry-Balanced",
+            groupOptions: [
+              { text: "Strawberry", value: "6" },
+              { text: "Blueberry", value: "9" },
+              { text: "Raspberry", value: "16" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+        ],
+        groupSetting: { collapsible: true },
       },
       { text: "Peppers", value: "99" },
       { text: "Eggplants", value: "100", hidden: true },
@@ -801,13 +845,10 @@ export const Categorized: Story = {
 
     const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
       FRUIT_OPTIONS.map((item) => {
-        if ("category" in item && item.options) {
-          return {
-            ...item,
-            initialState: "opened",
-          };
-        }
-        return item;
+        return {
+          ...item,
+          initialState: "opened",
+        };
       });
 
     return (
