@@ -847,7 +847,10 @@ export const Categorized: Story = {
       FRUIT_OPTIONS.map((item) => {
         return {
           ...item,
-          initialState: "opened",
+          groupSetting: {
+            ...item?.groupSetting,
+            initialState: "opened",
+          },
         };
       });
 
