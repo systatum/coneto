@@ -4,6 +4,7 @@ import React, {
   HTMLAttributes,
   ReactNode,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { RiArrowRightSLine, RiDraggable } from "@remixicon/react";
@@ -20,7 +21,13 @@ import { applyClassName } from "./../constants/classname";
 export interface TreeListProps
   extends Omit<
     HTMLAttributes<HTMLDivElement>,
-    "style" | "onChange" | "content"
+    | "style"
+    | "onChange"
+    | "content"
+    | "onMouseDown"
+    | "onMouseMove"
+    | "onKeyDown"
+    | "onMouseEnter"
   > {
   content: TreeListContent[];
   children?: ReactNode;
@@ -39,6 +46,33 @@ export interface TreeListProps
   styles?: TreeListStyles;
   id?: string;
   arrowSize?: number;
+  ref?: (props: { el: HTMLDivElement | null; item: TreeListContent }) => void;
+  onKeyDown?: (props: {
+    event?: React.KeyboardEvent;
+    item?: TreeListContent;
+  }) => void;
+  onMouseMove?: (props: {
+    event?: React.MouseEvent;
+    item?: TreeListContent;
+  }) => void;
+  onMouseEnter?: (props: {
+    event: React.MouseEvent;
+    item?: TreeListContent;
+  }) => void;
+  // treelist.item
+  refItem?: (props: { el: HTMLLIElement | null; item: TreeListItem }) => void;
+  onKeyDownItem?: (props: {
+    event?: React.KeyboardEvent;
+    item?: TreeListItem;
+  }) => void;
+  onMouseMoveItem?: (props: {
+    event?: React.MouseEvent;
+    item?: TreeListItem;
+  }) => void;
+  onMouseEnterItem?: (props: {
+    event: React.MouseEvent;
+    item?: TreeListItem;
+  }) => void;
 }
 
 export interface TreeListStyles {
@@ -174,6 +208,15 @@ function TreeList({
   className,
   id,
   arrowSize = 20,
+  ref,
+  onKeyDown,
+  onMouseEnter,
+  onMouseMove,
+  // for treelist.item
+  refItem,
+  onKeyDownItem,
+  onMouseEnterItem,
+  onMouseMoveItem,
   ...props
 }: TreeListProps) {
   const { currentTheme } = useTheme();
@@ -265,7 +308,6 @@ function TreeList({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TreeListWrapper
-        {...props}
         id={id}
         aria-label="tree-list-wrapper"
         className={applyClassName("tree-list", className)}
@@ -406,6 +448,9 @@ function TreeList({
             <GroupWrapper $style={styles?.containerGroupStyle} key={index}>
               {item.caption && (
                 <GroupTitleWrapper
+                  {...props}
+                  ref={(el) => ref?.({ el: el, item: item })}
+                  onKeyDown={(event) => onKeyDown({ event: event, item: item })}
                   data-has-options={item?.className?.includes(
                     "has-group-options"
                   )}
@@ -421,16 +466,18 @@ function TreeList({
                     }
                   }}
                   $collapsible={item?.collapsible ?? collapsible}
-                  onMouseLeave={() => {
+                  onMouseLeave={(e) => {
                     setIsHovered(null);
                   }}
-                  onMouseEnter={() => {
+                  onMouseMove={(e) => {
+                    onMouseMove?.({ event: e, item: item });
+                  }}
+                  onMouseEnter={(e) => {
+                    onMouseEnter?.({ event: e, item: item });
                     setIsHovered(item.id);
                   }}
                 >
-                  <GroupTitle $style={styles?.titleStyle}>
-                    {item.caption}
-                  </GroupTitle>
+                  <Title $style={styles?.titleStyle}>{item.caption}</Title>
 
                   {item.actions &&
                     (() => {
@@ -530,6 +577,10 @@ function TreeList({
                             <TreeListItem
                               key={val.id}
                               item={{ ...val }}
+                              onKeyDownItem={onKeyDownItem}
+                              onMouseMoveItem={onMouseMoveItem}
+                              onMouseEnterItem={onMouseEnterItem}
+                              refItem={refItem}
                               canContainChildren={
                                 val.canContainChildren ?? true
                               }
@@ -737,6 +788,23 @@ interface TreeListItemComponent<T extends TreeListItem> {
   alwaysShowDragIcon?: boolean;
   canContainChildren?: boolean;
   arrowSize?: number;
+  onKeyDownItem?: (props: {
+    event: React.KeyboardEvent;
+    item: TreeListItem;
+  }) => void;
+  onMouseMoveItem?: (props: {
+    event: React.MouseEvent;
+    item: TreeListItem;
+  }) => void;
+  onMouseEnterItem?: (props: {
+    event: React.MouseEvent;
+    item: TreeListItem;
+  }) => void;
+  onMouseDownItem?: (props: {
+    event: React.MouseEvent;
+    item: TreeListItem;
+  }) => void;
+  refItem?: (props: { el: HTMLLIElement | null; item: TreeListItem }) => void;
 }
 
 interface TreeListItemStyles {
@@ -816,9 +884,20 @@ function TreeListItem<T extends TreeListItem>({
   setOpenRowId,
   canContainChildren,
   arrowSize,
+  onKeyDownItem,
+  onMouseEnterItem,
+  onMouseMoveItem,
+  onMouseDownItem,
+  refItem,
 }: TreeListItemComponent<T> & TreeListOpenWithId) {
   const { currentTheme } = useTheme();
   const treeListTheme = currentTheme.treelist;
+
+  const itemRef = React.useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    refItem?.({ el: itemRef.current, item });
+  }, [itemRef.current]);
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
@@ -833,9 +912,6 @@ function TreeListItem<T extends TreeListItem>({
 
   const escapedTerm = escapeRegExp(searchTerm.trim());
   const regex = new RegExp(`(${escapedTerm})`, "gi");
-  const parts = escapedTerm
-    ? String(item.caption).split(regex)
-    : [String(item.caption)];
 
   const setToggleItem = (id: string) => {
     setIsOpen(id);
@@ -859,6 +935,7 @@ function TreeListItem<T extends TreeListItem>({
       }}
     >
       <TreeListItemWrapper
+        ref={itemRef}
         draggable={draggable}
         role="button"
         data-group-id={groupId}
@@ -867,10 +944,18 @@ function TreeListItem<T extends TreeListItem>({
         data-selected={isSelected === item.id}
         $isSelected={isSelected === item.id}
         $showHierarchyLine={showHierarchyLine}
+        onKeyDown={(e) => {
+          onKeyDownItem?.({ event: e, item });
+        }}
         onMouseDown={async (e) => {
           e.preventDefault();
           let prevent = false;
           let withoutSelection = false;
+
+          onMouseDownItem?.({
+            event: e,
+            item,
+          });
 
           if (item.onClick) {
             await item.onClick({
@@ -976,11 +1061,15 @@ function TreeListItem<T extends TreeListItem>({
             newPosition: clampedPosition,
           });
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(e) => {
           setIsHovered(null);
           setDropIntent(null);
+          onMouseMoveItem?.({ event: e, item });
         }}
-        onMouseEnter={() => setIsHovered(item.id)}
+        onMouseEnter={(e) => {
+          setIsHovered(item.id);
+          onMouseEnterItem?.({ event: e, item });
+        }}
         $level={level + 1}
       >
         {item.iconOnActive && isSelected === item.id ? (
@@ -1015,22 +1104,27 @@ function TreeListItem<T extends TreeListItem>({
             size={arrowSize}
           />
         )}
-        <div
+        <Title
           aria-label="tree-list-caption"
-          style={{
-            width: "100%",
-          }}
+          $style={css`
+            display: flex;
+            flex-direction: row;
+            padding: 0px;
+            gap: 10px;
+            align-items: center;
+          `}
         >
-          {parts.map((part, index) =>
-            part.toLowerCase() === searchTerm.toLowerCase() ? (
-              <HighlightedText $theme={treeListTheme} key={index}>
-                {part}
-              </HighlightedText>
-            ) : (
-              <span key={index}>{part}</span>
-            )
-          )}
-        </div>
+          {typeof item.caption === "string"
+            ? (escapedTerm ? item.caption.split(regex) : [item.caption]).map(
+                (part, index) =>
+                  part.toLowerCase() === searchTerm.toLowerCase() ? (
+                    <HighlightedText key={index}>{part}</HighlightedText>
+                  ) : (
+                    <span key={index}>{part}</span>
+                  )
+              )
+            : item.caption}
+        </Title>
         {item.actions &&
           (() => {
             const listActions = item.actions;
@@ -1181,6 +1275,11 @@ function TreeListItem<T extends TreeListItem>({
                       arrowStyle: styles?.arrowStyle,
                       hierarchyLineStyle: styles?.hierarchyLineStyle,
                     }}
+                    onKeyDownItem={onKeyDownItem}
+                    onMouseMoveItem={onMouseMoveItem}
+                    onMouseEnterItem={onMouseEnterItem}
+                    refItem={refItem}
+                    onMouseDownItem={onMouseDownItem}
                     arrowSize={arrowSize}
                     item={child}
                     isSelected={isSelected}
@@ -1417,7 +1516,7 @@ const GroupTitleWrapper = styled.div<{
   ${({ $style }) => $style};
 `;
 
-const GroupTitle = styled.span<{
+const Title = styled.span<{
   $style?: CSSProp;
 }>`
   font-weight: 500;
