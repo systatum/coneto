@@ -359,7 +359,7 @@ export const WithActions: Story = {
       },
       {
         onClick: () => {
-          console.log(`delete this ${id}`);
+          console.log(`copy this ${id}`);
         },
         icon: { image: RemixIcons.RiFileCopyLine },
       },
@@ -377,7 +377,7 @@ export const WithActions: Story = {
 
     const FRUIT_ACTIONS: ComboboxAction[] = [
       {
-        title: "Add Fruit",
+        caption: "Add Fruit",
         onClick: () => {
           console.log("New fruit added");
         },

@@ -458,7 +458,7 @@ export type PinboxStyles = BasePinboxStyles & FieldLaneStyles;
 
 export interface PinboxProps
   extends Omit<BasePinboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: PinboxStyles;
 }
 
@@ -469,7 +469,6 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       showError,
       styles,
       errorMessage,
-      actions,
       helper,
       disabled,
       name,
@@ -504,7 +503,6 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         labelPosition={labelPosition}
         showError={showError}
         errorMessage={errorMessage}
-        actions={actions}
         helper={helper}
         disabled={disabled}
         label={label}

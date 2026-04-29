@@ -158,7 +158,7 @@ export type CheckboxStyles = BaseCheckboxStyles & FieldLaneStyles;
 
 export interface CheckboxProps
   extends Omit<BaseCheckboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CheckboxStyles;
 }
 
@@ -167,7 +167,6 @@ function Checkbox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -202,7 +201,6 @@ function Checkbox({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={title}

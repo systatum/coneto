@@ -437,6 +437,7 @@ describe("Table", () => {
         },
       },
     ];
+
     const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
 
     function RowContent({
@@ -894,7 +895,7 @@ describe("Table", () => {
       },
       {
         hidden: true,
-        caption: "Arhive",
+        caption: "Archive",
         icon: { image: RiArchive2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was archive`);
@@ -1444,6 +1445,7 @@ describe("Table", () => {
     context("when given default", () => {
       const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
+          id: "copy",
           caption: "Copy",
           icon: { image: RiArrowUpSLine },
           onClick: () => {

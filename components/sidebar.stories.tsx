@@ -140,7 +140,7 @@ export const Default: Story = {
               content={FILTERED_CONTENT}
               emptySlate={
                 <EmptySlate
-                  imageUrl="https://picsum.photos/200?random=1"
+                  icon={{ image: "https://picsum.photos/200?random=1" }}
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
                   styles={{
@@ -152,30 +152,15 @@ export const Default: Story = {
                       maxWidth: "200px",
                     },
                   }}
-                  actions={
-                    <>
-                      <Button
-                        variant="default"
-                        styles={{
-                          self: {
-                            fontSize: "12px",
-                          },
-                        }}
-                      >
-                        Clear Search
-                      </Button>
-                      <Button
-                        variant="primary"
-                        styles={{
-                          self: {
-                            fontSize: "12px",
-                          },
-                        }}
-                      >
-                        Add Member
-                      </Button>
-                    </>
-                  }
+                  actions={[
+                    {
+                      caption: "Add Item",
+                    },
+                    {
+                      caption: "Learn More",
+                      variant: "primary",
+                    },
+                  ]}
                 />
               }
               searchTerm={value.caption}
@@ -279,7 +264,7 @@ export const FixedRight: Story = {
               content={FILTERED_CONTENT}
               emptySlate={
                 <EmptySlate
-                  imageUrl="https://picsum.photos/200?random=1"
+                  icon={{ image: "https://picsum.photos/200?random=1" }}
                   title="No Matches"
                   subtitle="We couldn't find any person or team that matches your search."
                   styles={{
@@ -291,30 +276,15 @@ export const FixedRight: Story = {
                       maxWidth: "200px",
                     },
                   }}
-                  actions={
-                    <>
-                      <Button
-                        variant="default"
-                        styles={{
-                          self: {
-                            fontSize: "12px",
-                          },
-                        }}
-                      >
-                        Clear Search
-                      </Button>
-                      <Button
-                        variant="primary"
-                        styles={{
-                          self: {
-                            fontSize: "12px",
-                          },
-                        }}
-                      >
-                        Add Member
-                      </Button>
-                    </>
-                  }
+                  actions={[
+                    {
+                      caption: "Add Item",
+                    },
+                    {
+                      caption: "Learn More",
+                      variant: "primary",
+                    },
+                  ]}
                 />
               }
               searchTerm={value.caption}

@@ -11,6 +11,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -389,6 +390,8 @@ export interface TimeboxProps
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
   styles?: TimeboxStyles & FieldLaneStyles;
 }
+
+export type TimeboxAction = FieldLaneAction;
 
 const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
   ({ ...props }, ref) => {

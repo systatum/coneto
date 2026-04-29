@@ -234,7 +234,7 @@ export const Default: Story = {
           title="Confirm Action"
           subtitle="Are you sure you want to delete?"
           closable={true}
-          buttons={BUTTONS}
+          actions={BUTTONS}
           onClick={({ closeDialog }) => {
             closeDialog();
           }}

@@ -215,7 +215,7 @@ export type ImageboxStyles = BaseImageboxStyles & FieldLaneStyles;
 
 export interface ImageboxProps
   extends Omit<BaseImageboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ImageboxStyles;
 }
 
@@ -224,7 +224,6 @@ function Imagebox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -258,7 +257,6 @@ function Imagebox({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={label}

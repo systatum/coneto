@@ -137,7 +137,7 @@ export type RadioStyles = BaseRadioStyles & FieldLaneStyles;
 
 export interface RadioProps
   extends Omit<BaseRadioProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RadioStyles;
 }
 
@@ -146,7 +146,6 @@ function Radio({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -182,7 +181,6 @@ function Radio({
       showError={showError}
       errorMessage={errorMessage}
       label={title}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       className={applyClassName("radio", className)}

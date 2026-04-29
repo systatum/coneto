@@ -1,4 +1,4 @@
-import { NavTab, NavTabTabProps } from "./../../components/nav-tab";
+import { NavTab, NavTabTab } from "./../../components/nav-tab";
 import { Card } from "./../../components/card";
 import {
   RiAddBoxLine,
@@ -1149,7 +1149,7 @@ const TOP_ACTIONS: TableAction[] = [
   },
 ];
 
-const TABS_ITEMS: NavTabTabProps[] = [
+const TABS_ITEMS: NavTabTab[] = [
   {
     id: "1",
     title: "Write",

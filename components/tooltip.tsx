@@ -180,6 +180,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
         ref={refs.setReference}
       >
         <ContentTrigger
+          id={id}
           aria-label="tooltip-trigger"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();

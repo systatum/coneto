@@ -236,7 +236,7 @@ export const WithActions: Story = {
   render: (args: AvatarProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const BUTTONS: ModalDialogButton[] = [
+    const ACTIONS: ModalDialogButton[] = [
       {
         id: "cancel",
         caption: "Cancel",
@@ -265,7 +265,7 @@ export const WithActions: Story = {
           title="Confirm Action"
           subtitle="Are you sure you want to continue?"
           closable={true}
-          buttons={BUTTONS}
+          actions={ACTIONS}
           onClick={({ closeDialog }) => {
             closeDialog();
           }}

@@ -174,7 +174,7 @@ export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
   extends Omit<BaseRatingProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RatingStyles;
 }
 
@@ -183,7 +183,6 @@ function Rating({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -216,7 +215,6 @@ function Rating({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={label}

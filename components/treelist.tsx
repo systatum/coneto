@@ -15,6 +15,7 @@ import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { TreeListThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
 export interface TreeListProps
@@ -106,14 +107,10 @@ export interface TreeListItemOnClick {
   preventDefault?: () => void;
 }
 
-export interface TreeListAction {
-  id: string;
-  caption?: string;
+export interface TreeListAction extends Omit<BaseAction, "onClick"> {
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
-  icon?: FigureProps;
   styles?: { self?: CSSProp };
   subMenu?: (props: TreeListSubMenu) => ReactNode;
-  hidden?: boolean;
 }
 
 type TreeListSubMenu = Omit<ButtonSubMenu, "list">;
@@ -307,6 +304,9 @@ function TreeList({
                       {...tooltipBaseProps}
                       dialog={children}
                       styles={{
+                        triggerStyle: css`
+                          width: 100%;
+                        `,
                         arrowStyle: (placement) => {
                           return (
                             withArrow &&
@@ -335,6 +335,9 @@ function TreeList({
                           color: black;
                           border: 1px solid #e5e7eb;
                           ${drawerStyle}
+                        `,
+                        containerStyle: css`
+                          width: 100%;
                         `,
                       }}
                     >
@@ -579,13 +582,10 @@ function TreeList({
   );
 }
 
-interface TreeListActionInternalProps {
+interface TreeListActionInternalProps extends BaseAction {
   isSelected?: boolean;
   isActive?: boolean;
-  onClick?: () => void;
   styles?: { self?: CSSProp };
-  icon?: FigureProps;
-  caption?: string;
 }
 
 function TreeListAction({
@@ -595,13 +595,22 @@ function TreeListAction({
   caption,
   icon,
   styles,
+  disabled,
+  hidden,
+  id,
 }: TreeListActionInternalProps) {
+  if (hidden) {
+    return;
+  }
+
   if (!onClick) onClick = () => {};
   const { currentTheme } = useTheme();
   const treeListTheme = currentTheme.treelist;
 
   return (
     <ActionItem
+      id={id}
+      $disabled={disabled}
       $theme={treeListTheme}
       $isActive={isActive}
       $isSelected={isSelected}
@@ -1264,6 +1273,7 @@ const ActionItem = styled.div<{
   $isSelected?: boolean;
   $isActive?: boolean;
   $theme?: TreeListThemeConfig;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -1292,6 +1302,14 @@ const ActionItem = styled.div<{
     css`
       background-color: ${$theme?.selectedBackgroundColor};
       border-left: 3px solid ${$theme?.dividerHierarchySelectedColor};
+    `}
+
+${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.6;
+      user-select: none;
+      cursor: not-allowed;
     `}
   ${(props) => props.$style}
 `;

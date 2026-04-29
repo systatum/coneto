@@ -23,6 +23,7 @@ import {
   useTheme,
 } from "./../theme/provider";
 import { DialogThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
@@ -47,7 +48,7 @@ export interface DialogProps {
   closable?: boolean;
   styles?: DialogStyles;
   onClick?: (args: { buttonId: string; closeDialog: () => void }) => void;
-  buttons?: DialogButton[];
+  actions?: DialogAction[];
   title?: ReactNode;
   subtitle?: ReactNode;
   icon?: FigureProps;
@@ -65,14 +66,14 @@ export interface DialogStyles {
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
-  buttonWrapperStyle?: CSSProp;
+  actionWrapperStyle?: CSSProp;
 }
 
-export interface DialogButton extends Pick<ButtonVariants, "variant"> {
+export interface DialogAction
+  extends Omit<BaseAction, "onClick">,
+    Pick<ButtonVariants, "variant"> {
   id: string;
-  caption: string;
   isLoading?: boolean;
-  disabled?: boolean;
   styles?: ButtonStyles;
   className?: string;
 }
@@ -85,7 +86,7 @@ function Dialog({
   styles,
   title,
   subtitle,
-  buttons,
+  actions,
   onClick,
   icon,
   onClosed,
@@ -229,28 +230,31 @@ function Dialog({
           </Body>
         )}
 
-        {buttons && (
-          <Footer $style={styles?.buttonWrapperStyle}>
-            {buttons.map((button, index) => (
-              <Button
-                key={index}
-                isLoading={button.isLoading}
-                disabled={button.disabled}
-                variant={button.variant}
-                id={button.id}
-                className={button.className}
-                onClick={() => onClick?.({ buttonId: button.id, closeDialog })}
-                styles={{
-                  ...button?.styles,
-                  self: css`
-                    min-width: 100px;
-                    ${button?.styles?.self}
-                  `,
-                }}
-              >
-                {button.caption}
-              </Button>
-            ))}
+        {actions && (
+          <Footer $style={styles?.actionWrapperStyle}>
+            {actions.map((action, index) => {
+              if (action.disabled) return;
+              return (
+                <Button
+                  key={index}
+                  isLoading={action.isLoading}
+                  disabled={action.disabled}
+                  variant={action.variant}
+                  onClick={() =>
+                    onClick?.({ buttonId: action.id, closeDialog })
+                  }
+                  styles={{
+                    ...action?.styles,
+                    self: css`
+                      min-width: 100px;
+                      ${action?.styles?.self}
+                    `,
+                  }}
+                >
+                  {action.caption}
+                </Button>
+              );
+            })}
           </Footer>
         )}
 
