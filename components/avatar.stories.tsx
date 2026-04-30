@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AvatarProps } from "./avatar";
 import { ChangeEvent, useState } from "react";
-import { ModalDialog, ModalDialogButton } from "./modal-dialog";
+import { ModalDialog, ModalDialogAction } from "./modal-dialog";
 import { Avatar } from "./avatar";
 
 const meta: Meta<typeof Avatar> = {
@@ -236,7 +236,7 @@ export const WithActions: Story = {
   render: (args: AvatarProps) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const ACTIONS: ModalDialogButton[] = [
+    const ACTIONS: ModalDialogAction[] = [
       {
         id: "cancel",
         caption: "Cancel",
