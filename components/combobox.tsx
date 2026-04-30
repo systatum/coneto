@@ -892,6 +892,8 @@ function ComboboxDrawer({
               `,
 
               hierarchyLineStyle: css`
+                border-left-width: 2px;
+
                 &[data-level="0"] {
                   border-left: none !important;
                 }
