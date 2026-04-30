@@ -901,6 +901,10 @@ function ComboboxDrawer({
                     : treeListTheme?.dividerHierarchyColor};
                 }
 
+                &[data-level="0"] {
+                  border-left: none !important;
+                }
+
                 &[aria-label="vertical-line-level"] {
                   border-left: none !important;
                 }
