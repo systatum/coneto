@@ -1288,6 +1288,7 @@ function TreeListItem<T extends TreeListItem>({
           <TreeListHierarchyVerticalLine
             $theme={treeListTheme}
             aria-label="vertical-line"
+            data-level={level}
             $level={level}
             $isSameLevel={isSameLevel}
             $style={styles?.hierarchyLineStyle}
@@ -1314,6 +1315,7 @@ function TreeListItem<T extends TreeListItem>({
           return (
             <TreeListHierarchyVerticalLine
               key={idx}
+              data-level={idx}
               $theme={treeListTheme}
               aria-label="vertical-line-level"
               $level={idx}
