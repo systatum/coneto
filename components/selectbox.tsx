@@ -202,8 +202,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       "keyboard" | "mouse"
     >("mouse");
 
-    console.log(highlightedIndex);
-
     const [confirmedValue, setConfirmedValue] =
       useState<SelectboxOption | null>(null);
 
@@ -252,7 +250,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
       setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
-      setHighlightedIndex(0);
+
+      const hasMatch = finalOptions.some((opt) =>
+        opt.text.toLowerCase().includes(value.toLowerCase())
+      );
+      setHighlightedIndex(hasMatch ? 0 : null);
     };
 
     const justCommittedRef = useRef(false);
