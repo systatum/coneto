@@ -387,8 +387,9 @@ function ComboboxDrawer({
   styles,
   navigableOptions,
 }: ComboboxDrawerProps) {
-  const { currentTheme } = useTheme();
+  const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
+  const treeListTheme = currentTheme?.treelist;
 
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -893,6 +894,12 @@ function ComboboxDrawer({
 
               hierarchyLineStyle: css`
                 border-left-width: 2px;
+
+                &[data-selected="false"] {
+                  border-color: ${mode === "light"
+                    ? "rgb(215, 214, 214)}"
+                    : treeListTheme?.dividerHierarchyColor};
+                }
 
                 &[aria-label="vertical-line-level"] {
                   border-left: none !important;
