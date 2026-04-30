@@ -23,7 +23,6 @@ import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
-import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 import {
   TreeList,
@@ -66,19 +65,18 @@ export const ComboboxGroupInitialState = {
 export type ComboboxGroupInitialState =
   (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
 
-export type ComboboxOption = ComboboxSingleOption & {
-  groupOptions?: ComboboxOption[];
-  groupSetting?: ComboboxGroupSetting;
-};
+export type ComboboxOption = SelectboxOption &
+  ComboboxActionOption & {
+    groupOptions?: ComboboxOption[];
+    groupSetting?: ComboboxGroupSetting;
+  };
 
 interface ComboboxGroupSetting {
   collapsible?: boolean;
   initialState?: ComboboxGroupInitialState;
 }
 
-export type ComboboxSingleOption = SelectboxOption & ComboboxActionOption;
-
-export interface ComboboxActionOption {
+interface ComboboxActionOption {
   actions?: (id?: string) => ComboboxItemAction[];
 }
 
@@ -527,7 +525,7 @@ function ComboboxDrawer({
       }
     };
 
-    registerAll(options);
+    registerAll(finalOptions);
 
     const renderCaption = (opt: ComboboxOption): ReactNode => {
       const isSelected = finalSelectedOptions.includes(String(opt.value));
@@ -646,7 +644,7 @@ function ComboboxDrawer({
       };
     };
 
-    return options.filter((opt) => !opt.hidden).map(mapToContent);
+    return finalOptions.filter((opt) => !opt.hidden).map(mapToContent);
   };
 
   const onMouseDown = (props: {
@@ -815,6 +813,7 @@ function ComboboxDrawer({
               });
             }}
             arrowSize={14}
+            maxActionsBeforeCollapsing={1}
             actions={filteredActions}
             styles={{
               actionWrapperStyle: css`
