@@ -385,6 +385,28 @@ describe("Combobox", () => {
       });
     });
 
+    context("style", () => {
+      it("renders border-left 2px solid rgb(215, 214, 214)", () => {
+        cy.findByText("Watery").click();
+        cy.findByText("Sweet").click();
+        cy.findAllByLabelText("vertical-line")
+          .eq(3)
+          .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+      });
+
+      context("relation vertical line level", () => {
+        it("renders border-left none", () => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+          cy.findAllByLabelText("vertical-line-level").should(
+            "have.css",
+            "border",
+            ""
+          );
+        });
+      });
+    });
+
     it("should not reveal the option", () => {
       MIX_FRUIT_OPTIONS.flatMap((option) => {
         if (option.text !== "Berry" && option.text !== "Eggplants") {
@@ -426,6 +448,8 @@ describe("Combobox", () => {
           cy.findByText(option?.text).should("not.exist");
         });
 
+        cy.findByText("Watery").click();
+
         cy.findByText("Sweet").click();
         cy.findByText("Balanced").click();
 
@@ -439,6 +463,8 @@ describe("Combobox", () => {
           expectedText.map((option) => {
             cy.findByText(option?.text).should("not.exist");
           });
+
+          cy.findByText("Watery").click();
 
           cy.findByText("Sweet").click();
           cy.findByText("Balanced").click();
