@@ -4,7 +4,6 @@ import React, {
   HTMLAttributes,
   ReactNode,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import { RiArrowRightSLine, RiDraggable } from "@remixicon/react";
@@ -83,6 +82,7 @@ export interface TreeListProps
     item?: TreeListContent;
   }) => void;
   multiple?: boolean;
+  maxActionsBeforeCollapsing?: number;
 }
 
 export interface TreeListStyles extends TreeListItemStyles {
@@ -228,6 +228,7 @@ function TreeList({
   onMouseDownItem,
   multiple,
   selectedItems: _selectedItems = "",
+  maxActionsBeforeCollapsing = 2,
   ...props
 }: TreeListProps) {
   const { currentTheme } = useTheme();
@@ -237,16 +238,6 @@ function TreeList({
   function normaliseSelected(value: string | string[] | undefined): string[] {
     if (value === undefined || value === null) return [];
     return Array.isArray(value) ? value : [value];
-  }
-
-  /** Check whether an id is in the selection. */
-  function isIdSelected(
-    selection: string | string[] | undefined,
-    id: string
-  ): boolean {
-    if (!selection) return false;
-    if (Array.isArray(selection)) return selection.includes(id);
-    return selection === id;
   }
 
   const [dragItem, setDragItem] = useState(null);
@@ -519,7 +510,7 @@ function TreeList({
                   data-highlighted={item?.className?.includes("is-highlighted")}
                   aria-expanded={isOpen[item.id]}
                   $style={styles?.textWrapperStyle}
-                  aria-label="treelist-group-title"
+                  aria-label="tree-list-group-title"
                   onMouseDown={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -542,6 +533,7 @@ function TreeList({
                   }}
                 >
                   <Title
+                    role="option"
                     data-has-options={item?.className?.includes(
                       "has-group-options"
                     )}
@@ -579,7 +571,9 @@ function TreeList({
                             }
                           }}
                           open={openRowId === item.id}
-                          maxActionsBeforeCollapsing={2}
+                          maxActionsBeforeCollapsing={
+                            maxActionsBeforeCollapsing
+                          }
                           actions={actionsWithIcons}
                           styles={{
                             containerStyle: css`
