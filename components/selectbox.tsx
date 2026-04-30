@@ -43,6 +43,7 @@ export type SelectboxSelectedOptions = number | string | number[] | string[];
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: SelectboxOption[];
+  navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
@@ -142,6 +143,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       labels,
       disabled,
       className,
+      navigableOptions,
       ...props
     },
     ref
@@ -199,6 +201,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const [interactionMode, setInteractionMode] = useState<
       "keyboard" | "mouse"
     >("mouse");
+
+    console.log(highlightedIndex);
 
     const [confirmedValue, setConfirmedValue] =
       useState<SelectboxOption | null>(null);
@@ -297,7 +301,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
-      const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
+      const totalItems = (actions?.length ?? 0) + navigableOptions.length - 1;
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         setInteractionMode("keyboard");
@@ -339,7 +343,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
         const selectedOption =
           highlightedIndex !== null
-            ? FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)]
+            ? navigableOptions[highlightedIndex - (actions?.length ?? 0)]
             : undefined;
 
         if (multiple) {
@@ -362,7 +366,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }
 
         requestAnimationFrame(() => {
-          setHighlightedIndex(null);
+          if (!multiple) {
+            setHighlightedIndex(null);
+          }
         });
       }
 
@@ -380,7 +386,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }
 
         requestAnimationFrame(() => {
-          setHighlightedIndex(null);
+          if (!multiple) {
+            setHighlightedIndex(null);
+          }
         });
       }
     };
@@ -500,7 +508,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            setHasInteracted(false);
+            if (!multiple) {
+              setHasInteracted(false);
+            }
 
             if (strict && !multiple) {
               if (justCommittedRef.current) {
