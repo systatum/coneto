@@ -291,7 +291,7 @@ describe("Button", () => {
             );
 
             cy.findByLabelText("button-toggle").click();
-            cy.findByLabelText("button-tip-menu-container").should(
+            cy.findByLabelText("tip-menu").should(
               "have.css",
               "border-color",
               "rgb(229, 231, 235)"
@@ -412,7 +412,7 @@ describe("Button", () => {
             "This button uses a render function to show custom content inside TipMenu."
           ).should("exist");
           cy.findByText("Got it").should("exist");
-          cy.findByLabelText("button-tip-menu-container").should("exist");
+          cy.findByLabelText("tip-menu").should("exist");
         });
       });
     });
@@ -462,7 +462,7 @@ describe("Button", () => {
             "This button uses a render function to show custom content inside TipMenu."
           ).should("exist");
           cy.findByText("Got it").should("exist");
-          cy.findByLabelText("button-tip-menu-container").should("exist");
+          cy.findByLabelText("tip-menu").should("exist");
         });
       });
 

@@ -194,7 +194,7 @@ describe("Treelist", () => {
 
         cy.findAllByLabelText("action-button").eq(0).should("not.be.visible");
 
-        cy.findAllByLabelText("treelist-group-title")
+        cy.findAllByLabelText("tree-list-group-title")
           .eq(0)
           .trigger("mouseover");
 
@@ -218,7 +218,7 @@ describe("Treelist", () => {
 
           cy.findAllByLabelText("action-button").eq(0).should("not.be.visible");
 
-          cy.findAllByLabelText("treelist-group-title")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(0)
             .trigger("mouseover");
 
