@@ -31,7 +31,6 @@ import {
   TreeListContent,
   TreeListItem,
   TreeListItemAction,
-  TreeListItemStyles,
 } from "./treelist";
 import { Searchbox } from "./searchbox";
 import { Checkbox } from "./checkbox";
@@ -537,7 +536,12 @@ function ComboboxDrawer({
             <Checkbox
               styles={{
                 containerStyle: css`
-                  margin-top: 1px;
+                  margin-top: 2px;
+
+                  ${opt?.render &&
+                  css`
+                    margin-top: 3px;
+                  `}
                 `,
                 iconStyle: css`
                   width: 8px;
@@ -876,7 +880,6 @@ function ComboboxDrawer({
                 display: flex;
                 flex-direction: row;
                 gap: 6px;
-                align-items: center;
 
                 &[data-has-options="false"] {
                   font-weight: 400;
@@ -977,6 +980,10 @@ const rowStyle = ({
     &:hover {
       background-color: ${theme.highlightBackgroundColor};
     }
+  }
+
+  &[data-action-opened="true"] {
+    background-color: ${theme.highlightBackgroundColor};
   }
 
   &[data-selected="true"] {
