@@ -20,10 +20,10 @@ import {
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
-import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 import {
   TreeList,

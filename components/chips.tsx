@@ -27,7 +27,12 @@ import {
 import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import {
+  FieldLane,
+  FieldLaneAction,
+  FieldLaneProps,
+  FieldLaneStyles,
+} from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
@@ -495,7 +500,7 @@ export type ChipsStyles = BaseChipsStyles & FieldLaneStyles;
 
 export interface ChipsProps
   extends Omit<BaseChipsProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ChipsStyles;
 }
 
@@ -504,7 +509,6 @@ function Chips({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -535,7 +539,6 @@ function Chips({
       showError={showError}
       errorMessage={errorMessage}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       labelGap={labelGap}

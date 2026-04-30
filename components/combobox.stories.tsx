@@ -359,7 +359,7 @@ export const WithActions: Story = {
       },
       {
         onClick: () => {
-          console.log(`delete this ${id}`);
+          console.log(`copy this ${id}`);
         },
         icon: { image: RemixIcons.RiFileCopyLine },
       },

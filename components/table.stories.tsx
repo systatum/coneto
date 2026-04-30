@@ -1280,33 +1280,18 @@ export const WithEmptySlate: Story = {
 
     const TableEmptySlate = (
       <EmptySlate
-        imageUrl="https://picsum.photos/200?random=1"
+        icon={{ image: "https://picsum.photos/200?random=1" }}
         title="Manage your inventory transfers"
         subtitle="Track and receive your incoming inventory from suppliers."
-        actions={
-          <>
-            <Button
-              variant="default"
-              styles={{
-                self: {
-                  fontSize: "12px",
-                },
-              }}
-            >
-              Add Item
-            </Button>
-            <Button
-              variant="primary"
-              styles={{
-                self: {
-                  fontSize: "12px",
-                },
-              }}
-            >
-              Learn More
-            </Button>
-          </>
-        }
+        actions={[
+          {
+            caption: "Add Item",
+          },
+          {
+            caption: "Learn More",
+            variant: "primary",
+          },
+        ]}
       />
     );
 
@@ -2006,9 +1991,7 @@ export const WithRowGroup: Story = {
               item.category.toLowerCase().includes(search.toLowerCase()) ||
               item.author.toLowerCase().includes(search.toLowerCase())
           )
-          .filter((item) =>
-            activeTab.category === "taken" ? item.taken : item
-          )
+          .filter((item) => (activeTab.taken === "taken" ? item.taken : item))
           .filter((item) => {
             const active = activeTab.category.toLowerCase();
 
@@ -2059,6 +2042,7 @@ export const WithRowGroup: Story = {
               border-radius: 4px;
               max-height: 500px;
               overflow: auto;
+              background-color: white;
 
               scrollbar-width: thin;
 

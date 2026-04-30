@@ -10,6 +10,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -115,6 +116,8 @@ export interface TextboxProps
     Omit<FieldLaneProps, "styles" | "id" | "type"> {
   styles?: TextboxStyles & FieldLaneStyles;
 }
+
+export type TextboxAction = FieldLaneAction;
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   ({ ...props }, ref) => {

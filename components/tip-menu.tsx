@@ -7,6 +7,7 @@ import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
 import { Tooltip, TooltipRef } from "./tooltip";
 import { RiArrowRightSFill } from "@remixicon/react";
+import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
 export const TipMenuVariant = {
@@ -112,6 +113,7 @@ function TipMenu({
       {filteredSubMenuList?.map((menu, index) => (
         <TipMenu.Item
           key={index}
+          id={menu.id}
           variant={menu.variant ?? variant}
           caption={menu.caption}
           icon={menu.icon}
@@ -120,6 +122,7 @@ function TipMenu({
           subMenuList={menu.subMenuList}
           hidden={menu.hidden}
           disabled={menu.disabled}
+          className={menu.className}
           setIsOpen={setIsOpen}
           onClick={(e) => {
             e.stopPropagation();
@@ -139,19 +142,16 @@ function TipMenu({
   );
 }
 
-export interface TipMenuItemProps {
-  caption?: string;
-  icon?: FigureProps;
-  onClick?: (e?: React.MouseEvent) => void;
+export interface TipMenuItemProps extends BaseAction {
   variant?: TipMenuVariant;
   size?: TipMenuSize;
-  hidden?: boolean;
   subMenuList?: TipMenuItemProps[];
   styles?: TipMenuItemStyles;
-  disabled?: boolean;
   className?: string;
+  disabled?: boolean;
   id?: string;
 }
+
 export interface TipMenuItemStyles {
   containerStyle?: CSSProp;
   self?: CSSProp;

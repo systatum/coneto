@@ -6,24 +6,19 @@ import {
   ButtonShowSubMenuPosition,
 } from "./button";
 import { ReactNode } from "react";
-import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
+import { BaseAction } from "../constants/action";
 
 export type ActionButtonSubMenu = ButtonSubMenu;
 export type ActionButtonShowSubMenuPosition = ButtonShowSubMenuPosition;
 
-export interface ActionButtonProps {
-  caption?: string;
-  icon?: FigureProps;
-  onClick?: () => void;
+export interface ActionButtonProps extends BaseAction {
   styles?: ActionButtonStyles;
   subMenu?: (props: ActionButtonSubMenu) => ReactNode;
-  disabled?: boolean;
   showSubMenuOn?: ActionButtonShowSubMenuPosition;
   variant?: ButtonVariants["variant"];
   className?: string;
   pressed?: boolean;
-  hidden?: boolean;
 }
 
 export interface ActionButtonStyles {
@@ -46,6 +41,7 @@ export function ActionButton({
   className,
   pressed,
   hidden,
+  id,
 }: ActionButtonProps & { forTable?: boolean }) {
   const { currentTheme } = useTheme();
   const actionButtonTheme = currentTheme.actionButton;
@@ -55,6 +51,7 @@ export function ActionButton({
   }
   return (
     <Button
+      id={id}
       onMouseDown={(e) => {
         e.stopPropagation();
         if (onClick) {

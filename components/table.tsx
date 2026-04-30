@@ -31,6 +31,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Figure } from "./figure";
 
 export interface TableColumn {
   caption: string;
@@ -858,6 +859,17 @@ export interface TableRowGroupProps {
   subtitle?: string;
   selectable?: boolean;
   className?: string;
+  styles?: TableRowGroupStyles;
+}
+
+export interface TableRowGroupStyles {
+  containerStyle?: CSSProp;
+  headerStyle?: CSSProp;
+  bodyStyle?: CSSProp;
+  chevronStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  titleStyle?: CSSProp;
 }
 
 export interface TableRowCellProps {
@@ -881,6 +893,7 @@ function TableRowGroup({
   onLastRowReached,
   draggable,
   className,
+  styles,
   ...props
 }: TableRowGroupProps & {
   selectedData?: string[];
@@ -949,65 +962,113 @@ function TableRowGroup({
     <TableRowGroupContainer
       id={id}
       className={applyClassName("table-row-group", className)}
+      $style={styles?.containerStyle}
     >
-      <TableRowGroupSticky
+      <TableRowGroupHeader
         $theme={tableTheme}
+        aria-label="table-row-group-header"
         onClick={() => setIsOpen(!isOpen)}
+        $style={styles?.headerStyle}
       >
-        <RotatingIcon $isOpen={isOpen}>
-          <RiArrowDownSLine />
-        </RotatingIcon>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
+        <Figure
+          styles={{
+            self: css`
+              transition: transform 300ms;
+              margin-left: 6px;
+              ${isOpen &&
+              css`
+                transform: rotate(-180deg);
+              `};
+              ${styles?.chevronStyle}
+            `,
           }}
+          size={20}
+          aria-label="table-row-group-chevron"
+          image={RiArrowDownSLine}
+        />
+
+        <TableRowGroupTextWrapper
+          aria-label="table-row-group-text-wrapper"
+          $style={styles?.textWrapperStyle}
         >
-          {title && <span>{title}</span>}
+          {title && (
+            <TableRowGroupTitle
+              aria-label="table-row-group-title"
+              $style={styles?.titleStyle}
+            >
+              {title}
+            </TableRowGroupTitle>
+          )}
           {subtitle && (
-            <span
-              style={{
-                fontSize: "14px",
-                color: tableTheme?.rowSubtitleTextColor || "#1f2937",
-              }}
+            <TableRowGroupSubtitle
+              aria-label="table-row-group-subtitle"
+              $style={styles?.subtitleStyle}
+              color={tableTheme?.rowSubtitleTextColor}
             >
               {subtitle}
-            </span>
+            </TableRowGroupSubtitle>
           )}
-        </div>
-      </TableRowGroupSticky>
+        </TableRowGroupTextWrapper>
+      </TableRowGroupHeader>
 
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
+          <TableRowGroupBody
+            aria-label="table-row-group-body"
+            $style={styles?.bodyStyle}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {rowChildren}
-          </motion.div>
+          </TableRowGroupBody>
         )}
       </AnimatePresence>
     </TableRowGroupContainer>
   );
 }
 
-const TableRowGroupContainer = styled.div`
+const TableRowGroupTextWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupTitle = styled.span<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupSubtitle = styled.span<{
+  $color?: string;
+  $style?: CSSProp;
+}>`
+  font-size: 14px;
+  color: ${({ $color }) => $color || "#1f2937"};
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   position: relative;
   width: 100%;
   height: 100%;
   overflow-y: visible;
+  ${({ $style }) => $style}
 `;
 
-const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
+const TableRowGroupBody = styled(motion.div)<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style};
+`;
+
+const TableRowGroupHeader = styled.div<{
+  $theme?: TableThemeConfig;
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -1030,16 +1091,8 @@ const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
   contain: layout style paint;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
-`;
 
-const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
-  transition: transform 300ms;
-  margin-left: 2px;
-  ${(props) =>
-    props.$isOpen &&
-    css`
-      transform: rotate(-180deg);
-    `}
+  ${({ $style }) => $style}
 `;
 
 export type TableRowAction = TipMenuItemProps;

@@ -15,6 +15,7 @@ export interface ContextMenuProps {
   iconSize?: number;
   open?: boolean;
   styles?: ContextMenuStyles;
+  className?: string;
 }
 
 export interface ContextMenuStyles {
@@ -87,7 +88,6 @@ export default function ContextMenu({
         }}
         onOpen={onOpen}
         title={action.caption}
-        className={action.className}
         aria-label="action-button"
         icon={action?.icon}
       />

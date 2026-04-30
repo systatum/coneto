@@ -247,7 +247,7 @@ export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
 
 export interface CapsuleProps
   extends Omit<BaseCapsuleProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CapsuleStyles;
 }
 
@@ -256,7 +256,6 @@ function Capsule({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -283,7 +282,6 @@ function Capsule({
       labelWidth={labelWidth}
       labelGap={labelGap}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       required={rest.required}
