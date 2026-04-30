@@ -140,7 +140,7 @@ describe("Keynote", () => {
     context("when given undefined", () => {
       it("should convert to '-' text", () => {
         Object.values(data).map((value) => {
-          if (typeof value === undefined) {
+          if (value === undefined) {
             cy.findByText("-").should("exist");
           }
         });

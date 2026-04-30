@@ -58,9 +58,11 @@ describe("Document Viewer", () => {
                   width: 0.751269035532995,
                   height: 0.34532374100719426,
                   contentOnHover: <p>heyyy</p>,
-                  boxStyle: {
-                    borderColor: "red",
-                    backgroundColor: "rgba(255, 0, 0, 0.2)",
+                  styles: {
+                    self: {
+                      borderColor: "red",
+                      backgroundColor: "rgba(255, 0, 0, 0.2)",
+                    },
                   },
                 },
               ]}

@@ -5,7 +5,7 @@ import "@testing-library/cypress/add-commands";
 import "cypress-real-events";
 import { ThemeProvider } from "./../../theme/provider";
 import { themes } from "./../../theme/mode";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 
 type CustomMountOptions = MountOptions & {
   mode?: "light" | "dark";

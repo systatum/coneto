@@ -71,6 +71,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(0)
+          .parent()
           .should("have.class", "card-button-in-header");
       });
     });
@@ -244,6 +245,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(2)
+          .parent()
           .should("have.class", "nav-tab-actions");
       });
     });
@@ -496,6 +498,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(0)
+          .parent()
           .should("have.class", "list-group-back-action");
       });
     });
@@ -812,8 +815,9 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(0)
-          .should("have.class", "table-delete-action")
-          .should("have.css", "background-color", "rgb(207, 207, 207)");
+          .should("have.css", "background-color", "rgb(207, 207, 207)")
+          .parent()
+          .should("have.class", "table-delete-action");
       });
     });
 
@@ -865,6 +869,7 @@ describe("ActionButton", () => {
 
         cy.findAllByLabelText("action-button")
           .eq(0)
+          .parent()
           .should("have.class", "table-delete-action");
       });
     });

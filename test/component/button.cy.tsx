@@ -137,7 +137,7 @@ describe("Button", () => {
     it("renders buttons with icons", () => {
       cy.mount(<ButtonWithIcon />);
 
-      cy.get("button").should("have.length", 12);
+      cy.get("button").should("have.length", 11);
       cy.get("button svg").should("exist");
     });
   });
@@ -197,7 +197,6 @@ describe("Button", () => {
           { label: "Danger", color: "rgb(128, 32, 54)" },
           { label: "Secondary", color: "rgb(179, 179, 179)" },
           { label: "Ghost", color: "rgb(234, 234, 234)" },
-          { label: "Transparent", color: "rgb(207, 207, 207)" },
           { label: "Success", color: "rgb(20, 101, 18)" },
         ] as const;
 
@@ -230,7 +229,6 @@ describe("Button", () => {
             { label: "Danger", color: "rgb(128, 32, 54)" },
             { label: "Secondary", color: "rgb(179, 179, 179)" },
             { label: "Ghost", color: "rgb(234, 234, 234)" },
-            { label: "Transparent", color: "rgb(207, 207, 207)" },
             { label: "Success", color: "rgb(20, 101, 18)" },
           ] as const;
 
@@ -412,7 +410,7 @@ describe("Button", () => {
             "This button uses a render function to show custom content inside TipMenu."
           ).should("exist");
           cy.findByText("Got it").should("exist");
-          cy.findByLabelText("tip-menu").should("exist");
+          cy.findByLabelText("button-tip-menu-container").should("exist");
         });
       });
     });
@@ -462,7 +460,7 @@ describe("Button", () => {
             "This button uses a render function to show custom content inside TipMenu."
           ).should("exist");
           cy.findByText("Got it").should("exist");
-          cy.findByLabelText("tip-menu").should("exist");
+          cy.findByLabelText("button-tip-menu-container").should("exist");
         });
       });
 
