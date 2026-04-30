@@ -741,8 +741,7 @@ export const WithCustomRenderer: Story = {
 export const Categorized: Story = {
   render: () => {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
-    const [value2, setValue2] = useState<SelectboxSelectedOptions>("");
-    const [value3, setValue3] = useState<SelectboxSelectedOptions>([]);
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       {
@@ -864,19 +863,18 @@ export const Categorized: Story = {
         }}
       >
         <Combobox
-          id="default"
-          label="Default"
+          id="empty"
+          label="Empty"
           selectedOptions={null}
           options={null}
-          onChange={setValue1}
           placeholder="Select a fruit..."
         />
         <Combobox
           id="default-with-initial-state"
           label='Default With Initial State "opened"'
-          selectedOptions={value2}
+          selectedOptions={value1}
           options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
-          onChange={setValue2}
+          onChange={setValue1}
           placeholder="Select a fruit..."
         />
         <Combobox
@@ -884,9 +882,9 @@ export const Categorized: Story = {
           multiple
           clearable
           label="Multiple"
-          selectedOptions={value3}
+          selectedOptions={value2}
           options={FRUIT_OPTIONS}
-          onChange={setValue3}
+          onChange={setValue2}
           placeholder="Select a fruit..."
         />
       </div>
