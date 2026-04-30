@@ -85,7 +85,7 @@ export interface TreeListProps
   multiple?: boolean;
 }
 
-export interface TreeListStyles {
+export interface TreeListStyles extends TreeListItemStyles {
   // ===== Root / layout =====
   containerStyle?: CSSProp;
   containerGroupStyle?: CSSProp;
@@ -95,20 +95,11 @@ export interface TreeListStyles {
   actionWrapperStyle?: CSSProp;
   actionStyle?: CSSProp;
 
-  // ===== Group (TreeListContent - NON level) =====
+  // ===== Group (TreeListContent) =====
   titleStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
   arrowGroupStyle?: CSSProp;
-
-  // ===== Item (TreeListItem - LEVEL based) =====
-  itemStyle?: CSSProp;
-  arrowStyle?: CSSProp;
-  hierarchyLineStyle?: CSSProp;
-  highlightedTextStyle?: CSSProp;
-
-  // ===== Empty states =====
   emptySlateStyle?: CSSProp;
-  emptyItemSlateStyle?: CSSProp;
 }
 
 export interface TreeListOnDragged {
@@ -660,7 +651,8 @@ function TreeList({
                                 val.canContainChildren ?? true
                               }
                               styles={{
-                                self: styles?.itemStyle,
+                                titleItemStyle: styles?.titleItemStyle,
+                                itemStyle: styles?.itemStyle,
                                 highlightedTextStyle:
                                   styles?.highlightedTextStyle,
                                 emptyItemSlateStyle:
@@ -892,11 +884,12 @@ interface TreeListItemComponent<T extends TreeListItem> {
 }
 
 export interface TreeListItemStyles {
-  self?: CSSProp;
+  itemStyle?: CSSProp;
   emptyItemSlateStyle?: CSSProp;
   arrowStyle?: CSSProp;
   hierarchyLineStyle?: CSSProp;
   highlightedTextStyle?: CSSProp;
+  titleItemStyle?: CSSProp;
 }
 
 interface TreeListOpenWithId {
@@ -1019,7 +1012,7 @@ function TreeListItem<T extends TreeListItem>({
         role="button"
         data-group-id={groupId}
         aria-label="tree-list-item"
-        $style={styles?.self}
+        $style={styles?.itemStyle}
         data-selected={isSelected.includes(item.id)}
         $isSelected={isSelected.includes(item.id)}
         aria-expanded={isOpen[item.id]}
@@ -1196,6 +1189,7 @@ function TreeListItem<T extends TreeListItem>({
             align-items: center;
             width: 100%;
             font-weight: inherit;
+            ${styles?.titleItemStyle}
           `}
         >
           {typeof item.caption === "string"
@@ -1358,9 +1352,10 @@ function TreeListItem<T extends TreeListItem>({
               ) : item.items?.length > 0 ? (
                 item.items?.map((child, index) => (
                   <TreeListItem
-                    key={child.id}
+                    key={index}
                     styles={{
-                      self: styles?.self,
+                      itemStyle: styles?.itemStyle,
+                      titleItemStyle: styles?.titleItemStyle,
                       highlightedTextStyle: styles?.highlightedTextStyle,
                       emptyItemSlateStyle: styles?.emptyItemSlateStyle,
                       arrowStyle: styles?.arrowStyle,
