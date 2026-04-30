@@ -152,7 +152,7 @@ type Story = StoryObj<typeof Combobox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<SelectboxSelectedOptions>([0]);
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },

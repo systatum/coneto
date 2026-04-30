@@ -300,10 +300,20 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
     };
 
+    const filteredNavigableOptions = useMemo<SelectboxOption[]>(() => {
+      if (!hasInteracted) return navigableOptions;
+      return navigableOptions.filter((opt) =>
+        opt?.text
+          ?.toLowerCase()
+          .includes(selectedOptionsLocal?.text.toLowerCase())
+      );
+    }, [navigableOptions, hasInteracted, selectedOptionsLocal?.text]);
+
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
-      const totalItems = (actions?.length ?? 0) + navigableOptions.length - 1;
+      const totalItems =
+        (actions?.length ?? 0) + filteredNavigableOptions.length - 1;
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         setInteractionMode("keyboard");
@@ -345,7 +355,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
         const selectedOption =
           highlightedIndex !== null
-            ? navigableOptions[highlightedIndex - (actions?.length ?? 0)]
+            ? filteredNavigableOptions[
+                highlightedIndex - (actions?.length ?? 0)
+              ]
             : undefined;
 
         if (multiple) {

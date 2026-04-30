@@ -303,6 +303,24 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               .filter(Boolean) as ComboboxOption[];
           };
 
+          /**
+           * filteredNavigableOptions — search-filtered navigable options passed to the drawer.
+           * When the user has typed, we filter navigable options by the search text
+           * so that the flatIndexMap in the drawer stays in sync with the rendered options.
+           * Without this, highlighted index would mismatch against the filtered drawer options.
+           */
+
+          const filteredNavigableOptions: SelectboxOption[] =
+            props?.hasInteracted
+              ? navigableOptions.filter((opt) =>
+                  opt?.text
+                    ?.toLowerCase()
+                    .includes(
+                      props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
+                    )
+                )
+              : navigableOptions;
+
           // Then replace the filteredForDrawer block:
           const filteredForDrawer: ComboboxOption[] = props?.hasInteracted
             ? filterOptions(
@@ -315,7 +333,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             <ComboboxDrawer
               {...props}
               styles={styles}
-              navigableOptions={navigableOptions}
+              navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}
               name={name}
               disabled={disabled}
