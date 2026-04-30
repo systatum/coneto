@@ -572,6 +572,9 @@ function TreeList({
                               setOpenRowId(null);
                             }
                           }}
+                          activeBackgroundColor="rgb(193, 214, 241)"
+                          focusBackgroundColor="rgb(193, 214, 241)"
+                          hoverBackgroundColor="rgb(193, 214, 241)"
                           open={openRowId === item.id}
                           maxActionsBeforeCollapsing={
                             maxActionsBeforeCollapsing
