@@ -1,7 +1,7 @@
 import {
   forwardRef,
-  Fragment,
   KeyboardEvent,
+  ReactNode,
   Ref,
   RefObject,
   useEffect,
@@ -19,14 +19,20 @@ import {
   SelectboxStyles,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
-import { List, ListItemAction, ListItemStyles } from "./list";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
-import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { ComboboxThemeConfig } from "./../theme";
-import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
+import {
+  TreeList,
+  TreeListAction,
+  TreeListContent,
+  TreeListItem,
+  TreeListItemAction,
+} from "./treelist";
+import { Searchbox } from "./searchbox";
+import { Checkbox } from "./checkbox";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -46,6 +52,7 @@ interface BaseComboboxProps {
   onClick?: () => void;
   strict?: boolean;
   options: ComboboxOption[];
+  navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
 }
@@ -58,22 +65,22 @@ export const ComboboxGroupInitialState = {
 export type ComboboxGroupInitialState =
   (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
 
-export interface ComboboxGroupedOption {
-  category?: string;
-  options?: ComboboxSingleOption[];
+export type ComboboxOption = SelectboxOption &
+  ComboboxActionOption & {
+    groupOptions?: ComboboxOption[];
+    groupSetting?: ComboboxGroupSetting;
+  };
+
+interface ComboboxGroupSetting {
   collapsible?: boolean;
-  hidden?: boolean;
   initialState?: ComboboxGroupInitialState;
 }
 
-export type ComboboxSingleOption = SelectboxOption & ComboboxActionOption;
-export interface ComboboxActionOption {
+interface ComboboxActionOption {
   actions?: (id?: string) => ComboboxItemAction[];
 }
 
-export type ComboboxItemAction = ListItemAction;
-
-export type ComboboxOption = ComboboxSingleOption | ComboboxGroupedOption;
+export type ComboboxItemAction = TreeListItemAction;
 
 export type ComboboxDropdownOption = FieldLaneDropdownOption;
 
@@ -86,11 +93,7 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   drawerStyle?: CSSProp;
 }
 
-export interface ComboboxAction extends BaseAction {
-  styles?: ComboboxActionStyles;
-}
-
-export type ComboboxActionStyles = ListItemStyles;
+export type ComboboxAction = TreeListAction;
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
@@ -157,30 +160,62 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     });
 
     const finalGroup = useMemo(() => {
-      return options
-        ?.filter(isGroupedOption)
-        ?.filter((item) => !item?.hidden)
-        ?.filter((item) => (item?.initialState ?? "closed") === "opened")
-        ?.map((item) => item.category!);
+      const collectOpened = (items: ComboboxOption[]): string[] => {
+        return items.flatMap((item) => {
+          if (item.hidden) return [];
+          const self =
+            (item.groupSetting?.initialState ?? "closed") === "opened"
+              ? [String(item.value)]
+              : [];
+          const children = item.groupOptions?.length
+            ? collectOpened(item.groupOptions)
+            : [];
+          return [...self, ...children];
+        });
+      };
+      return collectOpened(options ?? []);
     }, [options]);
 
     const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
       () => new Set(finalGroup)
     );
 
-    const flatOptions = useMemo(() => {
-      return options
-        ?.map((item) => {
-          if (isGroupedOption(item)) {
-            if (openedCategoryGroup.has(item.category)) {
-              return item.options ?? [];
-            }
-            return [];
+    const flatOptions = useMemo<SelectboxOption[]>(() => {
+      return (
+        options?.flatMap((item) => {
+          if (item.hidden) return [];
+          if (item.groupOptions?.length) {
+            const allChildren = item.groupOptions
+              .filter((o) => !o.hidden)
+              .flatMap((child) =>
+                child.groupOptions?.length
+                  ? [child, ...child.groupOptions.filter((o) => !o.hidden)]
+                  : [child]
+              );
+            return [item, ...allChildren];
           }
           return [item];
-        })
-        ?.flat()
-        ?.filter((option) => !option.hidden);
+        }) ?? []
+      );
+    }, [options]);
+
+    const navigableOptions = useMemo<SelectboxOption[]>(() => {
+      const flatten = (items: ComboboxOption[]): SelectboxOption[] => {
+        return items.flatMap((item) => {
+          if (item.hidden) return [];
+
+          if (item.groupOptions?.length) {
+            // Group parent → skip self, only include children if open
+            if (!openedCategoryGroup.has(String(item.value))) return [];
+            return flatten(item.groupOptions);
+          }
+
+          // Leaf node
+          return [item];
+        });
+      };
+
+      return flatten(options ?? []);
     }, [options, openedCategoryGroup]);
 
     return (
@@ -216,6 +251,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         }}
         id={inputId}
         options={flatOptions}
+        navigableOptions={navigableOptions}
         selectedOptions={selectedOptions}
         onChange={onChange}
         placeholder={placeholder}
@@ -228,43 +264,76 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         disabled={disabled}
       >
         {(props) => {
-          const filteredForDrawer = props?.hasInteracted
-            ? (options
-                ?.map((item) => {
-                  if (isGroupedOption(item)) {
-                    const matched = item.options?.filter(
-                      (opt) =>
-                        !opt.hidden &&
-                        opt.text
-                          .toLowerCase()
-                          .includes(
-                            props?.selectedOptionsLocal.text.toLowerCase()
-                          )
-                    );
+          /**
+           * filteredForDrawer — search-filtered options passed to the drawer.
+           * When the user has typed, we filter each group's children (or flat
+           * options) by the search text. Mirrors the old combobox behaviour.
+           */
+          const filterOptions = (
+            opts: ComboboxOption[],
+            search: string
+          ): ComboboxOption[] => {
+            return opts
+              .map((opt) => {
+                if (opt.hidden) return null;
 
-                    return matched && matched.length > 0
-                      ? { ...item, options: matched }
-                      : null;
+                if (opt.groupOptions?.length) {
+                  const selfMatches = opt.text.toLowerCase().includes(search);
+
+                  // Parent matches — keep it with ALL children untouched
+                  if (selfMatches) {
+                    return opt;
                   }
 
-                  if (
-                    !item.hidden &&
-                    item.text
-                      .toLowerCase()
-                      .includes(props?.selectedOptionsLocal.text.toLowerCase())
-                  ) {
-                    return item;
+                  // Parent doesn't match — recurse into children
+                  const filteredChildren = filterOptions(
+                    opt.groupOptions,
+                    search
+                  );
+                  if (filteredChildren.length > 0) {
+                    return { ...opt, groupOptions: filteredChildren };
                   }
 
                   return null;
-                })
-                ?.filter(Boolean) as typeof options)
+                }
+
+                // Leaf node
+                return opt.text.toLowerCase().includes(search) ? opt : null;
+              })
+              .filter(Boolean) as ComboboxOption[];
+          };
+
+          /**
+           * filteredNavigableOptions — search-filtered navigable options passed to the drawer.
+           * When the user has typed, we filter navigable options by the search text
+           * so that the flatIndexMap in the drawer stays in sync with the rendered options.
+           * Without this, highlighted index would mismatch against the filtered drawer options.
+           */
+
+          const filteredNavigableOptions: SelectboxOption[] =
+            props?.hasInteracted
+              ? navigableOptions.filter((opt) =>
+                  opt?.text
+                    ?.toLowerCase()
+                    .includes(
+                      props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
+                    )
+                )
+              : navigableOptions;
+
+          // Then replace the filteredForDrawer block:
+          const filteredForDrawer: ComboboxOption[] = props?.hasInteracted
+            ? filterOptions(
+                options ?? [],
+                props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
+              )
             : options;
 
           return (
             <ComboboxDrawer
               {...props}
               styles={styles}
+              navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}
               name={name}
               disabled={disabled}
@@ -316,9 +385,11 @@ function ComboboxDrawer({
   openedCategoryGroup,
   setOpenedCategoryGroup,
   styles,
+  navigableOptions,
 }: ComboboxDrawerProps) {
-  const { currentTheme } = useTheme();
+  const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
+  const treeListTheme = currentTheme?.treelist;
 
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -327,11 +398,11 @@ function ComboboxDrawer({
   const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
       options?.flatMap((item) => {
-        if (isGroupedOption(item)) {
-          return item?.options?.filter((option) => !option?.hidden) ?? [];
+        if (item?.hidden) return [];
+        if (item.groupOptions?.length) {
+          return [item, ...item.groupOptions.filter((o) => !o.hidden)];
         }
-
-        return item?.hidden ? [] : [item];
+        return [item];
       }) ?? []
     );
   }, [options, openedCategoryGroup]);
@@ -415,131 +486,263 @@ function ComboboxDrawer({
     }
   }, [highlightedIndex, multiple, interactionMode]);
 
-  const filteredActions = Array.isArray(actions)
-    ? actions?.filter((action) => !action?.hidden)
-    : [];
-
-  const hasActions = filteredActions?.length > 0;
-
-  const computedOptions = useMemo(() => {
-    let index = actions?.length || 0;
-
-    const mapped = (options ?? [])
-      ?.filter((item) => !item?.hidden)
-      ?.map((item) => {
-        if (isGroupedOption(item)) {
-          const groupOptions = (item.options ?? [])
-            ?.filter((option) => !option?.hidden)
-            ?.map((option) => ({
-              option,
-              index: openedCategoryGroup.has(item.category) ? index++ : null,
-            }));
+  const filteredActions: TreeListAction[] = Array.isArray(actions)
+    ? actions
+        ?.filter((action) => !action?.hidden)
+        .map((action, index) => {
+          const shouldHighlight = highlightedIndex === index;
 
           return {
-            type: "group",
-            category: item.category,
-            options: groupOptions,
-            collapsible: item.collapsible ?? true,
-            initialState: item.initialState ?? "closed",
+            id: action?.id,
+            caption: action?.caption,
+            hidden: action?.hidden,
+            icon: action?.icon,
+            onClick: () => {
+              action?.onClick();
+              setIsOpen(false);
+            },
+            onMouseEnter: () => {
+              if (interactionMode !== "mouse") return;
+              setHighlightedIndex(index);
+            },
+            className: shouldHighlight ? "is-highlighted" : "",
+            styles: {
+              ...action?.styles,
+              self: css`
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
+                ${action?.styles?.self}
+              `,
+            },
           };
-        }
+        })
+    : [];
 
-        return {
-          type: "item",
-          option: item,
-          index: index++,
-        };
-      });
+  const optionByTreeId = useRef<Record<string, ComboboxOption>>({});
 
-    const totalOptions = mapped.flatMap((item) => item).length;
+  const flatIndexMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    const offset = filteredActions.length;
 
-    return { mapped, totalOptions };
-  }, [options, openedCategoryGroup]);
+    navigableOptions.forEach((opt, i) => {
+      map[String(opt.value)] = i + offset;
+    });
 
-  function renderOption(option: ComboboxSingleOption, index: number) {
-    const optionValue = String(option.value);
-    const isSelected = finalSelectedOptions.includes(optionValue);
+    return map;
+  }, [navigableOptions, filteredActions.length]);
 
-    const shouldHighlight =
-      highlightOnMatch && isSelected ? true : highlightedIndex === index;
+  const generateContent = (): TreeListContent[] => {
+    optionByTreeId.current = {};
 
-    return (
-      <List.Item
-        id={String(option.value)}
-        title={option.render ? option.render : option.text}
-        actions={option?.actions}
-        styles={{
-          rowStyle: listItemRowStyle({
-            shouldHighlight,
-            interactionMode,
-            isSelected,
-            multiple,
-            theme: comboboxTheme,
-          }),
-          containerStyle: listItemContainerStyle,
-          leftSideStyle: [
-            listItemLeftSideStyle,
-            option.render && listItemLeftSideWithRender,
-          ],
-          titleStyle: [
-            listItemTitleStyle,
-            option.render && listItemTitleWithRender,
-          ],
-        }}
-        selectedOptions={{ checked: isSelected }}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          if (multiple) {
-            if (!finalSelectedOptions.includes(optionValue)) {
-              if (
-                !maxSelectableItems ||
-                finalSelectedOptions?.length < maxSelectableItems
-              ) {
-                handleOnChange([...finalSelectedOptions, optionValue]);
-              }
-            } else {
-              handleOnChange(
-                finalSelectedOptions.filter((val) => val !== option.value)
-              );
+    const registerAll = (opts: ComboboxOption[]) => {
+      for (const opt of opts) {
+        optionByTreeId.current[String(opt.value)] = opt;
+        if (opt.groupOptions?.length) registerAll(opt.groupOptions);
+      }
+    };
+
+    registerAll(finalOptions);
+
+    const renderCaption = (opt: ComboboxOption): ReactNode => {
+      const isSelected = finalSelectedOptions.includes(String(opt.value));
+
+      const label = opt.render ?? opt.text;
+      const hasChildren = Boolean(opt?.groupOptions?.length);
+
+      if (multiple && hasChildren) {
+        return label;
+      }
+
+      return (
+        <>
+          {multiple && (
+            <Checkbox
+              styles={{
+                containerStyle: css`
+                  margin-top: 2px;
+
+                  ${opt?.render &&
+                  css`
+                    margin-top: 3px;
+                  `}
+                `,
+                iconStyle: css`
+                  width: 8px;
+                  height: 8px;
+                `,
+                self: css`
+                  width: 14px;
+                  height: 14px;
+                `,
+              }}
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => {}}
+            />
+          )}
+          {label}
+        </>
+      );
+    };
+
+    const mapToItem = (opt: ComboboxOption): TreeListItem => {
+      const id = String(opt.value);
+
+      const itemIndex = flatIndexMap[id];
+      const isSelected = finalSelectedOptions.includes(id);
+      const shouldHighlight =
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
+
+      return {
+        id,
+        caption: renderCaption(opt),
+        collapsible:
+          opt?.groupSetting?.collapsible ??
+          (opt?.groupOptions?.length > 0 ? true : false),
+        className: [
+          opt.groupOptions?.length ? "has-group-options" : "",
+          shouldHighlight ? "is-highlighted" : "",
+        ]
+          .join(" ")
+          .trim(),
+        actions: opt?.actions?.(String(opt.value))?.map((action) => ({
+          ...action,
+          onClick: () => action.onClick?.(String(opt.value)),
+        })),
+        onClick: ({ withoutSelection }) => {
+          if (opt?.groupOptions?.length > 0) {
+            withoutSelection();
+          }
+        },
+
+        ...(opt?.groupOptions?.length > 0
+          ? {
+              items: opt.groupOptions
+                .filter((child) => !child.hidden)
+                .map((child) => mapToItem(child)),
             }
-            (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
-          } else {
-            setIsOpen(false);
-            setConfirmedValue(option);
-            setSelectedOptionsLocal(option);
-            handleOnChange([optionValue]);
-            setHasInteracted(false);
-          }
+          : {}),
+      };
+    };
 
-          requestAnimationFrame(() => {
-            setHighlightedIndex(null);
-          });
-          onClick?.();
-        }}
-        onMouseMove={() => {
-          if (interactionMode !== "mouse") {
-            setInteractionMode("mouse");
-          }
-        }}
-        onMouseEnter={() => {
-          if (interactionMode !== "mouse") return;
+    const mapToContent = (option: ComboboxOption): TreeListContent => {
+      const id = String(option.value);
 
-          if (typeof index === "number") {
-            setHighlightedIndex(index);
-          }
-        }}
-        ref={(el) => {
-          if (typeof index === "number") {
-            listRef.current[index] = el;
-          }
-        }}
-      />
-    );
-  }
+      const itemIndex = flatIndexMap[id];
+      const isSelected = finalSelectedOptions.includes(id);
+      const shouldHighlight =
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
+
+      return {
+        id,
+        caption: renderCaption(option),
+        initialState: option?.groupSetting?.initialState ?? "closed",
+        collapsible:
+          option?.groupSetting?.collapsible ??
+          (option?.groupOptions?.length > 0 ? true : false),
+        className: [
+          option.groupOptions?.length ? "has-group-options" : "",
+          shouldHighlight ? "is-highlighted" : "",
+        ]
+          .join(" ")
+          .trim(),
+        actions: option?.actions?.(String(option.value))?.map((action) => ({
+          ...action,
+          onClick: () => action.onClick?.(String(option.value)),
+        })),
+        ...(option?.groupOptions?.length > 0
+          ? {
+              items: option.groupOptions
+                .filter((child) => !child.hidden)
+                .map((child) => mapToItem(child)),
+            }
+          : {}),
+      };
+    };
+
+    return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent);
+  };
+
+  const onMouseDown = (props: {
+    event: React.MouseEvent;
+    item?: TreeListContent;
+  }) => {
+    const { event, item } = props;
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    const hasChildren = item?.items?.length > 0;
+
+    if (hasChildren) return;
+
+    const originalOption = optionByTreeId.current[item?.id];
+
+    const option: ComboboxOption = {
+      text: originalOption?.text ?? "",
+      value: item?.id,
+    };
+
+    const optionValue = item?.id;
+
+    if (multiple) {
+      if (!finalSelectedOptions.includes(item?.id)) {
+        if (
+          !maxSelectableItems ||
+          finalSelectedOptions?.length < maxSelectableItems
+        ) {
+          handleOnChange([...finalSelectedOptions, item?.id]);
+        }
+      } else {
+        handleOnChange(finalSelectedOptions.filter((val) => val !== item?.id));
+      }
+
+      (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+    } else {
+      const hasChildren = (item?.items?.length ?? 0) > 0;
+      if (hasChildren) return;
+
+      setIsOpen(false);
+      setConfirmedValue(option);
+      setSelectedOptionsLocal(option);
+      handleOnChange([optionValue]);
+      setHasInteracted(false);
+    }
+
+    requestAnimationFrame(() => {
+      if (!multiple) setHighlightedIndex(null);
+    });
+    onClick?.();
+  };
+
+  const onMouseMove = () => {
+    if (interactionMode !== "mouse") {
+      setInteractionMode("mouse");
+    }
+  };
+
+  const onMouseEnter = (props: {
+    event: React.MouseEvent;
+    item?: TreeListContent;
+  }) => {
+    const { item } = props;
+    const index = flatIndexMap[item.id];
+
+    if (interactionMode !== "mouse") return;
+    if (typeof index === "number") {
+      setHighlightedIndex(index);
+    }
+  };
 
   return (
     <DrawerWrapper
-      {...getFloatingProps()}
+      {...getFloatingProps({
+        onMouseDown: (e: React.MouseEvent) => {
+          e.preventDefault();
+        },
+      })}
       ref={(node) => {
         if (typeof refs.setFloating === "function") {
           refs.setFloating(node);
@@ -555,242 +758,208 @@ function ComboboxDrawer({
       $style={styles?.drawerStyle}
     >
       {(finalOptions || actions) && (
-        <List
-          onOpen={({ id }) => {
-            setOpenedCategoryGroup((prev) => {
-              const next = new Set(prev);
-              if (next.has(id)) {
-                next.delete(id);
-              } else {
-                next.add(id);
-              }
-              return next;
-            });
-          }}
-          styles={{
-            containerStyle: listContainerStyle,
-            searchboxStyles: {
-              containerStyle: css`
-                position: sticky;
-                top: 0;
-                background-color: ${comboboxTheme?.backgroundColor};
-                z-index: 30;
-                height: 38px;
-              `,
-              iconStyle: css`
-                left: 16px;
-              `,
-              self: css`
-                max-height: 35px;
-                margin-top: 7px;
-                margin-bottom: 7px;
-                padding-bottom: 7px;
-                padding-top: 7px;
-                margin-left: 4px;
-                margin-right: 4px;
-              `,
-            },
-          }}
-          inputRef={inputRef}
-          selectable={multiple}
-          searchable={multiple}
-          onSearchKeyDown={handleKeyDown}
-          searchValue={selectedOptionsLocal.text}
-          onSearchRequested={(e) => {
-            const { value } = e.target;
-            setHasInteracted(true);
-            setHighlightedIndex(0);
-            setSelectedOptionsLocal({
-              ...selectedOptionsLocal,
-              text: value,
-            });
-          }}
-        >
-          {hasActions &&
-            filteredActions.map((action, index) => {
-              const shouldHighlight = highlightedIndex === index;
-              const isLast = index === actions?.length - 1;
-
-              if (action.hidden) {
-                return;
-              }
-
-              return (
-                <Fragment key={index}>
-                  <List.Item
-                    id={action?.id}
-                    ref={(el) => {
-                      listRef.current[index] = el;
-                    }}
-                    styles={{
-                      ...action?.styles,
-                      titleStyle: css`
-                        ${listItemTitleStyle}
-                        ${action?.styles?.titleStyle}
-                      `,
-                      rowStyle: css`
-                        ${listItemRowStyle({
-                          shouldHighlight,
-                          interactionMode,
-                          theme: comboboxTheme,
-                        })}
-                        ${action?.styles?.rowStyle}
-                      `,
-                      containerStyle: css`
-                        ${listItemContainerStyle}
-                        ${action?.styles?.containerStyle}
-                      `,
-                      leftSideStyle: css`
-                        ${listItemLeftSideStyle}
-                        ${action?.styles?.leftSideStyle}
-                      `,
-                    }}
-                    title={
-                      <>
-                        {action.caption}
-                        {action.icon && <Figure {...action.icon} />}
-                      </>
-                    }
-                    onMouseEnter={() => setHighlightedIndex(index)}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      action.onClick?.();
-                      setIsOpen(false);
-                    }}
-                  />
-
-                  {isLast && (
-                    <Divider
-                      $theme={comboboxTheme}
-                      aria-label="divider"
-                      aria-hidden
-                    />
-                  )}
-                </Fragment>
-              );
-            })}
-
-          {computedOptions?.totalOptions > 0 ? (
-            computedOptions.mapped?.map((item) => {
-              if (item.type === "group") {
-                return (
-                  <List.Group
-                    styles={{
-                      contentStyle: css`
-                        gap: 0px;
-                      `,
-                      rowStyle: css`
-                        background-color: ${comboboxTheme?.groupBackgroundColor};
-                        padding-bottom: 8px;
-                      `,
-                      titleStyle: css`
-                        font-size: 12px;
-                        padding-left: 12px;
-                      `,
-                    }}
-                    onClick={({ toggle }) => {
-                      if (item.collapsible) toggle();
-                    }}
-                    openerStyle={item.collapsible ? "chevron" : "none"}
-                    initialState={item.initialState}
-                    key={item.category}
-                    id={item.category}
-                    title={item.category}
-                  >
-                    {item.options.map(({ option, index }) =>
-                      renderOption(option, index!)
-                    )}
-                  </List.Group>
-                );
-              } else {
-                return renderOption(item.option, item.index);
-              }
-            })
-          ) : (
-            <EmptyState $theme={comboboxTheme}>{emptySlate}</EmptyState>
+        <>
+          {multiple && (
+            <Searchbox
+              onKeyDown={handleKeyDown}
+              onChange={(e) => {
+                const { value } = e.target;
+                setHasInteracted(true);
+                setHighlightedIndex(0);
+                setSelectedOptionsLocal({
+                  ...selectedOptionsLocal,
+                  text: value,
+                });
+              }}
+              ref={inputRef}
+              value={selectedOptionsLocal.text}
+              styles={{
+                containerStyle: css`
+                  position: sticky;
+                  top: 0;
+                  background-color: ${comboboxTheme?.backgroundColor};
+                  z-index: 10000;
+                  height: 38px;
+                `,
+                iconStyle: css`
+                  left: 16px;
+                `,
+                self: css`
+                  max-height: 35px;
+                  margin-top: 7px;
+                  margin-bottom: 7px;
+                  padding-bottom: 7px;
+                  padding-top: 7px;
+                  margin-left: 4px;
+                  margin-right: 4px;
+                `,
+              }}
+            />
           )}
-        </List>
+
+          <TreeList
+            ref={({ el, item }) => {
+              const index = flatIndexMap[item.id];
+              if (typeof index === "number") {
+                listRef.current[index] = el;
+              }
+            }}
+            refItem={({ el, item }) => {
+              const index = flatIndexMap[item.id];
+              if (typeof index === "number") {
+                listRef.current[index] = el;
+              }
+            }}
+            multiple={multiple}
+            selectedItems={finalSelectedOptions}
+            emptySlate={emptySlate}
+            emptyItemSlate={emptySlate}
+            onMouseDown={onMouseDown}
+            onMouseDownItem={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseMoveItem={onMouseMove}
+            onMouseEnter={onMouseEnter}
+            onMouseEnterItem={onMouseEnter}
+            onOpenChange={({ id }) => {
+              setOpenedCategoryGroup((prev) => {
+                const next = new Set(prev);
+                if (next.has(id)) {
+                  next.delete(id);
+                } else {
+                  next.add(id);
+                }
+                return next;
+              });
+            }}
+            arrowSize={14}
+            maxActionsBeforeCollapsing={1}
+            actions={filteredActions}
+            styles={{
+              actionWrapperStyle: css`
+                margin-bottom: 0px;
+              `,
+              emptySlateStyle: css`
+                margin-left: 0px;
+                min-height: 36px;
+                margin-top: 0px;
+                border: none;
+              `,
+              actionStyle: css`
+                padding-left: 12px;
+                padding-right: 12px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                border-left: 0px;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+              `,
+              dividerStyle: css`
+                border-color: ${comboboxTheme?.dividerColor};
+                margin-bottom: 0px;
+              `,
+              containerGroupStyle: css`
+                gap: 0px;
+                &:not(:last-child) {
+                  padding-bottom: 0px;
+                }
+                cursor: pointer;
+              `,
+              textWrapperStyle: css`
+                min-height: 36px;
+                padding-left: 12px;
+                padding-right: 12px;
+                padding-top: 8px;
+                padding-bottom: 8px;
+                animation: all 0.2s ease-in-out;
+                gap: 6px;
+
+                &[data-has-options="true"] {
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  background-color: ${comboboxTheme?.groupBackgroundColor};
+                  border: 1px solid transparent;
+
+                  &[aria-expanded="true"] {
+                    border-bottom: 1px solid ${comboboxTheme?.borderColor};
+                  }
+                }
+
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
+              `,
+
+              hierarchyLineStyle: css`
+                border-left-width: 2px;
+
+                &[data-selected="false"] {
+                  border-color: ${mode === "light"
+                    ? "rgb(215, 214, 214)}"
+                    : treeListTheme?.dividerHierarchyColor};
+                }
+
+                &[data-level="0"] {
+                  border-left: none !important;
+                }
+
+                &[aria-label="vertical-line-level"] {
+                  border-left: none !important;
+                }
+
+                &[data-has-options="true"] {
+                  border-left: none;
+                }
+              `,
+              titleStyle: css`
+                width: 100%;
+                padding: 0px;
+                display: flex;
+                flex-direction: row;
+                gap: 6px;
+
+                &[data-has-options="false"] {
+                  font-weight: 400;
+                }
+              `,
+              arrowGroupStyle: css`
+                [data-has-options="true"] & {
+                  transform: none;
+                  display: flex;
+                  position: relative;
+                  flex-direction: column;
+                  justify-content: center;
+                  height: 100%;
+                  top: auto;
+                  left: auto;
+
+                  &[aria-expanded="true"] {
+                    transform: rotate(90deg);
+                  }
+                }
+              `,
+              arrowStyle: css`
+                margin-left: 3px;
+              `,
+              itemStyle: css`
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
+                gap: 6px;
+              `,
+            }}
+            showHierarchyLine
+            content={generateContent()}
+          />
+        </>
       )}
     </DrawerWrapper>
   );
 }
-
-const listContainerStyle = css`
-  gap: 0px;
-`;
-
-const listItemContainerStyle = css`
-  padding: 0px;
-`;
-
-const listItemLeftSideStyle = css`
-  padding: 0px;
-`;
-
-const listItemTitleStyle = css`
-  font-weight: 400;
-  padding: 0px;
-  font-size: 12px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: inherit;
-  &:hover {
-    color: inherit;
-  }
-`;
-
-const listItemRowStyle = ({
-  shouldHighlight,
-  interactionMode,
-  isSelected,
-  multiple,
-  theme,
-}: {
-  shouldHighlight?: boolean;
-  interactionMode?: "mouse" | "keyboard";
-  isSelected?: boolean;
-  multiple?: boolean;
-  theme?: ComboboxThemeConfig;
-}) => css`
-  border-radius: 0px;
-  padding: 0.5rem 0.75rem;
-  transition: background-color 0ms;
-  background-color: ${theme.backgroundColor};
-  color: ${theme.textColor};
-  min-height: 36px;
-
-  ${interactionMode !== "mouse" &&
-  css`
-    background-color: ${theme.backgroundColor};
-    &:hover {
-      background-color: ${theme.backgroundColor};
-    }
-  `}
-
-  ${shouldHighlight &&
-  css`
-    background-color: ${theme.highlightBackgroundColor};
-    color: ${theme.textColor};
-  `};
-
-  ${isSelected &&
-  !multiple &&
-  css`
-    font-weight: 600;
-    background-color: ${theme.selectedBackgroundColor};
-    color: ${theme.selectedTextColor};
-  `};
-`;
-
-const listItemLeftSideWithRender = css`
-  align-items: start;
-  padding-top: 3px;
-`;
-
-const listItemTitleWithRender = css`
-  transform: translateY(-4px);
-`;
 
 const DrawerWrapper = styled.ul<{
   $width?: number;
@@ -807,10 +976,6 @@ const DrawerWrapper = styled.ul<{
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
   &::-webkit-scrollbar-thumb {
     background-color: ${({ $theme }) => $theme?.scrollThumbColor || "#3f3f46"};
     border-radius: 999px;
@@ -819,23 +984,59 @@ const DrawerWrapper = styled.ul<{
   ${({ $style }) => $style}
 `;
 
-const Divider = styled.div<{ $theme: ComboboxThemeConfig }>`
-  width: 100%;
-  height: 1px;
-  border-bottom: 1px solid ${({ $theme }) => $theme.dividerColor};
-  margin: 2px 0;
-`;
+const rowStyle = ({
+  interactionMode,
+  multiple,
+  theme,
+}: {
+  interactionMode?: "mouse" | "keyboard";
+  multiple?: boolean;
+  theme?: ComboboxThemeConfig;
+}) => css`
+  transition: background-color 0ms;
+  background-color: ${theme.backgroundColor};
+  color: ${theme.textColor};
+  min-height: 36px;
 
-const EmptyState = styled.li<{ $theme: ComboboxThemeConfig }>`
-  padding: 0.5rem;
-  text-align: center;
-  color: ${({ $theme }) => $theme.emptyTextColor};
-`;
+  &[data-has-options="false"] {
+    ${interactionMode !== "mouse" &&
+    css`
+      background-color: ${theme.backgroundColor};
+      &:hover {
+        background-color: ${theme.backgroundColor};
+      }
+    `}
+  }
 
-function isGroupedOption(
-  item: ComboboxSingleOption | ComboboxGroupedOption
-): item is ComboboxGroupedOption {
-  return "options" in item;
-}
+  &[data-highlighted="true"] {
+    ${interactionMode !== "mouse" &&
+    css`
+      background-color: ${theme.highlightBackgroundColor};
+    `}
+  }
+
+  &[data-has-options="false"] {
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
+    }
+  }
+
+  &[data-action-opened="true"] {
+    background-color: ${theme.highlightBackgroundColor};
+  }
+
+  &[data-selected="true"] {
+    ${!multiple &&
+    css`
+      font-weight: 600;
+      background-color: ${theme.selectedBackgroundColor};
+      color: ${theme.selectedTextColor};
+
+      &:hover {
+        background-color: ${theme.selectedBackgroundColor};
+      }
+    `}
+  }
+`;
 
 export { Combobox };

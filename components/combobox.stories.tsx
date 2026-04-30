@@ -4,7 +4,6 @@ import {
   Combobox,
   ComboboxAction,
   ComboboxOption,
-  ComboboxSingleOption,
   ComboboxDropdownOption,
   ComboboxItemAction,
 } from "./combobox";
@@ -153,9 +152,9 @@ type Story = StoryObj<typeof Combobox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<SelectboxSelectedOptions>("");
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -186,7 +185,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -222,7 +221,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -365,7 +364,7 @@ export const WithActions: Story = {
       },
     ];
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1", actions: OPTION_ACTIONS },
       { text: "Banana", value: "2", actions: OPTION_ACTIONS },
       { text: "Orange", value: "3", actions: OPTION_ACTIONS },
@@ -410,7 +409,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -514,7 +513,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       {
         text: "Apple",
         value: "1",
@@ -742,73 +741,127 @@ export const WithCustomRenderer: Story = {
 export const Categorized: Story = {
   render: () => {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
-    const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       {
-        category: "Sweet",
-        options: [
-          { text: "Banana", value: "2" },
-          { text: "Mango", value: "8" },
-          { text: "Papaya", value: "11" },
-          { text: "Lychee", value: "17" },
-          { text: "Guava", value: "15" },
+        text: "Watery",
+        value: "group-watery",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-watery-sweet",
+            groupOptions: [
+              {
+                text: "Light",
+                value: "light",
+                groupOptions: [
+                  { text: "Watermelon", value: "item-watermelon" },
+                  { text: "Pear", value: "item-pear" },
+                ],
+              },
+              {
+                text: "Bold",
+                value: "bold",
+                groupOptions: [{ text: "Grape", value: "item-grape" }],
+              },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-watery-balanced",
+            groupOptions: [
+              { text: "Apple", value: "item-apple" },
+              { text: "Papaya", value: "item-papaya" },
+            ],
+            groupSetting: { collapsible: true },
+          },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
       {
-        category: "Tangy",
-        options: [
-          { text: "Orange", value: "3" },
-          { text: "Kiwi", value: "10" },
-          { text: "Pineapple", value: "5" },
-          { text: "Pomegranate", value: "20" },
-          { text: "Cherry", value: "12" },
+        text: "Tangy",
+        value: "group-tangy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-tangy-sweet",
+            groupOptions: [
+              { text: "Orange", value: "item-orange" },
+              { text: "Pineapple", value: "item-pineapple" },
+              { text: "Lychee", value: "item-lychee" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-tangy-balanced",
+            groupOptions: [
+              { text: "Kiwi", value: "item-kiwi" },
+              { text: "Pomegranate", value: "item-pomegranate" },
+              { text: "Cherry", value: "item-cherry" },
+            ],
+            groupSetting: { collapsible: true },
+          },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
       {
-        category: "Watery",
-        options: [
-          { text: "Watermelon", value: "7" },
-          { text: "Apple", value: "1" },
-          { text: "Pear", value: "19" },
-          { text: "Grape", value: "4" },
+        text: "Creamy",
+        value: "group-creamy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-creamy-sweet",
+            groupOptions: [
+              { text: "Banana", value: "item-banana" },
+              { text: "Mango", value: "item-mango" },
+              { text: "Peach", value: "item-peach" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-creamy-balanced",
+            groupOptions: [{ text: "Plum", value: "item-plum" }],
+            groupSetting: { collapsible: true },
+          },
+          { text: "Coconut", value: "item-coconut" },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
       {
-        category: "Berry",
-        options: [
-          { text: "Strawberry", value: "6" },
-          { text: "Blueberry", value: "9" },
-          { text: "Raspberry", value: "16" },
+        text: "Berry",
+        value: "group-berry",
+        groupOptions: [
+          {
+            text: "Balanced",
+            value: "group-berry-balanced",
+            groupOptions: [
+              { text: "Strawberry", value: "item-strawberry" },
+              { text: "Blueberry", value: "item-blueberry" },
+              { text: "Raspberry", value: "item-raspberry" },
+            ],
+            groupSetting: { collapsible: true },
+          },
         ],
-        collapsible: true,
+        groupSetting: { collapsible: true },
       },
-      {
-        category: "Creamy",
-        options: [
-          { text: "Coconut", value: "18" },
-          { text: "Peach", value: "13" },
-          { text: "Plum", value: "14" },
-        ],
-        collapsible: true,
-      },
-      { text: "Peppers", value: "99" },
-      { text: "Eggplants", value: "100", hidden: true },
+      { text: "Peppers", value: "item-peppers" },
+      { text: "Eggplants", value: "item-eggplants", hidden: true },
     ];
 
-    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
-      FRUIT_OPTIONS.map((item) => {
-        if ("category" in item && item.options) {
-          return {
-            ...item,
-            initialState: "opened",
-          };
-        }
-        return item;
-      });
+    const setAllOpened = (items: ComboboxOption[]): ComboboxOption[] =>
+      items.map((item) => ({
+        ...item,
+        groupSetting: { ...item?.groupSetting, initialState: "opened" },
+        groupOptions: item.groupOptions?.length
+          ? setAllOpened(item.groupOptions)
+          : item.groupOptions,
+      }));
+
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED = setAllOpened(FRUIT_OPTIONS);
 
     return (
       <div
@@ -820,11 +873,10 @@ export const Categorized: Story = {
         }}
       >
         <Combobox
-          id="default"
-          label="Default"
-          selectedOptions={value1}
-          options={FRUIT_OPTIONS}
-          onChange={setValue1}
+          id="empty"
+          label="Empty"
+          selectedOptions={null}
+          options={null}
           placeholder="Select a fruit..."
         />
         <Combobox
@@ -838,6 +890,7 @@ export const Categorized: Story = {
         <Combobox
           id="multiple"
           multiple
+          clearable
           label="Multiple"
           selectedOptions={value2}
           options={FRUIT_OPTIONS}

@@ -877,6 +877,12 @@ export const WithEmptySlate: Story = {
         <TreeList
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
+          styles={{
+            emptySlateStyle: css`
+              border: none;
+              color: inherit;
+            `,
+          }}
           emptySlate={
             <EmptySlate
               icon={{ image: "https://picsum.photos/200?random=1" }}
