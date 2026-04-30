@@ -14,7 +14,7 @@ describe("Modal Dialog", () => {
         title="Default Modal"
         subtitle="This is a subtitle"
         closable={true}
-        buttons={[
+        actions={[
           { id: "confirm", caption: "Confirm", variant: "primary" },
           { id: "cancel", caption: "Cancel", variant: "default" },
         ]}
@@ -46,7 +46,7 @@ describe("Modal Dialog", () => {
               title: "Default Modal",
               subtitle: "This is a subtitle",
               closable: true,
-              buttons: [
+              actions: [
                 { id: "confirm", caption: "Confirm", variant: "primary" },
                 { id: "cancel", caption: "Cancel", variant: "default" },
               ],
@@ -75,7 +75,7 @@ describe("Modal Dialog", () => {
                 title: "Default Modal",
                 subtitle: "This is a subtitle",
                 closable: true,
-                buttons: [
+                actions: [
                   { id: "confirm", caption: "Confirm", variant: "primary" },
                   { id: "cancel", caption: "Cancel", variant: "default" },
                 ],
@@ -482,7 +482,7 @@ describe("Modal Dialog", () => {
     it("renders with properly padding", () => {
       cy.mount(
         <ProductModalDialog
-          buttons={[
+          actions={[
             {
               id: "add-draft",
               caption: "Add draft",
