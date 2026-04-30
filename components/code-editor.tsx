@@ -1,6 +1,6 @@
 import styled, { css, CSSProp } from "styled-components";
 import { Combobox, ComboboxSingleOption } from "./combobox";
-import {
+import React, {
   MutableRefObject,
   RefObject,
   useEffect,
