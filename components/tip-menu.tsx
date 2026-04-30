@@ -1,8 +1,8 @@
 import styled, { css, CSSProp } from "styled-components";
-import React, { ReactNode, useMemo, useRef, useState } from "react";
+import { ReactNode, useMemo, useRef, useState } from "react";
 import { Button } from "./button";
 import { Searchbox } from "./searchbox";
-import { Figure, FigureProps } from "./figure";
+import { Figure } from "./figure";
 import { useTheme } from "../theme/provider";
 import { TipMenuThemeConfig } from "./../theme";
 import { Tooltip, TooltipRef } from "./tooltip";
