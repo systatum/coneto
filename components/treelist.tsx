@@ -305,8 +305,6 @@ function TreeList({
       next = id;
     }
 
-    console.log(isControlled);
-
     if (onChange) onChange(next);
 
     if (!isControlled) {
@@ -498,143 +496,142 @@ function TreeList({
         )}
 
         {content.length > 0 ? (
-          content.map((item, index) => (
-            <GroupWrapper $style={styles?.containerGroupStyle} key={index}>
-              {item.caption && (
-                <GroupTitleWrapper
-                  ref={(el) => ref?.({ el: el, item: item })}
-                  onKeyDown={(event) => onKeyDown({ event: event, item: item })}
-                  data-has-options={item?.className?.includes(
-                    "has-group-options"
-                  )}
-                  data-action-opened={item.id === openRowId}
-                  data-selected={selectedItems?.includes(item.id)}
-                  data-highlighted={item?.className?.includes("is-highlighted")}
-                  aria-expanded={isOpen[item.id]}
-                  $style={styles?.textWrapperStyle}
-                  aria-label="tree-list-group-title"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onMouseDown?.({ event: e, item });
-                    const isCollapsible = item.collapsible ?? collapsible;
-                    if (isCollapsible) {
-                      handleSelected(item.id);
+          content.map((item, index) => {
+            const isCollapsible = item.collapsible ?? collapsible;
+
+            return (
+              <GroupWrapper $style={styles?.containerGroupStyle} key={index}>
+                {item.caption && (
+                  <GroupTitleWrapper
+                    ref={(el) => ref?.({ el: el, item: item })}
+                    onKeyDown={(event) =>
+                      onKeyDown({ event: event, item: item })
                     }
-                  }}
-                  $collapsible={item?.collapsible ?? collapsible}
-                  onMouseLeave={(e) => {
-                    setIsHovered(null);
-                  }}
-                  onMouseMove={(e) => {
-                    onMouseMove?.({ event: e, item: item });
-                  }}
-                  onMouseEnter={(e) => {
-                    onMouseEnter?.({ event: e, item: item });
-                    setIsHovered(item.id);
-                  }}
-                >
-                  <Title
-                    role="option"
                     data-has-options={item?.className?.includes(
                       "has-group-options"
                     )}
-                    $style={styles?.titleStyle}
+                    data-action-opened={item.id === openRowId}
+                    data-selected={selectedItems?.includes(item.id)}
+                    data-highlighted={item?.className?.includes(
+                      "is-highlighted"
+                    )}
+                    aria-expanded={isOpen[item.id]}
+                    $style={styles?.textWrapperStyle}
+                    aria-label="tree-list-group-title"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onMouseDown?.({ event: e, item });
+                      if (isCollapsible) {
+                        handleSelected(item.id);
+                      }
+                    }}
+                    $collapsible={isCollapsible}
+                    onMouseLeave={() => setIsHovered(null)}
+                    onMouseMove={(e) => onMouseMove?.({ event: e, item })}
+                    onMouseEnter={(e) => {
+                      onMouseEnter?.({ event: e, item });
+                      setIsHovered(item.id);
+                    }}
                   >
-                    {item.caption}
-                  </Title>
+                    <Title
+                      role="option"
+                      data-has-options={item?.className?.includes(
+                        "has-group-options"
+                      )}
+                      $style={styles?.titleStyle}
+                    >
+                      {item.caption}
+                    </Title>
 
-                  {item.actions &&
-                    (() => {
-                      const listActions = item.actions;
+                    {item.actions &&
+                      (() => {
+                        const listActions = item.actions;
+                        const actionsWithIcons = item.actions
+                          ?.filter((action) => !action?.hidden)
+                          .map((action) => ({
+                            ...action,
+                            icon: {
+                              ...action?.icon,
+                              image: action?.icon?.image ?? RiArrowRightSLine,
+                            },
+                            onClick: (e?: React.MouseEvent) => {
+                              e?.stopPropagation();
+                              action.onClick?.(item.id);
+                              if (listActions.length > 2) setIsHovered(null);
+                            },
+                          }));
 
-                      const actionsWithIcons = item.actions
-                        ?.filter((action) => !action?.hidden)
-                        .map((action) => ({
-                          ...action,
-                          icon: {
-                            ...action?.icon,
-                            image: action?.icon?.image ?? RiArrowRightSLine,
-                          },
-                          onClick: (e?: React.MouseEvent) => {
-                            e?.stopPropagation();
-                            action.onClick?.(item.id);
-                            if (listActions.length > 2) setIsHovered(null);
-                          },
-                        }));
-
-                      return (
-                        <ContextMenu
-                          onOpen={(prop: boolean) => {
-                            if (prop) {
-                              setOpenRowId(item.id);
-                            } else {
-                              setOpenRowId(null);
+                        return (
+                          <ContextMenu
+                            onOpen={(prop: boolean) => {
+                              setOpenRowId(prop ? item.id : null);
+                            }}
+                            activeBackgroundColor="rgb(193, 214, 241)"
+                            focusBackgroundColor="rgb(193, 214, 241)"
+                            hoverBackgroundColor="rgb(193, 214, 241)"
+                            open={openRowId === item.id}
+                            maxActionsBeforeCollapsing={
+                              maxActionsBeforeCollapsing
                             }
-                          }}
-                          activeBackgroundColor="rgb(193, 214, 241)"
-                          focusBackgroundColor="rgb(193, 214, 241)"
-                          hoverBackgroundColor="rgb(193, 214, 241)"
-                          open={openRowId === item.id}
-                          maxActionsBeforeCollapsing={
-                            maxActionsBeforeCollapsing
-                          }
-                          actions={actionsWithIcons}
-                          styles={{
-                            containerStyle: css`
-                              display: none;
+                            actions={actionsWithIcons}
+                            styles={{
+                              containerStyle: css`
+                                display: none;
+                                ${(isHovered === item.id ||
+                                  openRowId === item.id) &&
+                                css`
+                                  display: inherit;
+                                `}
+                              `,
+                              self: css`
+                                width: 20px;
+                                height: 20px;
+                                padding: 0;
+                              `,
+                            }}
+                          />
+                        );
+                      })()}
 
-                              ${(isHovered === item.id
-                                ? isHovered === item.id
-                                : openRowId === item.id) &&
-                              css`
-                                display: inherit;
-                              `}
-                            `,
-                            self: css`
-                              width: 20px;
-                              height: 20px;
-                              padding: 0;
-                            `,
-                          }}
-                        />
-                      );
-                    })()}
-                  {(item?.collapsible ?? collapsible) && (
-                    <ArrowIcon
-                      aria-label="arrow-icon"
-                      aria-expanded={isOpen[item.id]}
-                      size={arrowSize}
-                      $style={styles?.arrowGroupStyle}
-                    />
-                  )}
-                </GroupTitleWrapper>
-              )}
+                    {isCollapsible && (
+                      <ArrowIcon
+                        aria-label="arrow-icon"
+                        aria-expanded={isOpen[item.id]}
+                        size={arrowSize}
+                        $style={styles?.arrowGroupStyle}
+                      />
+                    )}
+                  </GroupTitleWrapper>
+                )}
 
-              <AnimatePresence initial={false}>
-                {isOpen[item.id] && (
-                  <ItemsWrapper
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                  >
-                    {(() => {
-                      const groupLoading = loadingByGroup[item.id];
+                <AnimatePresence initial={false}>
+                  {isOpen[item.id] && (
+                    <ItemsWrapper
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    >
+                      {(() => {
+                        const groupLoading = loadingByGroup[item.id];
 
-                      return groupLoading?.isLoading ? (
-                        <LoadingSpinner
-                          styles={{
-                            containerStyle: css`
-                              padding-left: 20px;
-                              gap: 8px;
-                            `,
-                          }}
-                          label={groupLoading.caption}
-                        />
-                      ) : item.items?.length > 0 ? (
-                        item.items.map((val, index) => {
+                        if (groupLoading?.isLoading) {
                           return (
+                            <LoadingSpinner
+                              styles={{
+                                containerStyle: css`
+                                  padding-left: 20px;
+                                  gap: 8px;
+                                `,
+                              }}
+                              label={groupLoading.caption}
+                            />
+                          );
+                        }
+
+                        if (item.items?.length > 0) {
+                          return item.items.map((val, index) => (
                             <TreeListItem
                               key={val.id}
                               item={{ ...val }}
@@ -665,7 +662,7 @@ function TreeList({
                               searchTerm={searchTerm}
                               draggable={draggable}
                               showHierarchyLine={showHierarchyLine}
-                              collapsible={item?.collapsible ?? collapsible}
+                              collapsible={isCollapsible}
                               isHavingContent={val.items?.length > 0}
                               setIsOpen={handleSelected}
                               isOpen={isOpen}
@@ -679,54 +676,54 @@ function TreeList({
                               openRowId={openRowId}
                               setOpenRowId={setOpenRowId}
                             />
+                          ));
+                        }
+
+                        if (emptyItemSlate !== null) {
+                          return (
+                            <EmptyContent
+                              key="drop-here"
+                              aria-label="tree-list-empty-slate"
+                              initial="open"
+                              animate={isOpen ? "open" : "collapsed"}
+                              $style={styles?.emptyItemSlateStyle}
+                              exit="collapsed"
+                              variants={{
+                                open: { opacity: 1, height: "auto" },
+                                collapsed: { opacity: 0, height: 0 },
+                              }}
+                              transition={{ duration: 0.2, ease: "easeInOut" }}
+                              onDragOver={(e) => e.preventDefault()}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                if (dragItem && draggable) {
+                                  const {
+                                    id: draggedId,
+                                    oldGroupId,
+                                    oldPosition,
+                                  } = dragItem;
+                                  onDragged?.({
+                                    id: draggedId,
+                                    oldGroupId,
+                                    newGroupId: item.id,
+                                    oldPosition,
+                                    newPosition: 0,
+                                  });
+                                  setDragItem(null);
+                                }
+                              }}
+                            >
+                              {emptyItemSlate}
+                            </EmptyContent>
                           );
-                        })
-                      ) : (
-                        emptyItemSlate !== null && (
-                          <EmptyContent
-                            key="drop-here"
-                            aria-label="tree-list-empty-slate"
-                            initial="open"
-                            animate={isOpen ? "open" : "collapsed"}
-                            $style={styles?.emptyItemSlateStyle}
-                            exit="collapsed"
-                            variants={{
-                              open: { opacity: 1, height: "auto" },
-                              collapsed: { opacity: 0, height: 0 },
-                            }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={(e) => {
-                              e.preventDefault();
-                              if (dragItem && draggable) {
-                                const {
-                                  id: draggedId,
-                                  oldGroupId,
-                                  oldPosition,
-                                } = dragItem;
-
-                                onDragged?.({
-                                  id: draggedId,
-                                  oldGroupId,
-                                  newGroupId: item.id,
-                                  oldPosition,
-                                  newPosition: 0,
-                                });
-
-                                setDragItem(null);
-                              }
-                            }}
-                          >
-                            {emptyItemSlate}
-                          </EmptyContent>
-                        )
-                      );
-                    })()}
-                  </ItemsWrapper>
-                )}
-              </AnimatePresence>
-            </GroupWrapper>
-          ))
+                        }
+                      })()}
+                    </ItemsWrapper>
+                  )}
+                </AnimatePresence>
+              </GroupWrapper>
+            );
+          })
         ) : (
           <EmptyContent $style={styles?.emptySlateStyle}>
             {emptySlate}
