@@ -507,6 +507,7 @@ function TreeList({
                   data-has-options={item?.className?.includes(
                     "has-group-options"
                   )}
+                  data-action-opened={item.id === openRowId}
                   data-selected={selectedItems?.includes(item.id)}
                   data-highlighted={item?.className?.includes("is-highlighted")}
                   aria-expanded={isOpen[item.id]}
@@ -562,45 +563,35 @@ function TreeList({
                         }));
 
                       return (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "4px",
+                        <ContextMenu
+                          onOpen={(prop: boolean) => {
+                            if (prop) {
+                              setOpenRowId(item.id);
+                            } else {
+                              setOpenRowId(null);
+                            }
                           }}
-                        >
-                          <ContextMenu
-                            onOpen={(prop: boolean) => {
-                              if (prop) {
-                                setOpenRowId(item.id);
-                              } else {
-                                setOpenRowId(null);
-                              }
-                            }}
-                            open={openRowId === item.id}
-                            maxActionsBeforeCollapsing={2}
-                            actions={actionsWithIcons}
-                            styles={{
-                              containerStyle: css`
-                                display: none;
+                          open={openRowId === item.id}
+                          maxActionsBeforeCollapsing={2}
+                          actions={actionsWithIcons}
+                          styles={{
+                            containerStyle: css`
+                              display: none;
 
-                                ${(isHovered === item.id
-                                  ? isHovered === item.id
-                                  : openRowId === item.id) &&
-                                css`
-                                  display: inherit;
-                                `}
-                              `,
-                              self: css`
-                                width: 20px;
-                                height: 20px;
-                                padding: 0;
-                              `,
-                            }}
-                          />
-                        </div>
+                              ${(isHovered === item.id
+                                ? isHovered === item.id
+                                : openRowId === item.id) &&
+                              css`
+                                display: inherit;
+                              `}
+                            `,
+                            self: css`
+                              width: 20px;
+                              height: 20px;
+                              padding: 0;
+                            `,
+                          }}
+                        />
                       );
                     })()}
                   {(item?.collapsible ?? collapsible) && (
@@ -1057,6 +1048,7 @@ function TreeListItem<T extends TreeListItem>({
           }
         }}
         $theme={treeListTheme}
+        data-action-opened={openRowId === item.id}
         $isHovered={isHovered === item.id || openRowId === item.id}
         $isDropParent={dropIntent === "containment" && isOver}
         onDragStart={() =>
@@ -1389,6 +1381,8 @@ function TreeListItem<T extends TreeListItem>({
                     groupLength={item?.items?.length}
                     index={index}
                     canContainChildren={item.canContainChildren ?? true}
+                    openRowId={openRowId}
+                    setOpenRowId={setOpenRowId}
                   />
                 ))
               ) : (
