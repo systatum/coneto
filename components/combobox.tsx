@@ -894,7 +894,7 @@ function ComboboxDrawer({
               hierarchyLineStyle: css`
                 border-left-width: 2px;
 
-                &[data-level="0"] {
+                &[aria-label="vertical-line-level"] {
                   border-left: none !important;
                 }
 
