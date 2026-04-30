@@ -752,9 +752,19 @@ export const Categorized: Story = {
             text: "Sweet",
             value: "group-watery-sweet",
             groupOptions: [
-              { text: "Watermelon", value: "item-watermelon" },
-              { text: "Pear", value: "item-pear" },
-              { text: "Grape", value: "item-grape" },
+              {
+                text: "Light",
+                value: "light",
+                groupOptions: [
+                  { text: "Watermelon", value: "item-watermelon" },
+                  { text: "Pear", value: "item-pear" },
+                ],
+              },
+              {
+                text: "Bold",
+                value: "bold",
+                groupOptions: [{ text: "Grape", value: "item-grape" }],
+              },
             ],
             groupSetting: { collapsible: true },
           },
