@@ -176,7 +176,7 @@ export interface TreeListItemOnClick {
 }
 
 export interface TreeListAction {
-  id: string;
+  id?: string;
   caption?: string;
   onClick?: (props?: { setActive?: (prop: boolean) => void }) => void;
   icon?: FigureProps;
@@ -539,7 +539,14 @@ function TreeList({
                     setIsHovered(item.id);
                   }}
                 >
-                  <Title $style={styles?.titleStyle}>{item.caption}</Title>
+                  <Title
+                    data-has-options={item?.className?.includes(
+                      "has-group-options"
+                    )}
+                    $style={styles?.titleStyle}
+                  >
+                    {item.caption}
+                  </Title>
 
                   {item.actions &&
                     (() => {
