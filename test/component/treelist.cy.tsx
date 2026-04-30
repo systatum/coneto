@@ -497,9 +497,11 @@ describe("Treelist", () => {
               "have.been.calledWith",
               "discover was selected"
             );
-            cy.findByText("Discover")
-              .parent()
-              .should("have.css", "border-left-color", "rgb(59, 130, 246)");
+            cy.findByText("Discover").should(
+              "have.css",
+              "border-left-color",
+              "rgb(59, 130, 246)"
+            );
           });
         });
       });
@@ -675,7 +677,7 @@ describe("Treelist", () => {
       it("renders highlight active item", () => {
         cy.mount(
           <TreeList
-            selectedItem="mts-1"
+            selectedItems="mts-1"
             content={TREE_LIST_DATA}
             emptySlate={<p>Not found.</p>}
           />
@@ -721,10 +723,10 @@ describe("Treelist", () => {
         <TreeList content={TREE_LIST_DATA} emptySlate={<p>Not found.</p>} />
       );
       TREE_LIST_DATA.map((props) => {
-        cy.findByText(props.caption).should("be.visible");
+        cy.findByText(String(props.caption)).should("be.visible");
         {
           props.items.map((item) => {
-            cy.findByText(item.caption).should("be.visible");
+            cy.findByText(String(item.caption)).should("be.visible");
           });
         }
       });

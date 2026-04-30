@@ -1,52 +1,17 @@
-MIT License
+# Systatum Coneto License Agreement
 
-Copyright (c) 2026 Systatum
+**Grant of License**. Subject to these Terms, including the Restriction on Standalone Competitive Offerings below, the Licensor grants each Licensee a non-exclusive, worldwide, non-transferable, revocable license to use, copy, modify, create derivative works of, display, perform, distribute, sublicense, and otherwise use the Software, in source or object form, for any lawful purpose, including as part of open-source, source-available, or proprietary products and services.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+**Permitted Redistribution**. Licensees may distribute the Software, with or without modifications, and may include the Software in larger products, applications, services, or systems, including open-source, source-available, and proprietary offerings.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+**Restriction on Standalone Competitive Offerings**. Licensees may not distribute, sublicense, publish, or otherwise make available the Software, or any modified or derivative version of it, as a standalone software library, framework, toolkit, platform, or other product that primarily provides the same or substantially similar functionality as the Software, unless the Licensor gives prior written permission. This restriction does not prevent use of the Software as a component within a larger product, application, service, or system.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+**Condition of Redistribution**. Any distribution, sublicense, or other transfer of the Software, whether in original or modified form and whether in source or object form, must include a complete copy of this License or provide a clear and conspicuous way for recipients to access and review it. Any person or entity that uses, copies, modifies, distributes, or otherwise exercises rights under this License is bound by these Terms.
 
----
+**Revocation**. The Licensor may revoke this License, in whole or in part, for any or no reason, at any time, by written or electronic notice to the affected Licensee.
 
-## THIRD-PARTY LICENSES
+**Effect of Revocation**. Upon revocation, all rights granted to the affected Licensee under this License immediately terminate. The affected Licensee must immediately stop using, copying, modifying, distributing, sublicensing, or otherwise using the Software, and must promptly destroy or permanently delete all copies of the Software in its possession or control.
 
-This project includes code and concepts derived from:
+**Continued Use After Revocation**. After revocation, any continued use, copying, modification, distribution, sublicensing, possession, or other use of the Software by the affected Licensee is unauthorized and infringes the Licensor's rights.
 
-libphonenumber-js
-
-(The MIT License)
-
-Copyright (c) 2016 @catamphetamine <purecatamphetamine@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+**Reservation of Rights**. All rights not expressly granted under this License are reserved by the Licensor. The Licensor may grant others different license terms.

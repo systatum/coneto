@@ -43,6 +43,7 @@ export type SelectboxSelectedOptions = number | string | number[] | string[];
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: SelectboxOption[];
+  navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
   placeholder?: string;
@@ -141,6 +142,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
+      className,
+      navigableOptions,
       ...props
     },
     ref
@@ -217,6 +220,14 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       (opt) => opt.text === selectedOptionsLocal.text
     );
 
+    const FILTERED_NAVIGABLE_OPTIONS = hasInteracted
+      ? navigableOptions.filter((opt) =>
+          opt.text
+            .toLowerCase()
+            .includes(selectedOptionsLocal.text.toLowerCase())
+        )
+      : navigableOptions;
+
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
       open: isOpen,
@@ -247,7 +258,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
       setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
-      setHighlightedIndex(0);
+
+      const hasMatch = finalOptions.some((opt) =>
+        opt.text.toLowerCase().includes(value.toLowerCase())
+      );
+      setHighlightedIndex(hasMatch ? 0 : null);
     };
 
     const justCommittedRef = useRef(false);
@@ -296,7 +311,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
-      const totalItems = (actions?.length ?? 0) + FILTERED_OPTIONS.length - 1;
+      const totalItems =
+        (actions?.length ?? 0) + FILTERED_NAVIGABLE_OPTIONS.length - 1;
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         setInteractionMode("keyboard");
@@ -338,7 +354,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
         const selectedOption =
           highlightedIndex !== null
-            ? FILTERED_OPTIONS[highlightedIndex - (actions?.length ?? 0)]
+            ? FILTERED_NAVIGABLE_OPTIONS[
+                highlightedIndex - (actions?.length ?? 0)
+              ]
             : undefined;
 
         if (multiple) {
@@ -361,7 +379,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }
 
         requestAnimationFrame(() => {
-          setHighlightedIndex(null);
+          if (!multiple) {
+            setHighlightedIndex(null);
+          }
         });
       }
 
@@ -379,7 +399,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }
 
         requestAnimationFrame(() => {
-          setHighlightedIndex(null);
+          if (!multiple) {
+            setHighlightedIndex(null);
+          }
         });
       }
     };
@@ -499,7 +521,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            setHasInteracted(false);
+            if (!multiple) {
+              setHasInteracted(false);
+            }
 
             if (strict && !multiple) {
               if (justCommittedRef.current) {
