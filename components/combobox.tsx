@@ -472,27 +472,36 @@ function ComboboxDrawer({
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
         ?.filter((action) => !action?.hidden)
-        .map((action) => ({
-          id: action?.id,
-          caption: action?.caption,
-          hidden: action?.hidden,
-          icon: action?.icon,
-          onClick: () => {
-            action?.onClick();
-            setIsOpen(false);
-          },
-          styles: {
-            ...action?.styles,
-            self: css`
-              ${rowStyle({
-                interactionMode,
-                multiple,
-                theme: comboboxTheme,
-              })}
-              ${action?.styles?.self}
-            `,
-          },
-        }))
+        .map((action, index) => {
+          const shouldHighlight = highlightedIndex === index;
+
+          return {
+            id: action?.id,
+            caption: action?.caption,
+            hidden: action?.hidden,
+            icon: action?.icon,
+            onClick: () => {
+              action?.onClick();
+              setIsOpen(false);
+            },
+            onMouseEnter: () => {
+              if (interactionMode !== "mouse") return;
+              setHighlightedIndex(index);
+            },
+            className: shouldHighlight ? "is-highlighted" : "",
+            styles: {
+              ...action?.styles,
+              self: css`
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
+                ${action?.styles?.self}
+              `,
+            },
+          };
+        })
     : [];
 
   const optionByTreeId = useRef<Record<string, ComboboxOption>>({});

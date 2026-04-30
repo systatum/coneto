@@ -368,6 +368,10 @@ function TreeList({
             aria-label="tree-list-action-wrapper"
           >
             {filteredActions.map((action, index) => {
+              const {
+                className: classNameAction,
+                onMouseEnter: onMouseEnterAction,
+              } = action as TreeListActionInternalProps;
               const isActiveAction = action.id === isActive;
               const isSelectedAction = selectedItems.includes(action.id);
 
@@ -385,15 +389,18 @@ function TreeList({
               const TreeAction = (
                 <TreeListAction
                   key={index}
+                  onMouseEnter={onMouseEnterAction}
+                  className={classNameAction}
                   isActive={isActiveAction}
                   isSelected={isSelectedAction}
                   onClick={handleActionClick}
                   caption={action.caption}
                   icon={action.icon}
                   styles={{
-                    self: `
-                    ${styles?.actionStyle}
-                    ${action?.styles?.self}`,
+                    self: css`
+                      ${styles?.actionStyle}
+                      ${action?.styles?.self}
+                    `,
                   }}
                 />
               );
@@ -737,6 +744,8 @@ interface TreeListActionInternalProps extends BaseAction {
   isSelected?: boolean;
   isActive?: boolean;
   styles?: { self?: CSSProp };
+  className?: string;
+  onMouseEnter?: (event: React.MouseEvent) => void;
 }
 
 function TreeListAction({
@@ -749,6 +758,8 @@ function TreeListAction({
   disabled,
   hidden,
   id,
+  className,
+  onMouseEnter,
 }: TreeListActionInternalProps) {
   if (hidden) {
     return;
@@ -768,11 +779,15 @@ function TreeListAction({
       role="button"
       tabIndex={0}
       aria-label="tree-list-action"
+      data-has-options={false}
+      data-highlighted={className?.includes("is-highlighted")}
+      className={className}
+      onMouseEnter={onMouseEnter}
       onMouseDown={() => onClick()}
       $style={styles?.self}
     >
       {icon && <Figure {...icon} />}
-      <div>{caption}</div>
+      {caption}
     </ActionItem>
   );
 }
@@ -1004,10 +1019,10 @@ function TreeListItem<T extends TreeListItem>({
         data-group-id={groupId}
         aria-label="tree-list-item"
         $style={styles?.itemStyle}
-        data-selected={isSelected.includes(item.id)}
         $isSelected={isSelected.includes(item.id)}
         aria-expanded={isOpen[item.id]}
         $showHierarchyLine={showHierarchyLine}
+        data-selected={isSelected.includes(item.id)}
         data-has-options={item?.className?.includes("has-group-options")}
         data-highlighted={item?.className?.includes("is-highlighted")}
         onKeyDown={(e) => {
