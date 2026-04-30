@@ -377,7 +377,7 @@ export const WithActions: Story = {
 
     const FRUIT_ACTIONS: ComboboxAction[] = [
       {
-        title: "Add Fruit",
+        caption: "Add Fruit",
         onClick: () => {
           console.log("New fruit added");
         },
