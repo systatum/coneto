@@ -644,7 +644,7 @@ function ComboboxDrawer({
       };
     };
 
-    return finalOptions.filter((opt) => !opt.hidden).map(mapToContent);
+    return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent);
   };
 
   const onMouseDown = (props: {

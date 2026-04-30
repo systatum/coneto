@@ -154,8 +154,6 @@ export const Default: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>([0]);
 
-    console.log(value);
-
     const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
@@ -749,24 +747,24 @@ export const Categorized: Story = {
     const FRUIT_OPTIONS: ComboboxOption[] = [
       {
         text: "Watery",
-        value: "Watery",
+        value: "group-watery",
         groupOptions: [
           {
             text: "Sweet",
-            value: "Watery-Sweet",
+            value: "group-watery-sweet",
             groupOptions: [
-              { text: "Watermelon", value: "7" },
-              { text: "Pear", value: "19" },
-              { text: "Grape", value: "4" },
+              { text: "Watermelon", value: "item-watermelon" },
+              { text: "Pear", value: "item-pear" },
+              { text: "Grape", value: "item-grape" },
             ],
             groupSetting: { collapsible: true },
           },
           {
             text: "Balanced",
-            value: "Watery-Balanced",
+            value: "group-watery-balanced",
             groupOptions: [
-              { text: "Apple", value: "1" },
-              { text: "Papaya", value: "11" },
+              { text: "Apple", value: "item-apple" },
+              { text: "Papaya", value: "item-papaya" },
             ],
             groupSetting: { collapsible: true },
           },
@@ -775,25 +773,25 @@ export const Categorized: Story = {
       },
       {
         text: "Tangy",
-        value: "Tangy",
+        value: "group-tangy",
         groupOptions: [
           {
             text: "Sweet",
-            value: "Tangy-Sweet",
+            value: "group-tangy-sweet",
             groupOptions: [
-              { text: "Orange", value: "3" },
-              { text: "Pineapple", value: "5" },
-              { text: "Lychee", value: "17" },
+              { text: "Orange", value: "item-orange" },
+              { text: "Pineapple", value: "item-pineapple" },
+              { text: "Lychee", value: "item-lychee" },
             ],
             groupSetting: { collapsible: true },
           },
           {
             text: "Balanced",
-            value: "Tangy-Balanced",
+            value: "group-tangy-balanced",
             groupOptions: [
-              { text: "Kiwi", value: "10" },
-              { text: "Pomegranate", value: "20" },
-              { text: "Cherry", value: "12" },
+              { text: "Kiwi", value: "item-kiwi" },
+              { text: "Pomegranate", value: "item-pomegranate" },
+              { text: "Cherry", value: "item-cherry" },
             ],
             groupSetting: { collapsible: true },
           },
@@ -802,47 +800,47 @@ export const Categorized: Story = {
       },
       {
         text: "Creamy",
-        value: "Creamy",
+        value: "group-creamy",
         groupOptions: [
           {
             text: "Sweet",
-            value: "Creamy-Sweet",
+            value: "group-creamy-sweet",
             groupOptions: [
-              { text: "Banana", value: "2" },
-              { text: "Mango", value: "8" },
-              { text: "Peach", value: "13" },
+              { text: "Banana", value: "item-banana" },
+              { text: "Mango", value: "item-mango" },
+              { text: "Peach", value: "item-peach" },
             ],
             groupSetting: { collapsible: true },
           },
           {
             text: "Balanced",
-            value: "Creamy-Balanced",
-            groupOptions: [{ text: "Plum", value: "14" }],
+            value: "group-creamy-balanced",
+            groupOptions: [{ text: "Plum", value: "item-plum" }],
             groupSetting: { collapsible: true },
           },
-          { text: "Coconut", value: "18" },
+          { text: "Coconut", value: "item-coconut" },
         ],
         groupSetting: { collapsible: true },
       },
       {
         text: "Berry",
-        value: "Berry",
+        value: "group-berry",
         groupOptions: [
           {
             text: "Balanced",
-            value: "Berry-Balanced",
+            value: "group-berry-balanced",
             groupOptions: [
-              { text: "Strawberry", value: "6" },
-              { text: "Blueberry", value: "9" },
-              { text: "Raspberry", value: "16" },
+              { text: "Strawberry", value: "item-strawberry" },
+              { text: "Blueberry", value: "item-blueberry" },
+              { text: "Raspberry", value: "item-raspberry" },
             ],
             groupSetting: { collapsible: true },
           },
         ],
         groupSetting: { collapsible: true },
       },
-      { text: "Peppers", value: "99" },
-      { text: "Eggplants", value: "100", hidden: true },
+      { text: "Peppers", value: "item-peppers" },
+      { text: "Eggplants", value: "item-eggplants", hidden: true },
     ];
 
     const setAllOpened = (items: ComboboxOption[]): ComboboxOption[] =>
@@ -868,8 +866,8 @@ export const Categorized: Story = {
         <Combobox
           id="default"
           label="Default"
-          selectedOptions={value1}
-          options={FRUIT_OPTIONS}
+          selectedOptions={null}
+          options={null}
           onChange={setValue1}
           placeholder="Select a fruit..."
         />
