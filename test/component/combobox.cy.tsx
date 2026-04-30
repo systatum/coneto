@@ -63,8 +63,14 @@ const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
         text: "Sweet",
         value: "Watery-Sweet",
         groupOptions: [
-          { text: "Watermelon", value: "7" },
-          { text: "Pear", value: "19" },
+          {
+            text: "Bold",
+            value: "092",
+            groupOptions: [
+              { text: "Watermelon", value: "7" },
+              { text: "Pear", value: "19" },
+            ],
+          },
           { text: "Grape", value: "4" },
         ],
         groupSetting: { collapsible: true },
@@ -72,12 +78,10 @@ const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
       {
         text: "Balanced",
         value: "Watery-Balanced",
-        groupOptions: [
-          { text: "Apple", value: "1" },
-          { text: "Papaya", value: "11" },
-        ],
+        groupOptions: [{ text: "Apple", value: "1" }],
         groupSetting: { collapsible: true },
       },
+      { text: "Papaya", value: "11" },
     ],
     groupSetting: { collapsible: true },
   },
@@ -102,7 +106,6 @@ const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
   { text: "Peppers", value: "99" },
   { text: "Eggplants", value: "100", hidden: true },
 ];
-
 describe("Combobox", () => {
   function ProductCombobox(props: Partial<ComboboxProps>) {
     const [value, setValue] = useState<string>("");
@@ -385,24 +388,75 @@ describe("Combobox", () => {
       });
     });
 
-    context("style", () => {
-      it("renders border-left 2px solid rgb(215, 214, 214)", () => {
-        cy.findByText("Watery").click();
-        cy.findByText("Sweet").click();
-        cy.findAllByLabelText("vertical-line")
-          .eq(3)
-          .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
-      });
-
-      context("relation vertical line level", () => {
-        it("renders border-left none", () => {
+    context("vertical line", () => {
+      /**
+       * vertical-line-level = ANCESTOR lines (Array.from({ length: level }) loop)
+       * vertical-line       = OWN line (rendered inside TreeListItemWrapper)
+       *
+       * vertical-line-level: always forced border-left: none in combobox (aria-label rule)
+       * vertical-line: visible, colored rgb(215, 214, 214) when data-selected="false"
+       */
+      context("when nested level 1", () => {
+        it("not renders border-left (empty)", () => {
           cy.findByText("Watery").click();
           cy.findByText("Sweet").click();
-          cy.findAllByLabelText("vertical-line-level").should(
-            "have.css",
-            "border",
-            ""
-          );
+
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border", "");
+        });
+      });
+
+      context("when nested level 2", () => {
+        beforeEach(() => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+        });
+
+        it("data-level 0 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border-left-width", "0px");
+          // bold option
+        });
+
+        it("data-level 1 has border-left", () => {
+          cy.findAllByLabelText("vertical-line")
+            .eq(2)
+            .filter('[data-level="1"]')
+            .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+
+          // bold option
+        });
+      });
+
+      context("when nested level 3", () => {
+        beforeEach(() => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+          cy.findByText("Bold").click();
+        });
+
+        it("data-level 0 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border-width", "0px");
+          // watermelon option
+        });
+
+        it("data-level 1 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="1"]')
+            .should("have.css", "border-width", "0px");
+          // watermelon option
+        });
+
+        it("data-level 2 has border-left", () => {
+          cy.findAllByLabelText("vertical-line")
+            .eq(3)
+            .filter('[data-level="2"]')
+            .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+          // watermelon option
         });
       });
     });
@@ -439,10 +493,10 @@ describe("Combobox", () => {
 
     context("when clicking the group", () => {
       const expectedText = [
-        { text: "Watermelon", value: "7" },
         { text: "Pear", value: "19" },
         { text: "Grape", value: "4" },
       ];
+
       it("should reveal the option", () => {
         expectedText.map((option) => {
           cy.findByText(option?.text).should("not.exist");
@@ -451,7 +505,7 @@ describe("Combobox", () => {
         cy.findByText("Watery").click();
 
         cy.findByText("Sweet").click();
-        cy.findByText("Balanced").click();
+        cy.findByText("Bold").click();
 
         expectedText.map((option) => {
           cy.findByText(option?.text).should("exist");
@@ -467,7 +521,7 @@ describe("Combobox", () => {
           cy.findByText("Watery").click();
 
           cy.findByText("Sweet").click();
-          cy.findByText("Balanced").click();
+          cy.findByText("Bold").click();
 
           expectedText.map((option) => {
             cy.findByText(option?.text).should("exist");
