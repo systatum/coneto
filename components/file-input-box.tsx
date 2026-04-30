@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  DragEvent,
-  InputHTMLAttributes,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, DragEvent, InputHTMLAttributes, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
@@ -104,7 +98,7 @@ function BaseFileInputBox({
         if (disabled) return;
         handleDragOver(e);
       }}
-      onDragLeave={(e) => {
+      onDragLeave={() => {
         if (disabled) return;
         handleDragLeave();
       }}

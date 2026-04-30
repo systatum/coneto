@@ -4,7 +4,6 @@ import { ChangeEvent, useMemo, useState } from "react";
 import { Searchbox } from "./searchbox";
 import { TreeList } from "./treelist";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 
 const meta: Meta<typeof Sidebar> = {
   title: "Stage/Sidebar",

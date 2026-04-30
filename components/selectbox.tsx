@@ -141,7 +141,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       isLoading,
       labels,
       disabled,
-      className,
       ...props
     },
     ref

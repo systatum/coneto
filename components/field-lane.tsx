@@ -135,8 +135,7 @@ function FieldLane({
                   const dropdownData = dropdown.options.map((prop) => ({
                     caption: prop.text,
                     icon: prop.icon,
-                    onClick: (e: React.MouseEvent) => {
-                      e.preventDefault();
+                    onClick: () => {
                       dropdown.onChange(prop.value);
                     },
                     id: prop.value,
@@ -185,7 +184,7 @@ function FieldLane({
                     &:hover {
                       color: ${fieldLaneTheme?.buttonTextColor};
                     }
-                    min-height: 32px;
+                    min-height: 30px;
 
                     ${!children &&
                     css`

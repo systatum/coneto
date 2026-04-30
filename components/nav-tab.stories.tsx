@@ -287,6 +287,7 @@ export const WithActions: Story = {
               setActiveTab("3");
             },
             active: activeTab === "3",
+            className: "test",
           },
           {
             caption: "Add",

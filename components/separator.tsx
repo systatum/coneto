@@ -1,6 +1,5 @@
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { FigureProps } from "./figure";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
 import { BaseAction } from "../constants/action";

@@ -1,8 +1,4 @@
-import {
-  RiArrowDownSLine,
-  RiArrowRightSLine,
-  RiDraggable,
-} from "@remixicon/react";
+import { RiArrowDownSLine, RiDraggable } from "@remixicon/react";
 import React, {
   ChangeEvent,
   Children,
