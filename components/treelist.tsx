@@ -227,7 +227,7 @@ function TreeList({
   onMouseMoveItem,
   onMouseDownItem,
   multiple,
-  selectedItems: _selectedItems = "",
+  selectedItems: _selectedItems,
   maxActionsBeforeCollapsing = 2,
   ...props
 }: TreeListProps) {
@@ -304,6 +304,8 @@ function TreeList({
     } else {
       next = id;
     }
+
+    console.log(isControlled);
 
     if (onChange) onChange(next);
 
