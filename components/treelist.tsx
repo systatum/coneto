@@ -1289,7 +1289,6 @@ function TreeListItem<T extends TreeListItem>({
             $theme={treeListTheme}
             aria-label="vertical-line"
             $level={level}
-            data-level={level}
             $isSameLevel={isSameLevel}
             $style={styles?.hierarchyLineStyle}
             data-same-level={isSameLevel}
@@ -1318,7 +1317,6 @@ function TreeListItem<T extends TreeListItem>({
               $theme={treeListTheme}
               aria-label="vertical-line-level"
               $level={idx}
-              data-level={idx}
               data-has-options={Boolean(
                 item?.className?.includes("has-group-options")
               )}
