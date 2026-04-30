@@ -742,7 +742,8 @@ export const WithCustomRenderer: Story = {
 export const Categorized: Story = {
   render: () => {
     const [value1, setValue1] = useState<SelectboxSelectedOptions>("");
-    const [value2, setValue2] = useState<SelectboxSelectedOptions>([""]);
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>("");
+    const [value3, setValue3] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       {
@@ -843,16 +844,16 @@ export const Categorized: Story = {
       { text: "Eggplants", value: "100", hidden: true },
     ];
 
-    const FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
-      FRUIT_OPTIONS.map((item) => {
-        return {
-          ...item,
-          groupSetting: {
-            ...item?.groupSetting,
-            initialState: "opened",
-          },
-        };
-      });
+    const setAllOpened = (items: ComboboxOption[]): ComboboxOption[] =>
+      items.map((item) => ({
+        ...item,
+        groupSetting: { ...item?.groupSetting, initialState: "opened" },
+        groupOptions: item.groupOptions?.length
+          ? setAllOpened(item.groupOptions)
+          : item.groupOptions,
+      }));
+
+    const FRUIT_OPTIONS_WITH_INITIAL_OPENED = setAllOpened(FRUIT_OPTIONS);
 
     return (
       <div
@@ -874,18 +875,19 @@ export const Categorized: Story = {
         <Combobox
           id="default-with-initial-state"
           label='Default With Initial State "opened"'
-          selectedOptions={value1}
+          selectedOptions={value2}
           options={FRUIT_OPTIONS_WITH_INITIAL_OPENED}
-          onChange={setValue1}
+          onChange={setValue2}
           placeholder="Select a fruit..."
         />
         <Combobox
           id="multiple"
           multiple
+          clearable
           label="Multiple"
-          selectedOptions={value2}
+          selectedOptions={value3}
           options={FRUIT_OPTIONS}
-          onChange={setValue2}
+          onChange={setValue3}
           placeholder="Select a fruit..."
         />
       </div>
