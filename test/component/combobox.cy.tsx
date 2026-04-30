@@ -4,7 +4,6 @@ import {
   ComboboxItemAction,
   ComboboxOption,
   ComboboxProps,
-  ComboboxSingleOption,
 } from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
@@ -18,7 +17,7 @@ import {
 } from "@remixicon/react";
 import { useState } from "react";
 
-const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+const FRUIT_OPTIONS: ComboboxOption[] = [
   { text: "Apple", value: "1" },
   { text: "Banana", value: "2" },
   { text: "Orange", value: "3" },
@@ -45,7 +44,7 @@ const OPTION_ACTIONS = (id: string | number): ComboboxItemAction[] => [
   },
 ];
 
-const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxSingleOption[] = [
+const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxOption[] = [
   { text: "Apple", value: "1", actions: OPTION_ACTIONS },
   { text: "Banana", value: "2", actions: OPTION_ACTIONS },
   { text: "Orange", value: "3", actions: OPTION_ACTIONS },
@@ -57,55 +56,48 @@ const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxSingleOption[] = [
 
 const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
   {
-    category: "Sweet",
-    options: [
-      { text: "Banana", value: "2" },
-      { text: "Mango", value: "8" },
-      { text: "Papaya", value: "11" },
-      { text: "Lychee", value: "17" },
-      { text: "Guava", value: "15" },
+    text: "Watery",
+    value: "Watery",
+    groupOptions: [
+      {
+        text: "Sweet",
+        value: "Watery-Sweet",
+        groupOptions: [
+          { text: "Watermelon", value: "7" },
+          { text: "Pear", value: "19" },
+          { text: "Grape", value: "4" },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Balanced",
+        value: "Watery-Balanced",
+        groupOptions: [
+          { text: "Apple", value: "1" },
+          { text: "Papaya", value: "11" },
+        ],
+        groupSetting: { collapsible: true },
+      },
     ],
-    collapsible: true,
+    groupSetting: { collapsible: true },
   },
   {
-    category: "Tangy",
-    options: [
-      { text: "Orange", value: "3" },
-      { text: "Kiwi", value: "10" },
-      { text: "Pineapple", value: "5" },
-      { text: "Pomegranate", value: "20" },
-      { text: "Cherry", value: "12" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Watery",
-    options: [
-      { text: "Watermelon", value: "7" },
-      { text: "Apple", value: "1" },
-      { text: "Pear", value: "19" },
-      { text: "Grape", value: "4" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Berry",
-    options: [
-      { text: "Strawberry", value: "6" },
-      { text: "Blueberry", value: "9" },
-      { text: "Raspberry", value: "16" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Creamy",
-    options: [
-      { text: "Coconut", value: "18" },
-      { text: "Peach", value: "13" },
-      { text: "Plum", value: "14" },
-    ],
-    collapsible: true,
+    text: "Berry",
+    value: "Berry",
     hidden: true,
+    groupOptions: [
+      {
+        text: "Balanced",
+        value: "Berry-Balanced",
+        groupOptions: [
+          { text: "Strawberry", value: "6" },
+          { text: "Blueberry", value: "9" },
+          { text: "Raspberry", value: "16" },
+        ],
+        groupSetting: { collapsible: true },
+      },
+    ],
+    groupSetting: { collapsible: true },
   },
   { text: "Peppers", value: "99" },
   { text: "Eggplants", value: "100", hidden: true },
@@ -215,9 +207,11 @@ describe("Combobox", () => {
           cy.wait(500);
 
           // hovering the selected option
-          cy.findAllByLabelText("list-item-row").eq(1).trigger("mouseover");
+          cy.findAllByLabelText("tree-list-group-title")
+            .eq(1)
+            .trigger("mouseover");
 
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -227,7 +221,7 @@ describe("Combobox", () => {
         it("should highlight selected option (rgb(97, 169, 249))", () => {
           cy.findByLabelText("selectbox-opener").click();
           cy.wait(500);
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -238,7 +232,7 @@ describe("Combobox", () => {
           cy.findByPlaceholderText("Select a fruit...").type("{uparrow}");
 
           cy.wait(500);
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -393,8 +387,8 @@ describe("Combobox", () => {
 
     it("should not reveal the option", () => {
       MIX_FRUIT_OPTIONS.flatMap((option) => {
-        if ("category" in option && option.category !== "Creamy") {
-          cy.findByText(option.category).should("be.visible");
+        if (option.text !== "Berry" && option.text !== "Eggplants") {
+          cy.findByText(option.text).should("be.visible");
         }
       });
     });
@@ -403,8 +397,8 @@ describe("Combobox", () => {
       context("when given in the group", () => {
         it("should not render the group", () => {
           MIX_FRUIT_OPTIONS.flatMap((option) => {
-            if ("category" in option && option.category === "Creamy") {
-              cy.findByText("Creamy").should("not.exist");
+            if (option.text === "Berry") {
+              cy.findByText("Berry").should("not.exist");
             }
           });
         });
@@ -422,55 +416,57 @@ describe("Combobox", () => {
     });
 
     context("when clicking the group", () => {
+      const expectedText = [
+        { text: "Watermelon", value: "7" },
+        { text: "Pear", value: "19" },
+        { text: "Grape", value: "4" },
+      ];
       it("should reveal the option", () => {
-        MIX_FRUIT_OPTIONS.flatMap((option) => {
-          if ("category" in option && option.category === "Sweet") {
-            option.options.map((opt) => {
-              cy.findByText(opt.text).should("not.be.visible");
-            });
-            cy.findByText(option.category).should("be.visible").click();
-            cy.wait(200);
-            option.options.map((opt) => {
-              cy.findByText(opt.text).should("be.visible");
-            });
-          }
+        expectedText.map((option) => {
+          cy.findByText(option?.text).should("not.exist");
+        });
+
+        cy.findByText("Sweet").click();
+        cy.findByText("Balanced").click();
+
+        expectedText.map((option) => {
+          cy.findByText(option?.text).should("exist");
         });
       });
 
       context("when clicking the option", () => {
         it("should selecting the option", () => {
-          MIX_FRUIT_OPTIONS.flatMap((option) => {
-            if ("category" in option && option.category === "Sweet") {
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("not.be.visible");
-              });
-              cy.findByText(option.category).should("be.visible").click();
-              cy.wait(200);
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("be.visible");
-              });
-              cy.findByText("Banana").click();
-              cy.findByPlaceholderText("Select a fruit...").should(
-                "have.value",
-                "Banana"
-              );
-            }
+          expectedText.map((option) => {
+            cy.findByText(option?.text).should("not.exist");
           });
+
+          cy.findByText("Sweet").click();
+          cy.findByText("Balanced").click();
+
+          expectedText.map((option) => {
+            cy.findByText(option?.text).should("exist");
+          });
+
+          cy.findByText("Watermelon").click();
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Watermelon"
+          );
         });
       });
     });
 
     context("initialState", () => {
-      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
-        MIX_FRUIT_OPTIONS.map((item) => {
-          if ("category" in item && item.options) {
-            return {
-              ...item,
-              initialState: "opened",
-            };
-          }
-          return item;
-        });
+      const setAllOpened = (items: ComboboxOption[]): ComboboxOption[] =>
+        items.map((item) => ({
+          ...item,
+          groupSetting: { ...item?.groupSetting, initialState: "opened" },
+          groupOptions: item.groupOptions?.length
+            ? setAllOpened(item.groupOptions)
+            : item.groupOptions,
+        }));
+
+      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED = setAllOpened(FRUIT_OPTIONS);
 
       context("when given opened", () => {
         beforeEach(() => {
@@ -482,14 +478,14 @@ describe("Combobox", () => {
           );
           cy.findByPlaceholderText("Select a fruit...").click();
         });
+
         it("should reveal all option", () => {
           MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED.flatMap((option) => {
-            if ("category" in option && option.category === "Sweet") {
-              cy.findByText(option.category).should("be.visible");
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("be.visible");
-              });
-            }
+            if (!option.groupOptions) return;
+
+            option.groupOptions.forEach((opt) => {
+              cy.findByText(opt.text).should("be.visible");
+            });
           });
         });
       });
@@ -593,7 +589,7 @@ describe("Combobox", () => {
   context("actions", () => {
     const FRUIT_ACTIONS: ComboboxAction[] = [
       {
-        title: "Add Fruit",
+        caption: "Add Fruit",
         onClick: () => {},
         icon: {
           image: RiAddLine,
@@ -601,7 +597,7 @@ describe("Combobox", () => {
       },
       {
         hidden: true,
-        title: "Delete Fruit",
+        caption: "Delete Fruit",
         onClick: () => {},
         icon: {
           image: RiAddLine,
@@ -984,8 +980,8 @@ describe("Combobox", () => {
 
         cy.findByPlaceholderText("Select a fruit...").click();
 
-        cy.findByRole("option", { name: "Apple" }).click();
-        cy.findByRole("option", { name: "Banana" }).click();
+        cy.findByText("Apple").click();
+        cy.findByText("Banana").click();
 
         cy.findByDisplayValue("Apple, Banana").should("be.visible");
 
@@ -1021,8 +1017,8 @@ describe("Combobox", () => {
 
         cy.findByPlaceholderText("Select a fruit...").click();
 
-        cy.findByRole("option", { name: "Apple" }).click();
-        cy.findByRole("option", { name: "Banana" }).click();
+        cy.findByText("Apple").click();
+        cy.findByText("Banana").click();
 
         cy.findByDisplayValue("Apple, Banana").should("be.visible");
 
@@ -1076,11 +1072,7 @@ describe("Combobox", () => {
 
       cy.findByText("Button").click();
 
-      cy.findByLabelText("button-tip-menu-container").should(
-        "have.css",
-        "width",
-        "200px"
-      );
+      cy.findByLabelText("tip-menu").should("have.css", "width", "200px");
     });
 
     it("renders with similar height", () => {
