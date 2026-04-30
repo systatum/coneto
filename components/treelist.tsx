@@ -85,19 +85,29 @@ export interface TreeListProps
 }
 
 export interface TreeListStyles {
-  actionWrapperStyle?: CSSProp;
-  actionStyle?: CSSProp;
+  // ===== Root / layout =====
   containerStyle?: CSSProp;
   containerGroupStyle?: CSSProp;
-  emptySlateStyle?: CSSProp;
-  emptyItemSlateStyle?: CSSProp;
-  arrowGroupStyle?: CSSProp;
-  arrowStyle?: CSSProp;
+  dividerStyle?: CSSProp;
+
+  // ===== Actions (top area) =====
+  actionWrapperStyle?: CSSProp;
+  actionStyle?: CSSProp;
+
+  // ===== Group (TreeListContent - NON level) =====
   titleStyle?: CSSProp;
   textWrapperStyle?: CSSProp;
+  arrowGroupStyle?: CSSProp;
+
+  // ===== Item (TreeListItem - LEVEL based) =====
   itemStyle?: CSSProp;
+  arrowStyle?: CSSProp;
   hierarchyLineStyle?: CSSProp;
-  dividerStyle?: CSSProp;
+  highlightedTextStyle?: CSSProp;
+
+  // ===== Empty states =====
+  emptySlateStyle?: CSSProp;
+  emptyItemSlateStyle?: CSSProp;
 }
 
 export interface TreeListOnDragged {
@@ -152,6 +162,7 @@ export interface TreeListItem {
   initialState?: TreeListInitialState;
   className?: string;
   collapsible?: boolean;
+  styles?: TreeListItemStyles;
 }
 
 export interface TreeListItemAction extends Omit<ContextMenuAction, "onClick"> {
@@ -640,6 +651,8 @@ function TreeList({
                               }
                               styles={{
                                 self: styles?.itemStyle,
+                                highlightedTextStyle:
+                                  styles?.highlightedTextStyle,
                                 emptyItemSlateStyle:
                                   styles?.emptyItemSlateStyle,
                                 arrowStyle: styles?.arrowStyle,
@@ -823,8 +836,8 @@ interface TreeListItemComponent<T extends TreeListItem> {
   searchTerm?: string;
   onChange?: (item?: string) => void;
   isSelected?: string[];
-  showHierarchyLine?: boolean;
   styles?: TreeListItemStyles;
+  showHierarchyLine?: boolean;
   level?: number;
   collapsible?: boolean;
   isHavingContent?: boolean;
@@ -862,11 +875,12 @@ interface TreeListItemComponent<T extends TreeListItem> {
   refItem?: (props: { el: HTMLLIElement | null; item: TreeListItem }) => void;
 }
 
-interface TreeListItemStyles {
+export interface TreeListItemStyles {
   self?: CSSProp;
   emptyItemSlateStyle?: CSSProp;
   arrowStyle?: CSSProp;
   hierarchyLineStyle?: CSSProp;
+  highlightedTextStyle?: CSSProp;
 }
 
 interface TreeListOpenWithId {
@@ -994,6 +1008,7 @@ function TreeListItem<T extends TreeListItem>({
         $isSelected={isSelected.includes(item.id)}
         aria-expanded={isOpen[item.id]}
         $showHierarchyLine={showHierarchyLine}
+        data-has-options={item?.className?.includes("has-group-options")}
         data-highlighted={item?.className?.includes("is-highlighted")}
         onKeyDown={(e) => {
           onKeyDownItem?.({ event: e, item });
@@ -1164,13 +1179,19 @@ function TreeListItem<T extends TreeListItem>({
             gap: 10px;
             align-items: center;
             width: 100%;
+            font-weight: inherit;
           `}
         >
           {typeof item.caption === "string"
             ? (escapedTerm ? item.caption.split(regex) : [item.caption]).map(
                 (part, index) =>
                   part.toLowerCase() === searchTerm.toLowerCase() ? (
-                    <HighlightedText key={index}>{part}</HighlightedText>
+                    <HighlightedText
+                      $style={styles?.highlightedTextStyle}
+                      key={index}
+                    >
+                      {part}
+                    </HighlightedText>
                   ) : (
                     <span key={index}>{part}</span>
                   )
@@ -1255,6 +1276,7 @@ function TreeListItem<T extends TreeListItem>({
             $theme={treeListTheme}
             aria-label="vertical-line"
             $level={level}
+            data-level={level}
             $isSameLevel={isSameLevel}
             $style={styles?.hierarchyLineStyle}
             data-same-level={isSameLevel}
@@ -1323,6 +1345,7 @@ function TreeListItem<T extends TreeListItem>({
                     key={child.id}
                     styles={{
                       self: styles?.self,
+                      highlightedTextStyle: styles?.highlightedTextStyle,
                       emptyItemSlateStyle: styles?.emptyItemSlateStyle,
                       arrowStyle: styles?.arrowStyle,
                       hierarchyLineStyle: styles?.hierarchyLineStyle,
@@ -1700,10 +1723,14 @@ const TreeListItemWrapper = styled.li<{
   ${({ $style }) => $style}
 `;
 
-const HighlightedText = styled.span<{ $theme?: TreeListThemeConfig }>`
-  font-weight: 600;
+const HighlightedText = styled.span<{
+  $theme?: TreeListThemeConfig;
+  $style?: CSSProp;
+}>`
   border-radius: 4px;
   background-color: ${({ $theme }) => $theme?.highlightedText};
+
+  ${({ $style }) => $style}
 `;
 
 function escapeRegExp(string: string) {
