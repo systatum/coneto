@@ -3,6 +3,7 @@ import {
   KeyboardEvent,
   ReactNode,
   Ref,
+  RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -30,6 +31,8 @@ import {
   TreeListAction,
   TreeListContent,
   TreeListItem,
+  TreeListItemAction,
+  TreeListProps,
 } from "./treelist";
 import { Searchbox } from "./searchbox";
 import { Checkbox } from "./checkbox";
@@ -52,6 +55,7 @@ interface BaseComboboxProps {
   onClick?: () => void;
   strict?: boolean;
   options: ComboboxOption[];
+  navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
 }
@@ -80,7 +84,7 @@ export interface ComboboxActionOption {
   actions?: (id?: string) => ComboboxItemAction[];
 }
 
-export type ComboboxItemAction = ListItemAction;
+export type ComboboxItemAction = TreeListItemAction;
 
 export type ComboboxDropdownOption = FieldLaneDropdownOption;
 
@@ -168,12 +172,20 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     });
 
     const finalGroup = useMemo(() => {
-      return options
-        ?.filter((item) => !item?.hidden)
-        ?.filter(
-          (item) => (item?.groupSetting?.initialState ?? "closed") === "opened"
-        )
-        ?.map((item) => String(item.value));
+      const collectOpened = (items: ComboboxOption[]): string[] => {
+        return items.flatMap((item) => {
+          if (item.hidden) return [];
+          const self =
+            (item.groupSetting?.initialState ?? "closed") === "opened"
+              ? [String(item.value)]
+              : [];
+          const children = item.groupOptions?.length
+            ? collectOpened(item.groupOptions)
+            : [];
+          return [...self, ...children];
+        });
+      };
+      return collectOpened(options ?? []);
     }, [options]);
 
     const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
@@ -182,19 +194,40 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
 
     const flatOptions = useMemo<SelectboxOption[]>(() => {
       return (
-        options
-          ?.flatMap((item) => {
-            if (item.hidden) return [];
-            if (item.groupOptions?.length) {
-              const children = openedCategoryGroup.has(String(item.value))
-                ? item.groupOptions.filter((o) => !o.hidden)
-                : [];
-              return [item, ...children];
-            }
-            return [item];
-          })
-          ?.filter(Boolean) ?? []
+        options?.flatMap((item) => {
+          if (item.hidden) return [];
+          if (item.groupOptions?.length) {
+            const allChildren = item.groupOptions
+              .filter((o) => !o.hidden)
+              .flatMap((child) =>
+                child.groupOptions?.length
+                  ? [child, ...child.groupOptions.filter((o) => !o.hidden)]
+                  : [child]
+              );
+            return [item, ...allChildren];
+          }
+          return [item];
+        }) ?? []
       );
+    }, [options]);
+
+    const navigableOptions = useMemo<SelectboxOption[]>(() => {
+      const flatten = (items: ComboboxOption[]): SelectboxOption[] => {
+        return items.flatMap((item) => {
+          if (item.hidden) return [];
+
+          if (item.groupOptions?.length) {
+            // Group parent → skip self, only include children if open
+            if (!openedCategoryGroup.has(String(item.value))) return [];
+            return flatten(item.groupOptions);
+          }
+
+          // Leaf node
+          return [item];
+        });
+      };
+
+      return flatten(options ?? []);
     }, [options, openedCategoryGroup]);
 
     return (
@@ -230,6 +263,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         }}
         id={inputId}
         options={flatOptions}
+        navigableOptions={navigableOptions}
         selectedOptions={selectedOptions}
         onChange={onChange}
         placeholder={placeholder}
@@ -247,51 +281,53 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
            * When the user has typed, we filter each group's children (or flat
            * options) by the search text. Mirrors the old combobox behaviour.
            */
-          const filteredForDrawer: ComboboxOption[] = props?.hasInteracted
-            ? (options
-                ?.map((item) => {
-                  if (item.hidden) return null;
-                  // Option with children — filter children by search text
-                  if (item.groupOptions?.length) {
-                    const matched = item.groupOptions.filter(
-                      (opt) =>
-                        !opt.hidden &&
-                        opt.text
-                          .toLowerCase()
-                          .includes(
-                            props?.selectedOptionsLocal?.text?.toLowerCase() ??
-                              ""
-                          )
-                    );
-                    // Also keep parent itself if its own text matches
-                    const selfMatches = item.text
-                      ?.toLowerCase()
-                      .includes(
-                        props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
-                      );
-                    if (matched.length > 0 || selfMatches) {
-                      return { ...item, groupOptions: matched };
-                    }
-                    return null;
+          const filterOptions = (
+            opts: ComboboxOption[],
+            search: string
+          ): ComboboxOption[] => {
+            return opts
+              .map((opt) => {
+                if (opt.hidden) return null;
+
+                if (opt.groupOptions?.length) {
+                  const selfMatches = opt.text.toLowerCase().includes(search);
+
+                  // Parent matches — keep it with ALL children untouched
+                  if (selfMatches) {
+                    return opt;
                   }
-                  // Flat option
-                  if (
-                    item.text
-                      ?.toLowerCase()
-                      .includes(
-                        props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
-                      )
-                  ) {
-                    return item;
+
+                  // Parent doesn't match — recurse into children
+                  const filteredChildren = filterOptions(
+                    opt.groupOptions,
+                    search
+                  );
+                  if (filteredChildren.length > 0) {
+                    return { ...opt, groupOptions: filteredChildren };
                   }
+
                   return null;
-                })
-                ?.filter(Boolean) as ComboboxOption[])
+                }
+
+                // Leaf node
+                return opt.text.toLowerCase().includes(search) ? opt : null;
+              })
+              .filter(Boolean) as ComboboxOption[];
+          };
+
+          // Then replace the filteredForDrawer block:
+          const filteredForDrawer: ComboboxOption[] = props?.hasInteracted
+            ? filterOptions(
+                options ?? [],
+                props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
+              )
             : options;
+
           return (
             <ComboboxDrawer
               {...props}
               styles={styles}
+              navigableOptions={navigableOptions}
               inputRef={props.ref}
               name={name}
               disabled={disabled}
@@ -343,6 +379,7 @@ function ComboboxDrawer({
   openedCategoryGroup,
   setOpenedCategoryGroup,
   styles,
+  navigableOptions,
 }: ComboboxDrawerProps) {
   const { currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -392,13 +429,13 @@ function ComboboxDrawer({
     onChange(castValue(values[0], selectedOptions));
   };
 
+  const selectedId = finalOptions[selectedIndex - (actions?.length ?? 0)]
+    ? String(finalOptions[selectedIndex - (actions?.length ?? 0)].value)
+    : null;
+
   useEffect(() => {
-    if (
-      !hasScrolled &&
-      finalSelectedOptions?.length > 0 &&
-      finalOptions?.length > 0
-    ) {
-      const selectedEl = listRef.current[selectedIndex];
+    if (!hasScrolled && selectedId && finalOptions?.length > 0) {
+      const selectedEl = listRef.current[selectedId];
       if (selectedEl) {
         requestAnimationFrame(() => {
           selectedEl.scrollIntoView({ block: "center" });
@@ -406,21 +443,20 @@ function ComboboxDrawer({
         setHasScrolled(true);
       }
     }
-  }, [
-    selectedIndex,
-    hasScrolled,
-    finalSelectedOptions?.length,
-    finalOptions?.length,
-  ]);
+  }, [selectedId, hasScrolled, finalOptions?.length]);
+
+  const highlightedId =
+    highlightedIndex !== null
+      ? String(navigableOptions[highlightedIndex]?.value ?? "")
+      : null;
 
   useEffect(() => {
     if (
       highlightedIndex !== null &&
-      listRef.current[highlightedIndex] &&
       multiple &&
       interactionMode === "keyboard"
     ) {
-      const element = listRef.current[highlightedIndex];
+      const element = listRef.current[highlightedId];
       const container = floatingRef.current;
 
       if (element && container) {
@@ -440,7 +476,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, multiple, interactionMode]);
+  }, [highlightedId, multiple, interactionMode]);
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
@@ -450,23 +486,36 @@ function ComboboxDrawer({
           caption: action?.title,
           hidden: action?.hidden,
           icon: action?.icon,
-          onClick: action?.onClick,
+          onClick: () => {
+            action?.onClick();
+            setIsOpen(false);
+          },
         }))
     : [];
 
-  const indexRef = useRef(0);
   const flatIndexMap = useRef<Record<string, number>>({});
-  const parentRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
+  const optionByTreeId = useRef<Record<string, ComboboxOption>>({});
+
+  flatIndexMap.current = {};
+  navigableOptions.map((opt, i) => {
+    flatIndexMap.current[String(opt.value)] = i;
+  });
 
   const generateContent = (): TreeListContent[] => {
-    indexRef.current = 0;
-    flatIndexMap.current = {};
+    optionByTreeId.current = {};
 
-    const hasVisibleChildren = (opt: ComboboxOption) =>
-      opt.groupOptions?.some((o) => !o.hidden);
+    const registerAll = (opts: ComboboxOption[]) => {
+      for (const opt of opts) {
+        optionByTreeId.current[String(opt.value)] = opt;
+        if (opt.groupOptions?.length) registerAll(opt.groupOptions);
+      }
+    };
+
+    registerAll(options);
 
     const renderCaption = (opt: ComboboxOption): ReactNode => {
+      const isSelected = finalSelectedOptions.includes(String(opt.value));
+
       const label = opt.render ?? opt.text;
       const hasChildren = Boolean(opt?.groupOptions?.length);
 
@@ -474,7 +523,6 @@ function ComboboxDrawer({
         return label;
       }
 
-      const isChecked = finalSelectedOptions.includes(String(opt.value));
       return (
         <>
           {multiple && (
@@ -485,7 +533,7 @@ function ComboboxDrawer({
                 `,
               }}
               type="checkbox"
-              checked={isChecked}
+              checked={isSelected}
               onChange={() => {}}
             />
           )}
@@ -494,32 +542,30 @@ function ComboboxDrawer({
       );
     };
 
-    const assignIndex = (id: string) => {
-      flatIndexMap.current[id] = indexRef.current++;
-    };
-
-    const mapToItem = (
-      opt: ComboboxOption,
-      parentOpen = true
-    ): TreeListItem => {
+    const mapToItem = (opt: ComboboxOption): TreeListItem => {
       const id = String(opt.value);
-      const hasChildren = Boolean(opt.groupOptions?.length);
 
-      const isVisible = parentOpen;
+      const itemIndex = flatIndexMap.current[id];
+      const isSelected = finalSelectedOptions.includes(id);
+      const shouldHighlight =
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
 
-      if (isVisible && !hasChildren) {
-        assignIndex(id);
-      }
-
-      const isOpen = openedCategoryGroup?.has(id);
       return {
         id,
         caption: renderCaption(opt),
         collapsible:
           opt?.groupSetting?.collapsible ??
           (opt?.groupOptions?.length > 0 ? true : false),
-        className: opt?.groupOptions?.length > 0 ? "has-group-options" : "",
-
+        className: [
+          opt.groupOptions?.length ? "has-group-options" : "",
+          shouldHighlight ? "is-highlighted" : "",
+        ]
+          .join(" ")
+          .trim(),
+        actions: opt?.actions?.(String(opt.value))?.map((action) => ({
+          ...action,
+          onClick: () => action.onClick?.(String(opt.value)),
+        })),
         onClick: ({ withoutSelection }) => {
           if (opt?.groupOptions?.length > 0) {
             withoutSelection();
@@ -528,9 +574,9 @@ function ComboboxDrawer({
 
         ...(opt?.groupOptions?.length > 0
           ? {
-              items: opt.groupOptions.map((child) =>
-                mapToItem(child, isVisible && isOpen)
-              ),
+              items: opt.groupOptions
+                .filter((child) => !child.hidden)
+                .map((child) => mapToItem(child)),
             }
           : {}),
       };
@@ -538,13 +584,11 @@ function ComboboxDrawer({
 
     const mapToContent = (option: ComboboxOption): TreeListContent => {
       const id = String(option.value);
-      const isOpen = openedCategoryGroup?.has(id);
 
-      const hasChildren = Boolean(option.groupOptions?.length);
-
-      if (!hasChildren) {
-        assignIndex(id);
-      }
+      const itemIndex = flatIndexMap.current[id];
+      const isSelected = finalSelectedOptions.includes(id);
+      const shouldHighlight =
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
 
       return {
         id,
@@ -553,24 +597,106 @@ function ComboboxDrawer({
         collapsible:
           option?.groupSetting?.collapsible ??
           (option?.groupOptions?.length > 0 ? true : false),
-        className: option?.groupOptions?.length > 0 ? "has-group-options" : "",
-
+        className: [
+          option.groupOptions?.length ? "has-group-options" : "",
+          shouldHighlight ? "is-highlighted" : "",
+        ]
+          .join(" ")
+          .trim(),
+        actions: option?.actions?.(String(option.value))?.map((action) => ({
+          ...action,
+          onClick: () => action.onClick?.(String(option.value)),
+        })),
         ...(option?.groupOptions?.length > 0
           ? {
-              items: option.groupOptions.map((child) =>
-                mapToItem(child, isOpen)
-              ),
+              items: option.groupOptions
+                .filter((child) => !child.hidden)
+                .map((child) => mapToItem(child)),
             }
           : {}),
       };
     };
 
-    return options.map(mapToContent);
+    return options.filter((opt) => !opt.hidden).map(mapToContent);
+  };
+
+  const onMouseDown = (props: {
+    event: React.MouseEvent;
+    item?: TreeListContent;
+  }) => {
+    const { event, item } = props;
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    const hasChildren = item?.items?.length > 0;
+
+    if (hasChildren) return;
+
+    const originalOption = optionByTreeId.current[item?.id];
+
+    const option: ComboboxOption = {
+      text: originalOption?.text ?? "",
+      value: item?.id,
+    };
+
+    const optionValue = item?.id;
+
+    if (multiple) {
+      if (!finalSelectedOptions.includes(item?.id)) {
+        if (
+          !maxSelectableItems ||
+          finalSelectedOptions?.length < maxSelectableItems
+        ) {
+          handleOnChange([...finalSelectedOptions, item?.id]);
+        }
+      } else {
+        handleOnChange(finalSelectedOptions.filter((val) => val !== item?.id));
+      }
+
+      (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+    } else {
+      const hasChildren = (item?.items?.length ?? 0) > 0;
+      if (hasChildren) return;
+
+      setIsOpen(false);
+      setConfirmedValue(option);
+      setSelectedOptionsLocal(option);
+      handleOnChange([optionValue]);
+      setHasInteracted(false);
+    }
+
+    requestAnimationFrame(() => {
+      if (!multiple) setHighlightedIndex(null);
+    });
+    onClick?.();
+  };
+
+  const onMouseMove = () => {
+    if (interactionMode !== "mouse") {
+      setInteractionMode("mouse");
+    }
+  };
+
+  const onMouseEnter = (props: {
+    event: React.MouseEvent;
+    item?: TreeListContent;
+  }) => {
+    const { item } = props;
+    const index = flatIndexMap.current[item.id];
+
+    if (interactionMode !== "mouse") return;
+    if (typeof index === "number") {
+      setHighlightedIndex(index);
+    }
   };
 
   return (
     <DrawerWrapper
-      {...getFloatingProps()}
+      {...getFloatingProps({
+        onMouseDown: (e: React.MouseEvent) => {
+          e.preventDefault();
+        },
+      })}
       ref={(node) => {
         if (typeof refs.setFloating === "function") {
           refs.setFloating(node);
@@ -624,22 +750,18 @@ function ComboboxDrawer({
               }}
             />
           )}
+
           <TreeList
+            multiple={multiple}
+            selectedItems={finalSelectedOptions}
             emptySlate={emptySlate}
             emptyItemSlate={emptySlate}
-            ref={({ el, item }) => {
-              parentRefs.current[item.id] = el;
-            }}
-            refItem={({ el, item }) => {
-              itemRefs.current[item.id] = el;
-            }}
-            onMouseEnter={() => {}}
-            onMouseEnterItem={({ item }) => {
-              const index = flatIndexMap.current[item.id];
-
-              setHighlightedIndex(index);
-              console.log(index);
-            }}
+            onMouseDown={onMouseDown}
+            onMouseDownItem={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseMoveItem={onMouseMove}
+            onMouseEnter={onMouseEnter}
+            onMouseEnterItem={onMouseEnter}
             onOpenChange={({ id }) => {
               setOpenedCategoryGroup((prev) => {
                 const next = new Set(prev);
@@ -656,6 +778,10 @@ function ComboboxDrawer({
             styles={{
               actionWrapperStyle: css`
                 margin-bottom: 0px;
+              `,
+              emptySlateStyle: css`
+                margin-left: 0px;
+                min-height: 36px;
               `,
               actionStyle: css`
                 padding-left: 12px;
@@ -683,12 +809,25 @@ function ComboboxDrawer({
                 padding-right: 12px;
                 padding-top: 8px;
                 padding-bottom: 8px;
+                animation: all 0.2s ease-in-out;
+
                 &[data-has-options="true"] {
                   display: flex;
                   justify-content: space-between;
                   align-items: center;
                   background-color: ${comboboxTheme?.groupBackgroundColor};
+                  border: 1px solid transparent;
+
+                  &[aria-expanded="true"] {
+                    border-bottom: 1px solid ${comboboxTheme?.borderColor};
+                  }
                 }
+
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
               `,
               hierarchyLineStyle: css`
                 &[data-level="0"] {
@@ -727,9 +866,11 @@ function ComboboxDrawer({
                 margin-left: 3px;
               `,
               itemStyle: css`
-                &[data-selected="true"] {
-                  background-color: ${comboboxTheme?.selectedBackgroundColor};
-                }
+                ${rowStyle({
+                  interactionMode,
+                  multiple,
+                  theme: comboboxTheme,
+                })}
               `,
             }}
             showHierarchyLine
@@ -762,6 +903,45 @@ const DrawerWrapper = styled.ul<{
   }
 
   ${({ $style }) => $style}
+`;
+
+const rowStyle = ({
+  interactionMode,
+  multiple,
+  theme,
+}: {
+  interactionMode?: "mouse" | "keyboard";
+  multiple?: boolean;
+  theme?: ComboboxThemeConfig;
+}) => css`
+  transition: background-color 0ms;
+  background-color: ${theme.backgroundColor};
+  color: ${theme.textColor};
+  min-height: 36px;
+
+  &[data-has-options="false"] {
+    ${interactionMode !== "mouse" &&
+    css`
+      background-color: ${theme.backgroundColor};
+      &:hover {
+        background-color: ${theme.backgroundColor};
+      }
+    `}
+  }
+
+  &[data-highlighted="true"] {
+    background-color: ${theme.highlightBackgroundColor};
+    color: ${theme.textColor};
+  }
+
+  ${!multiple &&
+  css`
+    &[data-selected="true"] {
+      font-weight: 600;
+      background-color: ${theme.selectedBackgroundColor};
+      color: ${theme.selectedTextColor};
+    }
+  `}
 `;
 
 export { Combobox };
