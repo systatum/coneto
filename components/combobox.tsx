@@ -420,13 +420,13 @@ function ComboboxDrawer({
     onChange(castValue(values[0], selectedOptions));
   };
 
-  const selectedId = finalOptions[selectedIndex - (actions?.length ?? 0)]
-    ? String(finalOptions[selectedIndex - (actions?.length ?? 0)].value)
-    : null;
-
   useEffect(() => {
-    if (!hasScrolled && selectedId && finalOptions?.length > 0) {
-      const selectedEl = listRef.current[selectedId];
+    if (
+      !hasScrolled &&
+      finalSelectedOptions?.length > 0 &&
+      finalOptions?.length > 0
+    ) {
+      const selectedEl = listRef.current[selectedIndex];
       if (selectedEl) {
         requestAnimationFrame(() => {
           selectedEl.scrollIntoView({ block: "center" });
@@ -434,20 +434,21 @@ function ComboboxDrawer({
         setHasScrolled(true);
       }
     }
-  }, [selectedId, hasScrolled, finalOptions?.length]);
-
-  const highlightedId =
-    highlightedIndex !== null
-      ? String(navigableOptions[highlightedIndex]?.value ?? "")
-      : null;
+  }, [
+    selectedIndex,
+    hasScrolled,
+    finalSelectedOptions?.length,
+    finalOptions?.length,
+  ]);
 
   useEffect(() => {
     if (
       highlightedIndex !== null &&
+      listRef.current[highlightedIndex] &&
       multiple &&
       interactionMode === "keyboard"
     ) {
-      const element = listRef.current[highlightedId];
+      const element = listRef.current[highlightedIndex];
       const container = floatingRef.current;
 
       if (element && container) {
@@ -467,7 +468,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedId, multiple, interactionMode]);
+  }, [highlightedIndex, multiple, interactionMode]);
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
@@ -499,11 +500,14 @@ function ComboboxDrawer({
 
   const flatIndexMap = useMemo(() => {
     const map: Record<string, number> = {};
+    const offset = filteredActions.length;
+
     navigableOptions.forEach((opt, i) => {
-      map[String(opt.value)] = i;
+      map[String(opt.value)] = i + offset;
     });
+
     return map;
-  }, [navigableOptions]);
+  }, [navigableOptions, filteredActions.length]);
 
   const generateContent = (): TreeListContent[] => {
     optionByTreeId.current = {};
@@ -533,7 +537,15 @@ function ComboboxDrawer({
             <Checkbox
               styles={{
                 containerStyle: css`
-                  margin-top: 2px;
+                  margin-top: 1px;
+                `,
+                iconStyle: css`
+                  width: 8px;
+                  height: 8px;
+                `,
+                self: css`
+                  width: 14px;
+                  height: 14px;
                 `,
               }}
               type="checkbox"
@@ -756,6 +768,18 @@ function ComboboxDrawer({
           )}
 
           <TreeList
+            ref={({ el, item }) => {
+              const index = flatIndexMap[item.id];
+              if (typeof index === "number") {
+                listRef.current[index] = el;
+              }
+            }}
+            refItem={({ el, item }) => {
+              const index = flatIndexMap[item.id];
+              if (typeof index === "number") {
+                listRef.current[index] = el;
+              }
+            }}
             multiple={multiple}
             selectedItems={finalSelectedOptions}
             emptySlate={emptySlate}
@@ -786,6 +810,8 @@ function ComboboxDrawer({
               emptySlateStyle: css`
                 margin-left: 0px;
                 min-height: 36px;
+                margin-top: 0px;
+                border: none;
               `,
               actionStyle: css`
                 padding-left: 12px;
@@ -814,11 +840,12 @@ function ComboboxDrawer({
                 padding-top: 8px;
                 padding-bottom: 8px;
                 animation: all 0.2s ease-in-out;
+                gap: 6px;
 
                 &[data-has-options="true"] {
                   display: flex;
-                  justify-content: space-between;
                   align-items: center;
+                  justify-content: space-between;
                   background-color: ${comboboxTheme?.groupBackgroundColor};
                   border: 1px solid transparent;
 
@@ -848,7 +875,8 @@ function ComboboxDrawer({
                 padding: 0px;
                 display: flex;
                 flex-direction: row;
-                gap: 10px;
+                gap: 6px;
+                align-items: center;
 
                 &[data-has-options="false"] {
                   font-weight: 400;
@@ -879,6 +907,7 @@ function ComboboxDrawer({
                   multiple,
                   theme: comboboxTheme,
                 })}
+                gap: 6px;
               `,
             }}
             showHierarchyLine
