@@ -220,6 +220,14 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       (opt) => opt.text === selectedOptionsLocal.text
     );
 
+    const FILTERED_NAVIGABLE_OPTIONS = hasInteracted
+      ? navigableOptions.filter((opt) =>
+          opt.text
+            .toLowerCase()
+            .includes(selectedOptionsLocal.text.toLowerCase())
+        )
+      : navigableOptions;
+
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
       open: isOpen,
@@ -300,20 +308,11 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
     };
 
-    const filteredNavigableOptions = useMemo<SelectboxOption[]>(() => {
-      if (!hasInteracted) return navigableOptions;
-      return navigableOptions.filter((opt) =>
-        opt?.text
-          ?.toLowerCase()
-          .includes(selectedOptionsLocal?.text.toLowerCase())
-      );
-    }, [navigableOptions, hasInteracted, selectedOptionsLocal?.text]);
-
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
       onKeyDown?.(e);
 
       const totalItems =
-        (actions?.length ?? 0) + filteredNavigableOptions.length - 1;
+        (actions?.length ?? 0) + FILTERED_NAVIGABLE_OPTIONS.length - 1;
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         setInteractionMode("keyboard");
@@ -355,7 +354,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
         const selectedOption =
           highlightedIndex !== null
-            ? filteredNavigableOptions[
+            ? FILTERED_NAVIGABLE_OPTIONS[
                 highlightedIndex - (actions?.length ?? 0)
               ]
             : undefined;
