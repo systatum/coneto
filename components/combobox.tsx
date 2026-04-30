@@ -19,7 +19,6 @@ import {
   SelectboxStyles,
 } from "./selectbox";
 import styled, { css, CSSProp } from "styled-components";
-import { List, ListItemAction, ListItemStyles } from "./list";
 import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { FigureProps } from "./figure";
 import { StatefulForm } from "./stateful-form";
@@ -32,7 +31,7 @@ import {
   TreeListContent,
   TreeListItem,
   TreeListItemAction,
-  TreeListProps,
+  TreeListItemStyles,
 } from "./treelist";
 import { Searchbox } from "./searchbox";
 import { Checkbox } from "./checkbox";
@@ -97,15 +96,7 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
   drawerStyle?: CSSProp;
 }
 
-export interface ComboboxAction {
-  onClick?: () => void;
-  icon?: FigureProps;
-  title: string;
-  styles?: ComboboxActionStyles;
-  hidden?: boolean;
-}
-
-export type ComboboxActionStyles = ListItemStyles;
+export type ComboboxAction = TreeListAction;
 
 type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
@@ -482,24 +473,37 @@ function ComboboxDrawer({
     ? actions
         ?.filter((action) => !action?.hidden)
         .map((action) => ({
-          id: action?.title,
-          caption: action?.title,
+          id: action?.id,
+          caption: action?.caption,
           hidden: action?.hidden,
           icon: action?.icon,
           onClick: () => {
             action?.onClick();
             setIsOpen(false);
           },
+          styles: {
+            ...action?.styles,
+            self: css`
+              ${rowStyle({
+                interactionMode,
+                multiple,
+                theme: comboboxTheme,
+              })}
+              ${action?.styles?.self}
+            `,
+          },
         }))
     : [];
 
-  const flatIndexMap = useRef<Record<string, number>>({});
   const optionByTreeId = useRef<Record<string, ComboboxOption>>({});
 
-  flatIndexMap.current = {};
-  navigableOptions.map((opt, i) => {
-    flatIndexMap.current[String(opt.value)] = i;
-  });
+  const flatIndexMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    navigableOptions.forEach((opt, i) => {
+      map[String(opt.value)] = i;
+    });
+    return map;
+  }, [navigableOptions]);
 
   const generateContent = (): TreeListContent[] => {
     optionByTreeId.current = {};
@@ -545,7 +549,7 @@ function ComboboxDrawer({
     const mapToItem = (opt: ComboboxOption): TreeListItem => {
       const id = String(opt.value);
 
-      const itemIndex = flatIndexMap.current[id];
+      const itemIndex = flatIndexMap[id];
       const isSelected = finalSelectedOptions.includes(id);
       const shouldHighlight =
         highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
@@ -585,7 +589,7 @@ function ComboboxDrawer({
     const mapToContent = (option: ComboboxOption): TreeListContent => {
       const id = String(option.value);
 
-      const itemIndex = flatIndexMap.current[id];
+      const itemIndex = flatIndexMap[id];
       const isSelected = finalSelectedOptions.includes(id);
       const shouldHighlight =
         highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
@@ -682,7 +686,7 @@ function ComboboxDrawer({
     item?: TreeListContent;
   }) => {
     const { item } = props;
-    const index = flatIndexMap.current[item.id];
+    const index = flatIndexMap[item.id];
 
     if (interactionMode !== "mouse") return;
     if (typeof index === "number") {
@@ -829,6 +833,7 @@ function ComboboxDrawer({
                   theme: comboboxTheme,
                 })}
               `,
+
               hierarchyLineStyle: css`
                 &[data-level="0"] {
                   border-left: none !important;
@@ -840,11 +845,14 @@ function ComboboxDrawer({
               `,
               titleStyle: css`
                 width: 100%;
-                font-weight: normal;
                 padding: 0px;
                 display: flex;
                 flex-direction: row;
                 gap: 10px;
+
+                &[data-has-options="false"] {
+                  font-weight: 400;
+                }
               `,
               arrowGroupStyle: css`
                 [data-has-options="true"] & {
@@ -930,18 +938,30 @@ const rowStyle = ({
   }
 
   &[data-highlighted="true"] {
-    background-color: ${theme.highlightBackgroundColor};
-    color: ${theme.textColor};
+    ${interactionMode !== "mouse" &&
+    css`
+      background-color: ${theme.highlightBackgroundColor};
+    `}
   }
 
-  ${!multiple &&
-  css`
-    &[data-selected="true"] {
+  &[data-has-options="false"] {
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
+    }
+  }
+
+  &[data-selected="true"] {
+    ${!multiple &&
+    css`
       font-weight: 600;
       background-color: ${theme.selectedBackgroundColor};
       color: ${theme.selectedTextColor};
-    }
-  `}
+
+      &:hover {
+        background-color: ${theme.selectedBackgroundColor};
+      }
+    `}
+  }
 `;
 
 export { Combobox };
