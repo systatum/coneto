@@ -4,7 +4,6 @@ import {
   Combobox,
   ComboboxAction,
   ComboboxOption,
-  ComboboxSingleOption,
   ComboboxDropdownOption,
   ComboboxItemAction,
 } from "./combobox";
@@ -153,9 +152,11 @@ type Story = StoryObj<typeof Combobox>;
 
 export const Default: Story = {
   render: () => {
-    const [value, setValue] = useState<SelectboxSelectedOptions>("");
+    const [value, setValue] = useState<SelectboxSelectedOptions>([0]);
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    console.log(value);
+
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -186,7 +187,7 @@ export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -222,7 +223,7 @@ export const WithDropdown: Story = {
       value: "1",
     });
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -365,7 +366,7 @@ export const WithActions: Story = {
       },
     ];
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1", actions: OPTION_ACTIONS },
       { text: "Banana", value: "2", actions: OPTION_ACTIONS },
       { text: "Orange", value: "3", actions: OPTION_ACTIONS },
@@ -410,7 +411,7 @@ export const StrictValue: Story = {
   render: () => {
     const [value, setValue] = useState<string>("");
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
       { text: "Banana", value: "2" },
       { text: "Orange", value: "3" },
@@ -514,7 +515,7 @@ export const WithCustomRenderer: Story = {
       );
     };
 
-    const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+    const FRUIT_OPTIONS: ComboboxOption[] = [
       {
         text: "Apple",
         value: "1",
