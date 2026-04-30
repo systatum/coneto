@@ -485,8 +485,6 @@ function FormFields<T extends FieldValues>({
           (f) => f.rowItemsAlignment
         )?.rowItemsAlignment;
 
-        const withFrame = visibleFields.some((f) => f.type === "frame");
-
         const rowStyleItem = visibleFields.find((f) => f.rowStyle)?.rowStyle;
 
         const nonButtonFields = visibleFields.filter(
