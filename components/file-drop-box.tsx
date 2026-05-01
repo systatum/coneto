@@ -193,7 +193,7 @@ function FileDropBox({
       $isDragging={isDragging}
       $progress={progress}
       aria-label="file-drop-box-area"
-      onClick={(e) => {
+      onClick={() => {
         if (disabled) return;
         handleBrowseClick();
       }}
@@ -205,7 +205,7 @@ function FileDropBox({
         if (disabled) return;
         handleDragOver(e);
       }}
-      onDragLeave={(e) => {
+      onDragLeave={() => {
         if (disabled) return;
         handleDragLeave();
       }}

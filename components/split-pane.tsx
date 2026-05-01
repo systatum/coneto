@@ -15,7 +15,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonStyles } from "./button";
-import { Figure, FigureProps } from "./figure";
+import { Figure } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
 import { BaseAction } from "./../constants/action";

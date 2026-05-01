@@ -1,5 +1,5 @@
 import { RiSearchLine, RiCloseLine } from "@remixicon/react";
-import {
+import React, {
   ChangeEvent,
   forwardRef,
   InputHTMLAttributes,

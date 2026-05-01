@@ -20,8 +20,6 @@ import {
   RiMailUnreadLine,
   RiFolderLine,
   RiArchiveLine,
-  RiMailCloseLine,
-  RiShieldCrossLine,
   RiAlertLine,
   RiMailForbidLine,
 } from "@remixicon/react";

@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 import { css } from "styled-components";
 
 const meta: Meta<typeof EmptySlate> = {

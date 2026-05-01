@@ -23,7 +23,6 @@ interface BaseThumbFieldProps {
   styles?: BaseThumbFieldStyles;
   id?: string;
   showError?: boolean;
-  className?: string;
 }
 
 interface BaseThumbFieldStyles {
@@ -49,7 +48,6 @@ function BaseThumbField({
   showError,
   styles,
   id,
-  className,
 }: BaseThumbFieldProps) {
   const { currentTheme } = useTheme();
   const thumbFieldTheme = currentTheme.thumbField;

@@ -27,12 +27,7 @@ import {
 import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
-import {
-  FieldLane,
-  FieldLaneAction,
-  FieldLaneProps,
-  FieldLaneStyles,
-} from "./field-lane";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";

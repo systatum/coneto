@@ -1,6 +1,6 @@
 import styled, { css, CSSProp } from "styled-components";
-import { Combobox, ComboboxSingleOption } from "./combobox";
-import {
+import { Combobox, ComboboxOption } from "./combobox";
+import React, {
   MutableRefObject,
   RefObject,
   useEffect,
@@ -122,7 +122,7 @@ interface CodeEditorStyles {
   contentStyle?: CSSProp;
 }
 
-export type CodeEditorOption = ComboboxSingleOption;
+export type CodeEditorOption = ComboboxOption;
 
 function CodeEditor({
   id,

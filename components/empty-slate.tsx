@@ -1,7 +1,6 @@
 import { BaseAction } from "@/constants/action";
 import { applyClassName } from "./../constants/classname";
-import { ReactNode } from "react";
-import styled, { css, CSSProp } from "styled-components";
+import styled, { CSSProp } from "styled-components";
 import { Button, ButtonVariant } from "./button";
 import { Figure, FigureProps } from "./figure";
 

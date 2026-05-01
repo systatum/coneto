@@ -23,9 +23,9 @@ import {
   RiCloudLine,
   RiSmartphoneLine,
 } from "@remixicon/react";
-import { ModalDialog, ModalDialogButton } from "./modal-dialog";
+import { ModalDialog, ModalDialogAction } from "./modal-dialog";
 
-const BUTTONS: ModalDialogButton[] = [
+const BUTTONS: ModalDialogAction[] = [
   {
     id: "cancel",
     caption: "Cancel",
