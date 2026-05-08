@@ -1,8 +1,24 @@
 import type { Preview } from "@storybook/react";
+import { addons } from "@storybook/preview-api";
 import "../shared.css";
 import { ThemeProvider } from "./../theme/provider";
+import { GLOBALS_UPDATED } from "@storybook/core-events";
 
+if (typeof window !== "undefined") {
+  const channel = addons.getChannel();
+  channel.on(
+    GLOBALS_UPDATED,
+    ({ globals }: { globals: { theme?: string } }) => {
+      const mode = globals.theme ?? "dark";
+      document.body.setAttribute("data-theme", mode);
+      localStorage.setItem("sb-theme", mode);
+    }
+  );
+}
 const preview: Preview = {
+  initialGlobals: {
+    theme: "dark",
+  },
   parameters: {
     options: {
       storySort: {
@@ -22,7 +38,7 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => {
-      const mode = context.globals.theme || "light";
+      const mode = context.globals.theme || "dark";
 
       document.body.setAttribute("data-theme", mode);
 
@@ -37,7 +53,7 @@ const preview: Preview = {
     theme: {
       name: "Theme",
       description: "Global theme mode",
-      defaultValue: "light",
+      defaultValue: "dark",
       toolbar: {
         icon: "circlehollow",
         items: [
