@@ -748,6 +748,8 @@ const darkTreeList = createTreeListTheme(darkBody, {
   dividerHierarchyColor: "rgba(63, 62, 62, 0.35)",
   dividerHierarchyRelatedColor: "rgb(115, 115, 115)",
   dividerHierarchySelectedColor: "#485c7d",
+
+  rowActionBackgroundColor: "#1e3a5f",
 });
 
 const darkSplitPane = createSplitPaneTheme(darkBody, {

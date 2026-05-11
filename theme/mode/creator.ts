@@ -1708,6 +1708,8 @@ export function createTreeListTheme(
     dividerHierarchyColor: "rgb(243 243 243)",
     dividerHierarchyRelatedColor: "#d7d6d6",
     dividerHierarchySelectedColor: "#3b82f6",
+
+    rowActionBackgroundColor: "rgb(193, 214, 241)",
   };
 
   return {

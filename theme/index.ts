@@ -716,6 +716,8 @@ export interface TreeListThemeConfig
   dividerHierarchyColor?: string;
   dividerHierarchySelectedColor?: string;
   dividerHierarchyRelatedColor?: string;
+
+  rowActionBackgroundColor?: string;
 }
 
 // split-pane.tsx
