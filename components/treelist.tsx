@@ -567,9 +567,15 @@ function TreeList({
                             onOpen={(prop: boolean) => {
                               setOpenRowId(prop ? item.id : null);
                             }}
-                            activeBackgroundColor="rgb(193, 214, 241)"
-                            focusBackgroundColor="rgb(193, 214, 241)"
-                            hoverBackgroundColor="rgb(193, 214, 241)"
+                            activeBackgroundColor={
+                              treeListTheme.rowActionBackgroundColor
+                            }
+                            focusBackgroundColor={
+                              treeListTheme.rowActionBackgroundColor
+                            }
+                            hoverBackgroundColor={
+                              treeListTheme.rowActionBackgroundColor
+                            }
                             open={openRowId === item.id}
                             maxActionsBeforeCollapsing={
                               maxActionsBeforeCollapsing
@@ -1025,7 +1031,6 @@ function TreeListItem<T extends TreeListItem>({
           onKeyDownItem?.({ event: e, item });
         }}
         onMouseDown={async (e) => {
-          e.preventDefault();
           let prevent = false;
           let withoutSelection = false;
 
@@ -1416,6 +1421,7 @@ function TreeListItem<T extends TreeListItem>({
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       if (dragItem && draggable) {
                         const {
                           id: draggedId,
