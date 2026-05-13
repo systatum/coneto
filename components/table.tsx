@@ -1002,7 +1002,7 @@ function TableRowGroup({
             <TableRowGroupSubtitle
               aria-label="table-row-group-subtitle"
               $style={styles?.subtitleStyle}
-              color={tableTheme?.rowSubtitleTextColor}
+              $color={tableTheme?.rowGroupSubtitleTextColor}
             >
               {subtitle}
             </TableRowGroupSubtitle>
