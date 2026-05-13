@@ -22,7 +22,7 @@ import { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 interface TableSummaryProps {
   id?: string;
@@ -186,20 +186,13 @@ describe("Table", () => {
     );
   }
 
-  context("separate content with function", () => {
-    function TableSeparateContent({ isGroup = false }: { isGroup?: boolean }) {
+  context("when children with function", () => {
+    type SeparateMode = "row" | "group" | "group-separate-row";
+
+    function TableSeparateContent({ mode = "row" }: { mode?: SeparateMode }) {
       const columns: TableColumn[] = [
-        {
-          id: "itemId",
-          caption: "Item ID",
-          sortable: true,
-        },
-        {
-          id: "name",
-          caption: "Name",
-          sortable: true,
-          width: "60%",
-        },
+        { id: "itemId", caption: "Item ID", sortable: true },
+        { id: "name", caption: "Name", sortable: true, width: "60%" },
       ];
 
       function TableSeparateRow({ test }: { test: boolean }) {
@@ -209,35 +202,53 @@ describe("Table", () => {
       function TableSeparateGroup({ test }: { test: boolean }) {
         return (
           <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
-            <Table.Row content={["02", "Test 123"]} />;
+            <Table.Row content={["02", "Test 123"]} />
           </Table.Row.Group>
         );
       }
 
-      return (
-        <Table columns={columns}>
-          {isGroup ? (
-            <TableSeparateGroup test={true} />
-          ) : (
+      function TableSeparateGroupSeparateRow({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
             <TableSeparateRow test={true} />
-          )}
-        </Table>
-      );
+          </Table.Row.Group>
+        );
+      }
+
+      const contentMap: Record<SeparateMode, ReactNode> = {
+        row: <TableSeparateRow test={true} />,
+        group: <TableSeparateGroup test={true} />,
+        "group-separate-row": <TableSeparateGroupSeparateRow test={true} />,
+      };
+
+      return <Table columns={columns}>{contentMap[mode]}</Table>;
     }
 
-    it("can resolve the table with separate content", () => {
+    it("should still resolve and render the row content correctly", () => {
       cy.mount(<TableSeparateContent />);
 
       cy.findByText("02").should("exist");
       cy.findByText("Test 123").should("exist");
     });
 
-    context("when the table is grouped", () => {
-      it("shows the group title and subtitle", () => {
-        cy.mount(<TableSeparateContent isGroup />);
+    context("with separate group function", () => {
+      it("should render the group title and subtitle", () => {
+        cy.mount(<TableSeparateContent mode="group" />);
 
         cy.findByText("Group Title").should("exist");
         cy.findByText("Group Subtitle").should("exist");
+      });
+    });
+
+    context("when separate group, and separate row function", () => {
+      it("should render the group text, and row content", () => {
+        cy.mount(<TableSeparateContent mode="group-separate-row" />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+
+        cy.findByText("02").should("exist");
+        cy.findByText("Test 123").should("exist");
       });
     });
   });
