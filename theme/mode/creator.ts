@@ -62,6 +62,7 @@ import {
   TimelineThemeConfig,
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
+  TitleThemeConfig,
   ToggleThemeConfig,
   ToolbarThemeConfig,
   TooltipThemeConfig,
@@ -1580,6 +1581,61 @@ export function createTipMenuTheme(
 
   return {
     ...defaultTheme,
+  };
+}
+
+// title.tsx
+export function createTitleTheme(
+  body: BodyThemeConfig,
+  custom: Partial<TitleThemeConfig> = {}
+): TitleThemeConfig {
+  const defaultTheme: TitleThemeConfig = {
+    pretitle: {
+      textColor: body.textColor,
+      opacity: 0.7,
+      fontWeight: 400,
+      letterSpacing: "0.08em",
+    },
+
+    title: {
+      textColor: body.textColor,
+      fontWeight: 600,
+    },
+
+    subtitle: {
+      textColor: body.textColor,
+      opacity: 0.8,
+      fontWeight: 400,
+    },
+
+    icon: {
+      textColor: body.textColor,
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+
+    pretitle: {
+      ...defaultTheme.pretitle,
+      ...custom.pretitle,
+    },
+
+    title: {
+      ...defaultTheme.title,
+      ...custom.title,
+    },
+
+    subtitle: {
+      ...defaultTheme.subtitle,
+      ...custom.subtitle,
+    },
+
+    icon: {
+      ...defaultTheme.icon,
+      ...custom.icon,
+    },
   };
 }
 

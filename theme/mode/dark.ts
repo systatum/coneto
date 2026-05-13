@@ -65,6 +65,7 @@ import {
   createTreeListTheme,
   createTooltipTheme,
   createSplitPaneTheme,
+  createTitleTheme,
 } from "./creator";
 
 // Dark
@@ -705,6 +706,25 @@ const darkTipMenu = createTipMenuTheme(darkButton, {
   success: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
 });
 
+const darkTitle = createTitleTheme(darkBody, {
+  pretitle: {
+    opacity: 0.6,
+  },
+
+  title: {
+    textColor: "#f5f5f5",
+  },
+
+  subtitle: {
+    textColor: "#d4d4d4",
+    opacity: 0.75,
+  },
+
+  icon: {
+    backgroundColor: "#303030",
+  },
+});
+
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
@@ -817,6 +837,7 @@ export const darkTheme: AppTheme = {
   timebox: darkTimebox,
   timeline: darkTimeline,
   tipmenu: darkTipMenu,
+  title: darkTitle,
   thumbField: darkThumbField,
   toggle: darkToggle,
   toolbar: darkToolbar,
