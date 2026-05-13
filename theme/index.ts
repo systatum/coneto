@@ -627,6 +627,32 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   scrollbarTrackColor?: string;
 }
 
+// title.tsx
+export interface TitleThemeConfig {
+  pretitle?: {
+    textColor?: string;
+    opacity?: number;
+    fontWeight?: number;
+    letterSpacing?: string;
+  };
+
+  title?: {
+    textColor?: string;
+    fontWeight?: number;
+  };
+
+  subtitle?: {
+    textColor?: string;
+    opacity?: number;
+    fontWeight?: number;
+  };
+
+  icon?: {
+    backgroundColor?: string;
+    textColor?: string;
+  };
+}
+
 // timebox.tsx
 export interface TimeboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
@@ -789,6 +815,7 @@ export interface AppTheme {
   timeline: TimelineThemeConfig;
   tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
   timebox: TimeboxThemeConfig;
+  title: TitleThemeConfig;
   toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
