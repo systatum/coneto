@@ -94,6 +94,7 @@ function TitleSmall({
       `}
     >
       <BaseTitleSection
+        size={size}
         ariaLabel="title-left-section"
         sections={leftSection}
         style={styles?.leftSectionStyle}
@@ -109,12 +110,14 @@ function TitleSmall({
       />
 
       <BaseTitleSection
+        size={size}
         ariaLabel="title-center-section"
         sections={centerSection}
         style={styles?.centerSectionStyle}
       />
 
       <BaseTitleSection
+        size={size}
         ariaLabel="title-right-section"
         sections={rightSection}
         style={styles?.rightSectionStyle}
@@ -160,6 +163,7 @@ function TitleMedium({
       `}
     >
       <BaseTitleSection
+        size={size}
         ariaLabel="title-left-section"
         sections={leftSection}
         style={styles?.leftSectionStyle}
@@ -175,12 +179,14 @@ function TitleMedium({
       />
 
       <BaseTitleSection
+        size={size}
         ariaLabel="title-center-section"
         sections={centerSection}
         style={styles?.centerSectionStyle}
       />
 
       <BaseTitleSection
+        size={size}
         ariaLabel="title-right-section"
         sections={rightSection}
         style={styles?.rightSectionStyle}
@@ -221,15 +227,31 @@ function TitleLarge({
       id={id}
       className={applyClassName("title-container", className)}
       $style={css`
-        flex-direction: row;
+        flex-direction: column;
         ${styles?.containerStyle}
       `}
     >
-      <BaseTitleSection
-        ariaLabel="title-left-section"
-        sections={leftSection}
-        style={styles?.leftSectionStyle}
-      />
+      <SectionWrapper aria-label="title-left-section-wrapper">
+        <BaseTitleSection
+          size={size}
+          ariaLabel="title-left-section"
+          sections={leftSection}
+          style={styles?.leftSectionStyle}
+        />
+
+        <BaseTitleSection
+          size={size}
+          ariaLabel="title-center-section"
+          sections={centerSection}
+          style={styles?.centerSectionStyle}
+        />
+        <BaseTitleSection
+          size={size}
+          ariaLabel="title-right-section"
+          sections={rightSection}
+          style={styles?.rightSectionStyle}
+        />
+      </SectionWrapper>
 
       <BaseAllText
         text={text}
@@ -238,18 +260,6 @@ function TitleLarge({
         icon={icon}
         size={size}
         styles={textStyles}
-      />
-
-      <BaseTitleSection
-        ariaLabel="title-center-section"
-        sections={centerSection}
-        style={styles?.centerSectionStyle}
-      />
-
-      <BaseTitleSection
-        ariaLabel="title-right-section"
-        sections={rightSection}
-        style={styles?.rightSectionStyle}
       />
     </TitleContainer>
   );
@@ -271,25 +281,37 @@ const TitleContainer = styled.div<{
 export interface TitleSection {
   type?: "actions" | "capsule" | "custom";
   capsule?: CapsuleProps;
-  actions?: ContextMenuAction[];
+  actions?: TitleSectionAction[];
   render?: ReactNode;
   maxShown?: number;
   styles?: TitleSectionStyles;
+}
+
+export interface TitleSectionAction extends ContextMenuAction {
+  iconSize?: number;
 }
 
 export interface TitleSectionStyles {
   toggleActionStyle?: CSSProp;
 }
 
-interface BaseTitleSection {
+interface BaseTitleSectionProps {
   sections?: TitleSection[];
   style?: CSSProp;
   ariaLabel?: string;
+  size?: TitleSize;
 }
 
-function BaseTitleSection({ sections, style, ariaLabel }: BaseTitleSection) {
-  if (!sections?.length) {
-    return null;
+function BaseTitleSection({
+  sections,
+  style,
+  ariaLabel,
+  size,
+}: BaseTitleSectionProps) {
+  if (!sections?.length && size === "lg") {
+    return <div />;
+  } else if (!sections?.length) {
+    return;
   }
 
   return (
@@ -303,20 +325,53 @@ function BaseTitleSection({ sections, style, ariaLabel }: BaseTitleSection) {
           return <Fragment key={index}>{section.render}</Fragment>;
         }
 
+        const filteredActions = section.maxShown
+          ? section.actions?.slice(0, section.maxShown)
+          : section.actions;
+
+        const resolvedIconSize = ICON_SIZE[size] * 0.8;
+
+        const filteredActionsWithSize = filteredActions?.map((action) => ({
+          ...action,
+          icon: {
+            ...action.icon,
+            size: action.iconSize ?? resolvedIconSize,
+          },
+        }));
+
         return (
           <ContextMenu
             key={index}
             styles={{
-              self: section?.styles?.toggleActionStyle,
+              self: css`
+                width: ${resolvedIconSize * 1.4}px;
+                height: ${resolvedIconSize * 1.4}px;
+                padding: 0px;
+
+                ${section?.styles?.toggleActionStyle}
+              `,
             }}
-            maxActionsBeforeCollapsing={section.maxShown ?? 2}
-            actions={section.actions}
+            maxActionsBeforeCollapsing={section.actions?.length}
+            actions={filteredActionsWithSize}
           />
         );
       })}
     </Section>
   );
 }
+
+const SectionWrapper = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  ${({ $style }) => $style}
+`;
 
 const Section = styled.div<{
   $style?: CSSProp;
@@ -408,13 +463,15 @@ function BaseAllText({
     >
       {icon &&
         (() => {
+          const resolvedIconSize = icon?.size ?? ICON_SIZE[size];
+
           const iconProps: FigureProps = {
             ...icon,
-            size: icon?.size ?? 28,
+            size: resolvedIconSize,
             styles: {
               self: css`
-                min-width: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
-                min-height: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
+                min-width: ${resolvedIconSize * 1.5}px;
+                min-height: ${resolvedIconSize * 1.5}px;
                 background-color: ${titleTheme?.icon?.backgroundColor ??
                 (mode === "light"
                   ? lightenColor(icon?.color, 0.9)
@@ -510,8 +567,8 @@ const TITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
     line-height: 32px;
   `,
   [TitleSize.Large]: css`
-    font-size: 32px;
-    line-height: 40px;
+    font-size: 28px;
+    line-height: 38px;
   `,
 };
 
@@ -531,6 +588,12 @@ const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   `,
   [TitleSize.Medium]: SUBTITLE_SIZE[TitleSize.Small],
   [TitleSize.Large]: SUBTITLE_SIZE[TitleSize.Medium],
+};
+
+const ICON_SIZE: Record<TitleSize, number> = {
+  [TitleSize.Small]: 20,
+  [TitleSize.Medium]: 22,
+  [TitleSize.Large]: 26,
 };
 
 Title.Small = TitleSmall;
