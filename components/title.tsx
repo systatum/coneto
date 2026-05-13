@@ -1,14 +1,13 @@
-import { ElementType, ReactNode } from "react";
+import { ElementType, Fragment, ReactNode } from "react";
 import { Figure, FigureProps } from "./figure";
 import styled, { css, CSSProp } from "styled-components";
-import { BodyThemeConfig, useTheme } from "./../theme";
+import { BodyThemeConfig, TitleThemeConfig, useTheme } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { darkenColor, lightenColor } from "./../lib/color";
-import { CapsuleProps } from "./capsule";
-import { BaseAction } from "./../constants/action";
+import { Capsule, CapsuleProps } from "./capsule";
+import ContextMenu, { ContextMenuAction } from "./context-menu";
 
 export const TitleSize = {
-  ExtraSmall: "xs",
   Small: "sm",
   Medium: "md",
   Large: "lg",
@@ -16,30 +15,27 @@ export const TitleSize = {
 
 export type TitleSize = (typeof TitleSize)[keyof typeof TitleSize];
 
-export interface TitleProps {
+export interface TitleProps extends BaseTitleProps {
+  size?: TitleSize;
+}
+
+interface BaseTitleProps {
   text?: ReactNode;
   pretitle?: ReactNode;
   subtitle?: ReactNode;
   icon?: FigureProps;
   className?: string;
   id?: string;
-  size?: TitleSize;
   styles?: TitleStyles;
-  //   section
   leftSection?: TitleSection[];
   centerSection?: TitleSection[];
   rightSection?: TitleSection[];
 }
 
-export interface TitleSection extends BaseAction {
-  type?: "actions" | "capsule" | "custom";
-  capsule?: CapsuleProps;
-  maxShown?: number;
-  render?: ReactNode;
-}
-
 export interface TitleStyles {
   containerStyle?: CSSProp;
+
+  textWrapperStyle?: CSSProp;
   textStyle?: CSSProp;
   pretitleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
@@ -49,128 +45,212 @@ export interface TitleStyles {
   rightSectionStyle?: CSSProp;
 }
 
-interface TextVariant {
-  as?: ElementType;
-  ariaLabel: string;
-  style: CSSProp;
-  size: typeof TITLE_SIZE;
-  customStyle?: CSSProp;
-  content?: ReactNode;
+function Title({ size = "md", ...props }: TitleProps) {
+  if (size === "sm") {
+    return <TitleSmall {...props} />;
+  }
+  if (size === "md") {
+    return <TitleMedium {...props} />;
+  }
+  if (size === "lg") {
+    return <TitleLarge {...props} />;
+  }
 }
 
-function Title({
+export type TitleSmallProps = BaseTitleProps;
+
+function TitleSmall({
   text,
   pretitle,
   subtitle,
   icon,
-  size = "md",
   className,
   id,
   styles,
-}: TitleProps) {
-  const { currentTheme, mode } = useTheme();
-  const bodyTheme = currentTheme.body;
+  leftSection,
+  centerSection,
+  rightSection,
+}: TitleSmallProps) {
+  const size = "sm";
 
-  const TEXT_VARIANTS: Record<string, TextVariant> = {
-    pretitle: {
-      as: "span",
-      ariaLabel: "title-pretitle",
-      style: css`
-        font-weight: 400;
-        opacity: 0.7;
-        letter-spacing: 0.08em;
-      `,
-      size: PRETITLE_SIZE,
-      customStyle: styles?.pretitleStyle,
-      content: pretitle,
-    },
-
-    title: {
-      as: "h2",
-      ariaLabel: "main-title",
-      style: css`
-        font-weight: 600;
-      `,
-      size: TITLE_SIZE,
-      customStyle: styles?.textStyle,
-      content: text,
-    },
-
-    subtitle: {
-      as: "p",
-      ariaLabel: "title-subtitle",
-      style: css`
-        font-weight: 400;
-        opacity: 0.8;
-      `,
-      size: SUBTITLE_SIZE,
-      customStyle: styles?.subtitleStyle,
-      content: subtitle,
-    },
+  const textStyles: BaseAllTextStyles = {
+    textWrapperStyle: css`
+      flex-direction: row;
+      align-items: start;
+      ${styles?.textWrapperStyle}
+    `,
+    textStyle: styles?.textStyle,
+    pretitleStyle: styles?.pretitleStyle,
+    subtitleStyle: styles?.subtitleStyle,
   };
 
   return (
     <TitleContainer
       id={id}
       className={applyClassName("title-container", className)}
-      $style={styles?.containerStyle}
+      $style={css`
+        flex-direction: row;
+        ${styles?.containerStyle}
+      `}
     >
-      <TextContainer aria-label="title-text-container">
-        {icon &&
-          (() => {
-            const iconProps: FigureProps = {
-              ...icon,
-              size: icon?.size ?? 28,
-              styles: {
-                self: css`
-                  min-width: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
-                  min-height: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
-                  background-color: ${mode === "light"
-                    ? lightenColor(icon?.color ?? bodyTheme?.textColor, 0.9)
-                    : darkenColor(icon?.color ?? bodyTheme?.textColor, 0.8)};
-                  border-radius: 99999px;
-                  justify-content: center;
-                  align-items: center;
-                  display: flex;
-                  overflow: hidden;
-                  ${icon?.styles?.self}
-                `,
-              },
-            };
-            return <Figure {...iconProps} aria-label="title-icon" />;
-          })()}
+      <BaseTitleSection
+        ariaLabel="title-left-section"
+        sections={leftSection}
+        style={styles?.leftSectionStyle}
+      />
 
-        {(pretitle || text || subtitle) && (
-          <TextWrapper aria-label="title-text-wrapper">
-            {Object?.values(TEXT_VARIANTS)?.map(
-              ({
-                as,
-                ariaLabel,
-                style,
-                size: sizeStyle,
-                customStyle,
-                content,
-              }) =>
-                content && (
-                  <BaseText
-                    key={ariaLabel}
-                    as={as}
-                    aria-label={ariaLabel}
-                    $theme={bodyTheme}
-                    $size={size}
-                    $style={css`
-                      ${style};
-                      ${sizeStyle[size]};
-                      ${customStyle};
-                    `}
-                  >
-                    {content}
-                  </BaseText>
-                )
-            )}
-          </TextWrapper>
-        )}
-      </TextContainer>
+      <BaseAllText
+        text={text}
+        pretitle={pretitle}
+        subtitle={subtitle}
+        icon={icon}
+        size={size}
+        styles={textStyles}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-center-section"
+        sections={centerSection}
+        style={styles?.centerSectionStyle}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-right-section"
+        sections={rightSection}
+        style={styles?.rightSectionStyle}
+      />
+    </TitleContainer>
+  );
+}
+
+export type TitleMediumProps = BaseTitleProps;
+
+function TitleMedium({
+  text,
+  pretitle,
+  subtitle,
+  icon,
+  className,
+  id,
+  styles,
+  leftSection,
+  centerSection,
+  rightSection,
+}: TitleSmallProps) {
+  const size = "md";
+
+  const textStyles: BaseAllTextStyles = {
+    textWrapperStyle: css`
+      flex-direction: row;
+      align-items: start;
+      ${styles?.textWrapperStyle}
+    `,
+    textStyle: styles?.textStyle,
+    pretitleStyle: styles?.pretitleStyle,
+    subtitleStyle: styles?.subtitleStyle,
+  };
+
+  return (
+    <TitleContainer
+      id={id}
+      className={applyClassName("title-container", className)}
+      $style={css`
+        flex-direction: row;
+        ${styles?.containerStyle}
+      `}
+    >
+      <BaseTitleSection
+        ariaLabel="title-left-section"
+        sections={leftSection}
+        style={styles?.leftSectionStyle}
+      />
+
+      <BaseAllText
+        text={text}
+        pretitle={pretitle}
+        subtitle={subtitle}
+        icon={icon}
+        size={size}
+        styles={textStyles}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-center-section"
+        sections={centerSection}
+        style={styles?.centerSectionStyle}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-right-section"
+        sections={rightSection}
+        style={styles?.rightSectionStyle}
+      />
+    </TitleContainer>
+  );
+}
+
+export type TitleLargeProps = BaseTitleProps;
+
+function TitleLarge({
+  text,
+  pretitle,
+  subtitle,
+  icon,
+  className,
+  id,
+  styles,
+  leftSection,
+  centerSection,
+  rightSection,
+}: TitleSmallProps) {
+  const size = "lg";
+
+  const textStyles: BaseAllTextStyles = {
+    textWrapperStyle: css`
+      flex-direction: row;
+      align-items: start;
+      ${styles?.textWrapperStyle}
+    `,
+    textStyle: styles?.textStyle,
+    pretitleStyle: styles?.pretitleStyle,
+    subtitleStyle: styles?.subtitleStyle,
+  };
+
+  return (
+    <TitleContainer
+      id={id}
+      className={applyClassName("title-container", className)}
+      $style={css`
+        flex-direction: row;
+        ${styles?.containerStyle}
+      `}
+    >
+      <BaseTitleSection
+        ariaLabel="title-left-section"
+        sections={leftSection}
+        style={styles?.leftSectionStyle}
+      />
+
+      <BaseAllText
+        text={text}
+        pretitle={pretitle}
+        subtitle={subtitle}
+        icon={icon}
+        size={size}
+        styles={textStyles}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-center-section"
+        sections={centerSection}
+        style={styles?.centerSectionStyle}
+      />
+
+      <BaseTitleSection
+        ariaLabel="title-right-section"
+        sections={rightSection}
+        style={styles?.rightSectionStyle}
+      />
     </TitleContainer>
   );
 }
@@ -183,15 +263,210 @@ const TitleContainer = styled.div<{
   width: 100%;
   flex-direction: row;
   align-items: start;
+  justify-content: space-between;
 
   ${({ $style }) => $style}
 `;
+
+export interface TitleSection {
+  type?: "actions" | "capsule" | "custom";
+  capsule?: CapsuleProps;
+  actions?: ContextMenuAction[];
+  render?: ReactNode;
+  maxShown?: number;
+  styles?: TitleSectionStyles;
+}
+
+export interface TitleSectionStyles {
+  toggleActionStyle?: CSSProp;
+}
+
+interface BaseTitleSection {
+  sections?: TitleSection[];
+  style?: CSSProp;
+  ariaLabel?: string;
+}
+
+function BaseTitleSection({ sections, style, ariaLabel }: BaseTitleSection) {
+  if (!sections?.length) {
+    return null;
+  }
+
+  return (
+    <Section aria-label={ariaLabel} $style={style}>
+      {sections.map((section, index) => {
+        if (section.type === "capsule" && section.capsule) {
+          return <Capsule key={index} {...section.capsule} />;
+        }
+
+        if (section.type === "custom" && section.render) {
+          return <Fragment key={index}>{section.render}</Fragment>;
+        }
+
+        return (
+          <ContextMenu
+            key={index}
+            styles={{
+              self: section?.styles?.toggleActionStyle,
+            }}
+            maxActionsBeforeCollapsing={section.maxShown ?? 2}
+            actions={section.actions}
+          />
+        );
+      })}
+    </Section>
+  );
+}
+
+const Section = styled.div<{
+  $style?: CSSProp;
+}>`
+  display: flex;
+  gap: 4px;
+  width: fit-content;
+  flex-direction: row;
+  align-items: start;
+  justify-content: space-between;
+
+  ${({ $style }) => $style}
+`;
+
+interface BaseAllTextProps
+  extends Pick<TitleProps, "text" | "pretitle" | "subtitle" | "icon" | "size"> {
+  styles?: BaseAllTextStyles;
+}
+
+interface BaseAllTextStyles
+  extends Pick<
+    TitleStyles,
+    "textWrapperStyle" | "textStyle" | "pretitleStyle" | "subtitleStyle"
+  > {}
+
+interface TextVariant {
+  as?: ElementType;
+  ariaLabel: string;
+  style: CSSProp;
+  size: Record<TitleSize, ReturnType<typeof css>>;
+  customStyle?: CSSProp;
+  content?: ReactNode;
+}
+
+function BaseAllText({
+  text,
+  pretitle,
+  subtitle,
+  icon,
+  size = "md",
+  styles,
+}: BaseAllTextProps) {
+  const { currentTheme, mode } = useTheme();
+  const titleTheme = currentTheme.title;
+
+  const TEXT_VARIANTS: Record<string, TextVariant> = {
+    pretitle: {
+      as: "span",
+      ariaLabel: "title-pretitle",
+      style: css`
+        font-weight: ${titleTheme?.pretitle?.fontWeight};
+        opacity: ${titleTheme?.pretitle?.opacity};
+        letter-spacing: ${titleTheme?.pretitle?.letterSpacing};
+        color: ${titleTheme?.pretitle?.textColor};
+      `,
+      size: PRETITLE_SIZE,
+      customStyle: styles?.pretitleStyle,
+      content: pretitle,
+    },
+    title: {
+      as: "h2",
+      ariaLabel: "title-title",
+      style: css`
+        font-weight: ${titleTheme?.title?.fontWeight};
+        color: ${titleTheme?.title?.textColor};
+      `,
+      size: TITLE_SIZE,
+      customStyle: styles?.textStyle,
+      content: text,
+    },
+    subtitle: {
+      as: "p",
+      ariaLabel: "title-subtitle",
+      style: css`
+        font-weight: ${titleTheme?.subtitle?.fontWeight};
+        opacity: ${titleTheme?.subtitle?.opacity};
+        color: ${titleTheme?.subtitle?.textColor};
+      `,
+      size: SUBTITLE_SIZE,
+      customStyle: styles?.subtitleStyle,
+      content: subtitle,
+    },
+  };
+
+  return (
+    <TextContainer
+      aria-label="title-text-container"
+      $style={styles?.textWrapperStyle}
+    >
+      {icon &&
+        (() => {
+          const iconProps: FigureProps = {
+            ...icon,
+            size: icon?.size ?? 28,
+            styles: {
+              self: css`
+                min-width: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
+                min-height: ${icon?.size ? `${icon?.size * 1.5}px` : `42px`};
+                background-color: ${titleTheme?.icon?.backgroundColor ??
+                (mode === "light"
+                  ? lightenColor(icon?.color, 0.9)
+                  : darkenColor(icon?.color, 0.8))};
+                border-radius: 99999px;
+                justify-content: center;
+                align-items: center;
+                display: flex;
+                overflow: hidden;
+                ${icon?.styles?.self}
+              `,
+            },
+          };
+          return <Figure {...iconProps} aria-label="title-icon" />;
+        })()}
+
+      {(pretitle || text || subtitle) && (
+        <TextWrapper aria-label="title-text-wrapper">
+          {Object?.values(TEXT_VARIANTS)?.map(
+            ({ as, ariaLabel, style, size: sizeStyle, customStyle, content }) =>
+              content && (
+                <BaseText
+                  key={ariaLabel}
+                  as={as}
+                  aria-label={ariaLabel}
+                  $theme={titleTheme}
+                  $size={size}
+                  $type={
+                    ariaLabel.split("-")[1] as "pretitle" | "title" | "subtitle"
+                  }
+                  $style={css`
+                    ${style};
+                    ${sizeStyle[size]};
+                    ${customStyle};
+                  `}
+                >
+                  {content}
+                </BaseText>
+              )
+          )}
+        </TextWrapper>
+      )}
+    </TextContainer>
+  );
+}
 
 const TextContainer = styled(TitleContainer)`
   flex-direction: column;
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
@@ -210,24 +485,22 @@ const TextWrapper = styled.div<{
 
 const BaseText = styled.div<{
   $size: TitleSize;
-  $theme?: BodyThemeConfig;
+  $theme?: TitleThemeConfig;
   $style: CSSProp;
+  $type: "pretitle" | "title" | "subtitle";
 }>`
   width: 100%;
   display: flex;
   align-items: center;
-  color: ${({ $theme }) => $theme?.textColor || "#111"};
+
+  color: ${({ $theme, $type }) => $theme?.[$type]?.textColor || "#111"};
 
   ${({ $size }) => TITLE_SIZE[$size]}
 
   ${({ $style }) => $style}
 `;
 
-const TITLE_SIZE = {
-  [TitleSize.ExtraSmall]: css`
-    font-size: 14px;
-    line-height: 20px;
-  `,
+const TITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   [TitleSize.Small]: css`
     font-size: 18px;
     line-height: 28px;
@@ -242,21 +515,26 @@ const TITLE_SIZE = {
   `,
 };
 
-const SUBTITLE_SIZE = {
-  [TitleSize.ExtraSmall]: TITLE_SIZE[TitleSize.ExtraSmall],
-  [TitleSize.Small]: TITLE_SIZE[TitleSize.ExtraSmall],
+const SUBTITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
+  [TitleSize.Small]: css`
+    font-size: 14px;
+    line-height: 20px;
+  `,
   [TitleSize.Medium]: TITLE_SIZE[TitleSize.Small],
   [TitleSize.Large]: TITLE_SIZE[TitleSize.Medium],
 };
 
-const PRETITLE_SIZE = {
-  [TitleSize.ExtraSmall]: css`
+const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
+  [TitleSize.Small]: css`
     font-size: 12px;
-    line-height: 16px;
+    line-height: 18px;
   `,
-  [TitleSize.Small]: TITLE_SIZE[TitleSize.ExtraSmall],
-  [TitleSize.Medium]: TITLE_SIZE[TitleSize.ExtraSmall],
-  [TitleSize.Large]: TITLE_SIZE[TitleSize.Small],
+  [TitleSize.Medium]: SUBTITLE_SIZE[TitleSize.Small],
+  [TitleSize.Large]: SUBTITLE_SIZE[TitleSize.Medium],
 };
+
+Title.Small = TitleSmall;
+Title.Medium = TitleMedium;
+Title.Large = TitleLarge;
 
 export { Title };
