@@ -38,7 +38,9 @@ export const WithACustomAction: Story = {
         actions: [
           {
             icon: { image: RiCloseLine },
-            onClick: () => {},
+            onClick: () => {
+              console.log("close was clicked");
+            },
           },
         ],
       },
@@ -103,28 +105,28 @@ export const WithActions: Story = {
           {
             icon: { image: RiHeart2Fill },
             onClick: () => {
-              "ri heart clicked";
+              console.log("heart was clicked");
             },
             caption: "Heart",
           },
           {
             icon: { image: RiSearch2Line },
             onClick: () => {
-              "ri search clicked";
+              console.log("search was clicked");
             },
             caption: "Search",
           },
           {
             icon: { image: RiPriceTag3Line },
             onClick: () => {
-              "ri price tag clicked";
+              console.log("price tag was clicked");
             },
             caption: "Price Tag",
           },
           {
             icon: { image: RiDeleteBin7Fill },
             onClick: () => {
-              "ri delete bin clicked";
+              console.log("delete bin was clicked");
             },
             caption: "Delete Bin",
           },
