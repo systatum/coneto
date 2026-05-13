@@ -32,13 +32,6 @@ export const WithACustomAction: Story = {
   render: () => {
     const rightSection: TitleSection[] = [
       {
-        styles: {
-          toggleActionStyle: css`
-            padding: 2px;
-            width: 20px;
-            height: 20px;
-          `,
-        },
         type: "actions",
         actions: [
           {
@@ -161,7 +154,7 @@ export const WithActions: Story = {
                 background-color: #6200ee;
                 align-items: center;
               `,
-              textStyle: css`
+              titleStyle: css`
                 color: white;
               `,
             }}
