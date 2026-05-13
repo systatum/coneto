@@ -395,6 +395,7 @@ const NavItems = styled.div<{
   font-size: 14px;
   padding: 16px;
   min-width: 300px;
+  cursor: pointer;
 
   color: ${({ $mode }) => ($mode === "dark" ? "#f4f4f5" : "#18181b")};
 
