@@ -308,7 +308,7 @@ function BaseTitleSection({
   size,
 }: BaseTitleSectionProps) {
   if (!sections?.length && size === "lg") {
-    return;
+    return <div aria-label="title-empty-section" />;
   } else if (!sections?.length) {
     return;
   }
