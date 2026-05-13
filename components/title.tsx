@@ -35,8 +35,8 @@ interface BaseTitleProps {
 export interface TitleStyles {
   containerStyle?: CSSProp;
 
-  textWrapperStyle?: CSSProp;
-  textStyle?: CSSProp;
+  textContainerStyle?: CSSProp;
+  titleStyle?: CSSProp;
   pretitleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
 
@@ -74,12 +74,12 @@ function TitleSmall({
   const size = "sm";
 
   const textStyles: BaseAllTextStyles = {
-    textWrapperStyle: css`
+    textContainerStyle: css`
       flex-direction: row;
       align-items: start;
-      ${styles?.textWrapperStyle}
+      ${styles?.textContainerStyle}
     `,
-    textStyle: styles?.textStyle,
+    titleStyle: styles?.titleStyle,
     pretitleStyle: styles?.pretitleStyle,
     subtitleStyle: styles?.subtitleStyle,
   };
@@ -143,12 +143,12 @@ function TitleMedium({
   const size = "md";
 
   const textStyles: BaseAllTextStyles = {
-    textWrapperStyle: css`
+    textContainerStyle: css`
       flex-direction: row;
       align-items: start;
-      ${styles?.textWrapperStyle}
+      ${styles?.textContainerStyle}
     `,
-    textStyle: styles?.textStyle,
+    titleStyle: styles?.titleStyle,
     pretitleStyle: styles?.pretitleStyle,
     subtitleStyle: styles?.subtitleStyle,
   };
@@ -214,12 +214,12 @@ function TitleLarge({
   const size = "lg";
 
   const textStyles: BaseAllTextStyles = {
-    textWrapperStyle: css`
+    textContainerStyle: css`
       flex-direction: row;
       align-items: start;
-      ${styles?.textWrapperStyle}
+      ${styles?.textContainerStyle}
     `,
-    textStyle: styles?.textStyle,
+    titleStyle: styles?.titleStyle,
     pretitleStyle: styles?.pretitleStyle,
     subtitleStyle: styles?.subtitleStyle,
   };
@@ -401,7 +401,7 @@ interface BaseAllTextProps
 interface BaseAllTextStyles
   extends Pick<
     TitleStyles,
-    "textWrapperStyle" | "textStyle" | "pretitleStyle" | "subtitleStyle"
+    "textContainerStyle" | "titleStyle" | "pretitleStyle" | "subtitleStyle"
   > {}
 
 interface TextVariant {
@@ -446,7 +446,7 @@ function BaseAllText({
         color: ${titleTheme?.title?.textColor};
       `,
       size: TITLE_SIZE,
-      customStyle: styles?.textStyle,
+      customStyle: styles?.titleStyle,
       content: text,
     },
     subtitle: {
@@ -466,7 +466,7 @@ function BaseAllText({
   return (
     <TextContainer
       aria-label="title-text-container"
-      $style={styles?.textWrapperStyle}
+      $style={styles?.textContainerStyle}
     >
       {icon &&
         (() => {
