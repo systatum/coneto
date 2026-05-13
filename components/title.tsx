@@ -36,6 +36,7 @@ export interface TitleStyles {
   containerStyle?: CSSProp;
 
   textContainerStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
   titleStyle?: CSSProp;
   pretitleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
@@ -45,21 +46,8 @@ export interface TitleStyles {
   rightSectionStyle?: CSSProp;
 }
 
-function Title({ size = "md", ...props }: TitleProps) {
-  if (size === "sm") {
-    return <TitleSmall {...props} />;
-  }
-  if (size === "md") {
-    return <TitleMedium {...props} />;
-  }
-  if (size === "lg") {
-    return <TitleLarge {...props} />;
-  }
-}
-
-export type TitleSmallProps = BaseTitleProps;
-
-function TitleSmall({
+function Title({
+  size,
   text,
   pretitle,
   subtitle,
@@ -70,8 +58,8 @@ function TitleSmall({
   leftSection,
   centerSection,
   rightSection,
-}: TitleSmallProps) {
-  const size = "sm";
+}: TitleProps) {
+  const isLarge = size === "lg";
 
   const textStyles: BaseAllTextStyles = {
     textContainerStyle: css`
@@ -82,192 +70,114 @@ function TitleSmall({
     titleStyle: styles?.titleStyle,
     pretitleStyle: styles?.pretitleStyle,
     subtitleStyle: styles?.subtitleStyle,
+    textWrapperStyle: styles?.textWrapperStyle,
   };
+
+  const hasText = text || subtitle || pretitle;
+  const hasSections = leftSection || centerSection || rightSection;
 
   return (
     <TitleContainer
       id={id}
       className={applyClassName("title-container", className)}
       $style={css`
-        flex-direction: row;
+        flex-direction: ${isLarge ? "column" : "row"};
         ${styles?.containerStyle}
       `}
     >
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-left-section"
-        sections={leftSection}
-        style={styles?.leftSectionStyle}
-      />
+      {isLarge ? (
+        <>
+          {hasSections && (
+            <SectionWrapper aria-label="title-section-wrapper">
+              <BaseTitleSection
+                size={size}
+                ariaLabel="title-left-section"
+                sections={leftSection}
+                style={styles?.leftSectionStyle}
+              />
 
-      <BaseAllText
-        text={text}
-        pretitle={pretitle}
-        subtitle={subtitle}
-        icon={icon}
-        size={size}
-        styles={textStyles}
-      />
+              <BaseTitleSection
+                size={size}
+                ariaLabel="title-center-section"
+                sections={centerSection}
+                style={styles?.centerSectionStyle}
+              />
 
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-center-section"
-        sections={centerSection}
-        style={styles?.centerSectionStyle}
-      />
+              <BaseTitleSection
+                size={size}
+                ariaLabel="title-right-section"
+                sections={rightSection}
+                style={styles?.rightSectionStyle}
+              />
+            </SectionWrapper>
+          )}
 
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-right-section"
-        sections={rightSection}
-        style={styles?.rightSectionStyle}
-      />
-    </TitleContainer>
-  );
-}
-
-export type TitleMediumProps = BaseTitleProps;
-
-function TitleMedium({
-  text,
-  pretitle,
-  subtitle,
-  icon,
-  className,
-  id,
-  styles,
-  leftSection,
-  centerSection,
-  rightSection,
-}: TitleSmallProps) {
-  const size = "md";
-
-  const textStyles: BaseAllTextStyles = {
-    textContainerStyle: css`
-      flex-direction: row;
-      align-items: start;
-      ${styles?.textContainerStyle}
-    `,
-    titleStyle: styles?.titleStyle,
-    pretitleStyle: styles?.pretitleStyle,
-    subtitleStyle: styles?.subtitleStyle,
-  };
-
-  return (
-    <TitleContainer
-      id={id}
-      className={applyClassName("title-container", className)}
-      $style={css`
-        flex-direction: row;
-        ${styles?.containerStyle}
-      `}
-    >
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-left-section"
-        sections={leftSection}
-        style={styles?.leftSectionStyle}
-      />
-
-      {(text || subtitle || pretitle) && (
-        <BaseAllText
-          text={text}
-          pretitle={pretitle}
-          subtitle={subtitle}
-          icon={icon}
-          size={size}
-          styles={textStyles}
-        />
-      )}
-
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-center-section"
-        sections={centerSection}
-        style={styles?.centerSectionStyle}
-      />
-
-      <BaseTitleSection
-        size={size}
-        ariaLabel="title-right-section"
-        sections={rightSection}
-        style={styles?.rightSectionStyle}
-      />
-    </TitleContainer>
-  );
-}
-
-export type TitleLargeProps = BaseTitleProps;
-
-function TitleLarge({
-  text,
-  pretitle,
-  subtitle,
-  icon,
-  className,
-  id,
-  styles,
-  leftSection,
-  centerSection,
-  rightSection,
-}: TitleSmallProps) {
-  const size = "lg";
-
-  const textStyles: BaseAllTextStyles = {
-    textContainerStyle: css`
-      flex-direction: row;
-      align-items: start;
-      ${styles?.textContainerStyle}
-    `,
-    titleStyle: styles?.titleStyle,
-    pretitleStyle: styles?.pretitleStyle,
-    subtitleStyle: styles?.subtitleStyle,
-  };
-
-  return (
-    <TitleContainer
-      id={id}
-      className={applyClassName("title-container", className)}
-      $style={css`
-        flex-direction: column;
-        ${styles?.containerStyle}
-      `}
-    >
-      {(leftSection || centerSection || rightSection) && (
-        <SectionWrapper aria-label="title-section-wrapper">
+          {hasText && (
+            <BaseAllText
+              text={text}
+              pretitle={pretitle}
+              subtitle={subtitle}
+              icon={icon}
+              size={size}
+              styles={textStyles}
+            />
+          )}
+        </>
+      ) : (
+        <>
           <BaseTitleSection
             size={size}
             ariaLabel="title-left-section"
             sections={leftSection}
             style={styles?.leftSectionStyle}
           />
+
+          {hasText && (
+            <BaseAllText
+              text={text}
+              pretitle={pretitle}
+              subtitle={subtitle}
+              icon={icon}
+              size={size}
+              styles={textStyles}
+            />
+          )}
+
           <BaseTitleSection
             size={size}
             ariaLabel="title-center-section"
             sections={centerSection}
             style={styles?.centerSectionStyle}
           />
+
           <BaseTitleSection
             size={size}
             ariaLabel="title-right-section"
             sections={rightSection}
             style={styles?.rightSectionStyle}
           />
-        </SectionWrapper>
-      )}
-
-      {(text || subtitle || pretitle) && (
-        <BaseAllText
-          text={text}
-          pretitle={pretitle}
-          subtitle={subtitle}
-          icon={icon}
-          size={size}
-          styles={textStyles}
-        />
+        </>
       )}
     </TitleContainer>
   );
+}
+
+export type TitleSmallProps = BaseTitleProps;
+
+function TitleSmall(props: TitleSmallProps) {
+  return <Title {...props} size="sm" />;
+}
+
+export type TitleMediumProps = BaseTitleProps;
+
+function TitleMedium(props: TitleMediumProps) {
+  return <Title {...props} size="md" />;
+}
+
+export type TitleLargeProps = BaseTitleProps;
+
+function TitleLarge(props: TitleLargeProps) {
+  return <Title {...props} size="lg" />;
 }
 
 const TitleContainer = styled.div<{
@@ -401,7 +311,11 @@ interface BaseAllTextProps
 interface BaseAllTextStyles
   extends Pick<
     TitleStyles,
-    "textContainerStyle" | "titleStyle" | "pretitleStyle" | "subtitleStyle"
+    | "textContainerStyle"
+    | "textWrapperStyle"
+    | "titleStyle"
+    | "pretitleStyle"
+    | "subtitleStyle"
   > {}
 
 interface TextVariant {
@@ -495,7 +409,10 @@ function BaseAllText({
         })()}
 
       {(pretitle || text || subtitle) && (
-        <TextWrapper aria-label="title-text-wrapper">
+        <TextWrapper
+          aria-label="title-text-wrapper"
+          $style={styles?.textWrapperStyle}
+        >
           {Object?.values(TEXT_VARIANTS)?.map(
             ({ as, ariaLabel, style, size: sizeStyle, customStyle, content }) =>
               content && (
