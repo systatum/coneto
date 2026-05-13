@@ -231,27 +231,28 @@ function TitleLarge({
         ${styles?.containerStyle}
       `}
     >
-      <SectionWrapper aria-label="title-left-section-wrapper">
-        <BaseTitleSection
-          size={size}
-          ariaLabel="title-left-section"
-          sections={leftSection}
-          style={styles?.leftSectionStyle}
-        />
-
-        <BaseTitleSection
-          size={size}
-          ariaLabel="title-center-section"
-          sections={centerSection}
-          style={styles?.centerSectionStyle}
-        />
-        <BaseTitleSection
-          size={size}
-          ariaLabel="title-right-section"
-          sections={rightSection}
-          style={styles?.rightSectionStyle}
-        />
-      </SectionWrapper>
+      {(leftSection || centerSection || rightSection) && (
+        <SectionWrapper aria-label="title-section-wrapper">
+          <BaseTitleSection
+            size={size}
+            ariaLabel="title-left-section"
+            sections={leftSection}
+            style={styles?.leftSectionStyle}
+          />
+          <BaseTitleSection
+            size={size}
+            ariaLabel="title-center-section"
+            sections={centerSection}
+            style={styles?.centerSectionStyle}
+          />
+          <BaseTitleSection
+            size={size}
+            ariaLabel="title-right-section"
+            sections={rightSection}
+            style={styles?.rightSectionStyle}
+          />
+        </SectionWrapper>
+      )}
 
       <BaseAllText
         text={text}
@@ -287,9 +288,7 @@ export interface TitleSection {
   styles?: TitleSectionStyles;
 }
 
-export interface TitleSectionAction extends ContextMenuAction {
-  iconSize?: number;
-}
+export type TitleSectionAction = ContextMenuAction;
 
 export interface TitleSectionStyles {
   toggleActionStyle?: CSSProp;
@@ -309,7 +308,7 @@ function BaseTitleSection({
   size,
 }: BaseTitleSectionProps) {
   if (!sections?.length && size === "lg") {
-    return <div />;
+    return;
   } else if (!sections?.length) {
     return;
   }
@@ -335,7 +334,7 @@ function BaseTitleSection({
           ...action,
           icon: {
             ...action.icon,
-            size: action.iconSize ?? resolvedIconSize,
+            size: action?.icon?.size ?? resolvedIconSize,
           },
         }));
 
