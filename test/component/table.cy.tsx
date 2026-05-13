@@ -185,6 +185,63 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("separate content with function", () => {
+    function TableSeparateContent({ isGroup = false }: { isGroup?: boolean }) {
+      const columns: TableColumn[] = [
+        {
+          id: "itemId",
+          caption: "Item ID",
+          sortable: true,
+        },
+        {
+          id: "name",
+          caption: "Name",
+          sortable: true,
+          width: "60%",
+        },
+      ];
+
+      function TableSeparateRow({ test }: { test: boolean }) {
+        return <Table.Row content={["02", "Test 123"]} />;
+      }
+
+      function TableSeparateGroup({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
+            <Table.Row content={["02", "Test 123"]} />;
+          </Table.Row.Group>
+        );
+      }
+
+      return (
+        <Table columns={columns}>
+          {isGroup ? (
+            <TableSeparateGroup test={true} />
+          ) : (
+            <TableSeparateRow test={true} />
+          )}
+        </Table>
+      );
+    }
+
+    it("can resolve the table with separate content", () => {
+      cy.mount(<TableSeparateContent />);
+
+      cy.findByText("02").should("exist");
+      cy.findByText("Test 123").should("exist");
+    });
+
+    context("when the table is grouped", () => {
+      it("shows the group title and subtitle", () => {
+        cy.mount(<TableSeparateContent isGroup />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+      });
+    });
+  });
+
   context("isLoading", () => {
     context("when given true", () => {
       it("renders spinner ~14px from top and left relative to overlay", () => {
