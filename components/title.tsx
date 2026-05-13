@@ -348,8 +348,8 @@ function BaseTitleSection({
               key={index}
               styles={{
                 self: css`
-                  width: ${resolvedIconSize * 1.4}px;
-                  height: ${resolvedIconSize * 1.4}px;
+                  width: ${resolvedIconSize}px;
+                  height: ${resolvedIconSize}px;
                   padding: 0px;
 
                   ${section?.styles?.toggleActionStyle}
@@ -431,7 +431,6 @@ function BaseAllText({
       style: css`
         font-weight: ${titleTheme?.pretitle?.fontWeight};
         opacity: ${titleTheme?.pretitle?.opacity};
-        letter-spacing: ${titleTheme?.pretitle?.letterSpacing};
         color: ${titleTheme?.pretitle?.textColor};
       `,
       size: PRETITLE_SIZE,
@@ -566,16 +565,13 @@ const BaseText = styled.div<{
 
 const TITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   [TitleSize.Small]: css`
-    font-size: 18px;
-    line-height: 28px;
+    font-size: 16px;
   `,
   [TitleSize.Medium]: css`
     font-size: 24px;
-    line-height: 32px;
   `,
   [TitleSize.Large]: css`
     font-size: 28px;
-    line-height: 38px;
   `,
 };
 
@@ -598,9 +594,9 @@ const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
 };
 
 const ICON_SIZE: Record<TitleSize, number> = {
-  [TitleSize.Small]: 20,
-  [TitleSize.Medium]: 22,
-  [TitleSize.Large]: 26,
+  [TitleSize.Small]: 18,
+  [TitleSize.Medium]: 28,
+  [TitleSize.Large]: 32,
 };
 
 Title.Small = TitleSmall;
