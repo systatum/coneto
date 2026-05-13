@@ -168,14 +168,11 @@ function Card({
               ${styles?.actionContainerStyle}
             `,
             titleStyle: css`
-              font-size: 16px;
               font-weight: 400;
-              line-height: 18px;
               color: ${cardTheme?.titleColor ?? "#000000"};
               ${styles?.titleStyle}
             `,
             subtitleStyle: css`
-              font-size: 14px;
               color: ${cardTheme?.subtitleColor ?? "#6b7280"};
               ${styles?.subtitleStyle}
             `,
