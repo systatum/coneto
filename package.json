@@ -261,6 +261,10 @@
       "import": "./dist/components/tip-menu.js",
       "types": "./dist/components/tip-menu.d.ts"
     },
+    "./title": {
+      "import": "./dist/components/title.js",
+      "types": "./dist/components/title.d.ts"
+    },
     "./toggle": {
       "import": "./dist/components/toggle.js",
       "types": "./dist/components/toggle.d.ts"
