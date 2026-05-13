@@ -235,10 +235,9 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
+  const flatChildren = resolveChildren(children);
 
-  const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
-
+  const rowChildren = flatChildren.map((child, index) => {
     const hasRowGroup = child.type === TableRowGroup;
     const hasRow = child.type === TableRow;
 
@@ -1697,6 +1696,25 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
         (action): action is TipMenuItemProps => Boolean(action)
       );
       result.push(...validActions);
+    }
+  });
+
+  return result;
+}
+
+function resolveChildren(
+  children: ReactNode
+): ReactElement<TableRowProps | TableRowGroupProps>[] {
+  const result: ReactElement<TableRowProps | TableRowGroupProps>[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    if (child.type === TableRow || child.type === TableRowGroup) {
+      result.push(child as ReactElement<TableRowProps | TableRowGroupProps>);
+    } else if (typeof child.type === "function") {
+      const rendered = (child.type as Function)(child.props);
+      result.push(...resolveChildren(rendered));
     }
   });
 
