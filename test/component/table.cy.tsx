@@ -207,6 +207,10 @@ describe("Table", () => {
         );
       }
 
+      /**
+       * very rare case, but just to make sure that when both separate group
+       * and row function are given, it should still render the content correctly/
+       */
       function TableSeparateGroupSeparateRow({ test }: { test: boolean }) {
         return (
           <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
