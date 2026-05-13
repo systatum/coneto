@@ -169,14 +169,16 @@ function TitleMedium({
         style={styles?.leftSectionStyle}
       />
 
-      <BaseAllText
-        text={text}
-        pretitle={pretitle}
-        subtitle={subtitle}
-        icon={icon}
-        size={size}
-        styles={textStyles}
-      />
+      {(text || subtitle || pretitle) && (
+        <BaseAllText
+          text={text}
+          pretitle={pretitle}
+          subtitle={subtitle}
+          icon={icon}
+          size={size}
+          styles={textStyles}
+        />
+      )}
 
       <BaseTitleSection
         size={size}
@@ -254,14 +256,16 @@ function TitleLarge({
         </SectionWrapper>
       )}
 
-      <BaseAllText
-        text={text}
-        pretitle={pretitle}
-        subtitle={subtitle}
-        icon={icon}
-        size={size}
-        styles={textStyles}
-      />
+      {(text || subtitle || pretitle) && (
+        <BaseAllText
+          text={text}
+          pretitle={pretitle}
+          subtitle={subtitle}
+          icon={icon}
+          size={size}
+          styles={textStyles}
+        />
+      )}
     </TitleContainer>
   );
 }
@@ -315,7 +319,7 @@ function BaseTitleSection({
 
   return (
     <Section aria-label={ariaLabel} $style={style}>
-      {sections.map((section, index) => {
+      {sections?.map((section, index) => {
         if (section.type === "capsule" && section.capsule) {
           return <Capsule key={index} {...section.capsule} />;
         }
@@ -324,36 +328,40 @@ function BaseTitleSection({
           return <Fragment key={index}>{section.render}</Fragment>;
         }
 
-        const filteredActions = section.maxShown
-          ? section.actions?.slice(0, section.maxShown)
-          : section.actions;
+        if (section.type === "actions") {
+          const filteredActions = section.maxShown
+            ? section.actions?.slice(0, section.maxShown)
+            : section.actions;
 
-        const resolvedIconSize = ICON_SIZE[size] * 0.8;
+          const resolvedIconSize = ICON_SIZE[size] * 0.8;
 
-        const filteredActionsWithSize = filteredActions?.map((action) => ({
-          ...action,
-          icon: {
-            ...action.icon,
-            size: action?.icon?.size ?? resolvedIconSize,
-          },
-        }));
+          const filteredActionsWithSize = filteredActions?.map((action) => ({
+            ...action,
+            icon: {
+              ...action.icon,
+              size: action?.icon?.size ?? resolvedIconSize,
+            },
+          }));
 
-        return (
-          <ContextMenu
-            key={index}
-            styles={{
-              self: css`
-                width: ${resolvedIconSize * 1.4}px;
-                height: ${resolvedIconSize * 1.4}px;
-                padding: 0px;
+          return (
+            <ContextMenu
+              key={index}
+              styles={{
+                self: css`
+                  width: ${resolvedIconSize * 1.4}px;
+                  height: ${resolvedIconSize * 1.4}px;
+                  padding: 0px;
 
-                ${section?.styles?.toggleActionStyle}
-              `,
-            }}
-            maxActionsBeforeCollapsing={section.actions?.length}
-            actions={filteredActionsWithSize}
-          />
-        );
+                  ${section?.styles?.toggleActionStyle}
+                `,
+              }}
+              maxActionsBeforeCollapsing={section.actions?.length}
+              actions={filteredActionsWithSize}
+            />
+          );
+        }
+
+        return null;
       })}
     </Section>
   );
