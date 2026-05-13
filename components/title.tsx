@@ -284,7 +284,7 @@ const TitleContainer = styled.div<{
 `;
 
 export interface TitleSection {
-  type?: "actions" | "capsule" | "custom";
+  type: "actions" | "capsule" | "custom";
   capsule?: CapsuleProps;
   actions?: TitleSectionAction[];
   render?: ReactNode;
@@ -328,7 +328,7 @@ function BaseTitleSection({
           return <Fragment key={index}>{section.render}</Fragment>;
         }
 
-        if (section.type === "actions") {
+        if (section.type === "actions" && section.actions) {
           const filteredActions = section.maxShown
             ? section.actions?.slice(0, section.maxShown)
             : section.actions;
