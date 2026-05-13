@@ -1,6 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Title, TitleSection } from "./title";
-import { Ri24HoursFill, RiCloseLine } from "@remixicon/react";
+import { Title, TitleSection, TitleSize } from "./title";
+import {
+  Ri24HoursFill,
+  RiCloseLine,
+  RiDeleteBin7Fill,
+  RiHeart2Fill,
+  RiPriceTag3Line,
+  RiSearch2Line,
+} from "@remixicon/react";
 import { css } from "styled-components";
 
 const meta: Meta<typeof Title> = {
@@ -38,35 +45,119 @@ export const WithACustomAction: Story = {
     ];
 
     return (
-      <>
-        <Title
-          size="sm"
-          text="Default Modal"
-          subtitle="Here is the content of the modal dialog."
-          icon={{
-            image: Ri24HoursFill,
-          }}
-          rightSection={rightSection}
-        />
-        <Title
-          size="md"
-          text="Default Modal"
-          subtitle="Here is the content of the modal dialog."
-          icon={{
-            image: Ri24HoursFill,
-          }}
-          rightSection={rightSection}
-        />
-        <Title
-          size="lg"
-          text="Default Modal"
-          subtitle="Here is the content of the modal dialog."
-          icon={{
-            image: Ri24HoursFill,
-          }}
-          rightSection={rightSection}
-        />
-      </>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          width: "100%",
+          minWidth: "350px",
+        }}
+      >
+        {Object.values(TitleSize).map((size, index) => (
+          <Title
+            key={index}
+            size={size}
+            text="Default Modal"
+            icon={{
+              image: Ri24HoursFill,
+            }}
+            rightSection={rightSection}
+          />
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithDescription: Story = {
+  render: () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          width: "100%",
+        }}
+      >
+        {Object.values(TitleSize).map((size, index) => (
+          <Title
+            key={index}
+            size={size}
+            text="Yolo v8"
+            pretitle="Compile"
+            subtitle="Model: 2024-12-05"
+          />
+        ))}
+      </div>
+    );
+  },
+};
+
+export const WithActions: Story = {
+  render: () => {
+    const rightSection: TitleSection[] = [
+      {
+        actions: [
+          {
+            icon: { image: RiHeart2Fill },
+            onClick: () => {
+              "ri heart clicked";
+            },
+            caption: "Heart",
+          },
+          {
+            icon: { image: RiSearch2Line },
+            onClick: () => {
+              "ri search clicked";
+            },
+            caption: "Search",
+          },
+          {
+            icon: { image: RiPriceTag3Line },
+            onClick: () => {
+              "ri price tag clicked";
+            },
+            caption: "Price Tag",
+          },
+          {
+            icon: { image: RiDeleteBin7Fill },
+            onClick: () => {
+              "ri delete bin clicked";
+            },
+            caption: "Delete Bin",
+          },
+        ],
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          width: "100%",
+          minWidth: "450px",
+        }}
+      >
+        {Object.values(TitleSize).map((size, index) => (
+          <Title
+            key={index}
+            size={size}
+            text="Coneto - React UI"
+            styles={{
+              containerStyle: css`
+                padding: 10px;
+                background-color: #6200ee;
+                align-items: center;
+              `,
+            }}
+            rightSection={rightSection}
+          />
+        ))}
+      </div>
     );
   },
 };
