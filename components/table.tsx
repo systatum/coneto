@@ -1708,7 +1708,6 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
  * This allows wrapper components (e.g. <GetRows />, <Testing />) to be passed as children
  * to <Table> and still be recognized correctly, instead of returning null.
  */
-
 function resolveChildren(
   children: ReactNode
 ): ReactElement<TableRowProps | TableRowGroupProps>[] {
