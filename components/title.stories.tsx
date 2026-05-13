@@ -39,6 +39,7 @@ export const WithACustomAction: Story = {
             height: 20px;
           `,
         },
+        type: "actions",
         actions: [
           {
             icon: { image: RiCloseLine },
@@ -105,6 +106,7 @@ export const WithActions: Story = {
   render: () => {
     const rightSection: TitleSection[] = [
       {
+        type: "actions",
         actions: [
           {
             icon: { image: RiHeart2Fill, color: "white" },
