@@ -1594,12 +1594,11 @@ export function createTitleTheme(
       textColor: body.textColor,
       opacity: 0.7,
       fontWeight: 400,
-      letterSpacing: "0.08em",
     },
 
     title: {
       textColor: body.textColor,
-      fontWeight: 600,
+      fontWeight: 500,
     },
 
     subtitle: {

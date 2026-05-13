@@ -633,7 +633,6 @@ export interface TitleThemeConfig {
     textColor?: string;
     opacity?: number;
     fontWeight?: number;
-    letterSpacing?: string;
   };
 
   title?: {
