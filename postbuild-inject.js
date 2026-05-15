@@ -7,16 +7,25 @@ const useClientDirective = `"use client";`;
 /**
  * Resolve correct ESM path:
  * - ./file      -> ./file.js
+ * - ../file     -> ../file.js
  * - ./folder    -> ./folder/index.js
+ * - ../folder   -> ../folder/index.js
  */
 function resolveImport(importPath, baseDir) {
+  // already fully specified
+  if (
+    importPath.endsWith(".js") ||
+    importPath.endsWith(".mjs") ||
+    importPath.endsWith(".cjs") ||
+    importPath.endsWith(".json")
+  ) {
+    return importPath;
+  }
+
   const fullBase = path.resolve(baseDir, importPath);
 
-  // already has extension → keep
-  if (importPath.endsWith(".js")) return importPath;
-
   // file.js exists
-  if (fs.existsSync(fullBase + ".js")) {
+  if (fs.existsSync(`${fullBase}.js`)) {
     return `${importPath}.js`;
   }
 
@@ -25,25 +34,40 @@ function resolveImport(importPath, baseDir) {
     return `${importPath}/index.js`;
   }
 
-  // fallback (safe default)
+  // fallback
   return `${importPath}.js`;
 }
 
 function transformImports(content, fileDir) {
-  // handle: import ... from "..."
-  content = content.replace(/from\s+["'](\.\/[^"']+)["']/g, (_, p1) => {
-    const resolved = resolveImport(p1, fileDir);
-    return `from "${resolved}"`;
-  });
+  /**
+   * Matches:
+   * import x from "./x"
+   * import x from "../x"
+   * export * from "./x"
+   * export * from "../x"
+   */
 
-  // handle: export * from "..."
-  content = content.replace(
-    /export\s+\*\s+from\s+["'](\.\/[^"']+)["']/g,
-    (_, p1) => {
-      const resolved = resolveImport(p1, fileDir);
-      return `export * from "${resolved}"`;
-    }
-  );
+  const patterns = [
+    {
+      regex: /from\s+["']((?:\.\/|\.\.\/)[^"'?#]+)["']/g,
+      replacer: (_, importPath) => {
+        const resolved = resolveImport(importPath, fileDir);
+        return `from "${resolved}"`;
+      },
+    },
+    {
+      // handle: export * from "..." with regex
+      regex: /export\s+\*\s+from\s+["']((?:\.\/|\.\.\/)[^"'?#]+)["']/g,
+      replacer: (_, importPath) => {
+        const resolved = resolveImport(importPath, fileDir);
+        return `export * from "${resolved}"`;
+      },
+    },
+  ];
+
+  for (const { regex, replacer } of patterns) {
+    content = content.replace(regex, replacer);
+  }
 
   return content;
 }
@@ -51,10 +75,10 @@ function transformImports(content, fileDir) {
 function processFile(fullPath) {
   let content = fs.readFileSync(fullPath, "utf8").trim();
 
-  // --- 1. Inject "use client" ONLY for components ---
+  // Inject "use client" only for component files
   if (fullPath.includes(`${path.sep}components${path.sep}`)) {
     const lines = content.split("\n");
-    const hasUseClient = lines[0].trim() === useClientDirective;
+    const hasUseClient = lines[0]?.trim() === useClientDirective;
 
     if (!hasUseClient) {
       lines.unshift(useClientDirective);
@@ -62,7 +86,7 @@ function processFile(fullPath) {
     }
   }
 
-  // --- 2. Fix ESM imports ---
+  // Fix ESM imports
   content = transformImports(content, path.dirname(fullPath));
 
   fs.writeFileSync(fullPath, content);
@@ -74,7 +98,10 @@ function walk(dir) {
 
     if (fs.statSync(fullPath).isDirectory()) {
       walk(fullPath);
-    } else if (file.endsWith(".js")) {
+      continue;
+    }
+
+    if (file.endsWith(".js")) {
       processFile(fullPath);
       console.log(`✅ Processed: ${path.relative(distDir, fullPath)}`);
     }
