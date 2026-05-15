@@ -2,7 +2,7 @@ import { css } from "styled-components";
 import { SplitPane } from "../../components/split-pane";
 import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
-import { RiCloseFill, RiEdit2Fill } from "@remixicon/react";
+import { RiEdit2Fill } from "@remixicon/react";
 
 describe("SplitPane", () => {
   context("style", () => {
@@ -42,7 +42,7 @@ describe("SplitPane", () => {
             {
               hidden: true,
               icon: {
-                image: RiCloseFill,
+                image: RiEdit2Fill,
               },
             },
             {
@@ -57,7 +57,15 @@ describe("SplitPane", () => {
       );
     }
     context("actions", () => {
-      context("when given with hidden", () => {
+      it("should renders by given", () => {
+        cy.mount(<SplitPaneCellDefault />);
+        cy.findAllByLabelText("split-pane-button").should("have.length", 1);
+
+        // icon must have only one icon.
+        cy.findAllByLabelText("action-button-icon").should("have.length", 1);
+      });
+
+      context("when given hidden", () => {
         it("should ignore hidden actions", () => {
           cy.mount(<SplitPaneCellDefault />);
           cy.findAllByLabelText("split-pane-button").should("have.length", 1);
