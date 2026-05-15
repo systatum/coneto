@@ -65,6 +65,10 @@ function Title({
     textContainerStyle: css`
       flex-direction: row;
       align-items: start;
+      ${size === "lg" &&
+      css`
+        padding-left: 8px;
+      `};
       ${styles?.textContainerStyle}
     `,
     titleStyle: styles?.titleStyle,
@@ -75,6 +79,11 @@ function Title({
 
   const hasText = text || subtitle || pretitle;
   const hasSections = leftSection || centerSection || rightSection;
+
+  const sectionInLarge = (style: CSSProp) => css`
+    gap: 6px;
+    ${style}
+  `;
 
   return (
     <TitleContainer
@@ -94,21 +103,21 @@ function Title({
                 size={size}
                 ariaLabel="title-left-section"
                 sections={leftSection}
-                style={styles?.leftSectionStyle}
+                style={sectionInLarge(styles?.leftSectionStyle)}
               />
 
               <BaseTitleSection
                 size={size}
                 ariaLabel="title-center-section"
                 sections={centerSection}
-                style={styles?.centerSectionStyle}
+                style={sectionInLarge(styles?.centerSectionStyle)}
               />
 
               <BaseTitleSection
                 size={size}
                 ariaLabel="title-right-section"
                 sections={rightSection}
-                style={styles?.rightSectionStyle}
+                style={sectionInLarge(styles?.rightSectionStyle)}
               />
             </SectionWrapper>
           )}
@@ -261,9 +270,9 @@ function BaseTitleSection({
               key={index}
               styles={{
                 self: css`
-                  width: ${resolvedIconSize}px;
-                  height: ${resolvedIconSize}px;
-                  padding: 0px;
+                  width: ${resolvedIconSize * 1.4}px;
+                  height: ${resolvedIconSize * 1.4}px;
+                  padding: 10px;
 
                   ${section?.styles?.toggleActionStyle}
                 `,
@@ -517,8 +526,8 @@ const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   `,
 };
 const ICON_SIZE: Record<TitleSize, number> = {
-  [TitleSize.Small]: 18,
-  [TitleSize.Medium]: 28,
+  [TitleSize.Small]: 24,
+  [TitleSize.Medium]: 30,
   [TitleSize.Large]: 32,
 };
 
