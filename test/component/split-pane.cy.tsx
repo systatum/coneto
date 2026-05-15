@@ -1,5 +1,5 @@
 import { css } from "styled-components";
-import { SplitPane } from "../../components/split-pane";
+import { SplitPane, SplitPaneCellProps } from "../../components/split-pane";
 import { Textarea } from "./../../components/textarea";
 import { useRef, useState } from "react";
 import { RiEdit2Fill } from "@remixicon/react";
@@ -32,7 +32,7 @@ describe("SplitPane", () => {
   });
 
   context("SplitPane.Cell", () => {
-    function SplitPaneCellDefault() {
+    function SplitPaneCellDefault(props: SplitPaneCellProps) {
       return (
         <SplitPane.Cell
           onMouseEnter={() => console.log("now is hovering split-pane-cell")}
@@ -51,6 +51,7 @@ describe("SplitPane", () => {
               },
             },
           ]}
+          {...props}
         >
           Test
         </SplitPane.Cell>
@@ -63,6 +64,93 @@ describe("SplitPane", () => {
 
         // icon must have only one icon.
         cy.get("svg").should("have.length", 1);
+      });
+
+      context("when given 3 actions", () => {
+        it("should render all actions", () => {
+          cy.mount(
+            <SplitPaneCellDefault
+              actions={[
+                {
+                  icon: {
+                    image: RiEdit2Fill,
+                    onClick: () => console.log("Edit 1 was clicked"),
+                  },
+                },
+                {
+                  icon: {
+                    image: RiEdit2Fill,
+                    onClick: () => console.log("Edit 2 was clicked"),
+                  },
+                },
+                {
+                  icon: {
+                    image: RiEdit2Fill,
+                    onClick: () => console.log("Edit 3 was clicked"),
+                  },
+                },
+              ]}
+            />
+          );
+          cy.findAllByLabelText("split-pane-button").should("have.length", 3);
+
+          cy.get("svg").should("have.length", 3);
+        });
+
+        context("when clicking", () => {
+          it("should renders the console.log", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(
+              <SplitPaneCellDefault
+                actions={[
+                  {
+                    icon: {
+                      image: RiEdit2Fill,
+                      onClick: () => console.log("Edit 1 was clicked"),
+                    },
+                  },
+                  {
+                    icon: {
+                      image: RiEdit2Fill,
+                      onClick: () => console.log("Edit 2 was clicked"),
+                    },
+                  },
+                  {
+                    icon: {
+                      image: RiEdit2Fill,
+                      onClick: () => console.log("Edit 3 was clicked"),
+                    },
+                  },
+                ]}
+              />
+            );
+            [1, 2, 3].map((number) => {
+              cy.get("@consoleLog").should(
+                "not.have.been.calledWith",
+                `Edit ${number} was clicked`
+              );
+            });
+
+            cy.findAllByLabelText("split-pane-button").should("have.length", 3);
+            cy.get("svg").should("have.length", 3);
+
+            [1, 2, 3].map((number) => {
+              cy.findAllByLabelText("split-pane-button")
+                .eq(number - 1)
+                .click();
+            });
+
+            [1, 2, 3].map((number) => {
+              cy.get("@consoleLog").should(
+                "have.been.calledWith",
+                `Edit ${number} was clicked`
+              );
+            });
+          });
+        });
       });
 
       context("when given hidden", () => {
