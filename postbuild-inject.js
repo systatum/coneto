@@ -15,16 +15,15 @@ for (const file of files) {
     const fullPath = path.join(componentDir, file);
     let content = fs.readFileSync(fullPath, "utf8").trim();
 
+    const hasConsoleLog = /console\.log\s*\(/.test(content);
+
+    if (hasConsoleLog) {
+      console.error(`❌ Build failed: console.log found in ${file}`);
+      process.exit(1);
+    }
+
     let lines = content.split("\n");
     const hasUseClient = lines[0].trim() === useClientDirective;
-
-    lines = lines.filter((line) => {
-      const t = line.trim();
-
-      if (/^console\.(log)\(/.test(t)) return false;
-
-      return true;
-    });
 
     if (!hasUseClient) {
       lines.unshift(useClientDirective);
