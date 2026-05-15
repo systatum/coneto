@@ -62,7 +62,7 @@ describe("SplitPane", () => {
         cy.findAllByLabelText("split-pane-button").should("have.length", 1);
 
         // icon must have only one icon.
-        cy.findAllByLabelText("action-button-icon").should("have.length", 1);
+        cy.get("svg").should("have.length", 1);
       });
 
       context("when given hidden", () => {
