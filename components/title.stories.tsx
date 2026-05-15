@@ -5,14 +5,20 @@ import {
   RiCloseLine,
   RiDeleteBin7Fill,
   RiHeart2Fill,
+  RiLogoutBoxRLine,
   RiPriceTag3Line,
   RiSearch2Line,
+  RiSettings2Fill,
+  RiUserLine,
 } from "@remixicon/react";
 import styled, { css } from "styled-components";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTheme } from "./../theme";
+import { Searchbox } from "./searchbox";
+import { Avatar } from "./avatar";
+import { Launchpad } from "./launchpad";
 
 const meta: Meta<typeof Title> = {
   title: "Content/Title",
@@ -173,129 +179,107 @@ export const Navbar: Story = {
   render: () => {
     const { mode } = useTheme();
 
-    interface ActiveItem {
-      title?: string;
-      timestamp?: number;
-    }
-    const [activeItem, setActiveItem] = useState<ActiveItem>({
-      title: "",
-      timestamp: 0,
-    });
-
-    interface NavbarItemMenu {
-      title: string;
-      onClick: () => void;
-    }
-
     interface NavbarItem {
+      type: "hiring" | "work" | "office" | "integrations";
       title: string;
-      items: NavbarItemMenu[];
+      image: string;
+      link: string;
     }
 
-    const NAVBAR_ITEMS: NavbarItem[] = [
+    const NAVBAR: NavbarItem[] = [
       {
-        title: "Usage",
-        items: [
-          {
-            title: "Hiring Candidates",
-            onClick: () => {
-              console.log("Hiring Candidates was clicked");
-            },
-          },
-          {
-            title: "Recording",
-            onClick: () => {
-              console.log("Recording was clicked");
-            },
-          },
-          {
-            title: "Knowledge",
-            onClick: () => {
-              console.log("Knowledge was clicked");
-            },
-          },
-        ],
+        type: "hiring",
+        title: "Job Post",
+        image: "https://picsum.photos/seed/jobpost/200",
+        link: "/jobpost",
       },
       {
-        title: "Learn",
-        items: [
-          {
-            title: "Help Center",
-            onClick: () => {
-              console.log("Help Center was clicked");
-            },
-          },
-          {
-            title: "Customer Stories",
-            onClick: () => {
-              console.log("Customer Stories was clicked");
-            },
-          },
-          {
-            title: "About Us",
-            onClick: () => {
-              console.log("About Us was clicked");
-            },
-          },
-        ],
+        type: "hiring",
+        title: "Candidates",
+        image: "https://picsum.photos/seed/candidates/200",
+        link: "/candidates",
+      },
+      {
+        type: "hiring",
+        title: "Email Templates",
+        image: "https://picsum.photos/seed/email-templates/200",
+        link: "/email-template",
+      },
+      {
+        type: "work",
+        title: "Employees",
+        image: "https://picsum.photos/seed/employees/200",
+        link: "/employees",
+      },
+      {
+        type: "work",
+        title: "Timesheet",
+        image: "https://picsum.photos/seed/timesheet/200",
+        link: "/timesheet",
+      },
+      {
+        type: "work",
+        title: "Payroll",
+        image: "https://picsum.photos/seed/payroll/200",
+        link: "/payroll",
+      },
+      {
+        type: "work",
+        title: "Requests",
+        image: "https://picsum.photos/seed/requests/200",
+        link: "/requests",
+      },
+      {
+        type: "office",
+        title: "Announcements",
+        image: "https://picsum.photos/seed/announcements/200",
+        link: "/announcements",
+      },
+      {
+        type: "office",
+        title: "Assets",
+        image: "https://picsum.photos/seed/assets/200",
+        link: "/assets",
+      },
+      {
+        type: "office",
+        title: "Training Resources",
+        image: "https://picsum.photos/seed/training-resources/200",
+        link: "/resources",
+      },
+      {
+        type: "integrations",
+        title: "Slack",
+        image: "https://picsum.photos/seed/slack/200",
+        link: "/slack",
+      },
+      {
+        type: "integrations",
+        title: "Microsoft Teams",
+        image: "https://picsum.photos/seed/microsoft-teams/200",
+        link: "/microsoftteams",
       },
     ];
 
-    const TooltipMenu = ({
-      menu,
-      activeItem,
-      setActiveItem,
-      mode,
-    }: {
-      menu: NavbarItem;
-      activeItem: ActiveItem;
-      setActiveItem: (activeItem: ActiveItem) => void;
-      mode: "light" | "dark";
-    }) => (
-      <Tooltip
-        key={`${activeItem.title}-${activeItem.timestamp}`}
-        dialog={
-          <>
-            {menu.items.map((item) => (
-              <NavItems
-                $mode={mode}
-                key={item.title}
-                $active={activeItem.title === item.title}
-                onClick={() => {
-                  item.onClick();
-                  setActiveItem({ title: item.title, timestamp: Date.now() });
-                }}
-              >
-                <FirstCharacter
-                  $mode={mode}
-                  $active={activeItem.title === item.title}
-                >
-                  {item.title.charAt(0)}
-                </FirstCharacter>
-                {item.title}
-              </NavItems>
-            ))}
-          </>
+    type NavbarGroup = {
+      type: string;
+      items: NavbarItem[];
+    };
+
+    const navbarGroups = useMemo<NavbarGroup[]>(() => {
+      return NAVBAR.reduce((acc: NavbarGroup[], item) => {
+        const existingGroup = acc.find((g) => g.type === item.type);
+        if (existingGroup) {
+          existingGroup.items.push(item);
+        } else {
+          acc.push({
+            type: item.type,
+            items: [item],
+          });
         }
-        dialogPlacement="bottom-left"
-        styles={{
-          arrowStyle: css`
-            display: none;
-          `,
-          drawerStyle: css`
-            top: 14px;
-            border-radius: 2px;
-            padding: 0px;
-            background-color: ${mode === "dark" ? "rgb(35, 35, 35)" : "white"};
-          `,
-          triggerStyle: css`
-            font-size: 14px;
-          `,
-        }}
-      >
-        {menu.title}
-      </Tooltip>
-    );
+        return acc;
+      }, []);
+    }, []);
 
     return (
       <Title
@@ -303,25 +287,166 @@ export const Navbar: Story = {
         leftSection={[
           {
             type: "custom",
-            render: <img src="/workaty.png" width={36} height={36} />,
-          },
-          ...NAVBAR_ITEMS.map((menu) => ({
-            type: "custom" as const,
             render: (
-              <TooltipMenu
-                mode={mode}
-                key={menu.title}
-                menu={menu}
-                activeItem={activeItem}
-                setActiveItem={setActiveItem}
-              />
+              <Tooltip
+                showDialogOn="click"
+                hideDialogOn="click"
+                safeAreaAriaLabels={["launchpad"]}
+                styles={{
+                  arrowStyle: css`
+                    display: none;
+                  `,
+                  drawerStyle: css`
+                    margin-top: 8px;
+                    left: -11px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    width: 600px;
+                    background-color: ${mode === "dark"
+                      ? "rgb(35, 35, 35)"
+                      : "white"};
+
+                    @media (max-width: 768px) {
+                      width: 400px;
+                    }
+                  `,
+                }}
+                dialog={
+                  <Launchpad
+                    styles={{
+                      self: css`
+                        border: none;
+                      `,
+                    }}
+                  >
+                    {navbarGroups.map((navGroup, index) => {
+                      return (
+                        <Launchpad.Section
+                          gridPreset="2-to-4"
+                          key={index}
+                          title={
+                            navGroup.type.charAt(0).toUpperCase() +
+                            navGroup.type.slice(1)
+                          }
+                          styles={{
+                            titleSeparatorStyle: css`
+                              background-color: ${mode === "dark"
+                                ? "rgb(35, 35, 35)"
+                                : "white"};
+                            `,
+                          }}
+                        >
+                          {navGroup.items.map((navigation, i) => (
+                            <Launchpad.Section.Item
+                              key={i}
+                              iconUrl={navigation.image}
+                              label={navigation.title}
+                              href="#"
+                              onClick={(e) => e.preventDefault()}
+                            />
+                          ))}
+                        </Launchpad.Section>
+                      );
+                    })}
+                  </Launchpad>
+                }
+              >
+                <img src="/workaty.png" width={36} height={36} />
+              </Tooltip>
             ),
-          })),
+          },
+        ]}
+        centerSection={[
+          {
+            type: "custom",
+            render: <Searchbox />,
+          },
         ]}
         rightSection={[
           {
             type: "custom",
-            render: <Button>Go to Dashboard</Button>,
+            render: (
+              <Button
+                styles={{
+                  self: css`
+                    border-radius: 9999px;
+                    padding: px;
+                    height: 40px;
+                    width: 40px;
+                  `,
+                  dropdownStyle: css`
+                    margin-top: 6px;
+                    margin-left: 16px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                    background-color: ${mode === "dark"
+                      ? "rgb(35, 35, 35)"
+                      : "white"};
+                  `,
+                }}
+                showSubMenuOn="self"
+                subMenu={({ render }) =>
+                  render(
+                    <>
+                      <Header>
+                        <BrandTitle>Systatum</BrandTitle>
+
+                        <Row>
+                          <Avatar
+                            firstName="Adam"
+                            lastName="Hakarsa"
+                            changeable={true}
+                            fontSize={16}
+                            frameSize={70}
+                          />
+
+                          <UserInfo>
+                            <UserBox>
+                              <h3>Adam Hakarsa</h3>
+                              <span>adam@systatum.com</span>
+                            </UserBox>
+
+                            <RoleText>CEO of Systatum</RoleText>
+
+                            <SettingLink>
+                              Settings
+                              <RiSettings2Fill size={14} />
+                            </SettingLink>
+                          </UserInfo>
+                        </Row>
+                      </Header>
+
+                      <Button
+                        variant="secondary"
+                        icon={{
+                          image: RiLogoutBoxRLine,
+                          size: 16,
+                        }}
+                        styles={{
+                          containerStyle: css`
+                            width: 100%;
+                          `,
+                          self: css`
+                            width: 100%;
+                            text-align: start;
+                            gap: 12px;
+                            height: 40px;
+                            align-items: center;
+                          `,
+                        }}
+                      >
+                        Sign Out
+                      </Button>
+                    </>
+                  )
+                }
+                icon={{
+                  image: RiUserLine,
+                  size: 20,
+                }}
+              />
+            ),
           },
         ]}
         styles={{
@@ -342,85 +467,70 @@ export const Navbar: Story = {
   },
 };
 
-const FirstCharacter = styled.div<{
-  $mode: "light" | "dark";
-  $active: boolean;
-}>`
+const Header = styled.h2`
+  padding: 12px;
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  height: 42px;
-  width: 42px;
-  border-radius: 9999px;
-  border: 1px solid
-    ${({ $mode, $active }) =>
-      $active
-        ? $mode === "dark"
-          ? "#8b5cf6"
-          : "#61a9f9"
-        : $mode === "dark"
-          ? "#2b2b31"
-          : "#e7e7e7"};
-
-  background: ${({ $mode, $active }) =>
-    $active
-      ? $mode === "dark"
-        ? "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)"
-        : "linear-gradient(135deg, #61a9f9 0%, #61a9f9 100%)"
-      : $mode === "dark"
-        ? "#18181b"
-        : "#fafafa"};
-
-  color: ${({ $active, $mode }) =>
-    $active ? "white" : $mode === "dark" ? "#d4d4d8" : "#27272a"};
+  flex-direction: column;
+  gap: 8px;
 `;
 
-const NavItems = styled.div<{
-  $mode: "light" | "dark";
-  $active: boolean;
-}>`
+const BrandTitle = styled.h2`
+  font-size: 16px;
+  font-weight: 700;
+`;
+
+const Row = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 20px;
-  align-items: center;
+  gap: 16px;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-size: 14px;
-  padding: 16px;
-  min-width: 300px;
+`;
+
+const UserBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  border-radius: 4px;
+  padding: 0 8px;
+  transition: all 0.3s ease;
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  span {
+    font-size: 12px;
+  }
+`;
+
+const RoleText = styled.span`
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const SettingLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 0 8px;
+  font-size: 12px;
+
   cursor: pointer;
+  transition: all 0.3s ease;
 
-  color: ${({ $mode }) => ($mode === "dark" ? "#f4f4f5" : "#18181b")};
-
-  transition: all 0.2s ease;
-
-  background-color: ${({ $mode, $active }) =>
-    $active
-      ? $mode === "dark"
-        ? "rgba(139, 92, 246, 0.14)"
-        : "#dae9fa"
-      : "transparent"};
-
-  border: 1px solid
-    ${({ $mode, $active }) =>
-      $active
-        ? $mode === "dark"
-          ? "rgba(139, 92, 246, 0.3)"
-          : "#92c4fc"
-        : "transparent"};
+  text-decoration: none;
+  color: inherit;
 
   &:hover {
-    background-color: ${({ $mode }) =>
-      $mode === "dark" ? "rgba(139, 92, 246, 0.14)" : "#dbeafe"};
-
-    box-shadow: ${({ $mode }) =>
-      $mode === "dark"
-        ? "0 10px 24px rgba(0,0,0,0.35)"
-        : "0 10px 24px rgba(124, 58, 237, 0.08)"};
-
-    ${FirstCharacter} {
-      border-color: ${({ $mode }) =>
-        $mode === "dark" ? "#8b5cf6" : "#61a9f9"};
-    }
+    color: #3b82f6;
   }
 `;
