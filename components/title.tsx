@@ -523,9 +523,9 @@ const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   `,
 };
 const ICON_SIZE: Record<TitleSize, number> = {
-  [TitleSize.Small]: 24,
-  [TitleSize.Medium]: 32,
-  [TitleSize.Large]: 36,
+  [TitleSize.Small]: 28,
+  [TitleSize.Medium]: 36,
+  [TitleSize.Large]: 40,
 };
 
 Title.Small = TitleSmall;
