@@ -25,7 +25,109 @@ const meta: Meta<typeof Title> = {
   component: Title,
   parameters: {
     layout: "centered",
-    docs: {},
+    docs: {
+      description: {
+        component: `
+**Title** is a flexible layout component for displaying structured headings with optional pretitle, subtitle, icon, and action sections.  
+
+It is designed for design systems where a title block may include:
+- main text hierarchy
+- contextual metadata (pretitle/subtitle)
+- icons
+- grouped actions (capsule, buttons, context menu, custom render)
+- flexible left/center/right section composition
+
+---
+
+### ✨ Features
+- 🧱 **Structured layout system** (left / center / right sections)
+- 🧩 **Flexible content support**: pretitle, title, subtitle
+- 🎯 **Icon support** with automatic sizing per variant
+- 🎛️ **Action system** with ContextMenu integration
+- 🎨 **Highly customizable styles** via \`styles\` prop
+- 📐 **Three size variants**: small (sm), medium (md), large (lg)
+- 🧪 **Composable sections**: actions, capsule, or custom render nodes
+- ♿ **Accessible structure** with semantic headings and aria labels
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+<Title
+  size="lg"
+  pretitle="Dashboard"
+  text="Analytics Overview"
+  subtitle="Last updated 2 minutes ago"
+  icon={{
+    image: RiBarChartLine,
+    color: "#4f46e5",
+  }}
+  leftSection={[
+    {
+      type: "capsule",
+      capsule: {
+        tabs: [
+          {
+            id: "new",
+            title: "New",
+          },
+          {
+            id: "list",
+            title: "List",
+          },
+        ],
+        activeTab: "new",
+      },
+    },
+  ]}
+  rightSection={[
+    {
+      type: "actions",
+      actions: [
+        {
+          label: "Edit",
+          icon: { image: RiEditLine },
+          onClick: () => console.log("edit"),
+        },
+      ],
+    },
+  ]}
+  styles={{
+    containerStyle: css\`padding: 12px;\`,
+    titleStyle: css\`font-weight: 700;\`,
+    subtitleStyle: css\`opacity: 0.7;\`,
+  }}
+/>
+\`\`\`
+
+---
+
+### 🧠 Layout Behavior
+
+- **lg (Large)** → stacked layout  
+  - Sections rendered above text block
+- **sm / md** → inline layout  
+  - sections + text arranged horizontally when possible
+
+---
+
+### 🎯 Sections Types
+
+- **actions** → renders contextual menu (ContextMenu)
+- **capsule** → renders badge-like UI (Capsule)
+- **custom** → renders custom ReactNode
+
+---
+
+### ⚙️ Notes
+
+- Action icons auto-scale based on title size
+- Sections support maxShown + overflow collapsing
+- Theme-aware (supports light/dark via useTheme)
+        `,
+      },
+    },
   },
   tags: ["autodocs"],
 };
