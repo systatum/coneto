@@ -724,6 +724,18 @@ export interface SplitPaneThemeConfig
   dividerColor?: string;
 }
 
+// wheel.tsx
+export interface WheelThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
+  overlayBackgroundColor?: string;
+  overlayBorderColor?: string;
+
+  fadeColor?: string;
+
+  inactiveTextColor?: string;
+
+  separatorColor?: string;
+}
+
 // app-theme.tsx
 export interface AppTheme {
   body: BodyThemeConfig;
@@ -793,6 +805,7 @@ export interface AppTheme {
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
+  wheel: WheelThemeConfig;
 }
 
 export * from "./provider";
