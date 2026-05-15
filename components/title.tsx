@@ -1,7 +1,7 @@
 import { ElementType, Fragment, ReactNode } from "react";
 import { Figure, FigureProps } from "./figure";
 import styled, { css, CSSProp } from "styled-components";
-import { BodyThemeConfig, TitleThemeConfig, useTheme } from "./../theme";
+import { TitleThemeConfig, useTheme } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { darkenColor, lightenColor } from "./../lib/color";
 import { Capsule, CapsuleProps } from "./capsule";
@@ -370,7 +370,6 @@ function BaseAllText({
       ariaLabel: "title-subtitle",
       style: css`
         font-weight: ${titleTheme?.subtitle?.fontWeight};
-        opacity: ${titleTheme?.subtitle?.opacity};
         color: ${titleTheme?.subtitle?.textColor};
       `,
       size: SUBTITLE_SIZE,
@@ -414,7 +413,10 @@ function BaseAllText({
       {(pretitle || text || subtitle) && (
         <TextWrapper
           aria-label="title-text-wrapper"
-          $style={styles?.textWrapperStyle}
+          $style={css`
+            gap: ${size === "lg" ? "0px" : size === "md" ? "0px" : "1px"};
+            ${styles?.textWrapperStyle};
+          `}
         >
           {Object?.values(TEXT_VARIANTS)?.map(
             ({ as, ariaLabel, style, size: sizeStyle, customStyle, content }) =>
@@ -460,7 +462,6 @@ const TextWrapper = styled.div<{
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 4px;
   width: 100%;
 
   ${({ $style }) => $style}
@@ -485,7 +486,7 @@ const BaseText = styled.div<{
 
 const TITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   [TitleSize.Small]: css`
-    font-size: 16px;
+    font-size: 17px;
   `,
   [TitleSize.Medium]: css`
     font-size: 24px;
@@ -498,21 +499,23 @@ const TITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
 const SUBTITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   [TitleSize.Small]: css`
     font-size: 14px;
-    line-height: 20px;
   `,
   [TitleSize.Medium]: TITLE_SIZE[TitleSize.Small],
-  [TitleSize.Large]: TITLE_SIZE[TitleSize.Medium],
+  [TitleSize.Large]: css`
+    font-size: 16px;
+    margin-bottom: 3px;
+  `,
 };
 
 const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
   [TitleSize.Small]: css`
     font-size: 12px;
-    line-height: 18px;
   `,
   [TitleSize.Medium]: SUBTITLE_SIZE[TitleSize.Small],
-  [TitleSize.Large]: SUBTITLE_SIZE[TitleSize.Medium],
+  [TitleSize.Large]: css`
+    font-size: 15px;
+  `,
 };
-
 const ICON_SIZE: Record<TitleSize, number> = {
   [TitleSize.Small]: 18,
   [TitleSize.Medium]: 28,
