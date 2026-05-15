@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Title, TitleSection, TitleSize } from "./title";
 import {
   Ri24HoursFill,
+  RiArrowLeftLine,
   RiCloseLine,
   RiDeleteBin7Fill,
   RiHeart2Fill,
@@ -205,6 +206,21 @@ export const WithDescription: Story = {
 
 export const WithActions: Story = {
   render: () => {
+    const leftSection: TitleSection[] = [
+      {
+        type: "actions",
+        actions: [
+          {
+            icon: { image: RiArrowLeftLine, color: "white" },
+            onClick: () => {
+              console.log("left was clicked");
+            },
+            caption: "Left",
+          },
+        ],
+      },
+    ];
+
     const rightSection: TitleSection[] = [
       {
         type: "actions",
@@ -266,6 +282,7 @@ export const WithActions: Story = {
                 color: white;
               `,
             }}
+            leftSection={leftSection}
             rightSection={rightSection}
           />
         ))}
