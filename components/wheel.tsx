@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import styled, { CSSProp } from "styled-components";
+import { useTheme, WheelThemeConfig } from "./../theme";
 
 export interface WheelValue {
   value: string;
@@ -26,14 +27,19 @@ export interface WheelStyles extends WheelColumnStyles {
   fadeTopStyle?: CSSProp;
   fadeBottomStyle?: CSSProp;
   selectionOverlayStyle?: CSSProp;
+  separatorStyle?: CSSProp;
 }
 
 function Wheel({ parts, values, onChange, styles }: WheelProps) {
+  const { currentTheme } = useTheme();
+  const wheelTheme = currentTheme.wheel;
+
   const {
     containerStyle,
     fadeTopStyle,
     fadeBottomStyle,
     selectionOverlayStyle,
+    separatorStyle,
     ...wheelColumnStyle
   } = styles ?? {};
 
@@ -42,10 +48,10 @@ function Wheel({ parts, values, onChange, styles }: WheelProps) {
   };
 
   return (
-    <WheelWrapper $style={containerStyle}>
-      <FadeTop $style={fadeTopStyle} />
-      <FadeBottom $style={fadeBottomStyle} />
-      <SelectionOverlay $style={selectionOverlayStyle} />
+    <WheelWrapper $theme={wheelTheme} $style={containerStyle}>
+      <FadeTop $theme={wheelTheme} $style={fadeTopStyle} />
+      <FadeBottom $theme={wheelTheme} $style={fadeBottomStyle} />
+      <SelectionOverlay $theme={wheelTheme} $style={selectionOverlayStyle} />
       {parts.map((part, i) => (
         <>
           <WheelColumn
@@ -55,9 +61,16 @@ function Wheel({ parts, values, onChange, styles }: WheelProps) {
             onChange={(val) => handleChange(part.id, val)}
             width={part.width}
             styles={wheelColumnStyle}
+            theme={wheelTheme}
           />
           {i < parts.length - 1 && part.id === "hour" && (
-            <Separator key={`sep-${i}`}>:</Separator>
+            <Separator
+              $theme={wheelTheme}
+              $style={separatorStyle}
+              key={`sep-${i}`}
+            >
+              :
+            </Separator>
           )}
         </>
       ))}
@@ -65,13 +78,17 @@ function Wheel({ parts, values, onChange, styles }: WheelProps) {
   );
 }
 
-const WheelWrapper = styled.div<{ $style?: CSSProp }>`
+const WheelWrapper = styled.div<{
+  $style?: CSSProp;
+  $theme?: WheelThemeConfig;
+}>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   position: relative;
-  background: #2c2c2e;
+  background: ${({ $theme }) => $theme.backgroundColor};
+
   border-radius: 14px;
   padding: 0 8px;
   overflow: hidden;
@@ -82,7 +99,11 @@ const WheelWrapper = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const SelectionOverlay = styled.div<{ $style?: CSSProp }>`
+const SelectionOverlay = styled.div<{
+  $style?: CSSProp;
+
+  $theme: WheelThemeConfig;
+}>`
   pointer-events: none;
   position: absolute;
   left: 0;
@@ -96,34 +117,44 @@ const SelectionOverlay = styled.div<{ $style?: CSSProp }>`
     content: "";
     position: absolute;
     inset: 0;
-    border-top: 0.5px solid rgba(255, 255, 255, 0.18);
-    border-bottom: 0.5px solid rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.08);
+    border-top: 0.5px solid ${({ $theme }) => $theme.overlayBorderColor};
+
+    border-bottom: 0.5px solid ${({ $theme }) => $theme.overlayBorderColor};
+
+    background: ${({ $theme }) => $theme.overlayBackgroundColor};
     border-radius: 4px;
   }
   ${({ $style }) => $style}
 `;
 
-const FadeTop = styled.div<{ $style?: CSSProp }>`
+const FadeTop = styled.div<{ $style?: CSSProp; $theme: WheelThemeConfig }>`
   pointer-events: none;
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   height: 96px;
-  background: linear-gradient(to bottom, #2c2c2e 10%, transparent 100%);
+  background: linear-gradient(
+    to bottom,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
   z-index: 5;
   ${({ $style }) => $style}
 `;
 
-const FadeBottom = styled.div<{ $style?: CSSProp }>`
+const FadeBottom = styled.div<{ $style?: CSSProp; $theme: WheelThemeConfig }>`
   pointer-events: none;
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: 96px;
-  background: linear-gradient(to top, #2c2c2e 10%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
   z-index: 5;
   ${({ $style }) => $style}
 `;
@@ -164,6 +195,7 @@ const ColumnList = styled.div<{
 const Item = styled.div<{
   $selected?: boolean;
   $style?: CSSProp;
+  $theme: WheelThemeConfig;
 }>`
   height: 44px;
   display: flex;
@@ -172,8 +204,8 @@ const Item = styled.div<{
   font-size: 22px;
   font-weight: 400;
   letter-spacing: -0.3px;
-  color: ${({ $selected }) =>
-    $selected ? "#ffffff" : "rgba(255,255,255,0.38)"};
+  color: ${({ $selected, $theme }) =>
+    $selected ? $theme.textColor : $theme.inactiveTextColor};
 
   transform-origin: center center;
   transition: color 0.15s ease;
@@ -181,13 +213,19 @@ const Item = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const Separator = styled.div`
-  color: rgba(255, 255, 255, 0.5);
+const Separator = styled.div<{
+  $theme: WheelThemeConfig;
+  $style?: CSSProp;
+}>`
+  color: ${({ $theme }) => $theme.separatorColor};
+
   font-size: 22px;
   font-weight: 300;
   padding: 0 2px 2px;
   z-index: 20;
   pointer-events: none;
+
+  ${({ $style }) => $style}
 `;
 
 const ITEM_HEIGHT = 44;
@@ -199,6 +237,7 @@ interface WheelColumnProps {
   onChange: (value: string) => void;
   width?: string;
   styles?: WheelColumnStyles;
+  theme?: WheelThemeConfig;
 }
 
 interface WheelColumnStyles {
@@ -213,6 +252,7 @@ function WheelColumn({
   onChange,
   width,
   styles,
+  theme,
 }: WheelColumnProps) {
   const selectedIndex = Math.max(
     0,
@@ -352,6 +392,7 @@ function WheelColumn({
         {paddedValues.map((item, i) => {
           return (
             <Item
+              $theme={theme}
               $style={styles?.itemStyle}
               key={i}
               $selected={item?.value === selectedValue}
