@@ -15,16 +15,21 @@ for (const file of files) {
     const fullPath = path.join(componentDir, file);
     let content = fs.readFileSync(fullPath, "utf8").trim();
 
-    const lines = content.split("\n");
-    const hasUseClient = lines[0].trim() === useClientDirective;
+    const hasConsoleLog = /console\.log\s*\(/.test(content);
 
-    const newLines = [...lines];
-
-    if (!hasUseClient) {
-      newLines.unshift(useClientDirective);
+    if (hasConsoleLog) {
+      console.error(`❌ Build failed: console.log found in ${file}`);
+      process.exit(1);
     }
 
-    const finalContent = newLines.join("\n");
+    let lines = content.split("\n");
+    const hasUseClient = lines[0].trim() === useClientDirective;
+
+    if (!hasUseClient) {
+      lines.unshift(useClientDirective);
+    }
+
+    const finalContent = lines.join("\n");
     fs.writeFileSync(fullPath, finalContent);
     console.log(`✅ Injected into: ${file}`);
   }
