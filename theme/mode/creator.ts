@@ -1603,7 +1603,6 @@ export function createTitleTheme(
 
     subtitle: {
       textColor: body.textColor,
-      opacity: 0.8,
       fontWeight: 400,
     },
 

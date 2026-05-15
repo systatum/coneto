@@ -642,7 +642,6 @@ export interface TitleThemeConfig {
 
   subtitle?: {
     textColor?: string;
-    opacity?: number;
     fontWeight?: number;
   };
 

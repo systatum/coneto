@@ -716,8 +716,7 @@ const darkTitle = createTitleTheme(darkBody, {
   },
 
   subtitle: {
-    textColor: "#d4d4d4",
-    opacity: 0.75,
+    textColor: "#f5f5f5",
   },
 
   icon: {
