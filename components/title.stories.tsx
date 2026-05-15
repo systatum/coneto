@@ -15,7 +15,7 @@ import {
 import styled, { css } from "styled-components";
 import { Button } from "./button";
 import { Tooltip } from "./tooltip";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTheme } from "./../theme";
 import { Searchbox } from "./searchbox";
 import { Avatar } from "./avatar";
@@ -264,7 +264,7 @@ export const WithActions: Story = {
           flexDirection: "column",
           gap: "20px",
           width: "100%",
-          minWidth: "450px",
+          minWidth: "500px",
         }}
       >
         {Object.values(TitleSize).map((size, index) => (
