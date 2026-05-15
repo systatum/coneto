@@ -11,6 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SignboxThemeConfig } from "./../theme";
 import { Button } from "./button";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseSignboxProps {
   name?: string;
@@ -333,6 +334,7 @@ function Signbox({
   labelWidth,
   labelPosition,
   required,
+  className,
 }: SignboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
@@ -355,6 +357,7 @@ function Signbox({
       errorIconPosition={errorIconPosition}
       disabled={disabled}
       required={required}
+      className={applyClassName("signbox", className)}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,

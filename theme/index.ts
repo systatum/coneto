@@ -173,6 +173,8 @@ export interface ComboboxThemeConfig extends BodyThemeConfig {
 
   dividerColor?: string;
   boxShadow?: string;
+
+  scrollThumbColor?: string;
 }
 
 // colorbox.tsx
@@ -259,6 +261,7 @@ export interface FieldLaneThemeConfig
 
   actionColor?: string;
   actionHoverColor?: string;
+  actionHoverBackgroundColor?: string;
 
   errorColor?: string;
   errorBackground?: string;
@@ -606,8 +609,8 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   headerBorderColor?: string;
 
   rowGroupBackgroundColor?: string;
+  rowGroupSubtitleTextColor?: string;
 
-  rowSubtitleTextColor?: string;
   rowBackgroundColor?: string;
   rowBorderColor?: string;
   rowHoverBackgroundColor?: string;
@@ -699,6 +702,7 @@ export interface TipMenuThemeConfig
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
+  disabledTextColor?: string;
 }
 
 // treelist.tsx

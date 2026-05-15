@@ -1,12 +1,21 @@
-import { ReactNode } from "react";
+import { BaseAction } from "@/constants/action";
+import { applyClassName } from "./../constants/classname";
 import styled, { CSSProp } from "styled-components";
+import { Button, ButtonVariant } from "./button";
+import { Figure, FigureProps } from "./figure";
 
 export interface EmptySlateProps {
-  imageUrl: string;
+  icon: FigureProps;
   title: string;
   subtitle?: string;
-  actions?: ReactNode;
+  actions?: EmptySlateAction[];
   styles?: EmptySlateStyles;
+  className?: string;
+  id?: string;
+}
+
+export interface EmptySlateAction extends BaseAction {
+  variant?: ButtonVariant;
 }
 
 export interface EmptySlateStyles {
@@ -18,28 +27,44 @@ export interface EmptySlateStyles {
 }
 
 function EmptySlate({
-  imageUrl,
+  icon,
   title,
   subtitle,
   actions,
   styles,
+  className,
+  id,
 }: EmptySlateProps) {
   return (
-    <Container $style={styles?.containerStyle}>
-      {imageUrl && (
-        <ImageWrapper $style={styles?.imageStyle}>
-          <StyledImage
-            src={imageUrl}
-            alt="Image for Empty Slate Coneto Product from Systatum."
-          />
-        </ImageWrapper>
+    <Container
+      id={id}
+      className={applyClassName("empty-slate", className)}
+      $style={styles?.containerStyle}
+    >
+      {icon && (
+        <Figure
+          size={icon?.size ?? 200}
+          styles={{
+            self: icon?.styles?.self,
+          }}
+          {...icon}
+        />
       )}
       <Content $style={styles?.contentStyle}>
         <Title $style={styles?.titleStyle}>{title}</Title>
         {subtitle && (
           <Subtitle $style={styles?.titleStyle}>{subtitle}</Subtitle>
         )}
-        {actions && <Actions>{actions}</Actions>}
+        {actions && (
+          <Actions>
+            {actions?.map((action) => {
+              if (action?.hidden) {
+                return;
+              }
+              return <Button {...action}>{action?.caption}</Button>;
+            })}
+          </Actions>
+        )}
       </Content>
     </Container>
   );
@@ -54,29 +79,6 @@ const Container = styled.div<{ $style?: CSSProp }>`
   padding-top: 5rem;
   padding-bottom: 5rem;
   ${({ $style }) => $style}
-`;
-
-const ImageWrapper = styled.div<{ $style?: CSSProp }>`
-  width: 250px;
-  height: 150px;
-
-  @media (min-width: 640px) {
-    width: 350px;
-    height: 180px;
-  }
-
-  @media (min-width: 768px) {
-    width: 400px;
-    height: 200px;
-  }
-
-  ${({ $style }) => $style}
-`;
-
-const StyledImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 `;
 
 const Content = styled.div<{ $style?: CSSProp }>`

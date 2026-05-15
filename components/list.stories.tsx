@@ -27,7 +27,6 @@ import { DormantText } from "./dormant-text";
 import { FormFieldGroup, StatefulForm } from "./stateful-form";
 import { generateSentence } from "./../lib/text";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 
 const meta: Meta<typeof List> = {
   title: "Content/List",
@@ -1507,15 +1506,18 @@ export const WithBadge: Story = {
         ))
       ) : (
         <EmptySlate
-          imageUrl="https://picsum.photos/200?random=2"
+          icon={{ image: "https://picsum.photos/200?random=2" }}
           title="No employees found"
           subtitle="It looks like there are no employees in this category yet."
-          actions={
-            <>
-              <Button variant="default">Add Employee</Button>
-              <Button variant="primary">Learn More</Button>
-            </>
-          }
+          actions={[
+            {
+              caption: "Add Item",
+            },
+            {
+              caption: "Learn More",
+              variant: "primary",
+            },
+          ]}
           styles={{
             containerStyle: css`
               text-align: center;

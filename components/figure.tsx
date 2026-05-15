@@ -1,3 +1,4 @@
+import { applyClassName } from "./../constants/classname";
 import { ComponentType, HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 
@@ -19,12 +20,17 @@ function Figure({
   color,
   styles,
   "aria-label": ariaLabel,
+  className,
   ...rest
 }: FigureProps) {
   if (!Icon) return null;
 
   return (
-    <Wrapper {...rest} $style={styles?.self}>
+    <Wrapper
+      {...rest}
+      className={applyClassName("figure", className)}
+      $style={styles?.self}
+    >
       {typeof Icon === "string" ? (
         <img
           alt="figure-icon"

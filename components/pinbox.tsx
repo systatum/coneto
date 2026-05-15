@@ -11,6 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { PinboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BasePinboxProps {
   fontSize?: number;
@@ -431,8 +432,13 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
                 $isStatic={isStatic}
                 $fontSize={fontSize}
                 $isAnimate={isAnimate}
+                autoComplete="off"
               />
-              <PinboxIndicator $theme={pinboxTheme} $error={showError} />
+              <PinboxIndicator
+                aria-label="pinbox-indicator"
+                $theme={pinboxTheme}
+                $error={showError}
+              />
             </PinboxInputContent>
           );
         })}
@@ -457,7 +463,7 @@ export type PinboxStyles = BasePinboxStyles & FieldLaneStyles;
 
 export interface PinboxProps
   extends Omit<BasePinboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: PinboxStyles;
 }
 
@@ -468,7 +474,6 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       showError,
       styles,
       errorMessage,
-      actions,
       helper,
       disabled,
       name,
@@ -476,6 +481,7 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     },
     ref
@@ -502,10 +508,10 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
         labelPosition={labelPosition}
         showError={showError}
         errorMessage={errorMessage}
-        actions={actions}
         helper={helper}
         disabled={disabled}
         label={label}
+        className={applyClassName("pinbox", className)}
         errorIconPosition="none"
         required={rest.required}
         styles={{
@@ -573,12 +579,11 @@ const PinboxIndicator = styled.div<{
   transform: translateX(-50%);
   position: absolute;
   display: none;
+  border-bottom-width: 0.5px;
 
   border-color: ${({ $theme, $error }) =>
     $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
-  box-shadow: 0 0 0 0.5px
-    ${({ $theme, $error }) =>
-      $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
+
   color: ${({ $theme, $error }) =>
     $error ? $theme.errorTextColor : $theme.textColor};
   z-index: 9999;

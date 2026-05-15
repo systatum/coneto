@@ -5,6 +5,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ImageboxThemeConfig } from "theme";
+import { applyClassName } from "./../constants/classname";
 
 export const ImageboxSize = {
   ExtraSmall: "xs",
@@ -214,7 +215,7 @@ export type ImageboxStyles = BaseImageboxStyles & FieldLaneStyles;
 
 export interface ImageboxProps
   extends Omit<BaseImageboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ImageboxStyles;
 }
 
@@ -223,7 +224,6 @@ function Imagebox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -231,6 +231,7 @@ function Imagebox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -252,10 +253,10 @@ function Imagebox({
       id={inputId}
       labelGap={labelGap}
       labelWidth={labelWidth}
+      className={applyClassName("imagebox", className)}
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={label}

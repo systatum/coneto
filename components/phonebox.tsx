@@ -32,6 +32,7 @@ import { StatefulForm } from "./stateful-form";
 import { Searchbox } from "./searchbox";
 import { PhoneboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface PhoneboxCountryCode {
   id: string;
@@ -383,7 +384,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
 export interface PhoneboxProps
   extends Omit<BasePhoneboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "onChange"> {
+    Omit<FieldLaneProps, "styles" | "onChange" | "actions"> {
   styles?: PhoneboxStyles & FieldLaneStyles;
 }
 
@@ -395,7 +396,6 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       showError,
       styles,
       errorMessage,
-      actions,
       type,
       helper,
       disabled,
@@ -403,6 +403,7 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -422,10 +423,10 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         showError={showError}
         errorMessage={errorMessage}
         label={label}
-        actions={actions}
         type={type}
         helper={helper}
         disabled={disabled}
+        className={applyClassName("phonebox", className)}
         required={rest.required}
         styles={{
           bodyStyle: styles?.bodyStyle,

@@ -15,14 +15,83 @@ import {
   TableAction,
   TableProps,
   TableRowProps,
+  TableRowGroupProps,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { generateSentence } from "./../../lib/text";
+interface TableSummaryProps {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  items: {
+    itemId?: string;
+    name: string;
+    cost: string;
+    quantity: string;
+  }[];
+}
+
+const TABLE_SUMMARY: TableSummaryProps[] = [
+  {
+    id: "food",
+    title: "Food",
+    subtitle: "List of Food Items",
+    items: [
+      {
+        itemId: "F1583",
+        name: "Ayam Geprek",
+        cost: "5,000",
+        quantity: "5",
+      },
+      {
+        itemId: "F9311",
+        name: "Laksa Singapore",
+        cost: "4,500",
+        quantity: "1",
+      },
+      { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
+      {
+        itemId: "F7721",
+        name: "Soto Betawi",
+        cost: "4,000",
+        quantity: "1",
+      },
+      {
+        itemId: "F6622",
+        name: "Bakso Malang",
+        cost: "6,000",
+        quantity: "4",
+      },
+    ],
+  },
+  {
+    id: "beverages",
+    title: "Beverages",
+    subtitle: "Cold and Hot Refreshments",
+    items: [
+      { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
+      {
+        itemId: "B3911",
+        name: "Mineral Water",
+        cost: "500",
+        quantity: "1",
+      },
+      { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
+      { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
+      {
+        itemId: "B8821",
+        name: "Orange Juice",
+        cost: "2,500",
+        quantity: "2",
+      },
+    ],
+  },
+];
 
 interface TableItemProps {
   title: string;
@@ -116,6 +185,78 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("when children with function", () => {
+    type SeparateMode = "row" | "group" | "group-separate-row";
+
+    function TableSeparateContent({ mode = "row" }: { mode?: SeparateMode }) {
+      const columns: TableColumn[] = [
+        { id: "itemId", caption: "Item ID", sortable: true },
+        { id: "name", caption: "Name", sortable: true, width: "60%" },
+      ];
+
+      function TableSeparateRow({ test }: { test: boolean }) {
+        return <Table.Row content={["02", "Test 123"]} />;
+      }
+
+      function TableSeparateGroup({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
+            <Table.Row content={["02", "Test 123"]} />
+          </Table.Row.Group>
+        );
+      }
+
+      /**
+       * very rare case, but just to make sure that when both separate group
+       * and row function are given, it should still render the content correctly/
+       */
+      function TableSeparateGroupSeparateRow({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
+            <TableSeparateRow test={true} />
+          </Table.Row.Group>
+        );
+      }
+
+      const contentMap: Record<SeparateMode, ReactNode> = {
+        row: <TableSeparateRow test={true} />,
+        group: <TableSeparateGroup test={true} />,
+        "group-separate-row": <TableSeparateGroupSeparateRow test={true} />,
+      };
+
+      return <Table columns={columns}>{contentMap[mode]}</Table>;
+    }
+
+    it("should still resolve and render the row content correctly", () => {
+      cy.mount(<TableSeparateContent />);
+
+      cy.findByText("02").should("exist");
+      cy.findByText("Test 123").should("exist");
+    });
+
+    context("with separate group function", () => {
+      it("should render the group title and subtitle", () => {
+        cy.mount(<TableSeparateContent mode="group" />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+      });
+    });
+
+    context("when separate group, and separate row function", () => {
+      it("should render the group text, and row content", () => {
+        cy.mount(<TableSeparateContent mode="group-separate-row" />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+
+        cy.findByText("02").should("exist");
+        cy.findByText("Test 123").should("exist");
+      });
+    });
+  });
+
   context("isLoading", () => {
     context("when given true", () => {
       it("renders spinner ~14px from top and left relative to overlay", () => {
@@ -267,7 +408,199 @@ describe("Table", () => {
     });
   });
 
+  function TableGroup(props: TableRowGroupProps) {
+    return (
+      <Table
+        styles={{
+          tableBodyStyle: css`
+            max-height: 400px;
+          `,
+        }}
+        columns={columns}
+        searchable
+      >
+        {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
+          <Table.Row.Group
+            key={groupIndex}
+            title={groupValue.title}
+            subtitle={groupValue.subtitle}
+            {...props}
+          >
+            {groupValue.items.map((rowValue, rowIndex) => (
+              <Table.Row
+                key={rowIndex}
+                rowId={`${groupValue.id}-${rowValue.cost}-${rowValue.itemId}-${rowValue.name}-${rowValue.quantity}`}
+                content={[
+                  rowValue.itemId,
+                  rowValue.name,
+                  rowValue.cost,
+                  rowValue.quantity,
+                ]}
+                actions={ROW_ACTIONS}
+              />
+            ))}
+          </Table.Row.Group>
+        ))}
+      </Table>
+    );
+  }
+
   context("styles", () => {
+    context("table row group", () => {
+      context("bodyStyle", () => {
+        context("when given max-height 150px", () => {
+          it("renders the table group with height 150px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  bodyStyle: css`
+                    max-height: 150px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-body")
+              .eq(0)
+              .should("have.css", "height", "150px");
+          });
+        });
+      });
+
+      context("chevronStyle", () => {
+        context("when given margin left 20px", () => {
+          it("renders the margin left with 20px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  chevronStyle: css`
+                    margin-left: 20px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-chevron")
+              .eq(0)
+              .parent()
+              .should("have.css", "margin-left", "20px");
+          });
+        });
+      });
+
+      context("titleStyle", () => {
+        it("renders the title with size 16px", () => {
+          cy.mount(<TableGroup />);
+
+          cy.findAllByLabelText("table-row-group-title")
+            .eq(0)
+            .should("have.css", "font-size", "16px");
+        });
+
+        context("when given size 25px", () => {
+          it("renders the title with size 25px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  titleStyle: css`
+                    font-size: 25px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-title")
+              .eq(0)
+              .should("have.css", "font-size", "25px");
+          });
+        });
+      });
+
+      context("subtitleStyle", () => {
+        it("renders the title 14px", () => {
+          cy.mount(<TableGroup />);
+
+          cy.findAllByLabelText("table-row-group-subtitle")
+            .eq(0)
+            .should("have.css", "font-size", "14px");
+        });
+
+        context("when given size 25px", () => {
+          it("renders the title with size 25px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  subtitleStyle: css`
+                    font-size: 25px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-subtitle")
+              .eq(0)
+              .should("have.css", "font-size", "25px");
+          });
+        });
+      });
+
+      context("headerStyle", () => {
+        it("renders with padding 12px", () => {
+          cy.mount(<TableGroup />);
+
+          cy.findAllByLabelText("table-row-group-header")
+            .eq(0)
+            .should("have.css", "padding", "12px");
+        });
+
+        context("when given padding 25px", () => {
+          it("renders the header with padding 25px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  headerStyle: css`
+                    padding: 25px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-header")
+              .eq(0)
+              .should("have.css", "padding", "25px");
+          });
+        });
+      });
+
+      context("headerStyle", () => {
+        it("renders with normal gap", () => {
+          cy.mount(<TableGroup />);
+
+          cy.findAllByLabelText("table-row-group-text-wrapper")
+            .eq(0)
+            .should("have.css", "gap", "normal");
+        });
+
+        context("when given gap 10px", () => {
+          it("renders the wrapper text with gap 10px", () => {
+            cy.mount(
+              <TableGroup
+                styles={{
+                  textWrapperStyle: css`
+                    gap: 10px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-group-text-wrapper")
+              .eq(0)
+              .should("have.css", "gap", "10px");
+          });
+        });
+      });
+    });
+
     context("tableBodyStyle", () => {
       context("when given max-height 250px", () => {
         it("should render the table body with a height of 250px", () => {
@@ -350,63 +683,6 @@ describe("Table", () => {
       }[];
     }
 
-    const TABLE_SUMMARY: TableSummaryProps[] = [
-      {
-        id: "food",
-        title: "Food",
-        subtitle: "List of Food Items",
-        items: [
-          {
-            itemId: "F1583",
-            name: "Ayam Geprek",
-            cost: "5,000",
-            quantity: "5",
-          },
-          {
-            itemId: "F9311",
-            name: "Laksa Singapore",
-            cost: "4,500",
-            quantity: "1",
-          },
-          { itemId: "F2210", name: "Nasi Lemak", cost: "3,500", quantity: "2" },
-          {
-            itemId: "F7721",
-            name: "Soto Betawi",
-            cost: "4,000",
-            quantity: "1",
-          },
-          {
-            itemId: "F6622",
-            name: "Bakso Malang",
-            cost: "6,000",
-            quantity: "4",
-          },
-        ],
-      },
-      {
-        id: "beverages",
-        title: "Beverages",
-        subtitle: "Cold and Hot Refreshments",
-        items: [
-          { itemId: "B1010", name: "Iced Tea", cost: "1,000", quantity: "3" },
-          {
-            itemId: "B3911",
-            name: "Mineral Water",
-            cost: "500",
-            quantity: "1",
-          },
-          { itemId: "B5512", name: "Lemonade", cost: "2,000", quantity: "2" },
-          { itemId: "B6619", name: "Hot Coffee", cost: "3,000", quantity: "1" },
-          {
-            itemId: "B8821",
-            name: "Orange Juice",
-            cost: "2,500",
-            quantity: "2",
-          },
-        ],
-      },
-    ];
-
     function parseCost(val: string) {
       return Number(val.replace(/,/g, ""));
     }
@@ -437,6 +713,7 @@ describe("Table", () => {
         },
       },
     ];
+
     const { totalCost, totalQty } = calculateTotals(TABLE_SUMMARY);
 
     function RowContent({
@@ -894,7 +1171,7 @@ describe("Table", () => {
       },
       {
         hidden: true,
-        caption: "Arhive",
+        caption: "Archive",
         icon: { image: RiArchive2Fill, color: "gray" },
         onClick: () => {
           console.log(`${rowId} was archive`);
@@ -1444,6 +1721,7 @@ describe("Table", () => {
     context("when given default", () => {
       const DEFAULT_TOP_ACTIONS: TableAction[] = [
         {
+          id: "copy",
           caption: "Copy",
           icon: { image: RiArrowUpSLine },
           onClick: () => {

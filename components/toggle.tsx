@@ -7,6 +7,7 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "../theme/provider";
 import { ToggleThemeConfig } from "../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseToggleProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -140,7 +141,7 @@ export type ToggleStyles = BaseToggleStyles & FieldLaneStyles;
 
 export interface ToggleProps
   extends Omit<BaseToggleProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ToggleStyles;
 }
 
@@ -149,7 +150,6 @@ function Toggle({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   name,
   id,
@@ -159,6 +159,7 @@ function Toggle({
   labelWidth,
   labelPosition,
   disabled,
+  className,
   ...rest
 }: ToggleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -178,12 +179,12 @@ function Toggle({
   return (
     <FieldLane
       id={inputId}
+      className={applyClassName("toggle", className)}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={title}

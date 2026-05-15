@@ -561,6 +561,8 @@ export function createComboboxTheme(
       "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
 
     groupBackgroundColor: "rgb(249, 250, 251)",
+
+    scrollThumbColor: "#9ca3af",
   };
 
   return { ...defaultTheme, ...custom };
@@ -677,6 +679,7 @@ export function createFieldLaneTheme(
 
     actionColor: "#6b7280",
     actionHoverColor: "#374151",
+    actionHoverBackgroundColor: "#e5e7eb",
 
     placeholderColor: "rgb(107, 114, 128)",
     focusedBorderColor: "#61A9F9",
@@ -1251,7 +1254,7 @@ export function createSelectboxTheme(
 
     clearIconColor: fieldLane.actionColor || "#9ca3af",
     clearIconBackground: "transparent",
-    clearIconHoverBackground: fieldLane.actionHoverColor || "#e5e7eb",
+    clearIconHoverBackground: fieldLane.actionHoverBackgroundColor || "#e5e7eb",
 
     dividerColor: fieldLane.dividerColor || "#9ca3af",
     disabledOpacity: fieldLane.disabledOpacity,
@@ -1450,10 +1453,10 @@ export function createTableTheme(
     headerBorderColor: "rgb(229, 231, 235)",
 
     rowGroupBackgroundColor: "rgb(249, 250, 251)",
+    rowGroupSubtitleTextColor: "#1f2937",
 
     rowBackgroundColor: "rgb(249, 250, 251)",
     rowBorderColor: "#e5e7eb",
-    rowSubtitleTextColor: "#1f2937",
     rowHoverBackgroundColor: "#e7f2fc",
     rowSelectedBackgroundColor: "#dbeafe",
     rowContentBackgroundColor:
@@ -1538,7 +1541,7 @@ export function createTimelineTheme(
 // tipmenu.tsx
 export function createTipMenuTheme(
   buttonTheme?: Record<Partial<ButtonVariants["variant"]>, ButtonThemeConfig>,
-  customTheme: Partial<TipMenuThemeConfig> = {}
+  customTheme: Partial<Record<TipMenuVariant, Partial<TipMenuThemeConfig>>> = {}
 ): Record<TipMenuVariant, TipMenuThemeConfig> {
   const defaultTheme: Record<TipMenuVariant, TipMenuThemeConfig> = {
     default: {
@@ -1547,6 +1550,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.ghost?.textColor,
       activeBackgroundColor: buttonTheme?.ghost?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.ghost?.hoverBackgroundColor,
+      ...customTheme?.default,
     },
     danger: {
       focusBackgroundColor: buttonTheme?.danger?.focusBackgroundColor,
@@ -1554,6 +1558,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.danger?.textColor,
       activeBackgroundColor: buttonTheme?.danger?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.danger?.hoverBackgroundColor,
+      ...customTheme?.danger,
     },
     success: {
       focusBackgroundColor: buttonTheme?.success?.focusBackgroundColor,
@@ -1561,6 +1566,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.success?.textColor,
       activeBackgroundColor: buttonTheme?.success?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.success?.hoverBackgroundColor,
+      ...customTheme?.success,
     },
     primary: {
       focusBackgroundColor: buttonTheme?.primary?.focusBackgroundColor,
@@ -1568,12 +1574,12 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.primary?.textColor,
       activeBackgroundColor: buttonTheme?.primary?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.primary?.hoverBackgroundColor,
+      ...customTheme?.primary,
     },
   };
 
   return {
     ...defaultTheme,
-    ...customTheme,
   };
 }
 

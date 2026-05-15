@@ -9,6 +9,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { CheckboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 type WithoutStyle<T> = Omit<T, "style">;
 
@@ -157,7 +158,7 @@ export type CheckboxStyles = BaseCheckboxStyles & FieldLaneStyles;
 
 export interface CheckboxProps
   extends Omit<BaseCheckboxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CheckboxStyles;
 }
 
@@ -166,7 +167,6 @@ function Checkbox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -176,6 +176,7 @@ function Checkbox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: CheckboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -200,11 +201,11 @@ function Checkbox({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={title}
       required={rest.required}
+      className={applyClassName("checkbox", className)}
       errorIconPosition="none"
       styles={{
         bodyStyle: css`

@@ -15,9 +15,11 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button, ButtonStyles } from "./button";
-import { Figure, FigureProps } from "./figure";
+import { Figure } from "./figure";
 import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
+import { BaseAction } from "./../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const SplitPaneOrientation = {
   Horizontal: "horizontal",
@@ -34,6 +36,8 @@ export interface SplitPaneProps {
   onResizeComplete?: () => void;
   initialSizeRatio?: number[];
   styles?: SplitPaneStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface SplitPaneStyles {
@@ -52,11 +56,8 @@ export interface SplitPaneCellStyles {
   self?: CSSProp;
 }
 
-export interface SplitPaneAction {
-  onClick?: () => void;
-  icon?: FigureProps;
+export interface SplitPaneAction extends BaseAction {
   styles?: SplitPaneActionStyles;
-  hidden?: boolean;
 }
 
 export type SplitPaneActionStyles = ButtonStyles;
@@ -68,6 +69,8 @@ function SplitPane({
   onResize,
   onResizeComplete,
   initialSizeRatio,
+  className,
+  id,
 }: SplitPaneProps) {
   const { currentTheme } = useTheme();
   const splitPaneTheme = currentTheme.splitPane;
@@ -176,6 +179,8 @@ function SplitPane({
 
   return (
     <Container
+      id={id}
+      className={applyClassName("split-pane", className)}
       $backgroundColor={splitPaneTheme.backgroundColor}
       $textColor={splitPaneTheme.textColor}
       aria-label="split-pane"
@@ -294,11 +299,12 @@ const SplitPaneCell = forwardRef<HTMLDivElement, SplitPaneCellProps>(
           <ActionContainer>
             {filteredActions.map((action, index) => (
               <Button
+                {...action}
                 variant="ghost"
                 key={index}
                 aria-label="split-pane-button"
-                onClick={() => {
-                  if (action.onClick) action.onClick();
+                onClick={(e) => {
+                  if (action.onClick) action.onClick(e);
                 }}
                 styles={{
                   ...action?.styles,

@@ -2,6 +2,7 @@ import React, { HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { FrameThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface FrameProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
@@ -15,7 +16,14 @@ export interface FrameStyles {
   titleStyle?: CSSProp;
 }
 
-function Frame({ title, children, styles, ...props }: FrameProps) {
+function Frame({
+  title,
+  children,
+  styles,
+  className,
+  id,
+  ...props
+}: FrameProps) {
   const { currentTheme } = useTheme();
   const frameTheme = currentTheme?.frame;
 
@@ -23,6 +31,8 @@ function Frame({ title, children, styles, ...props }: FrameProps) {
     <FrameContainer
       aria-label="frame"
       {...props}
+      id={id}
+      className={applyClassName("frame", className)}
       $style={styles?.containerStyle}
       $theme={frameTheme}
     >

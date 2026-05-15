@@ -11,6 +11,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ThumbFieldThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
@@ -145,7 +146,7 @@ export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
 
 export interface ThumbFieldProps
   extends Omit<BaseThumbFieldProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ThumbFieldStyles;
 }
 
@@ -154,7 +155,6 @@ function ThumbField({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -162,6 +162,7 @@ function ThumbField({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -186,11 +187,11 @@ function ThumbField({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      className={applyClassName("thumb-field", className)}
       required={rest.required}
       styles={{
         bodyStyle,

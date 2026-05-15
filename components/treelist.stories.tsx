@@ -23,7 +23,6 @@ import {
   RiTable2,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
-import { Button } from "./button";
 import styled, { css } from "styled-components";
 import { useMemo, useState } from "react";
 import { Combobox } from "./combobox";
@@ -878,9 +877,15 @@ export const WithEmptySlate: Story = {
         <TreeList
           content={TREE_LIST_DATA}
           actions={TREE_LIST_ACTIONS}
+          styles={{
+            emptySlateStyle: css`
+              border: none;
+              color: inherit;
+            `,
+          }}
           emptySlate={
             <EmptySlate
-              imageUrl="https://picsum.photos/200?random=1"
+              icon={{ image: "https://picsum.photos/200?random=1" }}
               title="Manage your inventory transfers"
               styles={{
                 containerStyle: css`
@@ -892,12 +897,15 @@ export const WithEmptySlate: Story = {
                 `,
               }}
               subtitle="Track and receive your incoming inventory from suppliers."
-              actions={
-                <>
-                  <Button variant="default">Add Item</Button>
-                  <Button variant="primary">Learn More</Button>
-                </>
-              }
+              actions={[
+                {
+                  caption: "Add Item",
+                },
+                {
+                  caption: "Learn More",
+                  variant: "primary",
+                },
+              ]}
             />
           }
         />

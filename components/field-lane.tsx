@@ -7,6 +7,8 @@ import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
+import { BaseAction } from "../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const FieldLaneErrorIconPosition = {
   Absolute: "absolute",
@@ -35,13 +37,14 @@ export interface FieldLaneProps {
   helper?: string;
   disabled?: boolean;
   children?: ReactNode;
-  id?: string;
   actions?: FieldLaneAction[];
   type?: string;
   labelPosition?: FieldLaneLabelPosition;
   labelWidth?: string;
   labelGap?: number;
   required?: boolean;
+  className?: string;
+  id?: string;
 }
 
 export interface FieldLaneStyles {
@@ -51,14 +54,8 @@ export interface FieldLaneStyles {
   bodyStyle?: CSSProp;
 }
 
-export interface FieldLaneAction {
-  title?: string;
-  icon?: FigureProps;
-  iconColor?: string;
-  onClick?: (e: React.MouseEvent) => void;
-  disabled?: boolean;
+export interface FieldLaneAction extends BaseAction {
   titleShowDelay?: number;
-  hidden?: boolean;
 }
 
 export interface FieldLaneDropdown {
@@ -105,6 +102,7 @@ function FieldLane({
   labelGap,
   labelWidth,
   required,
+  className,
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
@@ -137,7 +135,10 @@ function FieldLane({
                   const dropdownData = dropdown.options.map((prop) => ({
                     caption: prop.text,
                     icon: prop.icon,
-                    onClick: () => dropdown.onChange(prop.value),
+                    onClick: () => {
+                      dropdown.onChange(prop.value);
+                    },
+                    id: prop.value,
                   }));
 
                   return list(dropdownData, {
@@ -183,6 +184,7 @@ function FieldLane({
                     &:hover {
                       color: ${fieldLaneTheme?.buttonTextColor};
                     }
+                    min-height: 30px;
 
                     ${!children &&
                     css`
@@ -220,11 +222,11 @@ function FieldLane({
       {children}
 
       {hasActions &&
-        filteredActions.map((props, index) => {
-          const { icon, titleShowDelay = 1250 } = props;
+        filteredActions.map((action, index) => {
+          const { icon, titleShowDelay = 1250 } = action;
           const offsetBase = 8;
           const offsetEach = 22;
-          const reverseIndex = actions.length - 1 - index;
+          const reverseIndex = filteredActions.length - 1 - index;
           const offset =
             offsetBase +
             reverseIndex * offsetEach +
@@ -234,16 +236,16 @@ function FieldLane({
           return (
             <Button
               key={index}
+              id={action.id}
               labelMode="flex"
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
                 e.stopPropagation();
-                if ((!disabled || !props?.disabled) && props.onClick) {
-                  props.onClick(e);
-                }
+                if (disabled || action?.disabled) return;
+                action?.onClick(e);
               }}
-              disabled={disabled ? disabled : props.disabled}
+              disabled={disabled ? disabled : action.disabled}
               styles={{
                 containerStyle: css`
                   position: absolute;
@@ -264,16 +266,12 @@ function FieldLane({
 
                   color: ${showError
                     ? fieldLaneTheme?.errorBackground
-                    : props.iconColor
-                      ? props.iconColor
-                      : fieldLaneTheme?.actionColor};
+                    : fieldLaneTheme?.actionColor};
 
                   &:hover {
                     color: ${showError
                       ? fieldLaneTheme?.errorForeground
-                      : props.iconColor
-                        ? props.iconColor
-                        : fieldLaneTheme?.actionHoverColor};
+                      : fieldLaneTheme?.actionHoverColor};
                   }
                 `,
               }}
@@ -283,8 +281,8 @@ function FieldLane({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  if ((!disabled || !props?.disabled) && props.onClick) {
-                    props.onClick(e);
+                  if ((!disabled || !action?.disabled) && action.onClick) {
+                    action.onClick(e);
                   }
                 }}
                 styles={{
@@ -316,7 +314,7 @@ function FieldLane({
                   `,
                 }}
                 showDelayPeriod={titleShowDelay}
-                dialog={props.title}
+                dialog={action?.caption}
               >
                 {icon && (
                   <Figure
@@ -345,8 +343,41 @@ function FieldLane({
     </InputWrapper>
   );
 
+  const CONETO_CLASSES = [
+    "coneto-textarea",
+    "coneto-calendar",
+    "coneto-capsule",
+    "coneto-checkbox",
+    "coneto-chips",
+    "coneto-colorbox",
+    "coneto-combobox",
+    "coneto-datebox",
+    "coneto-file-input-box",
+    "coneto-imagebox",
+    "coneto-moneybox",
+    "coneto-phonebox",
+    "coneto-pinbox",
+    "coneto-rating",
+    "coneto-radio",
+    "coneto-signbox",
+    "coneto-selectbox",
+    "coneto-thumb-field",
+    "coneto-toggle",
+    "coneto-timebox",
+    "coneto-textbox",
+  ];
+
+  const hasCustomConetoClass = CONETO_CLASSES.some((cls) =>
+    className?.includes(cls)
+  );
+
   return (
     <Container
+      className={
+        hasCustomConetoClass
+          ? className
+          : applyClassName("field-lane", className)
+      }
       $disabled={disabled}
       $style={css`
         ${styles?.containerStyle}

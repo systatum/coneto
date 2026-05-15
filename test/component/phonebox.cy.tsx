@@ -45,11 +45,7 @@ describe("Phonebox", () => {
 
       cy.findByText("Button").click();
 
-      cy.findByLabelText("button-tip-menu-container").should(
-        "have.css",
-        "width",
-        "200px"
-      );
+      cy.findByLabelText("tip-menu").should("have.css", "width", "200px");
     });
 
     it("renders with similar height", () => {

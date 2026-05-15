@@ -48,18 +48,17 @@ describe("RichEditor", () => {
         cy.findByText("Markdown Example").click();
         const contentHTML = `<h3>Hello there!</h3>
 <p>${sentences}</p>
-<p><br>This is ordered list</p>
+<p><br></p><p>This is ordered list</p>
 <ol>
-<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
-<li><input type="checkbox" class="custom-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
+<li><input type="checkbox" class="coneto-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
+<li><input type="checkbox" class="coneto-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
 </ol>
-<p><br>This is unordered list</p>
+<p><br></p><p>This is unordered list</p>
 <ul>
 <li>test</li>
 <li>test</li>
-</ul>
-`;
-        cy.findByRole("textbox").should("contain.html", contentHTML);
+</ul>`;
+        cy.findAllByRole("textbox").eq(0).should("contain.html", contentHTML);
         cy.findAllByRole("button").eq(6).click();
 
         cy.get("pre")
@@ -144,15 +143,15 @@ describe("RichEditor", () => {
         cy.viewport(1280, 800);
         cy.visit(getIdContent("input-elements-richeditor--page-editor"));
         cy.findByLabelText("toolbar-content").should("have.css", "top", "0px");
-        cy.findByLabelText("wrapper-editor")
+        cy.findByLabelText("rich-editor-wrapper")
           .should("not.have.css", "border", "1px solid #ececec")
           .and("not.have.css", "box-shadow", "0 1px 4px -3px #5b5b5b");
         cy.findByRole("textbox")
           .should("have.css", "min-height", "800px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
         cy.findByRole("textbox")
           .should("have.css", "max-height", "800px")
-          .and("have.css", "padding-top", "8px");
+          .and("have.css", "padding-top", "45px");
       });
     });
 

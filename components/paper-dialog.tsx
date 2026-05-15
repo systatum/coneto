@@ -3,13 +3,8 @@ import {
   RiArrowRightSLine,
   RiCloseLine,
 } from "@remixicon/react";
-import { useAnimation, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Children,
-  cloneElement,
-  Fragment,
-  isValidElement,
-  ReactElement,
   ReactNode,
   useState,
   useImperativeHandle,
@@ -23,6 +18,7 @@ import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { PaperDialogThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const PaperDialogState = {
   Restored: "restored",
@@ -49,6 +45,8 @@ export interface PaperDialogProps {
   styles?: PaperDialogStyles;
   onClosed?: () => void;
   icons?: PaperDialogIcons;
+  id?: string;
+  className?: string;
 }
 
 export interface PaperDialogIcons {
@@ -96,6 +94,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       styles,
       onClosed,
       icons,
+      className,
+      id,
     },
     ref
   ) => {
@@ -140,7 +140,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     return (
       dialogState !== "closed" && (
-        <DialogOverlay $dialogState={dialogState}>
+        <DialogOverlay
+          id={id}
+          className={applyClassName("paper-dialog", className)}
+          $dialogState={dialogState}
+        >
           {dialogState === "restored" && (
             <OverlayBlocker
               onClick={async ({ preventDefault, close }) => {

@@ -88,6 +88,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
 
   actionColor: "#cbd5e1",
   actionHoverColor: "#616161",
+  actionHoverBackgroundColor: "#4b4b4b",
 
   placeholderColor: "#9ca3af",
   focusedBorderColor: "rgb(105, 85, 193)",
@@ -335,6 +336,7 @@ const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
 const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   selectedTextColor: darkBody.textColor,
   groupBackgroundColor: "rgb(35 37 41)",
+  scrollThumbColor: "#52525b",
 });
 
 export const darkCrumb = createCrumbTheme(darkBody, {
@@ -666,12 +668,12 @@ const darkTable = createTableTheme(darkBody, {
   headerBorderColor: "rgb(39, 39, 48)",
 
   rowGroupBackgroundColor: "rgb(31, 31, 31)",
+  rowGroupSubtitleTextColor: "#838891",
 
   rowBackgroundColor: "rgb(26, 26, 26)",
   rowBorderColor: "rgb(39, 39, 48)",
   rowHoverBackgroundColor: "#292c2e",
   rowSelectedBackgroundColor: "#303438",
-  rowSubtitleTextColor: "#d1d5db",
   rowContentBackgroundColor:
     "linear-gradient(to bottom, #1a1a1a 0%, #222222 35%, #1f1f1f 100%)",
   rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
@@ -696,7 +698,12 @@ const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
 
 const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
 
-const darkTipMenu = createTipMenuTheme(darkButton);
+const darkTipMenu = createTipMenuTheme(darkButton, {
+  default: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  primary: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  danger: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+  success: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
+});
 
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",

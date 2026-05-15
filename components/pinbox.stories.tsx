@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { Pinbox, PinboxParts } from "./pinbox";
-import { StatefulOnChangeType } from "./stateful-form";
 
 const meta: Meta<typeof Pinbox> = {
   title: "Input Elements/Pinbox",

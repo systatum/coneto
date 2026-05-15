@@ -7,6 +7,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { OverlayBlocker } from "./overlay-blocker";
 import { SidebarThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export const SidebarPosition = {
   Left: "left",
@@ -20,6 +21,8 @@ export interface SidebarProps {
   children?: ReactNode;
   styles?: SidebarStyles;
   position?: SidebarPosition;
+  id?: string;
+  className?: string;
 }
 
 export interface SidebarStyles {
@@ -37,7 +40,13 @@ export interface SidebarItemStyles {
   self?: CSSProp;
 }
 
-function Sidebar({ children, styles, position = "left" }: SidebarProps) {
+function Sidebar({
+  children,
+  styles,
+  position = "left",
+  className,
+  id,
+}: SidebarProps) {
   const { currentTheme } = useTheme();
   const sidebarTheme = currentTheme.sidebar;
 
@@ -99,6 +108,8 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
       )}
 
       <MotionSidebar
+        id={id}
+        className={applyClassName("sidebar", className)}
         $theme={sidebarTheme}
         initial={{ x: position === "left" ? "-100%" : "+100%" }}
         animate={isMobile ? controls : { x: 0 }}
@@ -120,6 +131,8 @@ function Sidebar({ children, styles, position = "left" }: SidebarProps) {
       )}
 
       <DesktopSidebar
+        id={id}
+        className={applyClassName("sidebar", className)}
         $theme={sidebarTheme}
         $position={position}
         $style={styles?.desktopStyle}

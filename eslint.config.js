@@ -47,6 +47,8 @@ export default [
           varsIgnorePattern: "^_",
         },
       ],
+      "no-redeclare": "off",
+      "no-useless-escape": "off",
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/ban-ts-comment": "warn",

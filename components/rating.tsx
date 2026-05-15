@@ -4,6 +4,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { RatingThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const RatingSize = {
   Small: "sm",
@@ -173,7 +174,7 @@ export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
   extends Omit<BaseRatingProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RatingStyles;
 }
 
@@ -182,7 +183,6 @@ function Rating({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -190,6 +190,7 @@ function Rating({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: RatingProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -214,11 +215,11 @@ function Rating({
       labelPosition={labelPosition}
       showError={showError}
       errorMessage={errorMessage}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       label={label}
       errorIconPosition="none"
+      className={applyClassName("rating", className)}
       required={rest.required}
       styles={{
         bodyStyle,

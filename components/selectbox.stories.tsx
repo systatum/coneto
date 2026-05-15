@@ -14,7 +14,7 @@ const meta: Meta<typeof Selectbox> = {
     docs: {
       description: {
         component: `
-The **Selectbox** is a flexible and customizable input component that supports searchable dropdowns, single and multiple selection, keyboard navigation, and both controlled and uncontrolled usage.
+The **Selectbox** is a flexible and customizable input component that supports searchable dropdowns, single and multiple selection, and keyboard navigation.
 
 It is designed to handle complex interaction patterns such as filtering, strict validation, async loading states, and fully custom dropdown rendering via render props.
 
@@ -24,7 +24,6 @@ It is designed to handle complex interaction patterns such as filtering, strict 
 - Searchable options with filtering
 - Single and multiple selection modes
 - Full keyboard navigation support
-- Controlled and uncontrolled behavior
 - Strict mode validation (enforces valid options)
 - Clearable input support
 - Loading state with customizable label
@@ -41,22 +40,6 @@ It is designed to handle complex interaction patterns such as filtering, strict 
     { text: "Banana", value: "banana" },
   ]}
   placeholder="Select a fruit"
-/>
-\`\`\`
-
----
-
-### 🔁 Controlled Mode
-Use controlled mode when you need to **synchronize and manage the value from the parent state**.
-
-\`\`\`tsx
-const [value, setValue] = useState("apple");
-
-<Selectbox
-  options={options}
-  selectedOptions={value}
-  onChange={setValue}
-  controlled
 />
 \`\`\`
 
@@ -182,11 +165,6 @@ When \`strict\` is enabled:
     name: {
       control: "text",
       description: "Name or identifier used for accessibility (aria-label).",
-    },
-    controlled: {
-      control: "boolean",
-      description:
-        "Enables controlled mode, allowing the parent component to manage and synchronize the selected value.",
     },
   },
 };

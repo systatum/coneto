@@ -237,7 +237,7 @@ export const Default: Story = {
           required: true,
           placeholder: "Select your salutation",
           width: "40%",
-          comboboxProps: {
+          combobox: {
             options: SALUTATION_OPTIONS,
             strict: true,
           },
@@ -426,7 +426,7 @@ export const WithFrame: Story = {
           type: "combo",
           required: true,
           placeholder: "Select department",
-          comboboxProps: {
+          combobox: {
             options: DEPARTMENT_OPTIONS,
           },
         },
@@ -436,7 +436,7 @@ export const WithFrame: Story = {
           type: "combo",
           required: true,
           placeholder: "Select manager",
-          comboboxProps: {
+          combobox: {
             options: MANAGER_NAME_OPTIONS,
           },
         },
@@ -606,7 +606,7 @@ export const ConditionalElement: Story = {
           type: "combo",
           required: false,
           placeholder: "Select the quantization",
-          comboboxProps: {
+          combobox: {
             options: QUANTIZATION_TYPE_OPTIONS,
           },
         },
@@ -618,7 +618,7 @@ export const ConditionalElement: Story = {
             required: false,
             placeholder: "Compilation effort",
             hidden: !isInt8Quantization,
-            comboboxProps: {
+            combobox: {
               options: COMPILATION_EFFORT_OPTIONS,
             },
           },
@@ -637,7 +637,7 @@ export const ConditionalElement: Story = {
           type: "combo",
           required: true,
           placeholder: "Select the target platform",
-          comboboxProps: {
+          combobox: {
             options: COMPILATION_TARGET_OPTIONS,
           },
         },
@@ -647,7 +647,7 @@ export const ConditionalElement: Story = {
           type: "combo",
           required: false,
           placeholder: "Host architecture",
-          comboboxProps: {
+          combobox: {
             options: HOST_ARCHITECTURE_OPTIONS,
           },
         },
@@ -714,7 +714,7 @@ export const LeftLabeled: Story = {
         title: "Phone",
         placeholder: "Enter your phone",
         type: "phone",
-        phoneboxProps: {
+        phonebox: {
           countryCodeValue: value.country_code,
         },
         required: true,
@@ -1312,7 +1312,7 @@ export const AllCase: Story = {
         type: "pin",
         required: true,
         helper: "This pinbox allows you to enter your PIN code.",
-        pinboxProps: {
+        pinbox: {
           parts: PARTS_INPUT,
         },
       },
@@ -1345,7 +1345,7 @@ export const AllCase: Story = {
         required: true,
         placeholder: "Select a fruit...",
         helper: "This field allows you to select one or more options",
-        comboboxProps: {
+        combobox: {
           options: FRUIT_OPTIONS,
         },
       },
@@ -1356,7 +1356,7 @@ export const AllCase: Story = {
         required: true,
         placeholder: "Select a date",
         helper: "This field allows you to select a date",
-        dateProps: {
+        date: {
           monthNames: MONTH_NAMES,
         },
       },
@@ -1366,7 +1366,7 @@ export const AllCase: Story = {
         type: "file_drop_box",
         required: true,
         helper: "This field allows you to upload files via drag and drop",
-        fileDropBoxProps: {
+        fileDropBox: {
           onComplete,
           onFileDropped,
         },
@@ -1377,7 +1377,7 @@ export const AllCase: Story = {
         type: "file",
         required: true,
         helper: "This field allows you to upload one or more files",
-        fileInputBoxProps: {
+        fileInputBox: {
           accept: "image/jpeg",
         },
       },
@@ -1395,7 +1395,7 @@ export const AllCase: Story = {
         required: true,
         placeholder: "Enter amount",
         helper: "This field is used to input a monetary value",
-        moneyProps: {
+        money: {
           separator: "dot",
           editableCurrency: true,
           currencyOptions: CURRENCY_OPTIONS,
@@ -1445,7 +1445,7 @@ export const AllCase: Story = {
         type: "chips",
         required: false,
         helper: "This field allows you to select multiple items",
-        chipsProps: {
+        chips: {
           options: BADGE_OPTIONS,
           styles: {
             chipStyle: css`
@@ -1472,7 +1472,7 @@ export const AllCase: Story = {
         type: "capsule",
         required: true,
         helper: "This field allows you to switch between monetary options",
-        capsuleProps: {
+        capsule: {
           tabs: CAPSULE_TABS,
         },
       },
@@ -1671,7 +1671,7 @@ export const AllCaseDisabled: Story = {
         type: "pin",
         required: true,
         helper: "This pinbox allows you to enter your PIN code.",
-        pinboxProps: {
+        pinbox: {
           parts: PARTS_INPUT,
         },
       },
@@ -1704,7 +1704,7 @@ export const AllCaseDisabled: Story = {
         required: true,
         placeholder: "Select a fruit...",
         helper: "This field allows you to select one or more options",
-        comboboxProps: {
+        combobox: {
           options: [],
         },
       },
@@ -1715,7 +1715,7 @@ export const AllCaseDisabled: Story = {
         required: true,
         placeholder: "Select a date",
         helper: "This field allows you to select a date",
-        dateProps: {
+        date: {
           monthNames: [],
         },
       },
@@ -1732,7 +1732,7 @@ export const AllCaseDisabled: Story = {
         type: "file",
         required: true,
         helper: "This field allows you to upload one or more files",
-        fileInputBoxProps: {
+        fileInputBox: {
           accept: "image/jpeg",
         },
       },
@@ -1750,7 +1750,7 @@ export const AllCaseDisabled: Story = {
         required: true,
         placeholder: "Enter amount",
         helper: "This field is used to input a monetary value",
-        moneyProps: {
+        money: {
           separator: "dot",
           editableCurrency: true,
           currencyOptions: [
@@ -1806,7 +1806,7 @@ export const AllCaseDisabled: Story = {
         type: "chips",
         required: false,
         helper: "This field allows you to select multiple items",
-        chipsProps: {
+        chips: {
           options: [],
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,
@@ -1818,7 +1818,7 @@ export const AllCaseDisabled: Story = {
         type: "capsule",
         required: true,
         helper: "This field allows you to switch between monetary options",
-        capsuleProps: {
+        capsule: {
           tabs: CAPSULE_TABS,
         },
       },

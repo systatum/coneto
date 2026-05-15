@@ -12,7 +12,6 @@ import z from "zod";
 import { RiAddBoxLine, RiImage2Line } from "@remixicon/react";
 import { css } from "styled-components";
 import { SelectboxOption } from "./selectbox";
-import { useTheme } from "./../theme/provider";
 
 const meta: Meta<typeof Tooltip> = {
   title: "Content/Tooltip",
@@ -334,9 +333,6 @@ export const Positioning: Story = {
 
 export const WithForm: Story = {
   render: () => {
-    const { mode } = useTheme();
-    const isDark = mode === "dark";
-
     const [value, setValue] = useState<{ division_name: string }>({
       division_name: "",
     });
@@ -464,7 +460,7 @@ export const WithBadge: Story = {
         title: "Role",
         type: "combo",
         required: false,
-        comboboxProps: {
+        combobox: {
           options: EMPLOYEE_OPTIONS,
         },
       },

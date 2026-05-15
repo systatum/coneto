@@ -4,7 +4,6 @@ import {
   ComboboxItemAction,
   ComboboxOption,
   ComboboxProps,
-  ComboboxSingleOption,
 } from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
@@ -18,7 +17,14 @@ import {
 } from "@remixicon/react";
 import { useState } from "react";
 
-const FRUIT_OPTIONS: ComboboxSingleOption[] = [
+const flattenOptions = (items: ComboboxOption[]): string[] =>
+  items.flatMap((item) =>
+    item.groupOptions?.length
+      ? [item.text, ...flattenOptions(item.groupOptions)]
+      : [item.text]
+  );
+
+const FRUIT_OPTIONS: ComboboxOption[] = [
   { text: "Apple", value: "1" },
   { text: "Banana", value: "2" },
   { text: "Orange", value: "3" },
@@ -45,7 +51,7 @@ const OPTION_ACTIONS = (id: string | number): ComboboxItemAction[] => [
   },
 ];
 
-const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxSingleOption[] = [
+const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxOption[] = [
   { text: "Apple", value: "1", actions: OPTION_ACTIONS },
   { text: "Banana", value: "2", actions: OPTION_ACTIONS },
   { text: "Orange", value: "3", actions: OPTION_ACTIONS },
@@ -57,55 +63,52 @@ const FRUIT_OPTIONS_WITH_ACTIONS: ComboboxSingleOption[] = [
 
 const MIX_FRUIT_OPTIONS: ComboboxOption[] = [
   {
-    category: "Sweet",
-    options: [
-      { text: "Banana", value: "2" },
-      { text: "Mango", value: "8" },
+    text: "Watery",
+    value: "Watery",
+    groupOptions: [
+      {
+        text: "Sweet",
+        value: "Watery-Sweet",
+        groupOptions: [
+          {
+            text: "Bold",
+            value: "092",
+            groupOptions: [
+              { text: "Watermelon", value: "7" },
+              { text: "Pear", value: "19" },
+            ],
+          },
+          { text: "Grape", value: "4" },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Balanced",
+        value: "Watery-Balanced",
+        groupOptions: [{ text: "Apple", value: "1" }],
+        groupSetting: { collapsible: true },
+      },
       { text: "Papaya", value: "11" },
-      { text: "Lychee", value: "17" },
-      { text: "Guava", value: "15" },
     ],
-    collapsible: true,
+    groupSetting: { collapsible: true },
   },
   {
-    category: "Tangy",
-    options: [
-      { text: "Orange", value: "3" },
-      { text: "Kiwi", value: "10" },
-      { text: "Pineapple", value: "5" },
-      { text: "Pomegranate", value: "20" },
-      { text: "Cherry", value: "12" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Watery",
-    options: [
-      { text: "Watermelon", value: "7" },
-      { text: "Apple", value: "1" },
-      { text: "Pear", value: "19" },
-      { text: "Grape", value: "4" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Berry",
-    options: [
-      { text: "Strawberry", value: "6" },
-      { text: "Blueberry", value: "9" },
-      { text: "Raspberry", value: "16" },
-    ],
-    collapsible: true,
-  },
-  {
-    category: "Creamy",
-    options: [
-      { text: "Coconut", value: "18" },
-      { text: "Peach", value: "13" },
-      { text: "Plum", value: "14" },
-    ],
-    collapsible: true,
+    text: "Berry",
+    value: "Berry",
     hidden: true,
+    groupOptions: [
+      {
+        text: "Balanced",
+        value: "Berry-Balanced",
+        groupOptions: [
+          { text: "Strawberry", value: "6" },
+          { text: "Blueberry", value: "9" },
+          { text: "Raspberry", value: "16" },
+        ],
+        groupSetting: { collapsible: true },
+      },
+    ],
+    groupSetting: { collapsible: true },
   },
   { text: "Peppers", value: "99" },
   { text: "Eggplants", value: "100", hidden: true },
@@ -215,9 +218,11 @@ describe("Combobox", () => {
           cy.wait(500);
 
           // hovering the selected option
-          cy.findAllByLabelText("list-item-row").eq(1).trigger("mouseover");
+          cy.findAllByLabelText("tree-list-group-title")
+            .eq(1)
+            .trigger("mouseover");
 
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -227,7 +232,7 @@ describe("Combobox", () => {
         it("should highlight selected option (rgb(97, 169, 249))", () => {
           cy.findByLabelText("selectbox-opener").click();
           cy.wait(500);
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -238,7 +243,7 @@ describe("Combobox", () => {
           cy.findByPlaceholderText("Select a fruit...").type("{uparrow}");
 
           cy.wait(500);
-          cy.findAllByLabelText("list-item-row")
+          cy.findAllByLabelText("tree-list-group-title")
             .eq(1)
             .should("have.css", "background-color", "rgb(97, 169, 249)");
         });
@@ -391,10 +396,244 @@ describe("Combobox", () => {
       });
     });
 
+    const setAllOpened = (
+      items: ComboboxOption[],
+      collapsible?: boolean
+    ): ComboboxOption[] =>
+      items
+        .filter((item) => !item.hidden)
+        .map((item) => ({
+          ...item,
+          groupSetting: {
+            ...item?.groupSetting,
+            initialState: "opened",
+            collapsible,
+          },
+          groupOptions: item.groupOptions?.length
+            ? setAllOpened(item.groupOptions, collapsible)
+            : item.groupOptions,
+        }));
+
+    const MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE = setAllOpened(
+      MIX_FRUIT_OPTIONS,
+      false
+    );
+
+    const MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_TRUE = setAllOpened(
+      MIX_FRUIT_OPTIONS,
+      true
+    );
+
+    context("collapsible", () => {
+      context("with true", () => {
+        beforeEach(() => {
+          cy.mount(
+            <ProductCombobox
+              options={MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_TRUE}
+            />
+          );
+          cy.findByPlaceholderText("Select a fruit...").click();
+        });
+
+        it("renders all option", () => {
+          const allTexts = flattenOptions(
+            MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+          );
+          cy.get("#combo-list").scrollTo("bottom");
+
+          allTexts.forEach((text) => {
+            cy.get("#combo-list")
+              .contains(text)
+              .scrollIntoView()
+              .should("be.visible");
+          });
+        });
+
+        context("when clicking the group", () => {
+          it("can hidden the option", () => {
+            const allTexts = flattenOptions(
+              MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+            );
+            allTexts.forEach((text) => {
+              if (text === "Watermelon" || text === "Pear")
+                cy.findByText(text).should("exist");
+            });
+
+            cy.findByText("Bold").click();
+
+            allTexts.forEach((text) => {
+              if (text === "Watermelon" || text === "Pear")
+                cy.findByText(text).should("not.exist");
+            });
+          });
+        });
+
+        context("when clicking the option", () => {
+          it("renders choosen text option", () => {
+            const allTexts = flattenOptions(
+              MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+            );
+            allTexts.forEach((text) => {
+              if (text === "Watermelon" || text === "Pear")
+                cy.findByText(text).should("exist");
+            });
+
+            cy.findByText("Watermelon").click();
+
+            cy.findByPlaceholderText("Select a fruit...").should(
+              "have.value",
+              "Watermelon"
+            );
+          });
+        });
+      });
+
+      context("with false", () => {
+        beforeEach(() => {
+          cy.mount(
+            <ProductCombobox
+              options={MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE}
+            />
+          );
+          cy.findByPlaceholderText("Select a fruit...").click();
+        });
+
+        it("renders all option", () => {
+          const allTexts = flattenOptions(
+            MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+          );
+          cy.get("#combo-list").scrollTo("bottom");
+          allTexts.forEach((text) => {
+            cy.get("#combo-list")
+              .contains(text)
+              .scrollIntoView()
+              .should("be.visible");
+          });
+        });
+
+        context("when clicking the group", () => {
+          it("not choosen and still opened", () => {
+            const allTexts = flattenOptions(
+              MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+            );
+            cy.get("#combo-list").scrollTo("bottom");
+            allTexts.forEach((text) => {
+              cy.get("#combo-list")
+                .contains(text)
+                .scrollIntoView()
+                .should("be.visible");
+            });
+
+            cy.findByText("Watery").click();
+
+            cy.findByPlaceholderText("Select a fruit...").should(
+              "have.value",
+              ""
+            );
+          });
+        });
+
+        context("when clicking the option", () => {
+          it("renders choosen text option", () => {
+            const allTexts = flattenOptions(
+              MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
+            );
+            cy.get("#combo-list").scrollTo("bottom");
+            allTexts.forEach((text) => {
+              cy.get("#combo-list")
+                .contains(text)
+                .scrollIntoView()
+                .should("be.visible");
+            });
+
+            cy.findByText("Watermelon").click();
+
+            cy.findByPlaceholderText("Select a fruit...").should(
+              "have.value",
+              "Watermelon"
+            );
+          });
+        });
+      });
+    });
+
+    context("vertical line", () => {
+      /**
+       * vertical-line-level = ANCESTOR lines (Array.from({ length: level }) loop)
+       * vertical-line       = OWN line (rendered inside TreeListItemWrapper)
+       *
+       * vertical-line-level: always forced border-left: none in combobox (aria-label rule)
+       * vertical-line: visible, colored rgb(215, 214, 214) when data-selected="false"
+       */
+      context("when nested level 1", () => {
+        it("not renders border-left (empty)", () => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border", "");
+        });
+      });
+
+      context("when nested level 2", () => {
+        beforeEach(() => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+        });
+
+        it("data-level 0 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border-left-width", "0px");
+          // bold option
+        });
+
+        it("data-level 1 has border-left", () => {
+          cy.findAllByLabelText("vertical-line")
+            .eq(2)
+            .filter('[data-level="1"]')
+            .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+
+          // bold option
+        });
+      });
+
+      context("when nested level 3", () => {
+        beforeEach(() => {
+          cy.findByText("Watery").click();
+          cy.findByText("Sweet").click();
+          cy.findByText("Bold").click();
+        });
+
+        it("data-level 0 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="0"]')
+            .should("have.css", "border-width", "0px");
+          // watermelon option
+        });
+
+        it("data-level 1 has no border-left", () => {
+          cy.findAllByLabelText("vertical-line-level")
+            .filter('[data-level="1"]')
+            .should("have.css", "border-width", "0px");
+          // watermelon option
+        });
+
+        it("data-level 2 has border-left", () => {
+          cy.findAllByLabelText("vertical-line")
+            .eq(3)
+            .filter('[data-level="2"]')
+            .should("have.css", "border-left", "2px solid rgb(215, 214, 214)");
+          // watermelon option
+        });
+      });
+    });
+
     it("should not reveal the option", () => {
       MIX_FRUIT_OPTIONS.flatMap((option) => {
-        if ("category" in option && option.category !== "Creamy") {
-          cy.findByText(option.category).should("be.visible");
+        if (option.text !== "Berry" && option.text !== "Eggplants") {
+          cy.findByText(option.text).should("be.visible");
         }
       });
     });
@@ -403,8 +642,8 @@ describe("Combobox", () => {
       context("when given in the group", () => {
         it("should not render the group", () => {
           MIX_FRUIT_OPTIONS.flatMap((option) => {
-            if ("category" in option && option.category === "Creamy") {
-              cy.findByText("Creamy").should("not.exist");
+            if (option.text === "Berry") {
+              cy.findByText("Berry").should("not.exist");
             }
           });
         });
@@ -422,57 +661,74 @@ describe("Combobox", () => {
     });
 
     context("when clicking the group", () => {
+      const expectedText = [
+        { text: "Pear", value: "19" },
+        { text: "Grape", value: "4" },
+      ];
+
       it("should reveal the option", () => {
-        MIX_FRUIT_OPTIONS.flatMap((option) => {
-          if ("category" in option && option.category === "Sweet") {
-            option.options.map((opt) => {
-              cy.findByText(opt.text).should("not.be.visible");
-            });
-            cy.findByText(option.category).should("be.visible").click();
-            cy.wait(200);
-            option.options.map((opt) => {
-              cy.findByText(opt.text).should("be.visible");
-            });
-          }
+        expectedText.map((option) => {
+          cy.findByText(option?.text).should("not.exist");
+        });
+
+        cy.findByText("Watery").click();
+
+        cy.findByText("Sweet").click();
+        cy.findByText("Bold").click();
+
+        expectedText.map((option) => {
+          cy.findByText(option?.text).should("exist");
         });
       });
 
       context("when clicking the option", () => {
         it("should selecting the option", () => {
-          MIX_FRUIT_OPTIONS.flatMap((option) => {
-            if ("category" in option && option.category === "Sweet") {
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("not.be.visible");
-              });
-              cy.findByText(option.category).should("be.visible").click();
-              cy.wait(200);
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("be.visible");
-              });
-              cy.findByText("Banana").click();
-              cy.findByPlaceholderText("Select a fruit...").should(
-                "have.value",
-                "Banana"
-              );
-            }
+          expectedText.map((option) => {
+            cy.findByText(option?.text).should("not.exist");
           });
+
+          cy.findByText("Watery").click();
+
+          cy.findByText("Sweet").click();
+          cy.findByText("Bold").click();
+
+          expectedText.map((option) => {
+            cy.findByText(option?.text).should("exist");
+          });
+
+          cy.findByText("Watermelon").click();
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Watermelon"
+          );
         });
       });
     });
 
     context("initialState", () => {
-      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED: ComboboxOption[] =
-        MIX_FRUIT_OPTIONS.map((item) => {
-          if ("category" in item && item.options) {
-            return {
-              ...item,
-              initialState: "opened",
-            };
-          }
-          return item;
-        });
+      const setInitialState = (
+        items: ComboboxOption[],
+        initial: "opened" | "closed" = "opened"
+      ): ComboboxOption[] =>
+        items.map((item) => ({
+          ...item,
+          groupSetting: { ...item?.groupSetting, initialState: initial },
+          groupOptions: item.groupOptions?.length
+            ? setInitialState(item.groupOptions, initial)
+            : item.groupOptions,
+        }));
 
-      context("when given opened", () => {
+      const MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED = setInitialState(
+        MIX_FRUIT_OPTIONS,
+        "opened"
+      );
+
+      const MIX_FRUIT_OPTIONS_WITH_INITIAL_CLOSED = setInitialState(
+        MIX_FRUIT_OPTIONS,
+        "closed"
+      );
+
+      context("with opened", () => {
         beforeEach(() => {
           cy.mount(
             <ProductCombobox
@@ -482,14 +738,75 @@ describe("Combobox", () => {
           );
           cy.findByPlaceholderText("Select a fruit...").click();
         });
+
         it("should reveal all option", () => {
-          MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED.flatMap((option) => {
-            if ("category" in option && option.category === "Sweet") {
-              cy.findByText(option.category).should("be.visible");
-              option.options.map((opt) => {
-                cy.findByText(opt.text).should("be.visible");
-              });
-            }
+          const allTexts = flattenOptions(
+            MIX_FRUIT_OPTIONS_WITH_INITIAL_OPENED
+          );
+
+          allTexts.forEach((text) => {
+            if (
+              text !== "Berry" &&
+              text !== "Strawberry" &&
+              text !== "Blueberry" &&
+              text !== "Raspberry" &&
+              text !== "Eggplants"
+            )
+              cy.get("#combo-list")
+                .contains(text)
+                .scrollIntoView()
+                .should("be.visible");
+          });
+        });
+      });
+
+      context("with closed", () => {
+        beforeEach(() => {
+          cy.mount(
+            <ProductCombobox
+              name="mix"
+              options={MIX_FRUIT_OPTIONS_WITH_INITIAL_CLOSED}
+            />
+          );
+          cy.findByPlaceholderText("Select a fruit...").click();
+        });
+
+        it("should only show root level options", () => {
+          // only root visible: Watery, Peppers (Berry, Eggplants hidden)
+          cy.get("#combo-list").contains("Watery").should("be.visible");
+          cy.get("#combo-list").contains("Peppers").should("be.visible");
+
+          // children not visible until clicked
+          cy.get("#combo-list").contains("Sweet").should("not.exist");
+          cy.get("#combo-list").contains("Balanced").should("not.exist");
+          cy.get("#combo-list").contains("Papaya").should("not.exist");
+        });
+
+        context("when clicking watery", () => {
+          it("should reveal children", () => {
+            cy.get("#combo-list").contains("Sweet").should("not.exist");
+            cy.get("#combo-list").contains("Balanced").should("not.exist");
+            cy.get("#combo-list").contains("Papaya").should("not.exist");
+
+            cy.get("#combo-list").contains("Watery").click();
+
+            // level 1 children now visible
+            cy.get("#combo-list").contains("Sweet").should("be.visible");
+            cy.get("#combo-list").contains("Balanced").should("be.visible");
+            cy.get("#combo-list").contains("Papaya").should("be.visible");
+          });
+        });
+
+        context("when clicking nested level 2", () => {
+          it("should reveal children at level 2", () => {
+            cy.get("#combo-list").contains("Bold").should("not.exist");
+            cy.get("#combo-list").contains("Grape").should("not.exist");
+
+            cy.get("#combo-list").contains("Watery").click();
+            cy.get("#combo-list").contains("Sweet").click();
+
+            cy.get("#combo-list").contains("Bold").should("be.visible");
+            cy.get("#combo-list").contains("Grape").should("be.visible");
           });
         });
       });
@@ -593,7 +910,7 @@ describe("Combobox", () => {
   context("actions", () => {
     const FRUIT_ACTIONS: ComboboxAction[] = [
       {
-        title: "Add Fruit",
+        caption: "Add Fruit",
         onClick: () => {},
         icon: {
           image: RiAddLine,
@@ -601,7 +918,7 @@ describe("Combobox", () => {
       },
       {
         hidden: true,
-        title: "Delete Fruit",
+        caption: "Delete Fruit",
         onClick: () => {},
         icon: {
           image: RiAddLine,
@@ -984,8 +1301,8 @@ describe("Combobox", () => {
 
         cy.findByPlaceholderText("Select a fruit...").click();
 
-        cy.findByRole("option", { name: "Apple" }).click();
-        cy.findByRole("option", { name: "Banana" }).click();
+        cy.findByText("Apple").click();
+        cy.findByText("Banana").click();
 
         cy.findByDisplayValue("Apple, Banana").should("be.visible");
 
@@ -1021,8 +1338,8 @@ describe("Combobox", () => {
 
         cy.findByPlaceholderText("Select a fruit...").click();
 
-        cy.findByRole("option", { name: "Apple" }).click();
-        cy.findByRole("option", { name: "Banana" }).click();
+        cy.findByText("Apple").click();
+        cy.findByText("Banana").click();
 
         cy.findByDisplayValue("Apple, Banana").should("be.visible");
 
@@ -1076,11 +1393,7 @@ describe("Combobox", () => {
 
       cy.findByText("Button").click();
 
-      cy.findByLabelText("button-tip-menu-container").should(
-        "have.css",
-        "width",
-        "200px"
-      );
+      cy.findByLabelText("tip-menu").should("have.css", "width", "200px");
     });
 
     it("renders with similar height", () => {

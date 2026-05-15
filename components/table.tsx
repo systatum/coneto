@@ -30,6 +30,8 @@ import { ActionButton, ActionButtonProps } from "./action-button";
 import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
+import { Figure } from "./figure";
 
 export interface TableColumn {
   caption: string;
@@ -81,6 +83,8 @@ export interface TableProps {
   sumRow?: TableSummaryRowColumn[];
   styles?: TableStyles;
   searchbox?: TableSearchbox;
+  id?: string;
+  className?: string;
 }
 
 type TableSearchbox = SearchboxProps;
@@ -166,6 +170,8 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
+  className,
+  id,
 }: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
@@ -229,10 +235,9 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
+  const flatChildren = resolveChildren(children);
 
-  const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
-
+  const rowChildren = flatChildren.map((child, index) => {
     const hasRowGroup = child.type === TableRowGroup;
     const hasRow = child.type === TableRow;
 
@@ -323,7 +328,11 @@ function Table({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableColumnContext.Provider value={columns}>
-        <Wrapper $containerStyle={styles?.containerStyle}>
+        <Wrapper
+          id={id}
+          className={applyClassName("table", className)}
+          $containerStyle={styles?.containerStyle}
+        >
           {((selectedData.length > 0 &&
             labels?.totalSelectedItemText !== null) ||
             showPagination ||
@@ -848,6 +857,18 @@ export interface TableRowGroupProps {
   title?: string;
   subtitle?: string;
   selectable?: boolean;
+  className?: string;
+  styles?: TableRowGroupStyles;
+}
+
+export interface TableRowGroupStyles {
+  containerStyle?: CSSProp;
+  headerStyle?: CSSProp;
+  bodyStyle?: CSSProp;
+  chevronStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
+  titleStyle?: CSSProp;
 }
 
 export interface TableRowCellProps {
@@ -855,6 +876,8 @@ export interface TableRowCellProps {
   contentStyle?: CSSProp;
   width?: string;
   onClick?: () => void;
+  className?: string;
+  id?: string;
 }
 
 function TableRowGroup({
@@ -868,6 +891,8 @@ function TableRowGroup({
   isLast,
   onLastRowReached,
   draggable,
+  className,
+  styles,
   ...props
 }: TableRowGroupProps & {
   selectedData?: string[];
@@ -884,7 +909,7 @@ function TableRowGroup({
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
-  const rowChildren = Children.map(children, (child, index) => {
+  const rowChildren = resolveRowChildren(children).map((child, index) => {
     if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
     if (child.type === TableRow) {
       const props = child.props as TableRowProps & TableRowOpenWithId;
@@ -933,65 +958,116 @@ function TableRowGroup({
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <TableRowGroupContainer>
-      <TableRowGroupSticky
+    <TableRowGroupContainer
+      id={id}
+      className={applyClassName("table-row-group", className)}
+      $style={styles?.containerStyle}
+    >
+      <TableRowGroupHeader
         $theme={tableTheme}
+        aria-label="table-row-group-header"
         onClick={() => setIsOpen(!isOpen)}
+        $style={styles?.headerStyle}
       >
-        <RotatingIcon $isOpen={isOpen}>
-          <RiArrowDownSLine />
-        </RotatingIcon>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
+        <Figure
+          styles={{
+            self: css`
+              transition: transform 300ms;
+              margin-left: 6px;
+              ${isOpen &&
+              css`
+                transform: rotate(-180deg);
+              `};
+              ${styles?.chevronStyle}
+            `,
           }}
+          size={20}
+          aria-label="table-row-group-chevron"
+          image={RiArrowDownSLine}
+        />
+
+        <TableRowGroupTextWrapper
+          aria-label="table-row-group-text-wrapper"
+          $style={styles?.textWrapperStyle}
         >
-          {title && <span>{title}</span>}
+          {title && (
+            <TableRowGroupTitle
+              aria-label="table-row-group-title"
+              $style={styles?.titleStyle}
+            >
+              {title}
+            </TableRowGroupTitle>
+          )}
           {subtitle && (
-            <span
-              style={{
-                fontSize: "14px",
-                color: tableTheme?.rowSubtitleTextColor || "#1f2937",
-              }}
+            <TableRowGroupSubtitle
+              aria-label="table-row-group-subtitle"
+              $style={styles?.subtitleStyle}
+              $color={tableTheme?.rowGroupSubtitleTextColor}
             >
               {subtitle}
-            </span>
+            </TableRowGroupSubtitle>
           )}
-        </div>
-      </TableRowGroupSticky>
+        </TableRowGroupTextWrapper>
+      </TableRowGroupHeader>
 
       <AnimatePresence initial={false}>
         {isOpen && (
-          <motion.div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
+          <TableRowGroupBody
+            aria-label="table-row-group-body"
+            $style={styles?.bodyStyle}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {rowChildren}
-          </motion.div>
+          </TableRowGroupBody>
         )}
       </AnimatePresence>
     </TableRowGroupContainer>
   );
 }
 
-const TableRowGroupContainer = styled.div`
+const TableRowGroupTextWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupTitle = styled.span<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupSubtitle = styled.span<{
+  $color?: string;
+  $style?: CSSProp;
+}>`
+  font-size: 14px;
+  color: ${({ $color }) => $color || "#1f2937"};
+  ${({ $style }) => $style}
+`;
+
+const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: column;
   position: relative;
   width: 100%;
   height: 100%;
   overflow-y: visible;
+  ${({ $style }) => $style}
 `;
 
-const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
+const TableRowGroupBody = styled(motion.div)<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+
+  ${({ $style }) => $style};
+`;
+
+const TableRowGroupHeader = styled.div<{
+  $theme?: TableThemeConfig;
+  $style?: CSSProp;
+}>`
   display: flex;
   flex-direction: row;
   cursor: pointer;
@@ -1014,16 +1090,8 @@ const TableRowGroupSticky = styled.div<{ $theme?: TableThemeConfig }>`
   contain: layout style paint;
   -webkit-transform: translateZ(0);
   -webkit-backface-visibility: hidden;
-`;
 
-const RotatingIcon = styled.span<{ $isOpen?: boolean }>`
-  transition: transform 300ms;
-  margin-left: 2px;
-  ${(props) =>
-    props.$isOpen &&
-    css`
-      transform: rotate(-180deg);
-    `}
+  ${({ $style }) => $style}
 `;
 
 export type TableRowAction = TipMenuItemProps;
@@ -1045,6 +1113,8 @@ export interface TableRowProps {
   }) => void;
   groupId?: string;
   styles?: TableRowStyles;
+  id?: string;
+  className?: string;
 }
 
 export interface TableRowStyles {
@@ -1073,6 +1143,8 @@ function TableRow({
   groupId = "default",
   onDropItem,
   draggable,
+  className,
+  id,
   ...props
 }: TableRowProps &
   Partial<{
@@ -1133,6 +1205,8 @@ function TableRow({
     <RowWrapper $style={styles?.containerStyle}>
       <TableRowWrapper
         ref={rowRef}
+        id={id}
+        className={applyClassName("table-row", className)}
         $theme={tableTheme}
         $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
         $isSelected={isSelected}
@@ -1519,12 +1593,16 @@ function TableRowCell({
   width,
   onClick,
   bold,
+  id,
+  className,
 }: TableRowCellProps &
   Partial<{
     bold?: boolean;
   }>) {
   return (
     <CellContent
+      id={id}
+      className={applyClassName("table-row-cell", className)}
       onClick={() => {
         if (onClick) {
           onClick();
@@ -1618,6 +1696,52 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
         (action): action is TipMenuItemProps => Boolean(action)
       );
       result.push(...validActions);
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Recursively resolves React children into a flat array of TableRow or TableRowGroup elements.
+ *
+ * This allows wrapper components (e.g. <GetRows />, <Testing />) to be passed as children
+ * to <Table> and still be recognized correctly, instead of returning null.
+ */
+function resolveChildren(
+  children: ReactNode
+): ReactElement<TableRowProps | TableRowGroupProps>[] {
+  const result: ReactElement<TableRowProps | TableRowGroupProps>[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    if (child.type === TableRow || child.type === TableRowGroup) {
+      result.push(child as ReactElement<TableRowProps | TableRowGroupProps>);
+    } else if (typeof child.type === "function") {
+      // Unwrap wrapper components recursively until we find TableRow or TableRowGroup elements
+      const rendered = (child.type as Function)(child.props);
+      result.push(...resolveChildren(rendered));
+    }
+  });
+
+  return result;
+}
+
+function resolveRowChildren(
+  children: ReactNode
+): ReactElement<TableRowProps>[] {
+  const result: ReactElement<TableRowProps>[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    if (child.type === TableRow) {
+      result.push(child as ReactElement<TableRowProps>);
+    } else if (typeof child.type === "function") {
+      // Unwrap wrapper components recursively until we find TableRow elements
+      const rendered = (child.type as Function)(child.props);
+      result.push(...resolveRowChildren(rendered));
     }
   });
 

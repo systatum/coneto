@@ -21,6 +21,7 @@ import {
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { AppTheme, TipMenuContainerThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const ButtonVariant = {
   Link: "link",
@@ -135,6 +136,7 @@ function Button({
   icon,
   hoverBackgroundColor,
   labelMode = "ellipsis",
+  className,
   ...props
 }: ButtonProps) {
   const { currentTheme } = useTheme();
@@ -236,6 +238,7 @@ function Button({
       $isOpen={isOpen}
       $theme={buttonTheme}
       $variant={variant}
+      className={applyClassName("button", className)}
     >
       <BaseButton
         $theme={buttonTheme}
@@ -443,12 +446,12 @@ function ButtonTipMenuContainer({
 
   return (
     <TipMenuContainer
+      aria-label="button-tip-menu-container"
       {...props}
       $theme={buttonTipMenuContainer}
       onClick={(e) => {
         if (props.onClick) props.onClick?.(e);
       }}
-      aria-label="button-tip-menu-container"
       $style={styles?.self}
     >
       {children}

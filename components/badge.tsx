@@ -1,10 +1,11 @@
 import styled, { css, CSSProp } from "styled-components";
 import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
 import { strToColor } from "./../lib/code-color";
-import { FigureProps } from "./figure";
 import { Button, ButtonStyles } from "./button";
 import { useTheme } from "./../theme/provider";
 import { BadgeThemeConfig } from "./../theme";
+import { BaseAction } from "./../constants/action";
+import { applyClassName } from "./../constants/classname";
 
 export const BadgeVariant = {
   Neutral: "neutral",
@@ -37,14 +38,11 @@ export interface BadgeStyles {
   actionWrapperStyle?: CSSProp;
 }
 
-export interface BadgeAction {
-  icon?: FigureProps;
+export interface BadgeAction extends Omit<BaseAction, "onClick" | "caption"> {
   onClick?: (badge?: BadgeProps) => void;
-  disabled?: boolean;
   size?: number;
   styles?: ButtonStyles;
   title?: string;
-  hidden?: boolean;
 }
 
 const BADGE_BACKGROUND_COLORS: string[] = [
@@ -111,6 +109,7 @@ function Badge({
   id = "badge",
   actions,
   metadata,
+  className,
   ...props
 }: BadgeProps) {
   const { currentTheme } = useTheme();
@@ -195,6 +194,7 @@ function Badge({
     <BadgeWrapper
       {...props}
       id={String(id)}
+      className={applyClassName("badge", className)}
       onClick={onClick}
       aria-label="badge"
       $theme={badgeTheme}

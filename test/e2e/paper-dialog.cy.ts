@@ -48,7 +48,7 @@ describe("PaperDialog", () => {
     it("should open and close the left-positioned dialog", () => {
       cy.visit(getIdContent("stage-paperdialog--fixed-left"));
 
-      cy.findByRole("button", { name: /trigger/i }).click();
+      cy.findByText("trigger").click();
 
       cy.findByText("Add New Employee").should("exist");
 

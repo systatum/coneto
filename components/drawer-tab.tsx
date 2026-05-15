@@ -5,6 +5,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { DrawerTabThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export const DrawerTabPosition = {
   Left: "left",
@@ -18,6 +19,8 @@ export interface DrawerTabProps {
   tabs: DrawerTabTab[];
   position?: DrawerTabPosition;
   styles?: DrawerTabStyles;
+  className?: string;
+  id?: string;
 }
 export interface DrawerTabStyles {
   tabStyle?: CSSProp;
@@ -31,7 +34,13 @@ export interface DrawerTabTab {
   content: ReactNode;
 }
 
-function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
+function DrawerTab({
+  tabs,
+  styles,
+  position = "right",
+  className,
+  id,
+}: DrawerTabProps) {
   const { currentTheme } = useTheme();
   const drawerTabTheme = currentTheme.drawerTab;
 
@@ -64,6 +73,8 @@ function DrawerTab({ tabs, styles, position = "right" }: DrawerTabProps) {
   return (
     <DrawerTabContainer
       initial={{ x: isLeft ? "-100%" : "+100%" }}
+      id={id}
+      className={applyClassName("drawer-tab", className)}
       animate={controls}
       $position={position}
       $style={styles?.drawerTabStyle}

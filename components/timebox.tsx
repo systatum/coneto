@@ -11,6 +11,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -18,6 +19,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTimeboxProps
   extends Omit<
@@ -389,6 +391,8 @@ export interface TimeboxProps
   styles?: TimeboxStyles & FieldLaneStyles;
 }
 
+export type TimeboxAction = FieldLaneAction;
+
 const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
   ({ ...props }, ref) => {
     const {
@@ -403,6 +407,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -429,6 +434,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("timebox", className)}
         errorIconPosition="relative"
         styles={{
           bodyStyle,

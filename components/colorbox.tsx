@@ -9,6 +9,7 @@ import {
 import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -16,6 +17,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { ColorboxThemeConfig } from "theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
@@ -160,6 +162,8 @@ export interface ColorboxProps
   styles?: ColorboxStyles;
 }
 
+export type ColorboxAction = FieldLaneAction;
+
 const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
   ({ ...props }, ref) => {
     const {
@@ -175,6 +179,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      className,
       ...rest
     } = props;
 
@@ -199,6 +204,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         helper={helper}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("colorbox", className)}
         styles={{
           containerStyle: styles?.containerStyle,
           labelStyle: styles?.labelStyle,

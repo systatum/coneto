@@ -6,12 +6,14 @@ import { Figure, FigureProps } from "./figure";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { CapsuleThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export interface CapsuleTab {
   id: string;
   title?: string;
   content?: ReactNode;
   icon?: FigureProps;
+  className?: string;
 }
 
 interface BaseCapsuleProps {
@@ -217,6 +219,8 @@ function BaseCapsule({
             $disabled={disabled}
             role="tab"
             key={index}
+            className={applyClassName("capsule-pill", tab?.className)}
+            id={tab?.id}
             ref={setTabRef(index)}
             $activeTabStyle={styles?.tabStyle}
             onMouseEnter={() => !disabled && setHovered(tab.id)}
@@ -243,7 +247,7 @@ export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
 
 export interface CapsuleProps
   extends Omit<BaseCapsuleProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CapsuleStyles;
 }
 
@@ -252,7 +256,6 @@ function Capsule({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -260,6 +263,7 @@ function Capsule({
   labelPosition,
   labelGap,
   labelWidth,
+  className,
   ...rest
 }: CapsuleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -271,13 +275,13 @@ function Capsule({
   return (
     <FieldLane
       id={inputId}
+      className={applyClassName("capsule", className)}
       showError={showError}
       errorMessage={errorMessage}
       labelPosition={labelPosition}
       labelWidth={labelWidth}
       labelGap={labelGap}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       required={rest.required}

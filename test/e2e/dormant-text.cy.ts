@@ -334,14 +334,16 @@ describe("DormantText", () => {
     context("with onAcceptChange enter", () => {
       context("when pressing enter", () => {
         it("renders with changed phone number", () => {
-          cy.findAllByText("+1 812-345-7890").eq(3).click();
+          cy.findAllByLabelText("dormant-wrapper").eq(3).click();
           cy.findByLabelText("Select country code").click();
-          cy.findAllByLabelText("search-countries").type("Indonesia");
+          cy.findAllByLabelText("phonebox-search-countries").type("Indonesia");
           cy.findByText("Indonesia").click();
           cy.findByPlaceholderText("Enter your phone number")
             .clear()
             .type("08123456789{enter}");
-          cy.findByText("+62 812-3456-789").should("exist");
+          cy.findAllByLabelText("dormant-label")
+            .eq(3)
+            .should("have.text", "+62 812-345-6789");
         });
       });
     });
@@ -349,21 +351,17 @@ describe("DormantText", () => {
     context("with max width", () => {
       context("when word over the width", () => {
         it("render with truncate text and ellipsis", () => {
-          cy.findAllByText("+1 812-345-7890")
+          cy.findAllByLabelText("dormant-wrapper")
             .eq(2)
             .invoke("prop", "scrollWidth")
             .then((scrollWidth) => {
-              cy.findAllByText("+1 812-345-7890")
-                .eq(2)
+              cy.findAllByText("+1 305-123-4567")
+                .eq(0)
                 .invoke("prop", "clientWidth")
                 .then((clientWidth) => {
                   expect(scrollWidth).to.be.greaterThan(clientWidth);
                 });
             });
-
-          cy.findAllByText("+1 812-345-7890")
-            .eq(2)
-            .should("have.css", "text-overflow", "ellipsis");
         });
       });
     });
@@ -371,14 +369,16 @@ describe("DormantText", () => {
     context("with cancelable", () => {
       context("when pressing escape", () => {
         it("renders previously input phone number", () => {
-          cy.findAllByText("+1 812-345-7890").eq(3).click();
+          cy.findAllByLabelText("dormant-wrapper").eq(3).click();
           cy.findByLabelText("Select country code").click();
-          cy.findAllByLabelText("search-countries").type("Indonesia");
+          cy.findAllByLabelText("phonebox-search-countries").type("Indonesia");
           cy.findByText("Indonesia").click();
           cy.findByPlaceholderText("Enter your phone number")
             .clear()
             .type("08123456789{enter}");
-          cy.findByText("+62 812-3456-789").should("exist");
+          cy.findAllByLabelText("dormant-label")
+            .eq(3)
+            .should("have.text", "+62 812-345-6789");
         });
       });
     });

@@ -1,10 +1,4 @@
-import {
-  ChangeEvent,
-  DragEvent,
-  InputHTMLAttributes,
-  useRef,
-  useState,
-} from "react";
+import { ChangeEvent, DragEvent, InputHTMLAttributes, useState } from "react";
 import { RiCloseLine } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
@@ -12,6 +6,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileInputBoxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
@@ -103,7 +98,7 @@ function BaseFileInputBox({
         if (disabled) return;
         handleDragOver(e);
       }}
-      onDragLeave={(e) => {
+      onDragLeave={() => {
         if (disabled) return;
         handleDragLeave();
       }}
@@ -162,7 +157,7 @@ export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: FileInputBoxStyles;
 }
 
@@ -171,7 +166,6 @@ function FileInputBox({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
@@ -179,6 +173,7 @@ function FileInputBox({
   labelGap,
   labelWidth,
   labelPosition,
+  className,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -198,13 +193,13 @@ function FileInputBox({
   return (
     <FieldLane
       id={inputId}
+      className={applyClassName("file-input-box", className)}
       showError={showError}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
       errorMessage={errorMessage}
       label={label}
-      actions={actions}
       helper={helper}
       disabled={disabled}
       required={rest.required}

@@ -10,6 +10,7 @@ import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import {
   FieldLane,
+  FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
@@ -17,6 +18,7 @@ import {
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TextboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTextboxProps
   extends Omit<
@@ -115,6 +117,8 @@ export interface TextboxProps
   styles?: TextboxStyles & FieldLaneStyles;
 }
 
+export type TextboxAction = FieldLaneAction;
+
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   ({ ...props }, ref) => {
     const {
@@ -130,6 +134,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelPosition,
       labelGap,
       labelWidth,
+      className,
       ...rest
     } = props;
 
@@ -154,6 +159,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelPosition={labelPosition}
         disabled={disabled}
         required={rest.required}
+        className={applyClassName("textbox", className)}
         styles={{
           bodyStyle: styles?.bodyStyle,
           controlStyle: styles?.controlStyle,

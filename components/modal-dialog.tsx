@@ -1,11 +1,12 @@
 "use client";
 
+import { applyClassName } from "./../constants/classname";
 import { ModalDialogThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import {
   createDialogController,
   Dialog,
-  DialogButton,
+  DialogAction,
   DialogProps,
   DialogStyles,
 } from "./dialog";
@@ -13,28 +14,30 @@ import styled, { css, CSSProp } from "styled-components";
 
 export type ModalDialogProps = DialogProps;
 export type ModalDialogStyles = DialogStyles;
-export type ModalDialogButton = DialogButton;
+export type ModalDialogAction = DialogAction;
 
 function ModalDialog({
   onVisibilityChange,
   isOpen,
   subtitle,
   title,
-  buttons,
+  actions,
   children,
   styles,
   onClick,
   onClosed,
   closable = true,
   icon,
+  className,
+  id,
 }: ModalDialogProps) {
   const { currentTheme } = useTheme();
   const modalDialogTheme = currentTheme.modalDialog;
 
-  const customizeButtons = buttons?.map((button) => ({
-    ...button,
+  const customizeButtons = actions?.map((action) => ({
+    ...action,
     styles: {
-      ...button?.styles,
+      ...action?.styles,
       self: css`
         min-width: 140px;
         max-width: 140px;
@@ -45,15 +48,17 @@ function ModalDialog({
         padding-left: 1rem;
         padding-right: 1rem;
         text-align: start;
-        ${button?.styles?.self}
+        ${action?.styles?.self}
       `,
     },
   }));
   return (
     <Dialog
+      id={id}
+      className={applyClassName("modal-dialog", className)}
       closable={closable}
       isOpen={isOpen}
-      buttons={customizeButtons}
+      actions={customizeButtons}
       icon={icon}
       title={title}
       onClick={onClick}
@@ -113,12 +118,12 @@ function ModalDialog({
 
           ${styles?.subtitleStyle}
         `,
-        buttonWrapperStyle: css`
+        actionWrapperStyle: css`
           width: 100%;
           flex-direction: row;
           justify-content: flex-end;
           gap: 0px;
-          ${styles?.buttonWrapperStyle}
+          ${styles?.actionWrapperStyle}
         `,
       }}
     >

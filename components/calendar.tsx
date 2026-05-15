@@ -19,6 +19,7 @@ import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { CalendarThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
   options?: CalendarOption[];
@@ -977,7 +978,7 @@ export type CalendarStyles = BaseCalendarStyles & FieldLaneStyles;
 
 export interface CalendarProps
   extends Omit<BaseCalendarProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns"> {
+    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CalendarStyles;
 }
 
@@ -986,12 +987,12 @@ function Calendar({
   showError,
   styles,
   errorMessage,
-  actions,
   helper,
   disabled,
   name,
   id,
   labelPosition,
+  className,
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -1015,7 +1016,7 @@ function Calendar({
       errorMessage={errorMessage}
       labelPosition={labelPosition}
       label={label}
-      actions={actions}
+      className={applyClassName("calendar", className)}
       helper={helper}
       disabled={disabled}
       required={rest.required}

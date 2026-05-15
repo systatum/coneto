@@ -196,7 +196,12 @@ const lightTimebox = createTimeboxTheme(lightBody, lightFieldLane);
 
 const lightTimeline = createTimelineTheme(lightBody);
 
-const lightTipMenu = createTipMenuTheme(lightButton);
+const lightTipMenu = createTipMenuTheme(lightButton, {
+  default: { disabledTextColor: "rgba(107, 107, 107, 0.75)" },
+  primary: { disabledTextColor: "rgba(107, 107, 107, 0.75)" },
+  danger: { disabledTextColor: "rgba(107, 107, 107, 0.75)" },
+  success: { disabledTextColor: "rgba(107, 107, 107, 0.75)" },
+});
 
 const lightToggle = createToggleTheme(lightBody);
 

@@ -4,17 +4,20 @@ import { motion } from "framer-motion";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { BoxbarThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface BoxbarProps {
   children: ReactNode;
   styles?: BoxbarStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface BoxbarStyles {
   self: CSSProp;
 }
 
-function Boxbar({ styles, children }: BoxbarProps) {
+function Boxbar({ styles, children, className, id }: BoxbarProps) {
   const { currentTheme } = useTheme();
   const boxbarTheme = currentTheme.boxbar;
 
@@ -70,6 +73,8 @@ function Boxbar({ styles, children }: BoxbarProps) {
   return (
     <BaseBoxbar
       ref={contentRef}
+      id={id}
+      className={applyClassName("boxbar", className)}
       initial={{ height: collapsedHeight }}
       animate={{ height: isOpen ? contentHeight : collapsedHeight }}
       transition={{ duration: 0.2, ease: "easeInOut" }}

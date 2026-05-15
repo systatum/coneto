@@ -1,5 +1,5 @@
 import { RiSearchLine, RiCloseLine } from "@remixicon/react";
-import {
+import React, {
   ChangeEvent,
   forwardRef,
   InputHTMLAttributes,
@@ -14,6 +14,7 @@ import { TipMenuItemProps } from "./tip-menu";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { SearchboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface SearchboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
@@ -46,6 +47,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
       resultMenu,
       showResultMenu,
       id,
+      className,
       ...props
     },
     ref
@@ -87,6 +89,7 @@ const Searchbox = forwardRef<Omit<HTMLInputElement, "style">, SearchboxProps>(
         $style={styles?.containerStyle}
         onFocus={() => setIsFocus(true)}
         onBlur={handleBlur}
+        className={applyClassName("searchbox", className)}
       >
         <SearchIcon
           $theme={searchboxTheme}

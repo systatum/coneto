@@ -83,7 +83,7 @@ const meta: Meta<typeof Dialog> = {
         type: { summary: "FigureProps" },
       },
     },
-    buttons: {
+    actions: {
       control: false,
       description: `
 List of action buttons displayed in the modal footer.
@@ -142,7 +142,7 @@ export const Default: Story = {
         "The project will be moved to the archive section and will no longer appear in your active projects list.",
       icon: { image: RiInboxArchiveFill, color: "#2563eb" },
       onClick: ({ closeDialog }) => closeDialog(),
-      buttons: [
+      actions: [
         { id: "cancel", caption: "Cancel" },
         { id: "archive", caption: "Archive", variant: "primary" },
       ],
@@ -191,7 +191,7 @@ export const NonClosable: Story = {
       onClick: ({ closeDialog }) => {
         closeDialog();
       },
-      buttons: [
+      actions: [
         {
           id: "no",
           caption: "No",

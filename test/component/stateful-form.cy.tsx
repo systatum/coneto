@@ -194,7 +194,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Pin",
     type: "pin",
     required: true,
-    pinboxProps: {
+    pinbox: {
       parts: PARTS_INPUT,
     },
   },
@@ -223,7 +223,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "combo",
     required: true,
     placeholder: "Select a fruit...",
-    comboboxProps: {
+    combobox: {
       options: FRUIT_OPTIONS,
     },
   },
@@ -245,7 +245,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "File",
     type: "file",
     required: true,
-    fileInputBoxProps: {
+    fileInputBox: {
       accept: "image/jpeg",
     },
   },
@@ -261,7 +261,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     type: "money",
     required: true,
     placeholder: "Enter amount",
-    moneyProps: {
+    money: {
       separator: "dot",
     },
   },
@@ -301,7 +301,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Chips",
     type: "chips",
     required: false,
-    chipsProps: {
+    chips: {
       options: BADGE_OPTIONS_SHORT,
       styles: {
         chipStyle: css`
@@ -325,7 +325,7 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Monetary Value",
     type: "capsule",
     required: true,
-    capsuleProps: {
+    capsule: {
       tabs: CAPSULE_TABS,
     },
   },
@@ -435,8 +435,8 @@ describe("StatefulForm", () => {
     context("when given value from selectedOptions", () => {
       const comboFieldWithValue = comboField.map((field) => ({
         ...field,
-        comboboxProps: {
-          ...field?.comboboxProps,
+        combobox: {
+          ...field?.combobox,
           selectedOptions: ["1"],
         },
       }));
@@ -729,7 +729,7 @@ describe("StatefulForm", () => {
             type: "combo",
             required: false,
             placeholder: "Select the quantization",
-            comboboxProps: {
+            combobox: {
               options: QUANTIZATION_TYPE_OPTIONS,
             },
           },
@@ -741,7 +741,7 @@ describe("StatefulForm", () => {
               required: false,
               placeholder: "Compilation effort",
               hidden: !isInt8Quantization,
-              comboboxProps: {
+              combobox: {
                 options: COMPILATION_EFFORT_OPTIONS,
               },
             },
@@ -760,7 +760,7 @@ describe("StatefulForm", () => {
             type: "combo",
             required: true,
             placeholder: "Select the target platform",
-            comboboxProps: {
+            combobox: {
               options: COMPILATION_TARGET_OPTIONS,
             },
           },
@@ -770,7 +770,7 @@ describe("StatefulForm", () => {
             type: "combo",
             required: false,
             placeholder: "Host architecture",
-            comboboxProps: {
+            combobox: {
               options: HOST_ARCHITECTURE_OPTIONS,
             },
           },
@@ -1090,7 +1090,7 @@ describe("StatefulForm", () => {
         type: "pin",
         required: false,
         helper: "This pinbox allows you to enter your PIN code.",
-        pinboxProps: {
+        pinbox: {
           parts: PARTS_INPUT,
         },
       },
@@ -1185,7 +1185,7 @@ describe("StatefulForm", () => {
                     type: "button",
                     onClick: () =>
                       console.log("this is callback from the top level"),
-                    buttonProps: {
+                    button: {
                       onClick: () =>
                         console.log("this is callback from the specific level"),
                     },
@@ -1314,7 +1314,7 @@ describe("StatefulForm", () => {
             type: "combo",
             required: false,
             placeholder: "Select a fruit...",
-            comboboxProps: {
+            combobox: {
               options: [],
             },
           },
@@ -1328,7 +1328,7 @@ describe("StatefulForm", () => {
             name: "capsule",
             type: "capsule",
             required: false,
-            capsuleProps: {
+            capsule: {
               tabs: CAPSULE_TABS,
             },
           },
@@ -1496,7 +1496,7 @@ describe("StatefulForm", () => {
           type: "combo",
           required: false,
           placeholder: "Select a fruit...",
-          comboboxProps: { options: FRUIT_OPTIONS },
+          combobox: { options: FRUIT_OPTIONS },
           id: "field-combo-🍎 choose one",
         },
         {
@@ -1505,7 +1505,7 @@ describe("StatefulForm", () => {
           type: "date",
           required: false,
           placeholder: "Select a date",
-          dateProps: { monthNames: MONTH_NAMES },
+          date: { monthNames: MONTH_NAMES },
           id: "field-date-📅 01/01/2026",
         },
         {
@@ -1914,7 +1914,7 @@ describe("StatefulForm", () => {
     context("when given background wheat", () => {
       const FIELD_STYLES = {
         text: {
-          textboxProps: {
+          textbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1923,7 +1923,7 @@ describe("StatefulForm", () => {
           },
         },
         email: {
-          textboxProps: {
+          textbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1932,7 +1932,7 @@ describe("StatefulForm", () => {
           },
         },
         number: {
-          textboxProps: {
+          textbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1941,7 +1941,7 @@ describe("StatefulForm", () => {
           },
         },
         password: {
-          textboxProps: {
+          textbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1950,7 +1950,7 @@ describe("StatefulForm", () => {
           },
         },
         textarea: {
-          textareaProps: {
+          textarea: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1959,7 +1959,7 @@ describe("StatefulForm", () => {
           },
         },
         time: {
-          timeboxProps: {
+          timebox: {
             styles: {
               inputWrapperStyle: css`
                 background-color: wheat;
@@ -1971,7 +1971,7 @@ describe("StatefulForm", () => {
           },
         },
         checkbox: {
-          checkboxProps: {
+          checkbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1980,7 +1980,7 @@ describe("StatefulForm", () => {
           },
         },
         color: {
-          colorboxProps: {
+          colorbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -1989,7 +1989,7 @@ describe("StatefulForm", () => {
           },
         },
         combo: {
-          comboboxProps: {
+          combobox: {
             styles: {
               selectboxStyle: css`
                 background-color: wheat;
@@ -1998,7 +1998,7 @@ describe("StatefulForm", () => {
           },
         },
         date: {
-          dateProps: {
+          date: {
             styles: {
               selectboxStyle: css`
                 background-color: wheat;
@@ -2007,7 +2007,7 @@ describe("StatefulForm", () => {
           },
         },
         file_drop_box: {
-          fileDropBoxProps: {
+          fileDropBox: {
             styles: {
               dragOverStyle: css`
                 background-color: wheat;
@@ -2016,7 +2016,7 @@ describe("StatefulForm", () => {
           },
         },
         file: {
-          fileInputBoxProps: {
+          fileInputBox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -2025,7 +2025,7 @@ describe("StatefulForm", () => {
           },
         },
         image: {
-          imageboxProps: {
+          imagebox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -2034,7 +2034,7 @@ describe("StatefulForm", () => {
           },
         },
         money: {
-          moneyProps: {
+          money: {
             styles: {
               inputWrapperStyle: css`
                 background-color: wheat;
@@ -2043,7 +2043,7 @@ describe("StatefulForm", () => {
           },
         },
         phone: {
-          phoneboxProps: {
+          phonebox: {
             styles: {
               inputWrapperStyle: css`
                 background-color: wheat;
@@ -2055,7 +2055,7 @@ describe("StatefulForm", () => {
           },
         },
         signbox: {
-          signboxProps: {
+          signbox: {
             styles: {
               self: css`
                 background-color: wheat;
@@ -2205,7 +2205,7 @@ describe("StatefulForm", () => {
           title: "Monetary Value",
           type: "capsule",
           required: false,
-          capsuleProps: {
+          capsule: {
             tabs: CAPSULE_TABS,
           },
         },
@@ -2373,7 +2373,7 @@ describe("StatefulForm", () => {
 
       cy.findAllByLabelText("stateful-form-row")
         .eq(5)
-        .should("have.css", "justify-content", "flex-end");
+        .should("have.css", "justify-content", "end");
     });
   });
 

@@ -1,6 +1,7 @@
 import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 export type KeynoteKeys<T> = Extract<keyof T, string>;
 
@@ -10,12 +11,16 @@ export interface KeynoteProps<T extends object> {
   keyLabels?: string[];
   children?: ReactNode;
   styles?: KeynoteStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface KeynotePointProps {
   label: string;
   children: ReactNode;
   styles?: KeynotePointStyles;
+  className?: string;
+  id?: string;
 }
 
 export interface KeynoteStyles extends KeynotePointStyles {
@@ -34,11 +39,18 @@ function Keynote<T extends object>({
   keyLabels,
   children,
   styles,
+  className,
+  id,
 }: KeynoteProps<T>) {
   const shouldRenderFromData = data && keys;
 
   return (
-    <KeynoteWrapper aria-label="keynote-wrapper" $style={styles?.self}>
+    <KeynoteWrapper
+      id={id}
+      className={applyClassName("keynote", className)}
+      aria-label="keynote-wrapper"
+      $style={styles?.self}
+    >
       {shouldRenderFromData
         ? keys?.map((key, index) => {
             const keyLabel = keyLabels?.[index] ?? String(key);
@@ -91,12 +103,20 @@ function renderValue(value: unknown): ReactNode {
   return "-";
 }
 
-function KeynotePoint({ label, children, styles }: KeynotePointProps) {
+function KeynotePoint({
+  label,
+  children,
+  styles,
+  className,
+  id,
+}: KeynotePointProps) {
   const { currentTheme } = useTheme();
   const keynoteTheme = currentTheme.keynote;
 
   return (
     <KeynotePointWrapper
+      id={id}
+      className={applyClassName("keynote-point", className)}
       aria-label="keynote-point-wrapper"
       $style={styles?.rowStyle}
     >

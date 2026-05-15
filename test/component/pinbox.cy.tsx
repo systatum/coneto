@@ -17,6 +17,89 @@ describe("Pinbox", () => {
     );
   }
 
+  context("indicators", () => {
+    beforeEach(() => {
+      cy.mount(<ProductPinbox parts={PARTS_INPUT} />);
+    });
+
+    it("not shows the indicator", () => {
+      cy.findAllByLabelText("pinbox-indicator").should("not.be.visible");
+    });
+
+    context("when clicking", () => {
+      it("shows the indicator", () => {
+        cy.findAllByLabelText("pinbox-indicator").should("not.be.visible");
+
+        cy.get("input").eq(1).realClick();
+
+        cy.findAllByLabelText("pinbox-indicator")
+          .eq(1)
+          .should("be.visible")
+          .and("have.css", "border-bottom", "0.5px solid rgb(97, 169, 249)");
+      });
+    });
+
+    context("when pasting alphabet", () => {
+      it("shows those alphabet", () => {
+        cy.get("input")
+          .eq(1)
+          .trigger("paste", {
+            clipboardData: {
+              getData: () => "abcd",
+            },
+          });
+
+        cy.get("input").eq(1).should("have.value", "A");
+        cy.get("input").eq(2).should("have.value", "B");
+        cy.get("input").eq(3).should("have.value", "C");
+        cy.get("input").eq(5).should("have.value", "D");
+      });
+
+      it("shows static still not replace", () => {
+        cy.get("input")
+          .eq(1)
+          .trigger("paste", {
+            clipboardData: {
+              getData: () => "abcd",
+            },
+          });
+
+        cy.get("input").eq(0).should("have.value", "S");
+        cy.get("input").eq(4).should("have.value", "-");
+      });
+    });
+
+    context("when pasting alphanumeric", () => {
+      it("shows those alphanumeric", () => {
+        cy.get("input")
+          .eq(1)
+          .trigger("paste", {
+            clipboardData: {
+              getData: () => "ab12",
+            },
+          });
+
+        cy.get("input").eq(1).should("have.value", "A");
+        cy.get("input").eq(2).should("have.value", "B");
+        cy.get("input").eq(3).should("have.value", "1");
+        cy.get("input").eq(5).should("have.value", "2");
+      });
+
+      it("shows static still not replace", () => {
+        cy.get("input")
+          .eq(1)
+          .trigger("paste", {
+            clipboardData: {
+              getData: () => "ab12",
+            },
+          });
+
+        cy.get("input").eq(0).should("have.value", "S");
+        cy.get("input").eq(4).should("have.value", "-");
+      });
+    });
+  });
+
   context("when pasting", () => {
     context("with alphanumeric parts", () => {
       beforeEach(() => {
