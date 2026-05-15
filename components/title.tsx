@@ -66,6 +66,7 @@ function Title({
       flex-direction: row;
       align-items: start;
       ${size === "lg" &&
+      leftSection &&
       css`
         padding-left: 8px;
       `};
