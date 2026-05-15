@@ -289,8 +289,6 @@ export const Navbar: Story = {
             type: "custom",
             render: (
               <Tooltip
-                showDialogOn="click"
-                hideDialogOn="click"
                 safeAreaAriaLabels={["launchpad"]}
                 styles={{
                   arrowStyle: css`
