@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import styled from "styled-components";
+import styled, { CSSProp } from "styled-components";
 
 export interface WheelValue {
   value: string;
@@ -18,18 +18,34 @@ export interface WheelProps {
   parts: WheelPart[];
   values: WheelValues;
   onChange: (values: WheelValues) => void;
+  styles?: WheelStyles;
 }
 
-function Wheel({ parts, values, onChange }: WheelProps) {
+export interface WheelStyles extends WheelColumnStyles {
+  containerStyle?: CSSProp;
+  fadeTopStyle?: CSSProp;
+  fadeBottomStyle?: CSSProp;
+  selectionOverlayStyle?: CSSProp;
+}
+
+function Wheel({ parts, values, onChange, styles }: WheelProps) {
+  const {
+    containerStyle,
+    fadeTopStyle,
+    fadeBottomStyle,
+    selectionOverlayStyle,
+    ...wheelColumnStyle
+  } = styles ?? {};
+
   const handleChange = (partId: string, newValue: string) => {
     onChange({ ...values, [partId]: newValue });
   };
 
   return (
-    <WheelWrapper>
-      <FadeTop />
-      <FadeBottom />
-      <SelectionOverlay />
+    <WheelWrapper $style={containerStyle}>
+      <FadeTop $style={fadeTopStyle} />
+      <FadeBottom $style={fadeBottomStyle} />
+      <SelectionOverlay $style={selectionOverlayStyle} />
       {parts.map((part, i) => (
         <>
           <WheelColumn
@@ -38,6 +54,7 @@ function Wheel({ parts, values, onChange }: WheelProps) {
             selectedValue={values[part.id]}
             onChange={(val) => handleChange(part.id, val)}
             width={part.width}
+            styles={wheelColumnStyle}
           />
           {i < parts.length - 1 && part.id === "hour" && (
             <Separator key={`sep-${i}`}>:</Separator>
@@ -48,7 +65,7 @@ function Wheel({ parts, values, onChange }: WheelProps) {
   );
 }
 
-const WheelWrapper = styled.div`
+const WheelWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -60,9 +77,10 @@ const WheelWrapper = styled.div`
   overflow: hidden;
   user-select: none;
   touch-action: none;
+  ${({ $style }) => $style}
 `;
 
-const SelectionOverlay = styled.div`
+const SelectionOverlay = styled.div<{ $style?: CSSProp }>`
   pointer-events: none;
   position: absolute;
   left: 0;
@@ -81,9 +99,10 @@ const SelectionOverlay = styled.div`
     background: rgba(255, 255, 255, 0.08);
     border-radius: 4px;
   }
+  ${({ $style }) => $style}
 `;
 
-const FadeTop = styled.div`
+const FadeTop = styled.div<{ $style?: CSSProp }>`
   pointer-events: none;
   position: absolute;
   left: 0;
@@ -92,9 +111,10 @@ const FadeTop = styled.div`
   height: 96px;
   background: linear-gradient(to bottom, #2c2c2e 10%, transparent 100%);
   z-index: 5;
+  ${({ $style }) => $style}
 `;
 
-const FadeBottom = styled.div`
+const FadeBottom = styled.div<{ $style?: CSSProp }>`
   pointer-events: none;
   position: absolute;
   left: 0;
@@ -103,10 +123,12 @@ const FadeBottom = styled.div`
   height: 96px;
   background: linear-gradient(to top, #2c2c2e 10%, transparent 100%);
   z-index: 5;
+  ${({ $style }) => $style}
 `;
 
 const ColumnWrapper = styled.div<{
   $width?: string;
+  $style?: CSSProp;
 }>`
   position: relative;
   width: ${({ $width }) => $width || "72px"};
@@ -116,10 +138,13 @@ const ColumnWrapper = styled.div<{
   &:active {
     cursor: grabbing;
   }
+
+  ${({ $style }) => $style}
 `;
 
 const ColumnList = styled.div<{
   $dragging?: boolean;
+  $style?: CSSProp;
 }>`
   position: absolute;
   top: 0;
@@ -130,10 +155,13 @@ const ColumnList = styled.div<{
     $dragging
       ? "none"
       : "transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94)"};
+
+  ${({ $style }) => $style}
 `;
 
 const Item = styled.div<{
   $selected?: boolean;
+  $style?: CSSProp;
 }>`
   height: 44px;
   display: flex;
@@ -148,6 +176,7 @@ const Item = styled.div<{
   transform-origin: center center;
   transition: color 0.15s ease;
   will-change: transform, color;
+  ${({ $style }) => $style}
 `;
 
 const Separator = styled.div`
@@ -167,6 +196,13 @@ interface WheelColumnProps {
   selectedValue: string;
   onChange: (value: string) => void;
   width?: string;
+  styles?: WheelColumnStyles;
+}
+
+interface WheelColumnStyles {
+  columnWrapperStyle?: CSSProp;
+  columnListStyle?: CSSProp;
+  itemStyle?: CSSProp;
 }
 
 function WheelColumn({
@@ -174,6 +210,7 @@ function WheelColumn({
   selectedValue,
   onChange,
   width,
+  styles,
 }: WheelColumnProps) {
   const selectedIndex = Math.max(
     0,
@@ -303,14 +340,20 @@ function WheelColumn({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
+      $style={styles?.columnWrapperStyle}
     >
       <ColumnList
+        $style={styles?.columnListStyle}
         $dragging={dragging}
         style={{ transform: `translateY(${translate}px)` }}
       >
         {paddedValues.map((item, i) => {
           return (
-            <Item key={i} $selected={item?.value === selectedValue}>
+            <Item
+              $style={styles?.itemStyle}
+              key={i}
+              $selected={item?.value === selectedValue}
+            >
               {item?.text ?? ""}
             </Item>
           );
