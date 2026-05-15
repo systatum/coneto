@@ -79,6 +79,7 @@ function Title({
   return (
     <TitleContainer
       id={id}
+      aria-label="title-container"
       className={applyClassName("title-container", className)}
       $style={css`
         flex-direction: ${isLarge ? "column" : "row"};
@@ -202,7 +203,9 @@ export interface TitleSection {
   styles?: TitleSectionStyles;
 }
 
-export type TitleSectionAction = ContextMenuAction;
+export interface TitleSectionAction extends ContextMenuAction {
+  icon: FigureProps;
+}
 
 export interface TitleSectionStyles {
   toggleActionStyle?: CSSProp;
