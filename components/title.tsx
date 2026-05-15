@@ -81,11 +81,6 @@ function Title({
   const hasText = text || subtitle || pretitle;
   const hasSections = leftSection || centerSection || rightSection;
 
-  const sectionInLarge = (style: CSSProp) => css`
-    gap: 6px;
-    ${style}
-  `;
-
   return (
     <TitleContainer
       id={id}
@@ -104,21 +99,21 @@ function Title({
                 size={size}
                 ariaLabel="title-left-section"
                 sections={leftSection}
-                style={sectionInLarge(styles?.leftSectionStyle)}
+                style={styles?.leftSectionStyle}
               />
 
               <BaseTitleSection
                 size={size}
                 ariaLabel="title-center-section"
                 sections={centerSection}
-                style={sectionInLarge(styles?.centerSectionStyle)}
+                style={styles?.centerSectionStyle}
               />
 
               <BaseTitleSection
                 size={size}
                 ariaLabel="title-right-section"
                 sections={rightSection}
-                style={sectionInLarge(styles?.rightSectionStyle)}
+                style={styles?.rightSectionStyle}
               />
             </SectionWrapper>
           )}
@@ -273,7 +268,8 @@ function BaseTitleSection({
                 self: css`
                   width: ${resolvedIconSize * 1.4}px;
                   height: ${resolvedIconSize * 1.4}px;
-                  padding: 10px;
+                  padding: 20px;
+                  border-radius: 10px;
 
                   ${section?.styles?.toggleActionStyle}
                 `,
@@ -528,8 +524,8 @@ const PRETITLE_SIZE: Record<TitleSize, ReturnType<typeof css>> = {
 };
 const ICON_SIZE: Record<TitleSize, number> = {
   [TitleSize.Small]: 24,
-  [TitleSize.Medium]: 30,
-  [TitleSize.Large]: 32,
+  [TitleSize.Medium]: 32,
+  [TitleSize.Large]: 36,
 };
 
 Title.Small = TitleSmall;
