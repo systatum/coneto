@@ -15,16 +15,22 @@ for (const file of files) {
     const fullPath = path.join(componentDir, file);
     let content = fs.readFileSync(fullPath, "utf8").trim();
 
-    const lines = content.split("\n");
+    let lines = content.split("\n");
     const hasUseClient = lines[0].trim() === useClientDirective;
 
-    const newLines = [...lines];
+    lines = lines.filter((line) => {
+      const t = line.trim();
+
+      if (/^console\.(log)\(/.test(t)) return false;
+
+      return true;
+    });
 
     if (!hasUseClient) {
-      newLines.unshift(useClientDirective);
+      lines.unshift(useClientDirective);
     }
 
-    const finalContent = newLines.join("\n");
+    const finalContent = lines.join("\n");
     fs.writeFileSync(fullPath, finalContent);
     console.log(`✅ Injected into: ${file}`);
   }
