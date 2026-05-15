@@ -77,6 +77,8 @@ const WheelWrapper = styled.div<{ $style?: CSSProp }>`
   overflow: hidden;
   user-select: none;
   touch-action: none;
+  width: fit-content;
+
   ${({ $style }) => $style}
 `;
 
