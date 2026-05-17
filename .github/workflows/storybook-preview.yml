@@ -26,6 +26,10 @@ jobs:
         with:
           version: latest
 
+      - name: Configure pnpm
+        run: |
+          pnpm config set only-built-dependencies "esbuild cypress"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
