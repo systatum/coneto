@@ -26,9 +26,11 @@ jobs:
         with:
           version: latest
 
-      - name: Configure pnpm
+      - name: Debug workspace
         run: |
-          pnpm config set only-built-dependencies "esbuild cypress"
+          pwd
+          ls -lah
+          cat pnpm-workspace.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
