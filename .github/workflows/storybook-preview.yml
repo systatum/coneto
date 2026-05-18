@@ -56,6 +56,7 @@ jobs:
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: |
-          netiploy deploy storybook-static to r2/systatum-dev/coneto \
+          netiploy deploy "storybook-static/*" to r2/systatum-dev/coneto \
             --subfolder=hash:${{ steps.deploy.outputs.subfolder }} \
-            --token="${{ secrets.R2_ACCESS_KEY_ID }}:${{ secrets.R2_SECRET_ACCESS_KEY }}"
+            --token="${{ secrets.R2_ACCESS_KEY_ID }}:${{ secrets.R2_SECRET_ACCESS_KEY }}" \
+            --public-url="https://dev.files.systatum.com"
