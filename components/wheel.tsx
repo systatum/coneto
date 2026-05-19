@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme, WheelThemeConfig } from "./../theme";
 
@@ -20,6 +20,7 @@ export interface WheelProps {
   values: WheelValues;
   onChange: (values: WheelValues) => void;
   styles?: WheelStyles;
+  mobile?: boolean;
 }
 
 export interface WheelStyles extends WheelColumnStyles {
@@ -30,7 +31,7 @@ export interface WheelStyles extends WheelColumnStyles {
   separatorStyle?: CSSProp;
 }
 
-function Wheel({ parts, values, onChange, styles }: WheelProps) {
+function Wheel({ parts, values, onChange, styles, mobile }: WheelProps) {
   const { currentTheme } = useTheme();
   const wheelTheme = currentTheme.wheel;
 
@@ -62,6 +63,7 @@ function Wheel({ parts, values, onChange, styles }: WheelProps) {
             width={part.width}
             styles={wheelColumnStyle}
             theme={wheelTheme}
+            mobile={mobile}
           />
           {i < parts.length - 1 && part.id === "hour" && (
             <Separator
@@ -238,6 +240,7 @@ interface WheelColumnProps {
   width?: string;
   styles?: WheelColumnStyles;
   theme?: WheelThemeConfig;
+  mobile?: boolean;
 }
 
 interface WheelColumnStyles {
@@ -253,6 +256,7 @@ function WheelColumn({
   width,
   styles,
   theme,
+  mobile,
 }: WheelColumnProps) {
   const selectedIndex = Math.max(
     0,
@@ -350,7 +354,7 @@ function WheelColumn({
   const wheelAccumulator = useRef(0);
 
   const onWheel = useCallback(
-    (e: WheelEvent) => {
+    (e: React.WheelEvent<HTMLDivElement>) => {
       e.preventDefault();
 
       wheelAccumulator.current += e.deltaY;
@@ -373,13 +377,6 @@ function WheelColumn({
     [selectedIndex, values, onChange]
   );
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, [onWheel]);
-
   const padCount = Math.floor(VISIBLE_ITEMS / 2);
   const paddedValues: (WheelValue | null)[] = [
     ...Array(padCount).fill(null),
@@ -391,6 +388,7 @@ function WheelColumn({
     <ColumnWrapper
       ref={containerRef}
       $width={width}
+      onWheel={mobile ? undefined : onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
