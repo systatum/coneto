@@ -17,7 +17,6 @@ Wheel provides a smooth picker interface for selecting values through drag, swip
 ### ✨ Features
 - 🎡 **Smooth wheel interactions**: Select values naturally using drag, swipe, or mouse wheel gestures.
 - ⏱ **Multi-column support**: Combine multiple wheel columns such as hour, minute, second, and AM/PM.
-- 📱 **Mobile support**: Optimized interaction behavior using the \`mobile\` prop.
 - 🎨 **Fully customizable styles**: Override overlays, fades, separators, columns, items, and wrappers.
 - 🌗 **Theme integration**: Works seamlessly with the Coneto theme system.
 
@@ -55,7 +54,6 @@ const [values, setValues] = useState({
 
 - Use the \`parts\` prop to define each wheel column and its available values.
 - Use \`values\` and \`onChange\` for controlled state management.
-- The \`mobile\` prop improves touch interaction behavior for mobile environments.
 - Includes built-in presets:
   - \`Wheel.hourOptions\`
   - \`Wheel.minuteOptions\`
@@ -85,11 +83,6 @@ Each part defines:
     onChange: {
       control: false,
       description: "Callback triggered whenever a wheel value changes.",
-    },
-    mobile: {
-      control: "boolean",
-      description:
-        "Enables interaction behavior optimized for mobile/touch environments.",
     },
     styles: {
       control: false,
@@ -142,55 +135,6 @@ export const Default: Story = {
           { id: "ampm", values: Wheel.ampmOptions, width: "64px" },
         ]}
         values={values}
-      />
-    );
-  },
-};
-
-export const Mobile: Story = {
-  render: () => {
-    const [values, setValues] = useState({
-      hour: "10",
-      minute: "30",
-      second: "30",
-      ampm: "am",
-    });
-
-    const hours = Array.from({ length: 12 }, (_, i) => {
-      const h = i + 1;
-      return { value: h.toString(), text: h.toString() };
-    });
-
-    const minutes = Array.from({ length: 60 }, (_, i) => ({
-      value: i.toString(),
-      text: i.toString().padStart(2, "0"),
-    }));
-
-    const seconds = minutes;
-
-    const ampm = [
-      { value: "am", text: "AM" },
-      { value: "pm", text: "PM" },
-    ];
-
-    return (
-      <Wheel
-        onChange={(values) => {
-          setValues({
-            ampm: values.ampm,
-            hour: values.hour,
-            minute: values.minute,
-            second: values.second,
-          });
-        }}
-        parts={[
-          { id: "hour", values: hours, width: "64px" },
-          { id: "minute", values: minutes, width: "72px" },
-          { id: "second", values: seconds, width: "72px" },
-          { id: "ampm", values: ampm, width: "64px" },
-        ]}
-        values={values}
-        mobile
       />
     );
   },
