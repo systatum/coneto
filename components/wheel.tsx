@@ -20,7 +20,6 @@ export interface WheelProps {
   values?: WheelValues;
   onChange?: (values: WheelValues) => void;
   styles?: WheelStyles;
-  mobile?: boolean;
 }
 
 export interface WheelStyles extends WheelColumnStyles {
@@ -31,7 +30,7 @@ export interface WheelStyles extends WheelColumnStyles {
   separatorStyle?: CSSProp;
 }
 
-function Wheel({ parts, values, onChange, styles, mobile }: WheelProps) {
+function Wheel({ parts, values, onChange, styles }: WheelProps) {
   const { currentTheme } = useTheme();
   const wheelTheme = currentTheme.wheel;
 
@@ -63,7 +62,6 @@ function Wheel({ parts, values, onChange, styles, mobile }: WheelProps) {
             width={part.width}
             styles={wheelColumnStyle}
             theme={wheelTheme}
-            mobile={mobile}
           />
           {i < parts.length - 1 &&
             (part?.id === "hour" ||
@@ -99,7 +97,7 @@ const WheelWrapper = styled.div<{
   overflow: hidden;
   user-select: none;
   touch-action: none;
-  width: fit-content;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
