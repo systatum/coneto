@@ -65,7 +65,7 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
           />
           {i < parts.length - 1 &&
             (part?.id === "hour" ||
-              (part?.id === "minute" && parts?.length > 3)) && (
+              (part?.id === "minute" && parts?.length > 2)) && (
               <Separator
                 aria-label="wheel-separator"
                 $theme={wheelTheme}
