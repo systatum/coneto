@@ -1,12 +1,13 @@
 name: Storybook Preview
 
 on:
-  push:
+  pull_request:
     branches:
       - "**"
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   deploy-preview:
@@ -56,7 +57,40 @@ jobs:
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: |
-          netiploy deploy "storybook-static/*" to r2/systatum-dev/coneto \
+          OUTPUT=$(netiploy deploy "storybook-static/*" to r2/systatum-dev/coneto \
             --subfolder=hash:${{ steps.deploy.outputs.subfolder }} \
             --token="${{ secrets.R2_ACCESS_KEY_ID }}:${{ secrets.R2_SECRET_ACCESS_KEY }}" \
-            --public-url="https://dev.files.systatum.com"
+            --public-url="https://dev.files.systatum.com")
+
+          echo "$OUTPUT"
+
+          PUBLIC_URL=$(echo "$OUTPUT" | grep "Public URL:" | sed 's/.*Public URL: //')
+
+          if [ -n "$PUBLIC_URL" ]; then
+            COMMENT="Coneto Storybook preview deployed to: $PUBLIC_URL"
+          else
+            COMMENT="Deployment finished, but no public URL was found.
+
+          Full output:
+
+          \`\`\`
+          $OUTPUT
+          \`\`\`"
+          fi
+
+          {
+            echo "comment<<EOF"
+            echo "$COMMENT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Send URL as PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `${{ steps.netiploy.outputs.comment }}`
+            })
