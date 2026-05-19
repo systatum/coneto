@@ -248,17 +248,14 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       hour: {
         id: "hour",
         values: Wheel.fullHourOptions,
-        width: "100%",
       },
       minute: {
         id: "minute",
         values: Wheel.minuteOptions,
-        width: "100%",
       },
       second: {
         id: "second",
         values: Wheel.secondOptions,
-        width: "100%",
       },
     };
 
