@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, Fragment } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme, WheelThemeConfig } from "./../theme";
 
@@ -53,9 +53,8 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
       <FadeBottom $theme={wheelTheme} $style={fadeBottomStyle} />
       <SelectionOverlay $theme={wheelTheme} $style={selectionOverlayStyle} />
       {parts?.map((part, i) => (
-        <>
+        <Fragment key={i}>
           <WheelColumn
-            key={i}
             values={part?.values}
             selectedValue={values?.[part?.id]}
             onChange={(val) => handleChange(part?.id, val)}
@@ -75,7 +74,7 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
                 :
               </Separator>
             )}
-        </>
+        </Fragment>
       ))}
     </WheelWrapper>
   );
@@ -354,8 +353,6 @@ function WheelColumn({
 
   const onWheel = useCallback(
     (e: React.WheelEvent<HTMLDivElement>) => {
-      e.preventDefault();
-
       wheelAccumulator.current += e.deltaY;
 
       const threshold = 40;
