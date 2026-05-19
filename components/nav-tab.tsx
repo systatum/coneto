@@ -418,7 +418,6 @@ function NavTab({
             {actions
               .filter((action) => !action?.hidden)
               .map((action, index) => {
-                console.log(action.className);
                 return (
                   <ActionButton
                     key={index}

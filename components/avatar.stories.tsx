@@ -282,7 +282,7 @@ export const WithImage: Story = {
     firstName: "John",
     lastName: "Doe",
     changeable: true,
-    profileImageUrl: "/avatar-1.jpg",
+    profileImageUrl: "./avatar-1.jpg",
     frameSize: 70,
   },
   render: (args: AvatarProps) => {
