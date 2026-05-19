@@ -54,6 +54,7 @@ jobs:
           echo "subfolder=$SAFE_SUBFOLDER" >> $GITHUB_OUTPUT
 
       - name: Deploy to R2
+        id: netiploy
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: |
