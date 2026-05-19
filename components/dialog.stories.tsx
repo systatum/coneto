@@ -147,6 +147,7 @@ export const Default: Story = {
         { id: "archive", caption: "Archive", variant: "primary" },
       ],
     };
+
     return (
       <div
         style={{
@@ -163,13 +164,23 @@ export const Default: Story = {
         <Button onClick={() => updateArgs({ isOpen: !isOpen })}>
           Open Dialog
         </Button>
-
         <Button
           onClick={() => {
             Dialog.show(args);
           }}
         >
           Open Dialog with show()
+        </Button>
+
+        <Button
+          onClick={() => {
+            Dialog.show({
+              ...args,
+              mobile: true,
+            });
+          }}
+        >
+          Open Dialog mobile-mode
         </Button>
       </div>
     );
