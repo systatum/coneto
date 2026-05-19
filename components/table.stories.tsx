@@ -1829,7 +1829,7 @@ export const WithRowGroup: Story = {
       {
         id: "backend",
         icon: {
-          image: "/backend.png",
+          image: "./backend.png",
         },
       },
     ];
