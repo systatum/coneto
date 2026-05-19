@@ -467,7 +467,7 @@ export const Navbar: Story = {
                   </Launchpad>
                 }
               >
-                <img src="/workaty.png" width={36} height={36} />
+                <img src="./workaty.png" width={36} height={36} />
               </Tooltip>
             ),
           },
