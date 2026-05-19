@@ -30,7 +30,7 @@ export interface WheelStyles extends WheelColumnStyles {
   separatorStyle?: CSSProp;
 }
 
-function Wheel({ parts, values, onChange, styles }: WheelProps) {
+function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
   const { currentTheme } = useTheme();
   const wheelTheme = currentTheme.wheel;
 
@@ -52,14 +52,14 @@ function Wheel({ parts, values, onChange, styles }: WheelProps) {
       <FadeTop $theme={wheelTheme} $style={fadeTopStyle} />
       <FadeBottom $theme={wheelTheme} $style={fadeBottomStyle} />
       <SelectionOverlay $theme={wheelTheme} $style={selectionOverlayStyle} />
-      {parts.map((part, i) => (
+      {parts?.map((part, i) => (
         <>
           <WheelColumn
-            key={part.id}
-            values={part.values}
-            selectedValue={values[part.id]}
-            onChange={(val) => handleChange(part.id, val)}
-            width={part.width}
+            key={i}
+            values={part?.values}
+            selectedValue={values?.[part?.id]}
+            onChange={(val) => handleChange(part?.id, val)}
+            width={part?.width}
             styles={wheelColumnStyle}
             theme={wheelTheme}
           />
@@ -241,7 +241,6 @@ interface WheelColumnProps {
   width?: string;
   styles?: WheelColumnStyles;
   theme?: WheelThemeConfig;
-  mobile?: boolean;
 }
 
 interface WheelColumnStyles {
@@ -251,17 +250,16 @@ interface WheelColumnStyles {
 }
 
 function WheelColumn({
-  values,
+  values = [],
   selectedValue,
   onChange,
   width,
   styles,
   theme,
-  mobile,
 }: WheelColumnProps) {
   const selectedIndex = Math.max(
     0,
-    values.findIndex((v) => v.value === selectedValue)
+    values?.findIndex((v) => v.value === selectedValue)
   );
 
   const [offset, setOffset] = useState<number>(0);
@@ -389,7 +387,7 @@ function WheelColumn({
     <ColumnWrapper
       ref={containerRef}
       $width={width}
-      onWheel={mobile ? undefined : onWheel}
+      onWheel={onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -403,7 +401,7 @@ function WheelColumn({
         style={{ transform: `translateY(${translate}px)` }}
         aria-label="wheel-column-list"
       >
-        {paddedValues.map((item, i) => {
+        {paddedValues?.map((item, i) => {
           return (
             <Item
               $theme={theme}
@@ -422,6 +420,11 @@ function WheelColumn({
   );
 }
 
+const fullHours = Array.from({ length: 23 }, (_, i) => {
+  const h = i + 1;
+  return { value: h.toString(), text: h.toString() };
+});
+
 const hours = Array.from({ length: 12 }, (_, i) => {
   const h = i + 1;
   return { value: h.toString(), text: h.toString() };
@@ -439,6 +442,7 @@ const ampm = [
   { value: "pm", text: "PM" },
 ];
 
+Wheel.fullHourOptions = fullHours;
 Wheel.hourOptions = hours;
 Wheel.minuteOptions = minutes;
 Wheel.secondOptions = seconds;
