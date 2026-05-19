@@ -78,7 +78,7 @@ describe("Dialog", () => {
         />
       );
 
-      cy.findByLabelText("dialog-icon")
+      cy.findByLabelText("title-icon")
         .should("exist")
         .and("have.css", "width", "28px");
     });
@@ -94,7 +94,7 @@ describe("Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "width", "35px");
       });
@@ -111,7 +111,7 @@ describe("Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "color", "rgb(255, 0, 0)")
           .parent()
