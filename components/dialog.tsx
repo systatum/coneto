@@ -223,6 +223,8 @@ function Dialog({
                     toggleActionStyle: css`
                       width: 20px;
                       height: 20px;
+                      padding: 10px;
+                      border-radius: 4px;
                     `,
                   },
                   type: "actions",
