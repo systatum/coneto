@@ -40,7 +40,6 @@ interface BaseTimeboxProps extends Omit<
 export interface TimeboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
-  inputGroupStyle?: CSSProp;
 }
 
 export interface TimeboxPlaceholder {
@@ -274,9 +273,9 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
     };
 
     return (
-      <InputWrapper $style={styles?.inputWrapperStyle}>
+      <>
         <InputGroup
-          $style={styles?.inputGroupStyle}
+          $style={styles?.inputWrapperStyle}
           $focused={isFocused}
           $error={!!showError}
           $disabled={disabled}
@@ -457,7 +456,11 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
                 : css`
                     display: none;
                   `};
+              position: fixed;
+              bottom: 0;
+              left: 0;
               border-radius: 2px;
+              padding: 20px;
             `,
           }}
           onChange={(value) => {
@@ -474,18 +477,10 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
               : {}
           }
         />
-      </InputWrapper>
+      </>
     );
   }
 );
-
-const InputWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  ${({ $style }) => $style}
-`;
 
 export interface TimeboxProps
   extends
