@@ -71,10 +71,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
     const { currentTheme } = useTheme();
     const timeboxTheme = currentTheme?.timebox;
 
-    const [activePart, setActivePart] = useState<
-      "hour" | "minute" | "second" | "undefined"
-    >("undefined");
-
     const {
       hour: placeholderHour = "HH",
       minute: placeholderMinute = "MM",
@@ -266,12 +262,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       },
     };
 
-    const wheelValues = {
-      hour,
-      minute,
-      second,
-    };
-
     return (
       <>
         <InputGroup
@@ -287,7 +277,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            setActivePart("undefined");
 
             if (blurTimeout.current) clearTimeout(blurTimeout.current);
             blurTimeout.current = setTimeout(() => {
@@ -318,7 +307,6 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             $theme={timeboxTheme}
             onFocus={() => {
               setIsFocused(true);
-              setActivePart("hour");
 
               if (!hasBeenFocused.current) {
                 hasBeenFocused.current = true;
@@ -361,11 +349,9 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             onChange={(e) => handleChange("minute", e.target.value)}
             onFocus={() => {
               setIsFocused(true);
-              setActivePart("minute");
             }}
             onBlur={() => {
               setIsFocused(false);
-              setActivePart("undefined");
             }}
             min={0}
             max={59}
@@ -415,11 +401,9 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
                 onChange={(e) => handleChange("second", e.target.value)}
                 onFocus={() => {
                   setIsFocused(true);
-                  setActivePart("second");
                 }}
                 onBlur={() => {
                   setIsFocused(false);
-                  setActivePart("undefined");
                 }}
                 min={0}
                 max={59}
@@ -449,7 +433,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         <Wheel
           styles={{
             containerStyle: css`
-              ${mobile && activePart !== "undefined"
+              ${mobile && isFocused
                 ? css`
                     display: flex;
                   `
@@ -464,18 +448,23 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             `,
           }}
           onChange={(value) => {
-            if (activePart !== "undefined") {
-              handleChange(activePart, value[activePart]);
+            if (value.hour !== undefined) handleChange("hour", value.hour);
+            if (value.minute !== undefined)
+              handleChange("minute", value.minute);
+            if (withSeconds && value.second !== undefined) {
+              handleChange("second", value.second);
             }
           }}
-          parts={activePart ? [wheelParts[activePart]] : []}
-          values={
-            activePart
-              ? {
-                  [activePart]: wheelValues[activePart],
-                }
-              : {}
-          }
+          parts={[
+            wheelParts.hour,
+            wheelParts.minute,
+            ...(withSeconds ? [wheelParts.second] : []),
+          ]}
+          values={{
+            hour,
+            minute,
+            ...(withSeconds ? { second } : {}),
+          }}
         />
       </>
     );
