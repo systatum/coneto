@@ -427,43 +427,46 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           )}
         </InputGroup>
 
-        <Wheel
-          styles={{
-            containerStyle: css`
-              ${mobile && isFocused
-                ? css`
-                    display: flex;
-                  `
-                : css`
-                    display: none;
-                  `};
-              position: fixed;
-              bottom: 10px;
-              left: 50%;
-              transform: translateX(-50%);
-              padding: 20px;
-              width: 96dvw;
-            `,
-          }}
-          onChange={(value) => {
-            if (value.hour !== undefined) handleChange("hour", value.hour);
-            if (value.minute !== undefined)
-              handleChange("minute", value.minute);
-            if (withSeconds && value.second !== undefined) {
-              handleChange("second", value.second);
-            }
-          }}
-          parts={[
-            wheelParts.hour,
-            wheelParts.minute,
-            ...(withSeconds ? [wheelParts.second] : []),
-          ]}
-          values={{
-            hour,
-            minute,
-            ...(withSeconds ? { second } : {}),
-          }}
-        />
+        {mobile && (
+          <Wheel
+            styles={{
+              containerStyle: css`
+                ${isFocused
+                  ? css`
+                      display: flex;
+                    `
+                  : css`
+                      display: none;
+                    `};
+                position: fixed;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 20px;
+                width: 96dvw;
+                z-index: 9992999;
+              `,
+            }}
+            onChange={(value) => {
+              if (value.hour !== undefined) handleChange("hour", value.hour);
+              if (value.minute !== undefined)
+                handleChange("minute", value.minute);
+              if (withSeconds && value.second !== undefined) {
+                handleChange("second", value.second);
+              }
+            }}
+            parts={[
+              wheelParts.hour,
+              wheelParts.minute,
+              ...(withSeconds ? [wheelParts.second] : []),
+            ]}
+            values={{
+              hour,
+              minute,
+              ...(withSeconds ? { second } : {}),
+            }}
+          />
+        )}
       </>
     );
   }
