@@ -669,12 +669,12 @@ const darkTable = createTableTheme(darkBody, {
   headerBorderColor: "rgb(39, 39, 48)",
 
   rowGroupBackgroundColor: "rgb(31, 31, 31)",
+  rowGroupSubtitleTextColor: "#838891",
 
   rowBackgroundColor: "rgb(26, 26, 26)",
   rowBorderColor: "rgb(39, 39, 48)",
   rowHoverBackgroundColor: "#292c2e",
   rowSelectedBackgroundColor: "#303438",
-  rowSubtitleTextColor: "#d1d5db",
   rowContentBackgroundColor:
     "linear-gradient(to bottom, #1a1a1a 0%, #222222 35%, #1f1f1f 100%)",
   rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",

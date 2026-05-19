@@ -235,10 +235,9 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
+  const flatChildren = resolveChildren(children);
 
-  const rowChildren = Children.map(children, (child, index) => {
-    if (!isValidElement<TableRowProps | TableRowGroupProps>(child)) return null;
-
+  const rowChildren = flatChildren.map((child, index) => {
     const hasRowGroup = child.type === TableRowGroup;
     const hasRow = child.type === TableRow;
 
@@ -910,7 +909,7 @@ function TableRowGroup({
 
   const { dragItem, setDragItem, onDragged } = useContext(DnDContext);
 
-  const rowChildren = Children.map(children, (child, index) => {
+  const rowChildren = resolveRowChildren(children).map((child, index) => {
     if (!isValidElement<TableRowProps & TableRowOpenWithId>(child)) return null;
     if (child.type === TableRow) {
       const props = child.props as TableRowProps & TableRowOpenWithId;
@@ -1003,7 +1002,7 @@ function TableRowGroup({
             <TableRowGroupSubtitle
               aria-label="table-row-group-subtitle"
               $style={styles?.subtitleStyle}
-              color={tableTheme?.rowSubtitleTextColor}
+              $color={tableTheme?.rowGroupSubtitleTextColor}
             >
               {subtitle}
             </TableRowGroupSubtitle>
@@ -1697,6 +1696,52 @@ function getRowActionsFromChildren(children: ReactNode): TipMenuItemProps[] {
         (action): action is TipMenuItemProps => Boolean(action)
       );
       result.push(...validActions);
+    }
+  });
+
+  return result;
+}
+
+/**
+ * Recursively resolves React children into a flat array of TableRow or TableRowGroup elements.
+ *
+ * This allows wrapper components (e.g. <GetRows />, <Testing />) to be passed as children
+ * to <Table> and still be recognized correctly, instead of returning null.
+ */
+function resolveChildren(
+  children: ReactNode
+): ReactElement<TableRowProps | TableRowGroupProps>[] {
+  const result: ReactElement<TableRowProps | TableRowGroupProps>[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    if (child.type === TableRow || child.type === TableRowGroup) {
+      result.push(child as ReactElement<TableRowProps | TableRowGroupProps>);
+    } else if (typeof child.type === "function") {
+      // Unwrap wrapper components recursively until we find TableRow or TableRowGroup elements
+      const rendered = (child.type as Function)(child.props);
+      result.push(...resolveChildren(rendered));
+    }
+  });
+
+  return result;
+}
+
+function resolveRowChildren(
+  children: ReactNode
+): ReactElement<TableRowProps>[] {
+  const result: ReactElement<TableRowProps>[] = [];
+
+  Children.forEach(children, (child) => {
+    if (!isValidElement(child)) return;
+
+    if (child.type === TableRow) {
+      result.push(child as ReactElement<TableRowProps>);
+    } else if (typeof child.type === "function") {
+      // Unwrap wrapper components recursively until we find TableRow elements
+      const rendered = (child.type as Function)(child.props);
+      result.push(...resolveRowChildren(rendered));
     }
   });
 

@@ -22,7 +22,7 @@ import { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 interface TableSummaryProps {
   id?: string;
@@ -185,6 +185,78 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("when children with function", () => {
+    type SeparateMode = "row" | "group" | "group-separate-row";
+
+    function TableSeparateContent({ mode = "row" }: { mode?: SeparateMode }) {
+      const columns: TableColumn[] = [
+        { id: "itemId", caption: "Item ID", sortable: true },
+        { id: "name", caption: "Name", sortable: true, width: "60%" },
+      ];
+
+      function TableSeparateRow({ test }: { test: boolean }) {
+        return <Table.Row content={["02", "Test 123"]} />;
+      }
+
+      function TableSeparateGroup({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
+            <Table.Row content={["02", "Test 123"]} />
+          </Table.Row.Group>
+        );
+      }
+
+      /**
+       * very rare case, but just to make sure that when both separate group
+       * and row function are given, it should still render the content correctly/
+       */
+      function TableSeparateGroupSeparateRow({ test }: { test: boolean }) {
+        return (
+          <Table.Row.Group title="Group Title" subtitle="Group Subtitle">
+            <TableSeparateRow test={true} />
+          </Table.Row.Group>
+        );
+      }
+
+      const contentMap: Record<SeparateMode, ReactNode> = {
+        row: <TableSeparateRow test={true} />,
+        group: <TableSeparateGroup test={true} />,
+        "group-separate-row": <TableSeparateGroupSeparateRow test={true} />,
+      };
+
+      return <Table columns={columns}>{contentMap[mode]}</Table>;
+    }
+
+    it("should still resolve and render the row content correctly", () => {
+      cy.mount(<TableSeparateContent />);
+
+      cy.findByText("02").should("exist");
+      cy.findByText("Test 123").should("exist");
+    });
+
+    context("with separate group function", () => {
+      it("should render the group title and subtitle", () => {
+        cy.mount(<TableSeparateContent mode="group" />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+      });
+    });
+
+    context("when separate group, and separate row function", () => {
+      it("should render the group text, and row content", () => {
+        cy.mount(<TableSeparateContent mode="group-separate-row" />);
+
+        cy.findByText("Group Title").should("exist");
+        cy.findByText("Group Subtitle").should("exist");
+
+        cy.findByText("02").should("exist");
+        cy.findByText("Test 123").should("exist");
+      });
+    });
+  });
+
   context("isLoading", () => {
     context("when given true", () => {
       it("renders spinner ~14px from top and left relative to overlay", () => {

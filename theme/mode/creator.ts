@@ -1454,10 +1454,10 @@ export function createTableTheme(
     headerBorderColor: "rgb(229, 231, 235)",
 
     rowGroupBackgroundColor: "rgb(249, 250, 251)",
+    rowGroupSubtitleTextColor: "#1f2937",
 
     rowBackgroundColor: "rgb(249, 250, 251)",
     rowBorderColor: "#e5e7eb",
-    rowSubtitleTextColor: "#1f2937",
     rowHoverBackgroundColor: "#e7f2fc",
     rowSelectedBackgroundColor: "#dbeafe",
     rowContentBackgroundColor:

@@ -609,8 +609,8 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   headerBorderColor?: string;
 
   rowGroupBackgroundColor?: string;
+  rowGroupSubtitleTextColor?: string;
 
-  rowSubtitleTextColor?: string;
   rowBackgroundColor?: string;
   rowBorderColor?: string;
   rowHoverBackgroundColor?: string;
