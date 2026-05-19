@@ -54,6 +54,7 @@ export interface DialogProps {
   icon?: FigureProps;
   onClosed?: () => void;
   className?: string;
+  mobile?: boolean;
   id?: string;
 }
 
@@ -70,8 +71,7 @@ export interface DialogStyles {
 }
 
 export interface DialogAction
-  extends Omit<BaseAction, "onClick">,
-    Pick<ButtonVariants, "variant"> {
+  extends Omit<BaseAction, "onClick">, Pick<ButtonVariants, "variant"> {
   id: string;
   isLoading?: boolean;
   styles?: ButtonStyles;
@@ -91,9 +91,10 @@ function Dialog({
   icon,
   onClosed,
   className,
+  mobile,
   id,
 }: DialogProps) {
-  const { currentTheme, mode } = useTheme();
+  const { currentTheme } = useTheme();
   const dialogTheme = currentTheme.dialog;
 
   const [isVisible, setIsVisible] = useState(false);
@@ -158,7 +159,14 @@ function Dialog({
         $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}
-        $style={styles?.containerStyle}
+        $style={css`
+          ${mobile &&
+          css`
+            padding: 0px;
+            gap: 0px;
+          `}
+          ${styles?.containerStyle};
+        `}
       >
         {(icon || title || subtitle) && (
           <Title
@@ -170,6 +178,10 @@ function Dialog({
                 ${styles?.headerStyle}
               `,
               textWrapperStyle: css`
+                ${mobile &&
+                css`
+                  gap: 4px;
+                `};
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
@@ -196,6 +208,12 @@ function Dialog({
                 cursor: pointer;
                 border-radius: 2px;
                 padding: 2px;
+              `,
+              containerStyle: css`
+                ${mobile &&
+                css`
+                  padding: 20px 30px;
+                `};
               `,
             }}
             rightSection={
@@ -231,7 +249,15 @@ function Dialog({
         )}
 
         {actions && (
-          <Footer $style={styles?.actionWrapperStyle}>
+          <Footer
+            $style={css`
+              ${mobile &&
+              css`
+                gap: 0px;
+              `};
+              ${styles?.actionWrapperStyle}
+            `}
+          >
             {actions.map((action, index) => {
               if (action.disabled) return;
               return (
@@ -245,8 +271,22 @@ function Dialog({
                   }
                   styles={{
                     ...action?.styles,
+                    containerStyle: css`
+                      ${mobile &&
+                      css`
+                        width: 100%;
+                      `};
+                      ${action?.styles?.containerStyle};
+                    `,
                     self: css`
+                      ${mobile &&
+                      css`
+                        width: 100%;
+                        height: 44px;
+                        border-radius: 0px;
+                      `};
                       min-width: 100px;
+
                       ${action?.styles?.self}
                     `,
                   }}
