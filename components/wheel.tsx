@@ -16,9 +16,9 @@ export interface WheelPart {
 export type WheelValues = Record<string, string>;
 
 export interface WheelProps {
-  parts: WheelPart[];
-  values: WheelValues;
-  onChange: (values: WheelValues) => void;
+  parts?: WheelPart[];
+  values?: WheelValues;
+  onChange?: (values: WheelValues) => void;
   styles?: WheelStyles;
   mobile?: boolean;
 }
@@ -65,15 +65,18 @@ function Wheel({ parts, values, onChange, styles, mobile }: WheelProps) {
             theme={wheelTheme}
             mobile={mobile}
           />
-          {i < parts.length - 1 && part.id === "hour" && (
-            <Separator
-              $theme={wheelTheme}
-              $style={separatorStyle}
-              key={`sep-${i}`}
-            >
-              :
-            </Separator>
-          )}
+          {i < parts.length - 1 &&
+            (part?.id === "hour" ||
+              (part?.id === "minute" && parts?.length > 3)) && (
+              <Separator
+                aria-label="wheel-separator"
+                $theme={wheelTheme}
+                $style={separatorStyle}
+                key={`sep-${i}`}
+              >
+                :
+              </Separator>
+            )}
         </>
       ))}
     </WheelWrapper>
@@ -394,11 +397,13 @@ function WheelColumn({
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       $style={styles?.columnWrapperStyle}
+      aria-label="wheel-column-container"
     >
       <ColumnList
         $style={styles?.columnListStyle}
         $dragging={dragging}
         style={{ transform: `translateY(${translate}px)` }}
+        aria-label="wheel-column-list"
       >
         {paddedValues.map((item, i) => {
           return (
@@ -407,6 +412,8 @@ function WheelColumn({
               $style={styles?.itemStyle}
               key={i}
               $selected={item?.value === selectedValue}
+              aria-selected={item?.value === selectedValue}
+              aria-label="wheel-column-item"
             >
               {item?.text ?? ""}
             </Item>
@@ -416,5 +423,27 @@ function WheelColumn({
     </ColumnWrapper>
   );
 }
+
+const hours = Array.from({ length: 12 }, (_, i) => {
+  const h = i + 1;
+  return { value: h.toString(), text: h.toString() };
+});
+
+const minutes = Array.from({ length: 60 }, (_, i) => ({
+  value: i.toString(),
+  text: i.toString().padStart(2, "0"),
+}));
+
+const seconds = minutes;
+
+const ampm = [
+  { value: "am", text: "AM" },
+  { value: "pm", text: "PM" },
+];
+
+Wheel.hourOptions = hours;
+Wheel.minuteOptions = minutes;
+Wheel.secondOptions = seconds;
+Wheel.ampmOptions = ampm;
 
 export { Wheel };
