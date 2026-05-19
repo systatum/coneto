@@ -56,7 +56,10 @@ function transformImports(content, fileDir) {
       },
     },
     {
-      // handle: export * from "..." with regex
+      /**
+       * export * from "./x"
+       * export * from "../x"
+       */
       regex: /export\s+\*\s+from\s+["']((?:\.\/|\.\.\/)[^"'?#]+)["']/g,
       replacer: (_, importPath) => {
         const resolved = resolveImport(importPath, fileDir);
@@ -76,20 +79,41 @@ function processFile(fullPath) {
   let content = fs.readFileSync(fullPath, "utf8").trim();
 
   // Inject "use client" only for component files
-  if (fullPath.includes(`${path.sep}components${path.sep}`)) {
-    const lines = content.split("\n");
-    const hasUseClient = lines[0]?.trim() === useClientDirective;
+  if (!fullPath.includes(`${path.sep}components${path.sep}`)) {
+    return;
+  }
 
-    if (!hasUseClient) {
-      lines.unshift(useClientDirective);
-      content = lines.join("\n");
-    }
+  const relativePath = path.relative(distDir, fullPath);
+
+  // Prevent console.log in production build
+  const hasConsoleLog = /console\.log\s*\(/.test(content);
+
+  if (hasConsoleLog) {
+    console.error(`❌ Build failed: console.log found in ${relativePath}`);
+
+    process.exit(1);
+  }
+
+  let lines = content.split("\n");
+
+  // Inject "use client"
+  const hasUseClient = lines[0]?.trim() === useClientDirective;
+
+  if (!hasUseClient) {
+    lines.unshift(useClientDirective);
+
+    content = lines.join("\n");
+
+    console.log(`✅ Injected "use client" into: ${relativePath}`);
   }
 
   // Fix ESM imports
   content = transformImports(content, path.dirname(fullPath));
 
+  // Write final file
   fs.writeFileSync(fullPath, content);
+
+  console.log(`✅ Processed: ${relativePath}`);
 }
 
 function walk(dir) {

@@ -352,7 +352,7 @@ export const PDF: Story = {
     const source = useMemo<DocumentSource>(
       () =>
         ({ pdf }) =>
-          pdf("/sample.pdf"),
+          pdf("./sample.pdf"),
       []
     );
 
@@ -596,7 +596,7 @@ export const WithFile: Story = {
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
     useEffect(() => {
-      fetch("/architecture.jpg")
+      fetch("./architecture.jpg")
         .then((res) => res.blob())
         .then((blob) => {
           const f = new File([blob], "architecture.jpg", {

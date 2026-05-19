@@ -300,6 +300,10 @@ const SplitPaneCell = forwardRef<HTMLDivElement, SplitPaneCellProps>(
             {filteredActions.map((action, index) => (
               <Button
                 {...action}
+                icon={{
+                  ...action.icon,
+                  image: action?.icon?.image ?? RiCloseLine,
+                }}
                 variant="ghost"
                 key={index}
                 aria-label="split-pane-button"
@@ -328,14 +332,7 @@ const SplitPaneCell = forwardRef<HTMLDivElement, SplitPaneCellProps>(
                     ${action?.styles?.self}
                   `,
                 }}
-              >
-                {action.icon && (
-                  <Figure
-                    {...action.icon}
-                    image={action?.icon?.image ?? RiCloseLine}
-                  />
-                )}
-              </Button>
+              />
             ))}
           </ActionContainer>
         )}
