@@ -347,15 +347,28 @@ function WheelColumn({
     [offset, clampAndCommit]
   );
 
+  const wheelAccumulator = useRef(0);
+
   const onWheel = useCallback(
     (e: WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? 1 : -1;
-      const next = Math.max(
-        0,
-        Math.min(values.length - 1, selectedIndex + delta)
-      );
-      onChange(values[next].value);
+
+      wheelAccumulator.current += e.deltaY;
+
+      const threshold = 40;
+
+      if (Math.abs(wheelAccumulator.current) >= threshold) {
+        const direction = wheelAccumulator.current > 0 ? 1 : -1;
+
+        const next = Math.max(
+          0,
+          Math.min(values.length - 1, selectedIndex + direction)
+        );
+
+        onChange(values[next].value);
+
+        wheelAccumulator.current = 0;
+      }
     },
     [selectedIndex, values, onChange]
   );
