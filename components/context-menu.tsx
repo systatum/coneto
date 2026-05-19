@@ -72,26 +72,33 @@ export default function ContextMenu({
   };
 
   if (actions.length <= maxActionsBeforeCollapsing) {
-    return actions.map((action, index) => (
-      <Button
-        {...buttonProps}
-        key={index}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (action.onClick) {
-            action.onClick(e);
-          }
-        }}
-        onMouseDown={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-        }}
-        onOpen={onOpen}
-        title={action.caption}
-        aria-label="action-button"
-        icon={action?.icon}
-      />
-    ));
+    return actions.map((action, index) => {
+      const resolvedIconSize = action.icon?.size ?? iconSize;
+      return (
+        <Button
+          {...buttonProps}
+          key={index}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (action.onClick) {
+              action.onClick(e);
+            }
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onOpen={onOpen}
+          title={action.caption}
+          aria-label="action-button"
+          icon={{
+            ...action.icon,
+            image: action.icon?.image,
+            size: resolvedIconSize,
+          }}
+        />
+      );
+    });
   }
 
   return (
