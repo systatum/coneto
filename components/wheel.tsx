@@ -48,7 +48,11 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
   };
 
   return (
-    <WheelWrapper $theme={wheelTheme} $style={containerStyle}>
+    <WheelWrapper
+      aria-label="wheel-container"
+      $theme={wheelTheme}
+      $style={containerStyle}
+    >
       <FadeTop $theme={wheelTheme} $style={fadeTopStyle} />
       <FadeBottom $theme={wheelTheme} $style={fadeBottomStyle} />
       <SelectionOverlay $theme={wheelTheme} $style={selectionOverlayStyle} />
@@ -64,7 +68,8 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
           />
           {i < parts.length - 1 &&
             (part?.id === "hour" ||
-              (part?.id === "minute" && parts?.length > 2)) && (
+              (part?.id === "minute" &&
+                parts.some((p) => p.id === "second"))) && (
               <Separator
                 aria-label="wheel-separator"
                 $theme={wheelTheme}
@@ -417,13 +422,13 @@ function WheelColumn({
   );
 }
 
-const fullHours = Array.from({ length: 23 }, (_, i) => {
-  const h = i + 1;
+const fullHours = Array.from({ length: 24 }, (_, i) => {
+  const h = i;
   return { value: h.toString(), text: h.toString() };
 });
 
-const hours = Array.from({ length: 12 }, (_, i) => {
-  const h = i + 1;
+const hours = Array.from({ length: 13 }, (_, i) => {
+  const h = i;
   return { value: h.toString(), text: h.toString() };
 });
 
