@@ -10,9 +10,104 @@ const meta: Meta<typeof Wheel> = {
     docs: {
       description: {
         component: `
+Wheel provides a smooth picker interface for selecting values through drag, swipe, and scroll interactions. It supports multiple columns such as hours, minutes, seconds, and AM/PM, while remaining fully customizable for different layouts and experiences.
 
+---
+
+### ✨ Features
+- 🎡 **Smooth wheel interactions**: Select values naturally using drag, swipe, or mouse wheel gestures.
+- ⏱ **Multi-column support**: Combine multiple wheel columns such as hour, minute, second, and AM/PM.
+- 📱 **Mobile support**: Optimized interaction behavior using the \`mobile\` prop.
+- 🎨 **Fully customizable styles**: Override overlays, fades, separators, columns, items, and wrappers.
+- 🌗 **Theme integration**: Works seamlessly with the Coneto theme system.
+
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+const [values, setValues] = useState({
+  hour: "10",
+  minute: "30",
+  period: "am",
+});
+
+<Wheel
+  values={values}
+  onChange={setValues}
+  parts={[
+    {
+      id: "hour",
+      values: Wheel.hourOptions,
+    },
+    {
+      id: "minute",
+      values: Wheel.minuteOptions,
+    },
+    {
+      id: "period",
+      values: Wheel.ampmOptions,
+      width: "80px",
+    },
+  ]}
+/>
+\`\`\`
+
+- Use the \`parts\` prop to define each wheel column and its available values.
+- Use \`values\` and \`onChange\` for controlled state management.
+- The \`mobile\` prop improves touch interaction behavior for mobile environments.
+- Includes built-in presets:
+  - \`Wheel.hourOptions\`
+  - \`Wheel.minuteOptions\`
+  - \`Wheel.secondOptions\`
+  - \`Wheel.ampmOptions\`
 `,
       },
+    },
+  },
+  argTypes: {
+    parts: {
+      control: false,
+      description: `
+Array of wheel column configurations.
+
+Each part defines:
+- **id**: Unique identifier for the wheel column.
+- **values**: Array of selectable options.
+- **width**: Optional custom width for the column.
+`,
+    },
+    values: {
+      control: "object",
+      description:
+        "Controlled values object where each key corresponds to a wheel part id.",
+    },
+    onChange: {
+      control: false,
+      description: "Callback triggered whenever a wheel value changes.",
+    },
+    mobile: {
+      control: "boolean",
+      description:
+        "Enables interaction behavior optimized for mobile/touch environments.",
+    },
+    styles: {
+      control: false,
+      description: `
+Custom styles for the Wheel component.
+
+Available style overrides:
+- **containerStyle**: Root wheel wrapper.
+- **fadeTopStyle**: Top fade overlay.
+- **fadeBottomStyle**: Bottom fade overlay.
+- **selectionOverlayStyle**: Selected item overlay.
+- **separatorStyle**: Separator between wheel columns.
+- **columnWrapperStyle**: Individual column wrapper.
+- **columnListStyle**: Inner scrollable column list.
+- **itemStyle**: Individual wheel item styles.
+
+Each field accepts a \`CSSProp\` for full styled-components customization.
+`,
     },
   },
 };
