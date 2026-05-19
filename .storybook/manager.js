@@ -5,7 +5,7 @@ addons.setConfig({
   title: "Systatum Coneto React UI Library",
   theme: create({
     base: "dark",
-    brandImage: "/systatum-with-title.png",
+    brandImage: "./systatum-with-title.png",
     brandTitle: "Systatum Coneto React UI Library",
   }),
 });
