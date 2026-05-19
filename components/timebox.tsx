@@ -441,10 +441,11 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
                     display: none;
                   `};
               position: fixed;
-              bottom: 0;
-              left: 0;
-              border-radius: 2px;
+              bottom: 10px;
+              left: 50%;
+              transform: translateX(-50%);
               padding: 20px;
+              width: 96dvw;
             `,
           }}
           onChange={(value) => {
