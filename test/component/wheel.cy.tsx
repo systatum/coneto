@@ -184,123 +184,62 @@ describe("Wheel", () => {
 
   context("onWheel behavior", () => {
     context("when scroll to bottom in hour", () => {
-      context("when mobile is true", () => {
-        it("should be scroll to the top", () => {
-          cy.mount(<ProductWheel />);
+      it("should be scroll to the top", () => {
+        cy.mount(<ProductWheel />);
 
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "10");
+        cy.findAllByLabelText("wheel-column-item")
+          .filter('[aria-selected="true"]')
+          .first()
+          .should("contain", "10");
 
-          Cypress._.times(9, () => {
-            cy.findAllByLabelText("wheel-column-container")
-              .eq(0)
-              .realMouseWheel({ deltaY: -120 });
-          });
-
-          cy.wait(200);
-
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "1");
+        Cypress._.times(9, () => {
+          cy.findAllByLabelText("wheel-column-container")
+            .eq(0)
+            .realMouseWheel({ deltaY: -120 });
         });
-      });
 
-      context("when mobile is false", () => {
-        it("should not be scroll to the top", () => {
-          cy.mount(<ProductWheel mobile />);
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "10");
+        cy.wait(200);
 
-          Cypress._.times(9, () => {
-            cy.findAllByLabelText("wheel-column-container")
-              .eq(0)
-              .realMouseWheel({ deltaY: -120 });
-
-            cy.wait(200);
-          });
-
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "10");
-        });
+        cy.findAllByLabelText("wheel-column-item")
+          .filter('[aria-selected="true"]')
+          .first()
+          .should("contain", "1");
       });
     });
   });
 
   context("pointer behavior (drag)", () => {
     context("when drag to top in hour", () => {
-      context("when mobile is true", () => {
-        it("should scroll to the bottom", () => {
-          cy.mount(<ProductWheel mobile />);
+      it("should scroll to the bottom", () => {
+        cy.mount(<ProductWheel />);
 
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "10");
+        cy.findAllByLabelText("wheel-column-item")
+          .filter('[aria-selected="true"]')
+          .first()
+          .should("contain", "10");
 
-          cy.findAllByLabelText("wheel-column-container")
-            .eq(0)
-            .trigger("pointerdown", {
-              pointerId: 1,
-              clientY: 300,
-              buttons: 1,
-            })
-            .trigger("pointermove", {
-              pointerId: 1,
-              clientY: 100,
-              buttons: 1,
-            })
-            .trigger("pointerup", {
-              pointerId: 1,
-            });
+        cy.findAllByLabelText("wheel-column-container")
+          .eq(0)
+          .trigger("pointerdown", {
+            pointerId: 1,
+            clientY: 300,
+            buttons: 1,
+          })
+          .trigger("pointermove", {
+            pointerId: 1,
+            clientY: 100,
+            buttons: 1,
+          })
+          .trigger("pointerup", {
+            pointerId: 1,
+          });
 
-          cy.wait(200);
+        cy.wait(200);
 
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "12");
-        });
-      });
-
-      context("when mobile is false", () => {
-        it("should scroll to the bottom", () => {
-          cy.mount(<ProductWheel />);
-
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "10");
-
-          cy.findAllByLabelText("wheel-column-container")
-            .eq(0)
-            .trigger("pointerdown", {
-              pointerId: 1,
-              clientY: 300,
-              buttons: 1,
-            })
-            .trigger("pointermove", {
-              pointerId: 1,
-              clientY: 100,
-              buttons: 1,
-            })
-            .trigger("pointerup", {
-              pointerId: 1,
-            });
-
-          cy.wait(200);
-
-          cy.findAllByLabelText("wheel-column-item")
-            .filter('[aria-selected="true"]')
-            .first()
-            .should("contain", "12");
-        });
+        cy.findAllByLabelText("wheel-column-item")
+          .filter('[aria-selected="true"]')
+          .first()
+          .should("contain", "12");
       });
     });
   });
