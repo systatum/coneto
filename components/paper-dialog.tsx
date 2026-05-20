@@ -100,9 +100,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       id,
       mobile,
       closable = true,
-      controls = mobile
-        ? [closable ? "close" : ""]
-        : ["minimize", closable ? "close" : ""],
+      controls = ["minimize", closable ? "close" : ""],
       width,
       height,
     },
@@ -117,7 +115,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         await setDialogState("restored");
       },
       closeDialog: async () => {
-        await setDialogState("closed");
+        if (mobile) {
+          await setDialogState("minimized");
+          setTimeout(() => {
+            setDialogState("closed");
+          }, 400);
+        } else {
+          await setDialogState("closed");
+        }
         if (onClosed) {
           await onClosed();
         }
