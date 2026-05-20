@@ -6,14 +6,16 @@ import {
   PaperDialogRef,
   PaperDialogStyles,
 } from "./../../components/paper-dialog";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 import { Ri4kLine } from "@remixicon/react";
+import { Checkbox } from "./../../components/checkbox";
 
 describe("PaperDialog", () => {
   function ProductPaperDialog(
     props: PaperDialogProps & { children?: ReactNode }
   ) {
+    const [value, setValue] = useState(false);
     const dialogRef = useRef<PaperDialogRef>(null);
 
     return (
@@ -56,6 +58,12 @@ describe("PaperDialog", () => {
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
                 {generateSentence()}
               </p>
+
+              <Checkbox
+                checked={value}
+                onChange={(e) => setValue(e.target.checked)}
+                label="check this checkbox"
+              />
             </div>
           )}
         </PaperDialog>
@@ -108,18 +116,35 @@ describe("PaperDialog", () => {
         .and("have.css", "height", "504px");
     });
 
-    it("renders the title to can't selection", () => {
-      cy.viewport(500, 700);
-      cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+    context("user selection", () => {
+      it("renders the title to can't selection", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
-      cy.findAllByRole("button").eq(0).should("exist").click();
-      cy.wait(300);
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
 
-      cy.findByLabelText("paper-dialog-wrapper").should(
-        "have.css",
-        "user-select",
-        "none"
-      );
+        cy.findByLabelText("paper-dialog-wrapper").should(
+          "have.css",
+          "user-select",
+          "none"
+        );
+      });
+
+      context("when clicking the Checkbox", () => {
+        it("should still allow interaction", () => {
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+
+          cy.findByRole("checkbox").should("not.be.checked");
+
+          cy.findByText("check this checkbox").click();
+
+          cy.findByRole("checkbox").should("be.checked");
+        });
+      });
     });
 
     context("drag behavior", () => {
