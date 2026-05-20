@@ -63,6 +63,36 @@ describe("PaperDialog", () => {
     );
   }
 
+  context("text", () => {
+    context("title", () => {
+      it("renders the title text", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog title="Test title" />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("title-title")
+          .should("exist")
+          .and("have.text", "Test title");
+      });
+    });
+
+    context("subtitle", () => {
+      it("renders the subtitle text", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog subtitle="Test subtitle" />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("title-subtitle")
+          .should("exist")
+          .and("have.text", "Test subtitle");
+      });
+    });
+  });
+
   context("mobile", () => {
     it("renders with radius 0.75rem, width 100dvw and height 72dvh", () => {
       cy.viewport(500, 700);
@@ -78,9 +108,23 @@ describe("PaperDialog", () => {
         .and("have.css", "height", "504px");
     });
 
+    it("renders the title to can't selection", () => {
+      cy.viewport(500, 700);
+      cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+      cy.findAllByRole("button").eq(0).should("exist").click();
+      cy.wait(300);
+
+      cy.findByLabelText("paper-dialog-wrapper").should(
+        "have.css",
+        "user-select",
+        "none"
+      );
+    });
+
     context("drag behavior", () => {
       context("when dragging icon drag indicator", () => {
-        it("should works and animate to down", () => {
+        it("should close the dialog", () => {
           cy.viewport(500, 700);
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
@@ -99,8 +143,28 @@ describe("PaperDialog", () => {
         });
       });
 
+      context("when dragging in area empty icon drag indicator", () => {
+        it("should close the dialog", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .should("exist")
+            .realMouseDown({ position: "right" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
+
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
+        });
+      });
+
       context("when dragging at dialog content", () => {
-        it("should not works", () => {
+        it("should keep the dialog open", () => {
           cy.viewport(500, 700);
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
