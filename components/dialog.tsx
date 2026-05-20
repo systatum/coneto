@@ -238,7 +238,7 @@ function Dialog({
                 },
               ]
             }
-            icon={icon}
+            icon={{ ...icon, size: icon?.size ?? 28 }}
             text={title}
             subtitle={subtitle}
           />
