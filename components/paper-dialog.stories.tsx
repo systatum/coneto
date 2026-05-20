@@ -15,6 +15,8 @@ import {
   RiEdit2Line,
   RiSubtractLine,
 } from "@remixicon/react";
+import { Messagebox } from "./messagebox";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -74,10 +76,10 @@ You can override the default control icons (e.g. close and restore) by passing c
       control: { type: "radio" },
       options: ["left", "right"],
     },
-    closable: {
-      description:
-        "Whether the dialog can be closed via the close button or Escape key",
-      control: { type: "boolean" },
+    controls: {
+      description: "Controls displayed in the dialog header",
+      control: { type: "check" },
+      options: ["minimize", "close"],
     },
     width: {
       description:
@@ -205,7 +207,8 @@ export const Default: Story = {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog
-          width="35vw"
+          width="50vw"
+          controls={["close", "minimize"]}
           styles={{
             contentStyle: {
               padding: "36px",
@@ -274,6 +277,132 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  render: () => {
+    const dialogRef = useRef<PaperDialogRef>(null);
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
+        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
+        <PaperDialog
+          styles={{
+            contentStyle: css`
+              gap: 20px;
+            `,
+          }}
+          ref={dialogRef}
+          mobile
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "28px",
+                fontWeight: 700,
+              }}
+            >
+              Terms & Conditions
+            </span>
+
+            <span
+              style={{
+                opacity: 0.7,
+                lineHeight: 1.5,
+              }}
+            >
+              Please review the following information before continuing to use
+              Systatum services.
+            </span>
+          </div>
+
+          <Messagebox
+            variant="primary"
+            title="Privacy & Usage"
+            styles={{
+              contentStyle: css`
+                gap: 12px;
+                display: flex;
+                flex-direction: column;
+                line-height: 1.6;
+                overflow: auto;
+              `,
+            }}
+          >
+            <span>
+              Your activity may be processed to improve product experience and
+              system reliability.
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 20 })}
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 30 })}
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 40 })}
+            </span>
+          </Messagebox>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "auto",
+            }}
+          >
+            <Button
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                `,
+                self: css`
+                  width: 100%;
+                  height: 50px;
+                `,
+              }}
+              variant="primary"
+            >
+              Accept & Continue
+            </Button>
+
+            <Button
+              variant="outline-default"
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                `,
+                self: css`
+                  width: 100%;
+                  height: 50px;
+                `,
+              }}
+              onClick={() => dialogRef.current?.closeDialog()}
+            >
+              Not Now
+            </Button>
+          </div>
+        </PaperDialog>
+      </div>
+    );
+  },
+};
+
 export const CustomIcon: Story = {
   render: () => {
     const dialogRef = useRef<PaperDialogRef>(null);
@@ -291,6 +420,7 @@ export const CustomIcon: Story = {
 
         <PaperDialog
           closable={true}
+          controls={["close", "minimize"]}
           width="35vw"
           icons={{
             closeIcon: {
