@@ -78,7 +78,7 @@ function Title({
     textWrapperStyle: styles?.textWrapperStyle,
   };
 
-  const hasText = text || subtitle || pretitle;
+  const hasText = text || subtitle || pretitle || icon;
   const hasSections = leftSection || centerSection || rightSection;
 
   return (
@@ -312,20 +312,21 @@ const Section = styled.div<{
   ${({ $style }) => $style}
 `;
 
-interface BaseAllTextProps
-  extends Pick<TitleProps, "text" | "pretitle" | "subtitle" | "icon" | "size"> {
+interface BaseAllTextProps extends Pick<
+  TitleProps,
+  "text" | "pretitle" | "subtitle" | "icon" | "size"
+> {
   styles?: BaseAllTextStyles;
 }
 
-interface BaseAllTextStyles
-  extends Pick<
-    TitleStyles,
-    | "textContainerStyle"
-    | "textWrapperStyle"
-    | "titleStyle"
-    | "pretitleStyle"
-    | "subtitleStyle"
-  > {}
+interface BaseAllTextStyles extends Pick<
+  TitleStyles,
+  | "textContainerStyle"
+  | "textWrapperStyle"
+  | "titleStyle"
+  | "pretitleStyle"
+  | "subtitleStyle"
+> {}
 
 interface TextVariant {
   as?: ElementType;
