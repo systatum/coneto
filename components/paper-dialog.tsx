@@ -410,10 +410,10 @@ const ActionButtonWrapper = styled.div<{
 
           ${$isLeft
             ? css`
-                left: ${`${$indexAction * 30 + 10}px`};
+                left: ${`${$indexAction * 33 + 10}px`};
               `
             : css`
-                right: ${`${$indexAction * 30 + 10}px`};
+                right: ${`${$indexAction * 33 + 10}px`};
               `}
         `
       : css`
