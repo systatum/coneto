@@ -79,45 +79,43 @@ describe("PaperDialog", () => {
     });
 
     context("drag behavior", () => {
-      context("when dragging", () => {
-        context("at icon drag indicator", () => {
-          it("should works and animate to down", () => {
-            cy.viewport(500, 700);
-            cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+      context("when dragging icon drag indicator", () => {
+        it("should works and animate to down", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
-            cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.findAllByRole("button").eq(0).should("exist").click();
 
-            cy.wait(300);
+          cy.wait(300);
 
-            cy.findByLabelText("paper-dialog-drag-indicator")
-              .should("exist")
-              .realMouseDown({ position: "center" })
-              .realMouseMove(0, 350)
-              .realMouseUp();
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .should("exist")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
 
-            cy.wait(300);
-            cy.findByLabelText("paper-dialog-content").should("not.exist");
-          });
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
         });
+      });
 
-        context("at paper dialog content", () => {
-          it("should not works", () => {
-            cy.viewport(500, 700);
-            cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+      context("when dragging at dialog content", () => {
+        it("should not works", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
-            cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.findAllByRole("button").eq(0).should("exist").click();
 
-            cy.wait(300);
+          cy.wait(300);
 
-            cy.findByLabelText("paper-dialog-content")
-              .should("exist")
-              .realMouseDown({ position: "center" })
-              .realMouseMove(0, 350)
-              .realMouseUp();
+          cy.findByLabelText("paper-dialog-content")
+            .should("exist")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
 
-            cy.wait(300);
-            cy.findByLabelText("paper-dialog-content").should("exist");
-          });
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("exist");
         });
       });
     });
@@ -137,8 +135,8 @@ describe("PaperDialog", () => {
           cy.findByLabelText("paper-dialog-drag-indicator").should("exist");
         });
 
-        context("when clicking", () => {
-          it("should close the ", () => {
+        context("when clicking close icon", () => {
+          it("should close the modal", () => {
             cy.viewport(500, 700);
             cy.mount(
               <ProductPaperDialog width="100dvw" mobile closable={true} />
@@ -151,6 +149,23 @@ describe("PaperDialog", () => {
             cy.findByLabelText("paper-dialog-close-icon")
               .should("exist")
               .click();
+
+            cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+          });
+        });
+
+        context("when clicking overlay-background", () => {
+          it("should close the modal", () => {
+            cy.mount(
+              <ProductPaperDialog width="100dvw" mobile closable={true} />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            cy.findByLabelText("overlay-blocker")
+              .should("exist")
+              .click("topLeft");
+            cy.wait(400);
 
             cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
           });
@@ -188,6 +203,23 @@ describe("PaperDialog", () => {
 
           cy.findByLabelText("paper-dialog-close-icon").should("not.exist");
           cy.findByLabelText("paper-dialog-drag-indicator").should("not.exist");
+        });
+
+        context("when clicking overlay-background", () => {
+          it("should not close the modal", () => {
+            cy.mount(
+              <ProductPaperDialog width="100dvw" mobile closable={false} />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            cy.findByLabelText("overlay-blocker")
+              .should("exist")
+              .click("topLeft");
+            cy.wait(400);
+
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+          });
         });
       });
     });
