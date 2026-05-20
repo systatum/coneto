@@ -247,15 +247,15 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
     const wheelParts = {
       hour: {
         id: "hour",
-        values: Wheel.fullHourOptions,
+        values: hours,
       },
       minute: {
         id: "minute",
-        values: Wheel.minuteOptions,
+        values: minutes,
       },
       second: {
         id: "second",
-        values: Wheel.secondOptions,
+        values: seconds,
       },
     };
 
@@ -630,5 +630,17 @@ const Input = styled.input<{
 const Colon = styled.span<{ $theme?: TimeboxThemeConfig }>`
   transform: translateY(-1px);
 `;
+
+const hours = Array.from({ length: 24 }, (_, i) => {
+  const h = i;
+  return { value: h.toString(), text: h.toString() };
+});
+
+const minutes = Array.from({ length: 60 }, (_, i) => ({
+  value: i.toString(),
+  text: i.toString().padStart(2, "0"),
+}));
+
+const seconds = minutes;
 
 export { Timebox };
