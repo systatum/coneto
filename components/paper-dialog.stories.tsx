@@ -17,6 +17,7 @@ import {
 } from "@remixicon/react";
 import { Messagebox } from "./messagebox";
 import { generateSentence } from "./../lib/text";
+import { Checkbox } from "./checkbox";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -279,33 +280,13 @@ export const Default: Story = {
 
 export const Mobile: Story = {
   render: () => {
-    const dialogRef = useRef<PaperDialogRef>(null);
+    const dialogRef1 = useRef<PaperDialogRef>(null);
+    const dialogRef2 = useRef<PaperDialogRef>(null);
+    const dialogRef3 = useRef<PaperDialogRef>(null);
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-        }}
-      >
-        <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
-        <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
-        <PaperDialog
-          styles={{
-            contentStyle: css`
-              gap: 20px;
-            `,
-            titleStyle: css`
-              font-weight: 600;
-            `,
-          }}
-          ref={dialogRef}
-          mobile
-          controls={[]}
-          title="Terms & Conditions"
-          subtitle="Please review the following information before continuing to use Systatum services."
-        >
+    const PaperDialogContent = ({ onClose }: { onClose: () => void }) => {
+      return (
+        <>
           <Messagebox
             variant="primary"
             title="Privacy & Usage"
@@ -371,12 +352,73 @@ export const Mobile: Story = {
                   height: 50px;
                 `,
               }}
-              onClick={() => dialogRef.current?.closeDialog()}
+              onClick={() => onClose()}
             >
               Not Now
             </Button>
           </div>
-        </PaperDialog>
+        </>
+      );
+    };
+
+    const PAPER_DIALOGS = [
+      {
+        ref: dialogRef1,
+        caption: "Actionless",
+        controls: [],
+      },
+      {
+        ref: dialogRef2,
+        caption: "With right-aligned",
+        position: "right" as const,
+      },
+      {
+        ref: dialogRef3,
+        caption: "With left-aligned",
+        position: "left" as const,
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        {PAPER_DIALOGS.map((dialog) => (
+          <Button
+            key={dialog.caption}
+            onClick={() => dialog.ref.current?.openDialog()}
+          >
+            {dialog.caption}
+          </Button>
+        ))}
+
+        {PAPER_DIALOGS.map((dialog) => (
+          <PaperDialog
+            key={dialog.caption}
+            ref={dialog.ref}
+            mobile
+            controls={dialog.controls}
+            position={dialog.position}
+            title="Terms & Conditions"
+            subtitle="Please review the following information before continuing to use Systatum services."
+            styles={{
+              contentStyle: css`
+                gap: 20px;
+              `,
+              titleStyle: css`
+                font-weight: 600;
+              `,
+            }}
+          >
+            <PaperDialogContent
+              onClose={() => dialog.ref.current?.closeDialog()}
+            />
+          </PaperDialog>
+        ))}
       </div>
     );
   },
