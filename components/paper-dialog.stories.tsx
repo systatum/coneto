@@ -299,6 +299,7 @@ export const Mobile: Story = {
           }}
           ref={dialogRef}
           mobile
+          controls={[]}
         >
           <div
             style={{
