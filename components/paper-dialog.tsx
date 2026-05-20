@@ -532,6 +532,8 @@ const PaperDialogContent = styled.div<{
   ${({ $mobile }) =>
     $mobile &&
     css`
+      overflow-x: hidden;
+      overflow-y: auto;
       padding: 40px 20px 20px 20px;
       border-radius: 1rem 1rem 0 0;
       margin-top: 4px;
