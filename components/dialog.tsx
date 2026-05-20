@@ -13,8 +13,7 @@ import styled, { keyframes, CSSProp, css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
 import { Button, ButtonStyles, ButtonVariants } from "./button";
 import { OverlayBlocker } from "./overlay-blocker";
-import { Figure, FigureProps } from "./figure";
-import { darkenColor, lightenColor } from "../lib/color";
+import { FigureProps } from "./figure";
 import { createRoot } from "react-dom/client";
 import {
   getThemeSnapshot,
@@ -25,6 +24,7 @@ import {
 import { DialogThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
+import { Title } from "./title";
 
 const zoomIn = keyframes`from {transform: translate(-50%, -50%) scale(0.95); opacity: 0;} to {transform: translate(-50%, -50%) scale(1); opacity: 1;}`;
 const zoomOut = keyframes`from {transform: translate(-50%, -50%) scale(1); opacity: 1;} to {transform: translate(-50%, -50%) scale(0.95); opacity: 0;}`;
@@ -54,6 +54,7 @@ export interface DialogProps {
   icon?: FigureProps;
   onClosed?: () => void;
   className?: string;
+  mobile?: boolean;
   id?: string;
 }
 
@@ -70,8 +71,7 @@ export interface DialogStyles {
 }
 
 export interface DialogAction
-  extends Omit<BaseAction, "onClick">,
-    Pick<ButtonVariants, "variant"> {
+  extends Omit<BaseAction, "onClick">, Pick<ButtonVariants, "variant"> {
   id: string;
   isLoading?: boolean;
   styles?: ButtonStyles;
@@ -91,9 +91,10 @@ function Dialog({
   icon,
   onClosed,
   className,
+  mobile,
   id,
 }: DialogProps) {
-  const { currentTheme, mode } = useTheme();
+  const { currentTheme } = useTheme();
   const dialogTheme = currentTheme.dialog;
 
   const [isVisible, setIsVisible] = useState(false);
@@ -158,70 +159,89 @@ function Dialog({
         $theme={dialogTheme}
         aria-label="dialog-wrapper"
         $isOpen={isOpen}
-        $style={styles?.containerStyle}
+        $style={css`
+          ${mobile &&
+          css`
+            padding: 0px;
+            gap: 0px;
+          `}
+          ${styles?.containerStyle};
+        `}
       >
         {(icon || title || subtitle) && (
-          <Header aria-label="dialog-head-wrapper" $style={styles?.headerStyle}>
-            {icon &&
-              (() => {
-                const iconProps: FigureProps = {
-                  ...icon,
-                  size: icon?.size ?? 28,
+          <Title
+            styles={{
+              textContainerStyle: css`
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                ${styles?.headerStyle}
+              `,
+              textWrapperStyle: css`
+                ${mobile &&
+                css`
+                  gap: 4px;
+                `};
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                ${styles?.textWrapperStyle}
+              `,
+              titleStyle: css`
+                font-size: 18px;
+                width: fit-content;
+                text-align: center;
+                ${styles?.titleStyle}
+              `,
+              subtitleStyle: css`
+                font-size: 13px;
+                width: fit-content;
+                text-align: center;
+
+                ${dialogTheme?.subtitleColor ?? "#5a606b"};
+                ${styles?.subtitleStyle}
+              `,
+              rightSectionStyle: css`
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                cursor: pointer;
+                border-radius: 2px;
+                padding: 2px;
+              `,
+              containerStyle: css`
+                ${mobile &&
+                css`
+                  padding: 20px 30px;
+                `};
+              `,
+            }}
+            rightSection={
+              closable && [
+                {
                   styles: {
-                    self: css`
-                      min-width: ${icon?.size
-                        ? `${icon?.size * 1.5}px`
-                        : `42px`};
-                      min-height: ${icon?.size
-                        ? `${icon?.size * 1.5}px`
-                        : `42px`};
-                      background-color: ${mode === "light"
-                        ? lightenColor(
-                            icon?.color ?? dialogTheme?.textColor,
-                            0.9
-                          )
-                        : darkenColor(
-                            icon?.color ?? dialogTheme?.textColor,
-                            0.8
-                          )};
-                      border-radius: 99999px;
-                      justify-content: center;
-                      align-items: center;
-                      display: flex;
-                      overflow: hidden;
-                      ${icon?.styles?.self}
+                    toggleActionStyle: css`
+                      width: 20px;
+                      height: 20px;
+                      padding: 10px;
+                      border-radius: 4px;
                     `,
                   },
-                };
-                return <Figure {...iconProps} aria-label="dialog-icon" />;
-              })()}
-
-            {(title || subtitle) && (
-              <TextWrapper
-                aria-label="dialog-text-wrapper"
-                $style={styles?.textWrapperStyle}
-              >
-                {title && (
-                  <Title
-                    aria-label={"dialog-title"}
-                    $style={styles?.titleStyle}
-                  >
-                    {title}
-                  </Title>
-                )}
-
-                {subtitle && (
-                  <Subtitle
-                    $theme={dialogTheme}
-                    aria-label="dialog-subtitle"
-                    $style={styles?.subtitleStyle}
-                  >
-                    {subtitle}
-                  </Subtitle>
-                )}
-              </TextWrapper>
-            )}
-          </Header>
+                  type: "actions",
+                  actions: [
+                    {
+                      icon: { image: RiCloseLine, size: 14 },
+                      caption: "Close Modal",
+                      onClick: () => closeDialog(),
+                    },
+                  ],
+                },
+              ]
+            }
+            icon={{ ...icon, size: icon?.size ?? 28 }}
+            text={title}
+            subtitle={subtitle}
+          />
         )}
 
         {children && (
@@ -231,7 +251,15 @@ function Dialog({
         )}
 
         {actions && (
-          <Footer $style={styles?.actionWrapperStyle}>
+          <Footer
+            $style={css`
+              ${mobile &&
+              css`
+                gap: 0px;
+              `};
+              ${styles?.actionWrapperStyle}
+            `}
+          >
             {actions.map((action, index) => {
               if (action.disabled) return;
               return (
@@ -245,8 +273,22 @@ function Dialog({
                   }
                   styles={{
                     ...action?.styles,
+                    containerStyle: css`
+                      ${mobile &&
+                      css`
+                        width: 100%;
+                      `};
+                      ${action?.styles?.containerStyle};
+                    `,
                     self: css`
+                      ${mobile &&
+                      css`
+                        width: 100%;
+                        height: 44px;
+                        border-radius: 0px;
+                      `};
                       min-width: 100px;
+
                       ${action?.styles?.self}
                     `,
                   }}
@@ -256,33 +298,6 @@ function Dialog({
               );
             })}
           </Footer>
-        )}
-
-        {closable && (
-          <Button
-            variant="ghost"
-            onClick={() => closeDialog()}
-            aria-label="close-dialog"
-            styles={{
-              containerStyle: css`
-                position: absolute;
-                top: 1rem;
-                right: 1.2rem;
-                cursor: pointer;
-                transition: all 0.3s;
-                border-radius: 2px;
-                padding: 2px;
-              `,
-              self: css`
-                width: 20px;
-                height: 20px;
-                padding: 2px;
-                ${styles?.closeButtonStyle}
-              `,
-            }}
-          >
-            <RiCloseLine size={16} />
-          </Button>
         )}
       </Wrapper>
     </>,
@@ -317,50 +332,6 @@ const Wrapper = styled.div<{
   color: ${({ $theme }) => $theme?.textColor ?? "inherit"};
   background: ${({ $theme }) => $theme?.backgroundColor};
   animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
-
-  ${({ $style }) => $style}
-`;
-
-const Header = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  color: inherit;
-  background-color: inherit;
-
-  ${({ $style }) => $style}
-`;
-
-const TextWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-
-  ${({ $style }) => $style}
-`;
-
-const Title = styled.h2<{
-  $style?: CSSProp;
-}>`
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.25;
-  text-align: center;
-
-  ${({ $style }) => $style}
-`;
-
-const Subtitle = styled.h3<{
-  $style?: CSSProp;
-  $theme?: DialogThemeConfig;
-}>`
-  font-size: 13px;
-  text-align: center;
-  color: ${({ $theme }) => $theme?.subtitleColor ?? "#5a606b"};
 
   ${({ $style }) => $style}
 `;

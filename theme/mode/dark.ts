@@ -65,6 +65,8 @@ import {
   createTreeListTheme,
   createTooltipTheme,
   createSplitPaneTheme,
+  createTitleTheme,
+  createWheelTheme,
 } from "./creator";
 
 // Dark
@@ -705,6 +707,24 @@ const darkTipMenu = createTipMenuTheme(darkButton, {
   success: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
 });
 
+const darkTitle = createTitleTheme(darkBody, {
+  pretitle: {
+    opacity: 0.6,
+  },
+
+  title: {
+    textColor: "#f5f5f5",
+  },
+
+  subtitle: {
+    textColor: "#f5f5f5",
+  },
+
+  icon: {
+    backgroundColor: "#303030",
+  },
+});
+
 const darkThumbField = createThumbFieldTheme(darkBody, {
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
@@ -748,10 +768,26 @@ const darkTreeList = createTreeListTheme(darkBody, {
   dividerHierarchyColor: "rgba(63, 62, 62, 0.35)",
   dividerHierarchyRelatedColor: "rgb(115, 115, 115)",
   dividerHierarchySelectedColor: "#485c7d",
+
+  rowActionBackgroundColor: "#1e3a5f",
 });
 
 const darkSplitPane = createSplitPaneTheme(darkBody, {
   dividerColor: "#374151",
+});
+
+const darkWheel = createWheelTheme({
+  backgroundColor: "#2c2c2e",
+
+  overlayBackgroundColor: "rgba(255,255,255,0.08)",
+  overlayBorderColor: "rgba(255,255,255,0.18)",
+
+  fadeColor: "#2c2c2e",
+
+  textColor: "#ffffff",
+  inactiveTextColor: "rgba(255,255,255,0.38)",
+
+  separatorColor: "rgba(255,255,255,0.5)",
 });
 
 export const darkTheme: AppTheme = {
@@ -817,9 +853,11 @@ export const darkTheme: AppTheme = {
   timebox: darkTimebox,
   timeline: darkTimeline,
   tipmenu: darkTipMenu,
+  title: darkTitle,
   thumbField: darkThumbField,
   toggle: darkToggle,
   toolbar: darkToolbar,
   tooltip: darkTooltip,
   treelist: darkTreeList,
+  wheel: darkWheel,
 };

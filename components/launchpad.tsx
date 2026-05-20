@@ -14,10 +14,14 @@ import { applyClassName } from "./../constants/classname";
 
 export interface LaunchpadProps {
   children: ReactNode;
-  containerStyle?: CSSProp;
+  styles?: LaunchpadStyles;
   maxSection?: number;
   className?: string;
   id?: string;
+}
+
+export interface LaunchpadStyles {
+  self?: CSSProp;
 }
 
 export interface LaunchpadSectionProps {
@@ -30,7 +34,9 @@ export interface LaunchpadSectionProps {
 export interface LaunchpadSectionStyles {
   containerStyle?: CSSProp;
   gridStyle?: CSSProp;
-  separatorStyle?: CSSProp;
+  containerSeparatorStyle?: CSSProp;
+  titleSeparatorStyle?: CSSProp;
+  lineSeparatorStyle?: CSSProp;
 }
 
 export interface LaunchpadSectionItemProps {
@@ -38,6 +44,7 @@ export interface LaunchpadSectionItemProps {
   iconUrl: string;
   label: string;
   styles?: LaunchpadSectionItemStyles;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 export interface LaunchpadSectionItemStyles {
@@ -47,7 +54,7 @@ export interface LaunchpadSectionItemStyles {
 
 function Launchpad({
   children,
-  containerStyle,
+  styles,
   maxSection = 3,
   className,
   id,
@@ -108,9 +115,10 @@ function Launchpad({
     <LaunchpadContainer
       ref={containerRef}
       id={id}
+      aria-label="launchpad"
       className={applyClassName("launchpad", className)}
       onPointerDown={(e) => dragControls.start(e)}
-      $containerStyle={containerStyle}
+      $containerStyle={styles?.self}
     >
       <motion.div
         drag={"x"}
@@ -168,9 +176,16 @@ function LaunchpadSection({
   return (
     <LaunchpadSectionContainer $containerStyle={styles?.containerStyle}>
       <LaunchPadSectionSeparatorWrapper
-        $separatorStyle={styles?.separatorStyle}
+        $separatorStyle={styles?.containerSeparatorStyle}
       >
-        <Separator title={title} depth="0" />
+        <Separator
+          title={title}
+          styles={{
+            lineStyle: styles?.lineSeparatorStyle,
+            titleStyle: styles?.titleSeparatorStyle,
+          }}
+          depth="0"
+        />
       </LaunchPadSectionSeparatorWrapper>
       <Grid preset={gridPreset} styles={{ self: styles?.gridStyle }}>
         {children}
@@ -184,9 +199,11 @@ function LaunchpadSectionItem({
   label,
   iconUrl,
   styles,
+  onClick,
 }: LaunchpadSectionItemProps) {
   return (
     <LaunchpadSectionItemLink
+      onClick={(e) => onClick(e)}
       $containerStyle={styles?.containerStyle}
       href={href}
     >

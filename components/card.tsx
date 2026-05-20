@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Title, TitleSection } from "./title";
 
 export const CardShadow = {
   None: "none",
@@ -108,6 +109,36 @@ function Card({
 
   const hasActions = filteredHeaderActions.length > 0;
 
+  const renderHeaderActions: TitleSection[] = [
+    {
+      type: "custom",
+      render: hasActions
+        ? filteredHeaderActions.map((action, index) => (
+            <ActionButton key={index} {...action} />
+          ))
+        : undefined,
+    },
+    ...(toggleable
+      ? [
+          {
+            type: "custom" as const,
+            render: (
+              <Toggle
+                styles={{
+                  bodyStyle: css`
+                    min-height: 0;
+                  `,
+                }}
+                name="card-toggle"
+                checked={open}
+                onChange={(e) => onToggleChange(e.target.checked)}
+              />
+            ),
+          },
+        ]
+      : []),
+  ];
+
   return (
     <CardContainer
       {...props}
@@ -120,45 +151,38 @@ function Card({
       $theme={cardTheme}
     >
       {(title || subtitle || headerActions) && (
-        <Header $theme={cardTheme} $headerStyle={styles?.headerStyle}>
-          {(title || subtitle) && (
-            <HeaderTextContainer $style={styles?.textContainerStyle}>
-              {title && (
-                <HeaderTitle $style={styles?.titleStyle} $theme={cardTheme}>
-                  {title}
-                </HeaderTitle>
-              )}
-              {subtitle && (
-                <HeaderSubtitle
-                  $style={styles?.subtitleStyle}
-                  $theme={cardTheme}
-                >
-                  {subtitle}
-                </HeaderSubtitle>
-              )}
-            </HeaderTextContainer>
-          )}
-          {(headerActions || toggleable) && (
-            <HeaderActionGroup $style={styles?.actionContainerStyle}>
-              {hasActions &&
-                filteredHeaderActions.map((props, index) => (
-                  <ActionButton key={index} {...props} />
-                ))}
-              {toggleable && (
-                <Toggle
-                  styles={{
-                    bodyStyle: css`
-                      min-height: 0;
-                    `,
-                  }}
-                  name="card-toggle"
-                  checked={open}
-                  onChange={(e) => onToggleChange(e.target.checked)}
-                />
-              )}
-            </HeaderActionGroup>
-          )}
-        </Header>
+        <Title
+          text={title}
+          size="sm"
+          subtitle={subtitle}
+          styles={{
+            containerStyle: css`
+              align-items: center;
+              padding: 0.75rem 1.5rem;
+              border-bottom: 1px solid ${cardTheme?.dividerColor ?? "#d1d5db"};
+
+              ${styles?.headerStyle}
+            `,
+            rightSectionStyle: css`
+              align-items: center;
+              ${styles?.actionContainerStyle}
+            `,
+            titleStyle: css`
+              font-weight: 400;
+              color: ${cardTheme?.titleColor ?? "#000000"};
+              ${styles?.titleStyle}
+            `,
+            subtitleStyle: css`
+              color: ${cardTheme?.subtitleColor ?? "#6b7280"};
+              ${styles?.subtitleStyle}
+            `,
+            textContainerStyle: css`
+              gap: 2px;
+              ${styles?.textContainerStyle}
+            `,
+          }}
+          rightSection={renderHeaderActions}
+        />
       )}
 
       <AnimatePresence initial={false}>
@@ -255,42 +279,6 @@ const CardContainer = styled.div<{
   ${({ $containerStyle }) => $containerStyle}
 `;
 
-const Header = styled.div<{
-  $headerStyle?: CSSProp;
-  $theme?: CardThemeConfig;
-}>`
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor ?? "#d1d5db"};
-
-  ${({ $headerStyle }) => $headerStyle}
-`;
-
-const HeaderTitle = styled.span<{
-  $theme: CardThemeConfig;
-  $style?: CSSProp;
-}>`
-  font-size: 1rem;
-  color: ${({ $theme }) => $theme?.titleColor ?? "#000000"};
-
-  ${({ $style }) => $style}
-`;
-
-const HeaderSubtitle = styled.span<{
-  $theme: CardThemeConfig;
-  $style?: CSSProp;
-}>`
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: ${({ $theme }) => $theme?.subtitleColor ?? "#6b7280"};
-
-  ${({ $style }) => $style}
-`;
-
 const Contain = styled(motion.div)<{
   $style?: CSSProp;
 }>`
@@ -305,24 +293,6 @@ const Footer = styled(motion.div)<{
   padding: 0.5rem 1.5rem;
 
   ${({ $footerStyle }) => $footerStyle}
-`;
-
-const HeaderTextContainer = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  ${({ $style }) => $style}
-`;
-
-const HeaderActionGroup = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  flex-direction: row;
-  align-items: center;
-
-  ${({ $style }) => $style}
 `;
 
 const CloseIcon = styled(RiCloseLine)`

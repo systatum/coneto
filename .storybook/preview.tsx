@@ -15,6 +15,7 @@ if (typeof window !== "undefined") {
     }
   );
 }
+
 const preview: Preview = {
   initialGlobals: {
     theme: "dark",
@@ -38,7 +39,11 @@ const preview: Preview = {
   },
   decorators: [
     (Story, context) => {
-      const mode = context.globals.theme || "dark";
+      const isCypress =
+        typeof window !== "undefined" &&
+        (window as Window & { Cypress?: unknown }).Cypress;
+
+      const mode = isCypress ? "light" : context.globals.theme || "dark";
 
       document.body.setAttribute("data-theme", mode);
 

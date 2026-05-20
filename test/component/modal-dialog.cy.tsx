@@ -29,76 +29,6 @@ describe("Modal Dialog", () => {
     );
   }
 
-  context("with ModalDialog.show()", () => {
-    function ProductTextbox() {
-      const [value, setValue] = useState("");
-
-      return (
-        <Textbox value={value} onChange={(e) => setValue(e.target.value)} />
-      );
-    }
-
-    it("renders the modal dialog", () => {
-      cy.mount(
-        <Button
-          onClick={() =>
-            ModalDialog.show({
-              title: "Default Modal",
-              subtitle: "This is a subtitle",
-              closable: true,
-              actions: [
-                { id: "confirm", caption: "Confirm", variant: "primary" },
-                { id: "cancel", caption: "Cancel", variant: "default" },
-              ],
-              children: <ProductTextbox />,
-            })
-          }
-        >
-          Open modal
-        </Button>
-      );
-
-      cy.findByLabelText("dialog-wrapper").should("not.exist");
-      cy.findAllByRole("button").eq(0).click();
-
-      cy.findByLabelText("dialog-wrapper").should("exist");
-      cy.findAllByRole("button").eq(3).click();
-    });
-
-    context("given input element", () => {
-      it("renders the modal dialog", () => {
-        cy.wait(300);
-        cy.mount(
-          <Button
-            onClick={() =>
-              ModalDialog.show({
-                title: "Default Modal",
-                subtitle: "This is a subtitle",
-                closable: true,
-                actions: [
-                  { id: "confirm", caption: "Confirm", variant: "primary" },
-                  { id: "cancel", caption: "Cancel", variant: "default" },
-                ],
-                children: <ProductTextbox />,
-              })
-            }
-          >
-            Open modal
-          </Button>
-        );
-
-        cy.findByLabelText("dialog-wrapper").should("not.exist");
-        cy.findAllByRole("button").eq(0).click();
-
-        cy.findByLabelText("dialog-wrapper").should("exist");
-        cy.findByRole("textbox")
-          .type("Add the textbox")
-          .should("have.value", "Add the textbox");
-        cy.findAllByRole("button").eq(3).click();
-      });
-    });
-  });
-
   context("when given icon", () => {
     it("renders icon 28px (by default)", () => {
       cy.mount(
@@ -109,7 +39,7 @@ describe("Modal Dialog", () => {
         />
       );
 
-      cy.findByLabelText("dialog-icon")
+      cy.findByLabelText("title-icon")
         .should("exist")
         .and("have.css", "width", "28px");
     });
@@ -125,7 +55,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "width", "35px");
       });
@@ -142,7 +72,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "color", "rgb(255, 0, 0)")
           .parent()
@@ -387,11 +317,7 @@ describe("Modal Dialog", () => {
     it("renders with gap 6px", () => {
       cy.mount(<ProductModalDialog />);
 
-      cy.findByLabelText("dialog-text-wrapper").should(
-        "have.css",
-        "gap",
-        "6px"
-      );
+      cy.findByLabelText("title-text-wrapper").should("have.css", "gap", "6px");
     });
 
     context("when given gap 16px", () => {
@@ -406,7 +332,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-text-wrapper").should(
+        cy.findByLabelText("title-text-wrapper").should(
           "have.css",
           "gap",
           "16px"
@@ -428,7 +354,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-title").should(
+        cy.findByLabelText("title-title").should(
           "have.css",
           "font-size",
           "30px"
@@ -450,7 +376,7 @@ describe("Modal Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-subtitle").should(
+        cy.findByLabelText("title-subtitle").should(
           "have.css",
           "font-size",
           "20px"
@@ -504,19 +430,84 @@ describe("Modal Dialog", () => {
       );
 
       cy.findAllByRole("button")
-        .eq(0)
-        .should("have.css", "height", "56px")
-        .and("have.css", "padding-left", "16px")
-        .and("have.css", "padding-right", "16px")
-        .and("have.css", "padding-top", "16px")
-        .and("have.css", "padding-bottom", "40px");
-      cy.findAllByRole("button")
         .eq(1)
         .should("have.css", "height", "56px")
         .and("have.css", "padding-left", "16px")
         .and("have.css", "padding-right", "16px")
         .and("have.css", "padding-top", "16px")
         .and("have.css", "padding-bottom", "40px");
+      cy.findAllByRole("button")
+        .eq(2)
+        .should("have.css", "height", "56px")
+        .and("have.css", "padding-left", "16px")
+        .and("have.css", "padding-right", "16px")
+        .and("have.css", "padding-top", "16px")
+        .and("have.css", "padding-bottom", "40px");
+    });
+  });
+
+  context("with ModalDialog.show()", () => {
+    function ProductTextbox() {
+      const [value, setValue] = useState("");
+
+      return (
+        <Textbox value={value} onChange={(e) => setValue(e.target.value)} />
+      );
+    }
+
+    it("renders the modal dialog", () => {
+      cy.mount(
+        <Button
+          onClick={() =>
+            ModalDialog.show({
+              title: "Default Modal",
+              subtitle: "This is a subtitle",
+              closable: true,
+              actions: [
+                { id: "confirm", caption: "Confirm", variant: "primary" },
+                { id: "cancel", caption: "Cancel", variant: "default" },
+              ],
+              children: <ProductTextbox />,
+            })
+          }
+        >
+          Open modal
+        </Button>
+      );
+
+      cy.findByLabelText("dialog-wrapper").should("not.exist");
+      cy.findAllByRole("button").eq(0).click();
+
+      cy.findByLabelText("dialog-wrapper").should("exist");
+    });
+
+    context("given input element", () => {
+      it("renders the modal dialog", () => {
+        cy.wait(300);
+        cy.mount(
+          <Button
+            onClick={() =>
+              ModalDialog.show({
+                title: "Default Modal",
+                subtitle: "This is a subtitle",
+                closable: true,
+                actions: [
+                  { id: "confirm", caption: "Confirm", variant: "primary" },
+                  { id: "cancel", caption: "Cancel", variant: "default" },
+                ],
+                children: <ProductTextbox />,
+              })
+            }
+          >
+            Open modal
+          </Button>
+        );
+
+        cy.findByLabelText("dialog-wrapper").should("exist");
+        cy.findByRole("textbox")
+          .type("Add the textbox")
+          .should("have.value", "Add the textbox");
+      });
     });
   });
 });

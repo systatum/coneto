@@ -62,10 +62,12 @@ import {
   TimelineThemeConfig,
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
+  TitleThemeConfig,
   ToggleThemeConfig,
   ToolbarThemeConfig,
   TooltipThemeConfig,
   TreeListThemeConfig,
+  WheelThemeConfig,
 } from "./../index";
 import { TipMenuVariant } from "./../../components/tip-menu";
 
@@ -1583,6 +1585,59 @@ export function createTipMenuTheme(
   };
 }
 
+// title.tsx
+export function createTitleTheme(
+  body: BodyThemeConfig,
+  custom: Partial<TitleThemeConfig> = {}
+): TitleThemeConfig {
+  const defaultTheme: TitleThemeConfig = {
+    pretitle: {
+      textColor: body.textColor,
+      opacity: 0.7,
+      fontWeight: 400,
+    },
+
+    title: {
+      textColor: body.textColor,
+      fontWeight: 500,
+    },
+
+    subtitle: {
+      textColor: body.textColor,
+      fontWeight: 400,
+    },
+
+    icon: {
+      textColor: body.textColor,
+    },
+  };
+
+  return {
+    ...defaultTheme,
+    ...custom,
+
+    pretitle: {
+      ...defaultTheme.pretitle,
+      ...custom.pretitle,
+    },
+
+    title: {
+      ...defaultTheme.title,
+      ...custom.title,
+    },
+
+    subtitle: {
+      ...defaultTheme.subtitle,
+      ...custom.subtitle,
+    },
+
+    icon: {
+      ...defaultTheme.icon,
+      ...custom.icon,
+    },
+  };
+}
+
 // toggle.tsx
 export function createToggleTheme(
   body: BodyThemeConfig,
@@ -1708,6 +1763,8 @@ export function createTreeListTheme(
     dividerHierarchyColor: "rgb(243 243 243)",
     dividerHierarchyRelatedColor: "#d7d6d6",
     dividerHierarchySelectedColor: "#3b82f6",
+
+    rowActionBackgroundColor: "rgb(193, 214, 241)",
   };
 
   return {
@@ -1731,4 +1788,25 @@ export function createSplitPaneTheme(
     ...defaultTheme,
     ...customTheme,
   };
+}
+
+// wheel.tsx
+export function createWheelTheme(
+  custom: Partial<WheelThemeConfig> = {}
+): WheelThemeConfig {
+  const defaultTheme: WheelThemeConfig = {
+    backgroundColor: "#ffffff",
+
+    overlayBackgroundColor: "rgba(0,0,0,0.04)",
+    overlayBorderColor: "rgba(0,0,0,0.08)",
+
+    fadeColor: "#efefef",
+
+    textColor: "#111827",
+    inactiveTextColor: "rgba(17,24,39,0.35)",
+
+    separatorColor: "rgba(17,24,39,0.45)",
+  };
+
+  return { ...defaultTheme, ...custom };
 }

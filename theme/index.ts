@@ -627,6 +627,30 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   scrollbarTrackColor?: string;
 }
 
+// title.tsx
+export interface TitleThemeConfig {
+  pretitle?: {
+    textColor?: string;
+    opacity?: number;
+    fontWeight?: number;
+  };
+
+  title?: {
+    textColor?: string;
+    fontWeight?: number;
+  };
+
+  subtitle?: {
+    textColor?: string;
+    fontWeight?: number;
+  };
+
+  icon?: {
+    backgroundColor?: string;
+    textColor?: string;
+  };
+}
+
 // timebox.tsx
 export interface TimeboxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
@@ -716,12 +740,26 @@ export interface TreeListThemeConfig
   dividerHierarchyColor?: string;
   dividerHierarchySelectedColor?: string;
   dividerHierarchyRelatedColor?: string;
+
+  rowActionBackgroundColor?: string;
 }
 
 // split-pane.tsx
 export interface SplitPaneThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   dividerColor?: string;
+}
+
+// wheel.tsx
+export interface WheelThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
+  overlayBackgroundColor?: string;
+  overlayBorderColor?: string;
+
+  fadeColor?: string;
+
+  inactiveTextColor?: string;
+
+  separatorColor?: string;
 }
 
 // app-theme.tsx
@@ -789,10 +827,12 @@ export interface AppTheme {
   timeline: TimelineThemeConfig;
   tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
   timebox: TimeboxThemeConfig;
+  title: TitleThemeConfig;
   toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
   treelist: TreeListThemeConfig;
+  wheel: WheelThemeConfig;
 }
 
 export * from "./provider";
