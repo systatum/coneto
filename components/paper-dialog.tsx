@@ -3,7 +3,7 @@ import {
   RiArrowRightSLine,
   RiCloseLine,
 } from "@remixicon/react";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import {
   ReactNode,
   useState,
@@ -41,12 +41,15 @@ export interface PaperDialogProps {
   position?: PaperDialogPosition;
   children?: ReactNode;
   closable?: boolean;
-  width?: string;
   styles?: PaperDialogStyles;
   onClosed?: () => void;
   icons?: PaperDialogIcons;
   id?: string;
   className?: string;
+  mobile?: boolean;
+  controls?: Array<"minimize" | "close">;
+  height?: string;
+  width?: string;
 }
 
 export interface PaperDialogIcons {
@@ -89,13 +92,16 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     {
       position = "right",
       children,
-      closable = true,
-      width,
       styles,
       onClosed,
       icons,
       className,
       id,
+      mobile,
+      closable = true,
+      controls = mobile ? [] : ["minimize"],
+      width,
+      height,
     },
     ref
   ) => {
@@ -150,7 +156,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
                 if (closable) {
-                  await setDialogState("closed");
+                  if (mobile) {
+                    await setDialogState("minimized");
+                  } else {
+                    await setDialogState("closed");
+                  }
                   await close();
 
                   if (onClosed) {
@@ -166,19 +176,25 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           )}
 
           <MotionDialog
+            $mobile={mobile}
             aria-label="paper-dialog-wrapper"
             $width={width}
-            initial={{ x: isLeft ? "-100%" : "100%" }}
+            $height={height}
+            initial={mobile ? { y: "100%" } : { x: isLeft ? "-100%" : "100%" }}
             animate={
               dialogState === "minimized"
-                ? { x: isLeft ? "-100%" : "100%" }
-                : { x: 0 }
+                ? mobile
+                  ? { y: "100%" }
+                  : { x: isLeft ? "-100%" : "100%" }
+                : mobile
+                  ? { y: 0 }
+                  : { x: 0 }
             }
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
             $isLeft={isLeft}
             $theme={paperDialogTheme}
           >
-            {closable && (
+            {closable && controls?.includes("close") && (
               <ActionButtonWrapper $top={4} $isLeft={isLeft}>
                 <IconButton
                   $theme={paperDialogTheme}
@@ -202,44 +218,49 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               </ActionButtonWrapper>
             )}
 
-            <ActionButtonWrapper $top={44} $isLeft={isLeft}>
-              <IconButton
-                $theme={paperDialogTheme}
-                $style={styles?.minimizeButtonStyle}
-                $isLeft={isLeft}
-                aria-label="paper-dialog-toggle-restore"
-                onClick={() =>
-                  setDialogState(
-                    dialogState === "minimized" ? "restored" : "minimized"
-                  )
-                }
-              >
-                <Figure
-                  {...icons?.restoreIcon}
-                  image={
-                    icons?.restoreIcon?.image ??
-                    (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+            {controls?.includes("minimize") && (
+              <ActionButtonWrapper $top={44} $isLeft={isLeft}>
+                <IconButton
+                  $theme={paperDialogTheme}
+                  $style={styles?.minimizeButtonStyle}
+                  $isLeft={isLeft}
+                  aria-label="paper-dialog-toggle-restore"
+                  onClick={() =>
+                    setDialogState(
+                      dialogState === "minimized" ? "restored" : "minimized"
+                    )
                   }
-                  aria-label="paper-dialog-restore-icon"
-                  size={icons?.restoreIcon?.size ?? 18}
-                  styles={{
-                    self: css`
-                      display: flex;
-                      transition: transform 0.5s ease-in-out;
-                      transform: ${dialogState === "restored"
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)"};
-                    `,
-                  }}
-                />
-              </IconButton>
-            </ActionButtonWrapper>
+                >
+                  <Figure
+                    {...icons?.restoreIcon}
+                    image={
+                      icons?.restoreIcon?.image ??
+                      (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+                    }
+                    aria-label="paper-dialog-restore-icon"
+                    size={icons?.restoreIcon?.size ?? 18}
+                    styles={{
+                      self: css`
+                        display: flex;
+                        transition: transform 0.5s ease-in-out;
+                        transform: ${dialogState === "restored"
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)"};
+                      `,
+                    }}
+                  />
+                </IconButton>
+              </ActionButtonWrapper>
+            )}
 
             <PaperDialogContent
+              $height={height}
               $theme={paperDialogTheme}
               aria-label="paper-dialog-content"
               $style={styles?.contentStyle}
+              $mobile={mobile}
             >
+              {mobile && <DragIndicatorWrapper $theme={paperDialogTheme} />}
               {children}
             </PaperDialogContent>
           </MotionDialog>
@@ -267,25 +288,52 @@ const DialogOverlay = styled.div<{
 const MotionDialog = styled(motion.div)<{
   $isLeft: boolean;
   $style?: CSSProp;
-  $width?: string;
   $theme?: PaperDialogThemeConfig;
+  $mobile?: boolean;
+  $width?: string;
+  $height?: string;
 }>`
   position: fixed;
-  top: 0;
-  ${({ $isLeft }) =>
-    $isLeft
+
+  ${({ $mobile, $isLeft }) =>
+    $mobile
       ? css`
           left: 0;
+          right: 0;
+          margin-inline: auto;
+          bottom: 0;
+          overflow: hidden;
+          border-top-left-radius: 20px;
+          border-top-right-radius: 20px;
+        `
+      : $isLeft
+        ? css`
+            top: 0;
+            left: 0;
+          `
+        : css`
+            top: 0;
+            right: 0;
+          `}
+
+  ${({ $width, $mobile, $height }) =>
+    $mobile
+      ? css`
+          max-height: ${$height ?? "90dvh"};
+          min-height: ${$height ?? "72dvh"};
+          min-width: ${$width ?? "100dvw"};
+          max-width: ${$width ?? "100dvw"};
         `
       : css`
-          right: 0;
+          max-height: ${$height ?? "100dvh"};
+          min-height: ${$height ?? "100dvh"};
+          min-width: ${$width ?? "92dvw"};
+          max-width: ${$width ?? "92dvw"};
         `}
+
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 16rem;
-  min-width: ${({ $width }) => $width ?? "92vw"};
-  padding-bottom: 1rem;
   z-index: 9991999;
 
   background-color: ${({ $theme }) => $theme?.backgroundColor};
@@ -357,9 +405,11 @@ const IconButton = styled.button<{
 const PaperDialogContent = styled.div<{
   $style?: CSSProp;
   $theme?: PaperDialogThemeConfig;
+  $height?: string;
+  $mobile?: boolean;
 }>`
-  min-height: 100dvh;
-  max-height: 100dvh;
+  height: ${({ $height }) => $height ?? "100dvh"};
+  max-height: ${({ $height }) => $height ?? "100dvh"};
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -368,8 +418,31 @@ const PaperDialogContent = styled.div<{
   z-index: 9999;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   color: ${({ $theme }) => $theme?.textColor};
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      padding: 40px 20px 20px 20px;
+    `}
 
   ${({ $style }) => $style}
+`;
+
+const DragIndicatorWrapper = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  display: flex;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background-color: ${({ $theme }) => $theme?.textColor};
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 export { PaperDialog };
