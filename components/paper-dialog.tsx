@@ -100,7 +100,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       id,
       mobile,
       closable = true,
-      controls = mobile ? [] : ["minimize"],
+      controls = mobile
+        ? [closable ? "close" : ""]
+        : ["minimize", closable ? "close" : ""],
       width,
       height,
     },
@@ -160,6 +162,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 if (closable) {
                   if (mobile) {
                     await setDialogState("minimized");
+                    setTimeout(() => {
+                      setDialogState("closed");
+                    }, 400);
                   } else {
                     await setDialogState("closed");
                   }
@@ -207,10 +212,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
                 setDialogState("minimized");
+                setTimeout(() => {
+                  setDialogState("closed");
 
-                if (onClosed) {
-                  onClosed();
-                }
+                  if (onClosed) {
+                    onClosed();
+                  }
+                }, 400);
               }
             }}
             whileDrag={{
@@ -304,6 +312,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             >
               {mobile && closable && (
                 <DragIndicatorWrapper
+                  aria-label="paper-dialog-drag-indicator"
                   onPointerDown={(e) => dragControls.start(e)}
                   $theme={paperDialogTheme}
                 />
@@ -365,7 +374,7 @@ const MotionDialog = styled(motion.div)<{
   ${({ $width, $mobile, $height }) =>
     $mobile
       ? css`
-          max-height: ${$height ?? "90dvh"};
+          max-height: ${$height ?? "72dvh"};
           min-height: ${$height ?? "72dvh"};
           min-width: ${$width ?? "100dvw"};
           max-width: ${$width ?? "100dvw"};
@@ -410,10 +419,10 @@ const ActionButtonWrapper = styled.div<{
 
           ${$isLeft
             ? css`
-                left: ${`${$indexAction * 33 + 10}px`};
+                left: ${`${$indexAction * 32 + 18}px`};
               `
             : css`
-                right: ${`${$indexAction * 33 + 10}px`};
+                right: ${`${$indexAction * 32 + 18}px`};
               `}
         `
       : css`
@@ -450,10 +459,10 @@ const IconButton = styled.button<{
     $mobile
       ? css`
           border: 1px solid ${$theme?.borderColor};
-          box-shadow: ${$theme?.boxShadow};
           border-top-width: 1px;
           border-right-width: 1px;
           border-left-width: 1px;
+          border-bottom-width: 0px;
           border-radius: 0.75rem 0.75rem 0 0;
           padding: 4px;
         `
@@ -499,6 +508,8 @@ const PaperDialogContent = styled.div<{
     $mobile &&
     css`
       padding: 40px 20px 20px 20px;
+      border-radius: 1rem 1rem 0 0;
+      margin-top: 4px;
     `}
 
   ${({ $style }) => $style}
