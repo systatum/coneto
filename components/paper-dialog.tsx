@@ -117,15 +117,17 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const paperDialogTheme = currentTheme.paperDialog;
     const dragControls = useDragControls();
 
+    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
+
     const closeDialog = useCallback(async () => {
       if (mobile) {
-        setDialogState("minimized");
+        await setDialogState("minimized");
 
         setTimeout(() => {
           setDialogState("closed");
         }, 400);
       } else {
-        setDialogState("closed");
+        await setDialogState("closed");
       }
 
       if (onClosed) {
@@ -142,8 +144,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         await setDialogState("minimized");
       },
     }));
-
-    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
 
     const isLeft = position === "left";
 
@@ -187,6 +187,51 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             />
           )}
 
+          {mobile && dialogState === "minimized" && title && (
+            <MiniTitleBar
+              $theme={paperDialogTheme}
+              onClick={() => setDialogState("restored")}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 40 }}
+            >
+              <MiniDragPill $theme={paperDialogTheme} />
+              <Title
+                size="sm"
+                text={title ?? "Dialog"}
+                styles={{
+                  containerStyle: css`
+                    align-items: center;
+                  `,
+                }}
+                rightSection={[
+                  {
+                    styles: {
+                      toggleActionStyle: css`
+                        padding: 2px;
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 2px;
+                      `,
+                    },
+                    type: "actions",
+                    actions: [
+                      {
+                        icon: {
+                          image: icons?.closeIcon?.image ?? RiCloseLine,
+                          size: icons?.closeIcon?.size ?? 18,
+                        },
+                        onClick: () => {
+                          setDialogState("closed");
+                        },
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </MiniTitleBar>
+          )}
+
           <MotionDialog
             $mobile={mobile}
             aria-label="paper-dialog-wrapper"
@@ -216,7 +261,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
-                closeDialog();
+                setDialogState("minimized");
               }
             }}
             whileDrag={{
@@ -528,12 +573,13 @@ const PaperDialogContent = styled.div<{
 const DragIndicatorWrapper = styled(motion.div)`
   display: flex;
   position: absolute;
-  top: 20px;
+  top: -4px;
   left: 50%;
   transform: translateX(-50%);
   justify-content: center;
   width: 100dvw;
   cursor: grab;
+  height: 40px;
 
   &:active {
     cursor: grabbing;
@@ -544,10 +590,43 @@ const DragIndicator = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
 }>`
   display: flex;
+  transform: translateY(22px);
   width: 48px;
   height: 5px;
   border-radius: 999px;
   background-color: ${({ $theme }) => $theme?.textColor};
+  opacity: 0.3;
+`;
+
+const MiniTitleBar = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9994999;
+  align-items: center;
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  border-top: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border-radius: 12px 12px 0 0;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const MiniDragPill = styled.div<{ $theme?: PaperDialogThemeConfig }>`
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: ${({ $theme }) => $theme?.textColor};
+  opacity: 0.3;
 `;
 
 export { PaperDialog };
