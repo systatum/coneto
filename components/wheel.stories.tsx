@@ -54,11 +54,6 @@ const [values, setValues] = useState({
 
 - Use the \`parts\` prop to define each wheel column and its available values.
 - Use \`values\` and \`onChange\` for controlled state management.
-- Includes built-in presets:
-  - \`Wheel.hourOptions\`
-  - \`Wheel.minuteOptions\`
-  - \`Wheel.secondOptions\`
-  - \`Wheel.ampmOptions\`
 `,
       },
     },
@@ -118,6 +113,23 @@ export const Default: Story = {
       ampm: "am",
     });
 
+    const hours = Array.from({ length: 24 }, (_, i) => {
+      const h = i;
+      return { value: h.toString(), text: h.toString() };
+    });
+
+    const minutes = Array.from({ length: 60 }, (_, i) => ({
+      value: i.toString(),
+      text: i.toString().padStart(2, "0"),
+    }));
+
+    const seconds = minutes;
+
+    const ampm = [
+      { value: "am", text: "AM" },
+      { value: "pm", text: "PM" },
+    ];
+
     return (
       <Wheel
         onChange={(values) => {
@@ -129,10 +141,10 @@ export const Default: Story = {
           });
         }}
         parts={[
-          { id: "hour", values: Wheel.hourOptions, width: "64px" },
-          { id: "minute", values: Wheel.minuteOptions, width: "72px" },
-          { id: "second", values: Wheel.secondOptions, width: "72px" },
-          { id: "ampm", values: Wheel.ampmOptions, width: "64px" },
+          { id: "hour", values: hours, width: "64px" },
+          { id: "minute", values: minutes, width: "72px" },
+          { id: "second", values: seconds, width: "72px" },
+          { id: "ampm", values: ampm, width: "64px" },
         ]}
         values={values}
       />
