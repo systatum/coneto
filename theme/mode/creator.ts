@@ -67,6 +67,7 @@ import {
   ToolbarThemeConfig,
   TooltipThemeConfig,
   TreeListThemeConfig,
+  WheelThemeConfig,
 } from "./../index";
 import { TipMenuVariant } from "./../../components/tip-menu";
 
@@ -1787,4 +1788,25 @@ export function createSplitPaneTheme(
     ...defaultTheme,
     ...customTheme,
   };
+}
+
+// wheel.tsx
+export function createWheelTheme(
+  custom: Partial<WheelThemeConfig> = {}
+): WheelThemeConfig {
+  const defaultTheme: WheelThemeConfig = {
+    backgroundColor: "#ffffff",
+
+    overlayBackgroundColor: "rgba(0,0,0,0.04)",
+    overlayBorderColor: "rgba(0,0,0,0.08)",
+
+    fadeColor: "#efefef",
+
+    textColor: "#111827",
+    inactiveTextColor: "rgba(17,24,39,0.35)",
+
+    separatorColor: "rgba(17,24,39,0.45)",
+  };
+
+  return { ...defaultTheme, ...custom };
 }

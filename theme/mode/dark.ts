@@ -66,6 +66,7 @@ import {
   createTooltipTheme,
   createSplitPaneTheme,
   createTitleTheme,
+  createWheelTheme,
 } from "./creator";
 
 // Dark
@@ -775,6 +776,20 @@ const darkSplitPane = createSplitPaneTheme(darkBody, {
   dividerColor: "#374151",
 });
 
+const darkWheel = createWheelTheme({
+  backgroundColor: "#2c2c2e",
+
+  overlayBackgroundColor: "rgba(255,255,255,0.08)",
+  overlayBorderColor: "rgba(255,255,255,0.18)",
+
+  fadeColor: "#2c2c2e",
+
+  textColor: "#ffffff",
+  inactiveTextColor: "rgba(255,255,255,0.38)",
+
+  separatorColor: "rgba(255,255,255,0.5)",
+});
+
 export const darkTheme: AppTheme = {
   body: darkBody,
 
@@ -844,4 +859,5 @@ export const darkTheme: AppTheme = {
   toolbar: darkToolbar,
   tooltip: darkTooltip,
   treelist: darkTreeList,
+  wheel: darkWheel,
 };

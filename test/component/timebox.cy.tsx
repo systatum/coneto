@@ -31,6 +31,141 @@ describe("Timebox", () => {
     );
   }
 
+  context("mobile", () => {
+    context("when given false", () => {
+      it("renders the timebox as usual", () => {
+        cy.mount(<ProductTimebox mobile={false} />);
+
+        cy.findAllByRole("textbox").eq(0).click().realType("1234");
+
+        cy.findAllByRole("textbox").eq(0).should("have.value", "12");
+        cy.findAllByRole("textbox").eq(1).should("have.value", "34");
+
+        cy.findByLabelText("wheel-container").should("not.exist");
+      });
+    });
+
+    context("when given true", () => {
+      it("only renders the timebox", () => {
+        cy.mount(<ProductTimebox withSeconds withOnChange mobile />);
+
+        cy.findByLabelText("wheel-container").should("not.exist");
+      });
+
+      context("when typing", () => {
+        it("not shows changes the value", () => {
+          cy.mount(<ProductTimebox withSeconds withOnChange mobile />);
+          cy.findAllByRole("textbox").eq(0).click().realType("1234");
+
+          cy.findAllByRole("textbox").eq(0).should("have.value", "");
+          cy.findAllByRole("textbox").eq(1).should("have.value", "");
+        });
+      });
+
+      context("when clicking", () => {
+        it("should shows the wheel", () => {
+          cy.mount(<ProductTimebox withSeconds withOnChange mobile />);
+
+          cy.findByLabelText("wheel-container").should("not.exist");
+
+          cy.findAllByRole("textbox").eq(0).click();
+          cy.wait(200);
+
+          cy.findByLabelText("wheel-container").should("exist");
+        });
+      });
+
+      context("onWheel behavior", () => {
+        context("when scroll to bottom", () => {
+          it("should changes the value", () => {
+            cy.mount(<ProductTimebox withSeconds withOnChange mobile />);
+
+            cy.findByLabelText("wheel-container").should("not.exist");
+
+            cy.findAllByRole("textbox").eq(0).should("have.value", "").click();
+            cy.wait(200);
+
+            [0, 1, 2].map((number) => {
+              Cypress._.times(9, () => {
+                cy.findAllByLabelText("wheel-column-container")
+                  .eq(number)
+                  .realMouseWheel({ deltaY: 120 });
+              });
+            });
+
+            cy.wait(200);
+
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(0)
+              .should("contain", "9");
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(1)
+              .should("contain", "9");
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(2)
+              .should("contain", "9");
+
+            cy.findAllByRole("textbox").eq(0).should("have.value", "9");
+            cy.findAllByRole("textbox").eq(1).should("have.value", "9");
+            cy.findAllByRole("textbox").eq(2).should("have.value", "9");
+          });
+        });
+      });
+
+      context("pointer behavior (drag)", () => {
+        context("when drag to bottom", () => {
+          it("should changes the value", () => {
+            cy.mount(<ProductTimebox withSeconds withOnChange mobile />);
+
+            cy.findByLabelText("wheel-container").should("not.exist");
+
+            cy.findAllByRole("textbox").eq(0).should("have.value", "").click();
+            cy.wait(200);
+
+            [0, 1, 2].map((number) => {
+              cy.findAllByLabelText("wheel-column-container")
+                .eq(number)
+                .trigger("pointerdown", {
+                  pointerId: 1,
+                  clientY: 130,
+                  buttons: 1,
+                })
+                .trigger("pointermove", {
+                  pointerId: 1,
+                  clientY: 100,
+                  buttons: 1,
+                })
+                .trigger("pointerup", {
+                  pointerId: 1,
+                });
+              cy.wait(800);
+            });
+
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(0)
+              .should("contain", "4");
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(1)
+              .should("contain", "04");
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(2)
+              .should("contain", "04");
+
+            cy.findAllByRole("textbox").eq(0).should("have.value", "4");
+            cy.findAllByRole("textbox").eq(1).should("have.value", "4");
+            cy.findAllByRole("textbox").eq(2).should("have.value", "4");
+          });
+        });
+      });
+    });
+  });
+
   context("onChange", () => {
     context("when given", () => {
       it("should change the value", () => {

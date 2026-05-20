@@ -145,6 +145,33 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  args: {
+    label: "Mobile Timebox",
+    withSeconds: false,
+  },
+  render: (args) => {
+    const [value, setValue] = useState({ timebox: "" });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    return (
+      <Timebox
+        {...args}
+        mobile
+        withSeconds
+        value={value.timebox}
+        name="timebox"
+        onChange={onChangeValue}
+      />
+    );
+  },
+};
+
 export const WithSeconds: Story = {
   args: {
     label: "Timebox With Seconds",

@@ -65,6 +65,7 @@ import {
   createTreeListTheme,
   createSplitPaneTheme,
   createTooltipTheme,
+  createWheelTheme,
   createTitleTheme,
 } from "./creator";
 
@@ -224,6 +225,8 @@ const lightTreeList = createTreeListTheme(lightBody);
 
 const lightSplitPane = createSplitPaneTheme(lightBody);
 
+const lightWheel = createWheelTheme();
+
 export const lightTheme: AppTheme = {
   body: lightBody,
 
@@ -293,4 +296,5 @@ export const lightTheme: AppTheme = {
   toolbar: lightToolbar,
   tooltip: lightTooltip,
   treelist: lightTreeList,
+  wheel: lightWheel,
 };
