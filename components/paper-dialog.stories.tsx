@@ -17,7 +17,6 @@ import {
 } from "@remixicon/react";
 import { Messagebox } from "./messagebox";
 import { generateSentence } from "./../lib/text";
-import { Checkbox } from "./checkbox";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -297,6 +296,27 @@ export const Mobile: Story = {
                 flex-direction: column;
                 line-height: 1.6;
                 overflow: auto;
+
+                scrollbar-width: thin;
+                scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+
+                &::-webkit-scrollbar {
+                  width: 8px;
+                  height: 8px;
+                }
+
+                &::-webkit-scrollbar-track {
+                  background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                  background-color: rgba(0, 0, 0, 0.35);
+                  border-radius: 8px;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                  background-color: rgba(0, 0, 0, 0.5);
+                }
               `,
             }}
           >
