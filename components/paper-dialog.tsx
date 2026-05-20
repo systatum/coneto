@@ -20,6 +20,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { PaperDialogThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Title } from "./title";
 
 export const PaperDialogState = {
   Restored: "restored",
@@ -51,6 +52,8 @@ export interface PaperDialogProps {
   controls?: Array<"minimize" | "close">;
   height?: string;
   width?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 export interface PaperDialogIcons {
@@ -97,6 +100,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       onClosed,
       icons,
       className,
+      title,
+      subtitle,
       id,
       mobile,
       closable = true,
@@ -315,6 +320,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               $style={styles?.contentStyle}
               $mobile={mobile}
             >
+              {(title || subtitle) && (
+                <Title text={title} subtitle={subtitle} size="lg" />
+              )}
               {mobile && closable && (
                 <DragIndicatorWrapper
                   aria-label="paper-dialog-drag-indicator"

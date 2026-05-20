@@ -300,34 +300,9 @@ export const Mobile: Story = {
           ref={dialogRef}
           mobile
           controls={[]}
+          title="Terms & Conditions"
+          subtitle="Please review the following information before continuing to use Systatum services."
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "28px",
-                fontWeight: 700,
-              }}
-            >
-              Terms & Conditions
-            </span>
-
-            <span
-              style={{
-                opacity: 0.7,
-                lineHeight: 1.5,
-              }}
-            >
-              Please review the following information before continuing to use
-              Systatum services.
-            </span>
-          </div>
-
           <Messagebox
             variant="primary"
             title="Privacy & Usage"
