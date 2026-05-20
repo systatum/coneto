@@ -296,6 +296,12 @@ export const Mobile: Story = {
             contentStyle: css`
               gap: 20px;
             `,
+            titleStyle: css`
+              font-weight: 600;
+            `,
+            subtitleStyle: css`
+              font-weight: 500;
+            `,
           }}
           ref={dialogRef}
           mobile
