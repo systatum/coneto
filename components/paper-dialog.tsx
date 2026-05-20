@@ -66,6 +66,8 @@ export interface PaperDialogStyles {
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
   overlayStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
 }
 
 export interface PaperDialogTriggerProps {
@@ -321,7 +323,15 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               $mobile={mobile}
             >
               {(title || subtitle) && (
-                <Title text={title} subtitle={subtitle} size="lg" />
+                <Title
+                  styles={{
+                    titleStyle: styles?.titleStyle,
+                    subtitleStyle: styles?.subtitleStyle,
+                  }}
+                  text={title}
+                  subtitle={subtitle}
+                  size="lg"
+                />
               )}
               {mobile && closable && (
                 <DragIndicatorWrapper
