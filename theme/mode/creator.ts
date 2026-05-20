@@ -1798,7 +1798,7 @@ export function createWheelTheme(
     overlayBackgroundColor: "rgba(0,0,0,0.04)",
     overlayBorderColor: "rgba(0,0,0,0.08)",
 
-    fadeColor: "#e2e2e2",
+    fadeColor: "#efefef",
 
     textColor: "#111827",
     inactiveTextColor: "rgba(17,24,39,0.35)",
