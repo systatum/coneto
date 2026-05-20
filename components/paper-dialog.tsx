@@ -337,8 +337,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 <DragIndicatorWrapper
                   aria-label="paper-dialog-drag-indicator"
                   onPointerDown={(e) => dragControls.start(e)}
-                  $theme={paperDialogTheme}
-                />
+                >
+                  <DragIndicator $theme={paperDialogTheme} />
+                </DragIndicatorWrapper>
               )}
               {children}
             </PaperDialogContent>
@@ -383,6 +384,7 @@ const MotionDialog = styled(motion.div)<{
           bottom: 0;
           border-top-left-radius: 20px;
           border-top-right-radius: 20px;
+          user-select: none;
         `
       : $isLeft
         ? css`
@@ -538,22 +540,29 @@ const PaperDialogContent = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const DragIndicatorWrapper = styled(motion.div)<{
-  $theme?: PaperDialogThemeConfig;
-}>`
+const DragIndicatorWrapper = styled(motion.div)`
   display: flex;
   position: absolute;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
+  justify-content: center;
+  width: 100dvw;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+const DragIndicator = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  display: flex;
   width: 48px;
   height: 5px;
   border-radius: 999px;
   background-color: ${({ $theme }) => $theme?.textColor};
-  cursor: grab;
-  &:active {
-    cursor: grabbing;
-  }
 `;
 
 export { PaperDialog };
