@@ -2,6 +2,7 @@ import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCloseLine,
+  RiSubtractLine,
 } from "@remixicon/react";
 import { motion, useDragControls } from "framer-motion";
 import {
@@ -218,8 +219,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             }}
           >
             {closable && controls?.includes("close") && (
-              <ActionButtonWrapper $top={4} $isLeft={isLeft}>
+              <ActionButtonWrapper
+                $indexAction={0}
+                $mobile={mobile}
+                $top={4}
+                $isLeft={isLeft}
+              >
                 <IconButton
+                  $mobile={mobile}
                   $theme={paperDialogTheme}
                   $isLeft={isLeft}
                   $style={styles?.closeButtonStyle}
@@ -242,8 +249,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             {controls?.includes("minimize") && (
-              <ActionButtonWrapper $top={44} $isLeft={isLeft}>
+              <ActionButtonWrapper
+                $indexAction={1}
+                $mobile={mobile}
+                $top={44}
+                $isLeft={isLeft}
+              >
                 <IconButton
+                  $mobile={mobile}
                   $theme={paperDialogTheme}
                   $style={styles?.minimizeButtonStyle}
                   $isLeft={isLeft}
@@ -258,7 +271,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                     {...icons?.restoreIcon}
                     image={
                       icons?.restoreIcon?.image ??
-                      (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
+                      (mobile
+                        ? RiSubtractLine
+                        : isLeft
+                          ? RiArrowRightSLine
+                          : RiArrowLeftSLine)
                     }
                     aria-label="paper-dialog-restore-icon"
                     size={icons?.restoreIcon?.size ?? 18}
@@ -266,9 +283,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                       self: css`
                         display: flex;
                         transition: transform 0.5s ease-in-out;
-                        transform: ${dialogState === "restored"
-                          ? "rotate(180deg)"
-                          : "rotate(0deg)"};
+                        transform: ${mobile
+                          ? "rotate(0deg)"
+                          : dialogState === "restored"
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)"};
                       `,
                     }}
                   />
@@ -376,23 +395,34 @@ const ActionButtonWrapper = styled.div<{
   $isLeft: boolean;
   $top: number;
   $style?: CSSProp;
+  $mobile?: boolean;
+  $indexAction?: number;
 }>`
   position: absolute;
-  top: ${({ $top }) => `${$top}px`};
   z-index: 50;
   display: flex;
   flex-direction: column;
   height: fit-content;
 
-  ${({ $isLeft }) =>
-    $isLeft
+  ${({ $isLeft, $mobile, $top, $indexAction }) =>
+    $mobile
       ? css`
-          left: 100%;
-          translate: -4px;
+          top: 14px;
+          right: ${`${$indexAction * 30 + 10}px`};
+          z-index: 999999999;
         `
       : css`
-          right: 100%;
-          translate: 4px;
+          top: ${`${$top}px`};
+
+          ${$isLeft
+            ? css`
+                left: 100%;
+                translate: -4px;
+              `
+            : css`
+                right: 100%;
+                translate: 4px;
+              `}
         `}
 `;
 
@@ -400,31 +430,40 @@ const IconButton = styled.button<{
   $isLeft: boolean;
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
+  $mobile?: boolean;
 }>`
   position: relative;
   cursor: pointer;
   padding: 8px;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
-  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   &:hover {
     background-color: ${({ $theme }) => $theme?.actionHoverBackgroundColor};
   }
 
-  ${({ $isLeft }) =>
-    $isLeft
+  ${({ $isLeft, $mobile, $theme }) =>
+    $mobile
       ? css`
-          border-right-width: 1px;
-          border-top-width: 1px;
-          border-bottom-width: 1px;
-          border-radius: 0 0.75rem 0.75rem 0;
+          border-radius: 0.75rem;
+          padding: 4px;
         `
       : css`
-          border-left-width: 1px;
-          border-top-width: 1px;
-          border-bottom-width: 1px;
-          border-radius: 0.75rem 0 0 0.75rem;
+          border: 1px solid ${$theme?.borderColor};
+          box-shadow: ${$theme?.boxShadow};
+
+          ${$isLeft
+            ? css`
+                border-right-width: 1px;
+                border-top-width: 1px;
+                border-bottom-width: 1px;
+                border-radius: 0 0.75rem 0.75rem 0;
+              `
+            : css`
+                border-left-width: 1px;
+                border-top-width: 1px;
+                border-bottom-width: 1px;
+                border-radius: 0.75rem 0 0 0.75rem;
+              `}
         `};
 
   ${({ $style }) => $style}
