@@ -422,32 +422,4 @@ function WheelColumn({
   );
 }
 
-const fullHours = Array.from({ length: 24 }, (_, i) => {
-  const h = i;
-  return { value: h.toString(), text: h.toString() };
-});
-
-const hours = Array.from({ length: 13 }, (_, i) => {
-  const h = i;
-  return { value: h.toString(), text: h.toString() };
-});
-
-const minutes = Array.from({ length: 60 }, (_, i) => ({
-  value: i.toString(),
-  text: i.toString().padStart(2, "0"),
-}));
-
-const seconds = minutes;
-
-const ampm = [
-  { value: "am", text: "AM" },
-  { value: "pm", text: "PM" },
-];
-
-Wheel.fullHourOptions = fullHours;
-Wheel.hourOptions = hours;
-Wheel.minuteOptions = minutes;
-Wheel.secondOptions = seconds;
-Wheel.ampmOptions = ampm;
-
 export { Wheel };
