@@ -107,6 +107,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+    const dragControls = useDragControls();
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
@@ -193,6 +194,28 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
             $isLeft={isLeft}
             $theme={paperDialogTheme}
+            drag={mobile ? "y" : false}
+            dragListener={false}
+            dragDirectionLock
+            dragControls={dragControls}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{
+              top: 0,
+              bottom: 0.6,
+            }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120 || info.velocity.y > 500) {
+                setDialogState("minimized");
+
+                if (onClosed) {
+                  onClosed();
+                }
+              }
+            }}
+            whileDrag={{
+              cursor: "grabbing",
+              userSelect: "none",
+            }}
           >
             {closable && controls?.includes("close") && (
               <ActionButtonWrapper $top={4} $isLeft={isLeft}>
@@ -260,7 +283,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               $style={styles?.contentStyle}
               $mobile={mobile}
             >
-              {mobile && <DragIndicatorWrapper $theme={paperDialogTheme} />}
+              {mobile && (
+                <DragIndicatorWrapper
+                  onPointerDown={(e) => dragControls.start(e)}
+                  $theme={paperDialogTheme}
+                />
+              )}
               {children}
             </PaperDialogContent>
           </MotionDialog>
