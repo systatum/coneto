@@ -299,9 +299,6 @@ export const Mobile: Story = {
             titleStyle: css`
               font-weight: 600;
             `,
-            subtitleStyle: css`
-              font-weight: 500;
-            `,
           }}
           ref={dialogRef}
           mobile
