@@ -302,7 +302,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               $style={styles?.contentStyle}
               $mobile={mobile}
             >
-              {mobile && (
+              {mobile && closable && (
                 <DragIndicatorWrapper
                   onPointerDown={(e) => dragControls.start(e)}
                   $theme={paperDialogTheme}
@@ -349,7 +349,6 @@ const MotionDialog = styled(motion.div)<{
           right: 0;
           margin-inline: auto;
           bottom: 0;
-          overflow: hidden;
           border-top-left-radius: 20px;
           border-top-right-radius: 20px;
         `
@@ -407,9 +406,15 @@ const ActionButtonWrapper = styled.div<{
   ${({ $isLeft, $mobile, $top, $indexAction }) =>
     $mobile
       ? css`
-          top: 14px;
-          right: ${`${$indexAction * 30 + 10}px`};
-          z-index: 999999999;
+          top: -27px;
+
+          ${$isLeft
+            ? css`
+                left: ${`${$indexAction * 30 + 10}px`};
+              `
+            : css`
+                right: ${`${$indexAction * 30 + 10}px`};
+              `}
         `
       : css`
           top: ${`${$top}px`};
@@ -444,7 +449,12 @@ const IconButton = styled.button<{
   ${({ $isLeft, $mobile, $theme }) =>
     $mobile
       ? css`
-          border-radius: 0.75rem;
+          border: 1px solid ${$theme?.borderColor};
+          box-shadow: ${$theme?.boxShadow};
+          border-top-width: 1px;
+          border-right-width: 1px;
+          border-left-width: 1px;
+          border-radius: 0.75rem 0.75rem 0 0;
           padding: 4px;
         `
       : css`
