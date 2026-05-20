@@ -117,23 +117,27 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const paperDialogTheme = currentTheme.paperDialog;
     const dragControls = useDragControls();
 
+    const closeDialog = useCallback(async () => {
+      if (mobile) {
+        setDialogState("minimized");
+
+        setTimeout(() => {
+          setDialogState("closed");
+        }, 400);
+      } else {
+        setDialogState("closed");
+      }
+
+      if (onClosed) {
+        await onClosed();
+      }
+    }, [mobile, onClosed]);
+
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
         await setDialogState("restored");
       },
-      closeDialog: async () => {
-        if (mobile) {
-          await setDialogState("minimized");
-          setTimeout(() => {
-            setDialogState("closed");
-          }, 400);
-        } else {
-          await setDialogState("closed");
-        }
-        if (onClosed) {
-          await onClosed();
-        }
-      },
+      closeDialog,
       minimizeDialog: async () => {
         await setDialogState("minimized");
       },
@@ -146,7 +150,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
         if (e.key === "Escape" && closable) {
-          setDialogState("closed");
+          closeDialog();
           if (onClosed) {
             onClosed();
           }
@@ -172,19 +176,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
                 if (closable) {
-                  if (mobile) {
-                    await setDialogState("minimized");
-                    setTimeout(() => {
-                      setDialogState("closed");
-                    }, 400);
-                  } else {
-                    await setDialogState("closed");
-                  }
+                  await closeDialog();
                   await close();
-
-                  if (onClosed) {
-                    await onClosed();
-                  }
                 }
               }}
               styles={{
@@ -223,14 +216,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
-                setDialogState("minimized");
-                setTimeout(() => {
-                  setDialogState("closed");
-
-                  if (onClosed) {
-                    onClosed();
-                  }
-                }, 400);
+                closeDialog();
               }
             }}
             whileDrag={{
@@ -252,10 +238,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                   $style={styles?.closeButtonStyle}
                   aria-label="paper-dialog-toggle-close"
                   onClick={() => {
-                    setDialogState("closed");
-                    if (onClosed) {
-                      onClosed();
-                    }
+                    closeDialog();
                   }}
                 >
                   <Figure
@@ -399,8 +382,8 @@ const MotionDialog = styled(motion.div)<{
   ${({ $width, $mobile, $height }) =>
     $mobile
       ? css`
-          max-height: ${$height ?? "72dvh"};
-          min-height: ${$height ?? "72dvh"};
+          max-height: ${$height ?? "88dvh"};
+          min-height: ${$height ?? "88dvh"};
           min-width: ${$width ?? "100dvw"};
           max-width: ${$width ?? "100dvw"};
         `
