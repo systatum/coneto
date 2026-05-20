@@ -440,14 +440,14 @@ const ActionButtonWrapper = styled.div<{
   ${({ $isLeft, $mobile, $top, $indexAction }) =>
     $mobile
       ? css`
-          top: -27px;
+          top: -30.5px;
 
           ${$isLeft
             ? css`
-                left: ${`${$indexAction * 32 + 18}px`};
+                left: ${`${$indexAction * 38 + 30}px`};
               `
             : css`
-                right: ${`${$indexAction * 32 + 18}px`};
+                right: ${`${$indexAction * 38 + 30}px`};
               `}
         `
       : css`
@@ -489,7 +489,7 @@ const IconButton = styled.button<{
           border-left-width: 1px;
           border-bottom-width: 0px;
           border-radius: 0.75rem 0.75rem 0 0;
-          padding: 4px;
+          padding: 6px;
         `
       : css`
           border: 1px solid ${$theme?.borderColor};
