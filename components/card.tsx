@@ -52,8 +52,10 @@ export const CardPadding = {
 
 export type CardPadding = (typeof CardPadding)[keyof typeof CardPadding];
 
-export interface CardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
+export interface CardProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title" | "style"
+> {
   shadow?: CardShadow;
   radius?: CardBorderRadius;
   padding?: CardPadding;
@@ -71,7 +73,7 @@ export interface CardProps
 }
 
 export interface CardStyles {
-  textContainerStyle?: CSSProp;
+  headerTitleSectionStyle?: CSSProp;
   actionContainerStyle?: CSSProp;
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
@@ -178,7 +180,7 @@ function Card({
             `,
             textContainerStyle: css`
               gap: 2px;
-              ${styles?.textContainerStyle}
+              ${styles?.headerTitleSectionStyle}
             `,
           }}
           rightSection={renderHeaderActions}
