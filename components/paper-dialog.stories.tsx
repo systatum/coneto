@@ -15,6 +15,8 @@ import {
   RiEdit2Line,
   RiSubtractLine,
 } from "@remixicon/react";
+import { Messagebox } from "./messagebox";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof PaperDialog> = {
   title: "Stage/PaperDialog",
@@ -74,10 +76,10 @@ You can override the default control icons (e.g. close and restore) by passing c
       control: { type: "radio" },
       options: ["left", "right"],
     },
-    closable: {
-      description:
-        "Whether the dialog can be closed via the close button or Escape key",
-      control: { type: "boolean" },
+    controls: {
+      description: "Controls displayed in the dialog header",
+      control: { type: "check" },
+      options: ["minimize", "close"],
     },
     width: {
       description:
@@ -205,7 +207,8 @@ export const Default: Story = {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog
-          width="35vw"
+          width="50vw"
+          controls={["close", "minimize"]}
           styles={{
             contentStyle: {
               padding: "36px",
@@ -274,6 +277,181 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  render: () => {
+    const dialogRef1 = useRef<PaperDialogRef>(null);
+    const dialogRef2 = useRef<PaperDialogRef>(null);
+    const dialogRef3 = useRef<PaperDialogRef>(null);
+
+    const PaperDialogContent = ({ onClose }: { onClose: () => void }) => {
+      return (
+        <>
+          <Messagebox
+            variant="primary"
+            title="Privacy & Usage"
+            styles={{
+              contentStyle: css`
+                gap: 12px;
+                display: flex;
+                flex-direction: column;
+                line-height: 1.6;
+                overflow: auto;
+
+                scrollbar-width: thin;
+                scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
+
+                &::-webkit-scrollbar {
+                  width: 8px;
+                  height: 8px;
+                }
+
+                &::-webkit-scrollbar-track {
+                  background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                  background-color: rgba(0, 0, 0, 0.35);
+                  border-radius: 8px;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                  background-color: rgba(0, 0, 0, 0.5);
+                }
+              `,
+            }}
+          >
+            <span>
+              Your activity may be processed to improve product experience and
+              system reliability.
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 20 })}
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 30 })}
+            </span>
+
+            <span>
+              {generateSentence({ minLen: 200, maxLen: 300, seed: 40 })}
+            </span>
+          </Messagebox>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "auto",
+            }}
+          >
+            <Button
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                `,
+                self: css`
+                  width: 100%;
+                  height: 50px;
+                `,
+              }}
+              variant="primary"
+            >
+              Accept & Continue
+            </Button>
+
+            <Button
+              variant="outline-default"
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                `,
+                self: css`
+                  width: 100%;
+                  height: 50px;
+                `,
+              }}
+              onClick={() => onClose()}
+            >
+              Not Now
+            </Button>
+          </div>
+        </>
+      );
+    };
+
+    const PAPER_DIALOGS = [
+      {
+        ref: dialogRef1,
+        caption: "Actionless",
+        controls: [],
+      },
+      {
+        ref: dialogRef2,
+        caption: "With right-aligned",
+        position: "right" as const,
+      },
+      {
+        ref: dialogRef3,
+        caption: "With left-aligned",
+        position: "left" as const,
+      },
+    ];
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+        }}
+      >
+        {PAPER_DIALOGS.map((dialog, index) => (
+          <Button
+            key={index}
+            onClick={() => {
+              PAPER_DIALOGS.forEach((item) => {
+                if (item.ref !== dialog.ref) {
+                  item.ref.current?.closeDialog(false);
+                }
+              });
+
+              dialog.ref.current?.openDialog();
+            }}
+          >
+            {dialog.caption}
+          </Button>
+        ))}
+
+        {PAPER_DIALOGS.map((dialog, index) => (
+          <PaperDialog
+            key={index}
+            ref={dialog.ref}
+            mobile
+            controls={dialog.controls}
+            position={dialog.position}
+            title="Terms & Conditions"
+            subtitle="Please review the following information before continuing to use Systatum services."
+            styles={{
+              contentStyle: css`
+                gap: 20px;
+              `,
+              titleStyle: css`
+                font-weight: 600;
+              `,
+            }}
+          >
+            <PaperDialogContent
+              onClose={() => dialog.ref.current?.closeDialog()}
+            />
+          </PaperDialog>
+        ))}
+      </div>
+    );
+  },
+};
+
 export const CustomIcon: Story = {
   render: () => {
     const dialogRef = useRef<PaperDialogRef>(null);
@@ -291,6 +469,7 @@ export const CustomIcon: Story = {
 
         <PaperDialog
           closable={true}
+          controls={["close", "minimize"]}
           width="35vw"
           icons={{
             closeIcon: {

@@ -2,8 +2,9 @@ import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCloseLine,
+  RiSubtractLine,
 } from "@remixicon/react";
-import { motion } from "framer-motion";
+import { motion, useDragControls } from "framer-motion";
 import {
   ReactNode,
   useState,
@@ -19,6 +20,7 @@ import { OverlayBlocker } from "./overlay-blocker";
 import { useTheme } from "./../theme/provider";
 import { PaperDialogThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Title } from "./title";
 
 export const PaperDialogState = {
   Restored: "restored",
@@ -41,12 +43,17 @@ export interface PaperDialogProps {
   position?: PaperDialogPosition;
   children?: ReactNode;
   closable?: boolean;
-  width?: string;
   styles?: PaperDialogStyles;
   onClosed?: () => void;
   icons?: PaperDialogIcons;
   id?: string;
   className?: string;
+  mobile?: boolean;
+  controls?: Array<"minimize" | "close">;
+  height?: string;
+  width?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 export interface PaperDialogIcons {
@@ -59,6 +66,8 @@ export interface PaperDialogStyles {
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
   overlayStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  subtitleStyle?: CSSProp;
 }
 
 export interface PaperDialogTriggerProps {
@@ -80,7 +89,7 @@ export interface PaperDialogContentStyles {
 
 export interface PaperDialogRef {
   openDialog: () => void;
-  closeDialog: () => void;
+  closeDialog: (withTimeout?: boolean) => void;
   minimizeDialog: () => void;
 }
 
@@ -89,48 +98,78 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     {
       position = "right",
       children,
-      closable = true,
-      width,
       styles,
       onClosed,
       icons,
       className,
+      title,
+      subtitle,
       id,
+      mobile,
+      closable = true,
+      controls = ["minimize", closable ? "close" : ""],
+      width,
+      height,
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+    const dragControls = useDragControls();
+
+    const [showTitlebar, setShowTitlebar] = useState(false);
+    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
+
+    const closeDialog = useCallback(
+      async (withTimeout: boolean = true) => {
+        const close = async () => await setDialogState("closed");
+
+        if (mobile) {
+          await setDialogState("minimized");
+
+          if (withTimeout) {
+            setTimeout(close, 400);
+          } else {
+            await close();
+          }
+        } else {
+          await close();
+        }
+
+        if (onClosed) {
+          await onClosed();
+        }
+      },
+      [mobile, onClosed]
+    );
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
         await setDialogState("restored");
       },
-      closeDialog: async () => {
-        await setDialogState("closed");
-        if (onClosed) {
-          await onClosed();
-        }
-      },
+      closeDialog: (withTimeout?: boolean) => closeDialog(withTimeout),
       minimizeDialog: async () => {
         await setDialogState("minimized");
       },
     }));
 
-    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
-
     const isLeft = position === "left";
 
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
-        if (e.key === "Escape" && closable) {
-          setDialogState("closed");
+        if (
+          e.key === "Escape" &&
+          closable &&
+          (dialogState === "restored" || dialogState === "minimized")
+        ) {
+          closeDialog();
+          setShowTitlebar(false);
           if (onClosed) {
             onClosed();
           }
         }
       },
-      [setDialogState]
+      [setDialogState, dialogState]
     );
 
     useEffect(() => {
@@ -150,12 +189,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
                 if (closable) {
-                  await setDialogState("closed");
+                  await setShowTitlebar(false);
+                  await closeDialog();
                   await close();
-
-                  if (onClosed) {
-                    await onClosed();
-                  }
                 }
               }}
               styles={{
@@ -165,31 +201,107 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             />
           )}
 
+          {mobile && showTitlebar && dialogState === "minimized" && title && (
+            <MiniTitleBar
+              $theme={paperDialogTheme}
+              onClick={() => {
+                setDialogState("restored");
+                setShowTitlebar(false);
+              }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 40 }}
+            >
+              <MiniDragPill $theme={paperDialogTheme} />
+              <Title
+                size="sm"
+                text={title ?? "Dialog"}
+                styles={{
+                  containerStyle: css`
+                    align-items: center;
+                  `,
+                }}
+                rightSection={[
+                  {
+                    styles: {
+                      toggleActionStyle: css`
+                        padding: 2px;
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 2px;
+                      `,
+                    },
+                    type: "actions",
+                    actions: [
+                      {
+                        icon: {
+                          image: icons?.closeIcon?.image ?? RiCloseLine,
+                          size: icons?.closeIcon?.size ?? 18,
+                        },
+                        onClick: () => {
+                          setDialogState("closed");
+                        },
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </MiniTitleBar>
+          )}
+
           <MotionDialog
+            $mobile={mobile}
             aria-label="paper-dialog-wrapper"
             $width={width}
-            initial={{ x: isLeft ? "-100%" : "100%" }}
+            $height={height}
+            initial={mobile ? { y: "100%" } : { x: isLeft ? "-100%" : "100%" }}
             animate={
               dialogState === "minimized"
-                ? { x: isLeft ? "-100%" : "100%" }
-                : { x: 0 }
+                ? mobile
+                  ? { y: "100%" }
+                  : { x: isLeft ? "-100%" : "100%" }
+                : mobile
+                  ? { y: 0 }
+                  : { x: 0 }
             }
             transition={{ type: "spring", stiffness: 400, damping: 40 }}
             $isLeft={isLeft}
             $theme={paperDialogTheme}
+            drag={mobile ? "y" : false}
+            dragListener={false}
+            dragDirectionLock
+            dragControls={dragControls}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{
+              top: 0,
+              bottom: 0.6,
+            }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120 || info.velocity.y > 500) {
+                setDialogState("minimized");
+                setShowTitlebar(true);
+              }
+            }}
+            whileDrag={{
+              cursor: "grabbing",
+              userSelect: "none",
+            }}
           >
-            {closable && (
-              <ActionButtonWrapper $top={4} $isLeft={isLeft}>
+            {closable && controls?.includes("close") && (
+              <ActionButtonWrapper
+                $indexAction={0}
+                $mobile={mobile}
+                $top={4}
+                $isLeft={isLeft}
+              >
                 <IconButton
+                  $mobile={mobile}
                   $theme={paperDialogTheme}
                   $isLeft={isLeft}
                   $style={styles?.closeButtonStyle}
                   aria-label="paper-dialog-toggle-close"
                   onClick={() => {
-                    setDialogState("closed");
-                    if (onClosed) {
-                      onClosed();
-                    }
+                    closeDialog();
                   }}
                 >
                   <Figure
@@ -202,44 +314,80 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               </ActionButtonWrapper>
             )}
 
-            <ActionButtonWrapper $top={44} $isLeft={isLeft}>
-              <IconButton
-                $theme={paperDialogTheme}
-                $style={styles?.minimizeButtonStyle}
+            {controls?.includes("minimize") && (
+              <ActionButtonWrapper
+                $indexAction={1}
+                $mobile={mobile}
+                $top={44}
                 $isLeft={isLeft}
-                aria-label="paper-dialog-toggle-restore"
-                onClick={() =>
-                  setDialogState(
-                    dialogState === "minimized" ? "restored" : "minimized"
-                  )
-                }
               >
-                <Figure
-                  {...icons?.restoreIcon}
-                  image={
-                    icons?.restoreIcon?.image ??
-                    (isLeft ? RiArrowRightSLine : RiArrowLeftSLine)
-                  }
-                  aria-label="paper-dialog-restore-icon"
-                  size={icons?.restoreIcon?.size ?? 18}
-                  styles={{
-                    self: css`
-                      display: flex;
-                      transition: transform 0.5s ease-in-out;
-                      transform: ${dialogState === "restored"
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)"};
-                    `,
+                <IconButton
+                  $mobile={mobile}
+                  $theme={paperDialogTheme}
+                  $style={styles?.minimizeButtonStyle}
+                  $isLeft={isLeft}
+                  aria-label="paper-dialog-toggle-restore"
+                  onClick={() => {
+                    setDialogState(
+                      dialogState === "minimized" ? "restored" : "minimized"
+                    );
+                    setShowTitlebar(true);
                   }}
-                />
-              </IconButton>
-            </ActionButtonWrapper>
+                >
+                  <Figure
+                    {...icons?.restoreIcon}
+                    image={
+                      icons?.restoreIcon?.image ??
+                      (mobile
+                        ? RiSubtractLine
+                        : isLeft
+                          ? RiArrowRightSLine
+                          : RiArrowLeftSLine)
+                    }
+                    aria-label="paper-dialog-restore-icon"
+                    size={icons?.restoreIcon?.size ?? 18}
+                    styles={{
+                      self: css`
+                        display: flex;
+                        transition: transform 0.5s ease-in-out;
+                        transform: ${mobile
+                          ? "rotate(0deg)"
+                          : dialogState === "restored"
+                            ? "rotate(180deg)"
+                            : "rotate(0deg)"};
+                      `,
+                    }}
+                  />
+                </IconButton>
+              </ActionButtonWrapper>
+            )}
 
             <PaperDialogContent
+              $height={height}
               $theme={paperDialogTheme}
               aria-label="paper-dialog-content"
               $style={styles?.contentStyle}
+              $mobile={mobile}
             >
+              {(title || subtitle) && (
+                <Title
+                  styles={{
+                    titleStyle: styles?.titleStyle,
+                    subtitleStyle: styles?.subtitleStyle,
+                  }}
+                  text={title}
+                  subtitle={subtitle}
+                  size="lg"
+                />
+              )}
+              {mobile && closable && (
+                <DragIndicatorWrapper
+                  aria-label="paper-dialog-drag-indicator"
+                  onPointerDown={(e) => dragControls.start(e)}
+                >
+                  <DragIndicator $theme={paperDialogTheme} />
+                </DragIndicatorWrapper>
+              )}
               {children}
             </PaperDialogContent>
           </MotionDialog>
@@ -267,25 +415,52 @@ const DialogOverlay = styled.div<{
 const MotionDialog = styled(motion.div)<{
   $isLeft: boolean;
   $style?: CSSProp;
-  $width?: string;
   $theme?: PaperDialogThemeConfig;
+  $mobile?: boolean;
+  $width?: string;
+  $height?: string;
 }>`
   position: fixed;
-  top: 0;
-  ${({ $isLeft }) =>
-    $isLeft
+
+  ${({ $mobile, $isLeft }) =>
+    $mobile
       ? css`
           left: 0;
+          right: 0;
+          margin-inline: auto;
+          bottom: 0;
+          border-top-left-radius: 20px;
+          border-top-right-radius: 20px;
+          user-select: none;
+        `
+      : $isLeft
+        ? css`
+            top: 0;
+            left: 0;
+          `
+        : css`
+            top: 0;
+            right: 0;
+          `}
+
+  ${({ $width, $mobile, $height }) =>
+    $mobile
+      ? css`
+          max-height: ${$height ?? "88dvh"};
+          min-height: ${$height ?? "88dvh"};
+          min-width: ${$width ?? "100dvw"};
+          max-width: ${$width ?? "100dvw"};
         `
       : css`
-          right: 0;
+          max-height: ${$height ?? "100dvh"};
+          min-height: ${$height ?? "100dvh"};
+          min-width: ${$width ?? "92dvw"};
+          max-width: ${$width ?? "92dvw"};
         `}
+
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 16rem;
-  min-width: ${({ $width }) => $width ?? "92vw"};
-  padding-bottom: 1rem;
   z-index: 9991999;
 
   background-color: ${({ $theme }) => $theme?.backgroundColor};
@@ -300,23 +475,40 @@ const ActionButtonWrapper = styled.div<{
   $isLeft: boolean;
   $top: number;
   $style?: CSSProp;
+  $mobile?: boolean;
+  $indexAction?: number;
 }>`
   position: absolute;
-  top: ${({ $top }) => `${$top}px`};
   z-index: 50;
   display: flex;
   flex-direction: column;
   height: fit-content;
 
-  ${({ $isLeft }) =>
-    $isLeft
+  ${({ $isLeft, $mobile, $top, $indexAction }) =>
+    $mobile
       ? css`
-          left: 100%;
-          translate: -4px;
+          top: -30.5px;
+
+          ${$isLeft
+            ? css`
+                left: ${`${$indexAction * 42 + 30}px`};
+              `
+            : css`
+                right: ${`${$indexAction * 42 + 30}px`};
+              `}
         `
       : css`
-          right: 100%;
-          translate: 4px;
+          top: ${`${$top}px`};
+
+          ${$isLeft
+            ? css`
+                left: 100%;
+                translate: -4px;
+              `
+            : css`
+                right: 100%;
+                translate: 4px;
+              `}
         `}
 `;
 
@@ -324,31 +516,45 @@ const IconButton = styled.button<{
   $isLeft: boolean;
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
+  $mobile?: boolean;
 }>`
   position: relative;
   cursor: pointer;
   padding: 8px;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
-  box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   &:hover {
     background-color: ${({ $theme }) => $theme?.actionHoverBackgroundColor};
   }
 
-  ${({ $isLeft }) =>
-    $isLeft
+  ${({ $isLeft, $mobile, $theme }) =>
+    $mobile
       ? css`
-          border-right-width: 1px;
+          border: 1px solid ${$theme?.borderColor};
           border-top-width: 1px;
-          border-bottom-width: 1px;
-          border-radius: 0 0.75rem 0.75rem 0;
+          border-right-width: 1px;
+          border-left-width: 1px;
+          border-bottom-width: 0px;
+          border-radius: 0.75rem 0.75rem 0 0;
+          padding: 6px;
         `
       : css`
-          border-left-width: 1px;
-          border-top-width: 1px;
-          border-bottom-width: 1px;
-          border-radius: 0.75rem 0 0 0.75rem;
+          border: 1px solid ${$theme?.borderColor};
+          box-shadow: ${$theme?.boxShadow};
+
+          ${$isLeft
+            ? css`
+                border-right-width: 1px;
+                border-top-width: 1px;
+                border-bottom-width: 1px;
+                border-radius: 0 0.75rem 0.75rem 0;
+              `
+            : css`
+                border-left-width: 1px;
+                border-top-width: 1px;
+                border-bottom-width: 1px;
+                border-radius: 0.75rem 0 0 0.75rem;
+              `}
         `};
 
   ${({ $style }) => $style}
@@ -357,9 +563,11 @@ const IconButton = styled.button<{
 const PaperDialogContent = styled.div<{
   $style?: CSSProp;
   $theme?: PaperDialogThemeConfig;
+  $height?: string;
+  $mobile?: boolean;
 }>`
-  min-height: 100dvh;
-  max-height: 100dvh;
+  height: ${({ $height }) => $height ?? "100dvh"};
+  max-height: ${({ $height }) => $height ?? "100dvh"};
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -368,8 +576,76 @@ const PaperDialogContent = styled.div<{
   z-index: 9999;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   color: ${({ $theme }) => $theme?.textColor};
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 40px 20px 20px 20px;
+      border-radius: 1rem 1rem 0 0;
+      margin-top: 4px;
+    `}
 
   ${({ $style }) => $style}
+`;
+
+const DragIndicatorWrapper = styled(motion.div)`
+  display: flex;
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  width: 100dvw;
+  cursor: grab;
+  height: 40px;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+const DragIndicator = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  display: flex;
+  transform: translateY(22px);
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background-color: ${({ $theme }) => $theme?.textColor};
+  opacity: 0.3;
+`;
+
+const MiniTitleBar = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9994999;
+  align-items: center;
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  border-top: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border-radius: 12px 12px 0 0;
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const MiniDragPill = styled.div<{ $theme?: PaperDialogThemeConfig }>`
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: ${({ $theme }) => $theme?.textColor};
+  opacity: 0.3;
 `;
 
 export { PaperDialog };
