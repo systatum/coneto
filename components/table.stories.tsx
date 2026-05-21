@@ -685,7 +685,6 @@ export const Appendable: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column: columnCaption });
@@ -695,7 +694,6 @@ export const Appendable: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column: columnCaption });
@@ -705,7 +703,6 @@ export const Appendable: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column: columnCaption });
@@ -720,7 +717,6 @@ export const Appendable: Story = {
           caption: "Edit",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -730,7 +726,6 @@ export const Appendable: Story = {
           caption: "Delete",
           icon: {
             image: RiDeleteBin2Fill,
-            color: "gray",
           },
           variant: "danger",
           onClick: () => {
@@ -931,7 +926,6 @@ export const WithOneAction: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column: columnCaption });
@@ -941,7 +935,6 @@ export const WithOneAction: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column: columnCaption });
@@ -951,7 +944,6 @@ export const WithOneAction: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column: columnCaption });
@@ -1130,7 +1122,6 @@ export const SortableWithPagination: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
@@ -1140,7 +1131,6 @@ export const SortableWithPagination: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
@@ -1150,7 +1140,6 @@ export const SortableWithPagination: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
@@ -1446,7 +1435,6 @@ export const WithSummary: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
@@ -1456,7 +1444,6 @@ export const WithSummary: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
@@ -1466,7 +1453,6 @@ export const WithSummary: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
@@ -1481,7 +1467,6 @@ export const WithSummary: Story = {
           caption: "Edit",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -1491,7 +1476,6 @@ export const WithSummary: Story = {
           caption: "Delete",
           icon: {
             image: RiDeleteBin2Fill,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was deleted`);
@@ -1839,7 +1823,6 @@ export const WithRowGroup: Story = {
         caption: "Copy to parent",
         icon: {
           image: RiFileCopy2Line,
-          color: "gray",
         },
         variant: "danger",
         onClick: () => {
@@ -1850,7 +1833,6 @@ export const WithRowGroup: Story = {
         caption: "Copy to link",
         icon: {
           image: RiClipboardLine,
-          color: "gray",
         },
         onClick: () => {
           console.log(`${selected} was copied to link`);
@@ -1928,7 +1910,6 @@ export const WithRowGroup: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
@@ -1938,7 +1919,6 @@ export const WithRowGroup: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
@@ -1948,7 +1928,6 @@ export const WithRowGroup: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
@@ -1963,7 +1942,6 @@ export const WithRowGroup: Story = {
           caption: "Edit",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -1973,7 +1951,6 @@ export const WithRowGroup: Story = {
           caption: "Delete",
           icon: {
             image: RiDeleteBin2Fill,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was deleted`);
@@ -2296,7 +2273,6 @@ export const WithRowAppendix: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "asc", column });
@@ -2306,7 +2282,6 @@ export const WithRowAppendix: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "desc", column });
@@ -2316,7 +2291,6 @@ export const WithRowAppendix: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({ mode: "original", column });
@@ -2331,7 +2305,6 @@ export const WithRowAppendix: Story = {
           caption: "Edit",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -2341,7 +2314,6 @@ export const WithRowAppendix: Story = {
           caption: "Delete",
           icon: {
             image: RiDeleteBin2Fill,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was deleted`);
@@ -2805,7 +2777,6 @@ export const Draggable: Story = {
         caption: "Copy to parent",
         icon: {
           image: RiFileCopy2Line,
-          color: "gray",
         },
         variant: "danger",
         onClick: () => {
@@ -2816,7 +2787,6 @@ export const Draggable: Story = {
         caption: "Copy to link",
         icon: {
           image: RiClipboardLine,
-          color: "gray",
         },
         onClick: () => {
           console.log(`${selected} was copied to link`);
@@ -2860,7 +2830,6 @@ export const Draggable: Story = {
           caption: "Sort Ascending",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({
@@ -2875,7 +2844,6 @@ export const Draggable: Story = {
           caption: "Sort Descending",
           icon: {
             image: RiArrowDownSLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({
@@ -2890,7 +2858,6 @@ export const Draggable: Story = {
           caption: "Reset Sorting",
           icon: {
             image: RiRefreshLine,
-            color: "gray",
           },
           onClick: () => {
             handleSortingRequested({
@@ -2910,7 +2877,6 @@ export const Draggable: Story = {
           caption: "Edit",
           icon: {
             image: RiArrowUpSLine,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -2920,7 +2886,6 @@ export const Draggable: Story = {
           caption: "Delete",
           icon: {
             image: RiDeleteBin2Fill,
-            color: "gray",
           },
           onClick: () => {
             console.log(`${rowId} was deleted`);
