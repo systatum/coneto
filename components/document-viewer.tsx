@@ -15,6 +15,51 @@ import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 
+// PDF.js worker — Vite ?worker pattern (mirrors Monaco's CodeEditor setup)
+//
+// The `?worker` suffix tells Vite to:
+//  - Treat this file as a Web Worker entry point
+//  - Bundle it separately into its own chunk
+//  - Return a Worker *constructor* (not a URL string)
+//
+// Without this setup pdf.js will fall back to the fake "legacy" worker that
+// runs on the main thread, which blocks the UI and logs a warning.
+
+import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?worker";
+
+/**
+ * Registers the PDF.js worker factory exactly once.
+ * Call before the first `getDocument()` invocation.
+ * Safe to call multiple times — the `initialized` guard makes it a no-op.
+ */
+let initialized = false;
+
+function initPdfWorker() {
+  if (initialized || typeof window === "undefined") return;
+
+  // Lazily import pdfjs-dist and point it at our bundled worker.
+  // We use a factory function so pdf.js can spawn multiple workers if needed.
+  import("pdfjs-dist").then((module) => {
+    module.GlobalWorkerOptions.workerPort = new PdfWorker();
+  });
+
+  initialized = true;
+}
+
+// Cached promise so the pdfjs-dist bundle is only imported once.
+let pdfjsPromise: Promise<typeof import("pdfjs-dist")> | null = null;
+
+/**
+ * Lazily imports and caches the pdfjs-dist module.
+ * Mirrors CodeEditor's `getMonacoEditor()`.
+ */
+export function getPdfJs() {
+  if (!pdfjsPromise) {
+    pdfjsPromise = import("pdfjs-dist");
+  }
+  return pdfjsPromise;
+}
+
 type ResolvedSource =
   | { type: "pdf"; src: string }
   | { type: "image"; src: string }
@@ -36,7 +81,6 @@ export interface DocumentViewerProps {
   onRegionSelected?: (region: BoundingBoxState) => void;
   boundingBoxes?: BoundingBox[];
   initialZoom?: 75 | 100 | 110 | 120 | 130 | 140 | 150;
-  libPdfJsWorkerSrc?: string;
   styles?: DocumentViewerStyles;
   selectable?: boolean;
   labels?: DocumentViewerLabels;
@@ -85,6 +129,7 @@ export interface DocumentViewerRef {
    */
   repositionPopUp: (data: HTMLDivElement) => void;
 }
+
 interface BoxStyle {
   borderColor?: string;
   backgroundColor?: string;
@@ -109,7 +154,6 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       boundingBoxes = [],
       initialZoom = 100,
       labels,
-      libPdfJsWorkerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
       selectable,
       title,
       className,
@@ -124,6 +168,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       totalPages: renderTotalPages,
       zoomPlaceholder = "zoom your pdf...",
     } = labels ?? {};
+
+    // Register the worker once, on first render — same pattern as
+    // CodeEditor calling `initMonacoEnvironment()` inside useEffect.
+    useEffect(() => {
+      initPdfWorker();
+    }, []);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<HTMLDivElement>(null);
@@ -159,10 +209,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 
     const [selection, setSelection] = useState<BoundingBoxState | null>(null);
 
-    const [start, setStart] = useState<{
-      x: number;
-      y: number;
-    } | null>(null);
+    const [start, setStart] = useState<{ x: number; y: number } | null>(null);
     const [canvasLocal, setCanvasLocal] = useState<HTMLCanvasElement | null>(
       null
     );
@@ -191,64 +238,58 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       let cancelled = false;
 
       if (resolvedSource.type === "pdf") {
-        import("pdfjs-dist").then((module) => {
-          /**
-           * We set pdfjsLib.GlobalWorkerOptions.workerSrc to load the PDF.js worker from a CDN, since the built-in worker from the library cannot be used directly at the moment.
-           * In Next.js, the import must be done inside useEffect, because using `import * as ...`
-           * can cause issues with server-side rendering (SSR).
-           */
-          module.GlobalWorkerOptions.workerSrc = libPdfJsWorkerSrc;
+        // Use the cached singleton
+        getPdfJs()
+          .then((module) => {
+            return module.getDocument(resolvedSource.src).promise;
+          })
+          .then((pdf: PDFDocumentProxy) => {
+            if (cancelled) return;
+            setTotalPages(pdf.numPages);
+            const canvases: HTMLCanvasElement[] = [];
 
-          module
-            .getDocument(resolvedSource.src)
-            .promise.then((pdf: PDFDocumentProxy) => {
-              if (cancelled) return;
-              setTotalPages(pdf.numPages);
-              const canvases: HTMLCanvasElement[] = [];
+            const renderPages = async () => {
+              for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale });
 
-              const renderPages = async () => {
-                for (let i = 1; i <= pdf.numPages; i++) {
-                  const page = await pdf.getPage(i);
-                  const viewport = page.getViewport({ scale });
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
+                if (!context) continue;
 
-                  const canvas = document.createElement("canvas");
-                  const context = canvas.getContext("2d");
-                  if (!context) continue;
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
 
-                  canvas.width = viewport.width;
-                  canvas.height = viewport.height;
+                await page.render({
+                  canvas,
+                  canvasContext: context,
+                  viewport,
+                }).promise;
 
-                  await page.render({
-                    canvas,
-                    canvasContext: context,
-                    viewport,
-                  }).promise;
+                const pageWrapper = document.createElement("div");
+                pageWrapper.style.display = "flex";
+                pageWrapper.style.justifyContent = "center";
+                pageWrapper.style.marginBottom = "20px";
+                pageWrapper.style.background = "white";
+                pageWrapper.style.width = "fit-content";
+                pageWrapper.style.margin = "0 auto 20px auto";
 
-                  const pageWrapper = document.createElement("div");
-                  pageWrapper.style.display = "flex";
-                  pageWrapper.style.justifyContent = "center";
-                  pageWrapper.style.marginBottom = "20px";
-                  pageWrapper.style.background = "white";
-                  pageWrapper.style.width = "fit-content";
-                  pageWrapper.style.margin = "0 auto 20px auto";
+                pageWrapper.appendChild(canvas);
+                viewerRef.current?.appendChild(pageWrapper);
+                canvases.push(canvas);
+              }
 
-                  pageWrapper.appendChild(canvas);
-                  viewerRef.current?.appendChild(pageWrapper);
-                  canvases.push(canvas);
-                }
-
-                pdfRef.current = { pdf, canvases };
-                setLoading(false);
-              };
-
-              renderPages();
-            })
-            .catch((err: any) => {
-              if (cancelled) return;
-              setError(`Error loading PDF: ${err.message}`);
+              pdfRef.current = { pdf, canvases };
               setLoading(false);
-            });
-        });
+            };
+
+            renderPages();
+          })
+          .catch((err: any) => {
+            if (cancelled) return;
+            setError(`Error loading PDF: ${err.message}`);
+            setLoading(false);
+          });
 
         return () => {
           cancelled = true;
@@ -306,6 +347,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       }
     }, [resolvedSource]);
 
+    // Re-render whenever the viewer resizes so bounding box / selection
+    // overlay positions are recalculated against the updated dimensions.
     useEffect(() => {
       if (!viewerRef.current && selection) return;
       const resizeObserver = new ResizeObserver(() => {
@@ -354,9 +397,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       const handleScroll = () => {
         const canvases = pdfRef.current!.canvases;
         const containerRect = container.getBoundingClientRect();
-        const containerTop = containerRect.top;
-        const containerBottom = containerRect.bottom;
-        const containerCenter = (containerTop + containerBottom) / 2;
+        const containerCenter = (containerRect.top + containerRect.bottom) / 2;
 
         let closestPage = 1;
         let closestDistance = Infinity;
@@ -471,7 +512,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
         return;
       }
 
-      // PDF source
+      // PDF source — re-render each page at the new scale
       canvases.forEach((canvas, index) => {
         pdf.getPage(index + 1).then((page) => {
           const viewport = page.getViewport({ scale });
@@ -484,25 +525,17 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
           const context = canvas.getContext("2d");
           if (!context) return;
 
-          page.render({
-            canvas,
-            canvasContext: context,
-            viewport,
-          });
+          page.render({ canvas, canvasContext: context, viewport });
         });
       });
     }, [scale]);
 
     useEffect(() => {
-      if (pdfRef.current) {
-        resizeCanvases();
-      }
+      if (pdfRef.current) resizeCanvases();
     }, [scale, resizeCanvases]);
 
     useEffect(() => {
-      const handleResize = () => {
-        resizeCanvases();
-      };
+      const handleResize = () => resizeCanvases();
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, [resizeCanvases]);
@@ -670,7 +703,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             }}
             options={SCALE_OPTIONS}
           />
-          {resolvedSource.type === "pdf" && (
+          {resolvedSource?.type === "pdf" && (
             <div
               aria-label="doc-viewer-page"
               style={{
@@ -681,10 +714,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
               }}
             >
               {renderTotalPages ? (
-                renderTotalPages({
-                  currentPage: currentPage,
-                  totalPages: totalPages,
-                })
+                renderTotalPages({ currentPage, totalPages })
               ) : (
                 <p>
                   Page {currentPage} of {totalPages}
@@ -717,6 +747,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
           />
+
           {boundingBoxes &&
             boundingBoxes.map((box, index) => {
               const canvas = pdfRef.current?.canvases[box.page! - 1];
@@ -773,10 +804,8 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
                     }}
                     $selectionStyle={css`
                       ${styles?.boxStyle}
-
                       border-color: ${box.styles?.self?.borderColor};
                       background-color: ${box.styles?.self?.backgroundColor};
-
                       ${selection &&
                       css`
                         pointer-events: none;
@@ -830,9 +859,7 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
   }
 );
 
-const PDFViewerContainer = styled.div<{
-  $backgroundColor?: string;
-}>`
+const PDFViewerContainer = styled.div<{ $backgroundColor?: string }>`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -851,7 +878,6 @@ const ToolbarWrapper = styled.div<{
   display: flex;
   align-items: center;
   gap: 12px;
-  display: flex;
   padding: 20px 16px;
   flex-direction: row;
   justify-content: space-between;
@@ -859,9 +885,7 @@ const ToolbarWrapper = styled.div<{
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Title = styled.div<{
-  $textColor?: string;
-}>`
+const Title = styled.div<{ $textColor?: string }>`
   color: ${({ $textColor }) => $textColor};
   display: block;
   white-space: nowrap;
