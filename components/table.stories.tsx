@@ -9,6 +9,7 @@ import {
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
   RiDownload2Fill,
+  RiEditLine,
   RiFileCopy2Line,
   RiReactjsLine,
   RiRefreshLine,
@@ -1466,7 +1467,7 @@ export const WithSummary: Story = {
         {
           caption: "Edit",
           icon: {
-            image: RiArrowUpSLine,
+            image: RiEditLine,
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -1941,7 +1942,7 @@ export const WithRowGroup: Story = {
         {
           caption: "Edit",
           icon: {
-            image: RiArrowUpSLine,
+            image: RiEditLine,
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -2304,7 +2305,7 @@ export const WithRowAppendix: Story = {
         {
           caption: "Edit",
           icon: {
-            image: RiArrowUpSLine,
+            image: RiEditLine,
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
@@ -2876,7 +2877,7 @@ export const Draggable: Story = {
         {
           caption: "Edit",
           icon: {
-            image: RiArrowUpSLine,
+            image: RiEditLine,
           },
           onClick: () => {
             console.log(`${rowId} was edited`);
