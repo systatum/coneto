@@ -1374,7 +1374,6 @@ function TableRow({
                 icon: {
                   ...action.icon,
                   image: action.icon?.image ?? RiArrowRightSLine,
-                  color: action.icon?.color ?? "black",
                 },
                 onClick: (e?: React.MouseEvent) => {
                   e?.stopPropagation();
