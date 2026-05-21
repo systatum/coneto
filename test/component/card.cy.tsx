@@ -170,7 +170,7 @@ describe("Card", () => {
               titleStyle: css`
                 width: 100%;
               `,
-              textContainerStyle: css`
+              headerTitleSectionStyle: css`
                 width: 100%;
               `,
               containerStyle: css`
@@ -212,7 +212,7 @@ describe("Card", () => {
               titleStyle: css`
                 width: 100%;
               `,
-              textContainerStyle: css`
+              headerTitleSectionStyle: css`
                 width: 100%;
               `,
               containerStyle: css`
