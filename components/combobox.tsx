@@ -398,6 +398,8 @@ function ComboboxDrawer({
   const treeListTheme = currentTheme?.treelist;
 
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [showFadeTop, setShowFadeTop] = useState(true);
+  const [showFadeBottom, setShowFadeBottom] = useState(true);
 
   const floatingRef = useRef<HTMLUListElement>(null);
 
@@ -430,8 +432,6 @@ function ComboboxDrawer({
       ) + (actions?.length ?? 0),
     [finalOptions, finalSelectedOptions, actions]
   );
-
-  console.log(selectedIndex);
 
   const handleOnChange = (values: string[]) => {
     if (!onChange) return;
@@ -744,6 +744,52 @@ function ComboboxDrawer({
     }
   };
 
+  /**
+   * Dynamically show/hide the top and bottom fade overlays based on the
+   * selected item's position relative to the scrollable container.
+   *
+   * The fade hides when the selected item's center point comes within
+   * `threshold` pixels of that edge, and reappears once it scrolls past.
+   */
+
+  useEffect(() => {
+    const container = floatingRef.current;
+    if (!container || !mobile) return;
+
+    const updateFade = () => {
+      const selectedEl = listRef.current[selectedIndex];
+
+      if (!selectedEl) {
+        setShowFadeTop(true);
+        setShowFadeBottom(true);
+        return;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = selectedEl.getBoundingClientRect();
+
+      const itemMidY = itemRect.top + itemRect.height / 2;
+
+      const distanceFromTop = itemMidY - containerRect.top;
+      const distanceFromBottom = containerRect.bottom - itemMidY;
+
+      const threshold = 40;
+
+      const itemNearTop = distanceFromTop >= 0 && distanceFromTop <= threshold;
+      const itemNearBottom =
+        distanceFromBottom >= 0 && distanceFromBottom <= threshold;
+
+      setShowFadeTop(!itemNearTop);
+      setShowFadeBottom(!itemNearBottom);
+      setShowFadeBottom(!itemNearBottom);
+    };
+
+    updateFade();
+    container.addEventListener("scroll", updateFade);
+
+    return () => container.removeEventListener("scroll", updateFade);
+  }, [selectedIndex, finalOptions.length]);
+
   const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps({
@@ -973,8 +1019,8 @@ function ComboboxDrawer({
   if (mobile) {
     return (
       <DrawerContainer>
-        <FadeTop $theme={comboboxTheme} />
-        <FadeBottom $theme={comboboxTheme} />
+        <FadeTop $theme={comboboxTheme} $visible={showFadeTop} />
+        <FadeBottom $theme={comboboxTheme} $visible={showFadeBottom} />
         {mainCombobox}
       </DrawerContainer>
     );
@@ -1037,6 +1083,7 @@ const DrawerWrapper = styled.ul<{
       border-radius: 14px;
       min-height: 15rem;
       max-height: 15rem;
+      border-width: 0.5;
     `}
 
   ${({ $style }) => $style}
@@ -1109,13 +1156,19 @@ const rowStyle = ({
   }
 `;
 
-const FadeTop = styled.div<{ $style?: CSSProp; $theme: ComboboxThemeConfig }>`
+const FadeTop = styled.div<{
+  $style?: CSSProp;
+  $theme: ComboboxThemeConfig;
+  $visible?: boolean;
+}>`
   pointer-events: none;
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   height: 28px;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity 0.2s ease;
   background: linear-gradient(
     to bottom,
     ${({ $theme }) => $theme.fadeColor} 10%,
@@ -1129,6 +1182,7 @@ const FadeTop = styled.div<{ $style?: CSSProp; $theme: ComboboxThemeConfig }>`
 const FadeBottom = styled.div<{
   $style?: CSSProp;
   $theme: ComboboxThemeConfig;
+  $visible?: boolean;
 }>`
   pointer-events: none;
   position: absolute;
@@ -1136,7 +1190,8 @@ const FadeBottom = styled.div<{
   right: 0;
   bottom: 0;
   height: 28px;
-
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity 0.2s ease;
   background: linear-gradient(
     to top,
     ${({ $theme }) => $theme.fadeColor} 10%,
