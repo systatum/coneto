@@ -55,6 +55,7 @@ interface BaseComboboxProps {
   navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
+  mobile?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -151,6 +152,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       isLoading,
       labels,
       className,
+      mobile,
     },
     ref
   ) => {
@@ -224,6 +226,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         ref={ref}
         className={applyClassName("combobox", className)}
         isLoading={isLoading}
+        mobile={mobile}
         helper={helper}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
@@ -334,6 +337,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             <ComboboxDrawer
               {...props}
               styles={styles}
+              mobile={mobile}
               navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}
               name={name}
@@ -387,6 +391,7 @@ function ComboboxDrawer({
   setOpenedCategoryGroup,
   styles,
   navigableOptions,
+  mobile,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -425,6 +430,8 @@ function ComboboxDrawer({
       ) + (actions?.length ?? 0),
     [finalOptions, finalSelectedOptions, actions]
   );
+
+  console.log(selectedIndex);
 
   const handleOnChange = (values: string[]) => {
     if (!onChange) return;
@@ -737,7 +744,7 @@ function ComboboxDrawer({
     }
   };
 
-  return (
+  const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps({
         onMouseDown: (e: React.MouseEvent) => {
@@ -750,12 +757,13 @@ function ComboboxDrawer({
         }
         floatingRef.current = node;
       }}
+      style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
       id="combo-list"
       aria-label={`combobox-drawer-${name}`}
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
-      style={{ ...floatingStyles }}
+      $mobile={mobile}
       $style={styles?.drawerStyle}
     >
       {(finalOptions || actions) && (
@@ -960,14 +968,50 @@ function ComboboxDrawer({
       )}
     </DrawerWrapper>
   );
+
+  if (mobile) {
+    return (
+      <DrawerContainer $mobile={mobile}>
+        {mobile && (
+          <>
+            <FadeTop $theme={comboboxTheme} />
+            <FadeBottom $theme={comboboxTheme} />
+          </>
+        )}
+        {mainCombobox}
+      </DrawerContainer>
+    );
+  }
+
+  return mainCombobox;
 }
+
+const DrawerContainer = styled.div<{ $mobile?: boolean }>`
+  position: absolute;
+  overflow: hidden;
+
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96dvw;
+      z-index: 9992999;
+      min-height: 15rem;
+      max-height: 15rem;
+      border-radius: 14px;
+    `}
+`;
 
 const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
+  $mobile?: boolean;
 }>`
-  position: absolute;
+  position: relative;
   z-index: 9992999;
   max-height: 15rem;
   overflow-y: auto;
@@ -976,9 +1020,6 @@ const DrawerWrapper = styled.ul<{
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
-
-  scroll-behavior: smooth;
-  overscroll-behavior: contain;
 
   scrollbar-width: thin;
   scrollbar-color: ${({ $theme }) => $theme?.scrollThumbColor || "#52525b"}
@@ -996,6 +1037,16 @@ const DrawerWrapper = styled.ul<{
     background-color: #d1d5db;
     border-radius: 4px;
   }
+
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      width: 100%;
+      z-index: 9992999;
+      border-radius: 14px;
+      min-height: 15rem;
+      max-height: 15rem;
+    `}
 
   ${({ $style }) => $style}
 `;
@@ -1053,6 +1104,44 @@ const rowStyle = ({
       }
     `}
   }
+`;
+
+const FadeTop = styled.div<{ $style?: CSSProp; $theme: ComboboxThemeConfig }>`
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 32px;
+  background: linear-gradient(
+    to bottom,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
+  z-index: 99999999;
+
+  ${({ $style }) => $style}
+`;
+
+const FadeBottom = styled.div<{
+  $style?: CSSProp;
+  $theme: ComboboxThemeConfig;
+}>`
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+
+  background: linear-gradient(
+    to top,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
+  z-index: 99999999;
+
+  ${({ $style }) => $style}
 `;
 
 export { Combobox };
