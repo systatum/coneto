@@ -18,17 +18,16 @@ import { TreeListThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
-export interface TreeListProps
-  extends Omit<
-    HTMLAttributes<HTMLDivElement>,
-    | "style"
-    | "onChange"
-    | "content"
-    | "onMouseDown"
-    | "onMouseMove"
-    | "onKeyDown"
-    | "onMouseEnter"
-  > {
+export interface TreeListProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  | "style"
+  | "onChange"
+  | "content"
+  | "onMouseDown"
+  | "onMouseMove"
+  | "onKeyDown"
+  | "onMouseEnter"
+> {
   content: TreeListContent[];
   children?: ReactNode;
   emptySlate?: ReactNode;
@@ -136,8 +135,10 @@ export interface TreeListContent {
   collapsible?: boolean;
 }
 
-export interface TreeListContentAction
-  extends Omit<ContextMenuAction, "onClick"> {
+export interface TreeListContentAction extends Omit<
+  ContextMenuAction,
+  "onClick"
+> {
   onClick?: (id?: string) => void;
 }
 
@@ -510,6 +511,8 @@ function TreeList({
                     data-has-options={item?.className?.includes(
                       "has-group-options"
                     )}
+                    data-first={index === 0}
+                    data-last={index === content.length - 1}
                     data-action-opened={item.id === openRowId}
                     data-selected={selectedItems?.includes(item.id)}
                     data-highlighted={item?.className?.includes(
@@ -1027,6 +1030,8 @@ function TreeListItem<T extends TreeListItem>({
         data-selected={isSelected.includes(item.id)}
         data-has-options={item?.className?.includes("has-group-options")}
         data-highlighted={item?.className?.includes("is-highlighted")}
+        data-first={index === 0}
+        data-last={index === item?.items?.length - 1}
         onKeyDown={(e) => {
           onKeyDownItem?.({ event: e, item });
         }}
