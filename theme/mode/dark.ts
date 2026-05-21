@@ -752,8 +752,8 @@ const darkToolbar = createToolbarTheme({
 
 const darkTooltip = createTooltipTheme({
   arrowBackgroundColor: "#3e4143",
-  literalStringBackgroundColor: "#292c2e",
-  nodeElementBackgroundColor: "#292c2e",
+  literalStringBackgroundColor: "#3e4143",
+  nodeElementBackgroundColor: "#3e4143",
   literalStringTextColor: darkBody?.textColor,
   nodeElementTextColor: darkBody?.textColor,
 });
