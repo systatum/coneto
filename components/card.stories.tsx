@@ -148,7 +148,7 @@ Custom styles for different sections of the Card component:
 - **footerStyle**: Styles for the footer section
 - **titleStyle**: Styles for the title text
 - **subtitleStyle**: Styles for the subtitle text
-- **textContainerStyle**: Styles for the title/subtitle wrapper
+- **headerTitleSectionStyle**: Styles for the title/subtitle wrapper
 - **actionContainerStyle**: Styles for the header actions wrapper
       `,
     },
@@ -998,7 +998,7 @@ export const WithFullWidthContent: Story = {
           titleStyle: css`
             width: 100%;
           `,
-          textContainerStyle: css`
+          headerTitleSectionStyle: css`
             width: 100%;
           `,
           containerStyle: css`
