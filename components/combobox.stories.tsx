@@ -181,6 +181,50 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  render: () => {
+    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
+
+    const FRUIT_OPTIONS: ComboboxOption[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+      { text: "Mango", value: "8" },
+      { text: "Blueberry", value: "9" },
+      { text: "Cherry", value: "10" },
+      { text: "Kiwi", value: "11" },
+      { text: "Papaya", value: "12" },
+      { text: "Peach", value: "13" },
+      { text: "Pear", value: "14" },
+      { text: "Lemon", value: "15" },
+      { text: "Coconut", value: "16" },
+    ];
+    return (
+      <div
+        style={{
+          width: "256px",
+        }}
+      >
+        <Combobox
+          label="Mobile Combobox"
+          selectedOptions={value}
+          options={FRUIT_OPTIONS}
+          onChange={setValue}
+          placeholder="Select a fruit..."
+          mobile
+        />
+      </div>
+    );
+  },
+};
+
 export const WithLoading: Story = {
   render: () => {
     const [value, setValue] = useState<SelectboxSelectedOptions>("");
