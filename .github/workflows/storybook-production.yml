@@ -39,9 +39,7 @@ jobs:
             | bash
 
       - name: Deploy to Production R2
-        env:
-          R2_ACCOUNT_ID: ${{ secrets.R2_PROD_ACCOUNT_ID }}
         run: |
           netiploy deploy "storybook-static/*" to r2/coneto-com \
             --token="${{ secrets.R2_PROD_ACCESS_KEY_ID }}:${{ secrets.R2_PROD_SECRET_ACCESS_KEY }}" \
-            --public-url="https://coneto.systatum.com"
+            --public-url="https://coneto.systatum.com" --account-id="${{ secrets.R2_PROD_ACCOUNT_ID }}"
