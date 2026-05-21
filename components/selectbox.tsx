@@ -40,8 +40,10 @@ import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
-interface BaseSelectboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
+interface BaseSelectboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "children"
+> {
   options?: SelectboxOption[];
   navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
@@ -406,12 +408,29 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
     };
 
+    // Sync highlightedIndex to the selected option's position when the dropdown open
+    useEffect(() => {
+      if (isOpen) {
+        if (finalSelectedOptions.length > 0) {
+          const offset = actions?.length ?? 0;
+          const idx = (navigableOptions ?? finalOptions).findIndex(
+            (opt) => String(opt.value) === finalSelectedOptions[0]
+          );
+          setHighlightedIndex(idx !== -1 ? idx + offset : 0);
+        } else {
+          setHighlightedIndex(0);
+        }
+      }
+    }, [isOpen]);
+
+    // Scroll the highlighted item into view on keyboard navigation
     useEffect(() => {
       if (isOpen && listRef.current[highlightedIndex]) {
         listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
       }
     }, [highlightedIndex, isOpen]);
 
+    // Reset search text when the dropdown closes in multiple mode
     useEffect(() => {
       if (!isOpen && multiple) {
         setSelectedOptionsLocal({
@@ -620,7 +639,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 );
 
 export interface SelectboxProps
-  extends Omit<BaseSelectboxProps, "styles">,
+  extends
+    Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
   styles?: SelectboxStyles;
 }
