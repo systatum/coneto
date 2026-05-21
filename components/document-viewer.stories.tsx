@@ -67,6 +67,15 @@ DocumentViewer is a powerful component for displaying documents such as PDFs, im
   }}
 />
 \`\`\`
+
+### ⚙️ Vite Configuration
+PDF.js requires its worker to be excluded from dependency pre-bundling. Add this to your \`vite.config.ts\`:
+
+\`\`\`ts
+optimizeDeps: {
+  exclude: ["@systatum/coneto"],
+}
+\`\`\`
     `,
       },
     },
