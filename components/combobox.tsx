@@ -1069,23 +1069,21 @@ const rowStyle = ({
     ${interactionMode !== "mouse" &&
     css`
       background-color: ${theme.backgroundColor};
-      &:hover {
-        background-color: ${theme.backgroundColor};
-      }
     `}
   }
+
+  ${interactionMode === "mouse" &&
+  css`
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
+    }
+  `}
 
   &[data-highlighted="true"] {
     ${interactionMode !== "mouse" &&
     css`
       background-color: ${theme.highlightBackgroundColor};
     `}
-  }
-
-  &[data-has-options="false"] {
-    &:hover {
-      background-color: ${theme.highlightBackgroundColor};
-    }
   }
 
   &[data-action-opened="true"] {
