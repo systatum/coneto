@@ -565,6 +565,8 @@ export function createComboboxTheme(
     groupBackgroundColor: "rgb(249, 250, 251)",
 
     scrollThumbColor: "#9ca3af",
+
+    fadeColor: "#efefef",
   };
 
   return { ...defaultTheme, ...custom };
