@@ -89,7 +89,7 @@ export interface PaperDialogContentStyles {
 
 export interface PaperDialogRef {
   openDialog: () => void;
-  closeDialog: () => void;
+  closeDialog: (withTimeout?: boolean) => void;
   minimizeDialog: () => void;
 }
 
@@ -120,27 +120,34 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const [showTitlebar, setShowTitlebar] = useState(false);
     const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
 
-    const closeDialog = useCallback(async () => {
-      if (mobile) {
-        await setDialogState("minimized");
+    const closeDialog = useCallback(
+      async (withTimeout: boolean = true) => {
+        const close = async () => await setDialogState("closed");
 
-        setTimeout(() => {
-          setDialogState("closed");
-        }, 400);
-      } else {
-        await setDialogState("closed");
-      }
+        if (mobile) {
+          await setDialogState("minimized");
 
-      if (onClosed) {
-        await onClosed();
-      }
-    }, [mobile, onClosed]);
+          if (withTimeout) {
+            setTimeout(close, 400);
+          } else {
+            await close();
+          }
+        } else {
+          await close();
+        }
+
+        if (onClosed) {
+          await onClosed();
+        }
+      },
+      [mobile, onClosed]
+    );
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
         await setDialogState("restored");
       },
-      closeDialog,
+      closeDialog: (withTimeout?: boolean) => closeDialog(withTimeout),
       minimizeDialog: async () => {
         await setDialogState("minimized");
       },
