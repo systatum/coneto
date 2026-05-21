@@ -143,6 +143,7 @@ function Card({
 
   return (
     <CardContainer
+      aria-label="card-container"
       {...props}
       $shadow={shadow}
       $radius={radius}
