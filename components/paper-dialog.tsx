@@ -117,6 +117,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const paperDialogTheme = currentTheme.paperDialog;
     const dragControls = useDragControls();
 
+    const [showTitlebar, setShowTitlebar] = useState(false);
     const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
 
     const closeDialog = useCallback(async () => {
@@ -151,6 +152,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       (e: KeyboardEvent) => {
         if (e.key === "Escape" && closable) {
           closeDialog();
+          setShowTitlebar(false);
           if (onClosed) {
             onClosed();
           }
@@ -176,6 +178,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
                 if (closable) {
+                  await setShowTitlebar(false);
                   await closeDialog();
                   await close();
                 }
@@ -187,10 +190,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             />
           )}
 
-          {mobile && dialogState === "minimized" && title && (
+          {mobile && showTitlebar && dialogState === "minimized" && title && (
             <MiniTitleBar
               $theme={paperDialogTheme}
-              onClick={() => setDialogState("restored")}
+              onClick={() => {
+                setDialogState("restored");
+                setShowTitlebar(false);
+              }}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 40 }}
@@ -262,6 +268,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
                 setDialogState("minimized");
+                setShowTitlebar(true);
               }
             }}
             whileDrag={{
@@ -309,11 +316,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                   $style={styles?.minimizeButtonStyle}
                   $isLeft={isLeft}
                   aria-label="paper-dialog-toggle-restore"
-                  onClick={() =>
+                  onClick={() => {
                     setDialogState(
                       dialogState === "minimized" ? "restored" : "minimized"
-                    )
-                  }
+                    );
+                    setShowTitlebar(true);
+                  }}
                 >
                   <Figure
                     {...icons?.restoreIcon}
@@ -472,10 +480,10 @@ const ActionButtonWrapper = styled.div<{
 
           ${$isLeft
             ? css`
-                left: ${`${$indexAction * 38 + 30}px`};
+                left: ${`${$indexAction * 42 + 30}px`};
               `
             : css`
-                right: ${`${$indexAction * 38 + 30}px`};
+                right: ${`${$indexAction * 42 + 30}px`};
               `}
         `
       : css`
