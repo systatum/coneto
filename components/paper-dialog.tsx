@@ -157,7 +157,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
-        if (e.key === "Escape" && closable) {
+        if (
+          e.key === "Escape" &&
+          closable &&
+          (dialogState === "restored" || dialogState === "minimized")
+        ) {
           closeDialog();
           setShowTitlebar(false);
           if (onClosed) {
@@ -165,7 +169,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           }
         }
       },
-      [setDialogState]
+      [setDialogState, dialogState]
     );
 
     useEffect(() => {
