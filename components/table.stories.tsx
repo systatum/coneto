@@ -21,6 +21,7 @@ import { CapsuleTab } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
 import { generateSentence } from "./../lib/text";
+import { useTheme } from "./../theme";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -1609,6 +1610,7 @@ export const WithSummary: Story = {
 
 export const WithRowGroup: Story = {
   render: () => {
+    const { mode } = useTheme();
     interface TableItemProps {
       title: string;
       subtitle?: string;
@@ -1814,7 +1816,7 @@ export const WithRowGroup: Story = {
       {
         id: "backend",
         icon: {
-          image: "./backend.png",
+          image: mode === "light" ? "./backend.png" : "./backend-darkmode.png",
         },
       },
     ];
