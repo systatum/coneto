@@ -407,18 +407,26 @@ export const Mobile: Story = {
           gap: "4px",
         }}
       >
-        {PAPER_DIALOGS.map((dialog) => (
+        {PAPER_DIALOGS.map((dialog, index) => (
           <Button
-            key={dialog.caption}
-            onClick={() => dialog.ref.current?.openDialog()}
+            key={index}
+            onClick={() => {
+              PAPER_DIALOGS.forEach((item) => {
+                if (item.ref !== dialog.ref) {
+                  item.ref.current?.closeDialog(false);
+                }
+              });
+
+              dialog.ref.current?.openDialog();
+            }}
           >
             {dialog.caption}
           </Button>
         ))}
 
-        {PAPER_DIALOGS.map((dialog) => (
+        {PAPER_DIALOGS.map((dialog, index) => (
           <PaperDialog
-            key={dialog.caption}
+            key={index}
             ref={dialog.ref}
             mobile
             controls={dialog.controls}
