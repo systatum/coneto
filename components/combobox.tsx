@@ -114,7 +114,8 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   };
 
 export interface ComboboxProps
-  extends BaseComboboxProps,
+  extends
+    BaseComboboxProps,
     Omit<FieldLaneProps, "styles" | "type" | "children" | "actions"> {}
 
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
@@ -976,9 +977,24 @@ const DrawerWrapper = styled.ul<{
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;
+
+  scrollbar-width: thin;
+  scrollbar-color: ${({ $theme }) => $theme?.scrollThumbColor || "#52525b"}
+    transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollThumbColor || "#3f3f46"};
-    border-radius: 999px;
+    background-color: #d1d5db;
+    border-radius: 4px;
   }
 
   ${({ $style }) => $style}
