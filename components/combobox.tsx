@@ -898,6 +898,7 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  mobile,
                 })}
               `,
 
@@ -971,13 +972,9 @@ function ComboboxDrawer({
 
   if (mobile) {
     return (
-      <DrawerContainer $mobile={mobile}>
-        {mobile && (
-          <>
-            <FadeTop $theme={comboboxTheme} />
-            <FadeBottom $theme={comboboxTheme} />
-          </>
-        )}
+      <DrawerContainer>
+        <FadeTop $theme={comboboxTheme} />
+        <FadeBottom $theme={comboboxTheme} />
         {mainCombobox}
       </DrawerContainer>
     );
@@ -986,23 +983,17 @@ function ComboboxDrawer({
   return mainCombobox;
 }
 
-const DrawerContainer = styled.div<{ $mobile?: boolean }>`
-  position: absolute;
+const DrawerContainer = styled.div`
   overflow: hidden;
-
-  ${({ $mobile }) =>
-    $mobile &&
-    css`
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 96dvw;
-      z-index: 9992999;
-      min-height: 15rem;
-      max-height: 15rem;
-      border-radius: 14px;
-    `}
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96dvw;
+  z-index: 9992999;
+  min-height: 15rem;
+  max-height: 15rem;
+  border-radius: 14px;
 `;
 
 const DrawerWrapper = styled.ul<{
@@ -1055,15 +1046,29 @@ const rowStyle = ({
   interactionMode,
   multiple,
   theme,
+  mobile,
 }: {
   interactionMode?: "mouse" | "keyboard";
   multiple?: boolean;
   theme?: ComboboxThemeConfig;
+  mobile?: boolean;
 }) => css`
   transition: background-color 0ms;
   background-color: ${theme.backgroundColor};
   color: ${theme.textColor};
   min-height: 36px;
+
+  ${mobile &&
+  css`
+    padding: 15px 15px;
+    font-size: 14px;
+    &[data-first="true"] {
+      padding-top: 20px;
+    }
+    &[data-last="true"] {
+      padding-bottom: 20px;
+    }
+  `}
 
   &[data-has-options="false"] {
     ${interactionMode !== "mouse" &&
@@ -1110,7 +1115,7 @@ const FadeTop = styled.div<{ $style?: CSSProp; $theme: ComboboxThemeConfig }>`
   left: 0;
   right: 0;
   top: 0;
-  height: 32px;
+  height: 28px;
   background: linear-gradient(
     to bottom,
     ${({ $theme }) => $theme.fadeColor} 10%,
@@ -1130,7 +1135,7 @@ const FadeBottom = styled.div<{
   left: 0;
   right: 0;
   bottom: 0;
-  height: 32px;
+  height: 28px;
 
   background: linear-gradient(
     to top,
