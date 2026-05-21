@@ -3,6 +3,49 @@ import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
 import { css } from "styled-components";
 
 describe("Tooltip", () => {
+  context("theme", () => {
+    context("light", () => {
+      it("renders tooltip with rgb(185, 186, 188)", () => {
+        cy.clock();
+        cy.mount(
+          <Tooltip dialog={"This is a delay tooltip with 2 second."}>
+            This tooltip
+          </Tooltip>
+        );
+        cy.findByText("This tooltip").realHover();
+        cy.tick(400);
+
+        cy.findByLabelText("tooltip-drawer")
+          .should("exist")
+          .and("have.css", "background-color", "rgb(185, 186, 188)");
+        cy.findByLabelText("tooltip-arrow")
+          .should("exist")
+          .and("have.css", "background-color", "rgb(185, 186, 188)");
+      });
+    });
+
+    context("dark", () => {
+      it("renders tooltip with rgb(62, 65, 67)", () => {
+        cy.clock();
+        cy.mount(
+          <Tooltip dialog={"This is a delay tooltip with 2 second."}>
+            This tooltip
+          </Tooltip>,
+          { mode: "dark" }
+        );
+        cy.findByText("This tooltip").realHover();
+        cy.tick(400);
+
+        cy.findByLabelText("tooltip-drawer")
+          .should("exist")
+          .and("have.css", "background-color", "rgb(62, 65, 67)");
+        cy.findByLabelText("tooltip-arrow")
+          .should("exist")
+          .and("have.css", "background-color", "rgb(62, 65, 67)");
+      });
+    });
+  });
+
   context("dialogPlacement", () => {
     const ALL_PLACEMENTS: TooltipDialogPlacement[] = [
       "top-left",
