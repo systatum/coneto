@@ -217,6 +217,7 @@ export const Mobile: Story = {
           selectedOptions={value}
           options={FRUIT_OPTIONS}
           onChange={setValue}
+          clearable
           placeholder="Select a fruit..."
           mobile
         />
