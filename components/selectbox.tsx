@@ -528,7 +528,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           onKeyDown={(e) => {
             handleKeyDown(e);
           }}
-          readOnly={multiple}
+          readOnly={multiple || (mobile && !isOpen)}
           onMouseDown={() => {
             if (strict) {
               if (!isOpen) {
