@@ -777,7 +777,6 @@ function ComboboxDrawer({
    * The fade hides when the selected item's center point comes within
    * `threshold` pixels of that edge, and reappears once it scrolls past.
    */
-
   useEffect(() => {
     const container = floatingRef.current;
     if (!container || !mobile) return;
@@ -1169,7 +1168,6 @@ const DrawerWrapper = styled.ul<{
       max-height: 220px;
       border-width: 0.5;
       ${!$multiple &&
-      !$hasNestedOptions &&
       css`
         padding: 100px 0px;
       `}
