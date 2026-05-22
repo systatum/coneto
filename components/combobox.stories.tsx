@@ -365,7 +365,7 @@ export const Mobile: Story = {
           mobile
         />
         <Combobox
-          id="selectable-combobox"
+          id="grouped-combobox"
           label="With grouped options"
           selectedOptions={value3}
           options={CATEGORIZED_FRUIT_OPTIONS}
