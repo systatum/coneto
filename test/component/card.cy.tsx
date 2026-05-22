@@ -136,12 +136,13 @@ describe("Card", () => {
 
   context("with header", () => {
     const value = {
+      pretitle: "Organization Structure",
       title: "Department",
       subtitle: "Departments and their leaders",
     };
 
     const renderDormantTextField = (
-      name: "title" | "subtitle",
+      name: "title" | "subtitle" | "pretitle",
       sizeText?: number
     ) => {
       return (
@@ -200,6 +201,51 @@ describe("Card", () => {
       it("should render the text", () => {
         cy.mount(<Card title="Systatum Food Services">Test`</Card>);
         cy.findByText("Systatum Food Services").should("exist");
+      });
+    });
+
+    context("with pretitle", () => {
+      it("can be given ReactNode to render", () => {
+        cy.mount(
+          <Card
+            pretitle={renderDormantTextField("pretitle")}
+            styles={{
+              pretitleStyle: css`
+                width: 100%;
+              `,
+              textContainerStyle: css`
+                width: 100%;
+              `,
+              containerStyle: css`
+                padding-left: 0px;
+                padding-right: 0px;
+                min-width: 1000px;
+                padding-bottom: 0px;
+              `,
+              headerStyle: css`
+                padding-left: 15px;
+                padding-right: 15px;
+              `,
+            }}
+          >
+            test
+          </Card>
+        );
+
+        cy.get("input[type='text']").should("not.exist");
+        cy.findByText("Organization Structure").click();
+        cy.get("input[type='text']")
+          .should("exist")
+          .and("have.value", "Organization Structure");
+      });
+
+      it("should render the text", () => {
+        cy.mount(
+          <Card pretitle="Food & Dining" title="Systatum Food Services">
+            Test
+          </Card>
+        );
+        cy.findByText("Food & Dining").should("exist");
       });
     });
 
