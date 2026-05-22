@@ -536,6 +536,7 @@ function TreeList({
                       onMouseEnter?.({ event: e, item });
                       setIsHovered(item.id);
                     }}
+                    data-level={0}
                   >
                     <Title
                       role="option"
@@ -1159,6 +1160,7 @@ function TreeListItem<T extends TreeListItem>({
           onMouseEnterItem?.({ event: e, item });
         }}
         $level={level + 1}
+        data-level={level}
       >
         {item.iconOnActive && isSelected.includes(item.id) ? (
           <item.iconOnActive
