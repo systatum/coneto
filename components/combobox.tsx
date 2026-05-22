@@ -1053,7 +1053,9 @@ const DrawerWrapper = styled.ul<{
   max-height: 15rem;
   overflow-y: auto;
   border-radius: 4px;
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border: 1px solid
+    ${({ $theme, $mobile }) =>
+      $mobile ? $theme?.fadeColor : $theme?.borderColor};
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
