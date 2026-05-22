@@ -169,6 +169,7 @@ export interface CheckboxThemeConfig extends Omit<
 // combobox.tsx
 export interface ComboboxThemeConfig extends BodyThemeConfig {
   groupBackgroundColor?: string;
+  mobileGroupBackgroundColor?: string;
 
   highlightBackgroundColor?: string;
   selectedBackgroundColor?: string;

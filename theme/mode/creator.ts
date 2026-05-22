@@ -567,6 +567,8 @@ export function createComboboxTheme(
     scrollThumbColor: "#9ca3af",
 
     fadeColor: "#efefef",
+
+    mobileGroupBackgroundColor: "#ffffff",
     mobileBackgroundColor: "#ffffff",
   };
 

@@ -341,6 +341,7 @@ const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   scrollThumbColor: "#52525b",
   fadeColor: "#2c2c2e",
   mobileBackgroundColor: "#2c2c2e",
+  mobileGroupBackgroundColor: "#2a2a2d",
 });
 
 export const darkCrumb = createCrumbTheme(darkBody, {
