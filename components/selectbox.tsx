@@ -155,8 +155,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const { currentTheme } = useTheme();
     const selectboxTheme = currentTheme?.selectbox;
 
-    const [isReadOnly, setIsReadOnly] = useState(true);
-
     const finalOptions = useMemo(
       () => (Array.isArray(options) ? options : []),
       [options]
@@ -429,10 +427,14 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
     // Scroll the highlighted item into view on keyboard navigation
     useEffect(() => {
-      if (isOpen && listRef.current[highlightedIndex]) {
+      if (
+        isOpen &&
+        listRef.current[highlightedIndex] &&
+        finalSelectedOptions?.length > 0
+      ) {
         listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
       }
-    }, [highlightedIndex, isOpen]);
+    }, [highlightedIndex, isOpen, finalSelectedOptions]);
 
     // Reset search text when the dropdown closes in multiple mode
     useEffect(() => {
@@ -526,17 +528,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           onKeyDown={(e) => {
             handleKeyDown(e);
           }}
-          readOnly={multiple || (mobile ? isReadOnly : false)}
+          readOnly={multiple}
           onMouseDown={() => {
-            if (mobile) {
-              if (!isOpen) {
-                setIsOpen(true);
-              } else {
-                setIsReadOnly(false);
-              }
-              return;
-            }
-
             if (strict) {
               if (!isOpen) {
                 setIsOpen(true);
@@ -554,7 +547,6 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onBlur={() => {
             setIsFocused(false);
-            if (mobile) setIsReadOnly(true);
 
             if (!multiple) {
               setHasInteracted(false);
