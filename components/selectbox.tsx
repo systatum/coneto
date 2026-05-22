@@ -155,7 +155,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     const { currentTheme } = useTheme();
     const selectboxTheme = currentTheme?.selectbox;
 
-    const isFirstFocusRef = useRef(true);
+    const [isReadOnly, setIsReadOnly] = useState(true);
 
     const finalOptions = useMemo(
       () => (Array.isArray(options) ? options : []),
@@ -526,8 +526,17 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           onKeyDown={(e) => {
             handleKeyDown(e);
           }}
-          readOnly={multiple}
+          readOnly={multiple || (mobile ? isReadOnly : false)}
           onMouseDown={() => {
+            if (mobile) {
+              if (!isOpen) {
+                setIsOpen(true);
+              } else {
+                setIsReadOnly(false);
+              }
+              return;
+            }
+
             if (strict) {
               if (!isOpen) {
                 setIsOpen(true);
@@ -540,18 +549,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
-            if (mobile) {
-              if (isFirstFocusRef.current) {
-                isFirstFocusRef.current = false;
-                return;
-              }
-            }
 
             setIsOpen(true);
           }}
           onBlur={() => {
             setIsFocused(false);
-            isFirstFocusRef.current = true;
+            if (mobile) setIsReadOnly(true);
 
             if (!multiple) {
               setHasInteracted(false);
