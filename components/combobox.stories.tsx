@@ -60,6 +60,7 @@ Combobox makes use of the base Selectbox, featuring searchability, options-group
 ### 📌 Usage Guidelines
 - Use **grouped options** for large datasets
 - Enable \`multiple\` for multi-select use cases
+- Use \`mobile\` for touch-optimized experiences
 - Use \`maxSelectableItems\` to limit selections
         `,
       },
@@ -70,6 +71,21 @@ Combobox makes use of the base Selectbox, featuring searchability, options-group
     selectedOptions: {
       control: "text",
       description: "Currently selected value of the combobox. Example: [5, 6]",
+    },
+    mobile: {
+      control: "boolean",
+      description: `
+Enable mobile drawer mode.
+
+When enabled:
+- Dropdown becomes a bottom drawer
+- Touch targets become larger
+- Mobile spacing & typography are applied
+- Nested items receive mobile indentation
+- Fade overlays appear while scrolling
+
+Recommended for touch-based devices and responsive layouts.
+      `,
     },
     onChange: {
       control: false,
