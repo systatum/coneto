@@ -403,7 +403,7 @@ function ComboboxDrawer({
 
   const floatingRef = useRef<HTMLUListElement>(null);
 
-  const hasNestedOptions = options.some((opt) => opt.groupOptions?.length);
+  const hasNestedOptions = options?.some((opt) => opt.groupOptions?.length);
 
   const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
@@ -835,7 +835,7 @@ function ComboboxDrawer({
       style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
       id="combo-list"
-      aria-label={`combobox-drawer`}
+      aria-label="combobox-drawer"
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       $mobile={mobile}
@@ -1175,9 +1175,11 @@ const DrawerWrapper = styled.ul<{
         padding: 100px 0px;
       `}
 
-      background-color: ${$mobile
-        ? $theme.mobileBackgroundColor
-        : $theme.backgroundColor};
+      background-color: ${$mobile && $hasNestedOptions
+        ? $theme.mobileGroupBackgroundColor
+        : $mobile
+          ? $theme.mobileBackgroundColor
+          : $theme.backgroundColor};
     `}
 
   ${({ $style }) => $style}
