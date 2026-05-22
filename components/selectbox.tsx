@@ -63,6 +63,7 @@ interface BaseSelectboxProps extends Omit<
   showError?: boolean;
   maxSelectableItems?: number | undefined;
   isLoading?: boolean;
+  mobile?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -146,12 +147,15 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       disabled,
       className,
       navigableOptions,
+      mobile,
       ...props
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const selectboxTheme = currentTheme?.selectbox;
+
+    const isFirstFocusRef = useRef(true);
 
     const finalOptions = useMemo(
       () => (Array.isArray(options) ? options : []),
@@ -536,10 +540,19 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
+            if (mobile) {
+              if (isFirstFocusRef.current) {
+                isFirstFocusRef.current = false;
+                return;
+              }
+            }
+
             setIsOpen(true);
           }}
           onBlur={() => {
             setIsFocused(false);
+            isFirstFocusRef.current = true;
+
             if (!multiple) {
               setHasInteracted(false);
             }
@@ -664,6 +677,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelWidth,
       labelPosition,
       className,
+      mobile,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -681,6 +695,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
+        mobile={mobile}
         className={
           hasCombo || hasDatebox
             ? className
@@ -707,6 +722,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           id={inputId}
           actions={actions}
           showError={showError}
+          mobile={mobile}
           disabled={disabled}
           styles={{
             self: css`
