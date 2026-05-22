@@ -576,21 +576,25 @@ function ComboboxDrawer({
               styles={{
                 containerStyle: css`
                   margin-top: 2px;
-
-                  ${opt?.render &&
-                  css`
-                    margin-top: 3px;
-                  `}
                   ${mobile &&
                   css`
-                    margin-top: 5px;
+                    margin-top: 7px;
                   `}
+
+                  ${mobile && opt?.render
+                    ? css`
+                        margin-top: 10px;
+                      `
+                    : opt?.render &&
+                      css`
+                        margin-top: 7px;
+                      `}
                 `,
                 iconStyle: css`
                   ${mobile
                     ? css`
-                        width: 14px;
-                        height: 14px;
+                        width: 12px;
+                        height: 12px;
                       `
                     : css`
                         width: 8px;
@@ -600,8 +604,8 @@ function ComboboxDrawer({
                 self: css`
                   ${mobile
                     ? css`
-                        width: 22px;
-                        height: 22px;
+                        width: 20px;
+                        height: 20px;
                       `
                     : css`
                         width: 14px;
@@ -930,7 +934,7 @@ function ComboboxDrawer({
                 return next;
               });
             }}
-            arrowSize={mobile ? 20 : 14}
+            arrowSize={mobile ? 18 : 14}
             maxActionsBeforeCollapsing={1}
             actions={filteredActions}
             styles={{
@@ -1111,8 +1115,8 @@ const DrawerContainer = styled.div<{
   transform: translateX(-50%);
   width: 96dvw;
   z-index: 9992999;
-  min-height: 18rem;
-  max-height: 18rem;
+  min-height: 220px;
+  max-height: 220px;
   border-radius: 14px;
   background-color: ${({ $mobile, $theme }) =>
     $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
@@ -1128,7 +1132,7 @@ const DrawerWrapper = styled.ul<{
 }>`
   position: relative;
   z-index: 9992999;
-  max-height: 18rem;
+  max-height: 220px;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid
@@ -1161,13 +1165,13 @@ const DrawerWrapper = styled.ul<{
       width: 100%;
       z-index: 9992999;
       border-radius: 14px;
-      min-height: 18rem;
-      max-height: 18rem;
+      min-height: 220px;
+      max-height: 220px;
       border-width: 0.5;
       ${!$multiple &&
       !$hasNestedOptions &&
       css`
-        padding: 110px 0px;
+        padding: 100px 0px;
       `}
 
       background-color: ${$mobile
@@ -1202,11 +1206,11 @@ const rowStyle = ({
 
   ${mobile &&
   css`
-    padding: 15px 15px;
-    font-size: 21px;
+    padding: 6px 15px;
+    font-size: 22px;
     ${hasNestedOptions &&
     css`
-      padding-left: ${(level ?? 0) * 20 + 30}px;
+      padding-left: ${(level ?? 0) * 14 + 30}px;
     `}
   `}
 
