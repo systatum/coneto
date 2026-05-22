@@ -822,6 +822,7 @@ function ComboboxDrawer({
           e.preventDefault();
         },
         onClick: (e: React.MouseEvent) => {
+          e.preventDefault();
           e.stopPropagation(); // handles touch-generated click on mobile
         },
       })}
