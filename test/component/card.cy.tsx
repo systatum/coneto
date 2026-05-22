@@ -12,6 +12,7 @@ describe("Card", () => {
 
     return (
       <Card
+        pretitle="Food & Dining"
         title="Systatum Food Services"
         subtitle="Fueling innovation with every bite."
         headerActions={[
@@ -53,6 +54,28 @@ describe("Card", () => {
             "have.css",
             "width",
             "700px"
+          );
+        });
+      });
+    });
+
+    context("pretitle", () => {
+      context("when given font-size 40px", () => {
+        it("renders pre title with font-size 40px", () => {
+          cy.mount(
+            <ProductCard
+              styles={{
+                pretitleStyle: css`
+                  font-size: 40px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-pretitle").should(
+            "have.css",
+            "font-size",
+            "40px"
           );
         });
       });
@@ -398,7 +421,7 @@ describe("Card", () => {
               pretitleStyle: css`
                 width: 100%;
               `,
-              textContainerStyle: css`
+              headerTitleSectionStyle: css`
                 width: 100%;
               `,
               containerStyle: css`
