@@ -821,6 +821,9 @@ function ComboboxDrawer({
         onMouseDown: (e: React.MouseEvent) => {
           e.preventDefault();
         },
+        onClick: (e: React.MouseEvent) => {
+          e.stopPropagation(); // handles touch-generated click on mobile
+        },
       })}
       ref={(node) => {
         if (typeof refs.setFloating === "function") {
