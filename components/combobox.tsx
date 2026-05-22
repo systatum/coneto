@@ -525,6 +525,7 @@ function ComboboxDrawer({
                   theme: comboboxTheme,
                   mobile,
                   hasNestedOptions,
+                  level: 0,
                 })}
                 ${action?.styles?.self}
               `,
@@ -647,7 +648,6 @@ function ComboboxDrawer({
             withoutSelection();
           }
         },
-
         ...(opt?.groupOptions?.length > 0
           ? {
               items: opt.groupOptions
@@ -990,8 +990,8 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
-                  mobile,
                   hasNestedOptions,
+                  mobile,
                 })}
 
                 gap: 20px;
@@ -1053,13 +1053,14 @@ function ComboboxDrawer({
               arrowStyle: css`
                 margin-left: 3px;
               `,
-              itemStyle: css`
+              itemStyle: (level?: number) => css`
                 ${rowStyle({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
                   mobile,
                   hasNestedOptions,
+                  level,
                 })}
                 gap: 6px;
               `,
@@ -1183,12 +1184,14 @@ const rowStyle = ({
   theme,
   mobile,
   hasNestedOptions,
+  level,
 }: {
   interactionMode?: "mouse" | "keyboard";
   multiple?: boolean;
   theme?: ComboboxThemeConfig;
   mobile?: boolean;
   hasNestedOptions?: boolean;
+  level?: number;
 }) => css`
   transition: background-color 0ms;
   background-color: ${mobile
@@ -1201,10 +1204,9 @@ const rowStyle = ({
   css`
     padding: 15px 15px;
     font-size: 21px;
-
     ${hasNestedOptions &&
     css`
-      padding-left: calc((attr(data-level number) * 20px) + 30px);
+      padding-left: ${(level ?? 0) * 20 + 30}px;
     `}
   `}
 
