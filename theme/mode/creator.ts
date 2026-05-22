@@ -569,7 +569,7 @@ export function createComboboxTheme(
     fadeColor: "#efefef",
 
     mobileGroupBackgroundColor: "#ffffff",
-    mobileBackgroundColor: "#ffffff",
+    mobileBackgroundColor: "rgb(249, 250, 251)",
   };
 
   return { ...defaultTheme, ...custom };
