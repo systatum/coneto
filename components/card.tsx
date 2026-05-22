@@ -182,9 +182,7 @@ function Card({
               color: ${cardTheme?.subtitleColor ?? "#6b7280"};
               ${styles?.subtitleStyle}
             `,
-            pretitleStyle: css`
-              ${styles?.pretitleStyle}
-            `,
+            pretitleStyle: styles?.pretitleStyle,
             textContainerStyle: css`
               gap: 2px;
               ${styles?.textContainerStyle}
