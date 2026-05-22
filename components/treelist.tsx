@@ -1373,10 +1373,7 @@ function TreeListItem<T extends TreeListItem>({
                   <TreeListItem
                     key={index}
                     styles={{
-                      itemStyle:
-                        typeof styles?.itemStyle === "function"
-                          ? styles?.itemStyle(level + 1)
-                          : styles?.itemStyle,
+                      itemStyle: styles?.itemStyle,
                       titleItemStyle: styles?.titleItemStyle,
                       highlightedTextStyle: styles?.highlightedTextStyle,
                       emptyItemSlateStyle: styles?.emptyItemSlateStyle,
