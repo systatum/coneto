@@ -152,7 +152,14 @@ describe("Combobox", () => {
         .and("have.css", "position", "fixed");
     });
 
-    it("renders with 96dvw", () => {
+    it("renders the item with height 47px, padding-x 6px and padding-y 15px", () => {
+      cy.findAllByLabelText("tree-list-group-title")
+        .eq(0)
+        .should("have.css", "height", "45px")
+        .and("have.css", "padding", "6px 15px");
+    });
+
+    it("renders with 96dvw and height 220px", () => {
       cy.viewport(500, 700);
 
       cy.window().then((win) => {
@@ -163,6 +170,38 @@ describe("Combobox", () => {
           "width",
           expectedWidth
         );
+
+        cy.findByLabelText("combobox-drawer-mobile").should(
+          "have.css",
+          "height",
+          "220px"
+        );
+      });
+    });
+
+    context("multiple", () => {
+      context("when given true", () => {
+        it("should not given padding top and bottom (not centered)", () => {
+          cy.mount(<ProductCombobox options={FRUIT_OPTIONS} mobile multiple />);
+
+          cy.findByPlaceholderText("Select a fruit...").click();
+
+          cy.findByLabelText("combobox-drawer")
+            .should("have.css", "padding-top", "0px")
+            .and("have.css", "padding-bottom", "0px");
+        });
+      });
+
+      context("when given false", () => {
+        it("should given padding top and bottom (centered)", () => {
+          cy.mount(<ProductCombobox options={FRUIT_OPTIONS} mobile />);
+
+          cy.findByPlaceholderText("Select a fruit...").click();
+
+          cy.findByLabelText("combobox-drawer")
+            .should("have.css", "padding-top", "100px")
+            .and("have.css", "padding-bottom", "100px");
+        });
       });
     });
 
@@ -183,33 +222,116 @@ describe("Combobox", () => {
         cy.findByLabelText("combobox-fade-bottom").should("exist");
       });
 
-      context("when selected option near at the fade top", () => {
-        it("should not shows the fade top", () => {
-          cy.findByLabelText("combobox-fade-top").should("exist");
-          cy.findByLabelText("combobox-fade-bottom").should("exist");
+      context("when clicking item and open again", () => {
+        it("should shows the fade top and bottom", () => {
+          cy.findByLabelText("combobox-fade-top").should(
+            "have.css",
+            "opacity",
+            "1"
+          );
+          cy.findByLabelText("combobox-fade-bottom").should(
+            "have.css",
+            "opacity",
+            "1"
+          );
 
-          cy.findByText("Apple").click();
+          cy.findByText("Orange").click();
           cy.findByPlaceholderText("Select a fruit...").click();
 
           cy.wait(300);
 
-          cy.findByLabelText("combobox-fade-top").should("not.be.visible");
-          cy.findByLabelText("combobox-fade-bottom").should("exist");
+          cy.findByLabelText("combobox-fade-top").should(
+            "have.css",
+            "opacity",
+            "1"
+          );
+          cy.findByLabelText("combobox-fade-bottom").should(
+            "have.css",
+            "opacity",
+            "1"
+          );
         });
-      });
 
-      context("when selected option near at the fade bottom", () => {
-        it("should not shows the fade bottom", () => {
-          cy.findByLabelText("combobox-fade-top").should("exist");
-          cy.findByLabelText("combobox-fade-bottom").should("exist");
+        context("when scrolling item selected until fade top", () => {
+          it("should not shows the fade top", () => {
+            cy.findByLabelText("combobox-fade-top").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+            cy.findByLabelText("combobox-fade-bottom").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
 
-          cy.findByText("Pineapple").click();
-          cy.findByPlaceholderText("Select a fruit...").click();
+            cy.findByText("Orange").click();
+            cy.findByPlaceholderText("Select a fruit...").click();
 
-          cy.wait(300);
+            cy.wait(300);
 
-          cy.findByLabelText("combobox-fade-top").should("exist");
-          cy.findByLabelText("combobox-fade-bottom").should("not.be.visible");
+            cy.findByLabelText("combobox-fade-top").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+            cy.findByLabelText("combobox-fade-bottom").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+
+            // scroll behavior into top fade
+            cy.get("#combo-list").contains("Orange").scrollIntoView();
+
+            cy.findByLabelText("combobox-fade-top").should(
+              "have.css",
+              "opacity",
+              "0"
+            );
+          });
+        });
+
+        context("when scrolling item selected until fade bottom", () => {
+          it("should not shows the fade bottom", () => {
+            cy.findByLabelText("combobox-fade-top").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+            cy.findByLabelText("combobox-fade-bottom").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+
+            cy.findByText("Orange").click();
+            cy.findByPlaceholderText("Select a fruit...").click();
+
+            cy.wait(300);
+
+            cy.findByLabelText("combobox-fade-top").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+            cy.findByLabelText("combobox-fade-bottom").should(
+              "have.css",
+              "opacity",
+              "1"
+            );
+
+            // scroll behavior into top fade
+            cy.get("#combo-list")
+              .contains("Orange")
+              .scrollIntoView({ offset: { top: -999, left: 0 } });
+
+            cy.findByLabelText("combobox-fade-bottom").should(
+              "have.css",
+              "opacity",
+              "0"
+            );
+          });
         });
       });
     });
