@@ -1018,7 +1018,11 @@ function ComboboxDrawer({
 
   if (mobile) {
     return (
-      <DrawerContainer aria-label="combobox-drawer-mobile">
+      <DrawerContainer
+        aria-label="combobox-drawer-mobile"
+        $theme={comboboxTheme}
+        $mobile={mobile}
+      >
         <FadeTop
           aria-label="combobox-fade-top"
           $theme={comboboxTheme}
@@ -1037,7 +1041,10 @@ function ComboboxDrawer({
   return mainCombobox;
 }
 
-const DrawerContainer = styled.div`
+const DrawerContainer = styled.div<{
+  $theme?: ComboboxThemeConfig;
+  $mobile?: boolean;
+}>`
   overflow: hidden;
   position: fixed;
   bottom: 10px;
@@ -1048,6 +1055,8 @@ const DrawerContainer = styled.div`
   min-height: 15rem;
   max-height: 15rem;
   border-radius: 14px;
+  background-color: ${({ $mobile, $theme }) =>
+    $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
 `;
 
 const DrawerWrapper = styled.ul<{
@@ -1085,7 +1094,7 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile }) =>
+  ${({ $mobile, $theme }) =>
     $mobile &&
     css`
       width: 100%;
@@ -1094,6 +1103,11 @@ const DrawerWrapper = styled.ul<{
       min-height: 15rem;
       max-height: 15rem;
       border-width: 0.5;
+      padding: 90px 0px;
+
+      background-color: ${$mobile
+        ? $theme.mobileBackgroundColor
+        : $theme.backgroundColor};
     `}
 
   ${({ $style }) => $style}
@@ -1111,14 +1125,16 @@ const rowStyle = ({
   mobile?: boolean;
 }) => css`
   transition: background-color 0ms;
-  background-color: ${theme.backgroundColor};
+  background-color: ${mobile
+    ? theme.mobileBackgroundColor
+    : theme.backgroundColor};
   color: ${theme.textColor};
   min-height: 36px;
 
   ${mobile &&
   css`
     padding: 15px 15px;
-    font-size: 14px;
+    font-size: 21px;
     &[data-first="true"] {
       padding-top: 20px;
     }
