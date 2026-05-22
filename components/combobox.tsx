@@ -403,6 +403,8 @@ function ComboboxDrawer({
 
   const floatingRef = useRef<HTMLUListElement>(null);
 
+  const hasNestedOptions = options.some((opt) => opt.groupOptions?.length);
+
   const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
       options?.flatMap((item) => {
@@ -521,6 +523,8 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  mobile,
+                  hasNestedOptions,
                 })}
                 ${action?.styles?.self}
               `,
@@ -821,6 +825,7 @@ function ComboboxDrawer({
         }
         floatingRef.current = node;
       }}
+      $hasNestedOptions={hasNestedOptions}
       style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
       id="combo-list"
@@ -925,7 +930,7 @@ function ComboboxDrawer({
                 return next;
               });
             }}
-            arrowSize={14}
+            arrowSize={mobile ? 20 : 14}
             maxActionsBeforeCollapsing={1}
             actions={filteredActions}
             styles={{
@@ -971,7 +976,9 @@ function ComboboxDrawer({
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  background-color: ${comboboxTheme?.groupBackgroundColor};
+                  background-color: ${mobile
+                    ? comboboxTheme?.mobileGroupBackgroundColor
+                    : comboboxTheme?.groupBackgroundColor};
                   border: 1px solid transparent;
 
                   &[aria-expanded="true"] {
@@ -984,6 +991,7 @@ function ComboboxDrawer({
                   multiple,
                   theme: comboboxTheme,
                   mobile,
+                  hasNestedOptions,
                 })}
 
                 gap: 20px;
@@ -1050,6 +1058,8 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  mobile,
+                  hasNestedOptions,
                 })}
                 gap: 6px;
               `,
@@ -1100,8 +1110,8 @@ const DrawerContainer = styled.div<{
   transform: translateX(-50%);
   width: 96dvw;
   z-index: 9992999;
-  min-height: 15rem;
-  max-height: 15rem;
+  min-height: 18rem;
+  max-height: 18rem;
   border-radius: 14px;
   background-color: ${({ $mobile, $theme }) =>
     $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
@@ -1113,10 +1123,11 @@ const DrawerWrapper = styled.ul<{
   $style?: CSSProp;
   $mobile?: boolean;
   $multiple?: boolean;
+  $hasNestedOptions?: boolean;
 }>`
   position: relative;
   z-index: 9992999;
-  max-height: 15rem;
+  max-height: 18rem;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid
@@ -1143,18 +1154,19 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $multiple }) =>
+  ${({ $mobile, $theme, $multiple, $hasNestedOptions }) =>
     $mobile &&
     css`
       width: 100%;
       z-index: 9992999;
       border-radius: 14px;
-      min-height: 15rem;
-      max-height: 15rem;
+      min-height: 18rem;
+      max-height: 18rem;
       border-width: 0.5;
       ${!$multiple &&
+      !$hasNestedOptions &&
       css`
-        padding: 90px 0px;
+        padding: 110px 0px;
       `}
 
       background-color: ${$mobile
@@ -1170,11 +1182,13 @@ const rowStyle = ({
   multiple,
   theme,
   mobile,
+  hasNestedOptions,
 }: {
   interactionMode?: "mouse" | "keyboard";
   multiple?: boolean;
   theme?: ComboboxThemeConfig;
   mobile?: boolean;
+  hasNestedOptions?: boolean;
 }) => css`
   transition: background-color 0ms;
   background-color: ${mobile
@@ -1187,6 +1201,11 @@ const rowStyle = ({
   css`
     padding: 15px 15px;
     font-size: 21px;
+
+    ${hasNestedOptions &&
+    css`
+      padding-left: calc((attr(data-level number) * 20px) + 30px);
+    `}
   `}
 
   &[data-has-options="false"] {
