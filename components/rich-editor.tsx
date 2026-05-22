@@ -152,10 +152,9 @@ export interface RichEditorToolbarButtonStyles {
   self?: CSSProp;
 }
 
-interface RichEditorComponent
-  extends React.ForwardRefExoticComponent<
-    RichEditorProps & React.RefAttributes<RichEditorRef>
-  > {
+interface RichEditorComponent extends React.ForwardRefExoticComponent<
+  RichEditorProps & React.RefAttributes<RichEditorRef>
+> {
   ToolbarButton: typeof RichEditorToolbarButton;
   codeLanguage: typeof RichEditorCodeLanguage;
   translatedCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
@@ -1750,9 +1749,11 @@ function BaseRichEditor({
   mode,
   value,
   className,
+  id,
 }: BaseRichEditorProps) {
   return (
     <Wrapper
+      id={id}
       $theme={richEditorTheme}
       className={className}
       aria-label="rich-editor-wrapper"

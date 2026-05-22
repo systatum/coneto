@@ -22,7 +22,6 @@ describe("Card", () => {
             },
           },
         ]}
-        aria-label="card"
         onMouseEnter={() => console.log("now is hovering card")}
         onMouseLeave={() => console.log("now is leaving card")}
         onClick={() => console.log("now is clicking card")}
@@ -35,6 +34,192 @@ describe("Card", () => {
       </Card>
     );
   }
+
+  context("styles", () => {
+    context("containerStyle", () => {
+      context("when given width 700px", () => {
+        it("renders card container with width 700px", () => {
+          cy.mount(
+            <ProductCard
+              styles={{
+                containerStyle: css`
+                  width: 700px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("card-container").should(
+            "have.css",
+            "width",
+            "700px"
+          );
+        });
+      });
+    });
+
+    context("headerStyle", () => {
+      context("when given gap 20px", () => {
+        it("renders the header container with gap 20px", () => {
+          cy.mount(
+            <ProductCard
+              title="Product Title"
+              toggleable
+              styles={{
+                headerStyle: css`
+                  gap: 20px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-container").should(
+            "have.css",
+            "gap",
+            "20px"
+          );
+        });
+      });
+    });
+
+    context("headerTitleSectionStyle", () => {
+      context("when given gap 12px", () => {
+        it("renders the title text container with gap 12px", () => {
+          cy.mount(
+            <ProductCard
+              styles={{
+                headerTitleSectionStyle: css`
+                  gap: 12px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-text-container").should(
+            "have.css",
+            "gap",
+            "12px"
+          );
+        });
+      });
+    });
+
+    context("actionContainerStyle", () => {
+      context("when given padding 10px", () => {
+        it("renders the right section with padding 10px", () => {
+          cy.mount(
+            <ProductCard
+              styles={{
+                actionContainerStyle: css`
+                  padding: 10px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-right-section").should(
+            "have.css",
+            "padding",
+            "10px"
+          );
+        });
+      });
+    });
+
+    context("contentStyle", () => {
+      context("when given background red", () => {
+        it("renders content with custom background", () => {
+          cy.mount(
+            <ProductCard
+              title="Product Title"
+              styles={{
+                contentStyle: css`
+                  background: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("card-content").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
+    context("footerStyle", () => {
+      context("when given justify-content center", () => {
+        it("renders footer with centered content", () => {
+          cy.mount(
+            <ProductCard
+              title="Product Title"
+              footerContent="Footer"
+              styles={{
+                footerStyle: css`
+                  justify-content: center;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("card-footer").should(
+            "have.css",
+            "justify-content",
+            "center"
+          );
+        });
+      });
+    });
+
+    context("titleStyle", () => {
+      context("when given font-size 30px", () => {
+        it("renders title with font-size 30px", () => {
+          cy.mount(
+            <ProductCard
+              title="Product Title"
+              styles={{
+                titleStyle: css`
+                  font-size: 30px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-title").should(
+            "have.css",
+            "font-size",
+            "30px"
+          );
+        });
+      });
+    });
+
+    context("subtitleStyle", () => {
+      context("when given opacity 0.5", () => {
+        it("renders subtitle with opacity 0.5", () => {
+          cy.mount(
+            <ProductCard
+              title="Product Title"
+              subtitle="Subtitle"
+              styles={{
+                subtitleStyle: css`
+                  opacity: 0.5;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("title-subtitle").should(
+            "have.css",
+            "opacity",
+            "0.5"
+          );
+        });
+      });
+    });
+  });
 
   context("toggleable", () => {
     context("when given", () => {
@@ -84,7 +269,7 @@ describe("Card", () => {
         });
 
         cy.mount(<ProductCard />);
-        cy.findByLabelText("card").trigger("mouseover");
+        cy.findByLabelText("card-container").trigger("mouseover");
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -102,7 +287,9 @@ describe("Card", () => {
         });
 
         cy.mount(<ProductCard />);
-        cy.findByLabelText("card").trigger("mouseover").trigger("mouseout");
+        cy.findByLabelText("card-container")
+          .trigger("mouseover")
+          .trigger("mouseout");
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -124,7 +311,7 @@ describe("Card", () => {
         });
 
         cy.mount(<ProductCard />);
-        cy.findByLabelText("card").click();
+        cy.findByLabelText("card-container").click();
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -165,13 +352,13 @@ describe("Card", () => {
     context("with title", () => {
       it("can be given ReactNode to render", () => {
         cy.mount(
-          <Card
+          <ProductCard
             title={renderDormantTextField("title")}
             styles={{
               titleStyle: css`
                 width: 100%;
               `,
-              textContainerStyle: css`
+              headerTitleSectionStyle: css`
                 width: 100%;
               `,
               containerStyle: css`
@@ -186,9 +373,7 @@ describe("Card", () => {
                 border-bottom: 1px solid #d1d5db;
               `,
             }}
-          >
-            test
-          </Card>
+          />
         );
 
         cy.get("input[type='text']").should("not.exist");
@@ -258,7 +443,7 @@ describe("Card", () => {
               titleStyle: css`
                 width: 100%;
               `,
-              textContainerStyle: css`
+              headerTitleSectionStyle: css`
                 width: 100%;
               `,
               containerStyle: css`

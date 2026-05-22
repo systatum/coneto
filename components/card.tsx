@@ -74,7 +74,7 @@ export interface CardProps extends Omit<
 }
 
 export interface CardStyles {
-  textContainerStyle?: CSSProp;
+  headerTitleSectionStyle?: CSSProp;
   actionContainerStyle?: CSSProp;
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
@@ -146,6 +146,7 @@ function Card({
 
   return (
     <CardContainer
+      aria-label="card-container"
       {...props}
       $shadow={shadow}
       $radius={radius}
@@ -185,7 +186,7 @@ function Card({
             pretitleStyle: styles?.pretitleStyle,
             textContainerStyle: css`
               gap: 2px;
-              ${styles?.textContainerStyle}
+              ${styles?.headerTitleSectionStyle}
             `,
           }}
           rightSection={renderHeaderActions}
