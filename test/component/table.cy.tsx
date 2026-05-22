@@ -761,7 +761,7 @@ describe("Table", () => {
             containerStyle: css`
               background-color: transparent;
             `,
-            textContainerStyle: css`
+            headerTitleSectionStyle: css`
               width: 100%;
             `,
             titleStyle: css`
