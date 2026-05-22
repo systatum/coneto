@@ -52,13 +52,16 @@ export const CardPadding = {
 
 export type CardPadding = (typeof CardPadding)[keyof typeof CardPadding];
 
-export interface CardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
+export interface CardProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title" | "style"
+> {
   shadow?: CardShadow;
   radius?: CardBorderRadius;
   padding?: CardPadding;
   children: ReactNode;
   title?: ReactNode;
+  pretitle?: ReactNode;
   subtitle?: ReactNode;
   footerContent?: ReactNode;
   closable?: boolean;
@@ -71,13 +74,14 @@ export interface CardProps
 }
 
 export interface CardStyles {
-  textContainerStyle?: CSSProp;
+  headerTitleSectionStyle?: CSSProp;
   actionContainerStyle?: CSSProp;
   containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   headerStyle?: CSSProp;
   footerStyle?: CSSProp;
   titleStyle?: CSSProp;
+  pretitleStyle?: CSSProp;
   subtitleStyle?: CSSProp;
 }
 
@@ -98,6 +102,7 @@ function Card({
   open = true,
   id,
   className,
+  pretitle,
   ...props
 }: CardProps) {
   const { currentTheme } = useTheme();
@@ -141,6 +146,7 @@ function Card({
 
   return (
     <CardContainer
+      aria-label="card-container"
       {...props}
       $shadow={shadow}
       $radius={radius}
@@ -150,10 +156,11 @@ function Card({
       $containerStyle={styles?.containerStyle}
       $theme={cardTheme}
     >
-      {(title || subtitle || headerActions) && (
+      {(title || subtitle || pretitle || headerActions) && (
         <Title
-          text={title}
           size="sm"
+          text={title}
+          pretitle={pretitle}
           subtitle={subtitle}
           styles={{
             containerStyle: css`
@@ -176,9 +183,10 @@ function Card({
               color: ${cardTheme?.subtitleColor ?? "#6b7280"};
               ${styles?.subtitleStyle}
             `,
+            pretitleStyle: styles?.pretitleStyle,
             textContainerStyle: css`
               gap: 2px;
-              ${styles?.textContainerStyle}
+              ${styles?.headerTitleSectionStyle}
             `,
           }}
           rightSection={renderHeaderActions}

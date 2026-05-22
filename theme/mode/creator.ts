@@ -1721,9 +1721,9 @@ export function createTooltipTheme(
   customTheme: Partial<TooltipThemeConfig> = {}
 ): TooltipThemeConfig {
   const defaultTheme: TooltipThemeConfig = {
-    literalStringBackgroundColor: "#e7e7e7",
+    literalStringBackgroundColor: "#b9babc",
     literalStringTextColor: "#111827",
-    nodeElementBackgroundColor: "#e7e7e7",
+    nodeElementBackgroundColor: "#b9babc",
     nodeElementTextColor: "#111827",
     boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
     arrowBackgroundColor: "#b9babc",
