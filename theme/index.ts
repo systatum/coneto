@@ -182,6 +182,7 @@ export interface ComboboxThemeConfig extends BodyThemeConfig {
 
   scrollThumbColor?: string;
 
+  mobileBackgroundColor?: string;
   fadeColor?: string;
 }
 
