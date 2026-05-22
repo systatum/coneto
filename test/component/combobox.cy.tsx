@@ -135,6 +135,86 @@ describe("Combobox", () => {
     );
   }
 
+  context("mobile", () => {
+    beforeEach(() => {
+      cy.window().then((win) => {
+        cy.spy(win.console, "log").as("consoleLog");
+      });
+
+      cy.mount(<ProductCombobox options={FRUIT_OPTIONS} mobile />);
+
+      cy.findByPlaceholderText("Select a fruit...").click();
+    });
+
+    it("renders on the bottom screen", () => {
+      cy.findByLabelText("combobox-drawer-mobile")
+        .should("have.css", "bottom", "10px")
+        .and("have.css", "position", "fixed");
+    });
+
+    it("renders with 96dvw", () => {
+      cy.viewport(500, 700);
+
+      cy.window().then((win) => {
+        const expectedWidth = `${win.innerWidth * 0.96}px`;
+
+        cy.findByLabelText("combobox-drawer-mobile").should(
+          "have.css",
+          "width",
+          expectedWidth
+        );
+      });
+    });
+
+    context("when selecting an option", () => {
+      it("should update the selected value", () => {
+        cy.findByPlaceholderText("Select a fruit...").should("have.value", "");
+        cy.findByText("Apple").click();
+        cy.findByPlaceholderText("Select a fruit...").should(
+          "have.value",
+          "Apple"
+        );
+      });
+    });
+
+    context("fade", () => {
+      it("shows on the top and bottom", () => {
+        cy.findByLabelText("combobox-fade-top").should("exist");
+        cy.findByLabelText("combobox-fade-bottom").should("exist");
+      });
+
+      context("when selected option near at the fade top", () => {
+        it("should not shows the fade top", () => {
+          cy.findByLabelText("combobox-fade-top").should("exist");
+          cy.findByLabelText("combobox-fade-bottom").should("exist");
+
+          cy.findByText("Apple").click();
+          cy.findByPlaceholderText("Select a fruit...").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("combobox-fade-top").should("not.be.visible");
+          cy.findByLabelText("combobox-fade-bottom").should("exist");
+        });
+      });
+
+      context("when selected option near at the fade bottom", () => {
+        it("should not shows the fade bottom", () => {
+          cy.findByLabelText("combobox-fade-top").should("exist");
+          cy.findByLabelText("combobox-fade-bottom").should("exist");
+
+          cy.findByText("Pineapple").click();
+          cy.findByPlaceholderText("Select a fruit...").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("combobox-fade-top").should("exist");
+          cy.findByLabelText("combobox-fade-bottom").should("not.be.visible");
+        });
+      });
+    });
+  });
+
   context("option with actions", () => {
     context("with single option", () => {
       beforeEach(() => {
