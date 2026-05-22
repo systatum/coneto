@@ -806,7 +806,7 @@ function ComboboxDrawer({
       style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
       id="combo-list"
-      aria-label={`combobox-drawer-${name}`}
+      aria-label={`combobox-drawer`}
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
       $mobile={mobile}
@@ -1018,9 +1018,17 @@ function ComboboxDrawer({
 
   if (mobile) {
     return (
-      <DrawerContainer>
-        <FadeTop $theme={comboboxTheme} $visible={showFadeTop} />
-        <FadeBottom $theme={comboboxTheme} $visible={showFadeBottom} />
+      <DrawerContainer aria-label="combobox-drawer-mobile">
+        <FadeTop
+          aria-label="combobox-fade-top"
+          $theme={comboboxTheme}
+          $visible={showFadeTop}
+        />
+        <FadeBottom
+          aria-label="combobox-fade-bottom"
+          $theme={comboboxTheme}
+          $visible={showFadeBottom}
+        />
         {mainCombobox}
       </DrawerContainer>
     );
