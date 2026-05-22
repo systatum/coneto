@@ -186,7 +186,9 @@ export const Mobile: Story = {
     layout: "padded",
   },
   render: () => {
-    const [value, setValue] = useState<SelectboxSelectedOptions>([]);
+    const [value1, setValue1] = useState<SelectboxSelectedOptions>([]);
+    const [value2, setValue2] = useState<SelectboxSelectedOptions>([]);
+    const [value3, setValue3] = useState<SelectboxSelectedOptions>([]);
 
     const FRUIT_OPTIONS: ComboboxOption[] = [
       { text: "Apple", value: "1" },
@@ -206,19 +208,154 @@ export const Mobile: Story = {
       { text: "Lemon", value: "15" },
       { text: "Coconut", value: "16" },
     ];
+
+    const CATEGORIZED_FRUIT_OPTIONS: ComboboxOption[] = [
+      {
+        text: "Watery",
+        value: "group-watery",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-watery-sweet",
+            groupOptions: [
+              {
+                text: "Light",
+                value: "light",
+                groupOptions: [
+                  { text: "Watermelon", value: "item-watermelon" },
+                  { text: "Pear", value: "item-pear" },
+                ],
+              },
+              {
+                text: "Bold",
+                value: "bold",
+                groupOptions: [{ text: "Grape", value: "item-grape" }],
+              },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-watery-balanced",
+            groupOptions: [
+              { text: "Apple", value: "item-apple" },
+              { text: "Papaya", value: "item-papaya" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Tangy",
+        value: "group-tangy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-tangy-sweet",
+            groupOptions: [
+              { text: "Orange", value: "item-orange" },
+              { text: "Pineapple", value: "item-pineapple" },
+              { text: "Lychee", value: "item-lychee" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-tangy-balanced",
+            groupOptions: [
+              { text: "Kiwi", value: "item-kiwi" },
+              { text: "Pomegranate", value: "item-pomegranate" },
+              { text: "Cherry", value: "item-cherry" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Creamy",
+        value: "group-creamy",
+        groupOptions: [
+          {
+            text: "Sweet",
+            value: "group-creamy-sweet",
+            groupOptions: [
+              { text: "Banana", value: "item-banana" },
+              { text: "Mango", value: "item-mango" },
+              { text: "Peach", value: "item-peach" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+          {
+            text: "Balanced",
+            value: "group-creamy-balanced",
+            groupOptions: [{ text: "Plum", value: "item-plum" }],
+            groupSetting: { collapsible: true },
+          },
+          { text: "Coconut", value: "item-coconut" },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      {
+        text: "Berry",
+        value: "group-berry",
+        groupOptions: [
+          {
+            text: "Balanced",
+            value: "group-berry-balanced",
+            groupOptions: [
+              { text: "Strawberry", value: "item-strawberry" },
+              { text: "Blueberry", value: "item-blueberry" },
+              { text: "Raspberry", value: "item-raspberry" },
+            ],
+            groupSetting: { collapsible: true },
+          },
+        ],
+        groupSetting: { collapsible: true },
+      },
+      { text: "Peppers", value: "item-peppers" },
+      { text: "Eggplants", value: "item-eggplants", hidden: true },
+    ];
+
     return (
       <div
         style={{
           width: "256px",
+          gap: "8px",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <Combobox
-          label="Mobile Combobox"
-          selectedOptions={value}
+          id="mobile-combobox"
+          label="Mobile combobox"
+          selectedOptions={value1}
           options={FRUIT_OPTIONS}
-          onChange={setValue}
+          onChange={setValue1}
           clearable
           placeholder="Select a fruit..."
+          mobile
+        />
+        <Combobox
+          id="selectable-combobox"
+          label="Selectable combobox"
+          selectedOptions={value2}
+          options={FRUIT_OPTIONS}
+          onChange={setValue2}
+          clearable
+          placeholder="Select a fruit..."
+          multiple
+          mobile
+        />
+        <Combobox
+          id="selectable-combobox"
+          label="With grouped options"
+          selectedOptions={value3}
+          options={CATEGORIZED_FRUIT_OPTIONS}
+          onChange={setValue3}
+          placeholder="Select a fruit..."
+          clearable
           mobile
         />
       </div>
