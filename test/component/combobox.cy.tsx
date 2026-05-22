@@ -236,6 +236,7 @@ describe("Combobox", () => {
           );
 
           cy.findByText("Orange").click();
+          cy.get("body").click("right");
           cy.findByPlaceholderText("Select a fruit...").click();
 
           cy.wait(300);
@@ -266,6 +267,8 @@ describe("Combobox", () => {
             );
 
             cy.findByText("Orange").click();
+            cy.get("body").click("right");
+
             cy.findByPlaceholderText("Select a fruit...").click();
 
             cy.wait(300);
