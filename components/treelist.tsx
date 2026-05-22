@@ -896,7 +896,7 @@ interface TreeListItemComponent<T extends TreeListItem> {
 }
 
 export interface TreeListItemStyles {
-  itemStyle?: CSSProp;
+  itemStyle?: ((level: number) => CSSProp) | CSSProp;
   emptyItemSlateStyle?: CSSProp;
   arrowStyle?: CSSProp;
   hierarchyLineStyle?: CSSProp;
@@ -1024,7 +1024,11 @@ function TreeListItem<T extends TreeListItem>({
         role="button"
         data-group-id={groupId}
         aria-label="tree-list-item"
-        $style={styles?.itemStyle}
+        $style={
+          typeof styles?.itemStyle === "function"
+            ? styles?.itemStyle(level)
+            : styles?.itemStyle
+        }
         $isSelected={isSelected.includes(item.id)}
         aria-expanded={isOpen[item.id]}
         $showHierarchyLine={showHierarchyLine}
@@ -1369,7 +1373,10 @@ function TreeListItem<T extends TreeListItem>({
                   <TreeListItem
                     key={index}
                     styles={{
-                      itemStyle: styles?.itemStyle,
+                      itemStyle:
+                        typeof styles?.itemStyle === "function"
+                          ? styles?.itemStyle(level + 1)
+                          : styles?.itemStyle,
                       titleItemStyle: styles?.titleItemStyle,
                       highlightedTextStyle: styles?.highlightedTextStyle,
                       emptyItemSlateStyle: styles?.emptyItemSlateStyle,
