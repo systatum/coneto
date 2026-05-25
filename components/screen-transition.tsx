@@ -47,7 +47,6 @@ function ScreenTransition({
         height={"100dvh"}
       >
         {NextScreen && <NextScreen />}
-        test
       </PaperDialog>
     </ParentDialogContext.Provider>
   );
