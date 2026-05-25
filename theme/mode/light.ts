@@ -136,7 +136,7 @@ const lightGrid = createGridTheme(lightBody);
 
 const lightImagebox = createImageboxTheme(lightBody, lightFieldLane);
 
-const lightKeynote = createKeynoteTheme(lightBody);
+const lightKeynote = createKeynoteTheme();
 
 const lightList = createListTheme(lightBody);
 
@@ -219,7 +219,7 @@ const lightToolbar = createToolbarTheme({
 
 const lightTooltip = createTooltipTheme();
 
-const lightThumbField = createThumbFieldTheme(lightBody);
+const lightThumbField = createThumbFieldTheme();
 
 const lightTreeList = createTreeListTheme(lightBody);
 

@@ -438,7 +438,7 @@ const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
   iconColor: "#9ca3af",
 });
 
-const darkKeynote = createKeynoteTheme(darkBody, {
+const darkKeynote = createKeynoteTheme({
   keyColor: "rgb(243, 244, 246)",
   valueColor: "#f3f4f6",
 });
@@ -725,7 +725,7 @@ const darkTitle = createTitleTheme(darkBody, {
   },
 });
 
-const darkThumbField = createThumbFieldTheme(darkBody, {
+const darkThumbField = createThumbFieldTheme({
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
   inactiveColor: "#6b7280",
