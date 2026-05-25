@@ -9,3 +9,5 @@ export const themes = {
 export type ThemeMode = keyof typeof themes;
 
 export * from "./creator";
+export * from "./dark";
+export * from "./light";
