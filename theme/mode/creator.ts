@@ -71,91 +71,94 @@ import {
 } from "./../index";
 import { TipMenuVariant } from "./../../components/tip-menu";
 
+function mergeTheme<T extends object>(
+  defaultTheme: T,
+  ...themeConfigurations: Array<Partial<T>>
+): T {
+  return Object.assign({}, defaultTheme, ...themeConfigurations);
+}
+
 // body
 export function createBodyTheme(
-  themeConfigurations: Partial<BodyThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<BodyThemeConfig>>
 ): BodyThemeConfig {
-  const defaultTheme = {
-    backgroundColor: "#ffffff",
-    textColor: "#000000",
-    borderColor: "#d1d5db",
-  };
-
-  return {
-    ...defaultTheme,
-    ...themeConfigurations,
-  };
+  return mergeTheme(
+    {
+      backgroundColor: "#ffffff",
+      textColor: "#000000",
+      borderColor: "#d1d5db",
+    },
+    ...themeConfigurations
+  );
 }
 
 // action-capsule
 export function createActionCapsuleTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ActionCapsuleThemeConfig> = {},
-  themeConfigurations: Partial<ActionCapsuleThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ActionCapsuleThemeConfig>>
 ): ActionCapsuleThemeConfig {
-  const defaultTheme: ActionCapsuleThemeConfig = {
-    activeBackgroundColor: "rgb(226, 224, 224)",
-    textColor: body.textColor || "#343434",
-    boxShadow: "none",
-    borderRadius: "6px",
-    capsuleFontSize: "14px",
-    tabTextColor: "rgb(86, 85, 85)",
-    tabBorderRadius: "6px",
-    borderColor: "#ebebeb",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ActionCapsuleThemeConfig>(
+    {
+      activeBackgroundColor: "rgb(226, 224, 224)",
+      textColor: body.textColor || "#343434",
+      boxShadow: "none",
+      borderRadius: "6px",
+      capsuleFontSize: "14px",
+      tabTextColor: "rgb(86, 85, 85)",
+      tabBorderRadius: "6px",
+      borderColor: "#ebebeb",
+    },
+    ...themeConfigurations
+  );
 }
 
 // action-button.tsx
 export function createActionButtonTheme(
-  baseVariants: Partial<ActionButtonThemeConfig> = {},
-  themeConfigurations: Partial<ActionButtonThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ActionButtonThemeConfig>>
 ): ActionButtonThemeConfig {
-  const defaultTheme: ActionButtonThemeConfig = {
-    backgroundColor: "transparent",
-    textColor: "rgb(86, 85, 85)",
-    hoverBackgroundColor: "#f3f4f6",
-    disabledBackgroundColor: "#e5e7eb",
-    disabledOpacity: 0.5,
-    borderColor: "#ebebeb",
-    borderRadius: "6px",
+  return mergeTheme<ActionButtonThemeConfig>(
+    {
+      backgroundColor: "transparent",
+      textColor: "rgb(86, 85, 85)",
+      hoverBackgroundColor: "#f3f4f6",
+      disabledBackgroundColor: "#e5e7eb",
+      disabledOpacity: 0.5,
+      borderColor: "#ebebeb",
+      borderRadius: "6px",
 
-    toggleBackgroundColor: "transparent",
-    toggleTextColor: "rgb(86, 85, 85)",
-    toggleHoverBackgroundColor: "#f3f4f6",
-    toggleBorderColor: "#e5e7eb",
-    toggleBorderRadius: "6px",
+      toggleBackgroundColor: "transparent",
+      toggleTextColor: "rgb(86, 85, 85)",
+      toggleHoverBackgroundColor: "#f3f4f6",
+      toggleBorderColor: "#e5e7eb",
+      toggleBorderRadius: "6px",
 
-    dividerColor: "#e5e7eb",
+      dividerColor: "#e5e7eb",
 
-    dropdownWidth: "170px",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      dropdownWidth: "170px",
+    },
+    ...themeConfigurations
+  );
 }
 
 // avatar.tsx
 export function createAvatarTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<AvatarThemeConfig> = {},
-  themeConfigurations: Partial<AvatarThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<AvatarThemeConfig>>
 ): AvatarThemeConfig {
-  const defaultTheme = {
-    borderColor: "#f3f4f6",
-    textColor: body.textColor,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    overlayIconColor: "#ffffff",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<AvatarThemeConfig>(
+    {
+      borderColor: "#f3f4f6",
+      textColor: body.textColor,
+      overlayIconColor: "#ffffff",
+    },
+    ...themeConfigurations
+  );
 }
 
 // badge.tsx
 export function createBadgeTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<BadgeThemeConfig> = {},
-  themeConfigurations: Partial<BadgeThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<BadgeThemeConfig>>
 ): BadgeThemeConfig {
   const defaultTheme: BadgeThemeConfig = {
     backgroundColor: "transparent",
@@ -170,40 +173,38 @@ export function createBadgeTheme(
     },
   };
 
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
+
   return {
-    ...defaultTheme,
-    ...baseVariants,
-    ...themeConfigurations,
-    action: {
-      ...defaultTheme.action,
-      ...baseVariants.action,
-      ...themeConfigurations.action,
-    },
+    ...merged,
+    action: mergeTheme(
+      defaultTheme.action,
+      ...themeConfigurations.map((o) => o.action ?? {})
+    ),
   };
 }
 
 // boxbar.tsx
 export function createBoxbarTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<BoxbarThemeConfig> = {},
-  themeConfigurations: Partial<BoxbarThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<BoxbarThemeConfig>>
 ): BoxbarThemeConfig {
-  const defaultTheme: BoxbarThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    toggleButtonColor: body.textColor,
-    borderColor: "#d1d5db",
-    toggleButtonHoverColor: "#f3f4f6",
-    textColor: body.textColor,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<BoxbarThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      toggleButtonColor: body.textColor,
+      borderColor: "#d1d5db",
+      toggleButtonHoverColor: "#f3f4f6",
+      textColor: body.textColor,
+    },
+    ...themeConfigurations
+  );
 }
 
 // button.tsx
 export function createButtonTheme(
   body: BodyThemeConfig = {},
-  baseVariants: Partial<Record<string, ButtonThemeConfig>> = {},
-  themeConfigurations: Partial<Record<string, ButtonThemeConfig>> = {}
+  ...themeConfigurations: Array<Partial<Record<string, ButtonThemeConfig>>>
 ): Record<string, ButtonThemeConfig> {
   const defaultVariants: Record<string, ButtonThemeConfig> = {
     default: {
@@ -311,17 +312,15 @@ export function createButtonTheme(
 
   const allKeys = new Set([
     ...Object.keys(defaultVariants),
-    ...Object.keys(baseVariants),
-    ...Object.keys(themeConfigurations),
+    ...themeConfigurations.flatMap((o) => Object.keys(o)),
   ]);
 
   const merged: Record<string, ButtonThemeConfig> = {};
   for (const key of allKeys) {
-    merged[key] = {
-      ...defaultVariants[key],
-      ...baseVariants[key],
-      ...themeConfigurations[key],
-    };
+    merged[key] = mergeTheme(
+      defaultVariants[key] ?? {},
+      ...themeConfigurations.map((o) => o[key] ?? {})
+    );
   }
 
   return merged;
@@ -330,52 +329,51 @@ export function createButtonTheme(
 // tip-menu-container.tsx
 export function createTipMenuContainerTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<TipMenuContainerThemeConfig> = {},
-  themeConfigurations: Partial<TipMenuContainerThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TipMenuContainerThemeConfig>>
 ): TipMenuContainerThemeConfig {
-  return {
-    backgroundColor: body?.backgroundColor || "#ffffff",
-    borderColor: "#e5e7eb",
-    textColor: body?.textColor || "inherit",
-    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-    ...baseVariants,
-    ...themeConfigurations,
-  };
+  return mergeTheme<TipMenuContainerThemeConfig>(
+    {
+      backgroundColor: body?.backgroundColor || "#ffffff",
+      borderColor: "#e5e7eb",
+      textColor: body?.textColor || "inherit",
+      boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // calendar.tsx
 export function createCalendarTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<CalendarThemeConfig> = {},
-  themeConfigurations: Partial<CalendarThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CalendarThemeConfig>>
 ): CalendarThemeConfig {
-  const defaultTheme: CalendarThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor || "#111827",
+  return mergeTheme<CalendarThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      textColor: body.textColor || "#111827",
 
-    dayTextColor: "#6b7280",
+      dayTextColor: "#6b7280",
 
-    disabledDateColor: "#d1d5db",
-    weekendDateColor: "#fca5a5",
+      disabledDateColor: "#d1d5db",
+      weekendDateColor: "#fca5a5",
 
-    highlightedDateTextColor: "white",
-    hightlightDateColor: "#61a9f9",
-    rangeDateBackgroundColor: "#dbeafe",
-    rangeDateTextColor: "#61a9f9",
+      highlightedDateTextColor: "white",
+      hightlightDateColor: "#61a9f9",
+      rangeDateBackgroundColor: "#dbeafe",
+      rangeDateTextColor: "#61a9f9",
 
-    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // capsule.tsx
 export function createCapsuleTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<CapsuleThemeConfig> = {},
-  themeConfigurations: Partial<CapsuleThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CapsuleThemeConfig>>
 ): CapsuleThemeConfig {
   const defaultTheme: CapsuleThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -394,521 +392,517 @@ export function createCapsuleTheme(
     },
   };
 
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
+
   return {
-    ...defaultTheme,
-    ...baseVariants,
-    ...themeConfigurations,
-    tab: {
-      ...defaultTheme.tab,
-      ...baseVariants.tab,
-      ...themeConfigurations.tab,
-    },
-    active: {
-      ...defaultTheme.active,
-      ...baseVariants.active,
-      ...themeConfigurations.active,
-    },
-    hover: {
-      ...defaultTheme.hover,
-      ...baseVariants.hover,
-      ...themeConfigurations.hover,
-    },
+    ...merged,
+    tab: mergeTheme(
+      defaultTheme.tab,
+      ...themeConfigurations.map((o) => o.tab ?? {})
+    ),
+    active: mergeTheme(
+      defaultTheme.active,
+      ...themeConfigurations.map((o) => o.active ?? {})
+    ),
+    hover: mergeTheme(
+      defaultTheme.hover,
+      ...themeConfigurations.map((o) => o.hover ?? {})
+    ),
   };
 }
 
 // capsule-tab.tsx
 export function createCapsuleTabTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<CapsuleTabThemeConfig> = {},
-  themeConfigurations: Partial<CapsuleTabThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CapsuleTabThemeConfig>>
 ): CapsuleTabThemeConfig {
-  const defaultTheme: CapsuleTabThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    borderColor: "#ebebeb",
-    boxShadow: "0 1px 3px -3px #5b5b5b",
-    activeBackgroundColor: "black",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<CapsuleTabThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      borderColor: "#ebebeb",
+      boxShadow: "0 1px 3px -3px #5b5b5b",
+      activeBackgroundColor: "black",
+    },
+    ...themeConfigurations
+  );
 }
 
 // card.tsx
 export function createCardTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<CardThemeConfig> = {},
-  themeConfigurations: Partial<CardThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CardThemeConfig>>
 ): CardThemeConfig {
-  const defaultTheme: CardThemeConfig = {
-    backgroundColor: "#ffffff",
-    borderColor: "#e5e7eb",
-    dividerColor: "transparent",
-    titleColor: body.textColor,
-    subtitleColor: "#8b8e92",
-    headerBackground: "transparent",
-    footerBackground: "transparent",
-    closeIconColor: body.textColor,
-    closeIconHoverBackground: "#d1d5db",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<CardThemeConfig>(
+    {
+      backgroundColor: "#ffffff",
+      borderColor: "#e5e7eb",
+      dividerColor: "transparent",
+      titleColor: body.textColor,
+      subtitleColor: "#8b8e92",
+      headerBackground: "transparent",
+      footerBackground: "transparent",
+      closeIconColor: body.textColor,
+      closeIconHoverBackground: "#d1d5db",
+    },
+    ...themeConfigurations
+  );
 }
 
 // chips.tsx
 export function createChipsTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ChipsThemeConfig> = {},
-  themeConfigurations: Partial<ChipsThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ChipsThemeConfig>>
 ): ChipsThemeConfig {
-  return {
-    backgroundColor: body.backgroundColor,
-    borderColor: "#d1d5db",
-    textColor: body.textColor,
-    mutedTextColor: "#4b5563",
+  return mergeTheme<ChipsThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      borderColor: "#d1d5db",
+      textColor: body.textColor,
+      mutedTextColor: "#4b5563",
 
-    hoverBackgroundColor: "#bfdbfe",
-    selectedBackgroundColor: "#bfdbfe",
+      hoverBackgroundColor: "#bfdbfe",
+      selectedBackgroundColor: "#bfdbfe",
 
-    dividerColor: "#d1d5db",
+      dividerColor: "#d1d5db",
 
-    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-
-    ...baseVariants,
-    ...themeConfigurations,
-  };
+      boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // choice-group.tsx
 export function createChoiceGroupTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ChoiceGroupThemeConfig> = {},
-  themeConfigurations: Partial<ChoiceGroupThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ChoiceGroupThemeConfig>>
 ): ChoiceGroupThemeConfig {
-  const defaultTheme: ChoiceGroupThemeConfig = {
-    borderColor: "#e5e7eb",
-    dividerColor: "#e5e7eb",
-    labelColor: body.textColor,
-    backgroundColor: body.backgroundColor || "#fff",
-    descriptionColor: "#4b5563",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ChoiceGroupThemeConfig>(
+    {
+      borderColor: "#e5e7eb",
+      dividerColor: "#e5e7eb",
+      labelColor: body.textColor,
+      backgroundColor: body.backgroundColor || "#fff",
+      descriptionColor: "#4b5563",
+    },
+    ...themeConfigurations
+  );
 }
 
 // checkbox.tsx
 export function createCheckboxTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<CheckboxThemeConfig> = {},
-  themeConfigurations: Partial<CheckboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CheckboxThemeConfig>>
 ): CheckboxThemeConfig {
-  const defaultTheme: CheckboxThemeConfig = {
-    borderColor: "#6b7280",
-    checkedBorderColor: "#61A9F9",
-    backgroundColor: body.backgroundColor,
-    checkedBackgroundColor: "#61A9F9",
-    iconColor: "#ffffff",
-    labelColor: body.textColor,
-    descriptionColor: "#4b5563",
-    highlightCheckedBackgroundColor: "#DBEAFE",
-    highlightHoverBackgroundColor: "#E7F2FC",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<CheckboxThemeConfig>(
+    {
+      borderColor: "#6b7280",
+      checkedBorderColor: "#61A9F9",
+      backgroundColor: body.backgroundColor,
+      checkedBackgroundColor: "#61A9F9",
+      iconColor: "#ffffff",
+      labelColor: body.textColor,
+      descriptionColor: "#4b5563",
+      highlightCheckedBackgroundColor: "#DBEAFE",
+      highlightHoverBackgroundColor: "#E7F2FC",
+    },
+    ...themeConfigurations
+  );
 }
 
 // colorbox.tsx
 export function createColorboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<ColorboxThemeConfig> = {},
-  themeConfigurations: Partial<ColorboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ColorboxThemeConfig>>
 ): ColorboxThemeConfig {
-  const defaultTheme: ColorboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor,
+  return mergeTheme<ColorboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      textColor: body.textColor,
 
-    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+      focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
 
-    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
-    errorTextColor: fieldLane?.errorColor || "#dc2626",
+      errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
+      errorTextColor: fieldLane?.errorColor || "#dc2626",
 
-    disabledBorderColor: fieldLane?.borderColor || "#d1d5db",
-    disabledTextColor: fieldLane?.borderColor || "#d1d5db",
+      disabledBorderColor: fieldLane?.borderColor || "#d1d5db",
+      disabledTextColor: fieldLane?.borderColor || "#d1d5db",
 
-    prefixColor: fieldLane?.placeholderColor || "#6b7280",
+      prefixColor: fieldLane?.placeholderColor || "#6b7280",
 
-    boxBackgroundColor: body.backgroundColor || "#ffffff",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      boxBackgroundColor: body.backgroundColor || "#ffffff",
+    },
+    ...themeConfigurations
+  );
 }
 
 // crumb.tsx
 export function createCrumbTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<CrumbThemeConfig> = {},
-  themeConfigurations: Partial<CrumbThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<CrumbThemeConfig>>
 ): CrumbThemeConfig {
-  const defaultTheme: CrumbThemeConfig = {
-    textColor: "#4b5563",
-    hoverColor: "#61a9f9",
-    lastTextColor: body.textColor,
-    arrowColor: "#9ca3af",
-    ellipsisColor: "#6b7280",
-    ellipsisHoverColor: "#61a9f9",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<CrumbThemeConfig>(
+    {
+      textColor: "#4b5563",
+      hoverColor: "#61a9f9",
+      lastTextColor: body.textColor,
+      arrowColor: "#9ca3af",
+      ellipsisColor: "#6b7280",
+      ellipsisHoverColor: "#61a9f9",
+    },
+    ...themeConfigurations
+  );
 }
 
 // combobox.tsx
 export function createComboboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<ComboboxThemeConfig> = {},
-  themeConfigurations: Partial<ComboboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ComboboxThemeConfig>>
 ): ComboboxThemeConfig {
-  const defaultTheme: ComboboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor || "#1f2937",
-    highlightBackgroundColor: fieldLane?.highlightBackgroundColor || "#dbeafe",
-    selectedBackgroundColor: fieldLane?.selectedBackgroundColor || "#61a9f9",
-    selectedTextColor: body.backgroundColor || "#ffffff",
-    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
-    emptyTextColor: fieldLane?.helperColor || "#6b7280",
-    dividerColor: fieldLane?.dividerColor || "#d1d5db",
-    boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-    groupBackgroundColor: "rgb(249, 250, 251)",
-    scrollThumbColor: "#9ca3af",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ComboboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      textColor: body.textColor || "#1f2937",
+      highlightBackgroundColor:
+        fieldLane?.highlightBackgroundColor || "#dbeafe",
+      selectedBackgroundColor: fieldLane?.selectedBackgroundColor || "#61a9f9",
+      selectedTextColor: body.backgroundColor || "#ffffff",
+      disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+      emptyTextColor: fieldLane?.helperColor || "#6b7280",
+      dividerColor: fieldLane?.dividerColor || "#d1d5db",
+      boxShadow:
+        "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      groupBackgroundColor: "rgb(249, 250, 251)",
+      scrollThumbColor: "#9ca3af",
+    },
+    ...themeConfigurations
+  );
 }
 
 // dialog.tsx
 export function createDialogTheme(
   body: BodyThemeConfig,
-  baseVariants: DialogThemeConfig = {},
-  themeConfigurations: DialogThemeConfig = {}
+  ...themeConfigurations: Array<DialogThemeConfig>
 ): DialogThemeConfig {
-  const defaultTheme: DialogThemeConfig = {
-    borderColor: "#ebebeb",
-    textColor: body.textColor,
-    backgroundColor: body.backgroundColor,
-    boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-    subtitleColor: "#5a606b",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<DialogThemeConfig>(
+    {
+      borderColor: "#ebebeb",
+      textColor: body.textColor,
+      backgroundColor: body.backgroundColor,
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
+      subtitleColor: "#5a606b",
+    },
+    ...themeConfigurations
+  );
 }
 
 // document-viewer.tsx
 export function createDocumentViewerTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<DocumentViewerThemeConfig> = {},
-  themeConfigurations: Partial<DocumentViewerThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<DocumentViewerThemeConfig>>
 ): DocumentViewerThemeConfig {
-  const defaultTheme: DocumentViewerThemeConfig = {
-    backgroundColor: "#525659",
-    toolbarBackgroundColor: "#323639",
-    textColor: "white",
-    errorColor: "#ff6b6b",
-    hoverBoxBorderColor: "#4daaf5",
-    hoverBoxBackgroundColor: "rgba(77, 170, 245, 0.2)",
-    hoverBoxTextColor: "#323639",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<DocumentViewerThemeConfig>(
+    {
+      backgroundColor: "#525659",
+      toolbarBackgroundColor: "#323639",
+      textColor: "white",
+      errorColor: "#ff6b6b",
+      hoverBoxBorderColor: "#4daaf5",
+      hoverBoxBackgroundColor: "rgba(77, 170, 245, 0.2)",
+      hoverBoxTextColor: "#323639",
+    },
+    ...themeConfigurations
+  );
 }
 
 // dormant-text.tsx
 export function createDormantTextTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<DormantTextThemeConfig> = {},
-  themeConfigurations: Partial<DormantTextThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<DormantTextThemeConfig>>
 ): DormantTextThemeConfig {
-  const defaultTheme: DormantTextThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    hoverBackgroundColor: "#e9e9e9",
-    borderColor: "transparent",
-    textColor: body.textColor,
-    pencilColor: "#666666",
-    actionButtonColor: "#666666",
-    actionButtonHoverBackground: "#d1d5db",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<DormantTextThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      hoverBackgroundColor: "#e9e9e9",
+      borderColor: "transparent",
+      textColor: body.textColor,
+      pencilColor: "#666666",
+      actionButtonColor: "#666666",
+      actionButtonHoverBackground: "#d1d5db",
+    },
+    ...themeConfigurations
+  );
 }
 
 // drawer-tab.tsx
 export function createDrawerTabTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<DrawerTabThemeConfig> = {},
-  themeConfigurations: Partial<DrawerTabThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<DrawerTabThemeConfig>>
 ): DrawerTabThemeConfig {
-  const defaultTheme: DrawerTabThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    textColor: body.textColor,
-    borderColor: "#d1d5db",
-    hoverBackgroundColor: "#f3f4f6",
-    headerBackgroundColor: "#f3f4f6",
-    closeButtonHoverBackground: "#d1d5db",
-    dividerColor: "#e5e7eb",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<DrawerTabThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      textColor: body.textColor,
+      borderColor: "#d1d5db",
+      hoverBackgroundColor: "#f3f4f6",
+      headerBackgroundColor: "#f3f4f6",
+      closeButtonHoverBackground: "#d1d5db",
+      dividerColor: "#e5e7eb",
+    },
+    ...themeConfigurations
+  );
 }
 
 // error-slate.tsx
 export function createErrorSlateTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ErrorSlateThemeConfig> = {},
-  themeConfigurations: Partial<ErrorSlateThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ErrorSlateThemeConfig>>
 ): ErrorSlateThemeConfig {
-  const defaultTheme: ErrorSlateThemeConfig = {
-    cubeFaceBackground: "#dd0b0b",
-    cubeFaceBorder: "#a80000",
-    cubeFaceText: "#ffffff",
-    titleColor: body?.textColor,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ErrorSlateThemeConfig>(
+    {
+      cubeFaceBackground: "#dd0b0b",
+      cubeFaceBorder: "#a80000",
+      cubeFaceText: "#ffffff",
+      titleColor: body?.textColor,
+    },
+    ...themeConfigurations
+  );
 }
 
 // field-lane.tsx
 export function createFieldLaneTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<FieldLaneThemeConfig> = {},
-  themeConfigurations: Partial<FieldLaneThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<FieldLaneThemeConfig>>
 ): FieldLaneThemeConfig {
-  const defaultTheme: FieldLaneThemeConfig = {
-    buttonTextColor: body.textColor,
-    buttonBorderColor: "#d1d5db",
-    buttonErrorBorderColor: "#ef4444",
-    buttonErrorTextColor: "#b91c1c",
+  return mergeTheme<FieldLaneThemeConfig>(
+    {
+      buttonTextColor: body.textColor,
+      buttonBorderColor: "#d1d5db",
+      buttonErrorBorderColor: "#ef4444",
+      buttonErrorTextColor: "#b91c1c",
 
-    textColor: body.textColor,
+      textColor: body.textColor,
 
-    disabledOpacity: 0.5,
-    disabledBorderColor: "#d1d5db",
-    disabledTextColor: "#9ca3af",
+      disabledOpacity: 0.5,
+      disabledBorderColor: "#d1d5db",
+      disabledTextColor: "#9ca3af",
 
-    borderColor: "#d1d5db",
+      borderColor: "#d1d5db",
 
-    actionColor: "#6b7280",
-    actionHoverColor: "#374151",
-    actionHoverBackgroundColor: "#e5e7eb",
+      actionColor: "#6b7280",
+      actionHoverColor: "#374151",
+      actionHoverBackgroundColor: "#e5e7eb",
 
-    placeholderColor: "rgb(107, 114, 128)",
-    focusedBorderColor: "#61A9F9",
-    highlightBackgroundColor: "#dbeafe",
-    selectedBackgroundColor: "#61A9F9",
+      placeholderColor: "rgb(107, 114, 128)",
+      focusedBorderColor: "#61A9F9",
+      highlightBackgroundColor: "#dbeafe",
+      selectedBackgroundColor: "#61A9F9",
 
-    errorColor: "#b91c1c",
-    errorBorderColor: "#ef4444",
-    errorBackground: "#fee2e2",
-    errorForeground: "#991b1b",
+      errorColor: "#b91c1c",
+      errorBorderColor: "#ef4444",
+      errorBackground: "#fee2e2",
+      errorForeground: "#991b1b",
 
-    helperColor: "#6b7280",
-    dividerColor: "#9ca3af",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      helperColor: "#6b7280",
+      dividerColor: "#9ca3af",
+    },
+    ...themeConfigurations
+  );
 }
 
 // file-input-box.tsx
 export function createFileInputBoxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<FileInputBoxThemeConfig> = {},
-  themeConfigurations: Partial<FileInputBoxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<FileInputBoxThemeConfig>>
 ): FileInputBoxThemeConfig {
-  const defaultTheme: FileInputBoxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane.borderColor || "#d1d5db",
-    focusedBorderColor: fieldLane.focusedBorderColor || "#3b82f6",
-    errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
-    textColor: body.textColor || "#111827",
-    placeholderColor: fieldLane.placeholderColor || "#6b7280",
-    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+  return mergeTheme<FileInputBoxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane.borderColor || "#d1d5db",
+      focusedBorderColor: fieldLane.focusedBorderColor || "#3b82f6",
+      errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
+      textColor: body.textColor || "#111827",
+      placeholderColor: fieldLane.placeholderColor || "#6b7280",
+      disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
 
-    defaultGradientColor: "#9ca3af",
-    errorGradientColor: "#dc2626",
-    disabledGradientColor: "#9ca3af",
+      defaultGradientColor: "#9ca3af",
+      errorGradientColor: "#dc2626",
+      disabledGradientColor: "#9ca3af",
 
-    dragActiveColor: "#3b82f6",
-    dragActiveBackgroundColor: "#eff6ff",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      dragActiveColor: "#3b82f6",
+      dragActiveBackgroundColor: "#eff6ff",
+    },
+    ...themeConfigurations
+  );
 }
 
 // file-drop-box.tsx
 export function createFileDropBoxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<FileDropBoxThemeConfig> = {},
-  themeConfigurations: Partial<FileDropBoxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<FileDropBoxThemeConfig>>
 ): FileInputBoxThemeConfig {
-  const defaultTheme: FileDropBoxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane.borderColor || "#d1d5db",
+  return mergeTheme<FileDropBoxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane.borderColor || "#d1d5db",
 
-    textColor: body.textColor || "#111827",
-    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+      textColor: body.textColor || "#111827",
+      placeholderColor: fieldLane.placeholderColor || "#9ca3af",
 
-    defaultGradientColor: "#9ca3af",
-    dragActiveGradientColor: "#60a5fa",
-    errorGradientColor: "#dc2626",
-    disabledGradientColor: "#9ca3af",
+      defaultGradientColor: "#9ca3af",
+      dragActiveGradientColor: "#60a5fa",
+      errorGradientColor: "#dc2626",
+      disabledGradientColor: "#9ca3af",
 
-    dragActiveBackgroundColor: "#eff6ff",
-    dragActiveTextColor: "#3b82f6",
+      dragActiveBackgroundColor: "#eff6ff",
+      dragActiveTextColor: "#3b82f6",
 
-    iconColor: "#6b7280",
+      iconColor: "#6b7280",
 
-    progressBackgroundColor: "#d1d5db",
-    progressBarColor: "#93c5fd",
-    progressTextColor: "#111827",
+      progressBackgroundColor: "#d1d5db",
+      progressBarColor: "#93c5fd",
+      progressTextColor: "#111827",
 
-    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+    },
+    ...themeConfigurations
+  );
 }
 
 // frame.tsx
 export function createFrameTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<FrameThemeConfig> = {},
-  themeConfigurations: Partial<FrameThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<FrameThemeConfig>>
 ): FrameThemeConfig {
-  const defaultTheme: FrameThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: "#d1d5db",
-    titleColor: "#999b9d",
-    titleBackgroundColor: body.backgroundColor || "#ffffff",
-    overlayBackgroundColor: body.backgroundColor || "#ffffff",
-    boxShadow: "var(--shadow-xs)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<FrameThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: "#d1d5db",
+      titleColor: "#999b9d",
+      titleBackgroundColor: body.backgroundColor || "#ffffff",
+      overlayBackgroundColor: body.backgroundColor || "#ffffff",
+      boxShadow: "var(--shadow-xs)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // grid.tsx
 export function createGridTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<GridThemeConfig> = {},
-  themeConfigurations: Partial<GridThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<GridThemeConfig>>
 ): GridThemeConfig {
-  const defaultTheme: GridThemeConfig = {
-    cardBackgroundColor: body.backgroundColor,
-    cardHoverBackgroundColor: "#f3f3f3",
-    cardSelectedBackgroundColor: "#e6f0ff",
-    cardBorderColor: "#e5e5e5",
-    cardShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    thumbnailBackgroundColor: "#e5e5e5",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<GridThemeConfig>(
+    {
+      cardBackgroundColor: body.backgroundColor,
+      cardHoverBackgroundColor: "#f3f3f3",
+      cardSelectedBackgroundColor: "#e6f0ff",
+      cardBorderColor: "#e5e5e5",
+      cardShadow: "0 1px 3px rgba(0,0,0,0.1)",
+      thumbnailBackgroundColor: "#e5e5e5",
+    },
+    ...themeConfigurations
+  );
 }
 
 // imagebox.tsx
 export function createImageboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<ImageboxThemeConfig> = {},
-  themeConfigurations: Partial<ImageboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ImageboxThemeConfig>>
 ): ImageboxThemeConfig {
-  const defaultTheme: ImageboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
+  return mergeTheme<ImageboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
 
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    focusedBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      focusedBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
 
-    textColor: body.textColor || "#6b7280",
+      textColor: body.textColor || "#6b7280",
 
-    draggingBackgroundColor: "#eff6ff",
-    draggingBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
-    draggingTextColor: fieldLane?.focusedBorderColor || "#3b82f6",
+      draggingBackgroundColor: "#eff6ff",
+      draggingBorderColor: fieldLane?.focusedBorderColor || "#3b82f6",
+      draggingTextColor: fieldLane?.focusedBorderColor || "#3b82f6",
 
-    iconColor: "#c3c3c3",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      iconColor: "#c3c3c3",
+    },
+    ...themeConfigurations
+  );
 }
 
 // keynote.tsx
 export function createKeynoteTheme(
-  baseVariants: Partial<KeynoteThemeConfig> = {},
-  themeConfigurations: Partial<KeynoteThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<KeynoteThemeConfig>>
 ): KeynoteThemeConfig {
-  const defaultTheme: KeynoteThemeConfig = {
-    keyColor: "#374151",
-    valueColor: "#111827",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<KeynoteThemeConfig>(
+    {
+      keyColor: "#374151",
+      valueColor: "#111827",
+    },
+    ...themeConfigurations
+  );
 }
 
 // list.tsx
 export function createListTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ListThemeConfig> = {},
-  themeConfigurations: Partial<ListThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ListThemeConfig>>
 ): ListThemeConfig {
-  const defaultTheme: ListThemeConfig = {
-    backgroundColor: "transparent",
-    textColor: body.textColor,
-    hoverBackgroundColor: "#dbeafe",
-    hoverTextColor: body.textColor,
-    badgeBackgroundColor: "#488cac",
-    borderColor: "#d1d5db",
-    dragLineColor: "#3b82f6",
-    emptyHoverBackgroundColor: "#dbeafe",
-    badgeTextColor: "white",
-    badgeBorderColor: "#d1d5db",
-    toggleBackgroundColor: "#c1d6f1",
-    mutedTextColor: "#6b7280",
-    maxItemTextColor: "rgb(97, 97, 97)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ListThemeConfig>(
+    {
+      backgroundColor: "transparent",
+      textColor: body.textColor,
+      hoverBackgroundColor: "#dbeafe",
+      hoverTextColor: body.textColor,
+      badgeBackgroundColor: "#488cac",
+      borderColor: "#d1d5db",
+      dragLineColor: "#3b82f6",
+      emptyHoverBackgroundColor: "#dbeafe",
+      badgeTextColor: "white",
+      badgeBorderColor: "#d1d5db",
+      toggleBackgroundColor: "#c1d6f1",
+      mutedTextColor: "#6b7280",
+      maxItemTextColor: "rgb(97, 97, 97)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // loading-skeleton.tsx
 export function createLoadingSkeletonTheme(
-  baseVariants: Partial<LoadingSkeletonThemeConfig> = {},
-  themeConfigurations: Partial<LoadingSkeletonThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<LoadingSkeletonThemeConfig>>
 ): LoadingSkeletonThemeConfig {
-  const defaultTheme: LoadingSkeletonThemeConfig = {
-    baseColor: "#eeeeee",
-    highlightColor: "#dddddd",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<LoadingSkeletonThemeConfig>(
+    {
+      baseColor: "#eeeeee",
+      highlightColor: "#dddddd",
+    },
+    ...themeConfigurations
+  );
 }
 
 // loading-spinner.tsx
 export function createLoadingSpinnerTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<LoadingSpinnerThemeConfig> = {},
-  themeConfigurations: Partial<LoadingSpinnerThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<LoadingSpinnerThemeConfig>>
 ): LoadingSpinnerThemeConfig {
-  const defaultTheme: LoadingSpinnerThemeConfig = {
-    spinnerColor: "#3b82f6",
-    textColor: body.textColor,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<LoadingSpinnerThemeConfig>(
+    {
+      spinnerColor: "#3b82f6",
+      textColor: body.textColor,
+    },
+    ...themeConfigurations
+  );
 }
 
 // messagebox.tsx
 export function createMessageboxTheme(
-  baseVariants: Partial<MessageboxThemeConfig> = {},
-  themeConfigurations: Partial<MessageboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<MessageboxThemeConfig>>
 ): MessageboxThemeConfig {
   const defaultTheme: MessageboxThemeConfig = {
     primary: {
@@ -934,26 +928,22 @@ export function createMessageboxTheme(
   };
 
   return {
-    primary: {
-      ...defaultTheme.primary,
-      ...baseVariants.primary,
-      ...themeConfigurations.primary,
-    },
-    success: {
-      ...defaultTheme.success,
-      ...baseVariants.success,
-      ...themeConfigurations.success,
-    },
-    danger: {
-      ...defaultTheme.danger,
-      ...baseVariants.danger,
-      ...themeConfigurations.danger,
-    },
-    warning: {
-      ...defaultTheme.warning,
-      ...baseVariants.warning,
-      ...themeConfigurations.warning,
-    },
+    primary: mergeTheme(
+      defaultTheme.primary,
+      ...themeConfigurations.map((o) => o.primary ?? {})
+    ),
+    success: mergeTheme(
+      defaultTheme.success,
+      ...themeConfigurations.map((o) => o.success ?? {})
+    ),
+    danger: mergeTheme(
+      defaultTheme.danger,
+      ...themeConfigurations.map((o) => o.danger ?? {})
+    ),
+    warning: mergeTheme(
+      defaultTheme.warning,
+      ...themeConfigurations.map((o) => o.warning ?? {})
+    ),
   };
 }
 
@@ -961,226 +951,226 @@ export function createMessageboxTheme(
 export function createMoneyboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<MoneyboxThemeConfig> = {},
-  themeConfigurations: Partial<MoneyboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<MoneyboxThemeConfig>>
 ): MoneyboxThemeConfig {
-  const defaultTheme: MoneyboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane.borderColor || "#d1d5db",
+  return mergeTheme<MoneyboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane.borderColor || "#d1d5db",
 
-    focusedBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
-    errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
+      focusedBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+      errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
 
-    textColor: body.textColor || "#111827",
-    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
-    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+      textColor: body.textColor || "#111827",
+      placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+      disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
 
-    inputPadding: "10px 12px",
-    fontSize: "0.75rem",
-    borderRadius: "2px",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      inputPadding: "10px 12px",
+      fontSize: "0.75rem",
+      borderRadius: "2px",
+    },
+    ...themeConfigurations
+  );
 }
 
 // modal-dialog.tsx
 export function createModalDialogTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ModalDialogThemeConfig> = {},
-  themeConfigurations: Partial<ModalDialogThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ModalDialogThemeConfig>>
 ): ModalDialogThemeConfig {
-  const defaultTheme: ModalDialogThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    borderColor: "#ebebeb",
-    textColor: body.textColor,
-    boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-    subtitleColor: "#6b7280",
-    dividerColor: "#3b82f6",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ModalDialogThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      borderColor: "#ebebeb",
+      textColor: body.textColor,
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
+      subtitleColor: "#6b7280",
+      dividerColor: "#3b82f6",
+    },
+    ...themeConfigurations
+  );
 }
 
 // nav-tab.tsx
 export function createNavTabTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<NavTabThemeConfig> = {},
-  themeConfigurations: Partial<NavTabThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<NavTabThemeConfig>>
 ): NavTabThemeConfig {
-  const defaultTheme: NavTabThemeConfig = {
-    backgroundColor: body?.backgroundColor || "#ffffff",
-    borderColor: "#e0e0e0",
-    textColor: body.textColor,
+  return mergeTheme<NavTabThemeConfig>(
+    {
+      backgroundColor: body?.backgroundColor || "#ffffff",
+      borderColor: "#e0e0e0",
+      textColor: body.textColor,
 
-    hoverBackgroundColor: "rgb(243 244 246 / 50%)",
-    activeBackgroundColor: "rgb(243 244 246 / 80%)",
-    selectedBackgroundColor: "rgb(243 244 246 / 50%)",
+      hoverBackgroundColor: "rgb(243 244 246 / 50%)",
+      activeBackgroundColor: "rgb(243 244 246 / 80%)",
+      selectedBackgroundColor: "rgb(243 244 246 / 50%)",
 
-    indicatorColor: "rgb(59, 130, 246)",
-    boxShadow: "0 1px 4px -3px rgba(0,0,0,0.2)",
+      indicatorColor: "rgb(59, 130, 246)",
+      boxShadow: "0 1px 4px -3px rgba(0,0,0,0.2)",
 
-    activeInsetShadow:
-      "inset 0 0.5px 4px rgb(243 244 246 / 100%), inset 0 -0.5px 0.5px rgb(243 244 246 / 80%)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      activeInsetShadow:
+        "inset 0 0.5px 4px rgb(243 244 246 / 100%), inset 0 -0.5px 0.5px rgb(243 244 246 / 80%)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // overlay-blocker.tsx
 export function createOverlayBlockerTheme(
-  baseVariants: Partial<OverlayBlockerThemeConfig> = {},
-  themeConfigurations: Partial<OverlayBlockerThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<OverlayBlockerThemeConfig>>
 ): OverlayBlockerThemeConfig {
-  const defaultTheme: OverlayBlockerThemeConfig = {
-    backgroundColor: "rgba(3, 3, 3, 0.2)",
-    backdropFilter: "blur(2px)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<OverlayBlockerThemeConfig>(
+    {
+      backgroundColor: "rgba(3, 3, 3, 0.2)",
+      backdropFilter: "blur(2px)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // paper-dialog.tsx
 export function createPaperDialogTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<PaperDialogThemeConfig> = {},
-  themeConfigurations: Partial<PaperDialogThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<PaperDialogThemeConfig>>
 ): PaperDialogThemeConfig {
-  const defaultTheme: PaperDialogThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    borderColor: "rgb(235, 235, 235)",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    textColor: body.textColor,
-    actionHoverBackgroundColor: "#f3f4f6",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<PaperDialogThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      borderColor: "rgb(235, 235, 235)",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+      textColor: body.textColor,
+      actionHoverBackgroundColor: "#f3f4f6",
+    },
+    ...themeConfigurations
+  );
 }
 
 // pagination.tsx
 export function createPaginationTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<PaginationThemeConfig> = {},
-  themeConfigurations: Partial<PaginationThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<PaginationThemeConfig>>
 ): PaginationThemeConfig {
-  const defaultTheme: PaginationThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
+  return mergeTheme<PaginationThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
 
-    borderColor: fieldLane.borderColor || "#f3f4f6",
-    activeBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
-    hoverBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+      borderColor: fieldLane.borderColor || "#f3f4f6",
+      activeBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
+      hoverBorderColor: fieldLane.focusedBorderColor || "#61A9F9",
 
-    textColor: body.textColor || "#374151",
-    activeTextColor: body.textColor || "#111827",
+      textColor: body.textColor || "#374151",
+      activeTextColor: body.textColor || "#111827",
 
-    disabledBackgroundColor: body.backgroundColor || "#ffffff",
-    disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      disabledBackgroundColor: body.backgroundColor || "#ffffff",
+      disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
+    },
+    ...themeConfigurations
+  );
 }
 
 // pinbox.tsx
 export function createPinboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<PinboxThemeConfig> = {},
-  themeConfigurations: Partial<PinboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<PinboxThemeConfig>>
 ): PinboxThemeConfig {
-  const defaultTheme: PinboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
-    textColor: body.textColor || "#1f2937",
+  return mergeTheme<PinboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+      textColor: body.textColor || "#1f2937",
 
-    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
-    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+      errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+      errorTextColor: fieldLane?.errorForeground || "#991b1b",
 
-    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
-    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+      disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+      disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
 
-    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
-    boxShadow: "0 0 0 0.5px transparent",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+      boxShadow: "0 0 0 0.5px transparent",
+    },
+    ...themeConfigurations
+  );
 }
 
 // phonebox.tsx
 export function createPhoneboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<PhoneboxThemeConfig> = {},
-  themeConfigurations: Partial<PhoneboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<PhoneboxThemeConfig>>
 ): PhoneboxThemeConfig {
-  const defaultTheme: PhoneboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
-    textColor: body.textColor || "#1f2937",
+  return mergeTheme<PhoneboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      focusedBorderColor: fieldLane?.focusedBorderColor || "#61A9F9",
+      textColor: body.textColor || "#1f2937",
 
-    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
-    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+      errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+      errorTextColor: fieldLane?.errorForeground || "#991b1b",
 
-    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
-    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+      disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+      disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
 
-    boxShadow: "0 0 0 0.5px transparent",
+      boxShadow: "0 0 0 0.5px transparent",
 
-    placeholderColor: fieldLane?.placeholderColor,
+      placeholderColor: fieldLane?.placeholderColor,
 
-    optionHighlightedBackground:
-      fieldLane?.highlightBackgroundColor || "#dbeafe",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      optionHighlightedBackground:
+        fieldLane?.highlightBackgroundColor || "#dbeafe",
+    },
+    ...themeConfigurations
+  );
 }
 
 // radio.tsx
 export function createRadioTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<RadioThemeConfig> = {},
-  themeConfigurations: Partial<RadioThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<RadioThemeConfig>>
 ): RadioThemeConfig {
-  const defaultTheme: RadioThemeConfig = {
-    borderColor: "#6b7280",
-    checkedBorderColor: "#61A9F9",
-    backgroundColor: "#ffffff",
-    checkedBackgroundColor: "#ffffff",
-    checkedOutsideBorderColor: "#61A9F9",
-    iconColor: "#ffffff",
-    textColor: body.textColor,
-    descriptionColor: "#4b5563",
-    highlightBackgroundColor: "#E7F2FC",
-    highlightBorderColor: "#e5e7eb",
-    highlightCheckedBackgroundColor: "#DBEAFE",
-    highlightCheckedBorderColor: "#e5e7eb",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<RadioThemeConfig>(
+    {
+      borderColor: "#6b7280",
+      checkedBorderColor: "#61A9F9",
+      backgroundColor: "#ffffff",
+      checkedBackgroundColor: "#ffffff",
+      checkedOutsideBorderColor: "#61A9F9",
+      iconColor: "#ffffff",
+      textColor: body.textColor,
+      descriptionColor: "#4b5563",
+      highlightBackgroundColor: "#E7F2FC",
+      highlightBorderColor: "#e5e7eb",
+      highlightCheckedBackgroundColor: "#DBEAFE",
+      highlightCheckedBorderColor: "#e5e7eb",
+    },
+    ...themeConfigurations
+  );
 }
 
 // rating.tsx
 export function createRatingTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<RatingThemeConfig> = {},
-  themeConfigurations: Partial<RatingThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<RatingThemeConfig>>
 ): RatingThemeConfig {
-  const defaultTheme: RatingThemeConfig = {
-    starFullColor: "#facc15",
-    starEmptyColor: "#ffffff",
-    starBorderColor: "#facc15",
+  return mergeTheme<RatingThemeConfig>(
+    {
+      starFullColor: "#facc15",
+      starEmptyColor: "#ffffff",
+      starBorderColor: "#facc15",
 
-    hoverStarColor: "#f59e0b",
+      hoverStarColor: "#f59e0b",
 
-    labelTextColor: body.textColor || "#111827",
+      labelTextColor: body.textColor || "#111827",
 
-    disabledStarColor: fieldLane?.borderColor || "#d1d5db",
-    disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      disabledStarColor: fieldLane?.borderColor || "#d1d5db",
+      disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
+    },
+    ...themeConfigurations
+  );
 }
 
 // rich-editor.tsx
@@ -1188,52 +1178,51 @@ export function createRichEditorTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
   button: Partial<ButtonThemeConfig> = {},
-  baseVariants: Partial<RichEditorThemeConfig> = {},
-  themeConfigurations: Partial<RichEditorThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<RichEditorThemeConfig>>
 ): RichEditorThemeConfig {
-  const defaultTheme: RichEditorThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    textColor: body.textColor || "#111827",
-    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
-    borderColor: fieldLane.borderColor || "#d1d5db",
-    toolbarBackground: body.backgroundColor || "#f9fafb",
-    toolbarButtonActive: button?.activeBackgroundColor,
-    toolbarButtonHover: button?.hoverBackgroundColor,
-    toolbarButtonFocused: button?.hoverBackgroundColor,
-    scrollThumb: "#9ca3af",
-    preBackgroundColor: "#D3D3D3",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<RichEditorThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      textColor: body.textColor || "#111827",
+      placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+      borderColor: fieldLane.borderColor || "#d1d5db",
+      toolbarBackground: body.backgroundColor || "#f9fafb",
+      toolbarButtonActive: button?.activeBackgroundColor,
+      toolbarButtonHover: button?.hoverBackgroundColor,
+      toolbarButtonFocused: button?.hoverBackgroundColor,
+      scrollThumb: "#9ca3af",
+      preBackgroundColor: "#D3D3D3",
+    },
+    ...themeConfigurations
+  );
 }
 
 // searchbox.tsx
 export function createSearchboxTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<SearchboxThemeConfig> = {},
-  themeConfigurations: Partial<SearchboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SearchboxThemeConfig>>
 ): SearchboxThemeConfig {
-  const defaultTheme: SearchboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    activeBackgroundColor: body.backgroundColor,
-    borderColor: "#d1d5db",
+  return mergeTheme<SearchboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      activeBackgroundColor: body.backgroundColor,
+      borderColor: "#d1d5db",
 
-    focusBorderColor: "#61a9f9",
-    focusShadow: "0 0 0 1px #61a9f9",
-    iconColor: "#9ca3af",
-    clearIconColor: "#9ca3af",
-    textColor: "#111827",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      focusBorderColor: "#61a9f9",
+      focusShadow: "0 0 0 1px #61a9f9",
+      iconColor: "#9ca3af",
+      clearIconColor: "#9ca3af",
+      textColor: "#111827",
+    },
+    ...themeConfigurations
+  );
 }
 
 // stepline.tsx
 export function createSteplineTheme(
   body: BodyThemeConfig,
   buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
-  baseVariants: Partial<SteplineThemeConfig> = {},
-  themeConfigurations: Partial<SteplineThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SteplineThemeConfig>>
 ): SteplineThemeConfig {
   const defaultTheme: SteplineThemeConfig = {
     outerCircle: {
@@ -1262,26 +1251,22 @@ export function createSteplineTheme(
   };
 
   return {
-    outerCircle: {
-      ...defaultTheme.outerCircle,
-      ...baseVariants.outerCircle,
-      ...themeConfigurations.outerCircle,
-    },
-    innerCircle: {
-      ...defaultTheme.innerCircle,
-      ...baseVariants.innerCircle,
-      ...themeConfigurations.innerCircle,
-    },
-    text: {
-      ...defaultTheme.text,
-      ...baseVariants.text,
-      ...themeConfigurations.text,
-    },
-    line: {
-      ...defaultTheme.line,
-      ...baseVariants.line,
-      ...themeConfigurations.line,
-    },
+    outerCircle: mergeTheme(
+      defaultTheme.outerCircle,
+      ...themeConfigurations.map((o) => o.outerCircle ?? {})
+    ),
+    innerCircle: mergeTheme(
+      defaultTheme.innerCircle,
+      ...themeConfigurations.map((o) => o.innerCircle ?? {})
+    ),
+    text: mergeTheme(
+      defaultTheme.text,
+      ...themeConfigurations.map((o) => o.text ?? {})
+    ),
+    line: mergeTheme(
+      defaultTheme.line,
+      ...themeConfigurations.map((o) => o.line ?? {})
+    ),
   };
 }
 
@@ -1289,57 +1274,57 @@ export function createSteplineTheme(
 export function createSelectboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<SelectboxThemeConfig> = {},
-  themeConfigurations: Partial<SelectboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SelectboxThemeConfig>>
 ): SelectboxThemeConfig {
-  const defaultTheme: SelectboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    textColor: body.textColor || "#111827",
+  return mergeTheme<SelectboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      textColor: body.textColor || "#111827",
 
-    borderColor: fieldLane.borderColor || "#d1d5db",
-    hoverBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
-    focusedBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
+      borderColor: fieldLane.borderColor || "#d1d5db",
+      hoverBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
+      focusedBorderColor: fieldLane.focusedBorderColor || "#61a9f9",
 
-    errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
+      errorBorderColor: fieldLane.errorBorderColor || "#ef4444",
 
-    placeholderColor: fieldLane.placeholderColor || "#9ca3af",
+      placeholderColor: fieldLane.placeholderColor || "#9ca3af",
 
-    iconColor: fieldLane.actionColor || "#9ca3af",
-    iconActiveColor: fieldLane.focusedBorderColor || "#61a9f9",
+      iconColor: fieldLane.actionColor || "#9ca3af",
+      iconActiveColor: fieldLane.focusedBorderColor || "#61a9f9",
 
-    clearIconColor: fieldLane.actionColor || "#9ca3af",
-    clearIconBackground: "transparent",
-    clearIconHoverBackground: fieldLane.actionHoverBackgroundColor || "#e5e7eb",
+      clearIconColor: fieldLane.actionColor || "#9ca3af",
+      clearIconBackground: "transparent",
+      clearIconHoverBackground:
+        fieldLane.actionHoverBackgroundColor || "#e5e7eb",
 
-    dividerColor: fieldLane.dividerColor || "#9ca3af",
-    disabledOpacity: fieldLane.disabledOpacity,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      dividerColor: fieldLane.dividerColor || "#9ca3af",
+      disabledOpacity: fieldLane.disabledOpacity,
+    },
+    ...themeConfigurations
+  );
 }
 
 // separator.tsx
 export function createSeparatorTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<SeparatorThemeConfig> = {},
-  themeConfigurations: Partial<SeparatorThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SeparatorThemeConfig>>
 ): SeparatorThemeConfig {
-  const defaultTheme: SeparatorThemeConfig = {
-    containerColor: "#6b7280",
-    lineColor: "#111827",
-    lineShadow: "inset 0 2px 2px #ffffff, inset 0 -1px 1px #7a7a7a",
-    titleColor: "#6b7280",
-    backgroundTitleColor: body.backgroundColor,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<SeparatorThemeConfig>(
+    {
+      containerColor: "#6b7280",
+      lineColor: "#111827",
+      lineShadow: "inset 0 2px 2px #ffffff, inset 0 -1px 1px #7a7a7a",
+      titleColor: "#6b7280",
+      backgroundTitleColor: body.backgroundColor,
+    },
+    ...themeConfigurations
+  );
 }
 
 // sidebar.tsx
 export function createSidebarTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<SidebarThemeConfig> = {},
-  themeConfigurations: Partial<SidebarThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SidebarThemeConfig>>
 ): SidebarThemeConfig {
   const defaultTheme: SidebarThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -1357,20 +1342,18 @@ export function createSidebarTheme(
     },
   };
 
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
+
   return {
-    ...defaultTheme,
-    ...baseVariants,
-    ...themeConfigurations,
-    item: {
-      ...defaultTheme.item,
-      ...baseVariants.item,
-      ...themeConfigurations.item,
-    },
-    toggle: {
-      ...defaultTheme.toggle,
-      ...baseVariants.toggle,
-      ...themeConfigurations.toggle,
-    },
+    ...merged,
+    item: mergeTheme(
+      defaultTheme.item,
+      ...themeConfigurations.map((o) => o.item ?? {})
+    ),
+    toggle: mergeTheme(
+      defaultTheme.toggle,
+      ...themeConfigurations.map((o) => o.toggle ?? {})
+    ),
   };
 }
 
@@ -1378,27 +1361,26 @@ export function createSidebarTheme(
 export function createSignboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<SignboxThemeConfig> = {},
-  themeConfigurations: Partial<SignboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SignboxThemeConfig>>
 ): SignboxThemeConfig {
-  const defaultTheme: SignboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor || "#111827",
+  return mergeTheme<SignboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      textColor: body.textColor || "#111827",
 
-    errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
+      errorBorderColor: fieldLane?.errorBorderColor || "#f87171",
 
-    clearIconColor: fieldLane?.actionColor || "#6b7280",
-    clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      clearIconColor: fieldLane?.actionColor || "#6b7280",
+      clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
+    },
+    ...themeConfigurations
+  );
 }
 
 // statusbar.tsx
 export function createStatusbarTheme(
-  baseVariants: Partial<StatusbarThemeConfig> = {},
-  themeConfigurations: Partial<StatusbarThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<StatusbarThemeConfig>>
 ): StatusbarThemeConfig {
   const defaultTheme: StatusbarThemeConfig = {
     backgroundColor: "#ececec",
@@ -1411,147 +1393,146 @@ export function createStatusbarTheme(
     },
   };
 
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
+
   return {
-    ...defaultTheme,
-    ...baseVariants,
-    ...themeConfigurations,
-    item: {
-      ...defaultTheme.item,
-      ...baseVariants.item,
-      ...themeConfigurations.item,
-    },
+    ...merged,
+    item: mergeTheme(
+      defaultTheme.item,
+      ...themeConfigurations.map((o) => o.item ?? {})
+    ),
   };
 }
 
 // stateful-form.tsx
 export function createStatefulFormTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<StatefulFormThemeConfig> = {},
-  themeConfigurations: Partial<StatefulFormThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<StatefulFormThemeConfig>>
 ): StatefulFormThemeConfig {
-  const defaultTheme: StatefulFormThemeConfig = {
-    backgroundColor: body.backgroundColor,
-    textColor: body.textColor,
-    rowFrameBackgroundColor: "#f3f4f6",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<StatefulFormThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor,
+      textColor: body.textColor,
+      rowFrameBackgroundColor: "#f3f4f6",
+    },
+    ...themeConfigurations
+  );
 }
 
 // textarea.tsx
 export function createTextareaTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<TextareaThemeConfig> = {},
-  themeConfigurations: Partial<TextareaThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TextareaThemeConfig>>
 ): TextareaThemeConfig {
-  const defaultTheme: TextareaThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
+  return mergeTheme<TextareaThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
 
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    focusedBorderColor:
-      fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      focusedBorderColor:
+        fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
 
-    textColor: body.textColor || "#1f2937",
+      textColor: body.textColor || "#1f2937",
 
-    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
-    errorTextColor: fieldLane?.errorForeground || "#991b1b",
+      errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+      errorTextColor: fieldLane?.errorForeground || "#991b1b",
 
-    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
-    disabledTextColor: "#9ca3af",
+      disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+      disabledTextColor: "#9ca3af",
 
-    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
-    scrollbarThumbColor: "#3f3f46",
+      placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+      scrollbarThumbColor: "#3f3f46",
 
-    boxShadow: "0 0 0 1px transparent",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+      boxShadow: "0 0 0 1px transparent",
+    },
+    ...themeConfigurations
+  );
 }
 
 // textbox.tsx
 export function createTextboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<TextboxThemeConfig> = {},
-  themeConfigurations: Partial<TextboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TextboxThemeConfig>>
 ): TextboxThemeConfig {
-  const defaultTheme: TextboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    focusedBorderColor:
-      fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
-    textColor: body.textColor || "#1f2937",
-    errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
-    errorTextColor: fieldLane?.errorForeground || "#991b1b",
-    disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
-    disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
-    placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
-    boxShadow: "0 0 0 0.5px transparent",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<TextboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      focusedBorderColor:
+        fieldLane?.focusedBorderColor || fieldLane?.placeholderColor,
+      textColor: body.textColor || "#1f2937",
+      errorBorderColor: fieldLane?.errorBorderColor || "#ef4444",
+      errorTextColor: fieldLane?.errorForeground || "#991b1b",
+      disabledBorderColor: fieldLane?.disabledBorderColor || "#d1d5db",
+      disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
+      placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
+      boxShadow: "0 0 0 0.5px transparent",
+    },
+    ...themeConfigurations
+  );
 }
 
 // table.tsx
 export function createTableTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<TableThemeConfig> = {},
-  themeConfigurations: Partial<TableThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TableThemeConfig>>
 ): TableThemeConfig {
-  const defaultTheme: TableThemeConfig = {
-    textColor: body.textColor || "#111827",
-    backgroundColor: body?.backgroundColor,
-    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-    headerActionBackgroundColor: "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
-    headerActionBorderColor: "rgb(229, 231, 235)",
-    headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
-    headerBorderColor: "rgb(229, 231, 235)",
-    rowGroupBackgroundColor: "rgb(249, 250, 251)",
-    rowGroupSubtitleTextColor: "#1f2937",
-    rowBackgroundColor: "rgb(249, 250, 251)",
-    rowBorderColor: "#e5e7eb",
-    rowHoverBackgroundColor: "#e7f2fc",
-    rowSelectedBackgroundColor: "#dbeafe",
-    rowContentBackgroundColor:
-      "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
-    rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
-    summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
-    summaryBorderColor: "#d1d5db",
-    scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
-    scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
-    toggleRowBackgroundColor: "#d4d4d4",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<TableThemeConfig>(
+    {
+      textColor: body.textColor || "#111827",
+      backgroundColor: body?.backgroundColor,
+      boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      headerActionBackgroundColor:
+        "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
+      headerActionBorderColor: "rgb(229, 231, 235)",
+      headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
+      headerBorderColor: "rgb(229, 231, 235)",
+      rowGroupBackgroundColor: "rgb(249, 250, 251)",
+      rowGroupSubtitleTextColor: "#1f2937",
+      rowBackgroundColor: "rgb(249, 250, 251)",
+      rowBorderColor: "#e5e7eb",
+      rowHoverBackgroundColor: "#e7f2fc",
+      rowSelectedBackgroundColor: "#dbeafe",
+      rowContentBackgroundColor:
+        "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
+      rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
+      summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
+      summaryBorderColor: "#d1d5db",
+      scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+      scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
+      toggleRowBackgroundColor: "#d4d4d4",
+    },
+    ...themeConfigurations
+  );
 }
 
 // timebox.tsx
 export function createTimeboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  baseVariants: Partial<TimeboxThemeConfig> = {},
-  themeConfigurations: Partial<TimeboxThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TimeboxThemeConfig>>
 ): TimeboxThemeConfig {
-  const defaultTheme: TimeboxThemeConfig = {
-    backgroundColor: body.backgroundColor || "#ffffff",
-    borderColor: fieldLane?.borderColor || "#d1d5db",
-    textColor: body.textColor || "#111827",
-    focusedBorderColor: fieldLane?.focusedBorderColor,
-    errorBorderColor: fieldLane?.errorBorderColor,
-    errorTextColor: fieldLane?.errorColor,
-    colonColor: body.textColor,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<TimeboxThemeConfig>(
+    {
+      backgroundColor: body.backgroundColor || "#ffffff",
+      borderColor: fieldLane?.borderColor || "#d1d5db",
+      textColor: body.textColor || "#111827",
+      focusedBorderColor: fieldLane?.focusedBorderColor,
+      errorBorderColor: fieldLane?.errorBorderColor,
+      errorTextColor: fieldLane?.errorColor,
+      colonColor: body.textColor,
+    },
+    ...themeConfigurations
+  );
 }
 
 // timeline.tsx
 export function createTimelineTheme(
   body: BodyThemeConfig,
   buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
-  baseVariants: Partial<TimelineThemeConfig> = {},
-  themeConfigurations: Partial<TimelineThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TimelineThemeConfig>>
 ): TimelineThemeConfig {
   const defaultTheme: TimelineThemeConfig = {
     outerCircle: {
@@ -1580,38 +1561,31 @@ export function createTimelineTheme(
   };
 
   return {
-    outerCircle: {
-      ...defaultTheme.outerCircle,
-      ...baseVariants.outerCircle,
-      ...themeConfigurations.outerCircle,
-    },
-    innerCircle: {
-      ...defaultTheme.innerCircle,
-      ...baseVariants.innerCircle,
-      ...themeConfigurations.innerCircle,
-    },
-    text: {
-      ...defaultTheme.text,
-      ...baseVariants.text,
-      ...themeConfigurations.text,
-    },
-    line: {
-      ...defaultTheme.line,
-      ...baseVariants.line,
-      ...themeConfigurations.line,
-    },
+    outerCircle: mergeTheme(
+      defaultTheme.outerCircle,
+      ...themeConfigurations.map((o) => o.outerCircle ?? {})
+    ),
+    innerCircle: mergeTheme(
+      defaultTheme.innerCircle,
+      ...themeConfigurations.map((o) => o.innerCircle ?? {})
+    ),
+    text: mergeTheme(
+      defaultTheme.text,
+      ...themeConfigurations.map((o) => o.text ?? {})
+    ),
+    line: mergeTheme(
+      defaultTheme.line,
+      ...themeConfigurations.map((o) => o.line ?? {})
+    ),
   };
 }
 
 // tipmenu.tsx
 export function createTipMenuTheme(
   buttonTheme?: Record<Partial<ButtonVariants["variant"]>, ButtonThemeConfig>,
-  baseVariants: Partial<
-    Record<TipMenuVariant, Partial<TipMenuThemeConfig>>
-  > = {},
-  themeConfigurations: Partial<
-    Record<TipMenuVariant, Partial<TipMenuThemeConfig>>
-  > = {}
+  ...themeConfigurations: Array<
+    Partial<Record<TipMenuVariant, Partial<TipMenuThemeConfig>>>
+  >
 ): Record<TipMenuVariant, TipMenuThemeConfig> {
   const variantMap: Record<TipMenuVariant, ButtonVariants["variant"]> = {
     default: "ghost",
@@ -1633,11 +1607,10 @@ export function createTipMenuTheme(
 
       return [
         variant,
-        {
-          ...defaultConfig,
-          ...baseVariants[variant],
-          ...themeConfigurations[variant],
-        },
+        mergeTheme(
+          defaultConfig,
+          ...themeConfigurations.map((o) => o[variant] ?? {})
+        ),
       ];
     })
   ) as Record<TipMenuVariant, TipMenuThemeConfig>;
@@ -1646,8 +1619,7 @@ export function createTipMenuTheme(
 // title.tsx
 export function createTitleTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<TitleThemeConfig> = {},
-  themeConfigurations: Partial<TitleThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TitleThemeConfig>>
 ): TitleThemeConfig {
   const defaultTheme: TitleThemeConfig = {
     pretitle: {
@@ -1668,58 +1640,55 @@ export function createTitleTheme(
     },
   };
 
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
+
   return {
-    ...defaultTheme,
-    ...baseVariants,
-    ...themeConfigurations,
-    pretitle: {
-      ...defaultTheme.pretitle,
-      ...baseVariants.pretitle,
-      ...themeConfigurations.pretitle,
-    },
-    title: {
-      ...defaultTheme.title,
-      ...baseVariants.title,
-      ...themeConfigurations.title,
-    },
-    subtitle: {
-      ...defaultTheme.subtitle,
-      ...baseVariants.subtitle,
-      ...themeConfigurations.subtitle,
-    },
-    icon: {
-      ...defaultTheme.icon,
-      ...baseVariants.icon,
-      ...themeConfigurations.icon,
-    },
+    ...merged,
+    pretitle: mergeTheme(
+      defaultTheme.pretitle,
+      ...themeConfigurations.map((o) => o.pretitle ?? {})
+    ),
+    title: mergeTheme(
+      defaultTheme.title,
+      ...themeConfigurations.map((o) => o.title ?? {})
+    ),
+    subtitle: mergeTheme(
+      defaultTheme.subtitle,
+      ...themeConfigurations.map((o) => o.subtitle ?? {})
+    ),
+    icon: mergeTheme(
+      defaultTheme.icon,
+      ...themeConfigurations.map((o) => o.icon ?? {})
+    ),
   };
 }
 
 // toggle.tsx
 export function createToggleTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<ToggleThemeConfig> = {},
-  themeConfigurations: Partial<ToggleThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ToggleThemeConfig>>
 ): ToggleThemeConfig {
-  const defaultTheme: ToggleThemeConfig = {
-    backgroundColor: "#D1D5DB",
-    checkedBackgroundColor: "#61A9F9",
-    thumbColor: "#ffffff",
-    borderColor: "#d1d5db",
-    textColor: body?.textColor ?? "#111827",
-    descriptionColor: "#6b7280",
-    disabledOpacity: 0.5,
-    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ToggleThemeConfig>(
+    {
+      backgroundColor: "#D1D5DB",
+      checkedBackgroundColor: "#61A9F9",
+      thumbColor: "#ffffff",
+      borderColor: "#d1d5db",
+      textColor: body?.textColor ?? "#111827",
+      descriptionColor: "#6b7280",
+      disabledOpacity: 0.5,
+      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // toolbar.tsx
 export function createToolbarTheme(
   baseButton: Record<ToolbarVariant, ToolbarThemeConfig>,
-  baseVariants: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {},
-  themeConfigurations: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {}
+  ...themeConfigurations: Array<
+    Partial<Record<ToolbarVariant, ToolbarThemeConfig>>
+  >
 ): Record<ToolbarVariant, ToolbarThemeConfig> {
   const defaultVariants: Record<ToolbarVariant, ToolbarThemeConfig> = {
     default: {
@@ -1771,17 +1740,15 @@ export function createToolbarTheme(
 
   const allKeys = new Set([
     ...Object.keys(defaultVariants),
-    ...Object.keys(baseVariants),
-    ...Object.keys(themeConfigurations),
+    ...themeConfigurations.flatMap((o) => Object.keys(o)),
   ]) as Set<ToolbarVariant>;
 
   const merged = {} as Record<ToolbarVariant, ToolbarThemeConfig>;
   for (const key of allKeys) {
-    merged[key] = {
-      ...defaultVariants[key],
-      ...baseVariants[key],
-      ...themeConfigurations[key],
-    };
+    merged[key] = mergeTheme(
+      defaultVariants[key] ?? {},
+      ...themeConfigurations.map((o) => o[key] ?? {})
+    );
   }
 
   return merged;
@@ -1789,87 +1756,87 @@ export function createToolbarTheme(
 
 // tooltip.tsx
 export function createTooltipTheme(
-  baseVariants: Partial<TooltipThemeConfig> = {},
-  themeConfigurations: Partial<TooltipThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TooltipThemeConfig>>
 ): TooltipThemeConfig {
-  const defaultTheme: TooltipThemeConfig = {
-    literalStringBackgroundColor: "#b9babc",
-    literalStringTextColor: "#111827",
-    nodeElementBackgroundColor: "#b9babc",
-    nodeElementTextColor: "#111827",
-    boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
-    arrowBackgroundColor: "#b9babc",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<TooltipThemeConfig>(
+    {
+      literalStringBackgroundColor: "#b9babc",
+      literalStringTextColor: "#111827",
+      nodeElementBackgroundColor: "#b9babc",
+      nodeElementTextColor: "#111827",
+      boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+      arrowBackgroundColor: "#b9babc",
+    },
+    ...themeConfigurations
+  );
 }
 
 // thumb-field.tsx
 export function createThumbFieldTheme(
-  baseVariants: Partial<ThumbFieldThemeConfig> = {},
-  themeConfigurations: Partial<ThumbFieldThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<ThumbFieldThemeConfig>>
 ): ThumbFieldThemeConfig {
-  const defaultTheme: ThumbFieldThemeConfig = {
-    thumbsUpColor: "#61A9F9",
-    thumbsDownColor: "rgb(206, 55, 93)",
-    inactiveColor: "#9ca3af",
-    errorColor: "#dc2626",
-    disabledOpacity: 0.5,
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<ThumbFieldThemeConfig>(
+    {
+      thumbsUpColor: "#61A9F9",
+      thumbsDownColor: "rgb(206, 55, 93)",
+      inactiveColor: "#9ca3af",
+      errorColor: "#dc2626",
+      disabledOpacity: 0.5,
+    },
+    ...themeConfigurations
+  );
 }
 
 // treelist.tsx
 export function createTreeListTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<TreeListThemeConfig> = {},
-  themeConfigurations: Partial<TreeListThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<TreeListThemeConfig>>
 ): TreeListThemeConfig {
-  const defaultTheme: TreeListThemeConfig = {
-    textColor: body.textColor,
-    backgroundColor: body.backgroundColor,
-    hoverBackgroundColor: "#f3f4f6",
-    selectedBackgroundColor: "#f3f4f6",
-    highlightedText: "#e5e7eb",
-    dividerHierarchyColor: "rgb(243 243 243)",
-    dividerHierarchyRelatedColor: "#d7d6d6",
-    dividerHierarchySelectedColor: "#3b82f6",
-    rowActionBackgroundColor: "rgb(193, 214, 241)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<TreeListThemeConfig>(
+    {
+      textColor: body.textColor,
+      backgroundColor: body.backgroundColor,
+      hoverBackgroundColor: "#f3f4f6",
+      selectedBackgroundColor: "#f3f4f6",
+      highlightedText: "#e5e7eb",
+      dividerHierarchyColor: "rgb(243 243 243)",
+      dividerHierarchyRelatedColor: "#d7d6d6",
+      dividerHierarchySelectedColor: "#3b82f6",
+      rowActionBackgroundColor: "rgb(193, 214, 241)",
+    },
+    ...themeConfigurations
+  );
 }
 
 // split-pane.tsx
 export function createSplitPaneTheme(
   body: BodyThemeConfig,
-  baseVariants: Partial<SplitPaneThemeConfig> = {},
-  themeConfigurations: Partial<SplitPaneThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<SplitPaneThemeConfig>>
 ): SplitPaneThemeConfig {
-  const defaultTheme: SplitPaneThemeConfig = {
-    backgroundColor: body?.backgroundColor || "#ffffff",
-    textColor: body?.textColor || "#111827",
-    dividerColor: "#d1d5db",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<SplitPaneThemeConfig>(
+    {
+      backgroundColor: body?.backgroundColor || "#ffffff",
+      textColor: body?.textColor || "#111827",
+      dividerColor: "#d1d5db",
+    },
+    ...themeConfigurations
+  );
 }
 
 // wheel.tsx
 export function createWheelTheme(
-  baseVariants: Partial<WheelThemeConfig> = {},
-  themeConfigurations: Partial<WheelThemeConfig> = {}
+  ...themeConfigurations: Array<Partial<WheelThemeConfig>>
 ): WheelThemeConfig {
-  const defaultTheme: WheelThemeConfig = {
-    backgroundColor: "#ffffff",
-    overlayBackgroundColor: "rgba(0,0,0,0.04)",
-    overlayBorderColor: "rgba(0,0,0,0.08)",
-    fadeColor: "#efefef",
-    textColor: "#111827",
-    inactiveTextColor: "rgba(17,24,39,0.35)",
-    separatorColor: "rgba(17,24,39,0.45)",
-  };
-
-  return { ...defaultTheme, ...baseVariants, ...themeConfigurations };
+  return mergeTheme<WheelThemeConfig>(
+    {
+      backgroundColor: "#ffffff",
+      overlayBackgroundColor: "rgba(0,0,0,0.04)",
+      overlayBorderColor: "rgba(0,0,0,0.08)",
+      fadeColor: "#efefef",
+      textColor: "#111827",
+      inactiveTextColor: "rgba(17,24,39,0.35)",
+      separatorColor: "rgba(17,24,39,0.45)",
+    },
+    ...themeConfigurations
+  );
 }
