@@ -33,7 +33,7 @@ export function ThemeProvider({
   children,
   themes: themesContent,
 }: {
-  mode: string;
+  mode: ThemeMode | string;
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
@@ -90,7 +90,7 @@ export function Theme({
   children,
   themes: themesContent,
 }: {
-  mode: ThemeMode;
+  mode: ThemeMode | string;
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
