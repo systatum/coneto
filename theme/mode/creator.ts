@@ -1697,6 +1697,7 @@ export function createTitleTheme(
 
 // toggle.tsx
 export function createToggleTheme(
+  body: BodyThemeConfig,
   baseVariants: Partial<ToggleThemeConfig> = {},
   themeConfigurations: Partial<ToggleThemeConfig> = {}
 ): ToggleThemeConfig {
@@ -1705,7 +1706,7 @@ export function createToggleTheme(
     checkedBackgroundColor: "#61A9F9",
     thumbColor: "#ffffff",
     borderColor: "#d1d5db",
-    textColor: "#111827",
+    textColor: body?.textColor ?? "#111827",
     descriptionColor: "#6b7280",
     disabledOpacity: 0.5,
     boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
