@@ -56,11 +56,20 @@ describe("ThemeProvider", () => {
       beforeEach(() => {
         createTheme("parchment", "dark", {
           body: createBodyTheme(bodyTheme),
-          button: createButtonTheme(bodyTheme, darkButton, {
-            default: {
-              backgroundColor: "red",
+          button: createButtonTheme(
+            bodyTheme,
+            darkButton,
+            {
+              default: {
+                backgroundColor: "red",
+              },
             },
-          }),
+            {
+              default: {
+                textColor: "blue",
+              },
+            }
+          ),
         });
         cy.wait(400);
       });
@@ -106,10 +115,12 @@ describe("ThemeProvider", () => {
 
             cy.findAllByRole("button")
               .eq(0)
-              .should("have.css", "background-color", "rgb(60, 49, 110)");
+              .should("have.css", "background-color", "rgb(60, 49, 110)")
+              .and("have.css", "color", "rgb(202, 206, 212)");
             cy.findAllByRole("button")
               .eq(1)
-              .should("have.css", "background-color", "rgb(255, 0, 0)");
+              .should("have.css", "background-color", "rgb(255, 0, 0)")
+              .and("have.css", "color", "rgb(0, 0, 255)");
           });
         });
       });
