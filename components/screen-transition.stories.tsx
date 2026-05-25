@@ -4,6 +4,7 @@ import { Title } from "./title";
 import { RiArrowLeftSLine } from "@remixicon/react";
 import { css } from "styled-components";
 import { Button } from "./button";
+import { useTheme } from "./../theme";
 
 const meta: Meta<typeof ScreenTransition> = {
   title: "Mobile/ScreenTransition",
@@ -18,6 +19,9 @@ type Story = StoryObj<typeof ScreenTransition>;
 
 export const Default: Story = {
   render: () => {
+    const { currentTheme, mode } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     function PageTitle({
       text,
       gotoPrevScreen = null,
@@ -56,7 +60,7 @@ export const Default: Story = {
           text={text}
           styles={{
             containerStyle: css`
-              border-bottom: 1px solid #ececec;
+              border-bottom: 1px solid ${bodyTheme?.borderColor || "#ececec"};
               height: 53px;
               justify-content: center;
               align-items: center;
@@ -67,6 +71,7 @@ export const Default: Story = {
             `,
             titleStyle: css`
               justify-content: center;
+              font-size: 20px;
 
               ${gotoPrevScreen &&
               css`
@@ -122,7 +127,7 @@ export const Default: Story = {
               <Button
                 styles={{
                   containerStyle: css`
-                    margin-top: 10px;
+                    margin-top: 14px;
                   `,
                 }}
                 onClick={gotoNextScreen ?? undefined}
