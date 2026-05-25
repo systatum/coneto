@@ -281,6 +281,10 @@
       "import": "./dist/components/treelist.js",
       "types": "./dist/components/treelist.d.ts"
     },
+    "./wheel": {
+      "import": "./dist/components/wheel.js",
+      "types": "./dist/components/wheel.d.ts"
+    },
     "./constants/*": {
       "import": "./dist/constants/*.js",
       "types": "./dist/constants/*.d.ts"
