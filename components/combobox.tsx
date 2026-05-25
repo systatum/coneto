@@ -55,6 +55,7 @@ interface BaseComboboxProps {
   navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
+  mobile?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -114,7 +115,8 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   };
 
 export interface ComboboxProps
-  extends BaseComboboxProps,
+  extends
+    BaseComboboxProps,
     Omit<FieldLaneProps, "styles" | "type" | "children" | "actions"> {}
 
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
@@ -150,6 +152,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       isLoading,
       labels,
       className,
+      mobile,
     },
     ref
   ) => {
@@ -223,6 +226,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         ref={ref}
         className={applyClassName("combobox", className)}
         isLoading={isLoading}
+        mobile={mobile}
         helper={helper}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
@@ -333,6 +337,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
             <ComboboxDrawer
               {...props}
               styles={styles}
+              mobile={mobile}
               navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}
               name={name}
@@ -386,14 +391,19 @@ function ComboboxDrawer({
   setOpenedCategoryGroup,
   styles,
   navigableOptions,
+  mobile,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
   const treeListTheme = currentTheme?.treelist;
 
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [showFadeTop, setShowFadeTop] = useState(true);
+  const [showFadeBottom, setShowFadeBottom] = useState(true);
 
   const floatingRef = useRef<HTMLUListElement>(null);
+
+  const hasNestedOptions = options?.some((opt) => opt.groupOptions?.length);
 
   const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
@@ -513,6 +523,9 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  mobile,
+                  hasNestedOptions,
+                  level: 0,
                 })}
                 ${action?.styles?.self}
               `,
@@ -563,19 +576,41 @@ function ComboboxDrawer({
               styles={{
                 containerStyle: css`
                   margin-top: 2px;
-
-                  ${opt?.render &&
+                  ${mobile &&
                   css`
-                    margin-top: 3px;
+                    margin-top: 7px;
                   `}
+
+                  ${mobile && opt?.render
+                    ? css`
+                        margin-top: 10px;
+                      `
+                    : opt?.render &&
+                      css`
+                        margin-top: 7px;
+                      `}
                 `,
                 iconStyle: css`
-                  width: 8px;
-                  height: 8px;
+                  ${mobile
+                    ? css`
+                        width: 12px;
+                        height: 12px;
+                      `
+                    : css`
+                        width: 8px;
+                        height: 8px;
+                      `}
                 `,
                 self: css`
-                  width: 14px;
-                  height: 14px;
+                  ${mobile
+                    ? css`
+                        width: 20px;
+                        height: 20px;
+                      `
+                    : css`
+                        width: 14px;
+                        height: 14px;
+                      `}
                 `,
               }}
               type="checkbox"
@@ -617,7 +652,6 @@ function ComboboxDrawer({
             withoutSelection();
           }
         },
-
         ...(opt?.groupOptions?.length > 0
           ? {
               items: opt.groupOptions
@@ -736,11 +770,60 @@ function ComboboxDrawer({
     }
   };
 
-  return (
+  /**
+   * Dynamically show/hide the top and bottom fade overlays based on the
+   * selected item's position relative to the scrollable container.
+   *
+   * The fade hides when the selected item's center point comes within
+   * `threshold` pixels of that edge, and reappears once it scrolls past.
+   */
+  useEffect(() => {
+    const container = floatingRef.current;
+    if (!container || !mobile) return;
+
+    const updateFade = () => {
+      const selectedEl = listRef.current[selectedIndex];
+
+      if (!selectedEl) {
+        setShowFadeTop(true);
+        setShowFadeBottom(true);
+        return;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      const itemRect = selectedEl.getBoundingClientRect();
+
+      const itemMidY = itemRect.top + itemRect.height / 2;
+
+      const distanceFromTop = itemMidY - containerRect.top;
+      const distanceFromBottom = containerRect.bottom - itemMidY;
+
+      const threshold = 40;
+
+      const itemNearTop = distanceFromTop >= 0 && distanceFromTop <= threshold;
+      const itemNearBottom =
+        distanceFromBottom >= 0 && distanceFromBottom <= threshold;
+
+      setShowFadeTop(!itemNearTop);
+      setShowFadeBottom(!itemNearBottom);
+      setShowFadeBottom(!itemNearBottom);
+    };
+
+    updateFade();
+    container.addEventListener("scroll", updateFade);
+
+    return () => container.removeEventListener("scroll", updateFade);
+  }, [selectedIndex, finalOptions.length]);
+
+  const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps({
         onMouseDown: (e: React.MouseEvent) => {
           e.preventDefault();
+        },
+        onClick: (e: React.MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation(); // handles touch-generated click on mobile
         },
       })}
       ref={(node) => {
@@ -749,13 +832,16 @@ function ComboboxDrawer({
         }
         floatingRef.current = node;
       }}
+      $hasNestedOptions={hasNestedOptions}
+      style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
       id="combo-list"
-      aria-label={`combobox-drawer-${name}`}
+      aria-label="combobox-drawer"
       role="listbox"
       $width={refs.reference.current?.getBoundingClientRect().width}
-      style={{ ...floatingStyles }}
+      $mobile={mobile}
       $style={styles?.drawerStyle}
+      $multiple={multiple}
     >
       {(finalOptions || actions) && (
         <>
@@ -776,10 +862,22 @@ function ComboboxDrawer({
               styles={{
                 containerStyle: css`
                   position: sticky;
-                  top: 0;
-                  background-color: ${comboboxTheme?.backgroundColor};
+                  background-color: ${mobile
+                    ? comboboxTheme?.mobileBackgroundColor
+                    : comboboxTheme?.backgroundColor};
                   z-index: 10000;
                   height: 38px;
+                  top: 0;
+                  ${mobile &&
+                  !multiple &&
+                  css`
+                    transform: translateY(-90px);
+                  `};
+                  ${mobile &&
+                  css`
+                    max-height: 46px;
+                    height: 46px;
+                  `}
                 `,
                 iconStyle: css`
                   left: 16px;
@@ -792,6 +890,14 @@ function ComboboxDrawer({
                   padding-top: 7px;
                   margin-left: 4px;
                   margin-right: 4px;
+                  background-color: ${mobile
+                    ? comboboxTheme?.mobileBackgroundColor
+                    : comboboxTheme?.backgroundColor};
+                  &:focus {
+                    background-color: ${mobile
+                      ? comboboxTheme?.mobileBackgroundColor
+                      : comboboxTheme?.backgroundColor};
+                  }
                 `,
               }}
             />
@@ -831,7 +937,7 @@ function ComboboxDrawer({
                 return next;
               });
             }}
-            arrowSize={14}
+            arrowSize={mobile ? 18 : 14}
             maxActionsBeforeCollapsing={1}
             actions={filteredActions}
             styles={{
@@ -877,7 +983,9 @@ function ComboboxDrawer({
                   display: flex;
                   align-items: center;
                   justify-content: space-between;
-                  background-color: ${comboboxTheme?.groupBackgroundColor};
+                  background-color: ${mobile
+                    ? comboboxTheme?.mobileGroupBackgroundColor
+                    : comboboxTheme?.groupBackgroundColor};
                   border: 1px solid transparent;
 
                   &[aria-expanded="true"] {
@@ -889,9 +997,12 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  hasNestedOptions,
+                  mobile,
                 })}
-              `,
 
+                gap: 20px;
+              `,
               hierarchyLineStyle: css`
                 border-left-width: 2px;
 
@@ -918,7 +1029,13 @@ function ComboboxDrawer({
                 padding: 0px;
                 display: flex;
                 flex-direction: row;
-                gap: 6px;
+                ${mobile
+                  ? css`
+                      gap: 14px;
+                    `
+                  : css`
+                      gap: 6px;
+                    `}
 
                 &[data-has-options="false"] {
                   font-weight: 400;
@@ -943,11 +1060,14 @@ function ComboboxDrawer({
               arrowStyle: css`
                 margin-left: 3px;
               `,
-              itemStyle: css`
+              itemStyle: (level?: number) => css`
                 ${rowStyle({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
+                  mobile,
+                  hasNestedOptions,
+                  level,
                 })}
                 gap: 6px;
               `,
@@ -959,27 +1079,109 @@ function ComboboxDrawer({
       )}
     </DrawerWrapper>
   );
+
+  if (mobile) {
+    return (
+      <DrawerContainer
+        aria-label="combobox-drawer-mobile"
+        $theme={comboboxTheme}
+        $mobile={mobile}
+      >
+        {!multiple && (
+          <FadeTop
+            aria-label="combobox-fade-top"
+            $theme={comboboxTheme}
+            $visible={showFadeTop}
+          />
+        )}
+        <FadeBottom
+          aria-label="combobox-fade-bottom"
+          $theme={comboboxTheme}
+          $visible={showFadeBottom}
+        />
+        {mainCombobox}
+      </DrawerContainer>
+    );
+  }
+
+  return mainCombobox;
 }
+
+const DrawerContainer = styled.div<{
+  $theme?: ComboboxThemeConfig;
+  $mobile?: boolean;
+}>`
+  overflow: hidden;
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 96dvw;
+  z-index: 9992999;
+  min-height: 220px;
+  max-height: 220px;
+  border-radius: 14px;
+  background-color: ${({ $mobile, $theme }) =>
+    $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
+`;
 
 const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
+  $mobile?: boolean;
+  $multiple?: boolean;
+  $hasNestedOptions?: boolean;
 }>`
-  position: absolute;
+  position: relative;
   z-index: 9992999;
-  max-height: 15rem;
+  max-height: 220px;
   overflow-y: auto;
   border-radius: 4px;
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border: 1px solid
+    ${({ $theme, $mobile }) =>
+      $mobile ? $theme?.fadeColor : $theme?.borderColor};
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
 
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollThumbColor || "#3f3f46"};
-    border-radius: 999px;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ $theme }) => $theme?.scrollThumbColor || "#52525b"}
+    transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
   }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 4px;
+  }
+
+  ${({ $mobile, $theme, $multiple, $hasNestedOptions }) =>
+    $mobile &&
+    css`
+      width: 100%;
+      z-index: 9992999;
+      border-radius: 14px;
+      min-height: 220px;
+      max-height: 220px;
+      border-width: 0.5;
+      ${!$multiple &&
+      css`
+        padding: 100px 0px;
+      `}
+
+      background-color: ${$mobile && $hasNestedOptions
+        ? $theme.mobileGroupBackgroundColor
+        : $mobile
+          ? $theme.mobileBackgroundColor
+          : $theme.backgroundColor};
+    `}
 
   ${({ $style }) => $style}
 `;
@@ -988,37 +1190,55 @@ const rowStyle = ({
   interactionMode,
   multiple,
   theme,
+  mobile,
+  hasNestedOptions,
+  level,
 }: {
   interactionMode?: "mouse" | "keyboard";
   multiple?: boolean;
   theme?: ComboboxThemeConfig;
+  mobile?: boolean;
+  hasNestedOptions?: boolean;
+  level?: number;
 }) => css`
   transition: background-color 0ms;
-  background-color: ${theme.backgroundColor};
+  background-color: ${mobile
+    ? theme.mobileBackgroundColor
+    : theme.backgroundColor};
   color: ${theme.textColor};
   min-height: 36px;
+
+  ${mobile &&
+  css`
+    padding: 6px 15px;
+    font-size: 22px;
+    ${hasNestedOptions &&
+    css`
+      padding-left: ${(level ?? 0) * 14 + 30}px;
+    `}
+  `}
 
   &[data-has-options="false"] {
     ${interactionMode !== "mouse" &&
     css`
-      background-color: ${theme.backgroundColor};
-      &:hover {
-        background-color: ${theme.backgroundColor};
-      }
+      background-color: ${mobile
+        ? theme.mobileBackgroundColor
+        : theme.backgroundColor};
     `}
   }
+
+  ${interactionMode === "mouse" &&
+  css`
+    &:hover {
+      background-color: ${theme.highlightBackgroundColor};
+    }
+  `}
 
   &[data-highlighted="true"] {
     ${interactionMode !== "mouse" &&
     css`
       background-color: ${theme.highlightBackgroundColor};
     `}
-  }
-
-  &[data-has-options="false"] {
-    &:hover {
-      background-color: ${theme.highlightBackgroundColor};
-    }
   }
 
   &[data-action-opened="true"] {
@@ -1037,6 +1257,52 @@ const rowStyle = ({
       }
     `}
   }
+`;
+
+const FadeTop = styled.div<{
+  $style?: CSSProp;
+  $theme: ComboboxThemeConfig;
+  $visible?: boolean;
+}>`
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40px;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity 0.2s ease;
+  background: linear-gradient(
+    to bottom,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
+  z-index: 99999999;
+
+  ${({ $style }) => $style}
+`;
+
+const FadeBottom = styled.div<{
+  $style?: CSSProp;
+  $theme: ComboboxThemeConfig;
+  $visible?: boolean;
+}>`
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity 0.2s ease;
+  background: linear-gradient(
+    to top,
+    ${({ $theme }) => $theme.fadeColor} 10%,
+    transparent 100%
+  );
+  z-index: 99999999;
+
+  ${({ $style }) => $style}
 `;
 
 export { Combobox };
