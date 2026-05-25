@@ -73,7 +73,7 @@ import { TipMenuVariant } from "./../../components/tip-menu";
 
 // body
 export function createBodyTheme(
-  customTheme: Partial<BodyThemeConfig> = {}
+  themeConfigurations: Partial<BodyThemeConfig> = {}
 ): BodyThemeConfig {
   const defaultTheme = {
     backgroundColor: "#ffffff",
@@ -83,14 +83,14 @@ export function createBodyTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // action-capsule
 export function createActionCapsuleTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<ActionCapsuleThemeConfig> = {}
+  themeConfigurations: Partial<ActionCapsuleThemeConfig> = {}
 ): ActionCapsuleThemeConfig {
   const defaultTheme: ActionCapsuleThemeConfig = {
     activeBackgroundColor: "rgb(226, 224, 224)",
@@ -103,13 +103,12 @@ export function createActionCapsuleTheme(
     borderColor: "#ebebeb",
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // action-button.tsx
 export function createActionButtonTheme(
-  body: BodyThemeConfig,
-  customTheme: Partial<ActionButtonThemeConfig> = {}
+  themeConfigurations: Partial<ActionButtonThemeConfig> = {}
 ): ActionButtonThemeConfig {
   const defaultTheme: ActionButtonThemeConfig = {
     backgroundColor: "transparent",
@@ -133,14 +132,14 @@ export function createActionButtonTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // avatar.tsx
 export function createAvatarTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<AvatarThemeConfig> = {}
+  themeConfigurations: Partial<AvatarThemeConfig> = {}
 ): AvatarThemeConfig {
   const defaultTheme = {
     borderColor: "#f3f4f6",
@@ -150,14 +149,14 @@ export function createAvatarTheme(
   };
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // badge.tsx
 export function createBadgeTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<BadgeThemeConfig> = {}
+  themeConfigurations: Partial<BadgeThemeConfig> = {}
 ): BadgeThemeConfig {
   const defaultTextColor = body.textColor;
 
@@ -175,13 +174,13 @@ export function createBadgeTheme(
     },
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // boxbar.tsx
 export function createBoxbarTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<BoxbarThemeConfig> = {}
+  themeConfigurations: Partial<BoxbarThemeConfig> = {}
 ): BoxbarThemeConfig {
   const defaultTheme: BoxbarThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -191,13 +190,13 @@ export function createBoxbarTheme(
     textColor: body.textColor,
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // button.tsx
 export function createButtonTheme(
   body: BodyThemeConfig = {},
-  customVariants: Partial<
+  themeConfigurations: Partial<
     Record<ButtonVariants["variant"], ButtonThemeConfig>
   > = {}
 ): Record<string, ButtonThemeConfig> {
@@ -305,19 +304,19 @@ export function createButtonTheme(
     },
   };
 
-  return { ...variants, ...customVariants };
+  return { ...variants, ...themeConfigurations };
 }
 
 export function createTipMenuContainerTheme(
   body: BodyThemeConfig,
-  custom: Partial<TipMenuContainerThemeConfig> = {}
+  themeConfigurations: Partial<TipMenuContainerThemeConfig> = {}
 ): TipMenuContainerThemeConfig {
   return {
     backgroundColor: body?.backgroundColor || "#ffffff",
     borderColor: "#e5e7eb",
     textColor: body?.textColor || "inherit",
     boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
@@ -325,7 +324,7 @@ export function createTipMenuContainerTheme(
 export function createCalendarTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<CalendarThemeConfig> = {}
+  themeConfigurations: Partial<CalendarThemeConfig> = {}
 ): CalendarThemeConfig {
   const defaultTheme: CalendarThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -345,13 +344,13 @@ export function createCalendarTheme(
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // capsule.tsx
 export function createCapsuleTheme(
   body: BodyThemeConfig,
-  custom: Partial<CapsuleThemeConfig> = {}
+  themeConfigurations: Partial<CapsuleThemeConfig> = {}
 ): CapsuleThemeConfig {
   const defaultTheme: CapsuleThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -375,18 +374,18 @@ export function createCapsuleTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
     tab: {
       ...defaultTheme.tab,
-      ...custom.tab,
+      ...themeConfigurations.tab,
     },
     active: {
       ...defaultTheme.active,
-      ...custom.active,
+      ...themeConfigurations.active,
     },
     hover: {
       ...defaultTheme.hover,
-      ...custom.hover,
+      ...themeConfigurations.hover,
     },
   };
 }
@@ -394,7 +393,7 @@ export function createCapsuleTheme(
 // capsule-tab.tsx
 export function createCapsuleTabTheme(
   body: BodyThemeConfig,
-  custom: Partial<CapsuleTabThemeConfig> = {}
+  themeConfigurations: Partial<CapsuleTabThemeConfig> = {}
 ): CapsuleTabThemeConfig {
   const defaultTheme: CapsuleTabThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -405,14 +404,14 @@ export function createCapsuleTabTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // card.tsx
 export function createCardTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<CardThemeConfig> = {}
+  themeConfigurations: Partial<CardThemeConfig> = {}
 ): CardThemeConfig {
   const defaultTheme: CardThemeConfig = {
     backgroundColor: "#ffffff",
@@ -428,14 +427,14 @@ export function createCardTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // chips.tsx
 export function createChipsTheme(
   body: BodyThemeConfig,
-  custom: Partial<ChipsThemeConfig> = {}
+  themeConfigurations: Partial<ChipsThemeConfig> = {}
 ): ChipsThemeConfig {
   return {
     backgroundColor: body.backgroundColor,
@@ -450,14 +449,14 @@ export function createChipsTheme(
 
     boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
 
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // choice-group.tsx
 export function createChoiceGroupTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<ChoiceGroupThemeConfig> = {}
+  themeConfigurations: Partial<ChoiceGroupThemeConfig> = {}
 ): ChoiceGroupThemeConfig {
   const defaultTheme: ChoiceGroupThemeConfig = {
     borderColor: "#e5e7eb",
@@ -469,14 +468,14 @@ export function createChoiceGroupTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // checkbox.tsx
 export function createCheckboxTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<CheckboxThemeConfig> = {}
+  themeConfigurations: Partial<CheckboxThemeConfig> = {}
 ): CheckboxThemeConfig {
   const defaultTheme: CheckboxThemeConfig = {
     borderColor: "#6b7280",
@@ -492,7 +491,7 @@ export function createCheckboxTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
@@ -500,7 +499,7 @@ export function createCheckboxTheme(
 export function createColorboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<ColorboxThemeConfig> = {}
+  themeConfigurations: Partial<ColorboxThemeConfig> = {}
 ): ColorboxThemeConfig {
   const defaultTheme: ColorboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -520,13 +519,13 @@ export function createColorboxTheme(
     boxBackgroundColor: body.backgroundColor || "#ffffff",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // crumb.tsx
 export function createCrumbTheme(
   body: BodyThemeConfig,
-  custom: Partial<CrumbThemeConfig> = {}
+  themeConfigurations: Partial<CrumbThemeConfig> = {}
 ): CrumbThemeConfig {
   const defaultTheme: CrumbThemeConfig = {
     textColor: "#4b5563",
@@ -537,14 +536,14 @@ export function createCrumbTheme(
     ellipsisHoverColor: "#61a9f9",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // combobox.tsx
 export function createComboboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<ComboboxThemeConfig> = {}
+  themeConfigurations: Partial<ComboboxThemeConfig> = {}
 ): ComboboxThemeConfig {
   const defaultTheme: ComboboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -567,13 +566,13 @@ export function createComboboxTheme(
     scrollThumbColor: "#9ca3af",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // dialog.tsx
 export function createDialogTheme(
   body: BodyThemeConfig,
-  custom: DialogThemeConfig = {}
+  themeConfigurations: DialogThemeConfig = {}
 ): DialogThemeConfig {
   const defaultTheme: DialogThemeConfig = {
     borderColor: "#ebebeb",
@@ -585,14 +584,14 @@ export function createDialogTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // document-viewer.tsx
 export function createDocumentViewerTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<DocumentViewerThemeConfig> = {}
+  themeConfigurations: Partial<DocumentViewerThemeConfig> = {}
 ): DocumentViewerThemeConfig {
   const defaultTheme: DocumentViewerThemeConfig = {
     backgroundColor: "#525659",
@@ -606,14 +605,14 @@ export function createDocumentViewerTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // dormant-text.tsx
 export function createDormantTextTheme(
   body: BodyThemeConfig,
-  custom: Partial<DormantTextThemeConfig> = {}
+  themeConfigurations: Partial<DormantTextThemeConfig> = {}
 ): DormantTextThemeConfig {
   const defaultTheme: DormantTextThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -625,13 +624,13 @@ export function createDormantTextTheme(
     actionButtonHoverBackground: "#d1d5db",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // drawer-tab.tsx
 export function createDrawerTabTheme(
   body: BodyThemeConfig,
-  custom: Partial<DrawerTabThemeConfig> = {}
+  themeConfigurations: Partial<DrawerTabThemeConfig> = {}
 ): DrawerTabThemeConfig {
   const defaultTheme: DrawerTabThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -643,27 +642,27 @@ export function createDrawerTabTheme(
     dividerColor: "#e5e7eb",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // error-slate.tsx
 export function createErrorSlateTheme(
   body: BodyThemeConfig,
-  custom: Partial<ErrorSlateThemeConfig> = {}
+  themeConfigurations: Partial<ErrorSlateThemeConfig> = {}
 ): ErrorSlateThemeConfig {
   return {
     cubeFaceBackground: "#dd0b0b",
     cubeFaceBorder: "#a80000",
     cubeFaceText: "#ffffff",
     titleColor: body?.textColor,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // field-lane.tsx
 export function createFieldLaneTheme(
   body: BodyThemeConfig,
-  custom: Partial<FieldLaneThemeConfig> = {}
+  themeConfigurations: Partial<FieldLaneThemeConfig> = {}
 ): FieldLaneThemeConfig {
   const defaultTheme: FieldLaneThemeConfig = {
     buttonTextColor: body.textColor,
@@ -697,14 +696,14 @@ export function createFieldLaneTheme(
     dividerColor: "#9ca3af",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // file-input-box.tsx
 export function createFileInputBoxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<FileInputBoxThemeConfig> = {}
+  themeConfigurations: Partial<FileInputBoxThemeConfig> = {}
 ): FileInputBoxThemeConfig {
   const defaultTheme: FileInputBoxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -723,13 +722,13 @@ export function createFileInputBoxTheme(
     dragActiveBackgroundColor: "#eff6ff",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 export function createFileDropBoxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<FileDropBoxThemeConfig> = {}
+  themeConfigurations: Partial<FileDropBoxThemeConfig> = {}
 ): FileInputBoxThemeConfig {
   const defaultTheme: FileDropBoxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -755,13 +754,13 @@ export function createFileDropBoxTheme(
     disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // frame.tsx
 export function createFrameTheme(
   body: BodyThemeConfig,
-  custom: Partial<FrameThemeConfig> = {}
+  themeConfigurations: Partial<FrameThemeConfig> = {}
 ): FrameThemeConfig {
   const defaultTheme: FrameThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -772,13 +771,13 @@ export function createFrameTheme(
     boxShadow: "var(--shadow-xs)",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // grid.tsx
 export function createGridTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<GridThemeConfig> = {}
+  themeConfigurations: Partial<GridThemeConfig> = {}
 ): GridThemeConfig {
   const defaultTheme: GridThemeConfig = {
     cardBackgroundColor: body.backgroundColor,
@@ -791,7 +790,7 @@ export function createGridTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
@@ -799,7 +798,7 @@ export function createGridTheme(
 export function createImageboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<ImageboxThemeConfig> = {}
+  themeConfigurations: Partial<ImageboxThemeConfig> = {}
 ): ImageboxThemeConfig {
   const defaultTheme: ImageboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -816,13 +815,13 @@ export function createImageboxTheme(
     iconColor: "#c3c3c3",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // keynote.tsx
 export function createKeynoteTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<KeynoteThemeConfig> = {}
+  themeConfigurations: Partial<KeynoteThemeConfig> = {}
 ): KeynoteThemeConfig {
   const defaultTheme: KeynoteThemeConfig = {
     keyColor: "#374151",
@@ -831,14 +830,14 @@ export function createKeynoteTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // list.tsx
 export function createListTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<ListThemeConfig> = {}
+  themeConfigurations: Partial<ListThemeConfig> = {}
 ): ListThemeConfig {
   const defaultTheme: ListThemeConfig = {
     backgroundColor: "transparent",
@@ -858,13 +857,13 @@ export function createListTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // loading-skeleton.tsx
 export function createLoadingSkeletonTheme(
-  customTheme: Partial<LoadingSkeletonThemeConfig> = {}
+  themeConfigurations: Partial<LoadingSkeletonThemeConfig> = {}
 ): LoadingSkeletonThemeConfig {
   const defaultTheme: LoadingSkeletonThemeConfig = {
     baseColor: "#eeeeee",
@@ -873,14 +872,14 @@ export function createLoadingSkeletonTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // loading-spinner.tsx
 export function createLoadingSpinnerTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<LoadingSpinnerThemeConfig> = {}
+  themeConfigurations: Partial<LoadingSpinnerThemeConfig> = {}
 ): LoadingSpinnerThemeConfig {
   const defaultTheme: LoadingSpinnerThemeConfig = {
     spinnerColor: "#3b82f6",
@@ -889,13 +888,13 @@ export function createLoadingSpinnerTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // messagebox.tsx
 export function createMessageboxTheme(
-  customTheme: Partial<MessageboxThemeConfig> = {}
+  themeConfigurations: Partial<MessageboxThemeConfig> = {}
 ): MessageboxThemeConfig {
   const defaultTheme: MessageboxThemeConfig = {
     primary: {
@@ -922,7 +921,7 @@ export function createMessageboxTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
@@ -930,7 +929,7 @@ export function createMessageboxTheme(
 export function createMoneyboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<MoneyboxThemeConfig> = {}
+  themeConfigurations: Partial<MoneyboxThemeConfig> = {}
 ): MoneyboxThemeConfig {
   const defaultTheme: MoneyboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -948,13 +947,13 @@ export function createMoneyboxTheme(
     borderRadius: "2px",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // modal-dialog.tsx
 export function createModalDialogTheme(
   body: BodyThemeConfig,
-  custom: Partial<ModalDialogThemeConfig> = {}
+  themeConfigurations: Partial<ModalDialogThemeConfig> = {}
 ): ModalDialogThemeConfig {
   const defaultTheme: ModalDialogThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -967,14 +966,14 @@ export function createModalDialogTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // nav-tab.tsx
 export function createNavTabTheme(
   body: BodyThemeConfig,
-  custom: Partial<NavTabThemeConfig> = {}
+  themeConfigurations: Partial<NavTabThemeConfig> = {}
 ): NavTabThemeConfig {
   return {
     backgroundColor: body?.backgroundColor || "#ffffff",
@@ -991,13 +990,13 @@ export function createNavTabTheme(
     activeInsetShadow:
       "inset 0 0.5px 4px rgb(243 244 246 / 100%), inset 0 -0.5px 0.5px rgb(243 244 246 / 80%)",
 
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // overlay-blocker.tsx
 export function createOverlayBlockerTheme(
-  customTheme: Partial<OverlayBlockerThemeConfig> = {}
+  themeConfigurations: Partial<OverlayBlockerThemeConfig> = {}
 ): OverlayBlockerThemeConfig {
   const defaultTheme: OverlayBlockerThemeConfig = {
     backgroundColor: "rgba(3, 3, 3, 0.2)",
@@ -1006,14 +1005,14 @@ export function createOverlayBlockerTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // paper-dialog.tsx
 export function createPaperDialogTheme(
   body: BodyThemeConfig,
-  custom: Partial<PaperDialogThemeConfig> = {}
+  themeConfigurations: Partial<PaperDialogThemeConfig> = {}
 ): PaperDialogThemeConfig {
   const defaultTheme: PaperDialogThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -1025,7 +1024,7 @@ export function createPaperDialogTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
@@ -1034,7 +1033,7 @@ export function createPaperDialogTheme(
 export function createPaginationTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<PaginationThemeConfig> = {}
+  themeConfigurations: Partial<PaginationThemeConfig> = {}
 ): PaginationThemeConfig {
   const defaultTheme: PaginationThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1050,14 +1049,14 @@ export function createPaginationTheme(
     disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // pinbox.tsx
 export function createPinboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<PinboxThemeConfig> = {}
+  themeConfigurations: Partial<PinboxThemeConfig> = {}
 ): PinboxThemeConfig {
   const defaultTheme: PinboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1075,14 +1074,14 @@ export function createPinboxTheme(
     boxShadow: "0 0 0 0.5px transparent",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // phonebox.tsx
 export function createPhoneboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<PhoneboxThemeConfig> = {}
+  themeConfigurations: Partial<PhoneboxThemeConfig> = {}
 ): PhoneboxThemeConfig {
   const defaultTheme: PhoneboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1104,13 +1103,13 @@ export function createPhoneboxTheme(
       fieldLane?.highlightBackgroundColor || "#dbeafe",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // radio.tsx
 export function createRadioTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<RadioThemeConfig> = {}
+  themeConfigurations: Partial<RadioThemeConfig> = {}
 ): RadioThemeConfig {
   const defaultTheme: RadioThemeConfig = {
     borderColor: "#6b7280",
@@ -1127,14 +1126,14 @@ export function createRadioTheme(
     highlightCheckedBorderColor: "#e5e7eb",
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // rating.tsx
 export function createRatingTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<RatingThemeConfig> = {}
+  themeConfigurations: Partial<RatingThemeConfig> = {}
 ): RatingThemeConfig {
   const defaultTheme: RatingThemeConfig = {
     starFullColor: "#facc15",
@@ -1149,7 +1148,7 @@ export function createRatingTheme(
     disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // rich-editor.tsx
@@ -1157,7 +1156,7 @@ export function createRichEditorTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
   button: Partial<ButtonThemeConfig> = {},
-  custom: Partial<RichEditorThemeConfig> = {}
+  themeConfigurations: Partial<RichEditorThemeConfig> = {}
 ): RichEditorThemeConfig {
   const defaultTheme: RichEditorThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1172,13 +1171,13 @@ export function createRichEditorTheme(
     preBackgroundColor: "#D3D3D3",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // searchbox.tsx
 export function createSearchboxTheme(
   body: BodyThemeConfig,
-  custom: Partial<SearchboxThemeConfig> = {}
+  themeConfigurations: Partial<SearchboxThemeConfig> = {}
 ): SearchboxThemeConfig {
   const defaultTheme: SearchboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1194,7 +1193,7 @@ export function createSearchboxTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
@@ -1202,7 +1201,7 @@ export function createSearchboxTheme(
 export function createSteplineTheme(
   body: BodyThemeConfig,
   buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
-  customTheme: Partial<SteplineThemeConfig> = {}
+  themeConfigurations: Partial<SteplineThemeConfig> = {}
 ): SteplineThemeConfig {
   const defaultTheme: SteplineThemeConfig = {
     outerCircle: {
@@ -1230,14 +1229,14 @@ export function createSteplineTheme(
     },
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // selectbox.tsx
 export function createSelectboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<SelectboxThemeConfig> = {}
+  themeConfigurations: Partial<SelectboxThemeConfig> = {}
 ): SelectboxThemeConfig {
   const defaultTheme: SelectboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1262,13 +1261,13 @@ export function createSelectboxTheme(
     disabledOpacity: fieldLane.disabledOpacity,
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // separator.tsx
 export function createSeparatorTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<SeparatorThemeConfig> = {}
+  themeConfigurations: Partial<SeparatorThemeConfig> = {}
 ): SeparatorThemeConfig {
   const defaultTheme: SeparatorThemeConfig = {
     containerColor: "#6b7280",
@@ -1280,13 +1279,13 @@ export function createSeparatorTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 export function createSidebarTheme(
   body: BodyThemeConfig,
-  custom: Partial<SidebarThemeConfig> = {}
+  themeConfigurations: Partial<SidebarThemeConfig> = {}
 ): SidebarThemeConfig {
   const defaultTheme: SidebarThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -1308,14 +1307,14 @@ export function createSidebarTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
     item: {
       ...defaultTheme.item,
-      ...custom.item,
+      ...themeConfigurations.item,
     },
     toggle: {
       ...defaultTheme.toggle,
-      ...custom.toggle,
+      ...themeConfigurations.toggle,
     },
   };
 }
@@ -1324,7 +1323,7 @@ export function createSidebarTheme(
 export function createSignboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<SignboxThemeConfig> = {}
+  themeConfigurations: Partial<SignboxThemeConfig> = {}
 ): SignboxThemeConfig {
   const defaultTheme: SignboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1337,12 +1336,12 @@ export function createSignboxTheme(
     clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // statusbar.tsx
 export function createStatusbarTheme(
-  customTheme: Partial<StatusbarThemeConfig> = {}
+  themeConfigurations: Partial<StatusbarThemeConfig> = {}
 ): StatusbarThemeConfig {
   const defaultTheme: StatusbarThemeConfig = {
     backgroundColor: "#ececec",
@@ -1358,14 +1357,14 @@ export function createStatusbarTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // stateful-form.tsx
 export function createStatefulFormTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<StatefulFormThemeConfig> = {}
+  themeConfigurations: Partial<StatefulFormThemeConfig> = {}
 ): StatefulFormThemeConfig {
   const defaultTheme: StatefulFormThemeConfig = {
     backgroundColor: body.backgroundColor,
@@ -1375,7 +1374,7 @@ export function createStatefulFormTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
@@ -1383,7 +1382,7 @@ export function createStatefulFormTheme(
 export function createTextareaTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<TextareaThemeConfig> = {}
+  themeConfigurations: Partial<TextareaThemeConfig> = {}
 ): TextareaThemeConfig {
   const defaultTheme: TextareaThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1406,14 +1405,14 @@ export function createTextareaTheme(
     boxShadow: "0 0 0 1px transparent",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // textbox.tsx
 export function createTextboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<TextboxThemeConfig> = {}
+  themeConfigurations: Partial<TextboxThemeConfig> = {}
 ): TextboxThemeConfig {
   const defaultTheme: TextboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1435,13 +1434,13 @@ export function createTextboxTheme(
     boxShadow: "0 0 0 0.5px transparent",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // table.tsx
 export function createTableTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<TableThemeConfig> = {}
+  themeConfigurations: Partial<TableThemeConfig> = {}
 ): TableThemeConfig {
   const defaultTheme: TableThemeConfig = {
     textColor: body.textColor || "#111827",
@@ -1476,7 +1475,7 @@ export function createTableTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
@@ -1484,7 +1483,7 @@ export function createTableTheme(
 export function createTimeboxTheme(
   body: BodyThemeConfig,
   fieldLane: Partial<FieldLaneThemeConfig> = {},
-  custom: Partial<TimeboxThemeConfig> = {}
+  themeConfigurations: Partial<TimeboxThemeConfig> = {}
 ): TimeboxThemeConfig {
   const defaultTheme: TimeboxThemeConfig = {
     backgroundColor: body.backgroundColor || "#ffffff",
@@ -1499,14 +1498,14 @@ export function createTimeboxTheme(
     colonColor: body.textColor,
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // timeline.tsx
 export function createTimelineTheme(
   body: BodyThemeConfig,
   buttonTheme?: Record<ButtonVariants["variant"], ButtonThemeConfig>,
-  customTheme: Partial<TimelineThemeConfig> = {}
+  themeConfigurations: Partial<TimelineThemeConfig> = {}
 ): TimelineThemeConfig {
   const defaultTheme: TimelineThemeConfig = {
     outerCircle: {
@@ -1537,13 +1536,15 @@ export function createTimelineTheme(
     },
   };
 
-  return { ...defaultTheme, ...customTheme };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // tipmenu.tsx
 export function createTipMenuTheme(
   buttonTheme?: Record<Partial<ButtonVariants["variant"]>, ButtonThemeConfig>,
-  customTheme: Partial<Record<TipMenuVariant, Partial<TipMenuThemeConfig>>> = {}
+  themeConfigurations: Partial<
+    Record<TipMenuVariant, Partial<TipMenuThemeConfig>>
+  > = {}
 ): Record<TipMenuVariant, TipMenuThemeConfig> {
   const defaultTheme: Record<TipMenuVariant, TipMenuThemeConfig> = {
     default: {
@@ -1552,7 +1553,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.ghost?.textColor,
       activeBackgroundColor: buttonTheme?.ghost?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.ghost?.hoverBackgroundColor,
-      ...customTheme?.default,
+      ...themeConfigurations?.default,
     },
     danger: {
       focusBackgroundColor: buttonTheme?.danger?.focusBackgroundColor,
@@ -1560,7 +1561,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.danger?.textColor,
       activeBackgroundColor: buttonTheme?.danger?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.danger?.hoverBackgroundColor,
-      ...customTheme?.danger,
+      ...themeConfigurations?.danger,
     },
     success: {
       focusBackgroundColor: buttonTheme?.success?.focusBackgroundColor,
@@ -1568,7 +1569,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.success?.textColor,
       activeBackgroundColor: buttonTheme?.success?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.success?.hoverBackgroundColor,
-      ...customTheme?.success,
+      ...themeConfigurations?.success,
     },
     primary: {
       focusBackgroundColor: buttonTheme?.primary?.focusBackgroundColor,
@@ -1576,7 +1577,7 @@ export function createTipMenuTheme(
       textColor: buttonTheme?.primary?.textColor,
       activeBackgroundColor: buttonTheme?.primary?.activeBackgroundColor,
       hoverBackgroundColor: buttonTheme?.primary?.hoverBackgroundColor,
-      ...customTheme?.primary,
+      ...themeConfigurations?.primary,
     },
   };
 
@@ -1588,7 +1589,7 @@ export function createTipMenuTheme(
 // title.tsx
 export function createTitleTheme(
   body: BodyThemeConfig,
-  custom: Partial<TitleThemeConfig> = {}
+  themeConfigurations: Partial<TitleThemeConfig> = {}
 ): TitleThemeConfig {
   const defaultTheme: TitleThemeConfig = {
     pretitle: {
@@ -1614,26 +1615,26 @@ export function createTitleTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
 
     pretitle: {
       ...defaultTheme.pretitle,
-      ...custom.pretitle,
+      ...themeConfigurations.pretitle,
     },
 
     title: {
       ...defaultTheme.title,
-      ...custom.title,
+      ...themeConfigurations.title,
     },
 
     subtitle: {
       ...defaultTheme.subtitle,
-      ...custom.subtitle,
+      ...themeConfigurations.subtitle,
     },
 
     icon: {
       ...defaultTheme.icon,
-      ...custom.icon,
+      ...themeConfigurations.icon,
     },
   };
 }
@@ -1641,7 +1642,7 @@ export function createTitleTheme(
 // toggle.tsx
 export function createToggleTheme(
   body: BodyThemeConfig,
-  custom: Partial<ToggleThemeConfig> = {}
+  themeConfigurations: Partial<ToggleThemeConfig> = {}
 ): ToggleThemeConfig {
   const defaultTheme: ToggleThemeConfig = {
     backgroundColor: "#D1D5DB",
@@ -1654,13 +1655,13 @@ export function createToggleTheme(
     boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // toolbar.tsx
 export function createToolbarTheme(
   baseButton: Record<ToolbarVariant, ToolbarThemeConfig>,
-  customVariants: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {}
+  themeConfigurations: Partial<Record<ToolbarVariant, ToolbarThemeConfig>> = {}
 ): Record<ToolbarVariant, ToolbarThemeConfig> {
   const variants: Record<ToolbarVariant, ToolbarThemeConfig> = {
     default: {
@@ -1710,12 +1711,12 @@ export function createToolbarTheme(
     },
   };
 
-  return { ...variants, ...customVariants };
+  return { ...variants, ...themeConfigurations };
 }
 
 // tooltip.tsx
 export function createTooltipTheme(
-  customTheme: Partial<TooltipThemeConfig> = {}
+  themeConfigurations: Partial<TooltipThemeConfig> = {}
 ): TooltipThemeConfig {
   const defaultTheme: TooltipThemeConfig = {
     literalStringBackgroundColor: "#b9babc",
@@ -1728,14 +1729,14 @@ export function createTooltipTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // thumb-field.tsx
 export function createThumbFieldTheme(
   body: BodyThemeConfig,
-  custom: Partial<ThumbFieldThemeConfig> = {}
+  themeConfigurations: Partial<ThumbFieldThemeConfig> = {}
 ): ThumbFieldThemeConfig {
   const defaultTheme: ThumbFieldThemeConfig = {
     thumbsUpColor: "#61A9F9",
@@ -1744,13 +1745,13 @@ export function createThumbFieldTheme(
     errorColor: "#dc2626",
     disabledOpacity: 0.5,
   };
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
 
 // treelist.tsx
 export function createTreeListTheme(
   body: BodyThemeConfig,
-  custom: Partial<TreeListThemeConfig> = {}
+  themeConfigurations: Partial<TreeListThemeConfig> = {}
 ): TreeListThemeConfig {
   const defaultTheme: TreeListThemeConfig = {
     textColor: body.textColor,
@@ -1769,14 +1770,14 @@ export function createTreeListTheme(
 
   return {
     ...defaultTheme,
-    ...custom,
+    ...themeConfigurations,
   };
 }
 
 // split-pane.tsx
 export function createSplitPaneTheme(
   body: BodyThemeConfig,
-  customTheme: Partial<SplitPaneThemeConfig> = {}
+  themeConfigurations: Partial<SplitPaneThemeConfig> = {}
 ): SplitPaneThemeConfig {
   const defaultTheme: SplitPaneThemeConfig = {
     backgroundColor: body?.backgroundColor || "#ffffff",
@@ -1786,13 +1787,13 @@ export function createSplitPaneTheme(
 
   return {
     ...defaultTheme,
-    ...customTheme,
+    ...themeConfigurations,
   };
 }
 
 // wheel.tsx
 export function createWheelTheme(
-  custom: Partial<WheelThemeConfig> = {}
+  themeConfigurations: Partial<WheelThemeConfig> = {}
 ): WheelThemeConfig {
   const defaultTheme: WheelThemeConfig = {
     backgroundColor: "#ffffff",
@@ -1808,5 +1809,5 @@ export function createWheelTheme(
     separatorColor: "rgba(17,24,39,0.45)",
   };
 
-  return { ...defaultTheme, ...custom };
+  return { ...defaultTheme, ...themeConfigurations };
 }
