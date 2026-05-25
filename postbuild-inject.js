@@ -85,7 +85,9 @@ function processFile(fullPath) {
     process.exit(1);
   }
 
-  // Inject "use client" only for component files
+  // Inject "use client" only for component files, because hooks,
+  // browser APIs, and interactive UI logic require Client Components
+  // in Next.js App Router.
   const isComponent = fullPath.includes(`${path.sep}components${path.sep}`);
   if (isComponent) {
     let lines = content.split("\n");
