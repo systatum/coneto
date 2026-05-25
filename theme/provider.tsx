@@ -60,10 +60,10 @@ export function ThemeProvider({
 
   useEffect(() => {
     _mode = mode;
-    _themes = themesContent;
+    _themes = registrySnapshot;
 
     notifyThemeChange();
-  }, [mode, themesContent]);
+  }, [mode]);
 
   const themes = registrySnapshot;
   const theme = themes[mode] ?? themes["light"];
@@ -77,7 +77,7 @@ export function ThemeProvider({
 
 export function useTheme() {
   const { mode, themes } = useThemeMode();
-  const currentTheme = themes[mode];
+  const currentTheme = themes?.[mode];
 
   return {
     currentTheme,
@@ -94,7 +94,7 @@ export function Theme({
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
-  const theme = themesContent[mode];
+  const theme = themesContent?.[mode];
 
   return (
     <ThemeProvider mode={mode} themes={themesContent}>
