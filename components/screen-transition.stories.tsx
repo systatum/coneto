@@ -1,9 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import {
-  ScreenTransition,
-  ScreenProps,
-  ScreenNavigator,
-} from "./screen-transition";
+import { ScreenTransition, ScreenProps } from "./screen-transition";
 import { Title } from "./title";
 import { RiArrowLeftSLine } from "@remixicon/react";
 import { css } from "styled-components";
@@ -37,7 +33,10 @@ export const Default: Story = {
                   {
                     styles: {
                       toggleActionStyle: css`
-                        padding: 10px;
+                        padding: 4px;
+                        height: 30px;
+                        width: 30px;
+                        border-radius: 4px;
                       `,
                     },
                     type: "actions",
@@ -61,6 +60,7 @@ export const Default: Story = {
               height: 53px;
               justify-content: center;
               align-items: center;
+              padding: 0 6px;
             `,
             textContainerStyle: css`
               align-items: center;
@@ -81,7 +81,7 @@ export const Default: Story = {
 
     function PageC() {
       return (
-        <ScreenTransition prevScreen={PageB}>
+        <ScreenTransition>
           {({ gotoPrevScreen }) => (
             <>
               <PageTitle text="Page C" gotoPrevScreen={gotoPrevScreen} />
@@ -93,7 +93,7 @@ export const Default: Story = {
 
     function PageB() {
       return (
-        <ScreenTransition prevScreen={PageA} nextScreen={PageC}>
+        <ScreenTransition nextScreen={PageC}>
           {({ gotoPrevScreen, gotoNextScreen }) => (
             <>
               <PageTitle text="Page B" gotoPrevScreen={gotoPrevScreen} />
@@ -135,6 +135,6 @@ export const Default: Story = {
       );
     }
 
-    return <ScreenNavigator initial={PageA} />;
+    return <PageA />;
   },
 };
