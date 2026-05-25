@@ -6,14 +6,16 @@ import {
   PaperDialogRef,
   PaperDialogStyles,
 } from "./../../components/paper-dialog";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 import { Ri4kLine } from "@remixicon/react";
+import { Checkbox } from "./../../components/checkbox";
 
 describe("PaperDialog", () => {
   function ProductPaperDialog(
     props: PaperDialogProps & { children?: ReactNode }
   ) {
+    const [value, setValue] = useState(false);
     const dialogRef = useRef<PaperDialogRef>(null);
 
     return (
@@ -56,12 +58,261 @@ describe("PaperDialog", () => {
               <p style={{ fontSize: "14px", color: "#4B5563" }}>
                 {generateSentence()}
               </p>
+
+              <Checkbox
+                checked={value}
+                onChange={(e) => setValue(e.target.checked)}
+                label="check this checkbox"
+              />
             </div>
           )}
         </PaperDialog>
       </div>
     );
   }
+
+  context("text", () => {
+    context("title", () => {
+      it("renders the title text", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog title="Test title" />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("title-title")
+          .should("exist")
+          .and("have.text", "Test title");
+      });
+    });
+
+    context("subtitle", () => {
+      it("renders the subtitle text", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog subtitle="Test subtitle" />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("title-subtitle")
+          .should("exist")
+          .and("have.text", "Test subtitle");
+      });
+    });
+  });
+
+  context("mobile", () => {
+    it("renders with radius 0.75rem, width 100dvw and height 72dvh", () => {
+      cy.viewport(500, 700);
+      cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+      cy.findAllByRole("button").eq(0).should("exist").click();
+      cy.wait(300);
+
+      cy.findByLabelText("paper-dialog-wrapper")
+        .should("have.css", "border-top-left-radius", "20px")
+        .and("have.css", "border-top-right-radius", "20px")
+        .and("have.css", "width", "500px")
+        .and("have.css", "height", "504px");
+    });
+
+    context("user selection", () => {
+      it("renders the title to can't selection", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("paper-dialog-wrapper").should(
+          "have.css",
+          "user-select",
+          "none"
+        );
+      });
+
+      context("when clicking the Checkbox", () => {
+        it("should still allow interaction", () => {
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+
+          cy.findByRole("checkbox").should("not.be.checked");
+
+          cy.findByText("check this checkbox").click();
+
+          cy.findByRole("checkbox").should("be.checked");
+        });
+      });
+    });
+
+    context("drag behavior", () => {
+      context("when dragging icon drag indicator", () => {
+        it("should close the dialog", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .should("exist")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
+
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
+        });
+      });
+
+      context("when dragging in area empty icon drag indicator", () => {
+        it("should close the dialog", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .should("exist")
+            .realMouseDown({ position: "right" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
+
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("not.exist");
+        });
+      });
+
+      context("when dragging at dialog content", () => {
+        it("should keep the dialog open", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-content")
+            .should("exist")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 350)
+            .realMouseUp();
+
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-content").should("exist");
+        });
+      });
+    });
+
+    context("closable", () => {
+      context("when given true", () => {
+        it("should render the closable icon", () => {
+          cy.viewport(500, 700);
+          cy.mount(
+            <ProductPaperDialog width="100dvw" mobile closable={true} />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-close-icon").should("exist");
+          cy.findByLabelText("paper-dialog-drag-indicator").should("exist");
+        });
+
+        context("when clicking close icon", () => {
+          it("should close the modal", () => {
+            cy.viewport(500, 700);
+            cy.mount(
+              <ProductPaperDialog width="100dvw" mobile closable={true} />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.wait(300);
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+
+            cy.findByLabelText("paper-dialog-close-icon")
+              .should("exist")
+              .click();
+
+            cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+          });
+        });
+
+        context("when clicking overlay-background", () => {
+          it("should close the modal", () => {
+            cy.mount(
+              <ProductPaperDialog width="100dvw" mobile closable={true} />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            cy.findByLabelText("overlay-blocker")
+              .should("exist")
+              .click("topLeft");
+            cy.wait(400);
+
+            cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+          });
+        });
+
+        context("when given empty controls", () => {
+          it("should not render the closable icon", () => {
+            cy.viewport(500, 700);
+            cy.mount(
+              <ProductPaperDialog
+                width="100dvw"
+                mobile
+                controls={[]}
+                closable={true}
+              />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.wait(300);
+
+            cy.findByLabelText("paper-dialog-close-icon").should("not.exist");
+          });
+        });
+      });
+
+      context("when given false", () => {
+        it("should not render the closable icon and drag icon", () => {
+          cy.viewport(500, 700);
+          cy.mount(
+            <ProductPaperDialog width="100dvw" mobile closable={false} />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-close-icon").should("not.exist");
+          cy.findByLabelText("paper-dialog-drag-indicator").should("not.exist");
+        });
+
+        context("when clicking overlay-background", () => {
+          it("should not close the modal", () => {
+            cy.mount(
+              <ProductPaperDialog width="100dvw" mobile closable={false} />
+            );
+
+            cy.findAllByRole("button").eq(0).should("exist").click();
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            cy.findByLabelText("overlay-blocker")
+              .should("exist")
+              .click("topLeft");
+            cy.wait(400);
+
+            cy.findByLabelText("paper-dialog-wrapper").should("exist");
+          });
+        });
+      });
+    });
+  });
 
   context("icons", () => {
     context("restore icon", () => {
@@ -409,18 +660,19 @@ describe("PaperDialog", () => {
   context("style", () => {
     context("height", () => {
       it("should be 100% from the screen", () => {
+        cy.viewport(500, 500);
         cy.mount(<ProductPaperDialog closable={true} />);
         cy.findAllByRole("button").eq(0).should("exist").click();
 
         cy.findByLabelText("paper-dialog-content").should(
           "have.css",
           "height",
-          "500px"
+          "498px"
         );
       });
 
       context("when given a lot of text", () => {
-        it("should render 500px and can scroll to the bottom", () => {
+        it("should render 498px and can scroll to the bottom", () => {
           cy.mount(
             <ProductPaperDialog closable={true}>
               {generateSentence({
@@ -433,7 +685,7 @@ describe("PaperDialog", () => {
           cy.findAllByRole("button").eq(0).should("exist").click();
 
           cy.findByLabelText("paper-dialog-content")
-            .should("have.css", "height", "500px")
+            .should("have.css", "height", "498px")
             .and("have.css", "overflow", "auto")
             .scrollTo("bottom")
             .then(($el) => {

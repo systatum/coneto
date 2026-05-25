@@ -65,6 +65,8 @@ import {
   createTreeListTheme,
   createSplitPaneTheme,
   createTooltipTheme,
+  createWheelTheme,
+  createTitleTheme,
 } from "./creator";
 
 // Light
@@ -203,6 +205,8 @@ const lightTipMenu = createTipMenuTheme(lightButton, {
   success: { disabledTextColor: "rgba(107, 107, 107, 0.75)" },
 });
 
+const lightTitle = createTitleTheme(lightBody);
+
 const lightToggle = createToggleTheme(lightBody);
 
 const lightToolbar = createToolbarTheme({
@@ -220,6 +224,8 @@ const lightThumbField = createThumbFieldTheme(lightBody);
 const lightTreeList = createTreeListTheme(lightBody);
 
 const lightSplitPane = createSplitPaneTheme(lightBody);
+
+const lightWheel = createWheelTheme();
 
 export const lightTheme: AppTheme = {
   body: lightBody,
@@ -284,9 +290,11 @@ export const lightTheme: AppTheme = {
   timebox: lightTimebox,
   timeline: lightTimeline,
   tipmenu: lightTipMenu,
+  title: lightTitle,
   thumbField: lightThumbField,
   toggle: lightToggle,
   toolbar: lightToolbar,
   tooltip: lightTooltip,
   treelist: lightTreeList,
+  wheel: lightWheel,
 };

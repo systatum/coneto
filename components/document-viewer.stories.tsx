@@ -15,6 +15,7 @@ import { SplitPane } from "./split-pane";
 import { TableColumn, Table } from "./table";
 import { createPortal } from "react-dom";
 import { urlToBase64 } from "./../lib/base64";
+import { BodyThemeConfig, useTheme } from "./../theme";
 
 const meta: Meta<typeof DocumentViewer> = {
   title: "Content/DocumentViewer",
@@ -66,6 +67,15 @@ DocumentViewer is a powerful component for displaying documents such as PDFs, im
   }}
 />
 \`\`\`
+
+### ⚙️ Vite Configuration
+PDF.js requires its worker to be excluded from dependency pre-bundling. Add this to your \`vite.config.ts\`:
+
+\`\`\`ts
+optimizeDeps: {
+  exclude: ["@systatum/coneto"],
+}
+\`\`\`
     `,
       },
     },
@@ -115,18 +125,6 @@ DocumentViewer is a powerful component for displaying documents such as PDFs, im
         defaultValue: { summary: "100" },
       },
     },
-    libPdfJsWorkerSrc: {
-      description:
-        "Custom worker source URL used by pdf.js to load the PDF worker.",
-      control: "text",
-      table: {
-        type: { summary: "string" },
-        defaultValue: {
-          summary:
-            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.4.54/pdf.worker.min.mjs",
-        },
-      },
-    },
     labels: {
       description: `
 Customizes text labels displayed in the DocumentViewer toolbar.
@@ -165,6 +163,9 @@ type Story = StoryObj<typeof meta>;
 
 export const PDF: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
@@ -295,20 +296,18 @@ export const PDF: Story = {
 
     const commentPopUp: ReactElement = (
       <ContentViewer
+        $theme={bodyTheme}
         id="comment-popup"
         ref={ref.current?.repositionPopUp}
         style={{
           left: currentlySelectedRegion?.absoluteX ?? 0,
           top: currentlySelectedRegion?.absoluteY ?? 0,
-          background: "white",
-          border: "1px solid gray",
           zIndex: 9999,
           position: "absolute",
         }}
       >
         <div
           style={{
-            background: "white",
             minWidth: 300,
             padding: "12px",
             cursor: "pointer",
@@ -413,6 +412,9 @@ export const PDF: Story = {
 
 export const PNG: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     const ref = useRef<DocumentViewerRef>(null);
 
     const [popupVisibility, setPopupVisibility] = useState<boolean>(false);
@@ -511,19 +513,18 @@ export const PNG: Story = {
     const commentPopUp: ReactElement = (
       <ContentViewer
         id="comment-popup"
+        $theme={bodyTheme}
         ref={ref.current?.repositionPopUp}
         style={{
           left: currentlySelectedRegion?.absoluteX ?? 0,
           top: currentlySelectedRegion?.absoluteY ?? 0,
-          background: "white",
-          border: "1px solid gray",
+
           zIndex: 9999,
           position: "absolute",
         }}
       >
         <div
           style={{
-            background: "white",
             minWidth: 300,
             padding: "12px",
             cursor: "pointer",
@@ -592,6 +593,9 @@ export const PNG: Story = {
 
 export const WithFile: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     const ref = useRef<DocumentViewerRef>(null);
     const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
@@ -702,19 +706,17 @@ export const WithFile: Story = {
     const commentPopUp: ReactElement = (
       <ContentViewer
         id="comment-popup"
+        $theme={bodyTheme}
         ref={ref.current?.repositionPopUp}
         style={{
           left: currentlySelectedRegion?.absoluteX ?? 0,
           top: currentlySelectedRegion?.absoluteY ?? 0,
-          background: "white",
-          border: "1px solid gray",
           zIndex: 9999,
           position: "absolute",
         }}
       >
         <div
           style={{
-            background: "white",
             minWidth: 300,
             padding: "12px",
             cursor: "pointer",
@@ -785,6 +787,9 @@ export const WithFile: Story = {
 
 export const Base64: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const bodyTheme = currentTheme?.body;
+
     const ref = useRef<DocumentViewerRef>(null);
 
     const [base64, setBase64] = useState<string | null>(null);
@@ -891,19 +896,17 @@ export const Base64: Story = {
     const commentPopUp: ReactElement = (
       <ContentViewer
         id="comment-popup"
+        $theme={bodyTheme}
         ref={ref.current?.repositionPopUp}
         style={{
           left: currentlySelectedRegion?.absoluteX ?? 0,
           top: currentlySelectedRegion?.absoluteY ?? 0,
-          background: "white",
-          border: "1px solid gray",
           zIndex: 9999,
           position: "absolute",
         }}
       >
         <div
           style={{
-            background: "white",
             minWidth: 300,
             padding: "12px",
             cursor: "pointer",
@@ -970,8 +973,9 @@ export const Base64: Story = {
   },
 };
 
-const ContentViewer = styled.div`
+const ContentViewer = styled.div<{ $theme?: BodyThemeConfig }>`
   position: absolute;
   border: 2px solid #4daaf5;
-  background: rgba(77, 170, 245, 0.2);
+  background: ${({ $theme }) => $theme?.backgroundColor};
+  border: 1px solid ${({ $theme }) => $theme?.borderColor};
 `;

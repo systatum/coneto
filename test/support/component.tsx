@@ -17,6 +17,8 @@ const mountWithTheme = (
 ) => {
   const { mode = "light" } = options;
 
+  document.body.setAttribute("data-theme", mode);
+
   return mount(
     <ThemeProvider themes={themes} mode={mode}>
       <div data-theme={mode}>{component}</div>

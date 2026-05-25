@@ -761,7 +761,7 @@ describe("Table", () => {
             containerStyle: css`
               background-color: transparent;
             `,
-            textContainerStyle: css`
+            headerTitleSectionStyle: css`
               width: 100%;
             `,
             titleStyle: css`
@@ -1157,14 +1157,14 @@ describe("Table", () => {
     return [
       {
         caption: "Edit",
-        icon: { image: RiArrowUpSLine, color: "gray" },
+        icon: { image: RiArrowUpSLine },
         onClick: () => {
           console.log(`${rowId} was edited`);
         },
       },
       {
         caption: "Delete",
-        icon: { image: RiDeleteBin2Fill, color: "gray" },
+        icon: { image: RiDeleteBin2Fill },
         onClick: () => {
           console.log(`${rowId} was deleted`);
         },
@@ -1172,7 +1172,7 @@ describe("Table", () => {
       {
         hidden: true,
         caption: "Archive",
-        icon: { image: RiArchive2Fill, color: "gray" },
+        icon: { image: RiArchive2Fill },
         onClick: () => {
           console.log(`${rowId} was archive`);
         },
@@ -2234,6 +2234,67 @@ describe("Table", () => {
         </Table>
       );
     }
+
+    context("modes", () => {
+      context("dark mode", () => {
+        context("when clicking", () => {
+          it("renders the tip-menu with inherit color", () => {
+            cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />, {
+              mode: "dark",
+            });
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.findAllByLabelText("table-row").eq(0).trigger("mouseover");
+            cy.findAllByLabelText("action-button")
+              .eq(2)
+              .should("be.visible")
+              .click();
+            cy.findByLabelText("tip-menu").within(() => {
+              cy.findByText("Edit").should(
+                "have.css",
+                "color",
+                "rgb(202, 206, 212)"
+              );
+
+              cy.findAllByLabelText("tip-menu-icon")
+                .first()
+                .should("have.css", "color", "rgb(202, 206, 212)");
+            });
+          });
+        });
+      });
+
+      context("light mode", () => {
+        context("when clicking", () => {
+          it("renders the tip-menu with inherit color", () => {
+            cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.findAllByLabelText("table-row").eq(0).trigger("mouseover");
+            cy.findAllByLabelText("action-button")
+              .eq(2)
+              .should("be.visible")
+              .click();
+            cy.findByLabelText("tip-menu").within(() => {
+              cy.findByText("Edit").should(
+                "have.css",
+                "color",
+                "rgb(17, 17, 17)"
+              );
+
+              cy.findAllByLabelText("tip-menu-icon")
+                .first()
+                .should("have.css", "color", "rgb(17, 17, 17)");
+            });
+          });
+        });
+      });
+    });
+
     context("when hover another after opened", () => {
       it("should always opened", () => {
         cy.mount(<TableWithRowActions actions={ROW_ACTIONS} />);

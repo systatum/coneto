@@ -32,6 +32,42 @@ describe("RichEditor", () => {
     );
   }
 
+  context("id", () => {
+    context("code-editor mode", () => {
+      beforeEach(() => {
+        cy.mount(
+          <ProductRichEditor
+            mode="code-editor"
+            value=""
+            codeEditor={{
+              id: "test123",
+            }}
+          />
+        );
+      });
+
+      it("renders the id in the parent", () => {
+        cy.get("#test123").should("exist");
+      });
+    });
+
+    context("non code-editor mode", () => {
+      beforeEach(() => {
+        cy.mount(
+          <ProductRichEditor
+            mode="markdown-editor"
+            value=""
+            id="markdown-editor-21"
+          />
+        );
+      });
+
+      it("renders the id in the parent", () => {
+        cy.get("#markdown-editor-21").should("exist");
+      });
+    });
+  });
+
   context("mode", () => {
     context("with code-editor", () => {
       beforeEach(() => {

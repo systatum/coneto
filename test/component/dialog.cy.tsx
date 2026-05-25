@@ -68,6 +68,107 @@ describe("Dialog", () => {
     });
   });
 
+  context("mobile", () => {
+    it("renders wrapper without padding", () => {
+      cy.mount(
+        <ProductDialog
+          icon={{
+            image: RiAB,
+          }}
+          mobile
+        />
+      );
+
+      cy.findByLabelText("dialog-wrapper").should("have.css", "padding", "0px");
+    });
+
+    context("actions", () => {
+      it("renders button full width", () => {
+        cy.mount(
+          <ProductDialog
+            icon={{
+              image: RiAB,
+            }}
+            actions={[{ id: "cancel", caption: "Cancel" }]}
+            mobile
+          />
+        );
+
+        cy.findByLabelText("dialog-wrapper").should(
+          "have.css",
+          "width",
+          "380px"
+        );
+        cy.findAllByRole("button")
+          .eq(1)
+          .should("exist")
+          .and("have.css", "width", "380px");
+      });
+
+      context("when clicking", () => {
+        it("should render on the console", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.get("@consoleLog").should(
+            "not.have.been.calledWith",
+            "cancel was clicked"
+          );
+
+          cy.mount(
+            <ProductDialog
+              icon={{
+                image: RiAB,
+              }}
+              actions={[{ id: "cancel", caption: "Cancel" }]}
+              onClick={({ buttonId }) => console.log(`${buttonId} was clicked`)}
+              mobile
+            />
+          );
+
+          cy.findAllByRole("button").eq(1).click();
+
+          cy.get("@consoleLog").should(
+            "have.been.calledWith",
+            "cancel was clicked"
+          );
+        });
+      });
+
+      context("when given more than one button", () => {
+        it("separate all with for each button", () => {
+          cy.mount(
+            <ProductDialog
+              icon={{
+                image: RiAB,
+              }}
+              actions={[
+                { id: "cancel", caption: "Cancel" },
+                { id: "archive", caption: "Archive", variant: "primary" },
+              ]}
+              mobile
+            />
+          );
+
+          cy.findByLabelText("dialog-wrapper").should(
+            "have.css",
+            "width",
+            "380px"
+          );
+          cy.findAllByRole("button")
+            .eq(1)
+            .should("exist")
+            .and("have.css", "width", "190px");
+          cy.findAllByRole("button")
+            .eq(2)
+            .should("exist")
+            .and("have.css", "width", "190px");
+        });
+      });
+    });
+  });
+
   context("when given icon", () => {
     it("renders icon 28px (by default)", () => {
       cy.mount(
@@ -78,7 +179,7 @@ describe("Dialog", () => {
         />
       );
 
-      cy.findByLabelText("dialog-icon")
+      cy.findByLabelText("title-icon")
         .should("exist")
         .and("have.css", "width", "28px");
     });
@@ -94,7 +195,7 @@ describe("Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "width", "35px");
       });
@@ -111,7 +212,7 @@ describe("Dialog", () => {
           />
         );
 
-        cy.findByLabelText("dialog-icon")
+        cy.findByLabelText("title-icon")
           .should("exist")
           .and("have.css", "color", "rgb(255, 0, 0)")
           .parent()

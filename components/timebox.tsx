@@ -20,12 +20,12 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { TimeboxThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Wheel } from "./wheel";
 
-interface BaseTimeboxProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "style" | "placeholder" | "value" | "name"
-  > {
+interface BaseTimeboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "style" | "placeholder" | "value" | "name"
+> {
   withSeconds?: boolean;
   editable?: boolean;
   styles?: TimeboxStyles;
@@ -34,6 +34,7 @@ interface BaseTimeboxProps
   name?: string;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
   placeholder?: TimeboxPlaceholder;
+  mobile?: boolean;
 }
 
 export interface TimeboxStyles {
@@ -63,6 +64,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       placeholder,
       styles,
       id,
+      mobile,
     },
     ref
   ) => {
@@ -186,7 +188,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 
           setNext(type, firstDigit);
 
-          if (nextType) {
+          if (nextType && !mobile) {
             refMap[nextType].current?.focus();
             setNext(nextType, secondDigit);
           }
@@ -195,7 +197,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           return;
         } else if (value.length === 2) {
           setNext(type, value);
-          if (nextType) {
+          if (nextType && !mobile) {
             refMap[nextType].current?.focus();
           }
           callOnChange();
@@ -242,151 +244,237 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       }
     };
 
+    const wheelParts = {
+      hour: {
+        id: "hour",
+        values: hours,
+      },
+      minute: {
+        id: "minute",
+        values: minutes,
+      },
+      second: {
+        id: "second",
+        values: seconds,
+      },
+    };
+
     return (
-      <InputGroup
-        $style={styles?.inputWrapperStyle}
-        $focused={isFocused}
-        $error={!!showError}
-        $disabled={disabled}
-        $theme={timeboxTheme}
-        onKeyDown={(e) => {
-          if (onKeyDown) {
-            onKeyDown(e);
-          }
-        }}
-        onBlur={() => {
-          setIsFocused(false);
-          if (blurTimeout.current) clearTimeout(blurTimeout.current);
-          blurTimeout.current = setTimeout(() => {
-            const anyFocused = [hourRef, minuteRef, secondRef].some(
-              (r) => r.current === document.activeElement
-            );
-            if (!anyFocused) {
-              hasBeenFocused.current = false;
-            }
-          }, 0);
-        }}
-      >
-        <Input
-          id={id}
-          aria-label="timebox-hour"
-          ref={hourRef}
-          data-type={dataType}
-          type="text"
-          inputMode="numeric"
-          placeholder={placeholderHour}
-          disabled={!editable || disabled}
-          value={hour}
-          onChange={(e) => handleChange("hour", e.target.value)}
+      <>
+        <InputGroup
+          $style={styles?.inputWrapperStyle}
+          $focused={isFocused}
+          $error={!!showError}
+          $disabled={disabled}
           $theme={timeboxTheme}
-          onFocus={() => {
-            setIsFocused(true);
-
-            if (!hasBeenFocused.current) {
-              hasBeenFocused.current = true;
-              focusSmartField();
-            }
-          }}
-          min={0}
-          max={24}
-          $inputStyle={styles?.self}
           onKeyDown={(e) => {
-            const { selectionEnd, value } = e.currentTarget;
-
-            if (e.key === "ArrowRight" && selectionEnd === value.length) {
-              e.preventDefault();
-              minuteRef.current?.focus();
-            }
-
-            if (e.key === ":") {
-              e.preventDefault();
-              minuteRef.current?.focus();
+            if (onKeyDown) {
+              onKeyDown(e);
             }
           }}
-        />
-        <Colon $theme={timeboxTheme}>:</Colon>
-        <Input
-          aria-label="timebox-minute"
-          ref={minuteRef}
-          type="text"
-          inputMode="numeric"
-          $theme={timeboxTheme}
-          placeholder={placeholderMinute}
-          disabled={!editable || disabled}
-          value={minute}
-          onChange={(e) => handleChange("minute", e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          min={0}
-          max={59}
-          $inputStyle={styles?.self}
-          onKeyDown={(e) => {
-            const { selectionStart, selectionEnd, value } = e.currentTarget;
+          onBlur={() => {
+            setIsFocused(false);
 
-            if (e.key === "Backspace" && selectionStart === 0) {
-              e.preventDefault();
-              hourRef.current?.focus();
-            }
-
-            if (e.key === "ArrowRight" && selectionEnd === value.length) {
-              e.preventDefault();
-              if (withSeconds) secondRef.current?.focus();
-            }
-
-            if (e.key === "ArrowLeft" && selectionStart === 0) {
-              e.preventDefault();
-              hourRef.current?.focus();
-            }
-
-            if (e.key === ":") {
-              e.preventDefault();
-              secondRef.current?.focus();
-            }
+            if (blurTimeout.current) clearTimeout(blurTimeout.current);
+            blurTimeout.current = setTimeout(() => {
+              const anyFocused = [hourRef, minuteRef, secondRef].some(
+                (r) => r.current === document.activeElement
+              );
+              if (!anyFocused) {
+                hasBeenFocused.current = false;
+              }
+            }, 0);
           }}
-        />
-        {withSeconds && (
-          <>
-            <Colon $theme={timeboxTheme}>:</Colon>
-            <Input
-              aria-label="timebox-second"
-              ref={secondRef}
-              type="text"
-              $theme={timeboxTheme}
-              inputMode="numeric"
-              placeholder={placeholderSecond}
-              disabled={!editable || disabled}
-              value={second}
-              onChange={(e) => handleChange("second", e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              min={0}
-              max={59}
-              $inputStyle={styles?.self}
-              onKeyDown={(e) => {
-                const { selectionStart } = e.currentTarget;
-                if (e.key === "Backspace" && selectionStart === 0) {
-                  e.preventDefault();
-                  minuteRef.current?.focus();
-                }
+        >
+          <Input
+            id={id}
+            aria-label="timebox-hour"
+            ref={hourRef}
+            data-type={dataType}
+            type="text"
+            inputMode={mobile ? "none" : "numeric"}
+            readOnly={mobile}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            placeholder={placeholderHour}
+            disabled={!editable || disabled}
+            value={hour}
+            onChange={(e) => handleChange("hour", e.target.value)}
+            $theme={timeboxTheme}
+            onFocus={() => {
+              setIsFocused(true);
 
-                if (
-                  e.key === "ArrowLeft" &&
-                  e.currentTarget.selectionStart === 0
-                ) {
-                  e.preventDefault();
-                  minuteRef.current?.focus();
-                }
-              }}
-            />
-          </>
+              if (!hasBeenFocused.current) {
+                hasBeenFocused.current = true;
+                focusSmartField();
+              }
+            }}
+            min={0}
+            max={24}
+            $inputStyle={styles?.self}
+            onKeyDown={(e) => {
+              if (mobile) return;
+
+              const { selectionEnd, value } = e.currentTarget;
+
+              if (e.key === "ArrowRight" && selectionEnd === value.length) {
+                e.preventDefault();
+                minuteRef.current?.focus();
+              }
+
+              if (e.key === ":") {
+                e.preventDefault();
+                minuteRef.current?.focus();
+              }
+            }}
+          />
+          <Colon $theme={timeboxTheme}>:</Colon>
+          <Input
+            aria-label="timebox-minute"
+            ref={minuteRef}
+            type="text"
+            inputMode={mobile ? "none" : "numeric"}
+            readOnly={mobile}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            $theme={timeboxTheme}
+            placeholder={placeholderMinute}
+            disabled={!editable || disabled}
+            value={minute}
+            onChange={(e) => handleChange("minute", e.target.value)}
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
+            min={0}
+            max={59}
+            $inputStyle={styles?.self}
+            onKeyDown={(e) => {
+              if (mobile) return;
+
+              const { selectionStart, selectionEnd, value } = e.currentTarget;
+
+              if (e.key === "Backspace" && selectionStart === 0) {
+                e.preventDefault();
+                hourRef.current?.focus();
+              }
+
+              if (e.key === "ArrowRight" && selectionEnd === value.length) {
+                e.preventDefault();
+                if (withSeconds) secondRef.current?.focus();
+              }
+
+              if (e.key === "ArrowLeft" && selectionStart === 0) {
+                e.preventDefault();
+                hourRef.current?.focus();
+              }
+
+              if (e.key === ":") {
+                e.preventDefault();
+                secondRef.current?.focus();
+              }
+            }}
+          />
+          {withSeconds && (
+            <>
+              <Colon $theme={timeboxTheme}>:</Colon>
+              <Input
+                aria-label="timebox-second"
+                ref={secondRef}
+                type="text"
+                $theme={timeboxTheme}
+                inputMode={mobile ? "none" : "numeric"}
+                readOnly={mobile}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                placeholder={placeholderSecond}
+                disabled={!editable || disabled}
+                value={second}
+                onChange={(e) => handleChange("second", e.target.value)}
+                onFocus={() => {
+                  setIsFocused(true);
+                }}
+                onBlur={() => {
+                  setIsFocused(false);
+                }}
+                min={0}
+                max={59}
+                $inputStyle={styles?.self}
+                onKeyDown={(e) => {
+                  if (mobile) return;
+
+                  const { selectionStart } = e.currentTarget;
+                  if (e.key === "Backspace" && selectionStart === 0) {
+                    e.preventDefault();
+                    minuteRef.current?.focus();
+                  }
+
+                  if (
+                    e.key === "ArrowLeft" &&
+                    e.currentTarget.selectionStart === 0
+                  ) {
+                    e.preventDefault();
+                    minuteRef.current?.focus();
+                  }
+                }}
+              />
+            </>
+          )}
+        </InputGroup>
+
+        {mobile && (
+          <Wheel
+            styles={{
+              containerStyle: css`
+                ${isFocused
+                  ? css`
+                      display: flex;
+                    `
+                  : css`
+                      display: none;
+                    `};
+                position: fixed;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 20px;
+                width: 96dvw;
+                z-index: 9992999;
+              `,
+            }}
+            onChange={(value) => {
+              if (value.hour !== undefined) handleChange("hour", value.hour);
+              if (value.minute !== undefined)
+                handleChange("minute", value.minute);
+              if (withSeconds && value.second !== undefined) {
+                handleChange("second", value.second);
+              }
+            }}
+            parts={[
+              wheelParts.hour,
+              wheelParts.minute,
+              ...(withSeconds ? [wheelParts.second] : []),
+            ]}
+            values={{
+              hour,
+              minute,
+              ...(withSeconds ? { second } : {}),
+            }}
+          />
         )}
-      </InputGroup>
+      </>
     );
   }
 );
 
 export interface TimeboxProps
-  extends Omit<BaseTimeboxProps, "styles" | "inputId">,
+  extends
+    Omit<BaseTimeboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
   styles?: TimeboxStyles & FieldLaneStyles;
 }
@@ -542,5 +630,17 @@ const Input = styled.input<{
 const Colon = styled.span<{ $theme?: TimeboxThemeConfig }>`
   transform: translateY(-1px);
 `;
+
+const hours = Array.from({ length: 24 }, (_, i) => {
+  const h = i;
+  return { value: h.toString(), text: h.toString() };
+});
+
+const minutes = Array.from({ length: 60 }, (_, i) => ({
+  value: i.toString(),
+  text: i.toString().padStart(2, "0"),
+}));
+
+const seconds = minutes;
 
 export { Timebox };

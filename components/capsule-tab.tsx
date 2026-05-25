@@ -28,10 +28,11 @@ export interface CapsuleTabTab {
   title: string;
   content: ReactNode;
   className?: string;
+  hidden?: boolean;
 }
 
 function CapsuleTab({
-  tabs,
+  tabs: _tabs,
   styles,
   activeTab = "1",
   activeBackgroundColor,
@@ -42,6 +43,8 @@ function CapsuleTab({
 }: CapsuleTabProps) {
   const { currentTheme } = useTheme();
   const capsuleTabTheme = currentTheme.capsuleTab;
+
+  const tabs = _tabs?.filter((tab) => !tab.hidden);
 
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
 
