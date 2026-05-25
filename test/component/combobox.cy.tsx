@@ -214,6 +214,25 @@ describe("Combobox", () => {
           "Apple"
         );
       });
+
+      context("when clicking the selectbox again", () => {
+        it("should expand again (same behavior on the strict)", () => {
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            ""
+          );
+          cy.findByText("Apple").click();
+          cy.findByPlaceholderText("Select a fruit...").should(
+            "have.value",
+            "Apple"
+          );
+
+          cy.findByLabelText("combobox-drawer").should("not.exist");
+
+          cy.findByPlaceholderText("Select a fruit...").click();
+          cy.findByLabelText("combobox-drawer").should("exist");
+        });
+      });
     });
 
     context("fade", () => {
