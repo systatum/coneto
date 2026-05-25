@@ -77,34 +77,25 @@ function transformImports(content, fileDir) {
 
 function processFile(fullPath) {
   let content = fs.readFileSync(fullPath, "utf8").trim();
-
-  // Inject "use client" only for component files
-  if (!fullPath.includes(`${path.sep}components${path.sep}`)) {
-    return;
-  }
-
   const relativePath = path.relative(distDir, fullPath);
 
   // Prevent console.log in production build
-  const hasConsoleLog = /console\.log\s*\(/.test(content);
-
-  if (hasConsoleLog) {
+  if (/console\.log\s*\(/.test(content)) {
     console.error(`❌ Build failed: console.log found in ${relativePath}`);
-
     process.exit(1);
   }
 
-  let lines = content.split("\n");
+  // Inject "use client" only for component files
+  const isComponent = fullPath.includes(`${path.sep}components${path.sep}`);
+  if (isComponent) {
+    let lines = content.split("\n");
+    const hasUseClient = lines[0]?.trim() === useClientDirective;
 
-  // Inject "use client"
-  const hasUseClient = lines[0]?.trim() === useClientDirective;
-
-  if (!hasUseClient) {
-    lines.unshift(useClientDirective);
-
-    content = lines.join("\n");
-
-    console.log(`✅ Injected "use client" into: ${relativePath}`);
+    if (!hasUseClient) {
+      lines.unshift(useClientDirective);
+      content = lines.join("\n");
+      console.log(`✅ Injected "use client" into: ${relativePath}`);
+    }
   }
 
   // Fix ESM imports
