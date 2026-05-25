@@ -18,17 +18,16 @@ import { TreeListThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
-export interface TreeListProps
-  extends Omit<
-    HTMLAttributes<HTMLDivElement>,
-    | "style"
-    | "onChange"
-    | "content"
-    | "onMouseDown"
-    | "onMouseMove"
-    | "onKeyDown"
-    | "onMouseEnter"
-  > {
+export interface TreeListProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  | "style"
+  | "onChange"
+  | "content"
+  | "onMouseDown"
+  | "onMouseMove"
+  | "onKeyDown"
+  | "onMouseEnter"
+> {
   content: TreeListContent[];
   children?: ReactNode;
   emptySlate?: ReactNode;
@@ -136,8 +135,10 @@ export interface TreeListContent {
   collapsible?: boolean;
 }
 
-export interface TreeListContentAction
-  extends Omit<ContextMenuAction, "onClick"> {
+export interface TreeListContentAction extends Omit<
+  ContextMenuAction,
+  "onClick"
+> {
   onClick?: (id?: string) => void;
 }
 
@@ -510,6 +511,8 @@ function TreeList({
                     data-has-options={item?.className?.includes(
                       "has-group-options"
                     )}
+                    data-first={index === 0}
+                    data-last={index === content.length - 1}
                     data-action-opened={item.id === openRowId}
                     data-selected={selectedItems?.includes(item.id)}
                     data-highlighted={item?.className?.includes(
@@ -533,6 +536,7 @@ function TreeList({
                       onMouseEnter?.({ event: e, item });
                       setIsHovered(item.id);
                     }}
+                    data-level={0}
                   >
                     <Title
                       role="option"
@@ -892,7 +896,7 @@ interface TreeListItemComponent<T extends TreeListItem> {
 }
 
 export interface TreeListItemStyles {
-  itemStyle?: CSSProp;
+  itemStyle?: ((level: number) => CSSProp) | CSSProp;
   emptyItemSlateStyle?: CSSProp;
   arrowStyle?: CSSProp;
   hierarchyLineStyle?: CSSProp;
@@ -1020,13 +1024,19 @@ function TreeListItem<T extends TreeListItem>({
         role="button"
         data-group-id={groupId}
         aria-label="tree-list-item"
-        $style={styles?.itemStyle}
+        $style={
+          typeof styles?.itemStyle === "function"
+            ? styles?.itemStyle(level)
+            : styles?.itemStyle
+        }
         $isSelected={isSelected.includes(item.id)}
         aria-expanded={isOpen[item.id]}
         $showHierarchyLine={showHierarchyLine}
         data-selected={isSelected.includes(item.id)}
         data-has-options={item?.className?.includes("has-group-options")}
         data-highlighted={item?.className?.includes("is-highlighted")}
+        data-first={index === 0}
+        data-last={index === item?.items?.length - 1}
         onKeyDown={(e) => {
           onKeyDownItem?.({ event: e, item });
         }}
@@ -1154,6 +1164,7 @@ function TreeListItem<T extends TreeListItem>({
           onMouseEnterItem?.({ event: e, item });
         }}
         $level={level + 1}
+        data-level={level}
       >
         {item.iconOnActive && isSelected.includes(item.id) ? (
           <item.iconOnActive

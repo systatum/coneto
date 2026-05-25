@@ -45,6 +45,7 @@ export interface FieldLaneProps {
   required?: boolean;
   className?: string;
   id?: string;
+  mobile?: boolean;
 }
 
 export interface FieldLaneStyles {
@@ -103,6 +104,7 @@ function FieldLane({
   labelWidth,
   required,
   className,
+  mobile,
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
@@ -380,6 +382,10 @@ function FieldLane({
       }
       $disabled={disabled}
       $style={css`
+        ${mobile &&
+        css`
+          user-select: none;
+        `}
         ${styles?.containerStyle}
       `}
     >

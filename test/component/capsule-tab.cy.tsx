@@ -15,15 +15,17 @@ describe("Capsule Tab", () => {
   function ProductCapsuleTab({
     withCallback,
     styles,
+    tabs,
   }: {
     styles?: CapsuleTabStyles;
     withCallback?: boolean;
+    tabs?: CapsuleTabTab[];
   }) {
     const [activeTab, setActiveTab] = useState("2");
 
     return (
       <CapsuleTab
-        tabs={TABS_ITEMS}
+        tabs={tabs ? tabs : TABS_ITEMS}
         activeTab={activeTab}
         onTabChange={
           withCallback
@@ -144,6 +146,50 @@ describe("Capsule Tab", () => {
         cy.findByLabelText("capsule")
           .should("have.css", "justify-content", "normal")
           .and("have.css", "width", "458px");
+      });
+    });
+
+    context("hidden", () => {
+      context("when given true", () => {
+        it("should hidden on the tabs", () => {
+          cy.mount(
+            <ProductCapsuleTab
+              tabs={[
+                { id: "1", title: "Write", content: "Write Tab" },
+                {
+                  id: "2",
+                  title: "Review",
+                  content: "Review Tab",
+                  hidden: true,
+                },
+              ]}
+            />
+          );
+
+          cy.findByText("Write").should("exist");
+          cy.findByText("Review").should("not.exist");
+        });
+      });
+
+      context("when given false", () => {
+        it("should renders on the tabs", () => {
+          cy.mount(
+            <ProductCapsuleTab
+              tabs={[
+                { id: "1", title: "Write", content: "Write Tab" },
+                {
+                  id: "2",
+                  title: "Review",
+                  content: "Review Tab",
+                  hidden: false,
+                },
+              ]}
+            />
+          );
+
+          cy.findByText("Write").should("exist");
+          cy.findByText("Review").should("exist");
+        });
       });
     });
   });

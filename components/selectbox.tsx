@@ -40,8 +40,10 @@ import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
-interface BaseSelectboxProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
+interface BaseSelectboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "children"
+> {
   options?: SelectboxOption[];
   navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
@@ -61,6 +63,7 @@ interface BaseSelectboxProps
   showError?: boolean;
   maxSelectableItems?: number | undefined;
   isLoading?: boolean;
+  mobile?: boolean;
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
@@ -144,6 +147,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       disabled,
       className,
       navigableOptions,
+      mobile,
       ...props
     },
     ref
@@ -406,12 +410,33 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
     };
 
+    // Sync highlightedIndex to the selected option's position when the dropdown open
     useEffect(() => {
-      if (isOpen && listRef.current[highlightedIndex]) {
+      if (isOpen) {
+        if (finalSelectedOptions.length > 0) {
+          const offset = actions?.length ?? 0;
+          const idx = (navigableOptions ?? finalOptions).findIndex(
+            (opt) => String(opt.value) === finalSelectedOptions[0]
+          );
+          setHighlightedIndex(idx !== -1 ? idx + offset : 0);
+        } else {
+          setHighlightedIndex(0);
+        }
+      }
+    }, [isOpen]);
+
+    // Scroll the highlighted item into view on keyboard navigation
+    useEffect(() => {
+      if (
+        isOpen &&
+        listRef.current[highlightedIndex] &&
+        finalSelectedOptions?.length > 0
+      ) {
         listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
       }
-    }, [highlightedIndex, isOpen]);
+    }, [highlightedIndex, isOpen, finalSelectedOptions]);
 
+    // Reset search text when the dropdown closes in multiple mode
     useEffect(() => {
       if (!isOpen && multiple) {
         setSelectedOptionsLocal({
@@ -503,9 +528,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           onKeyDown={(e) => {
             handleKeyDown(e);
           }}
-          readOnly={multiple}
+          readOnly={multiple || mobile}
           onMouseDown={() => {
-            if (strict) {
+            if (strict || mobile) {
               if (!isOpen) {
                 setIsOpen(true);
               }
@@ -517,10 +542,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           onFocus={() => {
             if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
+
             setIsOpen(true);
           }}
           onBlur={() => {
             setIsFocused(false);
+
             if (!multiple) {
               setHasInteracted(false);
             }
@@ -620,7 +647,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 );
 
 export interface SelectboxProps
-  extends Omit<BaseSelectboxProps, "styles">,
+  extends
+    Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
   styles?: SelectboxStyles;
 }
@@ -644,6 +672,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelWidth,
       labelPosition,
       className,
+      mobile,
       ...rest
     } = props;
     const inputId = StatefulForm.sanitizeId({
@@ -661,6 +690,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
+        mobile={mobile}
         className={
           hasCombo || hasDatebox
             ? className
@@ -687,6 +717,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           id={inputId}
           actions={actions}
           showError={showError}
+          mobile={mobile}
           disabled={disabled}
           styles={{
             self: css`
