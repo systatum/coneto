@@ -4,8 +4,6 @@ import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
 import { TipMenuVariant } from "./../components/tip-menu";
 
-export type ThemeMode = "light" | "dark";
-
 // body
 export interface BodyThemeConfig {
   backgroundColor?: string;
@@ -44,8 +42,10 @@ export interface ActionButtonThemeConfig extends BodyThemeConfig {
 }
 
 // avatar.tsx
-export interface AvatarThemeConfig
-  extends Omit<BodyThemeConfig, "backgroundColor"> {
+export interface AvatarThemeConfig extends Omit<
+  BodyThemeConfig,
+  "backgroundColor"
+> {
   overlayBackgroundColor?: string;
   overlayIconColor?: string;
 }
@@ -141,16 +141,20 @@ export interface ChipsThemeConfig extends BodyThemeConfig {
 }
 
 // choice-group.tsx
-export interface ChoiceGroupThemeConfig
-  extends Omit<BodyThemeConfig, "textColor"> {
+export interface ChoiceGroupThemeConfig extends Omit<
+  BodyThemeConfig,
+  "textColor"
+> {
   dividerColor?: string;
   labelColor?: string;
   descriptionColor?: string;
 }
 
 // checkbox.tsx
-export interface CheckboxThemeConfig
-  extends Omit<BodyThemeConfig, "textColor"> {
+export interface CheckboxThemeConfig extends Omit<
+  BodyThemeConfig,
+  "textColor"
+> {
   checkedBorderColor?: string;
   checkedBackgroundColor?: string;
   iconColor?: string;
@@ -193,8 +197,10 @@ export interface ColorboxThemeConfig extends BodyThemeConfig {
 }
 
 // crumb.tsx
-export interface CrumbThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor" | "backgroundColor"> {
+export interface CrumbThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor" | "backgroundColor"
+> {
   hoverColor?: string;
   lastTextColor?: string;
   arrowColor?: string;
@@ -209,8 +215,10 @@ export interface DialogThemeConfig extends BodyThemeConfig {
 }
 
 // document-viewer.tsx
-export interface DocumentViewerThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface DocumentViewerThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   toolbarBackgroundColor?: string;
   errorColor?: string;
   hoverBoxTextColor?: string;
@@ -243,8 +251,10 @@ export interface ErrorSlateThemeConfig {
 }
 
 // field-lane.tsx
-export interface FieldLaneThemeConfig
-  extends Omit<BodyThemeConfig, "backgroundColor"> {
+export interface FieldLaneThemeConfig extends Omit<
+  BodyThemeConfig,
+  "backgroundColor"
+> {
   buttonTextColor?: string;
   buttonBorderColor?: string;
   buttonErrorTextColor?: string;
@@ -376,8 +386,10 @@ export interface LoadingSpinnerThemeConfig {
 }
 
 // messagebox.tsx
-export interface MessageboxVariantTheme
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface MessageboxVariantTheme extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   activeColor: string;
 }
 
@@ -593,8 +605,10 @@ export interface StatusbarThemeConfig extends BodyThemeConfig {
   };
 }
 
-export interface StatefulFormThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface StatefulFormThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   rowFrameBackgroundColor: string;
 }
 
@@ -721,8 +735,10 @@ export interface ToolbarThemeConfig extends BodyThemeConfig {
 }
 
 // tip-menu.tsx
-export interface TipMenuThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface TipMenuThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
@@ -730,8 +746,10 @@ export interface TipMenuThemeConfig
 }
 
 // treelist.tsx
-export interface TreeListThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface TreeListThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   hoverBackgroundColor?: string;
   selectedBackgroundColor?: string;
 
@@ -745,8 +763,10 @@ export interface TreeListThemeConfig
 }
 
 // split-pane.tsx
-export interface SplitPaneThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface SplitPaneThemeConfig extends Omit<
+  BodyThemeConfig,
+  "borderColor"
+> {
   dividerColor?: string;
 }
 
@@ -837,3 +857,5 @@ export interface AppTheme {
 
 export * from "./provider";
 export * from "./mode";
+export * from "./registry";
+export * from "./create-theme";
