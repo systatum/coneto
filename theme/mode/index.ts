@@ -6,4 +6,6 @@ export const themes = {
   dark: darkTheme,
 };
 
+export type ThemeMode = keyof typeof themes;
+
 export * from "./creator";
