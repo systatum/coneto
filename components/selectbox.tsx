@@ -530,7 +530,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           }}
           readOnly={multiple || mobile}
           onMouseDown={() => {
-            if (strict) {
+            if (strict || mobile) {
               if (!isOpen) {
                 setIsOpen(true);
               }
