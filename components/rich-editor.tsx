@@ -400,22 +400,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let processedValue = preprocessMarkdown(data);
-
-        let html = await marked.parse(processedValue);
+        let html = await marked.parse(value);
 
         html = splitBrIntoParagraphs(html);
-
-        html = html.replace(
-          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
-          "<p><br></p>"
-        );
-
-        // Also strip any placeholder that leaked into a text paragraph
-        html = html.replace(
-          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
-          "<br></p><p>"
-        );
 
         const temp = document.createElement("p");
         temp.innerHTML = html;
@@ -563,27 +550,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         let html: string;
 
-        let processedValue = preprocessMarkdown(value);
-        console.log("PROCESSED:", processedValue);
-
-        html = await marked.parse(processedValue);
-        console.log("HTML:", html);
+        html = value?.trim() ? await marked.parse(value) : `<p>${value}</p>`;
 
         if (!isMounted || !editorRef.current) return;
 
         html = splitBrIntoParagraphs(html);
-
-        html = html.replace(
-          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
-          "<p><br></p>"
-        );
-        html = html.replace(
-          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
-          "<br></p><p>"
-        );
-
-        // replace padding left for legal document
-        html = html.replace(/<p>( {4,})/g, '<p style="padding-left: 0.8rem">');
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -2029,8 +2000,7 @@ const EditorArea = styled.div<{
 
   pre[data-monaco-hydrated]:not([data-monaco-block-id]),
   pre[data-monaco-hydrated]:not([data-monaco-block-id]) code {
-    font-family: inherit;
-    font-size: inherit;
+    padding-bottom: 0.5rem;
   }
 
   ${({ $mode }) =>
@@ -2066,8 +2036,12 @@ const EditorArea = styled.div<{
   }
 
   li {
-    padding-left: 0 !important;
     display: list-item !important;
+    padding: 0 !important;
+  }
+
+  li p {
+    padding: 0.25rem 0;
   }
 
   h1 {
@@ -2085,8 +2059,9 @@ const EditorArea = styled.div<{
     margin: 0.4em 0;
   }
 
-  p {
+  p:not(li p) {
     min-height: 24px;
+    padding-bottom: 0.5rem;
   }
 
   ${({ $editorStyle }) => $editorStyle};
@@ -2362,40 +2337,6 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
       sel.addRange(newRange);
     }
   }
-};
-
-// Processes all input provided in the editor
-const EMPTY_P_PLACEHOLDER = "EMPTY_PARAGRAPH_PLACEHOLDER";
-
-const preprocessMarkdown = (markdown: string) => {
-  const parts = markdown.split(/(```[\s\S]*?```)/g);
-
-  const processed = parts.map((part, i) => {
-    if (i % 2 === 1) return part;
-
-    let result = part;
-
-    // After a code block, strip all leading newlines and replace with
-    // a clean placeholder separator so marked puts them in separate <p>s
-
-    return result
-      .replace(/\n(\n+)/g, (_, extraNewlines) => {
-        const emptyParagraphs = `\n\n${EMPTY_P_PLACEHOLDER}`.repeat(
-          extraNewlines.length
-        );
-        return "\n" + emptyParagraphs;
-      })
-      .replace(
-        new RegExp(`(${EMPTY_P_PLACEHOLDER})\n([a-zA-Z])`, "g"),
-        `$1\n\n$2`
-      )
-      .replace(
-        /^(\s*(?:[*\-+]|\d+\.)\s+[^\n]+)\n(?![\s*\-+\d<\n])([^\n]+)/gm,
-        "$1\n\n$2"
-      );
-  });
-
-  return processed.join("");
 };
 
 const splitBrIntoParagraphs = (html: string): string => {
