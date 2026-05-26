@@ -129,6 +129,7 @@ export type RichEditorToolbarPosition =
 
 export const RichEditorMode = {
   ViewOnly: "view-only",
+  ViewOnlyPlainText: "view-only-plain-text",
   PageEditor: "page-editor",
   TextEditor: "text-editor",
   CodeEditor: "code-editor",
@@ -497,7 +498,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     });
 
     const updateFormatStates = () => {
-      if (!editorRef.current || mode === "view-only") return;
+      if (
+        !editorRef.current ||
+        mode === "view-only" ||
+        mode === "view-only-plain-text"
+      )
+        return;
 
       const sel = window.getSelection();
       if (!sel || !sel.rangeCount) return;
@@ -524,7 +530,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     useEffect(() => {
       const editor = editorRef.current;
-      if (!editor || mode === "view-only") return;
+      if (!editor || mode === "view-only" || mode === "view-only-plain-text")
+        return;
 
       const handleSelectionChange = () => {
         setTimeout(updateFormatStates, 0);
@@ -561,21 +568,38 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const initializeEditor = async () => {
         if (!editorRef.current || editorRef.current.innerHTML.trim()) return;
 
-        let processedValue = preprocessMarkdown(value);
-        let html = await marked.parse(processedValue);
+        let html: string;
+
+        if (mode === "view-only-plain-text") {
+          html = value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .split("\n")
+            .map(
+              (line) =>
+                `<p style="white-space: pre-wrap;">${line || "<br>"}</p>`
+            )
+            .join("");
+        } else {
+          let processedValue = preprocessMarkdown(value);
+          html = await marked.parse(processedValue);
+
+          if (!isMounted || !editorRef.current) return;
+
+          html = splitBrIntoParagraphs(html);
+
+          html = html.replace(
+            new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
+            "<p><br></p>"
+          );
+          html = html.replace(
+            new RegExp(EMPTY_P_PLACEHOLDER, "g"),
+            "<br></p><p>"
+          );
+        }
 
         if (!isMounted || !editorRef.current) return;
-
-        html = splitBrIntoParagraphs(html);
-
-        html = html.replace(
-          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
-          "<p><br></p>"
-        );
-        html = html.replace(
-          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
-          "<br></p><p>"
-        );
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -619,7 +643,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       }
 
-      const isViewOnly = mode === "view-only";
+      const isViewOnly =
+        mode === "view-only" || mode === "view-only-plain-text";
 
       textNodesToProcess.forEach((textNode) => {
         if (!textNode.parentNode || !textNode.nodeValue) return;
@@ -796,7 +821,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-      if (mode === "view-only") {
+      if (mode === "view-only" || mode === "view-only-plain-text") {
         const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
 
         if (!isCopy) {
@@ -1609,7 +1634,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           `,
         }}
         leftSidePanel={
-          mode !== "view-only" && (
+          mode !== "view-only" &&
+          mode !== "view-only-plain-text" && (
             <>
               <RichEditorToolbarButton
                 ariaLabel="rich-editor-toolbar-bold"
@@ -1690,6 +1716,24 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           $mode={mode}
           $height={height}
           $autogrow={autogrow}
+          onPaste={(e) => {
+            if (mode === "view-only" || mode === "view-only-plain-text") return;
+
+            e.preventDefault();
+
+            const html = e.clipboardData.getData("text/html");
+            const plain = e.clipboardData.getData("text/plain");
+
+            const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
+              html
+            );
+
+            if (!html || hasCodeColors) {
+              document.execCommand("insertText", false, plain);
+            } else {
+              document.execCommand("insertHTML", false, html);
+            }
+          }}
           onInput={() => {
             if (mode !== "view-only") {
               if (editorRef.current) {
@@ -1991,7 +2035,7 @@ const EditorArea = styled.div<{
         : css`
             padding-bottom: 45px;
           `
-      : $mode !== "view-only"
+      : $mode !== "view-only" && $mode !== "view-only-plain-text"
         ? $toolbarPosition === "top"
           ? css`
               margin-top: 37px;
@@ -2002,7 +2046,7 @@ const EditorArea = styled.div<{
         : ""};
 
   ${({ $mode }) =>
-    $mode === "view-only" &&
+    ($mode === "view-only" || $mode === "view-only-plain-text") &&
     css`
       padding: 12px;
       user-select: text;
