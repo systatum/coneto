@@ -632,15 +632,24 @@ describe("RichEditor", () => {
             );
             cy.findByRole("textbox").then(($el) => {
               const el = $el[0];
-
               const doc = el.ownerDocument!;
               const sel = doc.getSelection()!;
               const range = doc.createRange();
 
-              const textNode = el.firstChild!;
-              const textLength = textNode.textContent!.length;
+              let textNode: Text | null = null;
 
-              range.setStart(textNode, textLength - 2);
+              const walker = doc.createTreeWalker(
+                el,
+                NodeFilter.SHOW_TEXT,
+                null
+              );
+              textNode = walker.nextNode() as Text | null;
+
+              if (!textNode) return;
+
+              const textLength = textNode.textContent?.length ?? 0;
+
+              range.setStart(textNode, Math.max(0, textLength - 2));
               range.setEnd(textNode, textLength);
 
               sel.removeAllRanges();
