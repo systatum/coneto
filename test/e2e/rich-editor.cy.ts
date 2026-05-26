@@ -46,18 +46,19 @@ describe("RichEditor", () => {
     context(".insertMarkdownContent", () => {
       it("renders content on editor", () => {
         cy.findByText("Markdown Example").click();
-        const contentHTML = `<h3>Hello there!</h3>
+        const contentHTML = `<p><h3>Hello there!</h3>
 <p>${sentences}</p>
-<p><br></p><p>This is ordered list</p>
+<p>This is ordered list</p>
 <ol>
 <li><input type="checkbox" class="coneto-checkbox-wrapper" contenteditable="false" data-checked="false" style="cursor: pointer;"> test</li>
 <li><input type="checkbox" class="coneto-checkbox-wrapper" contenteditable="false" data-checked="true" style="cursor: pointer;"> test</li>
 </ol>
-<p><br></p><p>This is unordered list</p>
+<p>This is unordered list</p>
 <ul>
 <li>test</li>
 <li>test</li>
-</ul>`;
+</ul>
+</p>`;
         cy.findAllByRole("textbox").eq(0).should("contain.html", contentHTML);
         cy.findAllByRole("button").eq(6).click();
 
