@@ -4,8 +4,6 @@ import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
 import { TipMenuVariant } from "./../components/tip-menu";
 
-export type ThemeMode = "light" | "dark";
-
 // body
 export interface BodyThemeConfig {
   backgroundColor?: string;
@@ -863,3 +861,5 @@ export interface AppTheme {
 
 export * from "./provider";
 export * from "./mode";
+export * from "./registry";
+export * from "./create-theme";

@@ -4,11 +4,10 @@ import "./commands";
 import "@testing-library/cypress/add-commands";
 import "cypress-real-events";
 import { ThemeProvider } from "./../../theme/provider";
-import { themes } from "./../../theme/mode";
 import React, { ReactNode } from "react";
 
 type CustomMountOptions = MountOptions & {
-  mode?: "light" | "dark";
+  mode?: "light" | "dark" | string;
 };
 
 const mountWithTheme = (
@@ -20,7 +19,7 @@ const mountWithTheme = (
   document.body.setAttribute("data-theme", mode);
 
   return mount(
-    <ThemeProvider themes={themes} mode={mode}>
+    <ThemeProvider mode={mode}>
       <div data-theme={mode}>{component}</div>
     </ThemeProvider>,
     options

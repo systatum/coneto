@@ -106,7 +106,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
   dividerColor: "#6b7280",
 });
 
-const darkActionButton = createActionButtonTheme(darkBody, {
+const darkActionButton = createActionButtonTheme({
   backgroundColor: "transparent",
   textColor: "#f9fafb",
   hoverBackgroundColor: "#292c2e",
@@ -344,7 +344,7 @@ const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   mobileGroupBackgroundColor: "#2a2a2a",
 });
 
-export const darkCrumb = createCrumbTheme(darkBody, {
+const darkCrumb = createCrumbTheme(darkBody, {
   hoverColor: darkButton?.primary?.hoverBackgroundColor,
   textColor: "rgb(160, 160, 160)",
   arrowColor: "#9ca3af",
@@ -441,7 +441,7 @@ const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
   iconColor: "#9ca3af",
 });
 
-const darkKeynote = createKeynoteTheme(darkBody, {
+const darkKeynote = createKeynoteTheme({
   keyColor: "rgb(243, 244, 246)",
   valueColor: "#f3f4f6",
 });
@@ -728,7 +728,7 @@ const darkTitle = createTitleTheme(darkBody, {
   },
 });
 
-const darkThumbField = createThumbFieldTheme(darkBody, {
+const darkThumbField = createThumbFieldTheme({
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
   inactiveColor: "#6b7280",
@@ -863,4 +863,74 @@ export const darkTheme: AppTheme = {
   tooltip: darkTooltip,
   treelist: darkTreeList,
   wheel: darkWheel,
+};
+
+export {
+  darkActionButton,
+  darkActionCapsule,
+  darkAvatar,
+  darkBadge,
+  darkBody,
+  darkBoxbar,
+  darkButton,
+  darkButtonTipMenuContainer,
+  darkCalendar,
+  darkCapsule,
+  darkCapsuleTab,
+  darkCard,
+  darkChips,
+  darkChoiceGroup,
+  darkCheckbox,
+  darkColorbox,
+  darkCombobox,
+  darkCrumb,
+  darkDialog,
+  darkDocumentViewer,
+  darkDormantText,
+  darkDrawerTab,
+  darkErrorSlate,
+  darkFieldLane,
+  darkFileInputBox,
+  darkFileDropBox,
+  darkFrame,
+  darkGrid,
+  darkImagebox,
+  darkKeynote,
+  darkList,
+  darkLoadingSkeleton,
+  darkLoadingSpinner,
+  darkMessagebox,
+  darkMoneybox,
+  darkModalDialog,
+  darkNavTab,
+  darkOverlayBlocker,
+  darkPaperDialog,
+  darkPagination,
+  darkPinbox,
+  darkPhonebox,
+  darkRadio,
+  darkRating,
+  darkRichEditor,
+  darkSearchbox,
+  darkSelectbox,
+  darkSeparator,
+  darkSidebar,
+  darkSignbox,
+  darkStatusbar,
+  darkStatefulForm,
+  darkStepline,
+  darkSplitPane,
+  darkTable,
+  darkTextarea,
+  darkTextbox,
+  darkTimebox,
+  darkTimeline,
+  darkTipMenu,
+  darkTitle,
+  darkThumbField,
+  darkToggle,
+  darkToolbar,
+  darkTooltip,
+  darkTreeList,
+  darkWheel,
 };

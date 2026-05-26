@@ -22,7 +22,7 @@ import {
   StatefulForm,
   StatefulOnChangeType,
 } from "./stateful-form";
-import { BodyThemeConfig } from "./../theme";
+import { BodyThemeConfig, ThemeMode } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { darkenColor, lightenColor } from "./../lib/color";
 
@@ -833,7 +833,7 @@ const FormBody = styled.div`
 
 const Footer = styled.div<{
   $theme?: BodyThemeConfig;
-  $mode: "light" | "dark";
+  $mode: ThemeMode | string;
 }>`
   display: flex;
   flex-direction: row;

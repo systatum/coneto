@@ -136,7 +136,7 @@ const lightGrid = createGridTheme(lightBody);
 
 const lightImagebox = createImageboxTheme(lightBody, lightFieldLane);
 
-const lightKeynote = createKeynoteTheme(lightBody);
+const lightKeynote = createKeynoteTheme();
 
 const lightList = createListTheme(lightBody);
 
@@ -219,7 +219,7 @@ const lightToolbar = createToolbarTheme({
 
 const lightTooltip = createTooltipTheme();
 
-const lightThumbField = createThumbFieldTheme(lightBody);
+const lightThumbField = createThumbFieldTheme();
 
 const lightTreeList = createTreeListTheme(lightBody);
 
@@ -297,4 +297,74 @@ export const lightTheme: AppTheme = {
   tooltip: lightTooltip,
   treelist: lightTreeList,
   wheel: lightWheel,
+};
+
+export {
+  lightActionButton,
+  lightActionCapsule,
+  lightAvatar,
+  lightBadge,
+  lightBody,
+  lightBoxbar,
+  lightButton,
+  lightButtonTipMenuContainer,
+  lightCalendar,
+  lightCapsule,
+  lightCapsuleTab,
+  lightCard,
+  lightChips,
+  lightChoiceGroup,
+  lightCheckbox,
+  lightColorbox,
+  lightCombobox,
+  lightCrumb,
+  lightDialog,
+  lightDocumentViewer,
+  lightDormantText,
+  lightDrawerTab,
+  lightErrorSlate,
+  lightFieldLane,
+  lightFileInputBox,
+  lightFileDropBox,
+  lightFrame,
+  lightGrid,
+  lightImagebox,
+  lightKeynote,
+  lightList,
+  lightLoadingSkeleton,
+  lightLoadingSpinner,
+  lightMessagebox,
+  lightMoneybox,
+  lightModalDialog,
+  lightNavTab,
+  lightOverlayBlocker,
+  lightPaperDialog,
+  lightPagination,
+  lightPinbox,
+  lightPhonebox,
+  lightRadio,
+  lightRating,
+  lightRichEditor,
+  lightSearchbox,
+  lightSelectbox,
+  lightSeparator,
+  lightSidebar,
+  lightSignbox,
+  lightStatusbar,
+  lightStatefulForm,
+  lightStepline,
+  lightSplitPane,
+  lightTable,
+  lightTextarea,
+  lightTextbox,
+  lightTimebox,
+  lightTimeline,
+  lightTipMenu,
+  lightTitle,
+  lightThumbField,
+  lightToggle,
+  lightToolbar,
+  lightTooltip,
+  lightTreeList,
+  lightWheel,
 };

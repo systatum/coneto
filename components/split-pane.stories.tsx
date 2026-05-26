@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { css } from "styled-components";
 import { Textarea } from "./textarea";
 import { TableColumn, Table } from "./table";
-import { useTheme } from "../theme/provider";
+import { ThemeMode, useTheme } from "./../theme";
 
 const meta: Meta<typeof SplitPane> = {
   title: "Content/SplitPane",
@@ -346,7 +346,7 @@ export const WithCellRef: Story = {
   },
 };
 
-const getSplitPaneBg = (title: string, mode: "light" | "dark") => {
+const getSplitPaneBg = (title: string, mode: ThemeMode | string) => {
   if (title === "Left") {
     return mode === "dark" ? "#7f1d1d" : "#fee2e2";
   } else if (title === "Right") {
