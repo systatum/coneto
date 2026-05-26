@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ScreenTransition, ScreenProps } from "./screen-transition";
 import { Title } from "./title";
 import { RiArrowLeftSLine } from "@remixicon/react";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { Button } from "./button";
 import { useTheme } from "./../theme";
 
@@ -88,9 +88,9 @@ export const Default: Story = {
       return (
         <ScreenTransition>
           {({ gotoPrevScreen }) => (
-            <>
+            <Wrapper>
               <PageTitle text="Page C" gotoPrevScreen={gotoPrevScreen} />
-            </>
+            </Wrapper>
           )}
         </ScreenTransition>
       );
@@ -100,19 +100,12 @@ export const Default: Story = {
       return (
         <ScreenTransition nextScreen={PageC}>
           {({ gotoPrevScreen, gotoNextScreen }) => (
-            <>
+            <Wrapper>
               <PageTitle text="Page B" gotoPrevScreen={gotoPrevScreen} />
-              <Button
-                styles={{
-                  containerStyle: css`
-                    margin-top: 10px;
-                  `,
-                }}
-                onClick={gotoNextScreen ?? undefined}
-              >
+              <Button onClick={gotoNextScreen ?? undefined}>
                 Go to Page C
               </Button>
-            </>
+            </Wrapper>
           )}
         </ScreenTransition>
       );
@@ -122,19 +115,12 @@ export const Default: Story = {
       return (
         <ScreenTransition nextScreen={PageB}>
           {({ gotoNextScreen }) => (
-            <>
+            <Wrapper>
               <PageTitle text="Page A" gotoPrevScreen={null} />
-              <Button
-                styles={{
-                  containerStyle: css`
-                    margin-top: 14px;
-                  `,
-                }}
-                onClick={gotoNextScreen ?? undefined}
-              >
+              <Button onClick={gotoNextScreen ?? undefined}>
                 Go to Page B
               </Button>
-            </>
+            </Wrapper>
           )}
         </ScreenTransition>
       );
@@ -143,3 +129,9 @@ export const Default: Story = {
     return <PageA />;
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`;
