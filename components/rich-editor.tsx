@@ -564,7 +564,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html: string;
 
         let processedValue = preprocessMarkdown(value);
+        console.log("PROCESSED:", processedValue);
+
         html = await marked.parse(processedValue);
+        console.log("HTML:", html);
 
         if (!isMounted || !editorRef.current) return;
 
@@ -578,6 +581,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           new RegExp(EMPTY_P_PLACEHOLDER, "g"),
           "<br></p><p>"
         );
+
+        // replace padding left for legal document
+        html = html.replace(/<p>( {4,})/g, '<p style="padding-left: 0.8rem">');
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -2373,7 +2379,6 @@ const preprocessMarkdown = (markdown: string) => {
     // a clean placeholder separator so marked puts them in separate <p>s
 
     return result
-      .replace(/([^\n])\n(?![ ]{4})([a-zA-Z])/g, "$1\n\n$2")
       .replace(/\n(\n+)/g, (_, extraNewlines) => {
         const emptyParagraphs = `\n\n${EMPTY_P_PLACEHOLDER}`.repeat(
           extraNewlines.length
