@@ -1,5 +1,14 @@
-import React, { createContext, ReactNode, useContext, useRef } from "react";
+import React, {
+  cloneElement,
+  createContext,
+  isValidElement,
+  ReactNode,
+  useContext,
+  useRef,
+} from "react";
 import { PaperDialog, PaperDialogRef } from "./paper-dialog";
+import { css } from "styled-components";
+
 export interface ScreenProps {
   gotoNextScreen: (() => void) | null;
   gotoPrevScreen: (() => void) | null;
@@ -21,25 +30,36 @@ function ScreenTransition({
 
   const dialogRef = useRef<PaperDialogRef>(null);
 
+  const injectedProps: ScreenProps = {
+    gotoNextScreen: NextScreen
+      ? () => {
+          dialogRef?.current?.openDialog();
+        }
+      : null,
+    gotoPrevScreen: parentDialogRef
+      ? () => {
+          parentDialogRef?.current?.minimizeDialog();
+
+          setTimeout(() => {
+            parentDialogRef?.current?.closeDialog();
+          }, 400);
+        }
+      : null,
+  };
+
   return (
     <ParentDialogContext.Provider value={dialogRef}>
       {typeof children === "function"
-        ? children({
-            gotoNextScreen: NextScreen
-              ? () => {
-                  dialogRef?.current?.openDialog();
-                }
-              : null,
-            gotoPrevScreen: () => {
-              parentDialogRef?.current?.minimizeDialog();
-
-              setTimeout(() => {
-                parentDialogRef?.current?.closeDialog();
-              }, 400);
-            },
-          })
-        : children}
+        ? children(injectedProps)
+        : isValidElement(children)
+          ? cloneElement(children, injectedProps)
+          : children}
       <PaperDialog
+        styles={{
+          contentStyle: css`
+            gap: 0px;
+          `,
+        }}
         ref={dialogRef}
         closable={false}
         controls={[]}
