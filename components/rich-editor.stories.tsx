@@ -784,14 +784,14 @@ export default Content
   },
 };
 
-export const ViewOnlyPlainText: Story = {
+export const LegalDocument: Story = {
   render: () => {
     return (
       <RichEditor
         height={700}
-        mode="view-only-plain-text"
-        value={`                              Systatum Antrikan License
-                                        Version 1.0, 2026
+        mode="view-only"
+        value={`                                Systatum Antrikan License
+                                    Version 1.0, 2026
                              https://systatum.com/licenses/
 
 TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
@@ -799,7 +799,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 1.  Definitions.
 
     "License" shall mean the terms and conditions for use, reproduction,
-    and distribution as defined by Sections 1 through 9 of this document.
+    and distribution as defined by Sections 1 through 9 of this document.   
 
     "Licensor" shall mean Systatum and any entity authorized by Systatum
     that is granting the License.
