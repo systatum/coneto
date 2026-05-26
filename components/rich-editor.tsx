@@ -388,7 +388,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      insertMarkdownContent: async (data: string) => {
+      insertMarkdownContent: async (content: string) => {
         if (!editorRef.current) return;
 
         if (document.activeElement !== editorRef.current) {
@@ -400,7 +400,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let html = await marked.parse(value);
+        let html = await marked.parse(content);
 
         html = splitBrIntoParagraphs(html);
 
