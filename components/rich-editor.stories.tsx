@@ -783,3 +783,68 @@ export default Content
     );
   },
 };
+
+export const ViewOnlyPlainText: Story = {
+  render: () => {
+    return (
+      <RichEditor
+        height={700}
+        mode="view-only-plain-text"
+        value={`                              Systatum Antrikan License
+                                        Version 1.0, 2026
+                             https://systatum.com/licenses/
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1.  Definitions.
+
+    "License" shall mean the terms and conditions for use, reproduction,
+    and distribution as defined by Sections 1 through 9 of this document.
+
+    "Licensor" shall mean Systatum and any entity authorized by Systatum
+    that is granting the License.
+
+    "Legal Entity" shall mean the union of the acting entity and all
+    other entities that control, are controlled by, or are under common
+    control with that entity.
+
+    "You" (or "Your") shall mean an individual or Legal Entity
+    exercising permissions granted by this License.
+
+    "Work" shall mean the software, documentation, or other materials
+    made available under this License by the Licensor.
+
+2.  Grant of Copyright License.
+
+    Subject to the terms and conditions of this License, the Licensor
+    hereby grants to You a perpetual, worldwide, non-exclusive,
+    no-charge, royalty-free copyright license to reproduce, prepare
+    derivative works of, publicly display, and distribute the Work.
+
+3.  Redistribution.
+
+    You may reproduce and distribute copies of the Work in any medium,
+    with or without modifications, provided that You meet the following
+    conditions:
+
+    (a) You must give any other recipients of the Work a copy of this
+        License; and
+
+    (b) You must cause any modified files to carry prominent notices
+        stating that You changed the files; and
+
+    (c) You must retain, in the Work, all copyright, patent, trademark,
+        and attribution notices from the source form of the Work.
+
+4.  Limitation of Liability.
+
+    In no event shall the Licensor be liable to You for any damages,
+    including any direct, indirect, incidental, or consequential damages
+    of any character arising as a result of this License or out of the
+    use of the Work.
+
+END OF TERMS AND CONDITIONS`}
+      />
+    );
+  },
+};
