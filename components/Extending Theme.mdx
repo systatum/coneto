@@ -5,6 +5,13 @@ You can extend specific styles without rewriting the whole theme configuration.
 This is useful when you only want to customize a small part of an existing theme, such as changing button colors, text colors, borders, or backgrounds, while still keeping the default styles from the original theme.
 
 ```ts
+import {
+  createBodyTheme,
+  createButtonTheme,
+  createTheme,
+  darkButton,
+} from "@systatum/coneto/theme";
+
 const bodyTheme = {
   backgroundColor: "#fdebce",
   textColor: "#1a1008",
