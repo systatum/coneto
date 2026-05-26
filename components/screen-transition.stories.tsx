@@ -19,7 +19,7 @@ type Story = StoryObj<typeof ScreenTransition>;
 
 export const Default: Story = {
   render: () => {
-    const { currentTheme, mode } = useTheme();
+    const { currentTheme } = useTheme();
     const bodyTheme = currentTheme?.body;
 
     function PageTitle({
