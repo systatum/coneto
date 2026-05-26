@@ -1,0 +1,71 @@
+### Extending Theme 🎨
+
+You can extend specific styles without rewriting the whole theme configuration.
+
+This is useful when you only want to customize a small part of an existing theme, such as changing button colors, text colors, borders, or backgrounds, while still keeping the default styles from the original theme.
+
+```ts
+const bodyTheme = {
+  backgroundColor: "#fdebce",
+  textColor: "#1a1008",
+  borderColor: "#6b4c2a",
+};
+
+createTheme("parchment", "dark", {
+  body: createBodyTheme(bodyTheme),
+  button: createButtonTheme(
+    bodyTheme,
+    darkButton,
+    {
+      default: {
+        backgroundColor: "red",
+      },
+    },
+    {
+      default: {
+        backgroundColor: "pink",
+        textColor: "blue",
+      },
+    }
+  ),
+});
+```
+
+In this example:
+
+- `bodyTheme` defines the shared colors used by the theme
+- `createBodyTheme` creates the body styles from the shared theme values
+- `createButtonTheme` creates the button styles using the same theme values
+- The third argument extends the button container styles
+- The fourth argument extends the button text styles
+
+This lets you customize only the parts you need while keeping the default theme styles.
+
+### Using the Theme
+
+After creating the theme, you can use it directly with `Theme`.
+
+```tsx
+import { Theme, ThemeMode } from "@systatum/coneto/theme";
+
+function App() {
+  const [mode, setMode] = useState<ThemeMode | "parchment">("parchment");
+
+  return (
+    <Theme mode={mode}>
+      <Content setMode={setMode} />
+    </Theme>
+  );
+}
+```
+
+Themes created with `createTheme` are automatically registered globally, so you do not need to pass `themes` again into the provider.
+
+### Result
+
+<img
+  src="./extending-theme.png"
+  alt="@systatum/coneto extending theme example"
+/>
+
+This is the final result after applying the extended theme configuration.
