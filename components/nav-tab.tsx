@@ -193,6 +193,7 @@ function NavTab({
       id={id}
       className={applyClassName("nav-tab", className)}
       $style={styles?.containerStyle}
+      $theme={navTheme}
     >
       <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
         <NavTabTabsSection
@@ -461,7 +462,10 @@ function NavTab({
 
 const NavTabContainer = styled.div<{
   $style?: CSSProp;
+  $theme: NavTabThemeConfig;
 }>`
+  background-color: ${({ $theme }) => $theme.backgroundColor};
+  color: ${({ $theme }) => $theme.textColor};
   width: 100%;
   height: 100%;
   display: flex;
@@ -540,6 +544,7 @@ const NavTabTab = styled.div<{
   $size?: NavTabSize;
   $theme?: NavTabThemeConfig;
 }>`
+  color: ${({ $theme }) => $theme.textColor};
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -247,6 +247,7 @@ const StatusbarWrapper = styled.div<{
   $transparent?: boolean;
   $theme?: StatusbarThemeConfig;
 }>`
+  color: ${({ $theme }) => $theme.textColor};
   bottom: 0;
   left: 0;
   width: 100%;
