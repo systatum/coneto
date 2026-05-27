@@ -7,6 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 import { RiArrowRightSLine } from "@remixicon/react";
+import { expectTextIncludesOrderedLines } from "./../../test/support/commands";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
@@ -69,6 +70,51 @@ describe("RichEditor", () => {
   });
 
   context("mode", () => {
+    context("with view-only", () => {
+      const viewOnlyPlainTextValue = `                              Systatum Antrikan License
+                                        Version 1.0, 2026
+                             https://systatum.com/licenses/
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+1.  Definitions.
+
+    "License" shall mean the terms and conditions for use, reproduction,
+    and distribution as defined by Sections 1 through 9 of this document.`;
+      beforeEach(() => {
+        cy.mount(
+          <ProductRichEditor
+            mode="view-only"
+            height={400}
+            value={viewOnlyPlainTextValue}
+          />
+        );
+        cy.wait(600);
+      });
+
+      it("should not shows code editor", () => {
+        cy.findAllByLabelText("rich-editor-content")
+          .first()
+          .should("contain.text", "Systatum Antrikan License")
+          .and("contain.text", "Version 1.0, 2026")
+          .and("contain.text", "https://systatum.com/licenses/");
+
+        cy.findAllByLabelText("rich-editor-code").should("not.exist");
+      });
+
+      context("when typing the editor", () => {
+        it("should not change the value", () => {
+          cy.findByRole("textbox").type("{selectall}{backspace}test 123");
+
+          cy.findAllByLabelText("rich-editor-content")
+            .first()
+            .should("contain.text", "Systatum Antrikan License")
+            .and("contain.text", "Version 1.0, 2026")
+            .and("contain.text", "https://systatum.com/licenses/");
+        });
+      });
+    });
+
     context("with code-editor", () => {
       beforeEach(() => {
         cy.mount(<ProductRichEditor mode="code-editor" value="" />);

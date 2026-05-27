@@ -679,13 +679,20 @@ function hydrateFencedCodeEditors(
   if (!editorRef.current) return;
 
   editorRef.current.querySelectorAll("pre").forEach((pre) => {
-    // Skip if already hydrated
     if (pre.dataset.monacoHydrated) return;
-    pre.dataset.monacoHydrated = "true";
 
     const codeEl = pre.querySelector("code");
-    const rawCode = codeEl?.textContent ?? pre.textContent ?? "";
     const langClass = codeEl?.className ?? "";
+    const hasLangClass = /language-\w+/.test(langClass);
+
+    if (!hasLangClass) {
+      pre.dataset.monacoHydrated = "true";
+      return;
+    }
+
+    pre.dataset.monacoHydrated = "true";
+
+    const rawCode = codeEl?.textContent ?? pre.textContent ?? "";
     const langMatch = langClass.match(/language-(\w+)/);
     const lang = langMatch ? langMatch[1] : "plaintext";
 
