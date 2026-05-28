@@ -43,6 +43,8 @@ export function ThemeProvider({
     Record<string, AppTheme>
   >(() => themesContent ?? getRegistry());
 
+  document.body.setAttribute("data-theme", mode);
+
   useEffect(() => {
     // If a fixed themes override is provided, skip registry subscription
     if (themesContent) {
