@@ -213,6 +213,7 @@ function Dialog({
                 ${mobile &&
                 css`
                   padding: 20px 30px;
+                  user-select: none;
                 `};
               `,
             }}
@@ -309,6 +310,7 @@ const Wrapper = styled.div<{
   $isOpen: boolean;
   $style?: CSSProp;
   $theme?: DialogThemeConfig;
+  $mobile?: boolean;
 }>`
   position: fixed;
   top: 50%;
@@ -332,8 +334,9 @@ const Wrapper = styled.div<{
   color: ${({ $theme }) => $theme?.textColor ?? "inherit"};
   background: ${({ $theme }) => $theme?.backgroundColor};
   animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
+  user-select: ${({ $mobile }) => ($mobile ? "none" : "inherit")};
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const Body = styled.div<{ $style?: CSSProp }>`
