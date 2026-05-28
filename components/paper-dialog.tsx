@@ -634,6 +634,7 @@ const MiniTitleBar = styled(motion.div)<{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  user-select: none;
 `;
 
 const MiniDragPill = styled.div<{ $theme?: PaperDialogThemeConfig }>`
