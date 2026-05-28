@@ -82,6 +82,23 @@ describe("Dialog", () => {
       cy.findByLabelText("dialog-wrapper").should("have.css", "padding", "0px");
     });
 
+    it("renders with user select none", () => {
+      cy.mount(
+        <ProductDialog
+          icon={{
+            image: RiAB,
+          }}
+          mobile
+        />
+      );
+
+      cy.findByLabelText("dialog-wrapper").should(
+        "have.css",
+        "user-select",
+        "none"
+      );
+    });
+
     context("actions", () => {
       it("renders button full width", () => {
         cy.mount(

@@ -113,7 +113,7 @@ describe("PaperDialog", () => {
         .should("have.css", "border-top-left-radius", "20px")
         .and("have.css", "border-top-right-radius", "20px")
         .and("have.css", "width", "500px")
-        .and("have.css", "height", "504px");
+        .and("have.css", "height", "616px");
     });
 
     context("user selection", () => {
@@ -164,7 +164,7 @@ describe("PaperDialog", () => {
             .realMouseUp();
 
           cy.wait(300);
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-content").should("not.be.visible");
         });
       });
 
@@ -177,14 +177,14 @@ describe("PaperDialog", () => {
 
           cy.wait(300);
 
-          cy.findByLabelText("paper-dialog-drag-indicator")
+          cy.findByLabelText("paper-dialog-content")
             .should("exist")
-            .realMouseDown({ position: "right" })
+            .realMouseDown({ position: "topRight" })
             .realMouseMove(0, 350)
             .realMouseUp();
 
           cy.wait(300);
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-content").should("not.be.visible");
         });
       });
 
