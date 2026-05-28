@@ -1020,7 +1020,6 @@ export function createNavTabTheme(
       backgroundColor: body?.backgroundColor || "#ffffff",
       borderColor: "#e0e0e0",
       textColor: body.textColor,
-      contentBackgroundColor: body?.backgroundColor || "#ffffff",
 
       hoverBackgroundColor: "rgb(243 244 246 / 50%)",
       activeBackgroundColor: "rgb(243 244 246 / 80%)",

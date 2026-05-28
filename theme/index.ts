@@ -423,7 +423,6 @@ export interface ModalDialogThemeConfig extends DialogThemeConfig {
 
 // nav-tab.tsx
 export interface NavTabThemeConfig extends BodyThemeConfig {
-  contentBackgroundColor?: string;
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   selectedBackgroundColor?: string;
