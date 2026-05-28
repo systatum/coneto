@@ -9,8 +9,9 @@ import {
 import { Separator } from "./separator";
 import { motion, useDragControls, useMotionValue } from "framer-motion";
 import { Grid, GridPresetKey } from "./grid";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { applyClassName } from "./../constants/classname";
+import { LaunchpadThemeConfig, useTheme } from "./../theme";
 
 export interface LaunchpadProps {
   children: ReactNode;
@@ -50,6 +51,7 @@ export interface LaunchpadSectionItemProps {
 export interface LaunchpadSectionItemStyles {
   containerStyle?: CSSProp;
   iconStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 function Launchpad({
@@ -59,6 +61,9 @@ function Launchpad({
   className,
   id,
 }: LaunchpadProps) {
+  const { currentTheme } = useTheme();
+  const launchpadTheme = currentTheme?.launchpad;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [page, setPage] = useState(0);
@@ -116,6 +121,7 @@ function Launchpad({
       ref={containerRef}
       id={id}
       aria-label="launchpad"
+      $theme={launchpadTheme}
       className={applyClassName("launchpad", className)}
       onPointerDown={(e) => dragControls.start(e)}
       $containerStyle={styles?.self}
@@ -201,10 +207,13 @@ function LaunchpadSectionItem({
   styles,
   onClick,
 }: LaunchpadSectionItemProps) {
+  const { currentTheme } = useTheme();
+  const launchpadTheme = currentTheme?.launchpad;
   return (
     <LaunchpadSectionItemLink
+      $theme={launchpadTheme}
       onClick={(e) => onClick(e)}
-      $containerStyle={styles?.containerStyle}
+      $style={styles?.containerStyle}
       href={href}
     >
       {iconUrl && (
@@ -212,13 +221,18 @@ function LaunchpadSectionItem({
           <img width={400} height={400} src={iconUrl} />
         </LaunchpadSectionIconWrapper>
       )}
-      {label && <span>{label}</span>}
+      {label && (
+        <LaunchpadSectionLabel $style={styles?.labelStyle}>
+          {label}
+        </LaunchpadSectionLabel>
+      )}
     </LaunchpadSectionItemLink>
   );
 }
 
 const LaunchpadContainer = styled.div<{
   $containerStyle?: CSSProp;
+  $theme?: LaunchpadThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -234,7 +248,18 @@ const LaunchpadContainer = styled.div<{
     cursor: grabbing;
   }
 
+  ${({ $theme }) =>
+    $theme &&
+    css`
+      background-color: ${$theme?.backgroundColor};
+      color: ${$theme?.textColor};
+    `}
+
   ${({ $containerStyle }) => $containerStyle}
+`;
+
+const LaunchpadSectionLabel = styled.div<{ $style?: CSSProp }>`
+  ${({ $style }) => $style}
 `;
 
 const LaunchpadSectionGroup = styled.div`
@@ -291,7 +316,8 @@ const LaunchPadSectionSeparatorWrapper = styled.div<{
 `;
 
 const LaunchpadSectionItemLink = styled.a<{
-  $containerStyle: CSSProp;
+  $style: CSSProp;
+  $theme?: LaunchpadThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -307,11 +333,11 @@ const LaunchpadSectionItemLink = styled.a<{
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    border-color: #e5e7eb;
+    border-color: ${({ $theme }) => $theme?.borderColor};
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   }
 
-  ${({ $containerStyle }) => $containerStyle}
+  ${({ $style }) => $style}
 `;
 
 const LaunchpadSectionIconWrapper = styled.div<{
