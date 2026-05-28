@@ -87,6 +87,12 @@ export function useTheme() {
   };
 }
 
+function ThemedBody({ children }: { children: React.ReactNode }) {
+  const { currentTheme } = useTheme();
+
+  return <BodyWrapper $theme={currentTheme?.body}>{children}</BodyWrapper>;
+}
+
 export function Theme({
   mode,
   children,
@@ -96,11 +102,9 @@ export function Theme({
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
-  const theme = themesContent?.[mode];
-
   return (
     <ThemeProvider mode={mode} themes={themesContent}>
-      <BodyWrapper $theme={theme?.body}>{children}</BodyWrapper>
+      <ThemedBody>{children}</ThemedBody>
     </ThemeProvider>
   );
 }
