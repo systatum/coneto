@@ -4,8 +4,10 @@ import { useTheme } from "./../theme/provider";
 import { FrameThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 
-export interface FrameProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
+export interface FrameProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title" | "style"
+> {
   title?: string;
   children: React.ReactNode;
   styles?: FrameStyles;
@@ -59,6 +61,8 @@ const FrameContainer = styled.div<{
   border: 1px solid ${({ $theme }) => $theme?.borderColor || "#d1d5db"};
   box-shadow: ${({ $theme }) => $theme?.boxShadow || "var(--shadow-xs)"};
   background-color: ${({ $theme }) => $theme?.backgroundColor || "white"};
+  color: ${({ $theme }) => $theme?.textColor || "white"};
+
   ${({ $style }) => $style}
 `;
 

@@ -4,8 +4,10 @@ import { Checkbox } from "./checkbox";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 
-export interface GridProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+export interface GridProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "style"
+> {
   children?: ReactNode;
   height?: number | string;
   width?: number | string;
@@ -14,8 +16,10 @@ export interface GridProps
   preset?: GridPresetKey;
 }
 
-export interface GridCardProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+export interface GridCardProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "style"
+> {
   styles?: GridCardStyles;
   children?: ReactNode;
   thumbnail?: string;
@@ -83,7 +87,8 @@ function GridCard({
       $isSelected={isSelected}
       $selectable={selectable}
       className={applyClassName("grid-card", className)}
-      $backgroundColor={gridTheme.cardBackgroundColor}
+      $textColor={gridTheme.textColor}
+      $backgroundColor={gridTheme.backgroundColor}
       $hoverBackgroundColor={gridTheme.cardHoverBackgroundColor}
       $selectedBackgroundColor={gridTheme.cardSelectedBackgroundColor}
       $borderColor={gridTheme.cardBorderColor}
@@ -146,6 +151,7 @@ const GridBase = styled.div<{
 const GridCardWrapper = styled.div.attrs<{
   $isSelected?: boolean;
   $backgroundColor?: string;
+  $textColor?: string;
   $hoverBackgroundColor?: string;
   $selectedBackgroundColor?: string;
   $borderColor?: string;
@@ -156,7 +162,7 @@ const GridCardWrapper = styled.div.attrs<{
 }))<{
   $selectable?: boolean;
   $style?: CSSProp;
-
+  $textColor?: string;
   $backgroundColor?: string;
   $hoverBackgroundColor?: string;
   $selectedBackgroundColor?: string;
@@ -174,6 +180,7 @@ const GridCardWrapper = styled.div.attrs<{
   font-size: 12px;
   border-radius: 4px;
 
+  color: ${({ $textColor }) => $textColor};
   background: ${({ $backgroundColor }) => $backgroundColor};
   border: 1px solid ${({ $borderColor }) => $borderColor};
   box-shadow: ${({ $shadow }) => $shadow};

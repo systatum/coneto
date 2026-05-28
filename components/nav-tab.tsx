@@ -464,7 +464,7 @@ const NavTabContainer = styled.div<{
   $style?: CSSProp;
   $theme: NavTabThemeConfig;
 }>`
-  background-color: ${({ $theme }) => $theme.backgroundColor};
+  background-color: ${({ $theme }) => $theme.contentBackgroundColor};
   color: ${({ $theme }) => $theme.textColor};
   width: 100%;
   height: 100%;

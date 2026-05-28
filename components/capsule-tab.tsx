@@ -127,11 +127,14 @@ const CapsuleTabWrapper = styled.div<{
 
 const ContentWrapper = styled.div<{
   $style?: CSSProp;
+  $theme?: CapsuleTabThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
   width: 100%;
   position: relative;
+
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $style }) => $style}
 `;
