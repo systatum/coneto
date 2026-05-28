@@ -682,7 +682,7 @@ const BaseButton = styled.button<{
 
             &:active {
               color: ${textColor};
-              background-color: ${activeBg};
+              background-color: ${$mobile ? hoverBg : activeBg};
               box-shadow:
                 inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
                 inset 0 -0.5px 0.5px ${getActiveColor($theme, $variant)};
