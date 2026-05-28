@@ -229,6 +229,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                         height: 20px;
                         width: 20px;
                         border-radius: 2px;
+
+                        ${mobile &&
+                        css`
+                          user-select: none;
+                          &:hover {
+                            background-color: transparent;
+                          }
+                        `}
                       `,
                     },
                     type: "actions",
@@ -488,6 +496,7 @@ const ActionButtonWrapper = styled.div<{
     $mobile
       ? css`
           top: -30.5px;
+          user-select: none;
 
           ${$isLeft
             ? css`
@@ -523,9 +532,13 @@ const IconButton = styled.button<{
   padding: 8px;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  &:hover {
-    background-color: ${({ $theme }) => $theme?.actionHoverBackgroundColor};
-  }
+  ${({ $mobile, $theme }) =>
+    !$mobile &&
+    css`
+      &:hover {
+        background-color: ${$theme?.actionHoverBackgroundColor};
+      }
+    `}
 
   ${({ $isLeft, $mobile, $theme }) =>
     $mobile
