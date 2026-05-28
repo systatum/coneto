@@ -20,56 +20,148 @@ import { TipMenuItemProps } from "./../../components/tip-menu";
 import { useState } from "react";
 import { FigureProps } from "./../../components/figure";
 
+interface ButtonWithIconOptions {
+  icon?: FigureProps;
+  variant?: ButtonVariants["variant"];
+}
+
+const OPTIONS_BUTTON: ButtonWithIconOptions[] = [
+  { variant: "link", icon: { image: RiAddLine } },
+  { variant: "outline-default", icon: { image: RiSearchLine } },
+  { variant: "outline-primary", icon: { image: RiHeartLine } },
+  { variant: "outline-danger", icon: { image: RiStarLine } },
+  { variant: "outline-success", icon: { image: RiAddLine } },
+  { variant: "default", icon: { image: RiSearchLine } },
+  { variant: "primary", icon: { image: RiHeartLine } },
+  { variant: "danger", icon: { image: RiStarLine } },
+  { variant: "secondary", icon: { image: RiAddLine } },
+  { variant: "ghost", icon: { image: RiSearchLine } },
+  { variant: "success", icon: { image: RiStarLine } },
+];
+
+const TIP_MENU_ITEMS: TipMenuItemProps[] = [
+  {
+    caption: "Report Phishing",
+    icon: { image: RiSpam2Line, color: "blue" },
+    onClick: () => console.log("Phishing reported"),
+  },
+  {
+    caption: "Report Junk",
+    icon: { image: RiForbid2Line, color: "red" },
+    onClick: () => console.log("Junk reported"),
+  },
+  {
+    caption: "Block Sender",
+    icon: { image: RiShieldLine, color: "orange" },
+    variant: "danger",
+    onClick: () => console.log("Sender blocked"),
+  },
+  {
+    caption: "Mark as Read",
+    icon: { image: RiCheckLine, color: "green" },
+    onClick: () => console.log("Marked as read"),
+  },
+  {
+    caption: "Move to Spam",
+    icon: { image: RiInboxArchiveLine, color: "purple" },
+    onClick: () => console.log("Moved to spam"),
+  },
+  {
+    caption: "Download Attachment",
+    icon: { image: RiDownloadLine, color: "teal" },
+    onClick: () => console.log("Downloading"),
+  },
+  {
+    caption: "Copy Link",
+    icon: { image: RiLink, color: "gray" },
+    onClick: () => console.log("Link copied"),
+  },
+  {
+    caption: "Share",
+    icon: { image: RiShareLine, color: "indigo" },
+    variant: "danger",
+    onClick: () => console.log("Shared"),
+  },
+  {
+    caption: "Edit",
+    icon: { image: RiEditLine, color: "yellow" },
+    onClick: () => console.log("Edit mode"),
+  },
+];
+
 describe("Button", () => {
-  const TIP_MENU_ITEMS: TipMenuItemProps[] = [
-    {
-      caption: "Report Phishing",
-      icon: { image: RiSpam2Line, color: "blue" },
-      onClick: () => console.log("Phishing reported"),
-    },
-    {
-      caption: "Report Junk",
-      icon: { image: RiForbid2Line, color: "red" },
-      onClick: () => console.log("Junk reported"),
-    },
-    {
-      caption: "Block Sender",
-      icon: { image: RiShieldLine, color: "orange" },
-      variant: "danger",
-      onClick: () => console.log("Sender blocked"),
-    },
-    {
-      caption: "Mark as Read",
-      icon: { image: RiCheckLine, color: "green" },
-      onClick: () => console.log("Marked as read"),
-    },
-    {
-      caption: "Move to Spam",
-      icon: { image: RiInboxArchiveLine, color: "purple" },
-      onClick: () => console.log("Moved to spam"),
-    },
-    {
-      caption: "Download Attachment",
-      icon: { image: RiDownloadLine, color: "teal" },
-      onClick: () => console.log("Downloading"),
-    },
-    {
-      caption: "Copy Link",
-      icon: { image: RiLink, color: "gray" },
-      onClick: () => console.log("Link copied"),
-    },
-    {
-      caption: "Share",
-      icon: { image: RiShareLine, color: "indigo" },
-      variant: "danger",
-      onClick: () => console.log("Shared"),
-    },
-    {
-      caption: "Edit",
-      icon: { image: RiEditLine, color: "yellow" },
-      onClick: () => console.log("Edit mode"),
-    },
-  ];
+  function ButtonWithIcon(
+    props: ButtonProps & {
+      maxOptions?: number;
+    }
+  ) {
+    const filteredOptions = OPTIONS_BUTTON?.slice(0, props.maxOptions);
+
+    return (
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {filteredOptions.map((option, index) => (
+          <Button
+            key={index}
+            variant={option.variant}
+            icon={option.icon}
+            {...props}
+          >
+            {option.variant.charAt(0).toUpperCase() + option.variant.slice(1)}
+          </Button>
+        ))}
+      </div>
+    );
+  }
+
+  context("mobile", () => {
+    it("renders taller than the default button", () => {
+      cy.mount(
+        <>
+          <ButtonWithIcon maxOptions={1} mobile />
+          <ButtonWithIcon maxOptions={1} />
+        </>
+      );
+
+      cy.get("button").should("have.length", 2);
+
+      cy.get("button")
+        .eq(0)
+        .invoke("outerHeight")
+        .then((mobileHeight) => {
+          cy.get("button")
+            .eq(1)
+            .invoke("outerHeight")
+            .then((defaultHeight) => {
+              expect(mobileHeight).to.be.greaterThan(defaultHeight);
+            });
+        });
+    });
+
+    it("renders with 16px font size", () => {
+      cy.mount(<ButtonWithIcon maxOptions={1} mobile />);
+
+      cy.get("button").should("have.css", "font-size", "16px");
+    });
+
+    context("when hovering button", () => {
+      it("should not changes the button", () => {
+        cy.mount(<ButtonWithIcon maxOptions={1} mobile />);
+
+        cy.get("button")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+          .realHover()
+          .then(($el) => {
+            cy.wait(200);
+            cy.wrap($el).should(
+              "not.have.css",
+              "background-color",
+              "rgb(42, 115, 195)"
+            );
+          });
+      });
+    });
+  });
 
   context("styles", () => {
     context("self", () => {
@@ -99,41 +191,6 @@ describe("Button", () => {
   });
 
   context("icon", () => {
-    function ButtonWithIcon(props: ButtonProps) {
-      interface ButtonWithIconOptions {
-        icon?: FigureProps;
-        variant?: ButtonVariants["variant"];
-      }
-
-      const OPTIONS_BUTTON: ButtonWithIconOptions[] = [
-        { variant: "link", icon: { image: RiAddLine } },
-        { variant: "outline-default", icon: { image: RiSearchLine } },
-        { variant: "outline-primary", icon: { image: RiHeartLine } },
-        { variant: "outline-danger", icon: { image: RiStarLine } },
-        { variant: "outline-success", icon: { image: RiAddLine } },
-        { variant: "default", icon: { image: RiSearchLine } },
-        { variant: "primary", icon: { image: RiHeartLine } },
-        { variant: "danger", icon: { image: RiStarLine } },
-        { variant: "secondary", icon: { image: RiAddLine } },
-        { variant: "ghost", icon: { image: RiSearchLine } },
-        { variant: "success", icon: { image: RiStarLine } },
-      ];
-
-      return (
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          {OPTIONS_BUTTON.map((option, index) => (
-            <Button
-              key={index}
-              variant={option.variant}
-              icon={option.icon}
-              {...props}
-            >
-              {option.variant.charAt(0).toUpperCase() + option.variant.slice(1)}
-            </Button>
-          ))}
-        </div>
-      );
-    }
     it("renders buttons with icons", () => {
       cy.mount(<ButtonWithIcon />);
 
