@@ -164,6 +164,7 @@ function Dialog({
           css`
             padding: 0px;
             gap: 0px;
+            user-select: none;
           `}
           ${styles?.containerStyle};
         `}
