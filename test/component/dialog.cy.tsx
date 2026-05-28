@@ -122,6 +122,23 @@ describe("Dialog", () => {
           .and("have.css", "width", "380px");
       });
 
+      it("renders button with user-select none", () => {
+        cy.mount(
+          <ProductDialog
+            icon={{
+              image: RiAB,
+            }}
+            actions={[{ id: "cancel", caption: "Cancel" }]}
+            mobile
+          />
+        );
+
+        cy.findAllByRole("button")
+          .eq(1)
+          .should("exist")
+          .and("have.css", "user-select", "none");
+      });
+
       context("when clicking", () => {
         it("should render on the console", () => {
           cy.window().then((win) => {
