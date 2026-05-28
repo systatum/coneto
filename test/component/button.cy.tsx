@@ -163,7 +163,7 @@ describe("Button", () => {
     });
 
     context("when clicking button", () => {
-      it("should changes the background to the hover clor", () => {
+      it("should changes the background to the hover color", () => {
         cy.mount(<ButtonWithIcon maxOptions={1} mobile />);
 
         cy.get("button")
