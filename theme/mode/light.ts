@@ -138,6 +138,8 @@ const lightImagebox = createImageboxTheme(lightBody, lightFieldLane);
 
 const lightKeynote = createKeynoteTheme();
 
+const lightLaunchpad = createListTheme(lightBody);
+
 const lightList = createListTheme(lightBody);
 
 const lightLoadingSkeleton = createLoadingSkeletonTheme();
@@ -260,6 +262,7 @@ export const lightTheme: AppTheme = {
   grid: lightGrid,
   imagebox: lightImagebox,
   keynote: lightKeynote,
+  launchpad: lightLaunchpad,
   list: lightList,
   loadingSkeleton: lightLoadingSkeleton,
   loadingSpinner: lightLoadingSpinner,
@@ -330,6 +333,7 @@ export {
   lightGrid,
   lightImagebox,
   lightKeynote,
+  lightLaunchpad,
   lightList,
   lightLoadingSkeleton,
   lightLoadingSpinner,

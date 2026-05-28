@@ -273,6 +273,7 @@ const CardContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
+  color: ${({ $theme }) => $theme?.textColor ?? "#ffffff"};
   background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff"};
   border: 1px solid ${({ $theme }) => $theme?.borderColor ?? "#d1d5db"};
   position: relative;

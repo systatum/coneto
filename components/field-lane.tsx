@@ -108,6 +108,7 @@ function FieldLane({
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
+  const bodyTheme = currentTheme.body;
 
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)
@@ -173,6 +174,8 @@ function FieldLane({
                       opacity: 0.5;
                     `}
 
+                    background-color:${bodyTheme?.backgroundColor};
+
                     ${dropdown.width &&
                     css`
                       width: ${dropdown.width};
@@ -193,6 +196,8 @@ function FieldLane({
                       border-right: 1px solid
                         ${fieldLaneTheme?.buttonBorderColor};
                     `}
+
+                    background-color:${bodyTheme?.backgroundColor};
 
                     ${dropdown.width &&
                     css`
@@ -463,6 +468,7 @@ const Body = styled.div<{
   height: 100%;
   min-height: 34px;
   gap: ${({ $labelGap }) => `${$labelGap ? `${$labelGap}px` : "0.5rem"}`};
+  color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $disabled, $theme }) =>
     $disabled &&

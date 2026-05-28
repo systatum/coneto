@@ -101,6 +101,7 @@ export type ButtonProps = Omit<React.ComponentProps<"button">, "style"> &
     hoverBackgroundColor?: string;
     showSubMenuOn?: ButtonShowSubMenuPosition;
     labelMode?: ButtonLabelMode;
+    mobile?: boolean;
   };
 
 export type ButtonDialogPlacement = DialogPlacement;
@@ -137,6 +138,7 @@ function Button({
   hoverBackgroundColor,
   labelMode = "ellipsis",
   className,
+  mobile,
   ...props
 }: ButtonProps) {
   const { currentTheme } = useTheme();
@@ -241,6 +243,7 @@ function Button({
       className={applyClassName("button", className)}
     >
       <BaseButton
+        $mobile={mobile}
         $theme={buttonTheme}
         onClick={(e) => {
           if (onClick && showSubMenuOn === "caret") {
@@ -517,7 +520,6 @@ const getVariantTextColor = (variant: string) => {
   if (variant.startsWith("outline")) return "white";
   return undefined;
 };
-
 const SIZE_STYLES: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
   xs: css`
     height: 28px;
@@ -542,8 +544,39 @@ const SIZE_STYLES: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
   `,
 };
 
-const getSizeStyles = (size?: ButtonProps["size"]) => {
-  return SIZE_STYLES[size ?? "md"];
+const MOBILE_SIZE_STYLES: Partial<
+  Record<NonNullable<ButtonProps["size"]>, CSSProp>
+> = {
+  xs: css`
+    height: 36px;
+    padding: 0 12px;
+  `,
+  sm: css`
+    height: 40px;
+    padding: 0 16px;
+  `,
+  md: css`
+    height: 44px;
+    padding: 0 20px;
+  `,
+  lg: css`
+    height: 48px;
+    padding: 0 28px;
+  `,
+  icon: css`
+    width: 44px;
+    height: 44px;
+  `,
+};
+
+const getSizeStyles = (size?: ButtonProps["size"], mobile?: boolean) => {
+  const currentSize = size ?? "md";
+
+  if (mobile) {
+    return MOBILE_SIZE_STYLES[currentSize];
+  }
+
+  return SIZE_STYLES[currentSize];
 };
 
 const BaseButton = styled.button<{
@@ -557,13 +590,14 @@ const BaseButton = styled.button<{
   $pressed?: boolean;
   $hoverBackgroundColor?: string;
   $theme: AppTheme["button"];
+  $mobile?: boolean;
 }>`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 
-  font-size: 14px;
+  font-size: ${({ $mobile }) => ($mobile ? "16px" : "14px")};
   font-weight: 500;
   white-space: nowrap;
 
@@ -578,7 +612,7 @@ const BaseButton = styled.button<{
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
   pointer-events: ${({ $disabled }) => ($disabled ? "none" : "auto")};
 
-  ${({ $size }) => getSizeStyles($size)}
+  ${({ $size, $mobile }) => getSizeStyles($size, $mobile)}
 
   ${({
     $variant,
@@ -587,6 +621,7 @@ const BaseButton = styled.button<{
     $hoverBackgroundColor,
     $pressed,
     $theme,
+    $mobile,
   }) => {
     const { backgroundColor, color, textDecoration } = getButtonColors(
       $theme,
@@ -637,6 +672,7 @@ const BaseButton = styled.button<{
           `
         : css`
             ${!$isOpen &&
+            !$mobile &&
             css`
               &:hover {
                 background-color: ${hoverBg};
@@ -645,7 +681,8 @@ const BaseButton = styled.button<{
             `}
 
             &:active {
-              background-color: ${activeBg};
+              color: ${textColor};
+              background-color: ${$mobile ? hoverBg : activeBg};
               box-shadow:
                 inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
                 inset 0 -0.5px 0.5px ${getActiveColor($theme, $variant)};

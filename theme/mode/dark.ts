@@ -67,6 +67,7 @@ import {
   createSplitPaneTheme,
   createTitleTheme,
   createWheelTheme,
+  createLaunchpadTheme,
 } from "./creator";
 
 // Dark
@@ -425,7 +426,7 @@ const darkFrame = createFrameTheme(darkBody, {
 });
 
 const darkGrid = createGridTheme(darkBody, {
-  cardBackgroundColor: "#1a1a1a",
+  backgroundColor: "#1a1a1a",
   cardHoverBackgroundColor: "#2a2a2a",
   cardSelectedBackgroundColor: "#1e3a5f",
   cardBorderColor: "#333333",
@@ -445,6 +446,8 @@ const darkKeynote = createKeynoteTheme({
   keyColor: "rgb(243, 244, 246)",
   valueColor: "#f3f4f6",
 });
+
+const darkLaunchpad = createLaunchpadTheme(darkBody);
 
 const darkList = createListTheme(darkBody, {
   hoverBackgroundColor: "#212c37",
@@ -826,6 +829,7 @@ export const darkTheme: AppTheme = {
   grid: darkGrid,
   imagebox: darkImagebox,
   keynote: darkKeynote,
+  launchpad: darkLaunchpad,
   list: darkList,
   loadingSkeleton: darkLoadingSkeleton,
   loadingSpinner: darkLoadingSpinner,
@@ -896,6 +900,7 @@ export {
   darkGrid,
   darkImagebox,
   darkKeynote,
+  darkLaunchpad,
   darkList,
   darkLoadingSkeleton,
   darkLoadingSpinner,

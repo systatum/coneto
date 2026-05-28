@@ -43,6 +43,8 @@ export function ThemeProvider({
     Record<string, AppTheme>
   >(() => themesContent ?? getRegistry());
 
+  document.body.setAttribute("data-theme", mode);
+
   useEffect(() => {
     // If a fixed themes override is provided, skip registry subscription
     if (themesContent) {
@@ -85,6 +87,12 @@ export function useTheme() {
   };
 }
 
+function ThemedBody({ children }: { children: React.ReactNode }) {
+  const { currentTheme } = useTheme();
+
+  return <BodyWrapper $theme={currentTheme?.body}>{children}</BodyWrapper>;
+}
+
 export function Theme({
   mode,
   children,
@@ -94,11 +102,9 @@ export function Theme({
   children: React.ReactNode;
   themes?: Record<string, AppTheme>;
 }) {
-  const theme = themesContent?.[mode];
-
   return (
     <ThemeProvider mode={mode} themes={themesContent}>
-      <BodyWrapper $theme={theme?.body}>{children}</BodyWrapper>
+      <ThemedBody>{children}</ThemedBody>
     </ThemeProvider>
   );
 }

@@ -330,8 +330,9 @@ function Table({
       <TableColumnContext.Provider value={columns}>
         <Wrapper
           id={id}
+          $theme={tableTheme}
           className={applyClassName("table", className)}
-          $containerStyle={styles?.containerStyle}
+          $style={styles?.containerStyle}
         >
           {((selectedData.length > 0 &&
             labels?.totalSelectedItemText !== null) ||
@@ -663,7 +664,8 @@ function ActionCapsule(capsule: CapsuleProps) {
 }
 
 const Wrapper = styled.div<{
-  $containerStyle?: CSSProp;
+  $style?: CSSProp;
+  $theme?: TableThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -671,7 +673,9 @@ const Wrapper = styled.div<{
   height: 100%;
   width: 100%;
 
-  ${({ $containerStyle }) => $containerStyle}
+  color: ${({ $theme }) => $theme?.textColor};
+
+  ${({ $style }) => $style}
 `;
 
 const HeaderActions = styled.div<{

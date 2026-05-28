@@ -149,6 +149,7 @@ const DrawerTabContainer = styled(motion.div)<{
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background: ${({ $theme }) => $theme.backgroundColor};
   border: 1px solid ${({ $theme }) => $theme.borderColor};
+  color: ${({ $theme }) => $theme.textColor};
 
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")}
 

@@ -298,6 +298,37 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  args: {
+    children: "Button",
+  },
+  render: (args) => {
+    const VARIANTS: ButtonVariants["variant"][] = [
+      "link",
+      "outline-default",
+      "outline-primary",
+      "outline-danger",
+      "outline-success",
+      "default",
+      "primary",
+      "danger",
+      "secondary",
+      "ghost",
+      "success",
+    ] as const;
+
+    return (
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+        {VARIANTS.map((variant) => (
+          <Button key={variant} {...args} mobile variant={variant}>
+            {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          </Button>
+        ))}
+      </div>
+    );
+  },
+};
+
 export const Pressed: Story = {
   args: {
     variant: "default",

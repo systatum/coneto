@@ -30,6 +30,7 @@ import {
   GridThemeConfig,
   ImageboxThemeConfig,
   KeynoteThemeConfig,
+  LaunchpadThemeConfig,
   ListThemeConfig,
   LoadingSkeletonThemeConfig,
   LoadingSpinnerThemeConfig,
@@ -161,7 +162,7 @@ export function createBadgeTheme(
   ...themeConfigurations: Array<Partial<BadgeThemeConfig>>
 ): BadgeThemeConfig {
   const defaultTheme: BadgeThemeConfig = {
-    backgroundColor: "transparent",
+    backgroundColor: body?.backgroundColor,
     textColor: body.textColor,
     circleColor: "#111",
     borderColor: "#e5e7eb",
@@ -434,7 +435,8 @@ export function createCardTheme(
 ): CardThemeConfig {
   return mergeTheme<CardThemeConfig>(
     {
-      backgroundColor: "#ffffff",
+      backgroundColor: body?.backgroundColor || "#ffffff",
+      textColor: body?.textColor,
       borderColor: "#e5e7eb",
       dividerColor: "transparent",
       titleColor: body.textColor,
@@ -781,9 +783,10 @@ export function createFrameTheme(
 ): FrameThemeConfig {
   return mergeTheme<FrameThemeConfig>(
     {
+      textColor: body.textColor,
       backgroundColor: body.backgroundColor || "#ffffff",
       borderColor: "#d1d5db",
-      titleColor: "#999b9d",
+      titleColor: "#070707",
       titleBackgroundColor: body.backgroundColor || "#ffffff",
       overlayBackgroundColor: body.backgroundColor || "#ffffff",
       boxShadow: "var(--shadow-xs)",
@@ -799,12 +802,13 @@ export function createGridTheme(
 ): GridThemeConfig {
   return mergeTheme<GridThemeConfig>(
     {
-      cardBackgroundColor: body.backgroundColor,
       cardHoverBackgroundColor: "#f3f3f3",
       cardSelectedBackgroundColor: "#e6f0ff",
       cardBorderColor: "#e5e5e5",
       cardShadow: "0 1px 3px rgba(0,0,0,0.1)",
       thumbnailBackgroundColor: "#e5e5e5",
+      backgroundColor: body.backgroundColor,
+      textColor: body?.textColor,
     },
     ...themeConfigurations
   );
@@ -843,6 +847,21 @@ export function createKeynoteTheme(
     {
       keyColor: "#374151",
       valueColor: "#111827",
+    },
+    ...themeConfigurations
+  );
+}
+
+// launchpad.tsx
+export function createLaunchpadTheme(
+  body: BodyThemeConfig,
+  ...themeConfigurations: Array<Partial<LaunchpadThemeConfig>>
+): LaunchpadThemeConfig {
+  return mergeTheme<LaunchpadThemeConfig>(
+    {
+      backgroundColor: body?.backgroundColor,
+      borderColor: body?.borderColor,
+      textColor: body?.textColor,
     },
     ...themeConfigurations
   );
@@ -1622,6 +1641,7 @@ export function createTitleTheme(
   ...themeConfigurations: Array<Partial<TitleThemeConfig>>
 ): TitleThemeConfig {
   const defaultTheme: TitleThemeConfig = {
+    backgroundColor: body?.backgroundColor,
     pretitle: {
       textColor: body.textColor,
       opacity: 0.7,

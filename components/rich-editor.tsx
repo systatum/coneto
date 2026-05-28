@@ -373,8 +373,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     });
 
     marked.use({
-      gfm: false,
-      breaks: true,
+      gfm: true,
+      breaks: false,
     });
 
     CodeEditor.addFencedCodeMarkedExtension();
@@ -388,7 +388,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     useImperativeHandle(ref, () => ({
-      insertMarkdownContent: async (data: string) => {
+      insertMarkdownContent: async (content: string) => {
         if (!editorRef.current) return;
 
         if (document.activeElement !== editorRef.current) {
@@ -400,22 +400,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let range = sel?.rangeCount ? sel.getRangeAt(0) : null;
         if (!range) return;
 
-        let processedValue = preprocessMarkdown(data);
-
-        let html = await marked.parse(processedValue);
+        let html = await marked.parse(content);
 
         html = splitBrIntoParagraphs(html);
-
-        html = html.replace(
-          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
-          "<p><br></p>"
-        );
-
-        // Also strip any placeholder that leaked into a text paragraph
-        html = html.replace(
-          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
-          "<br></p><p>"
-        );
 
         const temp = document.createElement("p");
         temp.innerHTML = html;
@@ -561,21 +548,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const initializeEditor = async () => {
         if (!editorRef.current || editorRef.current.innerHTML.trim()) return;
 
-        let processedValue = preprocessMarkdown(value);
-        let html = await marked.parse(processedValue);
+        let html: string;
+
+        html = value?.trim() ? await marked.parse(value) : `<p>${value}</p>`;
 
         if (!isMounted || !editorRef.current) return;
 
         html = splitBrIntoParagraphs(html);
-
-        html = html.replace(
-          new RegExp(`<p>${EMPTY_P_PLACEHOLDER}</p>`, "g"),
-          "<p><br></p>"
-        );
-        html = html.replace(
-          new RegExp(EMPTY_P_PLACEHOLDER, "g"),
-          "<br></p><p>"
-        );
 
         editorRef.current.innerHTML = String(html);
         document.execCommand("defaultParagraphSeparator", false, "p");
@@ -1690,6 +1669,24 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           $mode={mode}
           $height={height}
           $autogrow={autogrow}
+          onPaste={(e) => {
+            if (mode === "view-only") return;
+
+            e.preventDefault();
+
+            const html = e.clipboardData.getData("text/html");
+            const plain = e.clipboardData.getData("text/plain");
+
+            const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
+              html
+            );
+
+            if (!html || hasCodeColors) {
+              document.execCommand("insertText", false, plain);
+            } else {
+              document.execCommand("insertHTML", false, html);
+            }
+          }}
           onInput={() => {
             if (mode !== "view-only") {
               if (editorRef.current) {
@@ -2001,6 +1998,11 @@ const EditorArea = styled.div<{
             `
         : ""};
 
+  pre[data-monaco-hydrated]:not([data-monaco-block-id]),
+  pre[data-monaco-hydrated]:not([data-monaco-block-id]) code {
+    padding-bottom: 0.5rem;
+  }
+
   ${({ $mode }) =>
     $mode === "view-only" &&
     css`
@@ -2034,8 +2036,12 @@ const EditorArea = styled.div<{
   }
 
   li {
-    padding-left: 0 !important;
     display: list-item !important;
+    padding: 0 !important;
+  }
+
+  li p {
+    padding: 0.25rem 0;
   }
 
   h1 {
@@ -2053,8 +2059,9 @@ const EditorArea = styled.div<{
     margin: 0.4em 0;
   }
 
-  p {
+  p:not(li p) {
     min-height: 24px;
+    padding-bottom: 0.5rem;
   }
 
   ${({ $editorStyle }) => $editorStyle};
@@ -2330,41 +2337,6 @@ const applyInlineStyleToWord = (style: "bold" | "italic") => {
       sel.addRange(newRange);
     }
   }
-};
-
-// Processes all input provided in the editor
-const EMPTY_P_PLACEHOLDER = "EMPTY_PARAGRAPH_PLACEHOLDER";
-
-const preprocessMarkdown = (markdown: string) => {
-  const parts = markdown.split(/(```[\s\S]*?```)/g);
-
-  const processed = parts.map((part, i) => {
-    if (i % 2 === 1) return part;
-
-    let result = part;
-
-    // After a code block, strip all leading newlines and replace with
-    // a clean placeholder separator so marked puts them in separate <p>s
-
-    return result
-      .replace(/\n(\n+)/g, (_, extraNewlines) => {
-        const emptyParagraphs = `\n\n${EMPTY_P_PLACEHOLDER}`.repeat(
-          extraNewlines.length
-        );
-        return "\n" + emptyParagraphs;
-      })
-      .replace(/([^\n])\n([a-zA-Z])/g, "$1\n\n$2")
-      .replace(
-        new RegExp(`(${EMPTY_P_PLACEHOLDER})\n([a-zA-Z])`, "g"),
-        `$1\n\n$2`
-      )
-      .replace(
-        /^(\s*(?:[*\-+]|\d+\.)\s+[^\n]+)\n(?![\s*\-+\d<\n])([^\n]+)/gm,
-        "$1\n\n$2"
-      );
-  });
-
-  return processed.join("");
 };
 
 const splitBrIntoParagraphs = (html: string): string => {

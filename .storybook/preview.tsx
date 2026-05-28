@@ -1,8 +1,9 @@
 import type { Preview } from "@storybook/react";
 import { addons } from "@storybook/preview-api";
-import "../shared.css";
 import { ThemeProvider } from "./../theme/provider";
 import { GLOBALS_UPDATED } from "@storybook/core-events";
+import "../shared.css";
+import "../documentation.css";
 
 if (typeof window !== "undefined") {
   const channel = addons.getChannel();
@@ -44,8 +45,6 @@ const preview: Preview = {
         (window as Window & { Cypress?: unknown }).Cypress;
 
       const mode = isCypress ? "light" : context.globals.theme || "dark";
-
-      document.body.setAttribute("data-theme", mode);
 
       return (
         <ThemeProvider mode={mode}>
