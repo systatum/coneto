@@ -681,6 +681,7 @@ const BaseButton = styled.button<{
             `}
 
             &:active {
+              color: ${textColor};
               background-color: ${activeBg};
               box-shadow:
                 inset 0 0.5px 4px rgba(0, 0, 0, 0.2),
