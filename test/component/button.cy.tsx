@@ -161,6 +161,22 @@ describe("Button", () => {
           });
       });
     });
+
+    context("when clicking button", () => {
+      it("should changes the background to the hover clor", () => {
+        cy.mount(<ButtonWithIcon maxOptions={1} mobile />);
+
+        cy.get("button")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+          .realMouseDown();
+
+        cy.wait(100);
+        cy.get("button")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(42, 115, 195)");
+      });
+    });
   });
 
   context("styles", () => {
