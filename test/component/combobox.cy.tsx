@@ -16,6 +16,7 @@ import {
   RiUser2Line,
 } from "@remixicon/react";
 import { useState } from "react";
+import { Sidebar } from "./../../components/sidebar";
 
 const flattenOptions = (items: ComboboxOption[]): string[] =>
   items.flatMap((item) =>
@@ -176,6 +177,40 @@ describe("Combobox", () => {
           "height",
           "220px"
         );
+      });
+    });
+
+    context("when inside of fixed content", () => {
+      it("should be centered in the screen", () => {
+        cy.viewport(500, 700);
+
+        cy.mount(
+          <Sidebar>
+            <ProductCombobox options={FRUIT_OPTIONS} mobile />
+          </Sidebar>
+        );
+
+        cy.findByRole("button").click();
+
+        cy.findByRole("textbox").click();
+
+        // Ensures the combobox takes 96% of the viewport width
+        // when wrapped in a fixed-position container
+        cy.window().then((win) => {
+          const expectedWidth = `${win.innerWidth * 0.96}px`;
+
+          cy.findByLabelText("combobox-drawer-mobile").should(
+            "have.css",
+            "width",
+            expectedWidth
+          );
+
+          cy.findByLabelText("combobox-drawer-mobile").should(
+            "have.css",
+            "height",
+            "220px"
+          );
+        });
       });
     });
 
