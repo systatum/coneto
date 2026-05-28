@@ -2,6 +2,7 @@ import { Children, isValidElement, ReactNode } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
+import { KeynoteThemeConfig } from "./../theme";
 
 export type KeynoteKeys<T> = Extract<keyof T, string>;
 
@@ -123,7 +124,7 @@ function KeynotePoint({
       <Key
         aria-label="keynote-point-key"
         $style={styles?.rowKeyStyle}
-        $color={keynoteTheme.keyColor}
+        $theme={keynoteTheme}
       >
         {label}
       </Key>
@@ -131,7 +132,7 @@ function KeynotePoint({
       <Value
         aria-label="keynote-point-value"
         $style={styles?.rowValueStyle}
-        $color={keynoteTheme.valueColor}
+        $theme={keynoteTheme}
       >
         {children}
       </Value>
@@ -164,9 +165,9 @@ const KeynotePointWrapper = styled.div<{
 
 const Key = styled.span<{
   $style?: CSSProp;
-  $color?: string;
+  $theme?: KeynoteThemeConfig;
 }>`
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme?.keyColor};
   font-weight: 600;
   width: 30%;
   font-size: 14px;
@@ -176,7 +177,7 @@ const Key = styled.span<{
 
 const Value = styled.span<{
   $style?: CSSProp;
-  $color?: string;
+  $theme?: KeynoteThemeConfig;
 }>`
   width: 70%;
   font-size: 14px;
@@ -189,7 +190,7 @@ const Value = styled.span<{
   display: flex;
   justify-content: end;
 
-  color: ${({ $color }) => $color};
+  color: ${({ $theme }) => $theme?.valueColor};
 
   ${({ $style }) => $style}
 `;

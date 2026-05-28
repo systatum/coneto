@@ -16,8 +16,10 @@ export const BadgeVariant = {
 
 export type BadgeVariant = (typeof BadgeVariant)[keyof typeof BadgeVariant];
 
-export interface BadgeProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+export interface BadgeProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "style"
+> {
   id?: string;
   metadata?: Record<string, unknown>;
   variant?: BadgeVariant;

@@ -59,6 +59,9 @@ function Title({
   centerSection,
   rightSection,
 }: TitleProps) {
+  const { currentTheme } = useTheme();
+  const titleTheme = currentTheme?.title;
+
   const isLarge = size === "lg";
 
   const textStyles: BaseAllTextStyles = {
@@ -85,6 +88,7 @@ function Title({
     <TitleContainer
       id={id}
       aria-label="title-container"
+      $theme={titleTheme}
       className={applyClassName("title-container", className)}
       $style={css`
         flex-direction: ${isLarge ? "column" : "row"};
@@ -188,6 +192,7 @@ function TitleLarge(props: TitleLargeProps) {
 
 const TitleContainer = styled.div<{
   $style?: CSSProp;
+  $theme?: TitleThemeConfig;
 }>`
   display: flex;
   gap: 10px;
@@ -196,7 +201,9 @@ const TitleContainer = styled.div<{
   align-items: start;
   justify-content: space-between;
 
-  ${({ $style }) => $style}
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+
+  ${({ $style }) => $style};
 `;
 
 export interface TitleSection {

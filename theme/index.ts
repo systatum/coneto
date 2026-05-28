@@ -328,7 +328,7 @@ export interface FileDropBoxThemeConfig extends BodyThemeConfig {
 }
 
 // frame.tsx
-export interface FrameThemeConfig extends Omit<BodyThemeConfig, "textColor"> {
+export interface FrameThemeConfig extends BodyThemeConfig {
   titleColor?: string;
   titleBackgroundColor?: string;
   overlayBackgroundColor?: string;
@@ -336,8 +336,7 @@ export interface FrameThemeConfig extends Omit<BodyThemeConfig, "textColor"> {
 }
 
 // grid.tsx
-export interface GridThemeConfig {
-  cardBackgroundColor?: string;
+export interface GridThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   cardHoverBackgroundColor?: string;
   cardSelectedBackgroundColor?: string;
   cardBorderColor?: string;
@@ -362,6 +361,9 @@ export interface KeynoteThemeConfig {
   keyColor?: string;
   valueColor?: string;
 }
+
+// launchpad.tsx
+export interface LaunchpadThemeConfig extends BodyThemeConfig {}
 
 // list.tsx
 export interface ListThemeConfig extends BodyThemeConfig {
@@ -646,7 +648,10 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
 }
 
 // title.tsx
-export interface TitleThemeConfig {
+export interface TitleThemeConfig extends Omit<
+  BodyThemeConfig,
+  "textColor" | "borderColor"
+> {
   pretitle?: {
     textColor?: string;
     opacity?: number;
@@ -820,6 +825,7 @@ export interface AppTheme {
   grid: GridThemeConfig;
   imagebox: ImageboxThemeConfig;
   keynote: KeynoteThemeConfig;
+  launchpad: LaunchpadThemeConfig;
   list: ListThemeConfig;
   loadingSkeleton: LoadingSkeletonThemeConfig;
   loadingSpinner: LoadingSpinnerThemeConfig;
