@@ -3,6 +3,7 @@ import { addons } from "@storybook/preview-api";
 import { ThemeProvider } from "./../theme/provider";
 import { GLOBALS_UPDATED } from "@storybook/core-events";
 import "../shared.css";
+import "../theme.css";
 import "../documentation.css";
 
 if (typeof window !== "undefined") {
