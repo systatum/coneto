@@ -197,6 +197,10 @@
       "import": "./dist/components/rich-editor.js",
       "types": "./dist/components/rich-editor.d.ts"
     },
+    "./screen-transition": {
+      "import": "./dist/components/screen-transition.js",
+      "types": "./dist/components/screen-transition.d.ts"
+    },
     "./searchbox": {
       "import": "./dist/components/searchbox.js",
       "types": "./dist/components/searchbox.d.ts"
