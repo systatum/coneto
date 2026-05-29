@@ -124,7 +124,7 @@ export function createActionButtonTheme(
       hoverBackgroundColor: "#f3f4f6",
       disabledBackgroundColor: "#e5e7eb",
       disabledOpacity: 0.5,
-      borderColor: "#ebebeb",
+      borderColor: "#e5e7eb",
       borderRadius: "6px",
 
       toggleBackgroundColor: "transparent",
