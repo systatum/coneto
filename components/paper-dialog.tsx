@@ -62,6 +62,7 @@ export interface PaperDialogIcons {
 }
 
 export interface PaperDialogStyles {
+  containerStyle?: CSSProp;
   contentStyle?: CSSProp;
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
@@ -102,7 +103,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       onClosed,
       icons,
       className,
-      title,
+      title = "Dialog",
       subtitle,
       id,
       mobile,
@@ -215,7 +216,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               <MiniDragPill $theme={paperDialogTheme} />
               <Title
                 size="sm"
-                text={title ?? "Dialog"}
+                text={title}
                 styles={{
                   containerStyle: css`
                     align-items: center;
@@ -262,6 +263,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             aria-label="paper-dialog-wrapper"
             $width={width}
             $height={height}
+            $style={css`
+              ${mobile &&
+              css`
+                gap: 0px;
+              `}
+              ${styles?.containerStyle}
+            `}
             initial={mobile ? { y: "100%" } : { x: isLeft ? "-100%" : "100%" }}
             animate={
               dialogState === "minimized"
@@ -370,6 +378,16 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               </ActionButtonWrapper>
             )}
 
+            {mobile && closable && (
+              <DragIndicatorWrapper
+                $theme={paperDialogTheme}
+                aria-label="paper-dialog-drag-indicator"
+                onPointerDown={(e) => dragControls.start(e)}
+              >
+                <DragIndicator $theme={paperDialogTheme} />
+              </DragIndicatorWrapper>
+            )}
+
             <PaperDialogContent
               $height={height}
               $theme={paperDialogTheme}
@@ -388,14 +406,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                   size="lg"
                 />
               )}
-              {mobile && closable && (
-                <DragIndicatorWrapper
-                  aria-label="paper-dialog-drag-indicator"
-                  onPointerDown={(e) => dragControls.start(e)}
-                >
-                  <DragIndicator $theme={paperDialogTheme} />
-                </DragIndicatorWrapper>
-              )}
+
               {children}
             </PaperDialogContent>
           </MotionDialog>
@@ -594,7 +605,7 @@ const PaperDialogContent = styled.div<{
     css`
       overflow-x: hidden;
       overflow-y: auto;
-      padding: 40px 20px 20px 20px;
+      padding: 0px 20px 20px 20px;
       border-radius: 1rem 1rem 0 0;
       margin-top: 4px;
     `}
@@ -602,16 +613,19 @@ const PaperDialogContent = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const DragIndicatorWrapper = styled(motion.div)`
+const DragIndicatorWrapper = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+}>`
+  position: sticky;
   display: flex;
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
   justify-content: center;
-  width: 100dvw;
+  width: 100%;
   cursor: grab;
-  height: 40px;
+  height: 60px;
+  z-index: 9992999;
+  align-items: center;
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   &:active {
     cursor: grabbing;
@@ -622,7 +636,6 @@ const DragIndicator = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
 }>`
   display: flex;
-  transform: translateY(22px);
   width: 48px;
   height: 5px;
   border-radius: 999px;
