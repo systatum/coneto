@@ -1,0 +1,54 @@
+# Vite & Webpack Setup
+
+Coneto works out of the box in both Vite and Webpack projects.
+
+### Vite
+
+No extra configuration is required. CSS imports and ESM modules work natively.
+
+If TypeScript throws an error on CSS imports like:
+
+```
+Cannot find module '@systatum/coneto/shared.css' or its corresponding type declarations.
+```
+
+Create a `global.d.ts` file in your project root (or `src/`) with:
+
+```ts
+declare module "*.css";
+```
+
+This tells TypeScript to treat `.css` files as valid modules.
+
+If you are using a markdown editor (especially Monaco-based editors), add this to `vite.config.ts`:
+
+```tsx
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  worker: {
+    format: "es",
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          monaco: ["monaco-editor"],
+        },
+      },
+    },
+  },
+});
+```
+
+### Webpack
+
+Works with standard CSS loaders such as `style-loader` and `css-loader`.
+
+Most setups (Next.js, CRA, custom Webpack configs) already support this automatically.
+
+If you see TypeScript errors on CSS imports, add a `global.d.ts` file with:
+
+```ts
+declare module "*.css";
+```
