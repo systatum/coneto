@@ -63,6 +63,7 @@ export interface PaperDialogIcons {
 
 export interface PaperDialogStyles {
   containerStyle?: CSSProp;
+  indicatorStyle?: CSSProp;
   contentStyle?: CSSProp;
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
@@ -381,6 +382,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             {mobile && closable && (
               <DragIndicatorWrapper
                 $theme={paperDialogTheme}
+                $style={styles?.indicatorStyle}
                 aria-label="paper-dialog-drag-indicator"
                 onPointerDown={(e) => dragControls.start(e)}
               >
@@ -615,6 +617,7 @@ const PaperDialogContent = styled.div<{
 
 const DragIndicatorWrapper = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
+  $style?: CSSProp;
 }>`
   position: sticky;
   display: flex;
@@ -630,6 +633,8 @@ const DragIndicatorWrapper = styled(motion.div)<{
   &:active {
     cursor: grabbing;
   }
+
+  ${({ $style }) => $style}
 `;
 
 const DragIndicator = styled(motion.div)<{
