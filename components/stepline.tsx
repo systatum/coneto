@@ -95,6 +95,12 @@ const SteplineWrapper = styled.div<{
   $containerStyle?: CSSProp;
   $gap?: number;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   gap: 0.5rem;

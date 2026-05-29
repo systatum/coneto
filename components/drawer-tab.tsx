@@ -136,6 +136,12 @@ const DrawerTabContainer = styled(motion.div)<{
   $style?: CSSProp;
   $theme: DrawerTabThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: fixed;
   top: 2.5rem;
   display: flex;
@@ -165,6 +171,14 @@ const TabButtonsContainer = styled.div<{
   $position: "left" | "right";
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    display: block;
+    vertical-align: middle;
+  }
+
   position: absolute;
   top: 2rem;
   display: flex;

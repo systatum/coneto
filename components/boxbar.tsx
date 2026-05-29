@@ -102,6 +102,13 @@ const BaseBoxbar = styled(motion.div)<{
   $containerStyle: CSSProp;
   $theme: BoxbarThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   overflow: hidden;
   display: flex;
   flex-wrap: wrap;

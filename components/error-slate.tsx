@@ -118,6 +118,12 @@ function ErrorSlate({
 }
 
 const ErrorSlateWrapper = styled.div`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   gap: 1.75rem;

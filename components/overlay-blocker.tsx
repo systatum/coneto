@@ -118,6 +118,12 @@ const StyledOverlay = styled.div<{
   $style?: CSSProp;
   $theme?: OverlayBlockerThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: absolute;
   inset: 0;
   pointer-events: auto;

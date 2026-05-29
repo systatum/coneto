@@ -401,6 +401,11 @@ const DialogOverlay = styled.div<{
   $dialogState: PaperDialogState;
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   position: fixed;
   z-index: 9991999;
   ${({ $dialogState }) =>
@@ -420,6 +425,11 @@ const MotionDialog = styled(motion.div)<{
   $width?: string;
   $height?: string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   position: fixed;
 
   ${({ $mobile, $isLeft }) =>
@@ -590,6 +600,15 @@ const PaperDialogContent = styled.div<{
 `;
 
 const DragIndicatorWrapper = styled(motion.div)`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   position: absolute;
   top: -4px;

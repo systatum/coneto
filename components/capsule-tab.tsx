@@ -114,6 +114,12 @@ const CapsuleTabWrapper = styled.div<{
   $style?: CSSProp;
   $theme?: CapsuleTabThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   width: 100%;

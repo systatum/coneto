@@ -436,6 +436,12 @@ const Container = styled.div<{
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   width: 100%;
   height: 100%;
@@ -482,6 +488,8 @@ const Body = styled.div<{
 `;
 
 const InputWrapper = styled.label<{ $style?: CSSProp }>`
+  box-sizing: border-box;
+
   position: relative;
   display: flex;
   flex-direction: row;

@@ -106,6 +106,13 @@ function Separator({
 }
 
 const SeparatorContainer = styled.div<{ $style?: CSSProp; $color?: string }>`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   position: relative;
   width: 100%;
   display: flex;

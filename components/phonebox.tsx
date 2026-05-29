@@ -383,7 +383,8 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 );
 
 export interface PhoneboxProps
-  extends Omit<BasePhoneboxProps, "styles">,
+  extends
+    Omit<BasePhoneboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "onChange" | "actions"> {
   styles?: PhoneboxStyles & FieldLaneStyles;
 }
@@ -467,6 +468,13 @@ const InputWrapper = styled.div<{
   $style?: CSSProp;
   $theme: PhoneboxThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   display: flex;
   width: 100%;
   min-height: 32px;

@@ -1841,6 +1841,12 @@ const Wrapper = styled.div<{
   $mode?: RichEditorMode;
   $theme: RichEditorThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   ${({ $mode, $theme }) =>
     $mode !== "page-editor" &&
     css`
