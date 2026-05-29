@@ -103,7 +103,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       onClosed,
       icons,
       className,
-      title = "Dialog",
+      title,
       subtitle,
       id,
       mobile,
@@ -216,7 +216,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               <MiniDragPill $theme={paperDialogTheme} />
               <Title
                 size="sm"
-                text={title}
+                text={title ?? "Dialog"}
                 styles={{
                   containerStyle: css`
                     align-items: center;
