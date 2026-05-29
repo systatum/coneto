@@ -33,6 +33,7 @@ import {
 } from "./treelist";
 import { Searchbox } from "./searchbox";
 import { Checkbox } from "./checkbox";
+import { createPortal } from "react-dom";
 
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
@@ -1081,7 +1082,7 @@ function ComboboxDrawer({
   );
 
   if (mobile) {
-    return (
+    return createPortal(
       <DrawerContainer
         aria-label="combobox-drawer-mobile"
         $theme={comboboxTheme}
@@ -1100,7 +1101,8 @@ function ComboboxDrawer({
           $visible={showFadeBottom}
         />
         {mainCombobox}
-      </DrawerContainer>
+      </DrawerContainer>,
+      document.body
     );
   }
 
