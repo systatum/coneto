@@ -80,6 +80,10 @@ const additionalExports = {
     import: "./dist/shared.css",
     types: "./dist/shared.css",
   },
+  "./theme.css": {
+    import: "./dist/theme.css",
+    types: "./dist/theme.css",
+  },
 };
 
 const pkgPath = path.join(process.cwd(), "package.json");
