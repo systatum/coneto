@@ -1,0 +1,162 @@
+# Shared CSS
+
+This section explains what `shared.css` is, why it exists, and how to use it in your application.
+
+Coneto provides a lightweight shared stylesheet that contains foundational browser normalization, typography defaults, form consistency, spacing resets, and media rendering improvements.
+
+The goal of `shared.css` is to provide a predictable UI foundation across browsers while keeping component styling consistent with the Coneto design system.
+
+Unlike component-level styling, this stylesheet is optional and fully controlled by the application.
+
+## Why use shared.css
+
+Modern browsers apply different default styles to elements like buttons, inputs, headings, lists, and tables. Those differences can create inconsistent layouts and unexpected UI behavior.
+
+`shared.css` helps normalize those behaviors by providing:
+
+- Consistent typography defaults
+- Predictable spacing behavior
+- Form element normalization
+- Better media rendering defaults
+- Improved mobile tap behavior
+- Cleaner cross-browser rendering
+
+It acts as a lightweight foundation layer for applications using Coneto components.
+
+## Installation
+
+Import the stylesheet once in your application entry point.
+
+```tsx
+import "@systatum/coneto/shared.css";
+```
+
+Usually this is placed inside:
+
+- `main.tsx`
+- `index.tsx`
+- `app.tsx`
+- `layout.tsx`
+
+depending on your framework.
+
+## Example usage
+
+```tsx
+import "@systatum/coneto/shared.css";
+
+import { Theme } from "@systatum/coneto/theme";
+import { Button } from "@systatum/coneto/button";
+
+export default function App() {
+  return (
+    <Theme mode="dark">
+      <Button>Save</Button>
+    </Theme>
+  );
+}
+```
+
+## Theme styling
+
+Visual theme styling is separated into `theme.css`.
+
+This keeps `shared.css` visually neutral and focused only on normalization and foundational layout behavior.
+
+`theme.css` includes default body styling for both light and dark themes.
+
+```css
+body {
+  background-color: #ffffff;
+  color: black;
+}
+
+body[data-theme="dark"] {
+  background-color: #1f2023;
+  color: white;
+}
+```
+
+When using `<Theme />`, importing `theme.css` is usually enough to automatically apply the correct body appearance for both light and dark modes.
+
+## What shared.css includes
+
+The stylesheet includes foundational styles for common HTML elements.
+
+### Typography normalization
+
+Provides consistent typography rendering across browsers.
+
+```css
+html,
+:host {
+  line-height: 1.5;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+```
+
+### Body reset
+
+Removes default browser spacing and keeps typography inheritance predictable.
+
+```css
+body {
+  margin: 0;
+  line-height: inherit;
+}
+```
+
+### Form normalization
+
+Ensures inputs, buttons, and form controls inherit typography and behave consistently.
+
+```css
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+```
+
+### Media rendering improvements
+
+Improves default rendering for images and videos.
+
+```css
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+```
+
+### List and spacing resets
+
+Removes inconsistent browser spacing.
+
+```css
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+```
+
+## Optional usage
+
+`shared.css` is completely optional.
+
+If your application already uses another reset or normalization system such as:
+
+- Tailwind Preflight
+- normalize.css
+- modern-css-reset
+- custom design system resets
+
+you may choose not to use it.
+
+Coneto components work independently from `shared.css`.
