@@ -74,7 +74,7 @@ const lightBody = createBodyTheme();
 
 const lightFieldLane = createFieldLaneTheme(lightBody);
 
-const lightActionButton = createActionButtonTheme(lightBody);
+const lightActionButton = createActionButtonTheme();
 
 const lightActionCapsule = createActionCapsuleTheme(lightBody);
 
