@@ -25,7 +25,15 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ["Welcome", "*"],
+        order: [
+          "Welcome",
+          "Installation Guide",
+          "Vite and Webpack",
+          "Shared css",
+          "Extending Theme",
+          "Dark mode",
+          "*",
+        ],
       },
     },
     backgrounds: { disable: true },
