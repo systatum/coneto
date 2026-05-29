@@ -76,6 +76,10 @@ const additionalExports = {
     import: "./dist/lib/text.js",
     types: "./dist/lib/text.d.ts",
   },
+  "./shared.css": {
+    import: "./dist/shared.css",
+    types: "./dist/shared.css",
+  },
 };
 
 const pkgPath = path.join(process.cwd(), "package.json");
