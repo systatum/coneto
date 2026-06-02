@@ -741,48 +741,48 @@ const darkThumbField = createThumbFieldTheme({
 
 const darkToast = createToastTheme({
   primary: {
-    backgroundColor: "#1E293B",
-    borderColor: "#6366F1",
+    backgroundColor: "rgba(30, 41, 59, 0.55)",
+    borderColor: "rgba(99, 102, 241, 0.35)",
     textColor: "#C7D2FE",
-    iconBackgroundColor: "#6366F1",
+    iconBackgroundColor: "rgba(99, 102, 241, 0.85)",
     iconColor: "#FFFFFF",
-    progressColor: "#818CF8",
+    progressColor: "rgba(129, 140, 248, 0.9)",
   },
 
   success: {
-    backgroundColor: "#17261D",
-    borderColor: "#22C55E",
+    backgroundColor: "rgba(23, 38, 29, 0.55)",
+    borderColor: "rgba(34, 197, 94, 0.35)",
     textColor: "#BBF7D0",
-    iconBackgroundColor: "#22C55E",
+    iconBackgroundColor: "rgba(34, 197, 94, 0.85)",
     iconColor: "#FFFFFF",
-    progressColor: "#4ADE80",
+    progressColor: "rgba(74, 222, 128, 0.9)",
   },
 
   danger: {
-    backgroundColor: "#2A161A",
-    borderColor: "#F43F5E",
+    backgroundColor: "rgba(42, 22, 26, 0.55)",
+    borderColor: "rgba(244, 63, 94, 0.35)",
     textColor: "#FECDD3",
-    iconBackgroundColor: "#F43F5E",
+    iconBackgroundColor: "rgba(244, 63, 94, 0.85)",
     iconColor: "#FFFFFF",
-    progressColor: "#FB7185",
+    progressColor: "rgba(251, 113, 133, 0.9)",
   },
 
   warning: {
-    backgroundColor: "#2A2113",
-    borderColor: "#F59E0B",
+    backgroundColor: "rgba(42, 33, 19, 0.55)",
+    borderColor: "rgba(245, 158, 11, 0.35)",
     textColor: "#FDE68A",
-    iconBackgroundColor: "#F59E0B",
+    iconBackgroundColor: "rgba(245, 158, 11, 0.85)",
     iconColor: "#FFFFFF",
-    progressColor: "#FBBF24",
+    progressColor: "rgba(251, 191, 36, 0.9)",
   },
 
   neutral: {
-    backgroundColor: "#1E293B",
-    borderColor: "#64748B",
+    backgroundColor: "rgba(30, 41, 59, 0.55)",
+    borderColor: "rgba(100, 116, 139, 0.35)",
     textColor: "#E2E8F0",
-    iconBackgroundColor: "#64748B",
+    iconBackgroundColor: "rgba(100, 116, 139, 0.85)",
     iconColor: "#FFFFFF",
-    progressColor: "#94A3B8",
+    progressColor: "rgba(148, 163, 184, 0.9)",
   },
 });
 
