@@ -1,6 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react/*";
 import { Toast } from "./toast";
 import { Button } from "./button";
+import { LoadingSpinner } from "./loading-spinner";
+import { css } from "styled-components";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof Toast> = {
   title: "Content/Toast",
@@ -174,99 +177,25 @@ export const Default: Story = {
   ),
 };
 
-export const WithActionsAndDetail: Story = {
+export const WithActions: Story = {
   render: () => (
     <div style={{ padding: 24 }}>
-      <Section title="Single action">
-        <Row>
-          <Button
-            variant="success"
-            onClick={() =>
-              Toast.success({
-                title: "File uploaded",
-                content: "report.pdf was uploaded successfully.",
-                actions: [
-                  { label: "View file", onClick: () => alert("Opening file…") },
-                ],
-              })
-            }
-          >
-            Success
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() =>
-              Toast.warning({
-                title: "Session expiring",
-                content: "Your session will expire in 2 minutes.",
-                icon: {
-                  position: "left-center",
-                },
-                actions: [
-                  {
-                    label: "Stay logged in",
-                    onClick: () => alert("Session extended"),
-                  },
-                ],
-              })
-            }
-          >
-            Warning
-          </Button>
-        </Row>
-      </Section>
-
       <Section title="Two actions">
         <Row>
           <Button
-            variant="danger"
             onClick={() =>
-              Toast.danger({
-                title: "Delete this item?",
-                content: "This action cannot be undone.",
-                disappearAfterMs: 0,
+              Toast.warning({
+                title: "Appointment Update",
+                content:
+                  "Your hospital appointment has been rescheduled due to doctor availability changes.",
                 actions: [
-                  {
-                    label: "Delete",
-                    variant: "danger",
-                    onClick: () => alert("Deleted!"),
-                  },
-                  { label: "Cancel" },
+                  { label: "View details" },
+                  { label: "Confirm change" },
                 ],
               })
             }
           >
-            Danger
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() =>
-              Toast.primary({
-                title: "Update available",
-                content: "v2.4.0 is ready to install.",
-                actions: [
-                  { label: "Install now", onClick: () => alert("Installing…") },
-                  { label: "Later" },
-                ],
-              })
-            }
-          >
-            Primary
-          </Button>
-          <Button
-            onClick={() =>
-              Toast.neutral({
-                title: "Cookie preferences",
-                content: "We use cookies to improve your experience.",
-                disappearAfterMs: 0,
-                actions: [
-                  { label: "Accept all", onClick: () => alert("Accepted") },
-                  { label: "Reject all" },
-                ],
-              })
-            }
-          >
-            Neutral
+            Hospital Update
           </Button>
         </Row>
       </Section>
@@ -291,98 +220,38 @@ export const WithActionsAndDetail: Story = {
           </Button>
         </Row>
       </Section>
+    </div>
+  ),
+};
 
+export const WithDetailSlot: Story = {
+  render: () => (
+    <div style={{ padding: 24 }}>
       <Section title="With detail slot">
         <Row>
           <Button
-            variant="primary"
+            variant="secondary"
             onClick={() =>
-              Toast.primary({
-                title: "Update available",
-                content: "v2.4.0 is ready to install.",
-                disappearAfterMs: 7000,
-                detailSlot: (
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: "#6366f1",
-                      background: "#e0e7ff",
-                      borderRadius: 6,
-                      padding: "6px 10px",
-                    }}
-                  >
-                    Includes 3 bug fixes and performance improvements.
-                  </div>
-                ),
-                actions: [
-                  { label: "Install now", onClick: () => alert("Installing…") },
-                  { label: "Later" },
-                ],
-              })
-            }
-          >
-            Primary
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() =>
-              Toast.danger({
-                title: "Build failed",
-                content: "ci/deploy-production failed with exit code 1.",
+              Toast.warning({
+                title: "Export pending",
                 disappearAfterMs: 0,
+                content:
+                  "Preparing your export. Download will be available shortly.",
                 detailSlot: (
-                  <pre
-                    style={{
-                      fontSize: 11,
-                      background: "#fcb8bc",
-                      color: "#881337",
-                      borderRadius: 6,
-                      margin: 0,
-                      padding: "14px",
-                      overflowX: "auto",
-                    }}
-                  >
-                    "Error: ENOENT: no such file or directory\n at deploy.js:42"
-                  </pre>
-                ),
-                actions: [
-                  { label: "View logs", onClick: () => alert("Opening logs…") },
-                  { label: "Retry", onClick: () => alert("Retrying…") },
-                ],
-              })
-            }
-          >
-            Danger + detail
-          </Button>
-          <Button
-            variant="success"
-            onClick={() =>
-              Toast.success({
-                title: "Payment received",
-                content: "Invoice #1042 has been paid.",
-                detailSlot: (
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: "#14532d",
-                      background: "#dcfce7",
-                      borderRadius: 6,
-                      padding: "6px 10px",
-                    }}
-                  >
-                    Amount: <strong>$240.00</strong> · Ref: TXN-88291
+                  <div>
+                    <p style={{ margin: 0 }}>
+                      {generateSentence({ minLen: 60, maxLen: 110, seed: 101 })}
+                    </p>
                   </div>
                 ),
                 actions: [
-                  {
-                    label: "View receipt",
-                    onClick: () => alert("Opening receipt…"),
-                  },
+                  { label: "Download", disabled: true },
+                  { label: "Dismiss", onClick: () => console.log("dismiss") },
                 ],
               })
             }
           >
-            Success + detail
+            Show Export Toast
           </Button>
         </Row>
       </Section>
@@ -487,6 +356,39 @@ export const Positions: Story = {
         </Row>
       </Section>
     </div>
+  ),
+};
+
+export const Loading: Story = {
+  render: () => (
+    <Button
+      variant="primary"
+      onClick={() => {
+        Toast.neutral({
+          content: "Loading...",
+          icon: {
+            render: <LoadingSpinner iconSize={24} />,
+            position: "center-center",
+          },
+          styles: {
+            iconStyle: css`
+              background-color: transparent;
+            `,
+            contentStyle: css`
+              font-weight: 600;
+              font-size: 16px;
+              font-family: monospace;
+            `,
+          },
+          position: "center-center",
+          width: 200,
+          closable: false,
+          disappearAfterMs: 1000,
+        });
+      }}
+    >
+      Loading
+    </Button>
   ),
 };
 
