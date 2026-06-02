@@ -59,9 +59,6 @@ function Title({
   centerSection,
   rightSection,
 }: TitleProps) {
-  const { currentTheme } = useTheme();
-  const titleTheme = currentTheme?.title;
-
   const isLarge = size === "lg";
 
   const textStyles: BaseAllTextStyles = {
@@ -88,7 +85,6 @@ function Title({
     <TitleContainer
       id={id}
       aria-label="title-container"
-      $theme={titleTheme}
       className={applyClassName("title-container", className)}
       $style={css`
         flex-direction: ${isLarge ? "column" : "row"};
@@ -192,7 +188,6 @@ function TitleLarge(props: TitleLargeProps) {
 
 const TitleContainer = styled.div<{
   $style?: CSSProp;
-  $theme?: TitleThemeConfig;
 }>`
   display: flex;
   gap: 10px;
@@ -200,8 +195,6 @@ const TitleContainer = styled.div<{
   flex-direction: row;
   align-items: start;
   justify-content: space-between;
-
-  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $style }) => $style};
 `;
@@ -319,21 +312,20 @@ const Section = styled.div<{
   ${({ $style }) => $style}
 `;
 
-interface BaseAllTextProps extends Pick<
-  TitleProps,
-  "text" | "pretitle" | "subtitle" | "icon" | "size"
-> {
+interface BaseAllTextProps
+  extends Pick<TitleProps, "text" | "pretitle" | "subtitle" | "icon" | "size"> {
   styles?: BaseAllTextStyles;
 }
 
-interface BaseAllTextStyles extends Pick<
-  TitleStyles,
-  | "textContainerStyle"
-  | "textWrapperStyle"
-  | "titleStyle"
-  | "pretitleStyle"
-  | "subtitleStyle"
-> {}
+interface BaseAllTextStyles
+  extends Pick<
+    TitleStyles,
+    | "textContainerStyle"
+    | "textWrapperStyle"
+    | "titleStyle"
+    | "pretitleStyle"
+    | "subtitleStyle"
+  > {}
 
 interface TextVariant {
   as?: ElementType;
