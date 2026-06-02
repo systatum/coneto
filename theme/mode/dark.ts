@@ -68,6 +68,7 @@ import {
   createTitleTheme,
   createWheelTheme,
   createLaunchpadTheme,
+  createToastTheme,
 } from "./creator";
 
 // Dark
@@ -738,6 +739,53 @@ const darkThumbField = createThumbFieldTheme({
   errorColor: "#f87171",
 });
 
+const darkToast = createToastTheme({
+  primary: {
+    backgroundColor: "#0F172A",
+    borderColor: "#6366F1",
+    textColor: "#C7D2FE",
+    iconBackgroundColor: "#6366F1",
+    iconColor: "#FFFFFF",
+    progressColor: "#818CF8",
+  },
+
+  success: {
+    backgroundColor: "#08140D",
+    borderColor: "#22C55E",
+    textColor: "#BBF7D0",
+    iconBackgroundColor: "#22C55E",
+    iconColor: "#FFFFFF",
+    progressColor: "#4ADE80",
+  },
+
+  danger: {
+    backgroundColor: "#18090C",
+    borderColor: "#F43F5E",
+    textColor: "#FECDD3",
+    iconBackgroundColor: "#F43F5E",
+    iconColor: "#FFFFFF",
+    progressColor: "#FB7185",
+  },
+
+  warning: {
+    backgroundColor: "#191203",
+    borderColor: "#F59E0B",
+    textColor: "#FDE68A",
+    iconBackgroundColor: "#F59E0B",
+    iconColor: "#FFFFFF",
+    progressColor: "#FBBF24",
+  },
+
+  neutral: {
+    backgroundColor: "#020617",
+    borderColor: "#475569",
+    textColor: "#E2E8F0",
+    iconBackgroundColor: "#64748B",
+    iconColor: "#FFFFFF",
+    progressColor: "#94A3B8",
+  },
+});
+
 const darkToggle = createToggleTheme(darkBody, {
   backgroundColor: "rgb(80, 80, 80)",
   checkedBackgroundColor: darkButton?.primary?.hoverBackgroundColor,
@@ -862,6 +910,7 @@ export const darkTheme: AppTheme = {
   tipmenu: darkTipMenu,
   title: darkTitle,
   thumbField: darkThumbField,
+  toast: darkToast,
   toggle: darkToggle,
   toolbar: darkToolbar,
   tooltip: darkTooltip,
@@ -933,6 +982,7 @@ export {
   darkTipMenu,
   darkTitle,
   darkThumbField,
+  darkToast,
   darkToggle,
   darkToolbar,
   darkTooltip,
