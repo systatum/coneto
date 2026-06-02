@@ -97,6 +97,12 @@ function Timeline({
 }
 
 const TimelineWrapper = styled.div`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -112,6 +118,15 @@ const TimelineContent = styled.div<{ $isClickable: boolean }>`
 `;
 
 const IndicatorWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,6 +135,15 @@ const IndicatorWrapper = styled.div`
 `;
 
 const CircleWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -211,6 +235,15 @@ const Divider = styled.div<{
 `;
 
 const ContentWrapper = styled.div<{ $isLast: boolean }>`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -298,6 +331,15 @@ const TimelineContainer = styled.div<{
 `;
 
 const TextWrapper = styled.div<{ $style?: CSSProp }>`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -314,6 +356,15 @@ const Subtitle = styled.div<{ $style?: CSSProp }>`
 `;
 
 const SidenoteContainer = styled.div<{ $style?: CSSProp }>`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   min-width: 100px;

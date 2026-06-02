@@ -271,6 +271,12 @@ const CardContainer = styled.div<{
   $containerStyle?: CSSProp;
   $theme: CardThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   color: ${({ $theme }) => $theme?.textColor ?? "#ffffff"};

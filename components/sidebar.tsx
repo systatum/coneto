@@ -148,6 +148,12 @@ const MotionSidebar = styled(motion.div)<{
   $style?: CSSProp;
   $theme?: SidebarThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: fixed;
   z-index: 9999999;
   display: flex;
@@ -182,6 +188,12 @@ const ToggleButton = styled.button<{
   $position: "left" | "right";
   $theme?: SidebarThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: fixed;
   top: 0;
   z-index: 30;
@@ -212,6 +224,12 @@ const DesktopSidebar = styled.div<{
   $style?: CSSProp;
   $theme?: SidebarThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: fixed;
   z-index: 40;
   display: none;

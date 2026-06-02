@@ -242,6 +242,13 @@ const DormantLabel = styled.label<{
   $dormantedMaxWidth?: string;
   $theme?: DormantTextThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -298,6 +305,13 @@ const DormantWrapper = styled.div<{
   $style?: CSSProp;
   $minHeight?: number | string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   position: relative;
   width: 100%;
   display: flex;
@@ -346,6 +360,15 @@ const ActionButton = styled.button<{
 `;
 
 const IconWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   position: absolute;
   top: 50%;
   left: 6px;

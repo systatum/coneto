@@ -246,7 +246,8 @@ function BaseCapsule({
 export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
 
 export interface CapsuleProps
-  extends Omit<BaseCapsuleProps, "styles">,
+  extends
+    Omit<BaseCapsuleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CapsuleStyles;
 }
@@ -311,6 +312,12 @@ const CapsuleWrapper = styled.div<{
   $disabled?: boolean;
   $theme?: CapsuleThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: relative;
   display: flex;
   flex-direction: row;

@@ -194,14 +194,18 @@ const TitleContainer = styled.div<{
   $style?: CSSProp;
   $theme?: TitleThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   gap: 10px;
   width: 100%;
   flex-direction: row;
   align-items: start;
   justify-content: space-between;
-
-  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $style }) => $style};
 `;

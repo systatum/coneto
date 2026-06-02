@@ -6,8 +6,10 @@ import styled, { CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 
-export interface AvatarProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
+export interface AvatarProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title" | "style" | "onChange"
+> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
@@ -136,6 +138,12 @@ const AvatarContainer = styled.div<{
   $textColor: string;
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: relative;
   display: flex;
   align-items: center;

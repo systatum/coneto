@@ -81,6 +81,12 @@ const spin = keyframes`
 `;
 
 const SpinnerWrapper = styled.div<{ $gap: number; $style?: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;

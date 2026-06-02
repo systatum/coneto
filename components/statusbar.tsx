@@ -247,6 +247,12 @@ const StatusbarWrapper = styled.div<{
   $transparent?: boolean;
   $theme?: StatusbarThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   color: ${({ $theme }) => $theme.textColor};
   bottom: 0;
   left: 0;

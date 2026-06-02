@@ -3,6 +3,7 @@ import { addons } from "@storybook/preview-api";
 import { ThemeProvider } from "./../theme/provider";
 import { GLOBALS_UPDATED } from "@storybook/core-events";
 import "../shared.css";
+import "../theme.css";
 import "../documentation.css";
 
 if (typeof window !== "undefined") {
@@ -24,7 +25,15 @@ const preview: Preview = {
   parameters: {
     options: {
       storySort: {
-        order: ["Welcome", "*"],
+        order: [
+          "Welcome",
+          "Installation Guide",
+          "Vite and Webpack",
+          "Shared css",
+          "Extending Theme",
+          "Dark mode",
+          "*",
+        ],
       },
     },
     backgrounds: { disable: true },

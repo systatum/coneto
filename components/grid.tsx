@@ -4,10 +4,8 @@ import { Checkbox } from "./checkbox";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 
-export interface GridProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+export interface GridProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   height?: number | string;
   width?: number | string;
@@ -16,10 +14,8 @@ export interface GridProps extends Omit<
   preset?: GridPresetKey;
 }
 
-export interface GridCardProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+export interface GridCardProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   styles?: GridCardStyles;
   children?: ReactNode;
   thumbnail?: string;
@@ -143,6 +139,12 @@ function GridCard({
 const GridBase = styled.div<{
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: grid;
   width: 100%;
   ${({ $style }) => $style}
@@ -169,6 +171,11 @@ const GridCardWrapper = styled.div.attrs<{
   $borderColor?: string;
   $shadow?: string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   position: relative;
   display: flex;
   flex-direction: column;
@@ -203,12 +210,23 @@ const GridCardWrapper = styled.div.attrs<{
 `;
 
 const CheckboxWrapper = styled.div`
+  box-sizing: border-box;
+
   position: absolute;
   top: 16px;
   left: 16px;
 `;
 
 const ThumbnailWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   width: 100%;
   background-color: #e5e5e5;
   display: flex;
@@ -217,6 +235,15 @@ const ThumbnailWrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   width: 100%;
   height: 100%;
   display: flex;

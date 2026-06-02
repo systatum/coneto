@@ -116,8 +116,7 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   };
 
 export interface ComboboxProps
-  extends
-    BaseComboboxProps,
+  extends BaseComboboxProps,
     Omit<FieldLaneProps, "styles" | "type" | "children" | "actions"> {}
 
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
@@ -1135,6 +1134,10 @@ const DrawerWrapper = styled.ul<{
   $multiple?: boolean;
   $hasNestedOptions?: boolean;
 }>`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
   position: relative;
   z-index: 9992999;
   max-height: 220px;

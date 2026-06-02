@@ -1035,6 +1035,12 @@ function Calendar({
 const CalendarContainer = styled.div<{
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   ${({ $style }) => $style}
 `;
 

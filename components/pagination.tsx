@@ -99,6 +99,12 @@ function Pagination({
 }
 
 const PaginationWrapper = styled.div<{ $style?: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
