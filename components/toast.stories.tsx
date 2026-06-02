@@ -365,7 +365,7 @@ export const Loading: Story = {
       variant="primary"
       onClick={() => {
         Toast.neutral({
-          content: "Loading...",
+          content: "Fetching data...",
           icon: {
             render: <LoadingSpinner iconSize={24} />,
             position: "center-center",
