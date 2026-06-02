@@ -162,6 +162,12 @@ const Wrapper = styled.div<{
   $variant: MessageboxVariant;
   $theme: MessageboxThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   gap: 12px;

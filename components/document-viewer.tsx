@@ -860,6 +860,12 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
 );
 
 const PDFViewerContainer = styled.div<{ $backgroundColor?: string }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   height: 100%;

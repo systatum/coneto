@@ -143,6 +143,12 @@ function KeynotePoint({
 const KeynoteWrapper = styled.div<{
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -153,6 +159,12 @@ const KeynoteWrapper = styled.div<{
 const KeynotePointWrapper = styled.div<{
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;

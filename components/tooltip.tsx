@@ -293,6 +293,12 @@ function TooltipContainer({
 }
 
 const Wrapper = styled.div<{ $style?: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: relative;
   display: inline-flex;
   align-items: center;

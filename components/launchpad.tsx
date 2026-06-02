@@ -234,6 +234,12 @@ const LaunchpadContainer = styled.div<{
   $containerStyle?: CSSProp;
   $theme?: LaunchpadThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   cursor: grab;

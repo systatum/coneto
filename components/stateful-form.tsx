@@ -2083,8 +2083,10 @@ function FormFields<T extends FieldValues>({
   );
 }
 
-export interface StatefulFormLabelProps
-  extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
+export interface StatefulFormLabelProps extends Omit<
+  LabelHTMLAttributes<HTMLLabelElement>,
+  "label" | "style"
+> {
   label?: string;
   helper?: string;
   styles: { self?: CSSProp };
@@ -2187,6 +2189,12 @@ function sanitizeId({
 }
 
 const ContainerFormField = styled.div<{ $style: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   gap: 6px;

@@ -4,10 +4,8 @@ import { useTheme } from "./../theme/provider";
 import { FrameThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 
-export interface FrameProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "title" | "style"
-> {
+export interface FrameProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
   title?: string;
   children: React.ReactNode;
   styles?: FrameStyles;
@@ -53,6 +51,12 @@ const FrameContainer = styled.div<{
   $style?: CSSProp;
   $theme?: FrameThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: relative;
   width: 100%;
   min-width: 500px;

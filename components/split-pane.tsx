@@ -45,8 +45,10 @@ export interface SplitPaneStyles {
   dividerStyle?: CSSProp;
 }
 
-export interface SplitPaneCellProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+export interface SplitPaneCellProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "style"
+> {
   children?: ReactNode;
   styles?: SplitPaneCellStyles;
   actions?: SplitPaneAction[];
@@ -348,6 +350,12 @@ const Container = styled.div<{
   $backgroundColor: string;
   $textColor: string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   width: 100%;
   height: auto;

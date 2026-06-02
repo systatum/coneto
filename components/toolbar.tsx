@@ -380,6 +380,13 @@ function ToolbarMenu({
 }
 
 const ToolbarWrapper = styled.div<{ $style?: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   display: flex;
   width: 100%;
   flex-direction: row;

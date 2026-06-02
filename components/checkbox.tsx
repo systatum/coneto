@@ -302,6 +302,8 @@ const HiddenCheckbox = styled.input<{
   $style?: CSSProp;
   $disabled?: boolean;
 }>`
+  margin: 0;
+  padding: 0;
   appearance: none;
   height: 16px;
   width: 16px;

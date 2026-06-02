@@ -89,6 +89,12 @@ const WheelWrapper = styled.div<{
   $style?: CSSProp;
   $theme?: WheelThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;

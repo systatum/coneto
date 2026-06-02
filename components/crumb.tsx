@@ -160,6 +160,12 @@ function Crumb({
 }
 
 const CrumbNav = styled.nav`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;

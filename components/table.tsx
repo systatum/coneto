@@ -667,6 +667,12 @@ const Wrapper = styled.div<{
   $style?: CSSProp;
   $theme?: TableThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -706,6 +712,8 @@ const ActionsWrapper = styled.div`
 `;
 
 const PaginationButton = styled.button<{ $theme?: TableThemeConfig }>`
+  border-width: 0;
+
   display: flex;
   gap: 0.25rem;
   align-items: center;
@@ -1631,6 +1639,12 @@ const CellContent = styled.div<{
   $contentStyle?: CSSProp;
   $bold?: boolean;
 }>`
+  *,
+  ::before,
+  ::after {
+    border-width: 0;
+  }
+
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   display: flex;

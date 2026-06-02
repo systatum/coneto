@@ -189,6 +189,12 @@ function TitleLarge(props: TitleLargeProps) {
 const TitleContainer = styled.div<{
   $style?: CSSProp;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   gap: 10px;
   width: 100%;

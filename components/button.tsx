@@ -411,6 +411,12 @@ function Button({
 }
 
 const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   z-index: 9992999;
 
   ${({ $style }) => $style};
@@ -466,6 +472,12 @@ const TipMenuContainer = styled.div<{
   $style?: CSSProp;
   $theme?: TipMenuContainerThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   padding: 4px;
@@ -486,6 +498,13 @@ const ButtonWrapper = styled.div<{
   $variant?: ButtonVariants["variant"];
   $theme: AppTheme["button"];
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-width: 0;
+  }
+
   display: flex;
   position: relative;
   align-items: center;

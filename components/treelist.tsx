@@ -1468,6 +1468,12 @@ const TreeListWrapper = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   width: 100%;

@@ -313,6 +313,12 @@ const Wrapper = styled.div<{
   $theme?: DialogThemeConfig;
   $mobile?: boolean;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   position: fixed;
   top: 50%;
   left: 50%;

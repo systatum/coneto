@@ -76,7 +76,16 @@ function TipMenu({
       className={applyClassName("tip-menu", className)}
       aria-label="tip-menu"
       styles={{
-        self: styles?.self,
+        self: css`
+          *,
+          ::before,
+          ::after {
+            box-sizing: border-box;
+            border-width: 0;
+          }
+
+          ${styles?.self}
+        `,
       }}
     >
       {withFilter && (

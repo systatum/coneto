@@ -370,6 +370,12 @@ const ListContainer = styled.div<{
   $containerStyle?: CSSProp;
   $backgroundColor?: string;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
+
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -1443,6 +1449,15 @@ const ListItemRight = styled.div<{ $style?: CSSProp }>`
 `;
 
 const TextWrapper = styled.div`
+  &,
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  box-sizing: border-box;
+
   display: flex;
   flex-direction: column;
   user-select: none;

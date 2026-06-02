@@ -130,6 +130,19 @@ if (!fs.existsSync(distDir)) {
   process.exit(1);
 }
 
+function copyFileToDist(fileName) {
+  const src = path.resolve(fileName);
+  const dest = path.join(distDir, fileName);
+
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, dest);
+    console.log(`✅ Copied: ${fileName}`);
+  }
+}
+
+copyFileToDist("shared.css");
+copyFileToDist("theme.css");
+
 walk(distDir);
 
 console.log("✨ Post-build processing complete");
