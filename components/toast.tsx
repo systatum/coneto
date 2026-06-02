@@ -329,7 +329,7 @@ const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   backdrop-filter: blur(18px) - blur(24px);
   -webkit-backdrop-filter: blur(18px) - blur(24px);
 
-  box-shadow: 0 10px 15px rgb(0 0 0 / 20%);
+  box-shadow: 0 10px 15px rgb(0 0 0 / 10%);
   box-sizing: border-box;
 
   color: rgba(0, 0, 0, 0.8);
