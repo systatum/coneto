@@ -13,9 +13,11 @@
 //  *   - Extracts rich descriptions (docs.description.component)
 //  *   - Falls back to argTypes descriptions
 //  *   - Parses welcome.mdx as authoritative channel metadata
-//  *   - Uses filesystem timestamps for pubDate
+//  *   - Uses filesystem timestamps for pubDate on NEW items only
+//  *   - Preserves pubDate for items whose content hasn't changed
 //  *   - Strips markdown headings (#, ##) globally
 //  *   - Converts markdown formatting to HTML inside CDATA blocks
+//  *   - Tracks content changes via coneto:item-digest (MD5 of content:encoded)
 //  *
 //  * Execution:
 //  *   node scripts/generate-rss.js
@@ -24,6 +26,7 @@
 const fg = require("fast-glob");
 const fs = require("fs-extra");
 const path = require("path");
+const crypto = require("crypto");
 const { parse } = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 
@@ -40,6 +43,61 @@ function escapeXml(input = "") {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
+}
+
+/**
+ * Compute an MD5 hex digest of a string.
+ */
+function md5(input) {
+  return crypto.createHash("md5").update(input, "utf8").digest("hex");
+}
+
+// ---------------------------------------------------------------------------
+// Existing feed parsing — extract per-item {pubDate, digest} keyed by link
+// ---------------------------------------------------------------------------
+
+/**
+ * Parse the existing feed.xml (if it exists) and return a Map of
+ *   link → { pubDate: Date, digest: string }
+ *
+ * We use simple regex extraction — no full XML parser dependency needed
+ * because we control the output format exactly.
+ */
+function loadExistingFeed(outputPath) {
+  const fullPath = path.join(ROOT, outputPath);
+  const existing = new Map(); // link → { pubDate, digest }
+
+  if (!fs.existsSync(fullPath)) {
+    return existing;
+  }
+
+  const xml = fs.readFileSync(fullPath, "utf-8");
+
+  // Split into <item>...</item> blocks
+  const itemPattern = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+
+  while ((match = itemPattern.exec(xml)) !== null) {
+    const block = match[1];
+
+    const linkMatch = block.match(/<link>(.*?)<\/link>/);
+    const pubDateMatch = block.match(/<pubDate>(.*?)<\/pubDate>/);
+    const digestMatch = block.match(
+      /<coneto:item-digest>(.*?)<\/coneto:item-digest>/
+    );
+
+    if (!linkMatch) continue;
+
+    const link = linkMatch[1].trim();
+    const pubDate = pubDateMatch
+      ? new Date(pubDateMatch[1].trim())
+      : new Date(0);
+    const digest = digestMatch ? digestMatch[1].trim() : "";
+
+    existing.set(link, { pubDate, digest });
+  }
+
+  return existing;
 }
 
 /**
@@ -113,7 +171,6 @@ function makeSummary(rawText = "") {
  *   - No reliance on <br/> for layout
  *   - Safe rendering in RSS readers
  */
-
 function cleanDescription(input = "") {
   let text = input;
 
@@ -292,13 +349,14 @@ function toSlug(title) {
  * Build a single <item> block.
  *
  * @param {object} opts
- * @param {string} opts.title         - Display title
- * @param {string} opts.url           - Canonical link
- * @param {string} opts.guid          - Stable unique ID
+ * @param {string} opts.title          - Display title
+ * @param {string} opts.url            - Canonical link
+ * @param {string} opts.guid           - Stable unique ID
  * @param {string} opts.rawDescription - Raw (markdown) description text
- * @param {Date}   opts.pubDate       - Last modified date
+ * @param {Date}   opts.pubDate        - Publication date to use
+ * @param {string} opts.digest         - MD5 of content:encoded
  */
-function buildItem({ title, url, guid, rawDescription, pubDate }) {
+function buildItem({ title, url, guid, rawDescription, pubDate, digest }) {
   // <description> — short plain-text preview (3 sentences max)
   const summary = escapeXml(makeSummary(rawDescription));
 
@@ -313,12 +371,20 @@ function buildItem({ title, url, guid, rawDescription, pubDate }) {
     <description><![CDATA[${summary}]]></description>
     <content:encoded><![CDATA[${fullHtml}]]></content:encoded>
     <pubDate>${pubDate.toUTCString()}</pubDate>
+    <coneto:item-digest>${digest}</coneto:item-digest>
   </item>`;
 }
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
 
 async function main() {
   const pkg = await fs.readJSON(path.join(ROOT, "package.json"));
   const version = pkg.version;
+
+  // Load existing feed so we can preserve pubDate for unchanged items
+  const existingItems = loadExistingFeed(OUTPUT);
 
   const files = await fg(GLOB_PATTERNS);
 
@@ -332,10 +398,6 @@ async function main() {
     const fullPath = path.join(ROOT, file);
     const code = await fs.readFile(fullPath, "utf-8");
     const stats = await fs.stat(fullPath);
-
-    if (stats.mtime > lastModified) {
-      lastModified = stats.mtime;
-    }
 
     // MDX
     if (file.endsWith(".mdx")) {
@@ -363,13 +425,38 @@ async function main() {
       const slug = toSlug(mdx.title);
       const url = `${SITE_URL}/?path=/docs/${slug}`;
 
+      const fullHtml = cleanDescription(mdx.description);
+      const newDigest = md5(fullHtml);
+
+      const existing = existingItems.get(url);
+      let pubDate;
+
+      if (!existing) {
+        // New item — use filesystem mtime
+        pubDate = stats.mtime;
+        console.log(`🆕 New item: ${url}`);
+      } else if (existing.digest !== newDigest) {
+        // Content changed — use filesystem mtime as updated date
+        pubDate = stats.mtime;
+        console.log(`✏️  Updated item: ${url}`);
+      } else {
+        // No change — preserve original pubDate
+        pubDate = existing.pubDate;
+      }
+
+      // Track the most recent real change for lastBuildDate
+      if (pubDate > lastModified) {
+        lastModified = pubDate;
+      }
+
       items.push(
         buildItem({
           title: mdx.title,
-          url: url,
+          url,
           guid: url,
           rawDescription: mdx.description,
-          pubDate: stats.mtime,
+          pubDate,
+          digest: newDigest,
         })
       );
 
@@ -386,29 +473,56 @@ async function main() {
       meta.description || fallbackDescription(code) || "No description.";
 
     const slug = toSlug(meta.title);
-
     const url = `${SITE_URL}/?path=/docs/${slug}`;
+
+    const fullHtml = cleanDescription(description);
+    const newDigest = md5(fullHtml);
+
+    const existing = existingItems.get(url);
+    let pubDate;
+
+    if (!existing) {
+      pubDate = stats.mtime;
+      console.log(`🆕 New item: ${url}`);
+    } else if (existing.digest !== newDigest) {
+      pubDate = stats.mtime;
+      console.log(`✏️  Updated item: ${url}`);
+    } else {
+      pubDate = existing.pubDate;
+    }
+
+    if (pubDate > lastModified) {
+      lastModified = pubDate;
+    }
 
     items.push(
       buildItem({
         title: `${meta.title.split("/").pop()} - Coneto React UI`,
-        url: url,
+        url,
         guid: url,
         rawDescription: description,
-        pubDate: stats.mtime,
+        pubDate,
+        digest: newDigest,
       })
     );
   }
 
+  // Fall back to now if we somehow have no items at all
+  if (lastModified.getTime() === 0) {
+    lastModified = new Date();
+  }
+
   /**
    * RSS 2.0 output
+   * xmlns:coneto is used for the coneto:item-digest extension element.
    * CDATA is used to preserve markdown-like content safely.
    */
   const rss = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom"
-  xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:coneto="https://coneto.systatum.com/rss/extensions">
   <channel>
     <title>${escapeXml(channelTitle)}</title>
     <link>${SITE_URL}</link>
