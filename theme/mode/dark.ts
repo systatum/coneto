@@ -741,7 +741,7 @@ const darkThumbField = createThumbFieldTheme({
 
 const darkToast = createToastTheme({
   primary: {
-    backgroundColor: "#0F172A",
+    backgroundColor: "#1E293B",
     borderColor: "#6366F1",
     textColor: "#C7D2FE",
     iconBackgroundColor: "#6366F1",
@@ -750,7 +750,7 @@ const darkToast = createToastTheme({
   },
 
   success: {
-    backgroundColor: "#08140D",
+    backgroundColor: "#17261D",
     borderColor: "#22C55E",
     textColor: "#BBF7D0",
     iconBackgroundColor: "#22C55E",
@@ -759,7 +759,7 @@ const darkToast = createToastTheme({
   },
 
   danger: {
-    backgroundColor: "#18090C",
+    backgroundColor: "#2A161A",
     borderColor: "#F43F5E",
     textColor: "#FECDD3",
     iconBackgroundColor: "#F43F5E",
@@ -768,7 +768,7 @@ const darkToast = createToastTheme({
   },
 
   warning: {
-    backgroundColor: "#191203",
+    backgroundColor: "#2A2113",
     borderColor: "#F59E0B",
     textColor: "#FDE68A",
     iconBackgroundColor: "#F59E0B",
@@ -777,8 +777,8 @@ const darkToast = createToastTheme({
   },
 
   neutral: {
-    backgroundColor: "#020617",
-    borderColor: "#475569",
+    backgroundColor: "#1E293B",
+    borderColor: "#64748B",
     textColor: "#E2E8F0",
     iconBackgroundColor: "#64748B",
     iconColor: "#FFFFFF",
