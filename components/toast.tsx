@@ -1,6 +1,6 @@
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Figure, FigureProps } from "./figure";
-import styled, { css, keyframes } from "styled-components";
+import styled, { css, CSSProp, keyframes } from "styled-components";
 import { createRoot } from "react-dom/client";
 import {
   RiInformationLine,
@@ -9,6 +9,7 @@ import {
   RiAlertLine,
   RiNotification3Line,
   RiCloseLine,
+  RiArrowDownSLine,
 } from "@remixicon/react";
 import {
   getThemeSnapshot,
@@ -18,6 +19,7 @@ import {
   useTheme,
 } from "./../theme";
 import { Button } from "./button";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const ToastVariant = {
   Primary: "primary",
@@ -53,15 +55,18 @@ export type ToastIconPosition =
   (typeof ToastIconPosition)[keyof typeof ToastIconPosition];
 
 export interface ToastIconOptions extends FigureProps {
+  render?: ReactNode;
   position?: ToastIconPosition;
 }
 
 export interface ToastStyles {
-  containerStyle?: CSSProperties;
-  titleStyle?: CSSProperties;
-  contentStyle?: CSSProperties;
-  actionsStyle?: CSSProperties;
-  iconStyle?: CSSProperties;
+  containerStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  actionWrapperStyle?: CSSProp;
+  actionStyle?: CSSProp;
+  iconStyle?: CSSProp;
+  detailSlotStyle?: CSSProp;
 }
 
 export interface ToastAction {
@@ -122,7 +127,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     actions = [],
     icon,
     closable = true,
-    disappearAfterMs = 4000,
+    disappearAfterMs = 2000,
     styles = {},
     width,
     maxWidth,
@@ -132,11 +137,16 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     position = "top-right",
   } = item;
 
-  const { position: iconPosition = ToastIconPosition.LeftTop, ...restIcon } =
-    icon ?? {};
+  const {
+    position: iconPosition = ToastIconPosition.LeftTop,
+    render: Render,
+    ...restIcon
+  } = icon ?? {};
 
   const { currentTheme } = useTheme();
   const toastTheme = currentTheme?.toast?.[variant];
+
+  const [expanded, setExpanded] = useState(false);
 
   const fromBottom = position.startsWith("bottom");
   const resolvedIcon = defaultIcons[variant];
@@ -149,10 +159,12 @@ function ToastItem({ item, onClose }: ToastItemProps) {
       $maxWidth={maxWidth}
       role="alert"
     >
-      <Card $theme={toastTheme} style={styles.containerStyle}>
+      <Card $theme={toastTheme} $style={styles.containerStyle}>
         <Inner $iconPosition={iconPosition}>
-          <IconWrap $theme={toastTheme} style={styles.iconStyle}>
-            {restIcon?.image ? (
+          <IconWrap $theme={toastTheme} $style={styles.iconStyle}>
+            {Render ? (
+              Render
+            ) : restIcon?.image ? (
               <Figure {...restIcon} image={restIcon.image} />
             ) : (
               resolvedIcon
@@ -160,22 +172,21 @@ function ToastItem({ item, onClose }: ToastItemProps) {
           </IconWrap>
           <Body>
             {title && (
-              <Title $theme={toastTheme} style={styles.titleStyle}>
+              <Title $theme={toastTheme} $style={styles.titleStyle}>
                 {title}
               </Title>
             )}
-            <Content $theme={toastTheme} style={styles.contentStyle}>
+            <Content $theme={toastTheme} $style={styles.contentStyle}>
               {content}
             </Content>
           </Body>
         </Inner>
 
-        {detailSlot && <DetailSlot>{detailSlot}</DetailSlot>}
-
         {actions.length > 0 && (
-          <Actions style={styles.actionsStyle}>
+          <Actions $style={styles.actionWrapperStyle}>
             {actions.map((a, i) => (
               <ActionBtn
+                $style={styles.actionStyle}
                 key={i}
                 $theme={toastTheme}
                 disabled={a.disabled}
@@ -189,6 +200,33 @@ function ToastItem({ item, onClose }: ToastItemProps) {
             ))}
           </Actions>
         )}
+        <AnimatePresence initial={false}>
+          {detailSlot && (
+            <DetailSlot>
+              <DetailContent
+                layout
+                $style={styles.detailSlotStyle}
+                initial={false}
+                animate={{
+                  height: expanded ? "auto" : 10,
+                  opacity: 1,
+                }}
+                transition={{
+                  height: { duration: 0.25, ease: "easeInOut" },
+                  opacity: { duration: 0.2 },
+                }}
+              >
+                {detailSlot}
+              </DetailContent>
+
+              <ListShowMoreButton
+                expanded={expanded}
+                setExpanded={setExpanded}
+                variant={variant}
+              />
+            </DetailSlot>
+          )}
+        </AnimatePresence>
 
         {withLoadingBar && disappearAfterMs > 0 && (
           <ProgressBar $theme={toastTheme} $ms={disappearAfterMs} />
@@ -277,7 +315,7 @@ const Wrapper = styled.div<{
           `};
 `;
 
-const Card = styled.div<{ $theme?: ToastThemeConfig }>`
+const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(28px) saturate(1.8);
@@ -286,8 +324,10 @@ const Card = styled.div<{ $theme?: ToastThemeConfig }>`
   border: 1.5px solid ${({ $theme }) => $theme?.borderColor};
   border-radius: 12px;
   box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.04);
+    0 12px 30px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  ${({ $style }) => $style};
 `;
 
 const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
@@ -334,6 +374,7 @@ const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
 
 const IconWrap = styled.div<{
   $theme?: ToastThemeConfig;
+  $style?: CSSProp;
 }>`
   flex-shrink: 0;
   width: 30px;
@@ -344,6 +385,8 @@ const IconWrap = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
+
+  ${({ $style }) => $style}
 `;
 
 const Body = styled.div`
@@ -351,34 +394,142 @@ const Body = styled.div`
   min-width: 0;
 `;
 
-const Title = styled.p<{ $theme?: ToastThemeConfig }>`
+const Title = styled.p<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   margin: 0 0 2px;
   font-size: 13.5px;
   font-weight: 600;
   line-height: 1.35;
   color: ${({ $theme }) => $theme?.textColor};
+
+  ${({ $style }) => $style}
 `;
 
-const Content = styled.p<{ $theme?: ToastThemeConfig }>`
+const Content = styled.p<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
   color: ${({ $theme }) => $theme?.textColor};
   opacity: 0.85;
+
+  ${({ $style }) => $style}
+`;
+
+const DetailContent = styled(motion.div)<{
+  $style?: CSSProp;
+}>`
+  overflow: hidden;
+  padding: 0 13px 11px 54px;
+  font-size: 12px;
+
+  ${({ $style }) => $style}
 `;
 
 const DetailSlot = styled.div`
-  padding: 0 13px 10px 54px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 `;
 
-const Actions = styled.div`
+function ListShowMoreButton({
+  expanded,
+  isOpen,
+  setExpanded,
+  variant,
+}: {
+  expanded: boolean;
+  setExpanded: (prop: boolean) => void;
+  isOpen?: boolean | undefined;
+  variant?: ToastVariant;
+}) {
+  const { currentTheme } = useTheme();
+  const toastTheme = currentTheme.toast?.[variant];
+
+  return (
+    <ShowMoreButton
+      $theme={toastTheme}
+      aria-label="list-show-more-button"
+      $style={css`
+        ${isOpen !== undefined &&
+        !isOpen &&
+        css`
+          display: none;
+        `}
+      `}
+      onClick={() => setExpanded(!expanded)}
+    >
+      {expanded ? "Show less" : "Show more"}
+
+      {
+        <RiArrowDownSLine
+          aria-label="list-show-more-arrow"
+          style={{
+            width: 16,
+            height: 16,
+            marginLeft: 8,
+            transition: "transform 0.3s ease",
+            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      }
+    </ShowMoreButton>
+  );
+}
+
+const ListGroupLeftSideWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+`;
+
+const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+
+  ${({ $style }) => $style}
+`;
+
+const ShowMoreButton = styled.button<{
+  $style?: CSSProp;
+  $theme?: ToastThemeConfig;
+}>`
+  margin-top: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 2px;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-top: 1px solid ${({ $theme }) => $theme?.borderColor};
+  color: ${({ $theme }) => $theme?.textColor};
+
+  ${({ $style }) => $style}
+`;
+
+const Actions = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   padding: 0 13px 11px 54px;
+
+  ${({ $style }) => $style}
 `;
 
-const ActionBtn = styled.button<{ $theme?: ToastThemeConfig }>`
+const ActionBtn = styled.button<{
+  $theme?: ToastThemeConfig;
+  $style?: CSSProp;
+}>`
   padding: 5px 11px;
   border-radius: 6px;
   font-size: 12px;
@@ -398,6 +549,8 @@ const ActionBtn = styled.button<{ $theme?: ToastThemeConfig }>`
     opacity: 0.4;
     cursor: not-allowed;
   }
+
+  ${({ $style }) => $style}
 `;
 
 const defaultIcons: Record<ToastVariant, ReactNode> = {
@@ -619,7 +772,7 @@ function show(options: ToastProps): string {
   store.items = [...store.items, item];
   renderStore(store, position);
 
-  const ms = options.disappearAfterMs ?? 4000;
+  const ms = options.disappearAfterMs ?? 2000;
   if (ms > 0) scheduleRemove(id, position, ms);
 
   if (ms === 0) {
