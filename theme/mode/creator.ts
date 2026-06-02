@@ -1558,44 +1558,48 @@ export function createToastTheme(
 ): Record<ToastVariant, ToastThemeConfig> {
   const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
     primary: {
-      backgroundColor: "rgba(238, 242, 255, 0.55)",
-      borderColor: "rgba(129, 140, 248, 0.35)",
-      textColor: "#3730A3",
-      iconBackgroundColor: "rgba(129, 140, 248, 0.85)",
+      backgroundColor: "#E7ECFF",
+      borderColor: "#6C7BFF",
+      textColor: "#2E2A8A",
+      iconBackgroundColor: "#6C7BFF",
       iconColor: "#FFFFFF",
-      progressColor: "rgba(99, 102, 241, 0.9)",
+      progressColor: "#5B63F6",
     },
+
     success: {
-      backgroundColor: "rgba(240, 253, 244, 0.55)",
-      borderColor: "rgba(74, 222, 128, 0.35)",
-      textColor: "#14532D",
-      iconBackgroundColor: "rgba(34, 197, 94, 0.85)",
+      backgroundColor: "#ECFDF3",
+      borderColor: "#34D399",
+      textColor: "#0F3D22",
+      iconBackgroundColor: "#22C55E",
       iconColor: "#FFFFFF",
-      progressColor: "rgba(34, 197, 94, 0.9)",
+      progressColor: "#22C55E",
     },
+
     danger: {
-      backgroundColor: "rgba(255, 241, 242, 0.55)",
-      borderColor: "rgba(251, 113, 133, 0.35)",
-      textColor: "#881337",
-      iconBackgroundColor: "rgba(244, 63, 94, 0.85)",
+      backgroundColor: "#FFF0F3",
+      borderColor: "#FB647C",
+      textColor: "#6E0F2A",
+      iconBackgroundColor: "#F43F5E",
       iconColor: "#FFFFFF",
-      progressColor: "rgba(244, 63, 94, 0.9)",
+      progressColor: "#F43F5E",
     },
+
     warning: {
-      backgroundColor: "rgba(255, 251, 235, 0.55)",
-      borderColor: "rgba(251, 191, 36, 0.35)",
-      textColor: "#78350F",
-      iconBackgroundColor: "rgba(245, 158, 11, 0.85)",
+      backgroundColor: "#FFF7E0",
+      borderColor: "#F59E0B",
+      textColor: "#5A3A0A",
+      iconBackgroundColor: "#F59E0B",
       iconColor: "#FFFFFF",
-      progressColor: "rgba(245, 158, 11, 0.9)",
+      progressColor: "#F59E0B",
     },
+
     neutral: {
-      backgroundColor: "rgba(248, 250, 252, 0.55)",
-      borderColor: "rgba(148, 163, 184, 0.35)",
+      backgroundColor: "#F1F5F9",
+      borderColor: "#94A3B8",
       textColor: "#0F172A",
-      iconBackgroundColor: "rgba(100, 116, 139, 0.85)",
+      iconBackgroundColor: "#64748B",
       iconColor: "#FFFFFF",
-      progressColor: "rgba(100, 116, 139, 0.9)",
+      progressColor: "#64748B",
     },
   };
 
@@ -1622,6 +1626,7 @@ export function createToastTheme(
     ),
   };
 }
+
 // timeline.tsx
 export function createTimelineTheme(
   body: BodyThemeConfig,

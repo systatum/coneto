@@ -741,48 +741,48 @@ const darkThumbField = createThumbFieldTheme({
 
 const darkToast = createToastTheme({
   primary: {
-    backgroundColor: "rgba(30, 41, 59, 0.55)",
-    borderColor: "rgba(99, 102, 241, 0.35)",
-    textColor: "#C7D2FE",
-    iconBackgroundColor: "rgba(99, 102, 241, 0.85)",
+    backgroundColor: "#0B1220",
+    borderColor: "#3F46B5",
+    textColor: "#A9B4F7",
+    iconBackgroundColor: "#3F46B5",
     iconColor: "#FFFFFF",
-    progressColor: "rgba(129, 140, 248, 0.9)",
+    progressColor: "#6C77FF",
   },
 
   success: {
-    backgroundColor: "rgba(23, 38, 29, 0.55)",
-    borderColor: "rgba(34, 197, 94, 0.35)",
-    textColor: "#BBF7D0",
-    iconBackgroundColor: "rgba(34, 197, 94, 0.85)",
+    backgroundColor: "#0B1A12",
+    borderColor: "#1F9D55",
+    textColor: "#A7E3C1",
+    iconBackgroundColor: "#1F9D55",
     iconColor: "#FFFFFF",
-    progressColor: "rgba(74, 222, 128, 0.9)",
+    progressColor: "#3DDC84",
   },
 
   danger: {
-    backgroundColor: "rgba(42, 22, 26, 0.55)",
-    borderColor: "rgba(244, 63, 94, 0.35)",
-    textColor: "#FECDD3",
-    iconBackgroundColor: "rgba(244, 63, 94, 0.85)",
+    backgroundColor: "#1A0B10",
+    borderColor: "#D84A63",
+    textColor: "#F3B7C1",
+    iconBackgroundColor: "#D84A63",
     iconColor: "#FFFFFF",
-    progressColor: "rgba(251, 113, 133, 0.9)",
+    progressColor: "#F06B82",
   },
 
   warning: {
-    backgroundColor: "rgba(42, 33, 19, 0.55)",
-    borderColor: "rgba(245, 158, 11, 0.35)",
-    textColor: "#FDE68A",
-    iconBackgroundColor: "rgba(245, 158, 11, 0.85)",
+    backgroundColor: "#1A140A",
+    borderColor: "#D39A2C",
+    textColor: "#F3D58A",
+    iconBackgroundColor: "#D39A2C",
     iconColor: "#FFFFFF",
-    progressColor: "rgba(251, 191, 36, 0.9)",
+    progressColor: "#E6B84F",
   },
 
   neutral: {
-    backgroundColor: "rgba(30, 41, 59, 0.55)",
-    borderColor: "rgba(100, 116, 139, 0.35)",
-    textColor: "#E2E8F0",
-    iconBackgroundColor: "rgba(100, 116, 139, 0.85)",
+    backgroundColor: "#0B1220",
+    borderColor: "#334155",
+    textColor: "#CBD5E1",
+    iconBackgroundColor: "#334155",
     iconColor: "#FFFFFF",
-    progressColor: "rgba(148, 163, 184, 0.9)",
+    progressColor: "#94A3B8",
   },
 });
 
