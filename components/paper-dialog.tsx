@@ -629,10 +629,9 @@ const DragIndicatorWrapper = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
 }>`
-  &,
   *,
-  *::before,
-  *::after {
+  ::before,
+  ::after {
     box-sizing: border-box;
   }
 
@@ -646,6 +645,7 @@ const DragIndicatorWrapper = styled(motion.div)<{
   height: 60px;
   z-index: 9992999;
   align-items: center;
+  border-radius: 1.2rem 1.2rem 0 0;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   &:active {
