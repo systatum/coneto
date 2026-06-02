@@ -326,10 +326,8 @@ const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
   background-blend-mode: overlay;
 
-  backdrop-filter: blur(33px);
-  -webkit-backdrop-filter: blur(33px);
-
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px) - blur(24px);
+  -webkit-backdrop-filter: blur(18px) - blur(24px);
 
   box-shadow: 0 10px 15px rgb(0 0 0 / 20%);
   box-sizing: border-box;
@@ -345,9 +343,9 @@ const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
     inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.35),
+      ${({ $theme }) => withAlpha($theme?.backgroundColor, 0.22)},
       transparent 40%,
-      rgba(255, 255, 255, 0.08)
+      ${({ $theme }) => withAlpha($theme?.backgroundColor, 0.08)}
     );
     pointer-events: none;
     mix-blend-mode: overlay;
@@ -355,6 +353,13 @@ const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
 
   ${({ $style }) => $style}
 `;
+
+function withAlpha(color: string, alpha: number) {
+  return color.replace(/rgba?\(([^)]+)\)/, (_, rgb) => {
+    const [r, g, b] = rgb.split(",").map((v: string) => v.trim());
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  });
+}
 
 const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
   display: flex;
