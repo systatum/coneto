@@ -318,14 +318,45 @@ const Wrapper = styled.div<{
 const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(28px) saturate(1.8);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8);
-  background: ${({ $theme }) => $theme?.backgroundColor};
-  border: 1.5px solid ${({ $theme }) => $theme?.borderColor};
-  border-radius: 12px;
+  border-radius: 14px;
+
+  /* base glass */
+  background: ${({ $theme }) =>
+    `color-mix(in srgb, ${$theme?.backgroundColor ?? "#fff"} 75%, transparent)`};
+
+  backdrop-filter: blur(24px) saturate(1.8) brightness(1.05);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) brightness(1.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
   box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    0 10px 30px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* crystal highlight layer */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.35),
+      transparent 35%,
+      rgba(255, 255, 255, 0.08)
+    );
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+
+  /* subtle noise grain */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+  }
 
   ${({ $style }) => $style};
 `;
