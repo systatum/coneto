@@ -64,6 +64,7 @@ import {
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
   TitleThemeConfig,
+  ToastThemeConfig,
   ToggleThemeConfig,
   ToolbarThemeConfig,
   TooltipThemeConfig,
@@ -71,6 +72,7 @@ import {
   WheelThemeConfig,
 } from "./../index";
 import { TipMenuVariant } from "./../../components/tip-menu";
+import { ToastVariant } from "./../../components/toast";
 
 function mergeTheme<T extends object>(
   defaultTheme: T,
@@ -1546,6 +1548,79 @@ export function createTimeboxTheme(
     },
     ...themeConfigurations
   );
+}
+
+// toast.tsx
+export function createToastTheme(
+  ...themeConfigurations: Array<
+    Partial<Record<ToastVariant, Partial<ToastThemeConfig>>>
+  >
+): Record<ToastVariant, ToastThemeConfig> {
+  const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
+    primary: {
+      backgroundColor: "#EEF2FF",
+      borderColor: "#818CF8",
+      textColor: "#3730A3",
+      iconBackgroundColor: "#818CF8",
+      iconColor: "#FFFFFF",
+      progressColor: "#6366F1",
+    },
+    success: {
+      backgroundColor: "#F0FDF4",
+      borderColor: "#4ADE80",
+      textColor: "#14532D",
+      iconBackgroundColor: "#22C55E",
+      iconColor: "#FFFFFF",
+      progressColor: "#22C55E",
+    },
+    danger: {
+      backgroundColor: "#FFF1F2",
+      borderColor: "#FB7185",
+      textColor: "#881337",
+      iconBackgroundColor: "#F43F5E",
+      iconColor: "#FFFFFF",
+      progressColor: "#F43F5E",
+    },
+    warning: {
+      backgroundColor: "#FFFBEB",
+      borderColor: "#FBBF24",
+      textColor: "#78350F",
+      iconBackgroundColor: "#F59E0B",
+      iconColor: "#FFFFFF",
+      progressColor: "#F59E0B",
+    },
+    neutral: {
+      backgroundColor: "#F8FAFC",
+      borderColor: "#94A3B8",
+      textColor: "#0F172A",
+      iconBackgroundColor: "#64748B",
+      iconColor: "#FFFFFF",
+      progressColor: "#64748B",
+    },
+  };
+
+  return {
+    primary: mergeTheme(
+      defaultTheme.primary,
+      ...themeConfigurations.map((o) => o.primary ?? {})
+    ),
+    success: mergeTheme(
+      defaultTheme.success,
+      ...themeConfigurations.map((o) => o.success ?? {})
+    ),
+    danger: mergeTheme(
+      defaultTheme.danger,
+      ...themeConfigurations.map((o) => o.danger ?? {})
+    ),
+    warning: mergeTheme(
+      defaultTheme.warning,
+      ...themeConfigurations.map((o) => o.warning ?? {})
+    ),
+    neutral: mergeTheme(
+      defaultTheme.neutral,
+      ...themeConfigurations.map((o) => o.neutral ?? {})
+    ),
+  };
 }
 
 // timeline.tsx
