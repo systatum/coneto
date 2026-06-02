@@ -14,6 +14,7 @@ import {
 import {
   getThemeSnapshot,
   subscribeTheme,
+  ThemeMode,
   ThemeProvider,
   ToastThemeConfig,
   useTheme,
@@ -143,7 +144,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     ...restIcon
   } = icon ?? {};
 
-  const { currentTheme } = useTheme();
+  const { currentTheme, mode } = useTheme();
   const toastTheme = currentTheme?.toast?.[variant];
 
   const [expanded, setExpanded] = useState(false);
@@ -159,7 +160,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
       $maxWidth={maxWidth}
       role="alert"
     >
-      <Card $theme={toastTheme} $style={styles.containerStyle}>
+      <Card $mode={mode} $theme={toastTheme} $style={styles.containerStyle}>
         <Inner $iconPosition={iconPosition}>
           <IconWrap $theme={toastTheme} $style={styles.iconStyle}>
             {Render ? (
@@ -316,7 +317,11 @@ const Wrapper = styled.div<{
           `};
 `;
 
-const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
+const Card = styled.div<{
+  $theme?: ToastThemeConfig;
+  $style?: CSSProp;
+  $mode?: ThemeMode | string;
+}>`
   position: relative;
   overflow: hidden;
   border-radius: 16px;
@@ -325,6 +330,8 @@ const Card = styled.div<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
 
   background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
   background-blend-mode: overlay;
+
+  border: 1px solid ${({ $mode }) => ($mode === "dark" ? "#2f2f2f" : "#e8e8e8")};
 
   backdrop-filter: blur(18px) - blur(24px);
   -webkit-backdrop-filter: blur(18px) - blur(24px);
