@@ -364,11 +364,10 @@ const Card = styled.div<{
   width: 100%;
 
   background-color: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
-  color: ${({ $theme }) => $theme?.textColor};
 
   box-shadow: 0 10px 15px rgb(0 0 0 / 20%);
 
-  color: rgba(0, 0, 0, 0.8);
+  color: ${({ $theme }) => $theme?.textColor};
 
   display: flex;
   flex-direction: column;
