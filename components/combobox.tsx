@@ -56,7 +56,11 @@ interface BaseComboboxProps {
   navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
-  mobile?: boolean;
+  mobile?: boolean | ComboboxMobile;
+}
+
+export interface ComboboxMobile {
+  drawerHeight?: string;
 }
 
 export const ComboboxGroupInitialState = {
@@ -117,7 +121,10 @@ type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
 
 export interface ComboboxProps
   extends BaseComboboxProps,
-    Omit<FieldLaneProps, "styles" | "type" | "children" | "actions"> {}
+    Omit<
+      FieldLaneProps,
+      "mobile" | "styles" | "type" | "children" | "actions"
+    > {}
 
 const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
   (
@@ -226,7 +233,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         ref={ref}
         className={applyClassName("combobox", className)}
         isLoading={isLoading}
-        mobile={mobile}
+        mobile={!!mobile}
         helper={helper}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
@@ -523,7 +530,7 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
-                  mobile,
+                  mobile: !!mobile,
                   hasNestedOptions,
                   level: 0,
                 })}
@@ -998,7 +1005,7 @@ function ComboboxDrawer({
                   multiple,
                   theme: comboboxTheme,
                   hasNestedOptions,
-                  mobile,
+                  mobile: !!mobile,
                 })}
 
                 gap: 20px;
@@ -1065,7 +1072,7 @@ function ComboboxDrawer({
                   interactionMode,
                   multiple,
                   theme: comboboxTheme,
-                  mobile,
+                  mobile: !!mobile,
                   hasNestedOptions,
                   level,
                 })}
@@ -1110,8 +1117,9 @@ function ComboboxDrawer({
 
 const DrawerContainer = styled.div<{
   $theme?: ComboboxThemeConfig;
-  $mobile?: boolean;
+  $mobile?: boolean | ComboboxMobile;
 }>`
+  box-sizing: border-box;
   overflow: hidden;
   position: fixed;
   bottom: 10px;
@@ -1119,8 +1127,6 @@ const DrawerContainer = styled.div<{
   transform: translateX(-50%);
   width: 96dvw;
   z-index: 9992999;
-  min-height: 220px;
-  max-height: 220px;
   border-radius: 14px;
   background-color: ${({ $mobile, $theme }) =>
     $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
@@ -1130,17 +1136,17 @@ const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
-  $mobile?: boolean;
+  $mobile?: boolean | ComboboxMobile;
   $multiple?: boolean;
   $hasNestedOptions?: boolean;
 }>`
+  box-sizing: border-box;
   list-style: none;
   margin: 0;
   padding: 0;
 
   position: relative;
   z-index: 9992999;
-  max-height: 220px;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid
@@ -1173,12 +1179,20 @@ const DrawerWrapper = styled.ul<{
       width: 100%;
       z-index: 9992999;
       border-radius: 14px;
-      min-height: 220px;
-      max-height: 220px;
+      min-height: ${typeof $mobile === "object"
+        ? $mobile?.drawerHeight
+        : "220px"};
+      max-height: ${typeof $mobile === "object"
+        ? $mobile?.drawerHeight
+        : "220px"};
       border-width: 0.5;
       ${!$multiple &&
       css`
-        padding: 100px 0px;
+        padding: calc(
+            ${typeof $mobile === "object" ? $mobile.drawerHeight : "220px"} *
+              0.4545
+          )
+          0;
       `}
 
       background-color: ${$mobile && $hasNestedOptions
