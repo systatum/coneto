@@ -1119,14 +1119,18 @@ const DrawerContainer = styled.div<{
   $theme?: ComboboxThemeConfig;
   $mobile?: boolean | ComboboxMobile;
 }>`
-  box-sizing: border-box;
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   overflow: hidden;
   position: fixed;
   bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   width: 96dvw;
-  z-index: 9992999;
+  z-index: 99939999;
   border-radius: 14px;
   background-color: ${({ $mobile, $theme }) =>
     $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
@@ -1140,7 +1144,11 @@ const DrawerWrapper = styled.ul<{
   $multiple?: boolean;
   $hasNestedOptions?: boolean;
 }>`
-  box-sizing: border-box;
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   list-style: none;
   margin: 0;
   padding: 0;
