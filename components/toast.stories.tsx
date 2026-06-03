@@ -52,11 +52,11 @@ Toast.warning({
   content: "Your meeting begins in 5 minutes.",
   actions: [
     {
-      label: "Join now",
+      caption: "Join now",
       onClick: () => console.log("Join"),
     },
     {
-      label: "Dismiss",
+      caption: "Dismiss",
     },
   ],
 });
@@ -348,8 +348,8 @@ export const WithActions: Story = {
                 content:
                   "Your hospital appointment has been rescheduled due to doctor availability changes.",
                 actions: [
-                  { label: "View details" },
-                  { label: "Confirm change" },
+                  { caption: "View details" },
+                  { caption: "Confirm change" },
                 ],
               })
             }
@@ -369,8 +369,8 @@ export const WithActions: Story = {
                 content:
                   "Preparing your export. Download will be available shortly.",
                 actions: [
-                  { label: "Download", disabled: true },
-                  { label: "Dismiss" },
+                  { caption: "Download", disabled: true },
+                  { caption: "Dismiss" },
                 ],
               })
             }
@@ -404,8 +404,8 @@ export const WithDetailSlot: Story = {
                   </div>
                 ),
                 actions: [
-                  { label: "Download", disabled: true },
-                  { label: "Dismiss", onClick: () => console.log("dismiss") },
+                  { caption: "Download", disabled: true },
+                  { caption: "Dismiss", onClick: () => console.log("dismiss") },
                 ],
               })
             }
