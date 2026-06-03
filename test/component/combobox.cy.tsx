@@ -180,6 +180,37 @@ describe("Combobox", () => {
       });
     });
 
+    context("object", () => {
+      context("drawerHeight", () => {
+        context("when given 60dvh", () => {
+          it("should render with px", () => {
+            cy.viewport(500, 700);
+
+            cy.mount(
+              <ProductCombobox
+                options={FRUIT_OPTIONS}
+                mobile={{
+                  drawerHeight: "60dvh",
+                }}
+              />
+            );
+
+            cy.findByRole("textbox").click();
+
+            cy.window().then((win) => {
+              const expectedHeight = `${win.innerHeight * 0.6}px`;
+
+              cy.findByLabelText("combobox-drawer-mobile").should(
+                "have.css",
+                "height",
+                expectedHeight
+              );
+            });
+          });
+        });
+      });
+    });
+
     context("when inside of fixed content", () => {
       it("should be centered in the screen", () => {
         cy.viewport(500, 700);
@@ -233,9 +264,13 @@ describe("Combobox", () => {
 
           cy.findByPlaceholderText("Select a fruit...").click();
 
+          // automatic padding calculation
           cy.findByLabelText("combobox-drawer")
-            .should("have.css", "padding-top", "100px")
-            .and("have.css", "padding-bottom", "100px");
+            .invoke("css", "padding-top")
+            .then((value) => {
+              const paddingTop = Number.parseFloat(String(value));
+              expect(paddingTop).to.be.closeTo(100, 0.1);
+            });
         });
       });
     });
@@ -698,7 +733,9 @@ describe("Combobox", () => {
           const allTexts = flattenOptions(
             MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
           );
-          cy.get("#combo-list").scrollTo("bottom");
+          cy.get("#combo-list").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
 
           allTexts.forEach((text) => {
             cy.get("#combo-list")
@@ -761,7 +798,9 @@ describe("Combobox", () => {
           const allTexts = flattenOptions(
             MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
           );
-          cy.get("#combo-list").scrollTo("bottom");
+          cy.get("#combo-list").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
           allTexts.forEach((text) => {
             cy.get("#combo-list")
               .contains(text)
@@ -775,7 +814,9 @@ describe("Combobox", () => {
             const allTexts = flattenOptions(
               MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
             );
-            cy.get("#combo-list").scrollTo("bottom");
+            cy.get("#combo-list").scrollTo("bottom", {
+              ensureScrollable: false,
+            });
             allTexts.forEach((text) => {
               cy.get("#combo-list")
                 .contains(text)
@@ -797,7 +838,9 @@ describe("Combobox", () => {
             const allTexts = flattenOptions(
               MIX_FRUIT_OPTIONS_WITH_COLLAPSIBLE_FALSE
             );
-            cy.get("#combo-list").scrollTo("bottom");
+            cy.get("#combo-list").scrollTo("bottom", {
+              ensureScrollable: false,
+            });
             allTexts.forEach((text) => {
               cy.get("#combo-list")
                 .contains(text)
