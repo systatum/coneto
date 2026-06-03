@@ -21,6 +21,8 @@ import {
 } from "./../theme";
 import { Button } from "./button";
 import { AnimatePresence, motion } from "framer-motion";
+import { applyClassName } from "./../constants/classname";
+import { BaseAction } from "./../constants/action";
 
 export const ToastVariant = {
   Primary: "primary",
@@ -70,11 +72,8 @@ export interface ToastStyles {
   detailSlotStyle?: CSSProp;
 }
 
-export interface ToastAction {
-  label: ReactNode;
-  onClick?: () => void;
+export interface ToastAction extends Omit<BaseAction, "icon"> {
   variant?: ToastVariant;
-  disabled?: boolean;
 }
 
 export interface ToastProps {
@@ -92,6 +91,7 @@ export interface ToastProps {
   detailSlot?: ReactNode;
   withLoadingBar?: boolean;
   className?: string;
+  id?: string;
 }
 
 type ToastWithoutVariant = Omit<ToastProps, "variant">;
@@ -145,6 +145,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     exiting,
     withLoadingBar = true,
     position = "top-right",
+    className,
   } = item;
 
   const {
@@ -161,17 +162,31 @@ function ToastItem({ item, onClose }: ToastItemProps) {
   const fromBottom = position.startsWith("bottom");
   const resolvedIcon = defaultIcons[variant];
 
+  const filteredActions = actions?.filter((action) => !action.hidden);
+
   return (
     <Wrapper
+      id={id}
+      className={applyClassName("toast", className)}
       $exiting={exiting}
       $fromBottom={fromBottom}
       $width={width}
       $maxWidth={maxWidth}
       role="alert"
+      aria-label="toast"
     >
-      <Card $mode={mode} $theme={toastTheme} $style={styles.containerStyle}>
-        <Inner $iconPosition={iconPosition}>
-          <IconWrap $theme={toastTheme} $style={styles.iconStyle}>
+      <Card
+        aria-label="toast-wrapper"
+        $mode={mode}
+        $theme={toastTheme}
+        $style={styles.containerStyle}
+      >
+        <Inner aria-label="toast-inner" $iconPosition={iconPosition}>
+          <IconWrap
+            aria-label="toast-icon"
+            $theme={toastTheme}
+            $style={styles.iconStyle}
+          >
             {Render ? (
               Render
             ) : restIcon?.image ? (
@@ -182,38 +197,43 @@ function ToastItem({ item, onClose }: ToastItemProps) {
           </IconWrap>
           <Body>
             {title && (
-              <Title $theme={toastTheme} $style={styles.titleStyle}>
+              <Title aria-label="toast-title" $style={styles.titleStyle}>
                 {title}
               </Title>
             )}
-            <Content $theme={toastTheme} $style={styles.contentStyle}>
+            <Content aria-label="toast-content" $style={styles.contentStyle}>
               {content}
             </Content>
           </Body>
         </Inner>
 
-        {actions.length > 0 && (
-          <Actions $style={styles.actionWrapperStyle}>
-            {actions.map((a, i) => (
+        {filteredActions.length > 0 && (
+          <Actions
+            aria-label="toast-actions-wrapper"
+            $style={styles.actionWrapperStyle}
+          >
+            {actions.map((action, i) => (
               <ActionBtn
+                aria-label="toast-action-button"
                 $style={styles.actionStyle}
                 key={i}
                 $theme={toastTheme}
-                disabled={a.disabled}
+                disabled={action.disabled}
                 onClick={() => {
-                  a.onClick?.();
+                  action.onClick?.();
                   onClose(id);
                 }}
               >
-                {a.label}
+                {action.caption}
               </ActionBtn>
             ))}
           </Actions>
         )}
         <AnimatePresence initial={false}>
           {detailSlot && (
-            <DetailSlot>
+            <DetailSlot aria-label="toast-detail-slot">
               <DetailContent
+                aria-label="toast-detail-slot-content"
                 layout
                 $style={styles.detailSlotStyle}
                 $theme={toastTheme}
@@ -240,7 +260,11 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         </AnimatePresence>
 
         {withLoadingBar && disappearAfterMs > 0 && (
-          <ProgressBar $theme={toastTheme} $ms={disappearAfterMs} />
+          <ProgressBar
+            aria-label="toast-progress-bar"
+            $theme={toastTheme}
+            $ms={disappearAfterMs}
+          />
         )}
       </Card>
 
@@ -248,7 +272,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         <Button
           variant="ghost"
           onClick={() => onClose(id)}
-          aria-label="Close"
+          aria-label="toast-close"
           icon={{
             image: RiCloseLine,
             color: toastTheme?.textColor,
@@ -340,6 +364,7 @@ const Card = styled.div<{
   width: 100%;
 
   background-color: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
+  color: ${({ $theme }) => $theme?.textColor};
 
   box-shadow: 0 10px 15px rgb(0 0 0 / 20%);
 
@@ -415,21 +440,19 @@ const Body = styled.div`
   min-width: 0;
 `;
 
-const Title = styled.p<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
+const Title = styled.p<{ $style?: CSSProp }>`
   margin: 0 0 2px;
   font-size: 13.5px;
   font-weight: 600;
   line-height: 1.35;
-  color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $style }) => $style}
 `;
 
-const Content = styled.p<{ $theme?: ToastThemeConfig; $style?: CSSProp }>`
+const Content = styled.p<{ $style?: CSSProp }>`
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: ${({ $theme }) => $theme?.textColor};
   opacity: 0.85;
 
   ${({ $style }) => $style}
@@ -456,13 +479,11 @@ const DetailSlot = styled.div`
 
 function ListShowMoreButton({
   expanded,
-  isOpen,
   setExpanded,
   variant,
 }: {
   expanded: boolean;
   setExpanded: (prop: boolean) => void;
-  isOpen?: boolean | undefined;
   variant?: ToastVariant;
 }) {
   const { currentTheme } = useTheme();
@@ -471,52 +492,24 @@ function ListShowMoreButton({
   return (
     <ShowMoreButton
       $theme={toastTheme}
-      aria-label="list-show-more-button"
-      $style={css`
-        ${isOpen !== undefined &&
-        !isOpen &&
-        css`
-          display: none;
-        `}
-      `}
+      aria-label="toast-show-more-button"
       onClick={() => setExpanded(!expanded)}
     >
       {expanded ? "Show less" : "Show more"}
 
-      {
-        <RiArrowDownSLine
-          aria-label="list-show-more-arrow"
-          style={{
-            width: 16,
-            height: 16,
-            marginLeft: 8,
-            transition: "transform 0.3s ease",
-            transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-        />
-      }
+      <RiArrowDownSLine
+        aria-label="toast-show-more-arrow"
+        style={{
+          width: 16,
+          height: 16,
+          marginLeft: 8,
+          transition: "transform 0.3s ease",
+          transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+        }}
+      />
     </ShowMoreButton>
   );
 }
-
-const ListGroupLeftSideWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: flex-start;
-`;
-
-const ListGroupRightSideWrapper = styled.div<{ $style?: CSSProp }>`
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  align-items: center;
-  width: 100%;
-  justify-content: flex-end;
-  padding-right: 0.5rem;
-
-  ${({ $style }) => $style}
-`;
 
 const ShowMoreButton = styled.button<{
   $style?: CSSProp;
@@ -788,7 +781,7 @@ function scheduleRemove(id: string, position: ToastPosition, delay: number) {
 }
 
 function show(options: ToastProps): string {
-  const id = `toast-${++_uid}`;
+  const id = options?.id ?? `toast-${++_uid}`;
   const position = options.position ?? "top-right";
   const item: ToastItemState = { ...options, id, exiting: false };
 
