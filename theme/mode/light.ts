@@ -210,7 +210,47 @@ const lightTipMenu = createTipMenuTheme(lightButton, {
 
 const lightTitle = createTitleTheme(lightBody);
 
-const lightToast = createToastTheme();
+const sharedLightToast = {
+  backgroundColor: "#18181b7d",
+  textColor: "#ffffffe6",
+};
+
+const lightToast = createToastTheme({
+  primary: {
+    ...sharedLightToast,
+    borderColor: "#3F46B5",
+    iconBackgroundColor: "#3F46B5",
+    progressColor: "#6C77FF",
+  },
+
+  success: {
+    ...sharedLightToast,
+    borderColor: "#1F9D55",
+    iconBackgroundColor: "#1F9D55",
+    progressColor: "#3DDC84",
+  },
+
+  danger: {
+    ...sharedLightToast,
+    borderColor: "#D84A63",
+    iconBackgroundColor: "#D84A63",
+    progressColor: "#F06B82",
+  },
+
+  warning: {
+    ...sharedLightToast,
+    borderColor: "#D39A2C",
+    iconBackgroundColor: "#D39A2C",
+    progressColor: "#E6B84F",
+  },
+
+  neutral: {
+    ...sharedLightToast,
+    borderColor: "#334155",
+    iconBackgroundColor: "#334155",
+    progressColor: "#94A3B8",
+  },
+});
 
 const lightToggle = createToggleTheme(lightBody);
 
