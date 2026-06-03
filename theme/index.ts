@@ -3,6 +3,7 @@ import { ButtonVariants } from "./../components/button";
 import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
 import { TipMenuVariant } from "./../components/tip-menu";
+import { ToastVariant } from "./../components/toast";
 
 // body
 export interface BodyThemeConfig {
@@ -42,10 +43,8 @@ export interface ActionButtonThemeConfig extends BodyThemeConfig {
 }
 
 // avatar.tsx
-export interface AvatarThemeConfig extends Omit<
-  BodyThemeConfig,
-  "backgroundColor"
-> {
+export interface AvatarThemeConfig
+  extends Omit<BodyThemeConfig, "backgroundColor"> {
   overlayBackgroundColor?: string;
   overlayIconColor?: string;
 }
@@ -141,20 +140,16 @@ export interface ChipsThemeConfig extends BodyThemeConfig {
 }
 
 // choice-group.tsx
-export interface ChoiceGroupThemeConfig extends Omit<
-  BodyThemeConfig,
-  "textColor"
-> {
+export interface ChoiceGroupThemeConfig
+  extends Omit<BodyThemeConfig, "textColor"> {
   dividerColor?: string;
   labelColor?: string;
   descriptionColor?: string;
 }
 
 // checkbox.tsx
-export interface CheckboxThemeConfig extends Omit<
-  BodyThemeConfig,
-  "textColor"
-> {
+export interface CheckboxThemeConfig
+  extends Omit<BodyThemeConfig, "textColor"> {
   checkedBorderColor?: string;
   checkedBackgroundColor?: string;
   iconColor?: string;
@@ -201,10 +196,8 @@ export interface ColorboxThemeConfig extends BodyThemeConfig {
 }
 
 // crumb.tsx
-export interface CrumbThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor" | "backgroundColor"
-> {
+export interface CrumbThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor" | "backgroundColor"> {
   hoverColor?: string;
   lastTextColor?: string;
   arrowColor?: string;
@@ -219,10 +212,8 @@ export interface DialogThemeConfig extends BodyThemeConfig {
 }
 
 // document-viewer.tsx
-export interface DocumentViewerThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface DocumentViewerThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
   toolbarBackgroundColor?: string;
   errorColor?: string;
   hoverBoxTextColor?: string;
@@ -255,10 +246,8 @@ export interface ErrorSlateThemeConfig {
 }
 
 // field-lane.tsx
-export interface FieldLaneThemeConfig extends Omit<
-  BodyThemeConfig,
-  "backgroundColor"
-> {
+export interface FieldLaneThemeConfig
+  extends Omit<BodyThemeConfig, "backgroundColor"> {
   buttonTextColor?: string;
   buttonBorderColor?: string;
   buttonErrorTextColor?: string;
@@ -392,10 +381,8 @@ export interface LoadingSpinnerThemeConfig {
 }
 
 // messagebox.tsx
-export interface MessageboxVariantTheme extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface MessageboxVariantTheme
+  extends Omit<BodyThemeConfig, "borderColor"> {
   activeColor: string;
 }
 
@@ -611,10 +598,8 @@ export interface StatusbarThemeConfig extends BodyThemeConfig {
   };
 }
 
-export interface StatefulFormThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface StatefulFormThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
   rowFrameBackgroundColor: string;
 }
 
@@ -647,11 +632,29 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   scrollbarTrackColor?: string;
 }
 
+// textbox.tsx
+export interface TextboxThemeConfig extends BodyThemeConfig {
+  focusedBorderColor?: string;
+
+  errorBorderColor?: string;
+  errorTextColor?: string;
+
+  disabledBorderColor?: string;
+  disabledTextColor?: string;
+
+  placeholderColor?: string;
+
+  boxShadow?: string;
+}
+
+// textarea.tsx
+export interface TextareaThemeConfig extends TextboxThemeConfig {
+  scrollbarThumbColor?: string;
+}
+
 // title.tsx
-export interface TitleThemeConfig extends Omit<
-  BodyThemeConfig,
-  "textColor" | "borderColor"
-> {
+export interface TitleThemeConfig
+  extends Omit<BodyThemeConfig, "textColor" | "borderColor"> {
   pretitle?: {
     textColor?: string;
     opacity?: number;
@@ -683,25 +686,8 @@ export interface TimeboxThemeConfig extends BodyThemeConfig {
   colonColor?: string;
 }
 
-// textbox.tsx
-export interface TextboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
-
-  errorBorderColor?: string;
-  errorTextColor?: string;
-
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
-
-  placeholderColor?: string;
-
-  boxShadow?: string;
-}
-
-// textarea.tsx
-export interface TextareaThemeConfig extends TextboxThemeConfig {
-  scrollbarThumbColor?: string;
-}
+// timeline.tsx
+export interface TimelineThemeConfig extends SteplineThemeConfig {}
 
 // tooltip.tsx
 export interface TooltipThemeConfig {
@@ -713,8 +699,12 @@ export interface TooltipThemeConfig {
   nodeElementTextColor: string;
 }
 
-// timeline.tsx
-export interface TimelineThemeConfig extends SteplineThemeConfig {}
+// toast.tsx
+export interface ToastThemeConfig extends BodyThemeConfig {
+  iconBackgroundColor: string;
+  iconColor: string;
+  progressColor: string;
+}
 
 // thumb-field.tsx
 export interface ThumbFieldThemeConfig {
@@ -744,10 +734,8 @@ export interface ToolbarThemeConfig extends BodyThemeConfig {
 }
 
 // tip-menu.tsx
-export interface TipMenuThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface TipMenuThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   activeBackgroundColor?: string;
   focusBackgroundColor?: string;
@@ -755,10 +743,8 @@ export interface TipMenuThemeConfig extends Omit<
 }
 
 // treelist.tsx
-export interface TreeListThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface TreeListThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
   selectedBackgroundColor?: string;
 
@@ -772,10 +758,8 @@ export interface TreeListThemeConfig extends Omit<
 }
 
 // split-pane.tsx
-export interface SplitPaneThemeConfig extends Omit<
-  BodyThemeConfig,
-  "borderColor"
-> {
+export interface SplitPaneThemeConfig
+  extends Omit<BodyThemeConfig, "borderColor"> {
   dividerColor?: string;
 }
 
@@ -858,6 +842,7 @@ export interface AppTheme {
   tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
   timebox: TimeboxThemeConfig;
   title: TitleThemeConfig;
+  toast: Record<ToastVariant, ToastThemeConfig>;
   toggle: ToggleThemeConfig;
   toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
   tooltip: TooltipThemeConfig;
