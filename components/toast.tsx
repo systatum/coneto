@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { HTMLAttributes, ReactNode, useEffect, useState } from "react";
 import { Figure, FigureProps } from "./figure";
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { createRoot } from "react-dom/client";
@@ -96,6 +96,14 @@ export interface ToastProps {
 
 type ToastWithoutVariant = Omit<ToastProps, "variant">;
 
+interface ToastCardProps extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
+  children?: ReactNode;
+  variant?: ToastVariant;
+  styles?: {
+    self?: CSSProp;
+  };
+}
+
 export interface ToastAPI {
   alert(options: ToastProps): string;
 
@@ -104,6 +112,7 @@ export interface ToastAPI {
   danger(options: ToastWithoutVariant): string;
   warning(options: ToastWithoutVariant): string;
   neutral(options: ToastWithoutVariant): string;
+  Card(props: ToastCardProps): ReactNode;
 
   close(id: string): void;
   closeAll(): void;
@@ -242,7 +251,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
           aria-label="Close"
           icon={{
             image: RiCloseLine,
-            color: toastTheme?.borderColor,
+            color: toastTheme?.textColor,
           }}
           styles={{
             containerStyle: css`
@@ -273,7 +282,6 @@ function ToastItem({ item, onClose }: ToastItemProps) {
 
               opacity: 1;
               background-color: ${toastTheme?.backgroundColor};
-              border: 0.5px solid ${toastTheme?.borderColor};
             `,
           }}
         />
@@ -315,6 +323,9 @@ const Wrapper = styled.div<{
         : css`
             ${slideInTop} 0.28s cubic-bezier(0.16,1,0.3,1) both
           `};
+  backdrop-filter: blur(33px);
+  -webkit-backdrop-filter: blur(33px);
+  border-radius: 16px;
 `;
 
 const Card = styled.div<{
@@ -328,45 +339,17 @@ const Card = styled.div<{
 
   width: 100%;
 
-  background: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
-  background-blend-mode: overlay;
+  background-color: ${({ $theme }) => $theme?.backgroundColor ?? "#ffffff7d"};
 
-  border: 1px solid ${({ $mode }) => ($mode === "dark" ? "#2f2f2f" : "#e8e8e8")};
-
-  backdrop-filter: blur(18px) - blur(24px);
-  -webkit-backdrop-filter: blur(18px) - blur(24px);
-
-  box-shadow: 0 10px 15px rgb(0 0 0 / 10%);
-  box-sizing: border-box;
+  box-shadow: 0 10px 15px rgb(0 0 0 / 20%);
 
   color: rgba(0, 0, 0, 0.8);
 
   display: flex;
   flex-direction: column;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      ${({ $theme }) => withAlpha($theme?.backgroundColor, 0.22)},
-      transparent 40%,
-      ${({ $theme }) => withAlpha($theme?.backgroundColor, 0.08)}
-    );
-    pointer-events: none;
-    mix-blend-mode: overlay;
-  }
-
   ${({ $style }) => $style}
 `;
-
-function withAlpha(color: string, alpha: number) {
-  return color.replace(/rgba?\(([^)]+)\)/, (_, rgb) => {
-    const [r, g, b] = rgb.split(",").map((v: string) => v.trim());
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  });
-}
 
 const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
   display: flex;
@@ -844,6 +827,11 @@ export const Toast: ToastAPI = {
     return show({ ...options, variant: "warning" });
   },
 
+  Card(props: ToastCardProps): ReactNode {
+    const { children, ...rest } = props;
+    return <ToastCard {...rest}>{props.children}</ToastCard>;
+  },
+
   neutral(options: ToastWithoutVariant): string {
     return show({ ...options, variant: "neutral" });
   },
@@ -870,4 +858,25 @@ export const Toast: ToastAPI = {
       });
     }, 240);
   },
+};
+
+const ToastCard = ({
+  children,
+  variant = "neutral",
+  styles,
+  ...rest
+}: ToastCardProps) => {
+  const { currentTheme, mode } = useTheme();
+  const theme = currentTheme.toast;
+
+  return (
+    <Card
+      {...rest}
+      $theme={theme?.[variant]}
+      $mode={mode}
+      $style={styles?.self}
+    >
+      {children}
+    </Card>
+  );
 };
