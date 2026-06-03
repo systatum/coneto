@@ -70,6 +70,7 @@ export interface ToastStyles {
   actionStyle?: CSSProp;
   iconStyle?: CSSProp;
   detailSlotStyle?: CSSProp;
+  headerStyle?: CSSProp;
 }
 
 export interface ToastAction extends Omit<BaseAction, "icon"> {
@@ -112,7 +113,6 @@ export interface ToastAPI {
   danger(options: ToastWithoutVariant): string;
   warning(options: ToastWithoutVariant): string;
   neutral(options: ToastWithoutVariant): string;
-  Card(props: ToastCardProps): ReactNode;
 
   close(id: string): void;
   closeAll(): void;
@@ -181,7 +181,11 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         $theme={toastTheme}
         $style={styles.containerStyle}
       >
-        <Inner aria-label="toast-inner" $iconPosition={iconPosition}>
+        <Inner
+          aria-label="toast-inner"
+          $style={styles?.headerStyle}
+          $iconPosition={iconPosition}
+        >
           <IconWrap
             aria-label="toast-icon"
             $theme={toastTheme}
@@ -375,7 +379,10 @@ const Card = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
+const Inner = styled.div<{
+  $iconPosition?: ToastIconPosition;
+  $style?: CSSProp;
+}>`
   display: flex;
   align-items: flex-start;
   gap: 11px;
@@ -406,6 +413,8 @@ const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
           flex-direction: column;
           align-items: center;
           text-align: center;
+          gap: 4px;
+          padding: 20px;
 
           ${IconWrap} {
             margin-bottom: 4px;
@@ -415,6 +424,8 @@ const Inner = styled.div<{ $iconPosition?: ToastIconPosition }>`
         return "";
     }
   }}
+
+  ${({ $style }) => $style}
 `;
 
 const IconWrap = styled.div<{
@@ -819,11 +830,6 @@ export const Toast: ToastAPI = {
     return show({ ...options, variant: "warning" });
   },
 
-  Card(props: ToastCardProps): ReactNode {
-    const { children, ...rest } = props;
-    return <ToastCard {...rest}>{props.children}</ToastCard>;
-  },
-
   neutral(options: ToastWithoutVariant): string {
     return show({ ...options, variant: "neutral" });
   },
@@ -850,25 +856,4 @@ export const Toast: ToastAPI = {
       });
     }, 240);
   },
-};
-
-const ToastCard = ({
-  children,
-  variant = "neutral",
-  styles,
-  ...rest
-}: ToastCardProps) => {
-  const { currentTheme, mode } = useTheme();
-  const theme = currentTheme.toast;
-
-  return (
-    <Card
-      {...rest}
-      $theme={theme?.[variant]}
-      $mode={mode}
-      $style={styles?.self}
-    >
-      {children}
-    </Card>
-  );
 };
