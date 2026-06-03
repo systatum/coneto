@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import { PaperDialog, PaperDialogRef } from "./../../components/paper-dialog";
 import { Dialog, DialogProps } from "./../../components/dialog";
 import { RiInboxArchiveFill } from "@remixicon/react";
+import { generateSentence } from "./../../lib/text";
 
 describe("Overlay Blocker", () => {
   function ProductOverlayBlocker(props: OverlayBlockerProps) {
@@ -42,7 +43,11 @@ describe("Overlay Blocker", () => {
               Test
             </Button>
             <PaperDialog width="50dvw" ref={paperRef}>
-              PaperDialogOpened
+              {generateSentence({
+                minLen: 500,
+                maxLen: 600,
+                seed: 123,
+              })}
             </PaperDialog>
           </div>
         );
@@ -64,12 +69,12 @@ describe("Overlay Blocker", () => {
         cy.window().its("scrollY").should("not.eq", 0);
       });
 
-      context("when paper is opened", () => {
+      context("when scrolling in the overlay", () => {
         it("prevents overlay background scrolling", () => {
           cy.mount(<ProductPaperDialog />);
 
           cy.findByText("Test").should("exist").click();
-          cy.findByText("PaperDialogOpened").should("exist");
+          cy.contains(/Sed.*memoria/i).should("exist");
 
           cy.wait(500); // Wait for the dialog to open and render
 
@@ -84,6 +89,27 @@ describe("Overlay Blocker", () => {
           cy.window().its("scrollY").should("eq", 0);
         });
       });
+
+      context("when scrolling in the paper", () => {
+        it("still allows user scroll the paper", () => {
+          cy.mount(<ProductPaperDialog />);
+
+          cy.findByText("Test").should("exist").click();
+          cy.contains(/Sed.*memoria/i).should("exist");
+
+          cy.wait(500); // Wait for the dialog to open and render
+
+          cy.window().its("scrollY").should("eq", 0);
+
+          cy.findByLabelText("paper-dialog-content").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
+
+          cy.findByLabelText("paper-dialog-content")
+            .its("scrollY")
+            .should("not.eq", 0);
+        });
+      });
     });
 
     context("Dialog", () => {
@@ -94,12 +120,22 @@ describe("Overlay Blocker", () => {
           title: "Archive Project",
           subtitle:
             "The project will be moved to the archive section and will no longer appear in your active projects list.",
+          children: generateSentence({
+            minLen: 500,
+            maxLen: 600,
+            seed: 123,
+          }),
           icon: { image: RiInboxArchiveFill, color: "#2563eb" },
           onClick: ({ closeDialog }) => closeDialog(),
           actions: [
             { id: "cancel", caption: "Cancel" },
             { id: "archive", caption: "Archive", variant: "primary" },
           ],
+          styles: {
+            containerStyle: css`
+              max-height: 400px;
+            `,
+          },
         };
 
         return (
@@ -138,7 +174,7 @@ describe("Overlay Blocker", () => {
         cy.window().its("scrollY").should("not.eq", 0);
       });
 
-      context("when dialog is opened", () => {
+      context("when scrolling in the overlay", () => {
         it("prevents overlay background scrolling", () => {
           cy.mount(<ProductDialog />);
 
@@ -156,6 +192,27 @@ describe("Overlay Blocker", () => {
           });
 
           cy.window().its("scrollY").should("eq", 0);
+        });
+      });
+
+      context("when scrolling in the dialog", () => {
+        it("still allows user scroll the dialog", () => {
+          cy.mount(<ProductDialog />);
+
+          cy.findByText("Test").should("exist").click();
+          cy.findByText("Archive Project").should("exist");
+
+          cy.wait(500); // Wait for the dialog to open and render
+
+          cy.window().its("scrollY").should("eq", 0);
+
+          cy.findByLabelText("dialog-content").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
+
+          cy.findByLabelText("dialog-content")
+            .its("scrollY")
+            .should("not.eq", 0);
         });
       });
     });
