@@ -115,6 +115,7 @@ function Sidebar({
         animate={isMobile ? controls : { x: 0 }}
         $position={position}
         $style={styles?.mobileStyle}
+        aria-label="sidebar-mobile"
       >
         {children}
       </MotionSidebar>
@@ -136,6 +137,7 @@ function Sidebar({
         $theme={sidebarTheme}
         $position={position}
         $style={styles?.desktopStyle}
+        aria-label="sidebar-desktop"
       >
         {children}
       </DesktopSidebar>
