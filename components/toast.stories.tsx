@@ -6,7 +6,7 @@ import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof Toast> = {
-  title: "Content/Toast",
+  title: "Stage/Toast",
   component: Toast.alert,
   parameters: {
     layout: "centered",
