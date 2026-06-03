@@ -5,7 +5,10 @@ import {
   OverlayBlockerProps,
   OverlayBlockerRef,
 } from "./../../components/overlay-blocker";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { PaperDialog, PaperDialogRef } from "./../../components/paper-dialog";
+import { Dialog, DialogProps } from "./../../components/dialog";
+import { RiInboxArchiveFill } from "@remixicon/react";
 
 describe("Overlay Blocker", () => {
   function ProductOverlayBlocker(props: OverlayBlockerProps) {
@@ -18,6 +21,145 @@ describe("Overlay Blocker", () => {
       </>
     );
   }
+
+  context("scroll in overlay", () => {
+    context("PaperDialog", () => {
+      function ProductPaperDialog() {
+        const paperRef = useRef<PaperDialogRef>(null);
+        return (
+          <div
+            aria-label="test-aria"
+            style={{
+              minHeight: "700px",
+              overflowY: "scroll",
+            }}
+          >
+            <Button
+              onClick={() => {
+                paperRef?.current?.openDialog();
+              }}
+            >
+              Test
+            </Button>
+            <PaperDialog width="50dvw" ref={paperRef}>
+              PaperDialogOpened
+            </PaperDialog>
+          </div>
+        );
+      }
+
+      it("allows scroll to the bottom", () => {
+        cy.mount(<ProductPaperDialog />);
+
+        cy.wait(500);
+
+        cy.window().then((win) => {
+          win.scrollTo(0, 1000);
+        });
+
+        cy.findByLabelText("test-aria").scrollTo("bottom", {
+          ensureScrollable: false,
+        });
+
+        cy.window().its("scrollY").should("not.eq", 0);
+      });
+
+      context("when paper is opened", () => {
+        it("prevents overlay background scrolling", () => {
+          cy.mount(<ProductPaperDialog />);
+
+          cy.findByText("Test").should("exist").click();
+          cy.findByText("PaperDialogOpened").should("exist");
+
+          cy.wait(500); // Wait for the dialog to open and render
+
+          cy.window().then((win) => {
+            win.scrollTo(0, 1000);
+          });
+
+          cy.findByLabelText("test-aria").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
+
+          cy.window().its("scrollY").should("eq", 0);
+        });
+      });
+    });
+
+    context("Dialog", () => {
+      function ProductDialog() {
+        const [isOpen, setIsOpen] = useState(false);
+
+        const args: DialogProps = {
+          title: "Archive Project",
+          subtitle:
+            "The project will be moved to the archive section and will no longer appear in your active projects list.",
+          icon: { image: RiInboxArchiveFill, color: "#2563eb" },
+          onClick: ({ closeDialog }) => closeDialog(),
+          actions: [
+            { id: "cancel", caption: "Cancel" },
+            { id: "archive", caption: "Archive", variant: "primary" },
+          ],
+        };
+
+        return (
+          <div
+            aria-label="test-aria"
+            style={{
+              minHeight: "700px",
+              overflowY: "scroll",
+            }}
+          >
+            <Button
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Test
+            </Button>
+            <Dialog {...args} isOpen={isOpen} />
+          </div>
+        );
+      }
+
+      it("allows scroll to the bottom", () => {
+        cy.mount(<ProductDialog />);
+
+        cy.wait(500);
+
+        cy.window().then((win) => {
+          win.scrollTo(0, 1000);
+        });
+
+        cy.findByLabelText("test-aria").scrollTo("bottom", {
+          ensureScrollable: false,
+        });
+
+        cy.window().its("scrollY").should("not.eq", 0);
+      });
+
+      context("when dialog is opened", () => {
+        it("prevents overlay background scrolling", () => {
+          cy.mount(<ProductDialog />);
+
+          cy.findByText("Test").should("exist").click();
+          cy.findByText("Archive Project").should("exist");
+
+          cy.wait(500); // Wait for the dialog to open and render
+
+          cy.window().then((win) => {
+            win.scrollTo(0, 1000);
+          });
+
+          cy.findByLabelText("test-aria").scrollTo("bottom", {
+            ensureScrollable: false,
+          });
+
+          cy.window().its("scrollY").should("eq", 0);
+        });
+      });
+    });
+  });
 
   context("onClick", () => {
     context("when not provide", () => {
