@@ -739,49 +739,45 @@ const darkThumbField = createThumbFieldTheme({
   errorColor: "#f87171",
 });
 
+const sharedDarkToast = {
+  backgroundColor: "#18181b7d",
+  textColor: "rgba(255, 255, 255, 0.8)",
+  iconColor: "#FFFFFF",
+};
+
 const darkToast = createToastTheme({
   primary: {
-    backgroundColor: "#18181b7d",
+    ...sharedDarkToast,
     borderColor: "#3F46B5",
-    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#3F46B5",
-    iconColor: "#FFFFFF",
     progressColor: "#6C77FF",
   },
 
   success: {
-    backgroundColor: "#18181b7d",
+    ...sharedDarkToast,
     borderColor: "#1F9D55",
-    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#1F9D55",
-    iconColor: "#FFFFFF",
     progressColor: "#3DDC84",
   },
 
   danger: {
-    backgroundColor: "#18181b7d",
+    ...sharedDarkToast,
     borderColor: "#D84A63",
-    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#D84A63",
-    iconColor: "#FFFFFF",
     progressColor: "#F06B82",
   },
 
   warning: {
-    backgroundColor: "#18181b7d",
+    ...sharedDarkToast,
     borderColor: "#D39A2C",
-    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#D39A2C",
-    iconColor: "#FFFFFF",
     progressColor: "#E6B84F",
   },
 
   neutral: {
-    backgroundColor: "#18181b7d",
+    ...sharedDarkToast,
     borderColor: "#334155",
-    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#334155",
-    iconColor: "#FFFFFF",
     progressColor: "#94A3B8",
   },
 });

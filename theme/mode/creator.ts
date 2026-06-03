@@ -1551,54 +1551,51 @@ export function createTimeboxTheme(
 }
 
 // toast.tsx
+
 export function createToastTheme(
   ...themeConfigurations: Array<
     Partial<Record<ToastVariant, Partial<ToastThemeConfig>>>
   >
 ): Record<ToastVariant, ToastThemeConfig> {
+  const sharedToastTheme = {
+    backgroundColor: "#ffffff7d",
+    textColor: "rgba(0, 0, 0, 0.8)",
+    iconColor: "#FFFFFF",
+  };
+
   const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
     primary: {
-      backgroundColor: "#ffffff7d",
+      ...sharedToastTheme,
       borderColor: "#6C7BFF",
-      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#6C7BFF",
-      iconColor: "#FFFFFF",
       progressColor: "#5B63F6",
     },
 
     success: {
-      backgroundColor: "#ffffff7d",
+      ...sharedToastTheme,
       borderColor: "#34D399",
-      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#22C55E",
-      iconColor: "#FFFFFF",
       progressColor: "#22C55E",
     },
 
     danger: {
-      backgroundColor: "#ffffff7d",
+      ...sharedToastTheme,
       borderColor: "#FB647C",
-      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#F43F5E",
-      iconColor: "#FFFFFF",
       progressColor: "#F43F5E",
     },
 
     warning: {
-      backgroundColor: "#ffffff7d",
+      ...sharedToastTheme,
       borderColor: "#F59E0B",
-      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#F59E0B",
-      iconColor: "#FFFFFF",
       progressColor: "#F59E0B",
     },
 
     neutral: {
-      backgroundColor: "#ffffff7d",
+      ...sharedToastTheme,
       borderColor: "#94A3B8",
-      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#64748B",
-      iconColor: "#FFFFFF",
       progressColor: "#64748B",
     },
   };
