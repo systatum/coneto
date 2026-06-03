@@ -741,45 +741,45 @@ const darkThumbField = createThumbFieldTheme({
 
 const darkToast = createToastTheme({
   primary: {
-    backgroundColor: "#0B1220",
+    backgroundColor: "#18181b7d",
     borderColor: "#3F46B5",
-    textColor: "#A9B4F7",
+    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#3F46B5",
     iconColor: "#FFFFFF",
     progressColor: "#6C77FF",
   },
 
   success: {
-    backgroundColor: "#0B1A12",
+    backgroundColor: "#18181b7d",
     borderColor: "#1F9D55",
-    textColor: "#A7E3C1",
+    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#1F9D55",
     iconColor: "#FFFFFF",
     progressColor: "#3DDC84",
   },
 
   danger: {
-    backgroundColor: "#1A0B10",
+    backgroundColor: "#18181b7d",
     borderColor: "#D84A63",
-    textColor: "#F3B7C1",
+    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#D84A63",
     iconColor: "#FFFFFF",
     progressColor: "#F06B82",
   },
 
   warning: {
-    backgroundColor: "#1A140A",
+    backgroundColor: "#18181b7d",
     borderColor: "#D39A2C",
-    textColor: "#F3D58A",
+    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#D39A2C",
     iconColor: "#FFFFFF",
     progressColor: "#E6B84F",
   },
 
   neutral: {
-    backgroundColor: "#0B1220",
+    backgroundColor: "#18181b7d",
     borderColor: "#334155",
-    textColor: "#CBD5E1",
+    textColor: "rgba(255, 255, 255, 0.8)",
     iconBackgroundColor: "#334155",
     iconColor: "#FFFFFF",
     progressColor: "#94A3B8",

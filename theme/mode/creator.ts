@@ -1558,45 +1558,45 @@ export function createToastTheme(
 ): Record<ToastVariant, ToastThemeConfig> {
   const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
     primary: {
-      backgroundColor: "#E7ECFF",
+      backgroundColor: "#ffffff7d",
       borderColor: "#6C7BFF",
-      textColor: "#2E2A8A",
+      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#6C7BFF",
       iconColor: "#FFFFFF",
       progressColor: "#5B63F6",
     },
 
     success: {
-      backgroundColor: "#ECFDF3",
+      backgroundColor: "#ffffff7d",
       borderColor: "#34D399",
-      textColor: "#0F3D22",
+      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#22C55E",
       iconColor: "#FFFFFF",
       progressColor: "#22C55E",
     },
 
     danger: {
-      backgroundColor: "#FFF0F3",
+      backgroundColor: "#ffffff7d",
       borderColor: "#FB647C",
-      textColor: "#6E0F2A",
+      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#F43F5E",
       iconColor: "#FFFFFF",
       progressColor: "#F43F5E",
     },
 
     warning: {
-      backgroundColor: "#FFF7E0",
+      backgroundColor: "#ffffff7d",
       borderColor: "#F59E0B",
-      textColor: "#5A3A0A",
+      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#F59E0B",
       iconColor: "#FFFFFF",
       progressColor: "#F59E0B",
     },
 
     neutral: {
-      backgroundColor: "#F1F5F9",
+      backgroundColor: "#ffffff7d",
       borderColor: "#94A3B8",
-      textColor: "#0F172A",
+      textColor: "rgba(0, 0, 0, 0.8)",
       iconBackgroundColor: "#64748B",
       iconColor: "#FFFFFF",
       progressColor: "#64748B",
