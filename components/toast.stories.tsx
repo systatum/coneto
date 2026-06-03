@@ -12,7 +12,166 @@ const meta: Meta<typeof Toast> = {
     layout: "centered",
     docs: {
       description: {
-        component: `Toast is a component that displays a brief message to the user. It is typically used to provide feedback on an action or to display a notification. Toasts are usually displayed for a short period of time and then automatically dismissed.`,
+        component: `
+The **Toast** component displays temporary notifications and feedback messages to users.
+
+It supports multiple variants, actions, expandable details, custom icons, loading progress indicators, and flexible screen positioning. Toasts can be triggered imperatively using the \`Toast\` API and are automatically managed through a global portal system.
+
+---
+
+### ✨ Features
+- 🔔 Multiple notification variants (**Primary, Success, Danger, Warning, Neutral**)
+- ⏱️ Optional **auto-dismiss** with configurable duration
+- 📍 Flexible positioning across the viewport
+- 🎨 Theme-aware styling with full customization support
+- 🖼️ Custom icons, avatars, or image content
+- 🔘 Action buttons with callback handlers
+- 📖 Expandable detail content via \`detailSlot\`
+- 📊 Optional loading/progress indicator
+- ❌ Manual dismissal support
+- 🧩 Lightweight card container via \`Toast.Card\`
+
+---
+
+### 🧱 Basic Usage
+
+\`\`\`tsx
+Toast.success({
+  title: "Saved",
+  content: "Your changes have been saved successfully.",
+});
+\`\`\`
+
+---
+
+### 🧱 Toast With Actions
+
+\`\`\`tsx
+Toast.warning({
+  title: "Meeting starts soon",
+  content: "Your meeting begins in 5 minutes.",
+  actions: [
+    {
+      label: "Join now",
+      onClick: () => console.log("Join"),
+    },
+    {
+      label: "Dismiss",
+    },
+  ],
+});
+\`\`\`
+
+---
+
+### 🧱 Toast With Detail Slot
+
+\`\`\`tsx
+Toast.primary({
+  title: "Deployment completed",
+  content: "The deployment finished successfully.",
+  detailSlot: (
+    <div>
+      Build #1042 completed in 2m 13s.
+    </div>
+  ),
+});
+\`\`\`
+
+---
+
+### 🧱 Custom Icon
+
+\`\`\`tsx
+Toast.neutral({
+  content: "New message received.",
+  icon: {
+    render: <CustomIcon />,
+  },
+});
+\`\`\`
+
+---
+
+### 🧱 Toast.Card
+
+Use \`Toast.Card\` when you only need the visual toast appearance without the notification lifecycle or portal behavior.
+
+\`\`\`tsx
+<Toast.Card variant="success">
+  Custom content inside a toast-styled card.
+</Toast.Card>
+\`\`\`
+
+---
+
+### ⚙️ Core Behaviors
+
+#### Variants
+Available variants:
+
+- \`primary\`
+- \`success\`
+- \`danger\`
+- \`warning\`
+- \`neutral\`
+
+Each variant automatically provides its own icon and theme styling.
+
+#### Auto Dismiss
+- Controlled through \`disappearAfterMs\`
+- Default duration is \`2000ms\`
+- Set to \`0\` to disable automatic dismissal
+
+#### Progress Bar
+- Enabled by default
+- Visualizes remaining display duration
+- Can be disabled using \`withLoadingBar={false}\`
+
+#### Action Buttons
+- Rendered below the content area
+- Automatically close the toast after execution
+- Supports disabled states
+
+#### Detail Slot
+- Provides expandable content beneath the toast body
+- Includes built-in "Show more" / "Show less" interaction
+- Useful for logs, stack traces, metadata, or additional context
+
+#### Positioning
+Available positions:
+
+- \`top-left\`
+- \`top-center\`
+- \`top-right\`
+- \`bottom-left\`
+- \`bottom-center\`
+- \`bottom-right\`
+- \`center-center\`
+
+#### Closing Behavior
+- Close button appears on hover when \`closable\` is enabled
+- Individual toasts can be dismissed programmatically
+- All active toasts can be dismissed using:
+
+\`\`\`tsx
+Toast.close(id);
+Toast.closeAll();
+\`\`\`
+
+---
+
+### 🎯 Usage Guidelines
+
+- Use **Success** for completed actions and confirmations
+- Use **Danger** for failures and destructive feedback
+- Use **Warning** for important attention-required messages
+- Use **Neutral** for informational updates
+- Keep content concise and easy to scan
+- Use \`detailSlot\` for secondary information instead of long descriptions
+- Use \`Toast.Card\` when you need toast styling inside layouts without triggering notifications
+- Prefer short auto-dismiss durations for non-critical messages
+`,
       },
     },
   },
