@@ -679,7 +679,7 @@ function ToastContainer({ position }: { position: ToastPosition }) {
         <ToastItem
           key={item.id}
           item={item}
-          onClose={(id) => scheduleRemove(id, position, 0)}
+          onClose={(id) => scheduleRemoval(id, position, 0)}
         />
       ))}
     </Container>
@@ -696,51 +696,48 @@ function renderStore(store: PositionStore, _position: ToastPosition) {
   store.root.render(<ToastBridge position={_position} />);
 }
 
-const positionCss = (pos: ToastPosition) => {
-  const map: Record<ToastPosition, ReturnType<typeof css>> = {
-    "top-left": css`
-      top: 16px;
-      left: 16px;
-      align-items: flex-start;
-    `,
-    "top-center": css`
-      top: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      align-items: center;
-    `,
-    "top-right": css`
-      top: 16px;
-      right: 16px;
-      align-items: flex-end;
-    `,
-    "bottom-left": css`
-      bottom: 16px;
-      left: 16px;
-      align-items: flex-start;
-      flex-direction: column-reverse;
-    `,
-    "bottom-center": css`
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      align-items: center;
-      flex-direction: column-reverse;
-    `,
-    "bottom-right": css`
-      bottom: 16px;
-      right: 16px;
-      align-items: flex-end;
-      flex-direction: column-reverse;
-    `,
-    "center-center": css`
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      align-items: center;
-    `,
-  };
-  return map[pos];
+const TOAST_POSITION_STYLE: Record<ToastPosition, CSSProp> = {
+  "top-left": css`
+    top: 16px;
+    left: 16px;
+    align-items: flex-start;
+  `,
+  "top-center": css`
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  `,
+  "top-right": css`
+    top: 16px;
+    right: 16px;
+    align-items: flex-end;
+  `,
+  "bottom-left": css`
+    bottom: 16px;
+    left: 16px;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+  `,
+  "bottom-center": css`
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    flex-direction: column-reverse;
+  `,
+  "bottom-right": css`
+    bottom: 16px;
+    right: 16px;
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  `,
+  "center-center": css`
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+  `,
 };
 
 const Container = styled.div<{ $position: ToastPosition }>`
@@ -750,7 +747,7 @@ const Container = styled.div<{ $position: ToastPosition }>`
   flex-direction: column;
   gap: 0;
   pointer-events: none;
-  ${({ $position }) => positionCss($position)}
+  ${({ $position }) => TOAST_POSITION_STYLE[$position]}
 `;
 
 // Singleton state
@@ -758,7 +755,7 @@ const Container = styled.div<{ $position: ToastPosition }>`
 let _uid = 0;
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
-function scheduleRemove(id: string, position: ToastPosition, delay: number) {
+function scheduleRemoval(id: string, position: ToastPosition, delay: number) {
   // Clear any existing auto-dismiss timer
   const existing = timers.get(id);
   if (existing) clearTimeout(existing);
@@ -767,7 +764,7 @@ function scheduleRemove(id: string, position: ToastPosition, delay: number) {
     // Start exit animation after delay
     timers.set(
       id,
-      setTimeout(() => scheduleRemove(id, position, 0), delay)
+      setTimeout(() => scheduleRemoval(id, position, 0), delay)
     );
     return;
   }
@@ -800,7 +797,7 @@ function show(options: ToastProps): string {
   renderStore(store, position);
 
   const ms = options.disappearAfterMs ?? 2000;
-  if (ms > 0) scheduleRemove(id, position, ms);
+  if (ms > 0) scheduleRemoval(id, position, ms);
 
   if (ms === 0) {
     return null;
@@ -837,7 +834,7 @@ export const Toast: ToastAPI = {
   close(id: string): void {
     stores.forEach((store, position) => {
       if (store.items.some((t) => t.id === id)) {
-        scheduleRemove(id, position, 0);
+        scheduleRemoval(id, position, 0);
       }
     });
   },
