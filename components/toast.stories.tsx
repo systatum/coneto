@@ -533,11 +533,6 @@ export const Loading: Story = {
             iconStyle: css`
               background-color: transparent;
             `,
-            contentStyle: css`
-              font-weight: 600;
-              font-size: 16px;
-              font-family: monospace;
-            `,
           },
           position: "center-center",
           width: 200,
