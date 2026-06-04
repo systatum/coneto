@@ -113,11 +113,26 @@ describe("PaperDialog", () => {
         .should("have.css", "border-top-left-radius", "20px")
         .and("have.css", "border-top-right-radius", "20px")
         .and("have.css", "width", "500px")
-        .and("have.css", "height", "504px");
+        .and("have.css", "height", "616px");
     });
 
     context("user selection", () => {
-      it("renders the title to can't selection", () => {
+      it("renders action buttons without text selection", () => {
+        cy.viewport(500, 700);
+        cy.mount(<ProductPaperDialog width="100dvw" mobile />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+        cy.wait(300);
+
+        cy.findByLabelText("paper-dialog-toggle-close")
+          .parent()
+          .should("have.css", "user-select", "none");
+        cy.findByLabelText("paper-dialog-toggle-restore")
+          .parent()
+          .should("have.css", "user-select", "none");
+      });
+
+      it("disables text selection on dialog title wrapper", () => {
         cy.viewport(500, 700);
         cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
@@ -150,12 +165,12 @@ describe("PaperDialog", () => {
     context("drag behavior", () => {
       context("when dragging icon drag indicator", () => {
         it("should close the dialog", () => {
-          cy.viewport(500, 700);
+          cy.viewport(500, 500);
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
 
-          cy.wait(300);
+          cy.wait(500);
 
           cy.findByLabelText("paper-dialog-drag-indicator")
             .should("exist")
@@ -164,27 +179,27 @@ describe("PaperDialog", () => {
             .realMouseUp();
 
           cy.wait(300);
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-content").should("not.be.visible");
         });
       });
 
       context("when dragging in area empty icon drag indicator", () => {
         it("should close the dialog", () => {
-          cy.viewport(500, 700);
+          cy.viewport(500, 500);
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
 
-          cy.wait(300);
+          cy.wait(500);
 
-          cy.findByLabelText("paper-dialog-drag-indicator")
+          cy.findByLabelText("paper-dialog-content")
             .should("exist")
-            .realMouseDown({ position: "right" })
+            .realMouseDown({ position: "topRight" })
             .realMouseMove(0, 350)
             .realMouseUp();
 
           cy.wait(300);
-          cy.findByLabelText("paper-dialog-content").should("not.exist");
+          cy.findByLabelText("paper-dialog-content").should("not.be.visible");
         });
       });
 

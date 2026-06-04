@@ -12,7 +12,7 @@ import {
 } from "./dialog";
 import styled, { css, CSSProp } from "styled-components";
 
-export type ModalDialogProps = DialogProps;
+export type ModalDialogProps = Omit<DialogProps, "mobile">;
 export type ModalDialogStyles = DialogStyles;
 export type ModalDialogAction = DialogAction;
 

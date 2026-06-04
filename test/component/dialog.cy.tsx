@@ -82,6 +82,23 @@ describe("Dialog", () => {
       cy.findByLabelText("dialog-wrapper").should("have.css", "padding", "0px");
     });
 
+    it("renders with user select none", () => {
+      cy.mount(
+        <ProductDialog
+          icon={{
+            image: RiAB,
+          }}
+          mobile
+        />
+      );
+
+      cy.findByLabelText("dialog-wrapper").should(
+        "have.css",
+        "user-select",
+        "none"
+      );
+    });
+
     context("actions", () => {
       it("renders button full width", () => {
         cy.mount(
@@ -103,6 +120,50 @@ describe("Dialog", () => {
           .eq(1)
           .should("exist")
           .and("have.css", "width", "380px");
+      });
+
+      it("renders button with user-select none", () => {
+        cy.mount(
+          <ProductDialog
+            icon={{
+              image: RiAB,
+            }}
+            actions={[{ id: "cancel", caption: "Cancel" }]}
+            mobile
+          />
+        );
+
+        cy.findAllByRole("button")
+          .eq(1)
+          .should("exist")
+          .and("have.css", "user-select", "none");
+      });
+
+      context("when hovering button", () => {
+        it("should not changes the button", () => {
+          cy.mount(
+            <ProductDialog
+              icon={{
+                image: RiAB,
+              }}
+              actions={[{ id: "cancel", caption: "Cancel" }]}
+              mobile
+            />
+          );
+
+          cy.get("button")
+            .eq(0)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+            .realHover()
+            .then(($el) => {
+              cy.wait(200);
+              cy.wrap($el).should(
+                "not.have.css",
+                "background-color",
+                "rgb(243, 243, 243)"
+              );
+            });
+        });
       });
 
       context("when clicking", () => {
@@ -133,6 +194,28 @@ describe("Dialog", () => {
             "have.been.calledWith",
             "cancel was clicked"
           );
+        });
+
+        it("should changes the background to the hover color", () => {
+          cy.mount(
+            <ProductDialog
+              icon={{
+                image: RiAB,
+              }}
+              actions={[{ id: "cancel", caption: "Cancel" }]}
+              mobile
+            />
+          );
+
+          cy.get("button")
+            .eq(0)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+            .realMouseDown();
+
+          cy.wait(100);
+          cy.get("button")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(243, 243, 243)");
         });
       });
 
@@ -272,7 +355,9 @@ describe("Dialog", () => {
         );
 
         cy.findByLabelText("dialog-content").should("exist");
-        cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .click("topLeft", { force: true });
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -302,7 +387,9 @@ describe("Dialog", () => {
         );
 
         cy.findByLabelText("dialog-content").should("exist");
-        cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .click("topLeft", { force: true });
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -367,7 +454,7 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
 
           cy.get("@consoleLog").should(
             "not.have.been.calledWith",
@@ -398,7 +485,7 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });
@@ -422,7 +509,7 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("exist");
         });
       });
@@ -446,7 +533,7 @@ describe("Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });

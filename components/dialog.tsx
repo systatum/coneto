@@ -71,7 +71,8 @@ export interface DialogStyles {
 }
 
 export interface DialogAction
-  extends Omit<BaseAction, "onClick">, Pick<ButtonVariants, "variant"> {
+  extends Omit<BaseAction, "onClick">,
+    Pick<ButtonVariants, "variant"> {
   id: string;
   isLoading?: boolean;
   styles?: ButtonStyles;
@@ -164,6 +165,7 @@ function Dialog({
           css`
             padding: 0px;
             gap: 0px;
+            user-select: none;
           `}
           ${styles?.containerStyle};
         `}
@@ -213,6 +215,7 @@ function Dialog({
                 ${mobile &&
                 css`
                   padding: 20px 30px;
+                  user-select: none;
                 `};
               `,
             }}
@@ -233,6 +236,7 @@ function Dialog({
                       icon: { image: RiCloseLine, size: 14 },
                       caption: "Close Modal",
                       onClick: () => closeDialog(),
+                      mobile: mobile,
                     },
                   ],
                 },
@@ -271,6 +275,7 @@ function Dialog({
                   onClick={() =>
                     onClick?.({ buttonId: action.id, closeDialog })
                   }
+                  mobile={mobile}
                   styles={{
                     ...action?.styles,
                     containerStyle: css`
@@ -309,6 +314,7 @@ const Wrapper = styled.div<{
   $isOpen: boolean;
   $style?: CSSProp;
   $theme?: DialogThemeConfig;
+  $mobile?: boolean;
 }>`
   *,
   ::before,
@@ -338,8 +344,9 @@ const Wrapper = styled.div<{
   color: ${({ $theme }) => $theme?.textColor ?? "inherit"};
   background: ${({ $theme }) => $theme?.backgroundColor};
   animation: ${({ $isOpen }) => ($isOpen ? zoomIn : zoomOut)} 0.2s forwards;
+  user-select: ${({ $mobile }) => ($mobile ? "none" : "inherit")};
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const Body = styled.div<{ $style?: CSSProp }>`

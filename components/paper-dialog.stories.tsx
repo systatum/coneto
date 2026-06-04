@@ -347,6 +347,7 @@ export const Mobile: Story = {
             }}
           >
             <Button
+              mobile
               styles={{
                 containerStyle: css`
                   width: 100%;
@@ -362,6 +363,7 @@ export const Mobile: Story = {
             </Button>
 
             <Button
+              mobile
               variant="outline-default"
               styles={{
                 containerStyle: css`
