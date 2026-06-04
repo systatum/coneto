@@ -574,6 +574,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 />
               </DragIndicatorWrapper>
             )}
+
             <PaperDialogContent
               $height={resolvedHeight}
               $theme={paperDialogTheme}
