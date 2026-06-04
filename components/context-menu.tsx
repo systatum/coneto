@@ -3,7 +3,9 @@ import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
 
-export type ContextMenuAction = TipMenuItemProps;
+export type ContextMenuAction = TipMenuItemProps & {
+  mobile?: boolean;
+};
 
 export interface ContextMenuProps {
   actions: ContextMenuAction[];
@@ -88,6 +90,7 @@ export default function ContextMenu({
             e.stopPropagation();
             e.preventDefault();
           }}
+          mobile={action.mobile}
           onOpen={onOpen}
           title={action.caption}
           aria-label="action-button"

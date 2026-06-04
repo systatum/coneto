@@ -73,6 +73,8 @@ export interface PaperDialogIcons {
 }
 
 export interface PaperDialogStyles {
+  containerStyle?: CSSProp;
+  indicatorStyle?: CSSProp;
   contentStyle?: CSSProp;
   minimizeButtonStyle?: CSSProp;
   closeButtonStyle?: CSSProp;
@@ -403,6 +405,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                         height: 20px;
                         width: 20px;
                         border-radius: 2px;
+
+                        ${mobile &&
+                        css`
+                          user-select: none;
+                          &:hover {
+                            background-color: transparent;
+                          }
+                        `}
                       `,
                     },
                     type: "actions",
@@ -429,6 +439,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             aria-label="paper-dialog-wrapper"
             $width={resolvedWidth}
             $height={resolvedHeight}
+            $style={css`
+              ${mobile &&
+              css`
+                gap: 0px;
+              `}
+              ${styles?.containerStyle}
+            `}
             initial={mobile ? { y: "100%" } : { x: isLeft ? "-100%" : "100%" }}
             animate={
               dialogState === "minimized"
@@ -539,6 +556,24 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               </ActionButtonWrapper>
             )}
 
+            {mobile && (
+              <DragIndicatorWrapper
+                aria-label="paper-dialog-drag-indicator"
+                $resizable={!!resizable}
+                onPointerDown={(e) => {
+                  if (resizable) {
+                    handleMobileResizePointerDown(e);
+                  } else if (closable) {
+                    dragControls.start(e);
+                  }
+                }}
+              >
+                <DragIndicator
+                  $theme={paperDialogTheme}
+                  $resizable={!!resizable}
+                />
+              </DragIndicatorWrapper>
+            )}
             <PaperDialogContent
               $height={resolvedHeight}
               $theme={paperDialogTheme}
@@ -556,25 +591,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                   subtitle={subtitle}
                   size="lg"
                 />
-              )}
-
-              {mobile && (
-                <DragIndicatorWrapper
-                  aria-label="paper-dialog-drag-indicator"
-                  $resizable={!!resizable}
-                  onPointerDown={(e) => {
-                    if (resizable) {
-                      handleMobileResizePointerDown(e);
-                    } else if (closable) {
-                      dragControls.start(e);
-                    }
-                  }}
-                >
-                  <DragIndicator
-                    $theme={paperDialogTheme}
-                    $resizable={!!resizable}
-                  />
-                </DragIndicatorWrapper>
               )}
 
               {children}
@@ -741,6 +757,7 @@ const ActionButtonWrapper = styled.div<{
     $mobile
       ? css`
           top: -30.5px;
+          user-select: none;
 
           ${$isLeft
             ? css`
@@ -776,9 +793,13 @@ const IconButton = styled.button<{
   padding: 8px;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  &:hover {
-    background-color: ${({ $theme }) => $theme?.actionHoverBackgroundColor};
-  }
+  ${({ $mobile, $theme }) =>
+    !$mobile &&
+    css`
+      &:hover {
+        background-color: ${$theme?.actionHoverBackgroundColor};
+      }
+    `}
 
   ${({ $isLeft, $mobile, $theme }) =>
     $mobile
@@ -834,7 +855,7 @@ const PaperDialogContent = styled.div<{
     css`
       overflow-x: hidden;
       overflow-y: auto;
-      padding: 40px 20px 20px 20px;
+      padding: 0px 20px 20px 20px;
       border-radius: 1rem 1rem 0 0;
       margin-top: 4px;
     `}
@@ -842,28 +863,36 @@ const PaperDialogContent = styled.div<{
   ${({ $style }) => $style}
 `;
 
-const DragIndicatorWrapper = styled(motion.div)<{ $resizable?: boolean }>`
-  &,
+const DragIndicatorWrapper = styled(motion.div)<{
+  $theme?: PaperDialogThemeConfig;
+  $style?: CSSProp;
+  $resizable?: boolean;
+}>`
   *,
-  *::before,
-  *::after {
+  ::before,
+  ::after {
     box-sizing: border-box;
   }
 
+  position: sticky;
+
   display: flex;
-  position: absolute;
-  top: -4px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
   justify-content: center;
-  width: 100dvw;
 
   cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
-  height: 40px;
+  width: 100dvw;
+  height: 60px;
+  z-index: 9992999;
+  align-items: center;
+  border-radius: 1.2rem 1.2rem 0 0;
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   &:active {
     cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grabbing")};
   }
+
+  ${({ $style }) => $style}
 `;
 
 const DragIndicator = styled(motion.div)<{
@@ -871,7 +900,6 @@ const DragIndicator = styled(motion.div)<{
   $resizable?: boolean;
 }>`
   display: flex;
-  transform: translateY(22px);
   width: 48px;
   height: 5px;
   border-radius: 999px;
@@ -899,6 +927,7 @@ const MiniTitleBar = styled(motion.div)<{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  user-select: none;
 `;
 
 const MiniDragPill = styled.div<{ $theme?: PaperDialogThemeConfig }>`
