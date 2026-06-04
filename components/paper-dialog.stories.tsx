@@ -63,6 +63,54 @@ You can override the default control icons (e.g. close and restore) by passing c
 />
 \`\`\`
 
+
+
+### 📏 Resizable
+
+PaperDialog can be resized on both desktop and mobile devices.
+
+Desktop:
+- Drag the resize handle on the dialog edge to adjust the width.
+
+Mobile:
+- Drag the top indicator to adjust the height.
+
+You can enable resizing with a boolean value:
+
+\`\`\`tsx
+<PaperDialog resizable />
+\`\`\`
+
+
+Or configure resize constraints:
+
+\`\`\`tsx
+<PaperDialog
+  resizable={{
+    minWidth: "240px",
+    maxWidth: "800px",
+    minHeight: "200px",
+    maxHeight: "600px",
+  }}
+/>
+\`\`\`
+
+### 📐 Resize Callbacks
+
+Use \`onResize\` to react to size changes while dragging and \`onResizeComplete\` to react when resizing has finished:
+
+\`\`\`tsx
+<PaperDialog
+  resizable
+  onResize={({ width, height }) => {
+    console.log(width, height);
+  }}
+  onResizeComplete={({ width, height }) => {
+    console.log("Final size:", width, height);
+  }}
+/>
+\`\`\`
+
 ### 📝 Notes
 - Use \`styles\` prop to override default styles.
 - Use the \`icons\` prop to override default icons.
