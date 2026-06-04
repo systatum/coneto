@@ -67,6 +67,7 @@ import {
   createTooltipTheme,
   createWheelTheme,
   createTitleTheme,
+  createToastTheme,
 } from "./creator";
 
 // Light
@@ -209,6 +210,8 @@ const lightTipMenu = createTipMenuTheme(lightButton, {
 
 const lightTitle = createTitleTheme(lightBody);
 
+const lightToast = createToastTheme();
+
 const lightToggle = createToggleTheme(lightBody);
 
 const lightToolbar = createToolbarTheme({
@@ -295,6 +298,7 @@ export const lightTheme: AppTheme = {
   tipmenu: lightTipMenu,
   title: lightTitle,
   thumbField: lightThumbField,
+  toast: lightToast,
   toggle: lightToggle,
   toolbar: lightToolbar,
   tooltip: lightTooltip,
@@ -367,6 +371,7 @@ export {
   lightTitle,
   lightThumbField,
   lightToggle,
+  lightToast,
   lightToolbar,
   lightTooltip,
   lightTreeList,

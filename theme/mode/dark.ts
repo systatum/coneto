@@ -68,6 +68,7 @@ import {
   createTitleTheme,
   createWheelTheme,
   createLaunchpadTheme,
+  createToastTheme,
 } from "./creator";
 
 // Dark
@@ -738,6 +739,49 @@ const darkThumbField = createThumbFieldTheme({
   errorColor: "#f87171",
 });
 
+const sharedDarkToast = {
+  backgroundColor: "#18181b7d",
+  textColor: "rgba(255, 255, 255, 0.8)",
+  iconColor: "#FFFFFF",
+};
+
+const darkToast = createToastTheme({
+  primary: {
+    ...sharedDarkToast,
+    borderColor: "#3F46B5",
+    iconBackgroundColor: "#3F46B5",
+    progressColor: "#6C77FF",
+  },
+
+  success: {
+    ...sharedDarkToast,
+    borderColor: "#1F9D55",
+    iconBackgroundColor: "#1F9D55",
+    progressColor: "#3DDC84",
+  },
+
+  danger: {
+    ...sharedDarkToast,
+    borderColor: "#D84A63",
+    iconBackgroundColor: "#D84A63",
+    progressColor: "#F06B82",
+  },
+
+  warning: {
+    ...sharedDarkToast,
+    borderColor: "#D39A2C",
+    iconBackgroundColor: "#D39A2C",
+    progressColor: "#E6B84F",
+  },
+
+  neutral: {
+    ...sharedDarkToast,
+    borderColor: "#334155",
+    iconBackgroundColor: "#334155",
+    progressColor: "#94A3B8",
+  },
+});
+
 const darkToggle = createToggleTheme(darkBody, {
   backgroundColor: "rgb(80, 80, 80)",
   checkedBackgroundColor: darkButton?.primary?.hoverBackgroundColor,
@@ -862,6 +906,7 @@ export const darkTheme: AppTheme = {
   tipmenu: darkTipMenu,
   title: darkTitle,
   thumbField: darkThumbField,
+  toast: darkToast,
   toggle: darkToggle,
   toolbar: darkToolbar,
   tooltip: darkTooltip,
@@ -933,6 +978,7 @@ export {
   darkTipMenu,
   darkTitle,
   darkThumbField,
+  darkToast,
   darkToggle,
   darkToolbar,
   darkTooltip,

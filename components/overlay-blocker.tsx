@@ -29,6 +29,7 @@ export interface OverlayBlockerProps {
   children?: ReactNode;
   className?: string;
   id?: string;
+  scrollSafeAriaLabels?: string[];
 }
 
 export interface OverlayBlockerStyles {
@@ -48,13 +49,84 @@ export const OverlayBlocker = forwardRef<
       children,
       className,
       id,
+      scrollSafeAriaLabels: _scrollSafeAriaLabels,
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const overlayBlockerTheme = currentTheme.overlayBlocker;
 
+    const scrollSafeAriaLabels = [
+      "paper-dialog-wrapper",
+      "dialog-wrapper",
+      "sidebar-desktop",
+      "sidebar-mobile",
+      ...(_scrollSafeAriaLabels ?? []),
+    ];
+
     const [visible, setVisible] = useState(show);
+
+    useEffect(() => {
+      const safeLabels = scrollSafeAriaLabels ?? [];
+
+      const scrollY = window.scrollY;
+      const body = document.body;
+
+      const prev = {
+        overflow: body.style.overflow,
+        position: body.style.position,
+        top: body.style.top,
+        width: body.style.width,
+      };
+
+      body.style.overflow = "hidden";
+      body.style.position = "fixed";
+      body.style.top = `-${scrollY}px`;
+      body.style.width = "100%";
+
+      const allow = (target: EventTarget | null) =>
+        isInSafeZone(target, safeLabels);
+
+      const blockWheel = (e: WheelEvent) => {
+        if (allow(e.target)) return;
+        e.preventDefault();
+      };
+
+      const blockTouch = (e: TouchEvent) => {
+        if (allow(e.target)) return;
+        e.preventDefault();
+      };
+
+      window.addEventListener("wheel", blockWheel, { passive: false });
+      window.addEventListener("touchmove", blockTouch, { passive: false });
+
+      return () => {
+        body.style.overflow = prev.overflow;
+        body.style.position = prev.position;
+        body.style.top = prev.top;
+        body.style.width = prev.width;
+
+        window.removeEventListener("wheel", blockWheel);
+        window.removeEventListener("touchmove", blockTouch);
+
+        window.scrollTo(0, scrollY);
+      };
+    }, [scrollSafeAriaLabels]);
+
+    const isInSafeZone = (target: EventTarget | null, safeLabels: string[]) => {
+      if (!(target instanceof Element)) return false;
+
+      let el: Element | null = target;
+
+      while (el) {
+        const label = el.getAttribute?.("aria-label");
+        if (label && safeLabels.includes(label)) return true;
+
+        el = el.parentElement;
+      }
+
+      return false;
+    };
 
     useEffect(() => {
       setVisible(show);
@@ -124,7 +196,9 @@ const StyledOverlay = styled.div<{
     box-sizing: border-box;
   }
 
-  position: absolute;
+  overscroll-behavior: none;
+
+  position: fixed;
   inset: 0;
   pointer-events: auto;
   background: ${({ $theme }) =>

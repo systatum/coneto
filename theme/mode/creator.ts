@@ -64,6 +64,7 @@ import {
   TipMenuContainerThemeConfig,
   TipMenuThemeConfig,
   TitleThemeConfig,
+  ToastThemeConfig,
   ToggleThemeConfig,
   ToolbarThemeConfig,
   TooltipThemeConfig,
@@ -71,6 +72,7 @@ import {
   WheelThemeConfig,
 } from "./../index";
 import { TipMenuVariant } from "./../../components/tip-menu";
+import { ToastVariant } from "./../../components/toast";
 
 function mergeTheme<T extends object>(
   defaultTheme: T,
@@ -1546,6 +1548,80 @@ export function createTimeboxTheme(
     },
     ...themeConfigurations
   );
+}
+
+// toast.tsx
+
+export function createToastTheme(
+  ...themeConfigurations: Array<
+    Partial<Record<ToastVariant, Partial<ToastThemeConfig>>>
+  >
+): Record<ToastVariant, ToastThemeConfig> {
+  const sharedToastTheme = {
+    backgroundColor: "#ffffff7d",
+    textColor: "rgba(0, 0, 0, 0.8)",
+    iconColor: "#FFFFFF",
+  };
+
+  const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
+    primary: {
+      ...sharedToastTheme,
+      borderColor: "#6C7BFF",
+      iconBackgroundColor: "#6C7BFF",
+      progressColor: "#5B63F6",
+    },
+
+    success: {
+      ...sharedToastTheme,
+      borderColor: "#34D399",
+      iconBackgroundColor: "#22C55E",
+      progressColor: "#22C55E",
+    },
+
+    danger: {
+      ...sharedToastTheme,
+      borderColor: "#FB647C",
+      iconBackgroundColor: "#F43F5E",
+      progressColor: "#F43F5E",
+    },
+
+    warning: {
+      ...sharedToastTheme,
+      borderColor: "#F59E0B",
+      iconBackgroundColor: "#F59E0B",
+      progressColor: "#F59E0B",
+    },
+
+    neutral: {
+      ...sharedToastTheme,
+      borderColor: "#94A3B8",
+      iconBackgroundColor: "#64748B",
+      progressColor: "#64748B",
+    },
+  };
+
+  return {
+    primary: mergeTheme(
+      defaultTheme.primary,
+      ...themeConfigurations.map((o) => o.primary ?? {})
+    ),
+    success: mergeTheme(
+      defaultTheme.success,
+      ...themeConfigurations.map((o) => o.success ?? {})
+    ),
+    danger: mergeTheme(
+      defaultTheme.danger,
+      ...themeConfigurations.map((o) => o.danger ?? {})
+    ),
+    warning: mergeTheme(
+      defaultTheme.warning,
+      ...themeConfigurations.map((o) => o.warning ?? {})
+    ),
+    neutral: mergeTheme(
+      defaultTheme.neutral,
+      ...themeConfigurations.map((o) => o.neutral ?? {})
+    ),
+  };
 }
 
 // timeline.tsx
