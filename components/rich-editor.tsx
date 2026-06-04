@@ -152,9 +152,10 @@ export interface RichEditorToolbarButtonStyles {
   self?: CSSProp;
 }
 
-interface RichEditorComponent extends React.ForwardRefExoticComponent<
-  RichEditorProps & React.RefAttributes<RichEditorRef>
-> {
+interface RichEditorComponent
+  extends React.ForwardRefExoticComponent<
+    RichEditorProps & React.RefAttributes<RichEditorRef>
+  > {
   ToolbarButton: typeof RichEditorToolbarButton;
   codeLanguage: typeof RichEditorCodeLanguage;
   translatedCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
@@ -372,12 +373,75 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    marked.use({
-      gfm: true,
-      breaks: false,
-    });
-
     CodeEditor.addFencedCodeMarkedExtension();
+
+    marked.use({
+      gfm: false,
+      breaks: true,
+      extensions: [
+        {
+          name: "emptyParagraph",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n\n");
+          },
+          tokenizer(src, tokens) {
+            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
+            if (isListContext) return;
+
+            const match = src.match(/^(\n{2,})/);
+            if (match) {
+              // 7 blank lines = 8 \n chars
+              const blankLines = match[0].length - 1; // 7
+              return {
+                type: "emptyParagraph",
+                raw: match[0],
+                count: blankLines,
+              };
+            }
+          },
+          renderer(token) {
+            console.log(token);
+            // 1 blank line → normal separation, no extra
+            // 2 blank lines → 2 empty paragraphs
+            // 7 blank lines → 7 empty paragraphs
+            if (token.count <= 1) return "";
+            return "<p><br></p>".repeat(token.count - 1);
+          },
+        },
+        {
+          name: "lineSeparated",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n");
+          },
+          tokenizer(src) {
+            const isIndented = /^ {4,}/.test(src);
+            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
+            const isCodeFence = /^`{3,}/.test(src);
+            if (isIndented || isListContext || isCodeFence) return;
+
+            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)+(?!\n)/);
+            if (match) {
+              // Also bail if any matched line starts a code fence
+              if (match[0].split("\n").some((l) => /^`{3,}/.test(l.trim())))
+                return;
+
+              return {
+                type: "lineSeparated",
+                raw: match[0],
+                lines: match[0].split("\n").filter((l) => l.trim() !== ""),
+              };
+            }
+          },
+          renderer(token) {
+            return token.lines
+              .map((line: string) => `<p>${line}</p>`)
+              .join("\n");
+          },
+        },
+      ],
+    });
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
@@ -1963,6 +2027,11 @@ const EditorArea = styled.div<{
   $height?: number;
   $theme: RichEditorThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   padding: 8px;
   outline: none;
   background-color: ${({ $theme }) => $theme.backgroundColor};
@@ -2377,6 +2446,12 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   container.querySelectorAll("p").forEach((p) => {
+    // Skip empty paragraphs — already correct, don't re-split them
+    const isEmptyParagraph =
+      p.childNodes.length === 0 ||
+      (p.childNodes.length === 1 && p.firstChild?.nodeName === "BR");
+    if (isEmptyParagraph) return;
+
     if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, pre, input")) return;
 
     const fragments: Node[][] = [[]];
