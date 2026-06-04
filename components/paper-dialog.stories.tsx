@@ -207,7 +207,7 @@ export const Default: Story = {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog
-          width="50vw"
+          width="50dvw"
           controls={["close", "minimize"]}
           styles={{
             contentStyle: {
@@ -428,10 +428,11 @@ export const Mobile: Story = {
           <PaperDialog
             key={index}
             ref={dialog.ref}
-            mobile
             controls={dialog.controls}
             position={dialog.position}
             title="Terms & Conditions"
+            mobile
+            resizable
             subtitle="Please review the following information before continuing to use Systatum services."
             styles={{
               contentStyle: css`
