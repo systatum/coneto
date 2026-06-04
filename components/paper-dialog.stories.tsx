@@ -988,6 +988,7 @@ export const Nested: Story = {
               overflow: auto;
             `,
           }}
+          resizable
           closable
           width="90vw"
         >
@@ -1041,6 +1042,7 @@ export const Nested: Story = {
         <PaperDialog
           ref={dialogRef2}
           closable
+          resizable
           width="75vw"
           styles={{
             contentStyle: css`
