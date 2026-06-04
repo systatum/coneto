@@ -71,7 +71,8 @@ export interface DialogStyles {
 }
 
 export interface DialogAction
-  extends Omit<BaseAction, "onClick">, Pick<ButtonVariants, "variant"> {
+  extends Omit<BaseAction, "onClick">,
+    Pick<ButtonVariants, "variant"> {
   id: string;
   isLoading?: boolean;
   styles?: ButtonStyles;
@@ -235,6 +236,7 @@ function Dialog({
                       icon: { image: RiCloseLine, size: 14 },
                       caption: "Close Modal",
                       onClick: () => closeDialog(),
+                      mobile: mobile,
                     },
                   ],
                 },
@@ -273,6 +275,7 @@ function Dialog({
                   onClick={() =>
                     onClick?.({ buttonId: action.id, closeDialog })
                   }
+                  mobile={mobile}
                   styles={{
                     ...action?.styles,
                     containerStyle: css`
