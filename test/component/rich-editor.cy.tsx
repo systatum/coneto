@@ -554,6 +554,33 @@ describe("RichEditor", () => {
   });
 
   context("preprocessed value", () => {
+    context("heading", () => {
+      context("when the next line have empty space", () => {
+        it("should add the empty space", () => {
+          const input = `### Heading line 1
+
+Paragraph line 3`;
+          cy.mount(<RichEditor value={input} />);
+          cy.findByRole("textbox")
+            .find("p")
+            .eq(0)
+            .should("contain.html", "<br>");
+        });
+      });
+
+      context("when the next line is paragraph", () => {
+        it("should not have empty space", () => {
+          const input = `### Heading line 1
+Paragraph line 2`;
+          cy.mount(<RichEditor value={input} />);
+          cy.findByRole("textbox")
+            .find("p")
+            .eq(0)
+            .should("not.contain.html", "<br>");
+        });
+      });
+    });
+
     context("paragraph", () => {
       context("when the next line have empty space", () => {
         it("should render exactly as the expected value", () => {
