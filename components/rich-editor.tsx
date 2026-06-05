@@ -388,8 +388,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("\n\n");
           },
           tokenizer(src, tokens) {
-            if (isLegal) return;
-
             const prevToken = tokens?.[tokens.length - 1];
             if (prevToken?.type === "list") return;
 
@@ -407,6 +405,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
+            if (isLegal) return;
+
             return "<p><br></p>".repeat(token.count);
           },
         },
@@ -417,8 +417,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("\n");
           },
           tokenizer(src, tokens) {
-            if (isLegal) return;
-
             const isHeading = /^#{1,6}\s/.test(src);
             if (isHeading) return;
 
@@ -451,6 +449,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
+            if (isLegal) return;
             return token.lines
               .map((line: string) => `<p>${line}</p>`)
               .join("\n");
