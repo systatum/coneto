@@ -246,6 +246,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -277,6 +280,7 @@ export const Default: Story = {
       {
         title: "Markdown Example",
         content: `### Hello there!
+
 ${sentences}
 
 This is ordered list
@@ -366,7 +370,7 @@ This is unordered list
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
             }}
@@ -381,6 +385,9 @@ This is unordered list
 
 export const Autogrow: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -412,6 +419,7 @@ export const Autogrow: Story = {
       {
         title: "Markdown Example",
         content: `### Hello there!
+
 ${sentences}
 
 This is ordered list
@@ -513,7 +521,7 @@ export default Content
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
             }}
@@ -573,6 +581,9 @@ export const PageEditor: Story = {
     layout: "fullscreen",
   },
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -600,7 +611,7 @@ export const PageEditor: Story = {
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}
@@ -737,6 +748,7 @@ export const ViewOnly: Story = {
     );
     const [value, setValue] = useState(
       `### Hello there!
+
 ${sentences}
 
 This is ordered list
