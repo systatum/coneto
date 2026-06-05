@@ -375,6 +375,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     CodeEditor.addFencedCodeMarkedExtension();
 
+    const isLegal = isLegalDocument(value);
+
     marked.use({
       gfm: false,
       breaks: true,
@@ -386,13 +388,17 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("\n\n");
           },
           tokenizer(src, tokens) {
+            if (isLegal) return;
+
+            const prevToken = tokens?.[tokens.length - 1];
+            if (prevToken?.type === "list") return;
+
             const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
             if (isListContext) return;
 
             const match = src.match(/^(\n{2,})/);
             if (match) {
-              // 7 blank lines = 8 \n chars
-              const blankLines = match[0].length - 1; // 7
+              const blankLines = match[0].length - 1;
               return {
                 type: "emptyParagraph",
                 raw: match[0],
@@ -401,7 +407,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            if (token.count <= 1) return "";
             return "<p><br></p>".repeat(token.count);
           },
         },
@@ -412,6 +417,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("\n");
           },
           tokenizer(src, tokens) {
+            if (isLegal) return;
+
             const isHeading = /^#{1,6}\s/.test(src);
             if (isHeading) return;
 
@@ -2489,6 +2496,12 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   return container.innerHTML;
+};
+
+const isLegalDocument = (src: string) => {
+  return /^(MIT License|Apache License|GNU |BSD |ISC License|Copyright \(c\)|TERMS AND CONDITIONS|END OF TERMS)/im.test(
+    src
+  );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
