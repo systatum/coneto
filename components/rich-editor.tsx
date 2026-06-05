@@ -227,7 +227,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       filter: ["ul", "ol"],
       replacement: function (content, node) {
         const parentIsParagraph = node.parentElement?.tagName === "P";
-        return parentIsParagraph ? content : `${content}\n`;
+        return parentIsParagraph ? content : `${content}\n\n`;
       },
     });
 
@@ -297,7 +297,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content + "\n";
+          return "\n\n" + content + "\n";
         }
 
         if (
@@ -306,7 +306,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content.trim() ? content : "\n";
+          return content.trim() ? "\n" + content + "\n" : "\n";
         }
 
         if (hasBrOnly) {
@@ -401,12 +401,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            console.log(token);
-            // 1 blank line → normal separation, no extra
-            // 2 blank lines → 2 empty paragraphs
-            // 7 blank lines → 7 empty paragraphs
             if (token.count <= 1) return "";
-            return "<p><br></p>".repeat(token.count - 1);
+            return "<p><br></p>".repeat(token.count);
           },
         },
         {
@@ -415,22 +411,31 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           start(src) {
             return src.indexOf("\n");
           },
-          tokenizer(src) {
-            const isIndented = /^ {4,}/.test(src);
-            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
-            const isCodeFence = /^`{3,}/.test(src);
-            if (isIndented || isListContext || isCodeFence) return;
+          tokenizer(src, tokens) {
+            const isHeading = /^#{1,6}\s/.test(src);
+            if (isHeading) return;
 
-            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)+(?!\n)/);
-            if (match) {
-              // Also bail if any matched line starts a code fence
-              if (match[0].split("\n").some((l) => /^`{3,}/.test(l.trim())))
-                return;
+            const isCodeFence = /^`{3,}/.test(src);
+            if (isCodeFence) return;
+
+            const firstLine = src.split("\n")[0];
+            if (/^[ \t]*([-*+]|\d+\.)\s/.test(firstLine)) return;
+            if (/^[ \t]+/.test(firstLine)) return;
+
+            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)*(?=\n\n|\n?$)/);
+
+            if (match && match[0].includes("\n")) {
+              const lines = match[0].split("\n");
+
+              if (lines.some((l) => /^`{3,}/.test(l.trim()))) return;
+              if (lines.some((l) => /^ {4,}/.test(l))) return;
+              if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
+              if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
 
               return {
                 type: "lineSeparated",
                 raw: match[0],
-                lines: match[0].split("\n").filter((l) => l.trim() !== ""),
+                lines: lines.filter((l) => l.trim() !== ""),
               };
             }
           },
