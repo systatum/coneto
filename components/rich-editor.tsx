@@ -219,7 +219,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       replacement: function (content, node) {
         const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
         const prefix = "#".repeat(hLevel);
-        return `${prefix} ${content}\n`;
+        return `${prefix} ${content}\n\n`;
       },
     });
 
@@ -423,9 +423,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             if (/^[ \t]+/.test(firstLine)) return;
 
             const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)*(?=\n\n|\n?$)/);
-
             if (match && match[0].includes("\n")) {
               const lines = match[0].split("\n");
+
+              const looksLikeWrappedParagraph =
+                lines.length > 1 && lines.every((l) => l.length > 20);
+
+              if (looksLikeWrappedParagraph) return;
 
               if (lines.some((l) => /^`{3,}/.test(l.trim()))) return;
               if (lines.some((l) => /^ {4,}/.test(l))) return;
