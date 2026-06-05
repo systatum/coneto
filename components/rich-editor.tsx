@@ -631,6 +631,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         html = value?.trim() ? await marked.parse(value) : `<p>${value}</p>`;
 
+        if (!html.trim().startsWith("<")) {
+          html = `<p>${html}</p>`;
+        }
+
         if (!isMounted || !editorRef.current) return;
 
         html = splitBrIntoParagraphs(html);
