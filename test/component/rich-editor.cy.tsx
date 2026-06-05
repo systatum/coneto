@@ -5,9 +5,8 @@ import {
   RichEditorProps,
 } from "./../../components/rich-editor";
 import { useEffect, useState } from "react";
-import { generateSentence } from "./../../lib/text";
 import { RiArrowRightSLine } from "@remixicon/react";
-import { expectTextIncludesOrderedLines } from "./../../test/support/commands";
+import { generateSentence } from "./../../lib/text";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
@@ -72,15 +71,15 @@ describe("RichEditor", () => {
   context("mode", () => {
     context("with view-only", () => {
       const viewOnlyPlainTextValue = `                              Systatum Antrikan License
-                                        Version 1.0, 2026
-                             https://systatum.com/licenses/
+                                          Version 1.0, 2026
+                               https://systatum.com/licenses/
 
-TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+  TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-1.  Definitions.
+  1.  Definitions.
 
-    "License" shall mean the terms and conditions for use, reproduction,
-    and distribution as defined by Sections 1 through 9 of this document.`;
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.`;
       beforeEach(() => {
         cy.mount(
           <ProductRichEditor
@@ -162,11 +161,11 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
         it("should renders the value code", () => {
           const code = `import { Button } from "@systatum/coneto/button"
 
-function Content(){
-  return <Button variant="primary">Your caption</Button>
-}
+  function Content(){
+    return <Button variant="primary">Your caption</Button>
+  }
 
-export default Content`;
+  export default Content`;
           cy.mount(<ProductRichEditor mode="code-editor" value={code} />);
           cy.shouldHaveEditorFromValue("rich-editor-code", code);
         });
@@ -365,7 +364,7 @@ export default Content`;
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "472px"
+          "480px"
         );
       });
 
@@ -378,14 +377,14 @@ export default Content`;
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "472px")
+            .should("have.css", "height", "480px")
             .click()
             .type("{enter}{enter}{enter}");
 
           cy.findByLabelText("rich-editor-content").should(
             "have.css",
             "height",
-            "544px"
+            "576px"
           );
         });
       });
@@ -565,7 +564,7 @@ Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("text")
-            .should("eq", "Paragraph line 1\n\nParagraph line 2\n");
+            .should("eq", "Paragraph line 1\nParagraph line 2\n");
         });
       });
 
@@ -580,7 +579,7 @@ Paragraph line 4`;
             .invoke("text")
             .should(
               "eq",
-              "Paragraph line 1\nParagraph line 2\nParagraph line 3\nParagraph line 4\n"
+              "Paragraph line 1\nParagraph line 2\nParagraph line 3\nParagraph line 4"
             );
         });
       });
@@ -588,6 +587,8 @@ Paragraph line 4`;
       context("when the next line is paragraph", () => {
         it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
+
+
 Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
@@ -601,6 +602,7 @@ Paragraph line 2`;
       context("when the next line is paragraph", () => {
         it("should render normally", () => {
           const input = `- Unordered list
+
 Paragraph line`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
