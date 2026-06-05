@@ -377,15 +377,22 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
     const isLegal = isLegalDocument(value);
 
+    let prevWalkToken: any = null;
+
     marked.use({
       gfm: false,
       breaks: true,
       walkTokens(token) {
-        if (token.type === "space" && token.raw.length >= 2) {
-          const blankLines = token.raw.length;
+        if (
+          token.type === "space" &&
+          token.raw.length >= 2 &&
+          prevWalkToken?.type === "heading"
+        ) {
+          const blankLines = token.raw.length - 1;
           token.type = "emptyParagraph";
           (token as any).count = blankLines;
         }
+        prevWalkToken = token;
       },
       extensions: [
         {
@@ -395,7 +402,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("#");
           },
           tokenizer(src) {
-            const match = src.match(/^(#{1,6}) ([^\n]+)\n?/);
+            const match = src.match(/^(#{1,6}) ([^\n]+)/);
             if (match) {
               return {
                 type: "heading",
@@ -425,7 +432,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
             const match = src.match(/^(\n{2,})/);
             if (match) {
-              const blankLines = match[0].length - 1;
+              const isAfterHeading = prevToken?.type === "heading";
+              const blankLines = match[0].length - 1 + (isAfterHeading ? 1 : 0);
               return {
                 type: "emptyParagraph",
                 raw: match[0],
@@ -435,6 +443,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           },
           renderer(token) {
             if (isLegal) return "";
+
             return "<p><br></p>".repeat(token.count);
           },
         },
