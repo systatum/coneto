@@ -280,7 +280,6 @@ export const Default: Story = {
       {
         title: "Markdown Example",
         content: `### Hello there!
-
 ${sentences}
 
 This is ordered list
@@ -419,7 +418,6 @@ export const Autogrow: Story = {
       {
         title: "Markdown Example",
         content: `### Hello there!
-
 ${sentences}
 
 This is ordered list
@@ -746,9 +744,7 @@ export const ViewOnly: Story = {
       () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
     );
-    const [value, setValue] = useState(
-      `### Hello there!
-
+    const [value, setValue] = useState(`### Hello there!
 ${sentences}
 
 This is ordered list
@@ -769,8 +765,7 @@ function Content(){
 
 export default Content
 \`\`\`
-`
-    );
+`);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
