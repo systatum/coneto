@@ -219,7 +219,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       replacement: function (content, node) {
         const hLevel = Number((node as HTMLElement).nodeName.charAt(1));
         const prefix = "#".repeat(hLevel);
-        return `${prefix} ${content}\n\n`;
+        return `${prefix} ${content}\n`;
       },
     });
 
@@ -380,7 +380,36 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     marked.use({
       gfm: false,
       breaks: true,
+      walkTokens(token) {
+        if (token.type === "space" && token.raw.length >= 2) {
+          const blankLines = token.raw.length;
+          token.type = "emptyParagraph";
+          (token as any).count = blankLines;
+        }
+      },
       extensions: [
+        {
+          name: "heading",
+          level: "block",
+          start(src) {
+            return src.indexOf("#");
+          },
+          tokenizer(src) {
+            const match = src.match(/^(#{1,6}) ([^\n]+)\n?/);
+            if (match) {
+              return {
+                type: "heading",
+                raw: match[0],
+                depth: match[1].length,
+                text: match[2],
+                tokens: [],
+              };
+            }
+          },
+          renderer(token) {
+            return `<h${token.depth}>${token.text}</h${token.depth}>`;
+          },
+        },
         {
           name: "emptyParagraph",
           level: "block",
@@ -405,8 +434,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            if (isLegal) return;
-
+            if (isLegal) return "";
             return "<p><br></p>".repeat(token.count);
           },
         },
@@ -449,7 +477,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            if (isLegal) return;
+            if (isLegal) return "";
             return token.lines
               .map((line: string) => `<p>${line}</p>`)
               .join("\n");
