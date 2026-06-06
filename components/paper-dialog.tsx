@@ -12,6 +12,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import { ButtonStyles, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
@@ -54,6 +55,16 @@ export interface PaperDialogProps {
   width?: string;
   title?: string;
   subtitle?: string;
+  resizable?: boolean | PaperDialogResizable;
+  onResize?: (size: { width?: number; height?: number }) => void;
+  onResizeComplete?: (size: { width?: number; height?: number }) => void;
+}
+
+export interface PaperDialogResizable {
+  minWidth?: string;
+  maxWidth?: string;
+  minHeight?: string;
+  maxHeight?: string;
 }
 
 export interface PaperDialogIcons {
@@ -112,6 +123,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       controls = ["minimize", closable ? "close" : ""],
       width,
       height,
+      resizable: _resizable = false,
+      onResize,
+      onResizeComplete,
     },
     ref
   ) => {
@@ -119,12 +133,176 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const paperDialogTheme = currentTheme.paperDialog;
     const dragControls = useDragControls();
 
+    const resizable = resolveResizable(_resizable);
+
     const [showTitlebar, setShowTitlebar] = useState(false);
     const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
+
+    const [resizeWidth, setResizeWidth] = useState<number | null>(null);
+    const [resizeHeight, setResizeHeight] = useState<number | null>(null);
+
+    const isResizingDesktop = useRef(false);
+    const isResizingMobile = useRef(false);
+    const resizeStartX = useRef(0);
+    const resizeStartWidth = useRef(0);
+    const resizeStartY = useRef(0);
+    const resizeStartHeight = useRef(0);
+
+    // Track last pointer Y and timestamp for velocity-based minimize on mobile resize
+    const lastPointerY = useRef(0);
+    const lastPointerTime = useRef(0);
+    const velocityRef = useRef(0);
+
+    const dialogRef = useRef<HTMLDivElement>(null);
+
+    const isLeft = position === "left";
+
+    const handleDesktopResizePointerDown = useCallback(
+      (e: React.PointerEvent) => {
+        if (!resizable || mobile) return;
+        e.preventDefault();
+        e.stopPropagation();
+        isResizingDesktop.current = true;
+        resizeStartX.current = e.clientX;
+        resizeStartWidth.current =
+          dialogRef.current?.getBoundingClientRect().width ??
+          resizeWidth ??
+          window.innerWidth * 0.92;
+
+        const minPx = parsePx(resizable.minWidth);
+        const maxPx = parsePx(resizable.maxWidth);
+
+        const onMove = (ev: PointerEvent) => {
+          if (!isResizingDesktop.current) return;
+          const delta = isLeft
+            ? ev.clientX - resizeStartX.current
+            : resizeStartX.current - ev.clientX;
+          const next = Math.min(
+            maxPx,
+            Math.max(minPx, resizeStartWidth.current + delta)
+          );
+          setResizeWidth(next);
+          onResize?.({ width: next });
+        };
+
+        const onUp = () => {
+          isResizingDesktop.current = false;
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("pointerup", onUp);
+          const finalWidth = resizeWidth ?? resizeStartWidth.current;
+          onResizeComplete?.({ width: finalWidth });
+        };
+
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+      },
+      [
+        resizable,
+        mobile,
+        isLeft,
+        resizable,
+        resizeWidth,
+        setResizeWidth,
+        onResize,
+        onResizeComplete,
+      ]
+    );
+
+    const handleMobileResizePointerDown = useCallback(
+      (e: React.PointerEvent) => {
+        if (!resizable || !mobile) return;
+        e.preventDefault();
+        e.stopPropagation();
+        isResizingMobile.current = true;
+        resizeStartY.current = e.clientY;
+        resizeStartHeight.current =
+          dialogRef.current?.getBoundingClientRect().height ??
+          resizeHeight ??
+          window.innerHeight * 0.88;
+
+        lastPointerY.current = e.clientY;
+        lastPointerTime.current = performance.now();
+
+        const maxPx = parsePx(resizable.maxHeight);
+        const minPx = parsePx(resizable.minHeight);
+
+        const onMove = (ev: PointerEvent) => {
+          if (!isResizingMobile.current) return;
+          const delta = resizeStartY.current - ev.clientY;
+          const DAMPING = 0.72;
+
+          const next = Math.min(
+            maxPx,
+            Math.max(minPx, resizeStartHeight.current + delta * DAMPING)
+          );
+
+          setResizeHeight(next);
+          onResize?.({ height: next });
+
+          const now = performance.now();
+
+          const dy = ev.clientY - lastPointerY.current;
+          const dt = now - lastPointerTime.current;
+
+          if (dt > 0) {
+            velocityRef.current = dy / dt;
+          }
+
+          lastPointerY.current = ev.clientY;
+          lastPointerTime.current = performance.now();
+        };
+
+        const onUp = (ev: PointerEvent) => {
+          isResizingMobile.current = false;
+          window.removeEventListener("pointermove", onMove);
+          window.removeEventListener("pointerup", onUp);
+
+          // Compute instantaneous velocity (px/ms, positive = downward)
+          const dt = performance.now() - lastPointerTime.current;
+          const velocity =
+            dt > 0 ? (ev.clientY - lastPointerY.current) / dt : 0;
+
+          if (velocityRef.current > 0.5) {
+            setDialogState("minimized");
+            setShowTitlebar(true);
+            setTimeout(() => {
+              setResizeHeight(null);
+            }, 300);
+          } else {
+            const finalHeight =
+              dialogRef.current?.getBoundingClientRect().height ??
+              resizeHeight ??
+              resizeStartHeight.current;
+            onResizeComplete?.({ height: finalHeight });
+          }
+        };
+
+        window.addEventListener("pointermove", onMove);
+        window.addEventListener("pointerup", onUp);
+      },
+      [
+        resizable,
+        mobile,
+        resizable,
+        resizeHeight,
+        setResizeHeight,
+        onResize,
+        onResizeComplete,
+        lastPointerTime,
+        lastPointerY,
+        velocityRef,
+      ]
+    );
+
+    const resolvedWidth = resizeWidth != null ? `${resizeWidth}px` : width;
+    const resolvedHeight = resizeHeight != null ? `${resizeHeight}px` : height;
 
     const closeDialog = useCallback(
       async (withTimeout: boolean = true) => {
         const close = async () => await setDialogState("closed");
+
+        await setResizeHeight(null);
+        await setResizeWidth(null);
 
         if (mobile) {
           await setDialogState("minimized");
@@ -154,8 +332,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         await setDialogState("minimized");
       },
     }));
-
-    const isLeft = position === "left";
 
     const handleEscape = useCallback(
       (e: KeyboardEvent) => {
@@ -196,9 +372,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                   await close();
                 }
               }}
-              styles={{
-                self: styles?.overlayStyle,
-              }}
+              styles={{ self: styles?.overlayStyle }}
               show={dialogState === "restored"}
             />
           )}
@@ -260,10 +434,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           )}
 
           <MotionDialog
+            ref={dialogRef}
             $mobile={mobile}
             aria-label="paper-dialog-wrapper"
-            $width={width}
-            $height={height}
+            $width={resolvedWidth}
+            $height={resolvedHeight}
             $style={css`
               ${mobile &&
               css`
@@ -289,21 +464,23 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             dragDirectionLock
             dragControls={dragControls}
             dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{
-              top: 0,
-              bottom: 0.6,
-            }}
+            dragElastic={{ top: 0, bottom: 0.6 }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
                 setDialogState("minimized");
                 setShowTitlebar(true);
               }
             }}
-            whileDrag={{
-              cursor: "grabbing",
-              userSelect: "none",
-            }}
+            whileDrag={{ cursor: "grabbing", userSelect: "none" }}
           >
+            {resizable && !mobile && (
+              <DesktopResizeHandle
+                $isLeft={isLeft}
+                onPointerDown={handleDesktopResizePointerDown}
+                aria-label="paper-dialog-resize-handle"
+              />
+            )}
+
             {closable && controls?.includes("close") && (
               <ActionButtonWrapper
                 $indexAction={0}
@@ -379,19 +556,27 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               </ActionButtonWrapper>
             )}
 
-            {mobile && closable && (
+            {mobile && (
               <DragIndicatorWrapper
-                $theme={paperDialogTheme}
-                $style={styles?.indicatorStyle}
                 aria-label="paper-dialog-drag-indicator"
-                onPointerDown={(e) => dragControls.start(e)}
+                $resizable={!!resizable}
+                onPointerDown={(e) => {
+                  if (resizable) {
+                    handleMobileResizePointerDown(e);
+                  } else if (closable) {
+                    dragControls.start(e);
+                  }
+                }}
               >
-                <DragIndicator $theme={paperDialogTheme} />
+                <DragIndicator
+                  $theme={paperDialogTheme}
+                  $resizable={!!resizable}
+                />
               </DragIndicatorWrapper>
             )}
 
             <PaperDialogContent
-              $height={height}
+              $height={resolvedHeight}
               $theme={paperDialogTheme}
               aria-label="paper-dialog-content"
               $style={styles?.contentStyle}
@@ -417,6 +602,34 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     );
   }
 );
+
+/**
+ * Convert a CSS size string to pixels at the current viewport.
+ * Handles: px | dvw | vw | dvh | vh  — falls back to parseInt for bare numbers.
+ */
+function parsePx(value: string): number {
+  const n = parseFloat(value);
+  if (value.endsWith("dvw") || value.endsWith("vw"))
+    return (n / 100) * window.innerWidth;
+  if (value.endsWith("dvh") || value.endsWith("vh"))
+    return (n / 100) * window.innerHeight;
+  return n;
+}
+
+/** Resolve the `resizable` prop into a normalised config (or null when disabled). */
+function resolveResizable(
+  resizable: boolean | PaperDialogResizable | undefined
+): Required<PaperDialogResizable> | null {
+  if (!resizable) return null;
+  const defaults: Required<PaperDialogResizable> = {
+    minWidth: "20dvw",
+    maxWidth: "90dvw",
+    minHeight: "20dvh",
+    maxHeight: "90dvh",
+  };
+  if (resizable === true) return defaults;
+  return { ...defaults, ...resizable };
+}
 
 const DialogOverlay = styled.div<{
   $dialogState: PaperDialogState;
@@ -500,6 +713,32 @@ const MotionDialog = styled(motion.div)<{
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
   ${({ $style }) => $style};
+`;
+
+const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  z-index: 10000;
+  cursor: col-resize;
+  transition: background-color 0.15s ease;
+
+  ${({ $isLeft }) =>
+    $isLeft
+      ? css`
+          right: 0;
+          border-right: 2px solid transparent;
+        `
+      : css`
+          left: 0;
+          border-left: 2px solid transparent;
+        `}
+
+  &:hover,
+  &:active {
+    background-color: rgba(128, 128, 128, 0.18);
+  }
 `;
 
 const ActionButtonWrapper = styled.div<{
@@ -628,6 +867,7 @@ const PaperDialogContent = styled.div<{
 const DragIndicatorWrapper = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
+  $resizable?: boolean;
 }>`
   *,
   ::before,
@@ -640,8 +880,9 @@ const DragIndicatorWrapper = styled(motion.div)<{
   display: flex;
   top: 0;
   justify-content: center;
-  width: 100%;
-  cursor: grab;
+
+  cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
+  width: 100dvw;
   height: 60px;
   z-index: 9992999;
   align-items: center;
@@ -649,7 +890,7 @@ const DragIndicatorWrapper = styled(motion.div)<{
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   &:active {
-    cursor: grabbing;
+    cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grabbing")};
   }
 
   ${({ $style }) => $style}
@@ -657,13 +898,17 @@ const DragIndicatorWrapper = styled(motion.div)<{
 
 const DragIndicator = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
+  $resizable?: boolean;
 }>`
   display: flex;
   width: 48px;
   height: 5px;
   border-radius: 999px;
   background-color: ${({ $theme }) => $theme?.textColor};
-  opacity: 0.3;
+  opacity: ${({ $resizable }) => ($resizable ? 0.5 : 0.3)};
+  transition:
+    opacity 0.2s ease,
+    width 0.2s ease;
 `;
 
 const MiniTitleBar = styled(motion.div)<{

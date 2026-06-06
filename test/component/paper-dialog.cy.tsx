@@ -101,6 +101,192 @@ describe("PaperDialog", () => {
     });
   });
 
+  context("resizable", () => {
+    context("object", () => {
+      context("minWidth", () => {
+        it("does not resize below the minimum width", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductPaperDialog
+              width="50dvw"
+              resizable={{
+                minWidth: "200px",
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).click();
+          cy.wait(500);
+
+          cy.findByLabelText("paper-dialog-resize-handle")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(150, 0)
+            .realMouseUp();
+
+          cy.findByLabelText("paper-dialog-wrapper")
+            .invoke("width")
+            .should("be.closeTo", 200, 5);
+        });
+      });
+
+      context("maxWidth", () => {
+        it("does not resize above the maximum width", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductPaperDialog
+              width="50dvw"
+              resizable={{
+                maxWidth: "300px",
+              }}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).click();
+          cy.wait(500);
+
+          cy.findByLabelText("paper-dialog-resize-handle")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(-150, 0)
+            .realMouseUp();
+
+          cy.findByLabelText("paper-dialog-wrapper")
+            .invoke("width")
+            .should("be.closeTo", 300, 5);
+        });
+      });
+    });
+
+    context("when resizing wider", () => {
+      it("renders a wider dialog", () => {
+        cy.viewport(500, 700);
+
+        cy.mount(<ProductPaperDialog resizable width="50dvw" />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+
+        cy.wait(500);
+
+        let initialWidth: number;
+
+        cy.findByLabelText("paper-dialog-wrapper")
+          .invoke("width")
+          .then((w) => {
+            initialWidth = w as number;
+          });
+
+        cy.findByLabelText("paper-dialog-resize-handle")
+          .realMouseDown({ position: "center" })
+          .realMouseMove(-150, 0)
+          .realMouseUp();
+
+        cy.findByLabelText("paper-dialog-wrapper")
+          .invoke("width")
+          .then((w) => {
+            expect(w).to.be.closeTo(initialWidth + 150, 5);
+          });
+      });
+    });
+
+    context("when resizing narrower", () => {
+      it("renders a narrower dialog", () => {
+        cy.viewport(500, 700);
+
+        cy.mount(<ProductPaperDialog width="50dvw" resizable />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+
+        cy.wait(500);
+
+        let initialWidth: number;
+
+        cy.findByLabelText("paper-dialog-wrapper")
+          .invoke("width")
+          .then((w) => {
+            initialWidth = w as number;
+          });
+
+        cy.findByLabelText("paper-dialog-resize-handle")
+          .realMouseDown({ position: "center" })
+          .realMouseMove(150, 0)
+          .realMouseUp();
+
+        cy.findByLabelText("paper-dialog-wrapper")
+          .invoke("width")
+          .then((w) => {
+            expect(w).to.be.closeTo(initialWidth - 150, 5);
+          });
+      });
+    });
+
+    context("onResize", () => {
+      it("should shows the width", () => {
+        cy.viewport(500, 700);
+
+        const onResize = cy.spy().as("onResize");
+
+        cy.mount(<ProductPaperDialog resizable onResize={onResize} />);
+
+        cy.findAllByRole("button").eq(0).should("exist").click();
+
+        cy.wait(500);
+        cy.get("@onResize").should("not.have.been.called");
+
+        cy.findByLabelText("paper-dialog-wrapper").should("be.visible");
+
+        cy.findByLabelText("paper-dialog-resize-handle")
+          .realMouseDown({ position: "center" })
+          .realMouseMove(-50, 0)
+          .wait(200)
+          .realMouseMove(-100, 0)
+          .wait(200)
+          .realMouseMove(-150, 0)
+          .realMouseUp();
+
+        cy.wait(300);
+
+        cy.get("@onResize")
+          .its("lastCall.args.0.width")
+          .should("be.a", "number");
+      });
+    });
+
+    context("onResizeComplete", () => {
+      it("should call onResizeComplete with final width", () => {
+        cy.viewport(500, 700);
+
+        const onResizeComplete = cy.spy().as("onResizeComplete");
+
+        cy.mount(
+          <ProductPaperDialog resizable onResizeComplete={onResizeComplete} />
+        );
+
+        cy.findAllByRole("button").eq(0).click();
+
+        cy.wait(500);
+
+        cy.get("@onResizeComplete").should("not.have.been.called");
+
+        cy.findByLabelText("paper-dialog-resize-handle")
+          .realMouseDown({ position: "center" })
+          .realMouseMove(-50, 0)
+          .wait(200)
+          .realMouseMove(-100, 0)
+          .wait(200)
+          .realMouseMove(-150, 0)
+          .realMouseUp();
+
+        cy.wait(300);
+
+        cy.get("@onResizeComplete")
+          .should("have.been.calledOnce")
+          .its("lastCall.args.0.width")
+          .should("be.a", "number");
+      });
+    });
+  });
+
   context("mobile", () => {
     it("renders with radius 0.75rem, width 100dvw and height 72dvh", () => {
       cy.viewport(500, 700);
@@ -114,6 +300,215 @@ describe("PaperDialog", () => {
         .and("have.css", "border-top-right-radius", "20px")
         .and("have.css", "width", "500px")
         .and("have.css", "height", "616px");
+    });
+
+    context("resizable", () => {
+      context("object", () => {
+        context("minHeight", () => {
+          it("does not resize below the minimum height", () => {
+            cy.viewport(500, 700);
+
+            cy.mount(
+              <ProductPaperDialog
+                width="100dvw"
+                height="50dvh"
+                mobile
+                resizable={{
+                  minHeight: "200px",
+                }}
+              />
+            );
+
+            cy.findAllByRole("button").eq(0).click();
+            cy.wait(500);
+
+            cy.findByLabelText("paper-dialog-drag-indicator")
+              .realMouseDown({ position: "center" })
+              .realMouseMove(0, 50)
+              .wait(200)
+              .realMouseMove(0, 100)
+              .wait(200)
+              .realMouseMove(0, 150)
+              .wait(200)
+              .realMouseMove(0, 250)
+              .realMouseUp();
+
+            cy.findByLabelText("paper-dialog-wrapper")
+              .invoke("height")
+              .should("be.closeTo", 200, 10);
+          });
+        });
+
+        context("maxHeight", () => {
+          it("does not resize above the maximum height", () => {
+            cy.viewport(500, 700);
+
+            cy.mount(
+              <ProductPaperDialog
+                width="100dvw"
+                height="50dvh"
+                mobile
+                resizable={{
+                  maxHeight: "400px",
+                }}
+              />
+            );
+
+            cy.findAllByRole("button").eq(0).click();
+            cy.wait(500);
+
+            cy.findByLabelText("paper-dialog-drag-indicator")
+              .realMouseDown({ position: "center" })
+              .realMouseMove(0, -50)
+              .wait(200)
+              .realMouseMove(0, -100)
+              .wait(200)
+              .realMouseMove(0, -150)
+              .wait(200)
+              .realMouseMove(0, -250)
+              .realMouseUp();
+
+            cy.findByLabelText("paper-dialog-wrapper")
+              .invoke("height")
+              .should("be.closeTo", 400, 10);
+          });
+        });
+      });
+
+      context("onResize", () => {
+        it("should shows the height ", () => {
+          cy.viewport(500, 700);
+
+          const onResize = cy.spy().as("onResize");
+
+          cy.mount(
+            <ProductPaperDialog
+              width="100dvw"
+              resizable
+              mobile
+              onResize={onResize}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(500);
+          cy.get("@onResize").should("not.have.been.called");
+
+          cy.findByLabelText("paper-dialog-wrapper").should("be.visible");
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 30)
+            .wait(200)
+            .realMouseMove(0, 60)
+            .wait(200)
+            .realMouseMove(0, 100)
+            .realMouseUp();
+
+          cy.wait(300);
+
+          cy.get("@onResize")
+            .its("lastCall.args.0.height")
+            .should("be.a", "number");
+        });
+      });
+
+      context("onResizeComplete", () => {
+        it("should call onResizeComplete with final height", () => {
+          cy.viewport(500, 700);
+
+          const onResizeComplete = cy.spy().as("onResizeComplete");
+
+          cy.mount(
+            <ProductPaperDialog
+              width="100dvw"
+              resizable
+              mobile
+              onResizeComplete={onResizeComplete}
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).click();
+
+          cy.wait(500);
+
+          cy.get("@onResizeComplete").should("not.have.been.called");
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 30)
+            .wait(200)
+            .realMouseMove(0, 60)
+            .wait(200)
+            .realMouseMove(0, 100)
+            .realMouseUp();
+
+          cy.wait(300);
+
+          cy.get("@onResizeComplete")
+            .should("have.been.calledOnce")
+            .its("lastCall.args.0.height")
+            .should("be.a", "number");
+        });
+      });
+
+      context("when dragged fast", () => {
+        it("should minimize the dialog", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" resizable mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(500);
+
+          cy.findByLabelText("paper-dialog-wrapper").should("be.visible");
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 300)
+            .realMouseUp();
+
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-wrapper").should("not.be.visible");
+        });
+      });
+
+      context("when dragged slowly", () => {
+        it("should not minimize and resize the dialog", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog width="100dvw" resizable mobile />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+          let initialHeight: number;
+
+          cy.findByLabelText("paper-dialog-wrapper")
+            .should("be.visible")
+            .then(($el) => {
+              initialHeight = $el.height()!;
+            });
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, 30)
+            .wait(200)
+            .realMouseMove(0, 60)
+            .wait(200)
+            .realMouseMove(0, 100)
+            .realMouseUp();
+
+          cy.wait(300);
+
+          cy.findByLabelText("paper-dialog-wrapper")
+            .should("be.visible")
+            .then(($el) => {
+              const resizedHeight = $el.height()!;
+
+              expect(resizedHeight).to.be.lessThan(initialHeight);
+            });
+        });
+      });
     });
 
     context("user selection", () => {
@@ -165,7 +560,8 @@ describe("PaperDialog", () => {
     context("drag behavior", () => {
       context("when dragging icon drag indicator", () => {
         it("should close the dialog", () => {
-          cy.viewport(500, 500);
+          cy.viewport(500, 700);
+
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
@@ -185,16 +581,17 @@ describe("PaperDialog", () => {
 
       context("when dragging in area empty icon drag indicator", () => {
         it("should close the dialog", () => {
-          cy.viewport(500, 500);
+          cy.viewport(500, 700);
+
           cy.mount(<ProductPaperDialog width="100dvw" mobile />);
 
           cy.findAllByRole("button").eq(0).should("exist").click();
 
           cy.wait(500);
 
-          cy.findByLabelText("paper-dialog-content")
+          cy.findByLabelText("paper-dialog-drag-indicator")
             .should("exist")
-            .realMouseDown({ position: "topRight" })
+            .realMouseDown({ position: "right" })
             .realMouseMove(0, 350)
             .realMouseUp();
 
@@ -306,7 +703,7 @@ describe("PaperDialog", () => {
           cy.wait(300);
 
           cy.findByLabelText("paper-dialog-close-icon").should("not.exist");
-          cy.findByLabelText("paper-dialog-drag-indicator").should("not.exist");
+          cy.findByLabelText("paper-dialog-drag-indicator").should("exist");
         });
 
         context("when clicking overlay-background", () => {
