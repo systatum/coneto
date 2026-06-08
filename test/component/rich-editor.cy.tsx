@@ -71,8 +71,8 @@ describe("RichEditor", () => {
   context("mode", () => {
     context("with view-only", () => {
       const viewOnlyPlainTextValue = `                              Systatum Antrikan License
-                                          Version 1.0, 2026
-                               https://systatum.com/licenses/
+                                            Version 1.0, 2026
+                                 https://systatum.com/licenses/
 
   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
@@ -161,11 +161,11 @@ describe("RichEditor", () => {
         it("should renders the value code", () => {
           const code = `import { Button } from "@systatum/coneto/button"
 
-  function Content(){
-    return <Button variant="primary">Your caption</Button>
-  }
+    function Content(){
+      return <Button variant="primary">Your caption</Button>
+    }
 
-  export default Content`;
+    export default Content`;
           cy.mount(<ProductRichEditor mode="code-editor" value={code} />);
           cy.shouldHaveEditorFromValue("rich-editor-code", code);
         });
@@ -590,8 +590,12 @@ Paragraph line 2`;
 Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "Paragraph line 1\nParagraph line 2\n");
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
+            .should(
+              "eq",
+              "<p>Paragraph line 1</p><p><br></p><p><br></p><p>Paragraph line 2</p>"
+            );
         });
       });
 
@@ -603,24 +607,12 @@ Paragraph line 3
 Paragraph line 4`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
             .should(
               "eq",
-              "Paragraph line 1\nParagraph line 2\nParagraph line 3\nParagraph line 4"
+              "<p>Paragraph line 1</p><p>Paragraph line 2</p><p>Paragraph line 3</p><p>Paragraph line 4</p>"
             );
-        });
-      });
-
-      context("when the next line is paragraph", () => {
-        it("should render exactly as the expected value", () => {
-          const input = `Paragraph line 1
-
-
-Paragraph line 2`;
-          cy.mount(<RichEditor value={input} />);
-          cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "Paragraph line 1\nParagraph line 2\n");
         });
       });
     });
@@ -633,8 +625,12 @@ Paragraph line 2`;
 Paragraph line`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "\nUnordered list\n\nParagraph line\n");
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
+            .should(
+              "eq",
+              "<ul><li>Unordered list</li></ul><p>Paragraph line</p>"
+            );
         });
       });
 
@@ -645,10 +641,11 @@ Paragraph line`;
 - Unordered list 3`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
             .should(
               "eq",
-              "\nUnordered list 1\nUnordered list 2\nUnordered list 3\n\n"
+              "<ul><li>Unordered list 1</li><li>Unordered list 2</li><li>Unordered list 3</li></ul>"
             );
         });
       });
