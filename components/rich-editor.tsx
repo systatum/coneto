@@ -2691,7 +2691,13 @@ function buildTurndownRules(tokenRenderers: Record<string, TokenRenderer>) {
           );
         },
         replacement(_content: string, node: HTMLElement) {
-          const word = node.dataset.tokenWord ?? node.textContent ?? "";
+          const raw = node.dataset.tokenWord ?? "";
+          const decoded = raw
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, "&")
+            .replace(/&#39;/g, "'");
+
+          const word = (decoded || node.dataset.tokenWord) ?? "";
 
           const next = node.nextSibling;
           if (
