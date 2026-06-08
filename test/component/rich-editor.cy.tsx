@@ -5,9 +5,8 @@ import {
   RichEditorProps,
 } from "./../../components/rich-editor";
 import { useEffect, useState } from "react";
-import { generateSentence } from "./../../lib/text";
 import { RiArrowRightSLine } from "@remixicon/react";
-import { expectTextIncludesOrderedLines } from "./../../test/support/commands";
+import { generateSentence } from "./../../lib/text";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
@@ -72,15 +71,15 @@ describe("RichEditor", () => {
   context("mode", () => {
     context("with view-only", () => {
       const viewOnlyPlainTextValue = `                              Systatum Antrikan License
-                                        Version 1.0, 2026
-                             https://systatum.com/licenses/
+                                            Version 1.0, 2026
+                                 https://systatum.com/licenses/
 
-TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+  TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-1.  Definitions.
+  1.  Definitions.
 
-    "License" shall mean the terms and conditions for use, reproduction,
-    and distribution as defined by Sections 1 through 9 of this document.`;
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.`;
       beforeEach(() => {
         cy.mount(
           <ProductRichEditor
@@ -162,11 +161,11 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
         it("should renders the value code", () => {
           const code = `import { Button } from "@systatum/coneto/button"
 
-function Content(){
-  return <Button variant="primary">Your caption</Button>
-}
+    function Content(){
+      return <Button variant="primary">Your caption</Button>
+    }
 
-export default Content`;
+    export default Content`;
           cy.mount(<ProductRichEditor mode="code-editor" value={code} />);
           cy.shouldHaveEditorFromValue("rich-editor-code", code);
         });
@@ -365,7 +364,7 @@ export default Content`;
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "472px"
+          "480px"
         );
       });
 
@@ -378,14 +377,14 @@ export default Content`;
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "472px")
+            .should("have.css", "height", "480px")
             .click()
             .type("{enter}{enter}{enter}");
 
           cy.findByLabelText("rich-editor-content").should(
             "have.css",
             "height",
-            "544px"
+            "576px"
           );
         });
       });
@@ -555,6 +554,33 @@ export default Content`;
   });
 
   context("preprocessed value", () => {
+    context("heading", () => {
+      context("when the next line have empty space", () => {
+        it("should add the empty space", () => {
+          const input = `### Heading line 1
+
+Paragraph line 3`;
+          cy.mount(<RichEditor value={input} />);
+          cy.findByRole("textbox")
+            .find("p")
+            .eq(0)
+            .should("contain.html", "<br>");
+        });
+      });
+
+      context("when the next line is paragraph", () => {
+        it("should not have empty space", () => {
+          const input = `### Heading line 1
+Paragraph line 2`;
+          cy.mount(<RichEditor value={input} />);
+          cy.findByRole("textbox")
+            .find("p")
+            .eq(0)
+            .should("not.contain.html", "<br>");
+        });
+      });
+    });
+
     context("paragraph", () => {
       context("when the next line have empty space", () => {
         it("should render exactly as the expected value", () => {
@@ -564,8 +590,12 @@ export default Content`;
 Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "Paragraph line 1\n\nParagraph line 2\n");
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
+            .should(
+              "eq",
+              "<p>Paragraph line 1</p><p><br></p><p><br></p><p>Paragraph line 2</p>"
+            );
         });
       });
 
@@ -577,22 +607,12 @@ Paragraph line 3
 Paragraph line 4`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
             .should(
               "eq",
-              "Paragraph line 1\nParagraph line 2\nParagraph line 3\nParagraph line 4\n"
+              "<p>Paragraph line 1</p><p>Paragraph line 2</p><p>Paragraph line 3</p><p>Paragraph line 4</p>"
             );
-        });
-      });
-
-      context("when the next line is paragraph", () => {
-        it("should render exactly as the expected value", () => {
-          const input = `Paragraph line 1
-Paragraph line 2`;
-          cy.mount(<RichEditor value={input} />);
-          cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "Paragraph line 1\nParagraph line 2\n");
         });
       });
     });
@@ -601,11 +621,16 @@ Paragraph line 2`;
       context("when the next line is paragraph", () => {
         it("should render normally", () => {
           const input = `- Unordered list
+
 Paragraph line`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
-            .should("eq", "\nUnordered list\n\nParagraph line\n");
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
+            .should(
+              "eq",
+              "<ul><li>Unordered list</li></ul><p>Paragraph line</p>"
+            );
         });
       });
 
@@ -616,10 +641,11 @@ Paragraph line`;
 - Unordered list 3`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
-            .invoke("text")
+            .invoke("html")
+            .then((html) => html.replace(/\n/g, ""))
             .should(
               "eq",
-              "\nUnordered list 1\nUnordered list 2\nUnordered list 3\n\n"
+              "<ul><li>Unordered list 1</li><li>Unordered list 2</li><li>Unordered list 3</li></ul>"
             );
         });
       });

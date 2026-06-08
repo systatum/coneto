@@ -29,6 +29,7 @@ import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
 import { applyClassName } from "./../constants/classname";
+import { createPortal } from "react-dom";
 
 export interface RichEditorProps {
   value?: string;
@@ -42,6 +43,16 @@ export interface RichEditorProps {
   actions?: RichEditorAction[];
   codeEditor?: RichEditorCode;
   id?: string;
+  className?: string;
+  tokenRenderers?: RichEditorTokenRenderer;
+  onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+}
+
+export type RichEditorTokenRenderer = Record<string, TokenRenderer>;
+
+export interface TokenRenderer {
+  endToken: string;
+  render: (word: string) => ReactNode;
   className?: string;
 }
 
@@ -152,9 +163,10 @@ export interface RichEditorToolbarButtonStyles {
   self?: CSSProp;
 }
 
-interface RichEditorComponent extends React.ForwardRefExoticComponent<
-  RichEditorProps & React.RefAttributes<RichEditorRef>
-> {
+interface RichEditorComponent
+  extends React.ForwardRefExoticComponent<
+    RichEditorProps & React.RefAttributes<RichEditorRef>
+  > {
   ToolbarButton: typeof RichEditorToolbarButton;
   codeLanguage: typeof RichEditorCodeLanguage;
   translatedCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
@@ -183,6 +195,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       codeEditor,
       className,
       id,
+      tokenRenderers,
+      onKeyDown,
     },
     ref
   ) => {
@@ -226,7 +240,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       filter: ["ul", "ol"],
       replacement: function (content, node) {
         const parentIsParagraph = node.parentElement?.tagName === "P";
-        return parentIsParagraph ? content : `${content}\n`;
+        return parentIsParagraph ? content : `${content}\n\n`;
       },
     });
 
@@ -296,7 +310,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content + "\n";
+          return "\n\n" + content + "\n";
         }
 
         if (
@@ -305,7 +319,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content.trim() ? content : "\n";
+          return content.trim() ? "\n" + content + "\n" : "\n";
         }
 
         if (hasBrOnly) {
@@ -372,12 +386,180 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
+    CodeEditor.addFencedCodeMarkedExtension();
+
+    const isLegal = isLegalDocument(value);
+
+    let prevWalkToken: any = null;
+
     marked.use({
-      gfm: true,
-      breaks: false,
+      gfm: false,
+      breaks: true,
+      // Track previous token so we can detect
+      // blank lines that appear immediately after headings.
+      walkTokens(token) {
+        if (
+          token.type === "space" &&
+          token.raw.length >= 2 &&
+          prevWalkToken?.type === "heading"
+        ) {
+          const blankLines = token.raw.length - 1;
+
+          // Convert heading-following spaces into a custom
+          // emptyParagraph token so we can preserve spacing.
+          token.type = "emptyParagraph";
+          (token as any).count = blankLines;
+        }
+        prevWalkToken = token;
+      },
+      extensions: [
+        {
+          /**
+           * Custom heading tokenizer.
+           * Ensures markdown headings are parsed consistently
+           * and rendered as native h1-h6 elements.
+           */
+          name: "heading",
+          level: "block",
+          start(src) {
+            return src.indexOf("#");
+          },
+          tokenizer(src) {
+            const match = src.match(/^(#{1,6}) ([^\n]+)/);
+            if (match) {
+              return {
+                type: "heading",
+                raw: match[0],
+                depth: match[1].length,
+                text: match[2],
+                tokens: [],
+              };
+            }
+          },
+          renderer(token) {
+            return `<h${token.depth}>${token.text}</h${token.depth}>`;
+          },
+        },
+        {
+          /**
+           * Preserves multiple blank lines by converting them
+           * into explicit empty paragraph elements.
+           *
+           * Skipped for:
+           * - list contexts
+           * - legal document rendering
+           */
+          name: "emptyParagraph",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n\n");
+          },
+          tokenizer(src, tokens) {
+            const prevToken = tokens?.[tokens.length - 1];
+            if (prevToken?.type === "list") return;
+
+            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
+            if (isListContext) return;
+
+            const match = src.match(/^(\n{2,})/);
+            if (match) {
+              const isAfterHeading = prevToken?.type === "heading";
+              // Add an extra line when spacing follows a heading.
+              const blankLines = match[0].length - 1 + (isAfterHeading ? 1 : 0);
+              return {
+                type: "emptyParagraph",
+                raw: match[0],
+                count: blankLines,
+              };
+            }
+          },
+          renderer(token) {
+            if (isLegal) return "";
+
+            return "<p><br></p>".repeat(token.count);
+          },
+        },
+        {
+          /**
+           * Converts consecutive single-line breaks into
+           * individual paragraph elements.
+           *
+           * Example:
+           *   Line A
+           *   Line B
+           *
+           * Becomes:
+           *   <p>Line A</p>
+           *   <p>Line B</p>
+           *
+           * Skipped for:
+           * - headings
+           * - code fences
+           * - lists
+           * - indented blocks
+           * - wrapped paragraphs
+           */
+          name: "lineSeparated",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n");
+          },
+          tokenizer(src, tokens) {
+            const isHeading = /^#{1,6}\s/.test(src);
+            if (isHeading) return;
+
+            const isCodeFence = /^`{3,}/.test(src);
+            if (isCodeFence) return;
+
+            const firstLine = src.split("\n")[0];
+            if (/^[ \t]*([-*+]|\d+\.)\s/.test(firstLine)) return;
+            if (/^[ \t]+/.test(firstLine)) return;
+
+            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)*(?=\n\n|\n?$)/);
+            if (match && match[0].includes("\n")) {
+              const lines = match[0].split("\n");
+
+              // Treat long consecutive lines as a wrapped paragraph,
+              // not as separate paragraphs.
+              const looksLikeWrappedParagraph =
+                lines.length > 1 && lines.every((l) => l.length > 20);
+
+              if (looksLikeWrappedParagraph) return;
+
+              if (lines.some((l) => /^`{3,}/.test(l.trim()))) return;
+              if (lines.some((l) => /^ {4,}/.test(l))) return;
+              if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
+              if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
+
+              return {
+                type: "lineSeparated",
+                raw: match[0],
+                lines: lines.filter((l) => l.trim() !== ""),
+              };
+            }
+          },
+          renderer(token) {
+            if (isLegal) return "";
+            return token.lines
+              .map((line: string) => `<p>${line}</p>`)
+              .join("\n");
+          },
+        },
+      ],
     });
 
-    CodeEditor.addFencedCodeMarkedExtension();
+    if (tokenRenderers) {
+      // build turndown rules
+      const rules = buildTurndownRules(tokenRenderers);
+      rules.forEach(({ name, filter, replacement }) => {
+        turndownService.addRule(name, { filter, replacement });
+        turndownServiceRef.current.addRule(name, { filter, replacement });
+      });
+
+      // build extensions
+      const extensions = buildMarkedExtensions(tokenRenderers);
+      marked.use({ extensions });
+    }
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
@@ -551,6 +733,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html: string;
 
         html = value?.trim() ? await marked.parse(value) : `<p>${value}</p>`;
+
+        if (!html.trim().startsWith("<")) {
+          html = `<p>${html}</p>`;
+        }
 
         if (!isMounted || !editorRef.current) return;
 
@@ -775,6 +961,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e);
+
       if (mode === "view-only") {
         const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
 
@@ -1522,6 +1710,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     ];
 
+    const portals = useTokenPortals(editorRef, tokenRenderers);
+
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
         if (
@@ -1572,143 +1762,151 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }
 
     return (
-      <BaseRichEditor
-        actions={actions}
-        value={value}
-        mode={mode}
-        id={id}
-        className={applyClassName("rich-editor", className)}
-        styles={{
-          ...styles,
-          toolbarStyle: css`
-            padding-left: 8px;
-            padding-right: 8px;
-            z-index: 10;
-            ${styles?.toolbarStyle}
-          `,
-        }}
-        leftSidePanel={
-          mode !== "view-only" && (
-            <>
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-bold"
-                isActive={formatStates.bold}
-                icon={{ image: RiBold }}
-                onClick={() => handleCommand("bold")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-italic"
-                isActive={formatStates.italic}
-                icon={{ image: RiItalic }}
-                onClick={() => handleCommand("italic")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-ordered-list"
-                icon={{ image: RiListOrdered }}
-                onClick={() => handleCommand("insertOrderedList")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-unordered-list"
-                icon={{ image: RiListUnordered }}
-                onClick={() => handleCommand("insertUnorderedList")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-checkbox"
-                icon={{ image: RiCheckboxLine }}
-                onClick={() => handleCommand("checkbox")}
-              />
-
-              {mode === "markdown-editor" && (
+      <>
+        <BaseRichEditor
+          actions={actions}
+          value={value}
+          mode={mode}
+          id={id}
+          className={applyClassName("rich-editor", className)}
+          styles={{
+            ...styles,
+            toolbarStyle: css`
+              padding-left: 8px;
+              padding-right: 8px;
+              z-index: 10;
+              ${styles?.toolbarStyle}
+            `,
+          }}
+          leftSidePanel={
+            mode !== "view-only" && (
+              <>
                 <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-code-block"
-                  icon={{ image: RiCodeSSlashLine }}
-                  onClick={() => handleCommand("codeBlock")}
+                  ariaLabel="rich-editor-toolbar-bold"
+                  isActive={formatStates.bold}
+                  icon={{ image: RiBold }}
+                  onClick={() => handleCommand("bold")}
                 />
-              )}
 
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-heading-menu"
-                icon={{ image: RiHeading }}
-                isOpen={isOpen}
-                onClick={() => {
-                  const sel = window.getSelection();
-                  if (sel && sel.rangeCount > 0) {
-                    savedSelection.current = sel.getRangeAt(0).cloneRange();
-                  }
-                  setIsOpen(!isOpen);
-                }}
-              />
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-italic"
+                  isActive={formatStates.italic}
+                  icon={{ image: RiItalic }}
+                  onClick={() => handleCommand("italic")}
+                />
 
-              {isOpen && (
-                <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                  <TipMenu
-                    setIsOpen={() => setIsOpen(false)}
-                    subMenuList={TIP_MENU_RICH_EDITOR}
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-ordered-list"
+                  icon={{ image: RiListOrdered }}
+                  onClick={() => handleCommand("insertOrderedList")}
+                />
+
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-unordered-list"
+                  icon={{ image: RiListUnordered }}
+                  onClick={() => handleCommand("insertUnorderedList")}
+                />
+
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-checkbox"
+                  icon={{ image: RiCheckboxLine }}
+                  onClick={() => handleCommand("checkbox")}
+                />
+
+                {mode === "markdown-editor" && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-code-block"
+                    icon={{ image: RiCodeSSlashLine }}
+                    onClick={() => handleCommand("codeBlock")}
                   />
-                </MenuWrapper>
-              )}
-            </>
-          )
-        }
-        rightSidePanel={toolbarRightPanel}
-        toolbarPosition={toolbarPosition}
-        theme={richEditorTheme}
-      >
-        <EditorArea
-          ref={editorRef}
-          role="textbox"
-          $theme={richEditorTheme}
-          aria-label="rich-editor-content"
-          contentEditable
-          $editorStyle={styles?.editorStyle}
-          $toolbarPosition={toolbarPosition}
-          $mode={mode}
-          $height={height}
-          $autogrow={autogrow}
-          onPaste={(e) => {
-            if (mode === "view-only") return;
+                )}
 
-            e.preventDefault();
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-heading-menu"
+                  icon={{ image: RiHeading }}
+                  isOpen={isOpen}
+                  onClick={() => {
+                    const sel = window.getSelection();
+                    if (sel && sel.rangeCount > 0) {
+                      savedSelection.current = sel.getRangeAt(0).cloneRange();
+                    }
+                    setIsOpen(!isOpen);
+                  }}
+                />
 
-            const html = e.clipboardData.getData("text/html");
-            const plain = e.clipboardData.getData("text/plain");
+                {isOpen && (
+                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                    <TipMenu
+                      setIsOpen={() => setIsOpen(false)}
+                      subMenuList={TIP_MENU_RICH_EDITOR}
+                    />
+                  </MenuWrapper>
+                )}
+              </>
+            )
+          }
+          rightSidePanel={toolbarRightPanel}
+          toolbarPosition={toolbarPosition}
+          theme={richEditorTheme}
+        >
+          <EditorArea
+            ref={editorRef}
+            role="textbox"
+            $theme={richEditorTheme}
+            aria-label="rich-editor-content"
+            contentEditable
+            $editorStyle={styles?.editorStyle}
+            $toolbarPosition={toolbarPosition}
+            $mode={mode}
+            $height={height}
+            $autogrow={autogrow}
+            onPaste={(e) => {
+              if (mode === "view-only") return;
 
-            const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
-              html
-            );
+              e.preventDefault();
 
-            if (!html || hasCodeColors) {
-              document.execCommand("insertText", false, plain);
-            } else {
-              document.execCommand("insertHTML", false, html);
-            }
-          }}
-          onInput={() => {
-            if (mode !== "view-only") {
-              if (editorRef.current) {
-                syncCheckboxStates(editorRef.current);
+              const html = e.clipboardData.getData("text/html");
+              const plain = e.clipboardData.getData("text/plain");
+
+              const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
+                html
+              );
+
+              if (!html || hasCodeColors) {
+                document.execCommand("insertText", false, plain);
+              } else {
+                document.execCommand("insertHTML", false, html);
               }
+            }}
+            onInput={() => {
+              if (mode !== "view-only") {
+                if (editorRef.current) {
+                  syncCheckboxStates(editorRef.current);
+                }
 
-              const html =
-                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-              const cleanedHTML = cleanupHtml(html);
+                const html =
+                  editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+                const cleanedHTML = cleanupHtml(html);
 
-              const markdown = turndownService.turndown(cleanedHTML);
-              const cleanedMarkdown = cleanSpacing(markdown);
-              if (onChange) {
-                onChange(cleanedMarkdown);
+                const markdown = turndownService.turndown(cleanedHTML);
+                const cleanedMarkdown = cleanSpacing(markdown);
+                if (onChange) {
+                  onChange(cleanedMarkdown);
+                }
+
+                CodeEditor.serializeAndEmit(
+                  editorRef,
+                  turndownService,
+                  onChange
+                );
               }
+            }}
+            onKeyDown={handleOnKeyDown}
+          />
+        </BaseRichEditor>
 
-              CodeEditor.serializeAndEmit(editorRef, turndownService, onChange);
-            }
-          }}
-          onKeyDown={handleOnKeyDown}
-        />
-      </BaseRichEditor>
+        {portals}
+      </>
     );
   }
 ) as RichEditorComponent;
@@ -1963,6 +2161,11 @@ const EditorArea = styled.div<{
   $height?: number;
   $theme: RichEditorThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   padding: 8px;
   outline: none;
   background-color: ${({ $theme }) => $theme.backgroundColor};
@@ -2175,6 +2378,7 @@ function createCheckboxWrapper(
 // - Collapsing multiple spaces into a single space elsewhere
 const cleanSpacing = (text: string): string => {
   return text
+    .replace(/\u200B/g, "")
     .replace(/\u00A0/g, " ")
     .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
@@ -2203,6 +2407,8 @@ const cleanupHtml = (html: string): string => {
   container.innerHTML = html;
 
   Array.from(container.querySelectorAll("div")).forEach((div) => {
+    if (div.closest("[data-token-start]")) return;
+
     if (div.querySelector("ul, ol")) {
       const frag = document.createDocumentFragment();
       while (div.firstChild) {
@@ -2227,7 +2433,11 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong"))
+    if (
+      p.querySelector(
+        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong, [data-token-start]"
+      )
+    )
       return;
 
     const frag = document.createDocumentFragment();
@@ -2261,6 +2471,9 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("span")).forEach((span) => {
+    if (span.hasAttribute("data-token-start")) return;
+    if (span.closest("[data-token-start]")) return;
+
     const style = span.getAttribute("style") || "";
 
     const hasOnlyFontStyling =
@@ -2284,6 +2497,7 @@ const cleanupHtml = (html: string): string => {
   });
 
   container.normalize();
+
   return container.innerHTML;
 };
 
@@ -2377,6 +2591,14 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   container.querySelectorAll("p").forEach((p) => {
+    if (p.querySelector("[data-token-start]")) return;
+
+    // Skip empty paragraphs — already correct, don't re-split them
+    const isEmptyParagraph =
+      p.childNodes.length === 0 ||
+      (p.childNodes.length === 1 && p.firstChild?.nodeName === "BR");
+    if (isEmptyParagraph) return;
+
     if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, pre, input")) return;
 
     const fragments: Node[][] = [[]];
@@ -2406,6 +2628,138 @@ const splitBrIntoParagraphs = (html: string): string => {
 
   return container.innerHTML;
 };
+
+const isLegalDocument = (src: string) => {
+  return /^(MIT License|Apache License|GNU |BSD |ISC License|Copyright \(c\)|TERMS AND CONDITIONS|END OF TERMS)/im.test(
+    src
+  );
+};
+
+function buildMarkedExtensions(tokenRenderers: Record<string, TokenRenderer>) {
+  return Object.entries(tokenRenderers).map(
+    ([startToken, { endToken, className }]) => {
+      const escapedStart = escapeRegex(startToken);
+      const escapedEnd = escapeRegex(endToken);
+      const safeClass =
+        className ?? `custom-token-${startToken.replace(/[^a-z0-9]/gi, "")}`;
+
+      return {
+        name: safeClass,
+        level: "inline" as const,
+        start(src: string) {
+          return src.indexOf(startToken);
+        },
+        tokenizer(src: string) {
+          const rule = new RegExp(
+            `^${escapedStart}((?:(?!${escapedEnd}).)+?)${escapedEnd}`
+          );
+          const match = rule.exec(src);
+
+          if (match) {
+            return {
+              type: safeClass,
+              raw: match[0],
+              word: match[1],
+            };
+          }
+        },
+        renderer(token: any) {
+          const safeWord = token.word
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;");
+
+          return `<span data-token-start="${startToken}" data-token-end="${endToken}" data-token-word="${safeWord}" data-token-type="${safeClass}"><span contenteditable="false"></span></span>&#8203;`;
+        },
+      };
+    }
+  );
+}
+
+function buildTurndownRules(tokenRenderers: Record<string, TokenRenderer>) {
+  return Object.entries(tokenRenderers).map(
+    ([startToken, { endToken, className }]) => {
+      const safeClass =
+        className ?? `custom-token-${startToken.replace(/[^a-z0-9]/gi, "")}`;
+
+      return {
+        name: safeClass,
+        filter(node: HTMLElement) {
+          return (
+            node.nodeName === "SPAN" &&
+            node.dataset.tokenStart === startToken &&
+            node.dataset.tokenEnd === endToken
+          );
+        },
+        replacement(_content: string, node: HTMLElement) {
+          const raw = node.dataset.tokenWord ?? "";
+          const decoded = raw
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, "&")
+            .replace(/&#39;/g, "'");
+
+          const word = (decoded || node.dataset.tokenWord) ?? "";
+
+          const next = node.nextSibling;
+          if (
+            next?.nodeType === Node.TEXT_NODE &&
+            next.textContent === "\u200B"
+          ) {
+            next.textContent = "";
+          }
+          return `${startToken}${word}${endToken}`;
+        },
+      };
+    }
+  );
+}
+
+function useTokenPortals(
+  editorRef: React.RefObject<HTMLDivElement>,
+  tokenRenderers?: Record<
+    string,
+    { endToken: string; render: (word: string) => ReactNode }
+  >
+) {
+  const [portals, setPortals] = useState<React.ReactPortal[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    if (!editorRef.current || !tokenRenderers) return;
+
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const nodes = editorRef.current?.querySelectorAll<HTMLElement>(
+        "[data-token-start] > span[contenteditable='false']"
+      );
+      if (!nodes) return;
+
+      const newPortals = Array.from(nodes).map((node) => {
+        const outer = node.closest<HTMLElement>("[data-token-start]")!;
+        const startToken = outer.dataset.tokenStart!;
+        const word = outer.dataset.tokenWord!;
+        const renderer = tokenRenderers[startToken];
+        if (!renderer) return null;
+
+        return createPortal(
+          <span style={{ display: "inline-flex", alignItems: "center" }}>
+            {renderer.render(word)}
+          </span>,
+          node
+        );
+      });
+
+      setPortals(newPortals.filter(Boolean) as React.ReactPortal[]);
+    }, 50);
+
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
+  return portals;
+}
+
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 RichEditor.codeLanguage = RichEditorCodeLanguage;

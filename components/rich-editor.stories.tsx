@@ -205,6 +205,49 @@ Supports embedded Monaco code blocks.
 
 ---
 
+
+### 🧩 Token Renderers (\`tokenRenderers\`)
+
+Extend the editor with custom inline token rendering. Tokens are parsed from Markdown and rendered as interactive React components inside the editor.
+
+\`\`\`tsx
+<RichEditor
+  tokenRenderers={{
+    "<{[": {
+      endToken: "]}>",
+      render: (word) => {
+        const parsed = JSON.parse(\`[\${word}]\`);
+        const [surah, ayah] = parsed;
+        return <Badge caption={\`\${surah}:\${ayah}\`} />;
+      },
+    },
+  }}
+/>
+\`\`\`
+
+Token syntax in Markdown:
+\`\`\`
+<{["Q", "17:32"]}>
+\`\`\`
+
+
+#### Token delimiter rules
+
+- Start token is the object key (e.g. \`"<{["\`)
+- End token is \`endToken\` (e.g. \`"]}>"\`  )
+- Content between delimiters can include any character **except** the full end token sequence
+- Tokens are parsed as **inline** elements — they flow naturally within paragraphs alongside regular text
+
+
+### Notes for tokenRenderers
+
+- Multiple token types can be registered simultaneously
+- Token content is **HTML-attribute-safe encoded** in the DOM (\`"\` → \`&quot;\`) and automatically decoded before being passed to \`render\`
+- Tokens survive editor operations: Enter, Backspace, bold/italic, list formatting
+
+---
+
+
 ### 🎯 Imperative API
 
 - \`insertPlainText(text)\`
@@ -246,6 +289,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -366,7 +412,7 @@ This is unordered list
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
             }}
@@ -381,6 +427,9 @@ This is unordered list
 
 export const Autogrow: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -513,9 +562,77 @@ export default Content
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const CustomTokenRenderer: Story = {
+  render: () => {
+    const [value, setValue] = useState(
+      `### Sprint Planning Notes
+The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.
+
+Blocking issues should be escalated to <{["carol"]}>. She will coordinate with the backend team on the API contract.
+
+Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline fails.`
+    );
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={{ image: RiPrinterFill }}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          onChange={(e) => setValue(e)}
+          value={value}
+          tokenRenderers={{
+            "<{[": {
+              endToken: "]}>",
+              render: (word) => {
+                const parsed = JSON.parse(`[${word}]`);
+                const [username] = parsed;
+                return (
+                  <Badge
+                    contentEditable
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Mention clicked:", username);
+                    }}
+                    withCircle
+                    caption={`@${username}`}
+                  />
+                );
+              },
+            },
+          }}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {printValue}
@@ -573,6 +690,9 @@ export const PageEditor: Story = {
     layout: "fullscreen",
   },
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -600,7 +720,7 @@ export const PageEditor: Story = {
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}
@@ -735,8 +855,7 @@ export const ViewOnly: Story = {
       () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
     );
-    const [value, setValue] = useState(
-      `### Hello there!
+    const [value, setValue] = useState(`### Hello there!
 ${sentences}
 
 This is ordered list
@@ -757,8 +876,7 @@ function Content(){
 
 export default Content
 \`\`\`
-`
-    );
+`);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
