@@ -63,6 +63,54 @@ You can override the default control icons (e.g. close and restore) by passing c
 />
 \`\`\`
 
+
+
+### 📏 Resizable
+
+PaperDialog can be resized on both desktop and mobile devices.
+
+Desktop:
+- Drag the resize handle on the dialog edge to adjust the width.
+
+Mobile:
+- Drag the top indicator to adjust the height.
+
+You can enable resizing with a boolean value:
+
+\`\`\`tsx
+<PaperDialog resizable />
+\`\`\`
+
+
+Or configure resize constraints:
+
+\`\`\`tsx
+<PaperDialog
+  resizable={{
+    minWidth: "240px",
+    maxWidth: "800px",
+    minHeight: "200px",
+    maxHeight: "600px",
+  }}
+/>
+\`\`\`
+
+### 📐 Resize Callbacks
+
+Use \`onResize\` to react to size changes while dragging and \`onResizeComplete\` to react when resizing has finished:
+
+\`\`\`tsx
+<PaperDialog
+  resizable
+  onResize={({ width, height }) => {
+    console.log(width, height);
+  }}
+  onResizeComplete={({ width, height }) => {
+    console.log("Final size:", width, height);
+  }}
+/>
+\`\`\`
+
 ### 📝 Notes
 - Use \`styles\` prop to override default styles.
 - Use the \`icons\` prop to override default icons.
@@ -207,7 +255,7 @@ export const Default: Story = {
         <Button onClick={() => dialogRef.current?.openDialog()}>Open</Button>
         <Button onClick={() => dialogRef.current?.closeDialog()}>Close</Button>
         <PaperDialog
-          width="50vw"
+          width="50dvw"
           controls={["close", "minimize"]}
           styles={{
             contentStyle: {
@@ -430,10 +478,11 @@ export const Mobile: Story = {
           <PaperDialog
             key={index}
             ref={dialog.ref}
-            mobile
             controls={dialog.controls}
             position={dialog.position}
             title="Terms & Conditions"
+            mobile
+            resizable
             subtitle="Please review the following information before continuing to use Systatum services."
             styles={{
               contentStyle: css`
@@ -939,6 +988,7 @@ export const Nested: Story = {
               overflow: auto;
             `,
           }}
+          resizable
           closable
           width="90vw"
         >
@@ -992,6 +1042,7 @@ export const Nested: Story = {
         <PaperDialog
           ref={dialogRef2}
           closable
+          resizable
           width="75vw"
           styles={{
             contentStyle: css`
