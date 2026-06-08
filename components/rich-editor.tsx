@@ -382,6 +382,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     marked.use({
       gfm: false,
       breaks: true,
+      // Track previous token so we can detect
+      // blank lines that appear immediately after headings.
       walkTokens(token) {
         if (
           token.type === "space" &&
@@ -389,6 +391,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           prevWalkToken?.type === "heading"
         ) {
           const blankLines = token.raw.length - 1;
+
+          // Convert heading-following spaces into a custom
+          // emptyParagraph token so we can preserve spacing.
           token.type = "emptyParagraph";
           (token as any).count = blankLines;
         }
@@ -396,6 +401,11 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
       extensions: [
         {
+          /**
+           * Custom heading tokenizer.
+           * Ensures markdown headings are parsed consistently
+           * and rendered as native h1-h6 elements.
+           */
           name: "heading",
           level: "block",
           start(src) {
@@ -418,6 +428,14 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           },
         },
         {
+          /**
+           * Preserves multiple blank lines by converting them
+           * into explicit empty paragraph elements.
+           *
+           * Skipped for:
+           * - list contexts
+           * - legal document rendering
+           */
           name: "emptyParagraph",
           level: "block",
           start(src) {
@@ -433,6 +451,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             const match = src.match(/^(\n{2,})/);
             if (match) {
               const isAfterHeading = prevToken?.type === "heading";
+              // Add an extra line when spacing follows a heading.
               const blankLines = match[0].length - 1 + (isAfterHeading ? 1 : 0);
               return {
                 type: "emptyParagraph",
@@ -448,6 +467,25 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           },
         },
         {
+          /**
+           * Converts consecutive single-line breaks into
+           * individual paragraph elements.
+           *
+           * Example:
+           *   Line A
+           *   Line B
+           *
+           * Becomes:
+           *   <p>Line A</p>
+           *   <p>Line B</p>
+           *
+           * Skipped for:
+           * - headings
+           * - code fences
+           * - lists
+           * - indented blocks
+           * - wrapped paragraphs
+           */
           name: "lineSeparated",
           level: "block",
           start(src) {
@@ -468,6 +506,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             if (match && match[0].includes("\n")) {
               const lines = match[0].split("\n");
 
+              // Treat long consecutive lines as a wrapped paragraph,
+              // not as separate paragraphs.
               const looksLikeWrappedParagraph =
                 lines.length > 1 && lines.every((l) => l.length > 20);
 
