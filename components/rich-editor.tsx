@@ -29,6 +29,7 @@ import { RichEditorThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
 import { applyClassName } from "./../constants/classname";
+import { createPortal } from "react-dom";
 
 export interface RichEditorProps {
   value?: string;
@@ -42,6 +43,16 @@ export interface RichEditorProps {
   actions?: RichEditorAction[];
   codeEditor?: RichEditorCode;
   id?: string;
+  className?: string;
+  tokenRenderers?: RichEditorTokenRenderer;
+  onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+}
+
+export type RichEditorTokenRenderer = Record<string, TokenRenderer>;
+
+export interface TokenRenderer {
+  endToken: string;
+  render: (word: string) => ReactNode;
   className?: string;
 }
 
@@ -184,6 +195,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       codeEditor,
       className,
       id,
+      tokenRenderers,
+      onKeyDown,
     },
     ref
   ) => {
@@ -534,6 +547,19 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         },
       ],
     });
+
+    if (tokenRenderers) {
+      // build turndown rules
+      const rules = buildTurndownRules(tokenRenderers);
+      rules.forEach(({ name, filter, replacement }) => {
+        turndownService.addRule(name, { filter, replacement });
+        turndownServiceRef.current.addRule(name, { filter, replacement });
+      });
+
+      // build extensions
+      const extensions = buildMarkedExtensions(tokenRenderers);
+      marked.use({ extensions });
+    }
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
@@ -935,6 +961,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     };
 
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e);
+
       if (mode === "view-only") {
         const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
 
@@ -1682,6 +1710,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     ];
 
+    const portals = useTokenPortals(editorRef, tokenRenderers);
+
     useEffect(() => {
       function handleClickOutside(event: MouseEvent) {
         if (
@@ -1732,143 +1762,151 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }
 
     return (
-      <BaseRichEditor
-        actions={actions}
-        value={value}
-        mode={mode}
-        id={id}
-        className={applyClassName("rich-editor", className)}
-        styles={{
-          ...styles,
-          toolbarStyle: css`
-            padding-left: 8px;
-            padding-right: 8px;
-            z-index: 10;
-            ${styles?.toolbarStyle}
-          `,
-        }}
-        leftSidePanel={
-          mode !== "view-only" && (
-            <>
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-bold"
-                isActive={formatStates.bold}
-                icon={{ image: RiBold }}
-                onClick={() => handleCommand("bold")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-italic"
-                isActive={formatStates.italic}
-                icon={{ image: RiItalic }}
-                onClick={() => handleCommand("italic")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-ordered-list"
-                icon={{ image: RiListOrdered }}
-                onClick={() => handleCommand("insertOrderedList")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-unordered-list"
-                icon={{ image: RiListUnordered }}
-                onClick={() => handleCommand("insertUnorderedList")}
-              />
-
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-checkbox"
-                icon={{ image: RiCheckboxLine }}
-                onClick={() => handleCommand("checkbox")}
-              />
-
-              {mode === "markdown-editor" && (
+      <>
+        <BaseRichEditor
+          actions={actions}
+          value={value}
+          mode={mode}
+          id={id}
+          className={applyClassName("rich-editor", className)}
+          styles={{
+            ...styles,
+            toolbarStyle: css`
+              padding-left: 8px;
+              padding-right: 8px;
+              z-index: 10;
+              ${styles?.toolbarStyle}
+            `,
+          }}
+          leftSidePanel={
+            mode !== "view-only" && (
+              <>
                 <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-code-block"
-                  icon={{ image: RiCodeSSlashLine }}
-                  onClick={() => handleCommand("codeBlock")}
+                  ariaLabel="rich-editor-toolbar-bold"
+                  isActive={formatStates.bold}
+                  icon={{ image: RiBold }}
+                  onClick={() => handleCommand("bold")}
                 />
-              )}
 
-              <RichEditorToolbarButton
-                ariaLabel="rich-editor-toolbar-heading-menu"
-                icon={{ image: RiHeading }}
-                isOpen={isOpen}
-                onClick={() => {
-                  const sel = window.getSelection();
-                  if (sel && sel.rangeCount > 0) {
-                    savedSelection.current = sel.getRangeAt(0).cloneRange();
-                  }
-                  setIsOpen(!isOpen);
-                }}
-              />
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-italic"
+                  isActive={formatStates.italic}
+                  icon={{ image: RiItalic }}
+                  onClick={() => handleCommand("italic")}
+                />
 
-              {isOpen && (
-                <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                  <TipMenu
-                    setIsOpen={() => setIsOpen(false)}
-                    subMenuList={TIP_MENU_RICH_EDITOR}
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-ordered-list"
+                  icon={{ image: RiListOrdered }}
+                  onClick={() => handleCommand("insertOrderedList")}
+                />
+
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-unordered-list"
+                  icon={{ image: RiListUnordered }}
+                  onClick={() => handleCommand("insertUnorderedList")}
+                />
+
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-checkbox"
+                  icon={{ image: RiCheckboxLine }}
+                  onClick={() => handleCommand("checkbox")}
+                />
+
+                {mode === "markdown-editor" && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-code-block"
+                    icon={{ image: RiCodeSSlashLine }}
+                    onClick={() => handleCommand("codeBlock")}
                   />
-                </MenuWrapper>
-              )}
-            </>
-          )
-        }
-        rightSidePanel={toolbarRightPanel}
-        toolbarPosition={toolbarPosition}
-        theme={richEditorTheme}
-      >
-        <EditorArea
-          ref={editorRef}
-          role="textbox"
-          $theme={richEditorTheme}
-          aria-label="rich-editor-content"
-          contentEditable
-          $editorStyle={styles?.editorStyle}
-          $toolbarPosition={toolbarPosition}
-          $mode={mode}
-          $height={height}
-          $autogrow={autogrow}
-          onPaste={(e) => {
-            if (mode === "view-only") return;
+                )}
 
-            e.preventDefault();
+                <RichEditorToolbarButton
+                  ariaLabel="rich-editor-toolbar-heading-menu"
+                  icon={{ image: RiHeading }}
+                  isOpen={isOpen}
+                  onClick={() => {
+                    const sel = window.getSelection();
+                    if (sel && sel.rangeCount > 0) {
+                      savedSelection.current = sel.getRangeAt(0).cloneRange();
+                    }
+                    setIsOpen(!isOpen);
+                  }}
+                />
 
-            const html = e.clipboardData.getData("text/html");
-            const plain = e.clipboardData.getData("text/plain");
+                {isOpen && (
+                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
+                    <TipMenu
+                      setIsOpen={() => setIsOpen(false)}
+                      subMenuList={TIP_MENU_RICH_EDITOR}
+                    />
+                  </MenuWrapper>
+                )}
+              </>
+            )
+          }
+          rightSidePanel={toolbarRightPanel}
+          toolbarPosition={toolbarPosition}
+          theme={richEditorTheme}
+        >
+          <EditorArea
+            ref={editorRef}
+            role="textbox"
+            $theme={richEditorTheme}
+            aria-label="rich-editor-content"
+            contentEditable
+            $editorStyle={styles?.editorStyle}
+            $toolbarPosition={toolbarPosition}
+            $mode={mode}
+            $height={height}
+            $autogrow={autogrow}
+            onPaste={(e) => {
+              if (mode === "view-only") return;
 
-            const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
-              html
-            );
+              e.preventDefault();
 
-            if (!html || hasCodeColors) {
-              document.execCommand("insertText", false, plain);
-            } else {
-              document.execCommand("insertHTML", false, html);
-            }
-          }}
-          onInput={() => {
-            if (mode !== "view-only") {
-              if (editorRef.current) {
-                syncCheckboxStates(editorRef.current);
+              const html = e.clipboardData.getData("text/html");
+              const plain = e.clipboardData.getData("text/plain");
+
+              const hasCodeColors = /color\s*:|background(-color)?\s*:/i.test(
+                html
+              );
+
+              if (!html || hasCodeColors) {
+                document.execCommand("insertText", false, plain);
+              } else {
+                document.execCommand("insertHTML", false, html);
               }
+            }}
+            onInput={() => {
+              if (mode !== "view-only") {
+                if (editorRef.current) {
+                  syncCheckboxStates(editorRef.current);
+                }
 
-              const html =
-                editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
-              const cleanedHTML = cleanupHtml(html);
+                const html =
+                  editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
+                const cleanedHTML = cleanupHtml(html);
 
-              const markdown = turndownService.turndown(cleanedHTML);
-              const cleanedMarkdown = cleanSpacing(markdown);
-              if (onChange) {
-                onChange(cleanedMarkdown);
+                const markdown = turndownService.turndown(cleanedHTML);
+                const cleanedMarkdown = cleanSpacing(markdown);
+                if (onChange) {
+                  onChange(cleanedMarkdown);
+                }
+
+                CodeEditor.serializeAndEmit(
+                  editorRef,
+                  turndownService,
+                  onChange
+                );
               }
+            }}
+            onKeyDown={handleOnKeyDown}
+          />
+        </BaseRichEditor>
 
-              CodeEditor.serializeAndEmit(editorRef, turndownService, onChange);
-            }
-          }}
-          onKeyDown={handleOnKeyDown}
-        />
-      </BaseRichEditor>
+        {portals}
+      </>
     );
   }
 ) as RichEditorComponent;
@@ -2340,6 +2378,7 @@ function createCheckboxWrapper(
 // - Collapsing multiple spaces into a single space elsewhere
 const cleanSpacing = (text: string): string => {
   return text
+    .replace(/\u200B/g, "")
     .replace(/\u00A0/g, " ")
     .replace(/\[(x| )\]\s+/gi, "[$1] ")
     .split("\n")
@@ -2368,6 +2407,8 @@ const cleanupHtml = (html: string): string => {
   container.innerHTML = html;
 
   Array.from(container.querySelectorAll("div")).forEach((div) => {
+    if (div.closest("[data-token-start]")) return;
+
     if (div.querySelector("ul, ol")) {
       const frag = document.createDocumentFragment();
       while (div.firstChild) {
@@ -2392,7 +2433,11 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("p")).forEach((p) => {
-    if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong"))
+    if (
+      p.querySelector(
+        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong, [data-token-start]"
+      )
+    )
       return;
 
     const frag = document.createDocumentFragment();
@@ -2426,6 +2471,9 @@ const cleanupHtml = (html: string): string => {
   });
 
   Array.from(container.querySelectorAll("span")).forEach((span) => {
+    if (span.hasAttribute("data-token-start")) return;
+    if (span.closest("[data-token-start]")) return;
+
     const style = span.getAttribute("style") || "";
 
     const hasOnlyFontStyling =
@@ -2449,6 +2497,7 @@ const cleanupHtml = (html: string): string => {
   });
 
   container.normalize();
+
   return container.innerHTML;
 };
 
@@ -2542,6 +2591,8 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   container.querySelectorAll("p").forEach((p) => {
+    if (p.querySelector("[data-token-start]")) return;
+
     // Skip empty paragraphs — already correct, don't re-split them
     const isEmptyParagraph =
       p.childNodes.length === 0 ||
@@ -2583,6 +2634,126 @@ const isLegalDocument = (src: string) => {
     src
   );
 };
+
+function buildMarkedExtensions(tokenRenderers: Record<string, TokenRenderer>) {
+  return Object.entries(tokenRenderers).map(
+    ([startToken, { endToken, className }]) => {
+      const escapedStart = escapeRegex(startToken);
+      const escapedEnd = escapeRegex(endToken);
+      const safeClass =
+        className ?? `custom-token-${startToken.replace(/[^a-z0-9]/gi, "")}`;
+
+      return {
+        name: safeClass,
+        level: "inline" as const,
+        start(src: string) {
+          return src.indexOf(startToken);
+        },
+        tokenizer(src: string) {
+          const rule = new RegExp(
+            `^${escapedStart}((?:(?!${escapedEnd}).)+?)${escapedEnd}`
+          );
+          const match = rule.exec(src);
+
+          if (match) {
+            return {
+              type: safeClass,
+              raw: match[0],
+              word: match[1],
+            };
+          }
+        },
+        renderer(token: any) {
+          const safeWord = token.word
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;");
+
+          return `<span data-token-start="${startToken}" data-token-end="${endToken}" data-token-word="${safeWord}" data-token-type="${safeClass}"><span contenteditable="false"></span></span>&#8203;`;
+        },
+      };
+    }
+  );
+}
+
+function buildTurndownRules(tokenRenderers: Record<string, TokenRenderer>) {
+  return Object.entries(tokenRenderers).map(
+    ([startToken, { endToken, className }]) => {
+      const safeClass =
+        className ?? `custom-token-${startToken.replace(/[^a-z0-9]/gi, "")}`;
+
+      return {
+        name: safeClass,
+        filter(node: HTMLElement) {
+          return (
+            node.nodeName === "SPAN" &&
+            node.dataset.tokenStart === startToken &&
+            node.dataset.tokenEnd === endToken
+          );
+        },
+        replacement(_content: string, node: HTMLElement) {
+          const word = node.dataset.tokenWord ?? node.textContent ?? "";
+
+          const next = node.nextSibling;
+          if (
+            next?.nodeType === Node.TEXT_NODE &&
+            next.textContent === "\u200B"
+          ) {
+            next.textContent = "";
+          }
+          return `${startToken}${word}${endToken}`;
+        },
+      };
+    }
+  );
+}
+
+function useTokenPortals(
+  editorRef: React.RefObject<HTMLDivElement>,
+  tokenRenderers?: Record<
+    string,
+    { endToken: string; render: (word: string) => ReactNode }
+  >
+) {
+  const [portals, setPortals] = useState<React.ReactPortal[]>([]);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    if (!editorRef.current || !tokenRenderers) return;
+
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const nodes = editorRef.current?.querySelectorAll<HTMLElement>(
+        "[data-token-start] > span[contenteditable='false']"
+      );
+      if (!nodes) return;
+
+      const newPortals = Array.from(nodes).map((node) => {
+        const outer = node.closest<HTMLElement>("[data-token-start]")!;
+        const startToken = outer.dataset.tokenStart!;
+        const word = outer.dataset.tokenWord!;
+        const renderer = tokenRenderers[startToken];
+        if (!renderer) return null;
+
+        return createPortal(
+          <span style={{ display: "inline-flex", alignItems: "center" }}>
+            {renderer.render(word)}
+          </span>,
+          node
+        );
+      });
+
+      setPortals(newPortals.filter(Boolean) as React.ReactPortal[]);
+    }, 50);
+
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
+  return portals;
+}
+
+function escapeRegex(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
 RichEditor.codeLanguage = RichEditorCodeLanguage;
