@@ -205,6 +205,49 @@ Supports embedded Monaco code blocks.
 
 ---
 
+
+### 🧩 Token Renderers (\`tokenRenderers\`)
+
+Extend the editor with custom inline token rendering. Tokens are parsed from Markdown and rendered as interactive React components inside the editor.
+
+\`\`\`tsx
+<RichEditor
+  tokenRenderers={{
+    "<{[": {
+      endToken: "]}>",
+      render: (word) => {
+        const parsed = JSON.parse(\`[\${word}]\`);
+        const [surah, ayah] = parsed;
+        return <Badge caption={\`\${surah}:\${ayah}\`} />;
+      },
+    },
+  }}
+/>
+\`\`\`
+
+Token syntax in Markdown:
+\`\`\`
+<{["Q", "17:32"]}>
+\`\`\`
+
+
+#### Token delimiter rules
+
+- Start token is the object key (e.g. \`"<{["\`)
+- End token is \`endToken\` (e.g. \`"]}>"\`  )
+- Content between delimiters can include any character **except** the full end token sequence
+- Tokens are parsed as **inline** elements — they flow naturally within paragraphs alongside regular text
+
+
+### Notes for tokenRenderers
+
+- Multiple token types can be registered simultaneously
+- Token content is **HTML-attribute-safe encoded** in the DOM (\`"\` → \`&quot;\`) and automatically decoded before being passed to \`render\`
+- Tokens survive editor operations: Enter, Backspace, bold/italic, list formatting
+
+---
+
+
 ### 🎯 Imperative API
 
 - \`insertPlainText(text)\`
