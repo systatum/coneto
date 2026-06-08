@@ -575,6 +575,74 @@ export default Content
   },
 };
 
+export const CustomTokenRenderer: Story = {
+  render: () => {
+    const [value, setValue] = useState(
+      `### Sprint Planning Notes
+The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.
+
+Blocking issues should be escalated to <{["carol"]}>. She will coordinate with the backend team on the API contract.
+
+Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline fails.`
+    );
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={{ image: RiPrinterFill }}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          onChange={(e) => setValue(e)}
+          value={value}
+          tokenRenderers={{
+            "<{[": {
+              endToken: "]}>",
+              render: (word) => {
+                const parsed = JSON.parse(`[${word}]`);
+                const [username] = parsed;
+                return (
+                  <Badge
+                    contentEditable
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Mention clicked:", username);
+                    }}
+                    withCircle
+                    caption={`@${username}`}
+                  />
+                );
+              },
+            },
+          }}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: "#D3D3D3",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
 export const ToolbarPositionBottom: Story = {
   render: () => {
     const [value, setValue] = useState("");
