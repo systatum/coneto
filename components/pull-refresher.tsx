@@ -7,14 +7,17 @@ import React, {
 } from "react";
 import styled, { CSSProp, keyframes } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
+import { applyClassName } from "./../constants/classname";
 
 export interface PullRefresherProps {
   activatedAt?: string | number;
-  preloadingSlot?: (isThresholdReached?: boolean) => ReactNode | ReactNode;
+  preloadingSlot?: ((isReady?: boolean) => ReactNode) | ReactNode;
   loadingSlot?: ReactNode;
   onLoading: (ctx: { stopLoading: () => void }) => void;
   children: ReactNode;
   styles?: PullRefresherStyles;
+  id?: string;
+  className?: string;
 }
 
 type Phase = "idle" | "pulling" | "loading";
@@ -34,6 +37,8 @@ function PullRefresher({
   onLoading,
   children,
   styles,
+  className,
+  id,
 }: PullRefresherProps) {
   const threshold = parsePx(activatedAt, 100);
 
@@ -175,21 +180,29 @@ function PullRefresher({
 
   return (
     <Container
+      id={id}
+      className={applyClassName("pull-refresher", className)}
       $style={styles?.containerStyle}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
+      aria-label="pull-refresher-container"
     >
       <SlotWrapper
         $height={slotHeight}
         $animated={animated}
-        aria-label={phase === "loading" ? "Refreshing content" : undefined}
+        aria-label="pull-refresher-slot-loader"
         $style={styles?.slotWrapperStyle}
       >
         {slotHeight > 0 &&
           (phase === "loading" ? resolvedLoading : resolvedPreloading)}
       </SlotWrapper>
 
-      <Content $style={styles?.contentStyle}>{children}</Content>
+      <Content
+        aria-label="pull-refresher-content"
+        $style={styles?.contentStyle}
+      >
+        {children}
+      </Content>
     </Container>
   );
 }
@@ -243,22 +256,20 @@ const Arrow = styled.svg<{ $flipped: boolean }>`
 const DefaultPreloadingSlot: React.FC<{ activated: boolean }> = ({
   activated,
 }) => (
-  <>
-    <Arrow
-      $flipped={activated}
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="6 9 12 15 18 9" />
-    </Arrow>
-  </>
+  <Arrow
+    $flipped={activated}
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="6 9 12 15 18 9" />
+  </Arrow>
 );
 
 function parsePx(value: string | number | undefined, fallback: number): number {
