@@ -50,9 +50,8 @@ You can pass an array of aria label strings to improve accessibility when scroll
   show={isOpen}
   zIndex={9999}
   scrollSafeAriaLabels={[
-    "Overlay is active",
-    "Background content is disabled",
-    "Press Escape to close"
+    "dialog-wrapper",
+    "messagebox-wrapper",
   ]}
   onClick={({ close }) => {
     close();
