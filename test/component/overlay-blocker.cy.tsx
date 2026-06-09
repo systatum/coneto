@@ -10,6 +10,7 @@ import { PaperDialog, PaperDialogRef } from "./../../components/paper-dialog";
 import { Dialog, DialogProps } from "./../../components/dialog";
 import { RiInboxArchiveFill } from "@remixicon/react";
 import { generateSentence } from "./../../lib/text";
+import { Combobox, ComboboxOption } from "./../../components/combobox";
 
 describe("Overlay Blocker", () => {
   function ProductOverlayBlocker(props: OverlayBlockerProps) {
@@ -24,6 +25,87 @@ describe("Overlay Blocker", () => {
   }
 
   context("scroll in overlay", () => {
+    context("Custom Combobox", () => {
+      function ProductCombobox(overlayProps?: OverlayBlockerProps) {
+        const [isOpen, setIsOpen] = useState(false);
+
+        const RANDOM_OPTIONS: ComboboxOption[] = Array.from({ length: 20 }).map(
+          (_, index) => ({ text: String(index), value: index })
+        );
+
+        return (
+          <>
+            <Button
+              onClick={() => {
+                setIsOpen(true);
+              }}
+            >
+              Test
+            </Button>
+            {isOpen && (
+              <Combobox
+                styles={{
+                  containerStyle: css`
+                    position: absolute;
+                    top: 0px;
+                    z-index: 99999999999;
+                  `,
+                }}
+                options={RANDOM_OPTIONS}
+                mobile
+              />
+            )}
+            <OverlayBlocker show={isOpen} {...overlayProps} />
+          </>
+        );
+      }
+
+      it("should not scroll to the bottom", () => {
+        cy.mount(<ProductCombobox />);
+
+        cy.contains("Test").click();
+
+        cy.wait(500);
+        cy.findByPlaceholderText("Search your item...").click();
+
+        cy.get("#combo-list").realMouseWheel({ deltaY: 1000 });
+
+        cy.findByText(19).should("not.be.visible");
+      });
+
+      context("when given exemptRegions", () => {
+        context("when given accurate id or className", () => {
+          it("should scroll to the bottom", () => {
+            cy.mount(<ProductCombobox exemptRegions={["#combo-list"]} />);
+
+            cy.contains("Test").click();
+
+            cy.wait(500);
+            cy.findByPlaceholderText("Search your item...").click();
+
+            cy.get("#combo-list").realMouseWheel({ deltaY: 1000 });
+
+            cy.findByText(19).should("be.visible");
+          });
+        });
+
+        context("when given not accurate id or className", () => {
+          it("should not scroll to the bottom", () => {
+            cy.mount(<ProductCombobox exemptRegions={[".combo-list"]} />);
+
+            cy.contains("Test").click();
+
+            cy.wait(500);
+            cy.findByPlaceholderText("Search your item...").click();
+
+            cy.get("#combo-list").realMouseWheel({ deltaY: 1000 });
+
+            cy.findByText(19).should("not.be.visible");
+          });
+        });
+      });
+    });
+
     context("PaperDialog", () => {
       function ProductPaperDialog() {
         const paperRef = useRef<PaperDialogRef>(null);
