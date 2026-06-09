@@ -10,7 +10,7 @@ import { LoadingSpinner } from "./loading-spinner";
 
 export interface PullRefresherProps {
   activatedAt?: string | number;
-  preloadingSlot?: ReactNode;
+  preloadingSlot?: (isThresholdReached?: boolean) => ReactNode | ReactNode;
   loadingSlot?: ReactNode;
   onLoading: (ctx: { stopLoading: () => void }) => void;
   children: ReactNode;
@@ -161,11 +161,14 @@ function PullRefresher({
     };
   }, [applyPull, threshold, triggerLoading]);
 
-  const resolvedPreloading = preloadingSlot ? (
-    preloadingSlot
-  ) : (
-    <DefaultPreloadingSlot activated={activated} />
-  );
+  const resolvedPreloading =
+    typeof preloadingSlot === "function" ? (
+      preloadingSlot(activated)
+    ) : preloadingSlot ? (
+      preloadingSlot
+    ) : (
+      <DefaultPreloadingSlot activated={activated} />
+    );
 
   const resolvedLoading =
     loadingSlot !== undefined ? loadingSlot : <LoadingSpinner iconSize={30} />;
