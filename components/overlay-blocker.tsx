@@ -67,6 +67,7 @@ export const OverlayBlocker = forwardRef<
     const [visible, setVisible] = useState(show);
 
     useEffect(() => {
+      if (!show) return;
       const safeLabels = scrollSafeAriaLabels ?? [];
 
       const scrollY = window.scrollY;
@@ -111,7 +112,7 @@ export const OverlayBlocker = forwardRef<
 
         window.scrollTo(0, scrollY);
       };
-    }, [scrollSafeAriaLabels]);
+    }, [scrollSafeAriaLabels, show]);
 
     const isInSafeZone = (target: EventTarget | null, safeLabels: string[]) => {
       if (!(target instanceof Element)) return false;
