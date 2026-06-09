@@ -14,7 +14,75 @@ const meta: Meta<typeof PullRefresher> = {
     docs: {
       description: {
         component: `
- `,
+🧲 **PullRefresher** is a mobile-friendly pull-to-refresh container that detects drag gestures and triggers async loading when a threshold is reached.
+
+It provides full control over the pull interaction UI via custom slots for both preloading and loading states.
+
+---
+
+### ✨ Features
+- 🖐 Supports mouse and touch pull gestures
+- 🎯 Configurable activation threshold via \`activatedAt\`
+- 🔄 Built-in loading state management
+- 🎨 Fully customizable UI via slots
+- ⚡ Smooth pull resistance effect after threshold
+- 🧩 Controlled async loading via \`onLoading\`
+
+---
+
+### 📦 Slots
+
+#### preloadingSlot
+A render function or ReactNode used during the pulling phase before loading starts.
+
+\`\`\`ts
+(isReady: boolean) => ReactNode
+isReady = false → user is still below threshold
+isReady = true → threshold reached, ready to trigger refresh
+\`\`\`
+
+If a function is provided, it receives the current pull state and updates in real time.
+
+### ⏳ loadingSlot
+
+Rendered when the refresh action is triggered after the user releases at or above the threshold.
+
+If not provided, a default \`Loading Spinner\` will be displayed.
+
+### 🛠 Usage
+\`\`\`ts
+<PullRefresher
+  activatedAt="100px"
+  onLoading={({ stopLoading }) => {
+    setTimeout(() => stopLoading(), 2000);
+  }}
+  preloadingSlot={(isReady) => (
+    <div>
+      {isReady ? "Release to refresh" : "Pull to refresh"}
+    </div>
+  )}
+  loadingSlot={<div>Loading...</div>}
+>
+  <div>Your scroll content</div>
+</PullRefresher>
+\`\`\`
+
+
+### 🧠 Behavior
+
+- User drags downward from idle state
+- preloadingSlot is shown during pulling
+- Once pull distance exceeds activatedAt, isReady = true
+- Releasing after threshold triggers onLoading
+- While loading, loadingSlot is rendered
+- Call stopLoading() to return to idle state
+
+### 📝 Notes
+- Works with both touch and mouse input
+- Includes natural resistance after threshold is passed
+- Content remains independently scrollable
+- Designed for mobile-first pull-to-refresh UX
+`,
       },
     },
   },
