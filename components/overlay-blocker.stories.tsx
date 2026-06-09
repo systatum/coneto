@@ -23,6 +23,8 @@ const meta: Meta<typeof OverlayBlocker> = {
   - **Function**: Custom behavior
 - 🎨 Fully styleable via \`styles.self\` (CSSProp compatible)
 - 🔧 Supports imperative \`open\` and \`close\` via \`ref\`
+- ♿ Accessibility support via \`scrollSafeAriaLabels\` (featuring prop for improved scroll-safe screen reader labels)
+
 
 ### 🛠 Usage
 \`\`\`tsx
@@ -38,6 +40,26 @@ const meta: Meta<typeof OverlayBlocker> = {
   <p>Your content here</p>
 </OverlayBlocker>
 \`\`\`
+
+
+## 🧠 Using scrollSafeAriaLabels
+
+You can pass an array of aria label strings to improve accessibility when scroll is blocked.
+
+<OverlayBlocker
+  show={isOpen}
+  zIndex={9999}
+  scrollSafeAriaLabels={[
+    "Overlay is active",
+    "Background content is disabled",
+    "Press Escape to close"
+  ]}
+  onClick={({ close }) => {
+    close();
+  }}
+>
+  <p>Your content here</p>
+</OverlayBlocker>
 
 ### 📝 Notes
 - Overlay automatically disappears when \`show={false}\`.
