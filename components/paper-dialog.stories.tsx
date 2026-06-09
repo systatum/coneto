@@ -63,8 +63,6 @@ You can override the default control icons (e.g. close and restore) by passing c
 />
 \`\`\`
 
-
-
 ### 📏 Resizable
 
 PaperDialog can be resized on both desktop and mobile devices.

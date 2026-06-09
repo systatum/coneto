@@ -29,7 +29,7 @@ export interface OverlayBlockerProps {
   children?: ReactNode;
   className?: string;
   id?: string;
-  scrollSafeAriaLabels?: string[];
+  exemptRegions?: string[];
 }
 
 export interface OverlayBlockerStyles {
@@ -49,25 +49,26 @@ export const OverlayBlocker = forwardRef<
       children,
       className,
       id,
-      scrollSafeAriaLabels: _scrollSafeAriaLabels,
+      exemptRegions: _exemptRegions,
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const overlayBlockerTheme = currentTheme.overlayBlocker;
 
-    const scrollSafeAriaLabels = [
-      "paper-dialog-wrapper",
-      "dialog-wrapper",
-      "sidebar-desktop",
-      "sidebar-mobile",
-      ...(_scrollSafeAriaLabels ?? []),
+    const exemptRegions = [
+      ".coneto-paper-dialog",
+      ".coneto-dialog",
+      ".coneto-sidebar",
+      ...(_exemptRegions ?? []),
     ];
 
     const [visible, setVisible] = useState(show);
 
     useEffect(() => {
-      const safeLabels = scrollSafeAriaLabels ?? [];
+      if (!visible) return;
+
+      const safeRegions = exemptRegions ?? [];
 
       const scrollY = window.scrollY;
       const body = document.body;
@@ -85,7 +86,7 @@ export const OverlayBlocker = forwardRef<
       body.style.width = "100%";
 
       const allow = (target: EventTarget | null) =>
-        isInSafeZone(target, safeLabels);
+        isInSafeZone(target, safeRegions);
 
       const blockWheel = (e: WheelEvent) => {
         if (allow(e.target)) return;
@@ -111,16 +112,31 @@ export const OverlayBlocker = forwardRef<
 
         window.scrollTo(0, scrollY);
       };
-    }, [scrollSafeAriaLabels]);
+    }, [exemptRegions, visible]);
 
-    const isInSafeZone = (target: EventTarget | null, safeLabels: string[]) => {
-      if (!(target instanceof Element)) return false;
+    const isInSafeZone = (target: EventTarget | null, regions: string[]) => {
+      if (!(target instanceof Element)) {
+        return false;
+      }
 
       let el: Element | null = target;
 
       while (el) {
-        const label = el.getAttribute?.("aria-label");
-        if (label && safeLabels.includes(label)) return true;
+        const matched = regions.some((region) => {
+          if (region.startsWith("#")) {
+            return el.id === region.slice(1);
+          }
+
+          if (region.startsWith(".")) {
+            return el.classList.contains(region.slice(1));
+          }
+
+          return false;
+        });
+
+        if (matched) {
+          return true;
+        }
 
         el = el.parentElement;
       }
