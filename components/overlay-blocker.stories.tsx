@@ -23,7 +23,7 @@ const meta: Meta<typeof OverlayBlocker> = {
   - **Function**: Custom behavior
 - 🎨 Fully styleable via \`styles.self\` (CSSProp compatible)
 - 🔧 Supports imperative \`open\` and \`close\` via \`ref\`
-- ♿ Accessibility support via \`scrollSafeAriaLabels\` (featuring prop for improved scroll-safe screen reader labels)
+- ♿ Accessibility support via \`exemptRegions\` to keep specific regions (by ID or class name) scrollable and interactive while the overlay is active
 
 
 ### 🛠 Usage
@@ -42,16 +42,17 @@ const meta: Meta<typeof OverlayBlocker> = {
 \`\`\`
 
 
-## 🧠 Using scrollSafeAriaLabels
+## 🧠 Using \`exemptRegions\`
 
-You can pass an array of aria label strings to improve accessibility when scroll is blocked.
+Pass an array of ID or class locators where scroll-blocking will not take effect.
 
 <OverlayBlocker
   show={isOpen}
   zIndex={9999}
-  scrollSafeAriaLabels={[
-    "dialog-wrapper",
-    "messagebox-wrapper",
+  exemptRegions={[
+    "coneto-paper-dialog",
+    "coneto-dialog",
+    "coneto-sidebar",
   ]}
   onClick={({ close }) => {
     close();
@@ -63,6 +64,11 @@ You can pass an array of aria label strings to improve accessibility when scroll
 ### 📝 Notes
 - Overlay automatically disappears when \`show={false}\`.
 - Use \`ref\` to programmatically open or close the overlay.
+- While active, the overlay prevents page scrolling by locking the document body.
+- Regions specified in \`exemptRegions\` remain scrollable and interactive.
+- Values passed to \`exemptRegions\` can be either element IDs or class names (without \`#\` or \`.\` prefixes).
+- Default exempt regions include \`coneto-paper-dialog\`, \`coneto-dialog\`, and \`coneto-sidebar\`.
+- Clicking the overlay triggers the behavior configured via \`onClick\`.
       `,
       },
     },
