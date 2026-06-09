@@ -246,6 +246,9 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -366,7 +369,7 @@ This is unordered list
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
             }}
@@ -381,6 +384,9 @@ This is unordered list
 
 export const Autogrow: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -513,7 +519,7 @@ export default Content
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
             }}
@@ -573,6 +579,9 @@ export const PageEditor: Story = {
     layout: "fullscreen",
   },
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
@@ -600,7 +609,7 @@ export const PageEditor: Story = {
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}
@@ -735,8 +744,7 @@ export const ViewOnly: Story = {
       () => generateSentence({ minLen: 30, maxLen: 40, seed: 12345 }),
       [generateSentence]
     );
-    const [value, setValue] = useState(
-      `### Hello there!
+    const [value, setValue] = useState(`### Hello there!
 ${sentences}
 
 This is ordered list
@@ -757,8 +765,7 @@ function Content(){
 
 export default Content
 \`\`\`
-`
-    );
+`);
 
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

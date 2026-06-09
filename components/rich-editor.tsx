@@ -152,9 +152,10 @@ export interface RichEditorToolbarButtonStyles {
   self?: CSSProp;
 }
 
-interface RichEditorComponent extends React.ForwardRefExoticComponent<
-  RichEditorProps & React.RefAttributes<RichEditorRef>
-> {
+interface RichEditorComponent
+  extends React.ForwardRefExoticComponent<
+    RichEditorProps & React.RefAttributes<RichEditorRef>
+  > {
   ToolbarButton: typeof RichEditorToolbarButton;
   codeLanguage: typeof RichEditorCodeLanguage;
   translatedCodeLanguage: typeof TranslatedRichEditorCodeLanguage;
@@ -226,7 +227,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       filter: ["ul", "ol"],
       replacement: function (content, node) {
         const parentIsParagraph = node.parentElement?.tagName === "P";
-        return parentIsParagraph ? content : `${content}\n`;
+        return parentIsParagraph ? content : `${content}\n\n`;
       },
     });
 
@@ -296,7 +297,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content + "\n";
+          return "\n\n" + content + "\n";
         }
 
         if (
@@ -305,7 +306,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           nextSibling &&
           (nextSibling.tagName === "UL" || nextSibling.tagName === "OL")
         ) {
-          return content.trim() ? content : "\n";
+          return content.trim() ? "\n" + content + "\n" : "\n";
         }
 
         if (hasBrOnly) {
@@ -372,12 +373,167 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    marked.use({
-      gfm: true,
-      breaks: false,
-    });
-
     CodeEditor.addFencedCodeMarkedExtension();
+
+    const isLegal = isLegalDocument(value);
+
+    let prevWalkToken: any = null;
+
+    marked.use({
+      gfm: false,
+      breaks: true,
+      // Track previous token so we can detect
+      // blank lines that appear immediately after headings.
+      walkTokens(token) {
+        if (
+          token.type === "space" &&
+          token.raw.length >= 2 &&
+          prevWalkToken?.type === "heading"
+        ) {
+          const blankLines = token.raw.length - 1;
+
+          // Convert heading-following spaces into a custom
+          // emptyParagraph token so we can preserve spacing.
+          token.type = "emptyParagraph";
+          (token as any).count = blankLines;
+        }
+        prevWalkToken = token;
+      },
+      extensions: [
+        {
+          /**
+           * Custom heading tokenizer.
+           * Ensures markdown headings are parsed consistently
+           * and rendered as native h1-h6 elements.
+           */
+          name: "heading",
+          level: "block",
+          start(src) {
+            return src.indexOf("#");
+          },
+          tokenizer(src) {
+            const match = src.match(/^(#{1,6}) ([^\n]+)/);
+            if (match) {
+              return {
+                type: "heading",
+                raw: match[0],
+                depth: match[1].length,
+                text: match[2],
+                tokens: [],
+              };
+            }
+          },
+          renderer(token) {
+            return `<h${token.depth}>${token.text}</h${token.depth}>`;
+          },
+        },
+        {
+          /**
+           * Preserves multiple blank lines by converting them
+           * into explicit empty paragraph elements.
+           *
+           * Skipped for:
+           * - list contexts
+           * - legal document rendering
+           */
+          name: "emptyParagraph",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n\n");
+          },
+          tokenizer(src, tokens) {
+            const prevToken = tokens?.[tokens.length - 1];
+            if (prevToken?.type === "list") return;
+
+            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
+            if (isListContext) return;
+
+            const match = src.match(/^(\n{2,})/);
+            if (match) {
+              const isAfterHeading = prevToken?.type === "heading";
+              // Add an extra line when spacing follows a heading.
+              const blankLines = match[0].length - 1 + (isAfterHeading ? 1 : 0);
+              return {
+                type: "emptyParagraph",
+                raw: match[0],
+                count: blankLines,
+              };
+            }
+          },
+          renderer(token) {
+            if (isLegal) return "";
+
+            return "<p><br></p>".repeat(token.count);
+          },
+        },
+        {
+          /**
+           * Converts consecutive single-line breaks into
+           * individual paragraph elements.
+           *
+           * Example:
+           *   Line A
+           *   Line B
+           *
+           * Becomes:
+           *   <p>Line A</p>
+           *   <p>Line B</p>
+           *
+           * Skipped for:
+           * - headings
+           * - code fences
+           * - lists
+           * - indented blocks
+           * - wrapped paragraphs
+           */
+          name: "lineSeparated",
+          level: "block",
+          start(src) {
+            return src.indexOf("\n");
+          },
+          tokenizer(src, tokens) {
+            const isHeading = /^#{1,6}\s/.test(src);
+            if (isHeading) return;
+
+            const isCodeFence = /^`{3,}/.test(src);
+            if (isCodeFence) return;
+
+            const firstLine = src.split("\n")[0];
+            if (/^[ \t]*([-*+]|\d+\.)\s/.test(firstLine)) return;
+            if (/^[ \t]+/.test(firstLine)) return;
+
+            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)*(?=\n\n|\n?$)/);
+            if (match && match[0].includes("\n")) {
+              const lines = match[0].split("\n");
+
+              // Treat long consecutive lines as a wrapped paragraph,
+              // not as separate paragraphs.
+              const looksLikeWrappedParagraph =
+                lines.length > 1 && lines.every((l) => l.length > 20);
+
+              if (looksLikeWrappedParagraph) return;
+
+              if (lines.some((l) => /^`{3,}/.test(l.trim()))) return;
+              if (lines.some((l) => /^ {4,}/.test(l))) return;
+              if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
+              if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
+
+              return {
+                type: "lineSeparated",
+                raw: match[0],
+                lines: lines.filter((l) => l.trim() !== ""),
+              };
+            }
+          },
+          renderer(token) {
+            if (isLegal) return "";
+            return token.lines
+              .map((line: string) => `<p>${line}</p>`)
+              .join("\n");
+          },
+        },
+      ],
+    });
 
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
@@ -551,6 +707,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         let html: string;
 
         html = value?.trim() ? await marked.parse(value) : `<p>${value}</p>`;
+
+        if (!html.trim().startsWith("<")) {
+          html = `<p>${html}</p>`;
+        }
 
         if (!isMounted || !editorRef.current) return;
 
@@ -1963,6 +2123,11 @@ const EditorArea = styled.div<{
   $height?: number;
   $theme: RichEditorThemeConfig;
 }>`
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+  }
   padding: 8px;
   outline: none;
   background-color: ${({ $theme }) => $theme.backgroundColor};
@@ -2377,6 +2542,12 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   container.querySelectorAll("p").forEach((p) => {
+    // Skip empty paragraphs — already correct, don't re-split them
+    const isEmptyParagraph =
+      p.childNodes.length === 0 ||
+      (p.childNodes.length === 1 && p.firstChild?.nodeName === "BR");
+    if (isEmptyParagraph) return;
+
     if (p.querySelector("ul, ol, h1, h2, h3, h4, h5, h6, pre, input")) return;
 
     const fragments: Node[][] = [[]];
@@ -2405,6 +2576,12 @@ const splitBrIntoParagraphs = (html: string): string => {
   });
 
   return container.innerHTML;
+};
+
+const isLegalDocument = (src: string) => {
+  return /^(MIT License|Apache License|GNU |BSD |ISC License|Copyright \(c\)|TERMS AND CONDITIONS|END OF TERMS)/im.test(
+    src
+  );
 };
 
 RichEditor.ToolbarButton = RichEditorToolbarButton;
