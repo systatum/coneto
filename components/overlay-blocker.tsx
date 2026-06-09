@@ -57,9 +57,9 @@ export const OverlayBlocker = forwardRef<
     const overlayBlockerTheme = currentTheme.overlayBlocker;
 
     const exemptRegions = [
-      "coneto-paper-dialog",
-      "coneto-dialog",
-      "coneto-sidebar",
+      ".coneto-paper-dialog",
+      ".coneto-dialog",
+      ".coneto-sidebar",
       ...(_exemptRegions ?? []),
     ];
 
@@ -115,16 +115,26 @@ export const OverlayBlocker = forwardRef<
     }, [exemptRegions, visible]);
 
     const isInSafeZone = (target: EventTarget | null, regions: string[]) => {
-      if (!(target instanceof Element)) return false;
+      if (!(target instanceof Element)) {
+        return false;
+      }
 
       let el: Element | null = target;
 
       while (el) {
-        if (
-          regions.some(
-            (region) => el.id === region || el.classList.contains(region)
-          )
-        ) {
+        const matched = regions.some((region) => {
+          if (region.startsWith("#")) {
+            return el.id === region.slice(1);
+          }
+
+          if (region.startsWith(".")) {
+            return el.classList.contains(region.slice(1));
+          }
+
+          return false;
+        });
+
+        if (matched) {
           return true;
         }
 
