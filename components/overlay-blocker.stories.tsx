@@ -50,9 +50,9 @@ Pass an array of ID or class locators where scroll-blocking will not take effect
   show={isOpen}
   zIndex={9999}
   exemptRegions={[
-    "coneto-paper-dialog",
-    "coneto-dialog",
-    "coneto-sidebar",
+    ".coneto-paper-dialog",
+    ".coneto-dialog",
+    ".coneto-sidebar",
   ]}
   onClick={({ close }) => {
     close();
@@ -66,7 +66,7 @@ Pass an array of ID or class locators where scroll-blocking will not take effect
 - Use \`ref\` to programmatically open or close the overlay.
 - While active, the overlay prevents page scrolling by locking the document body.
 - Regions specified in \`exemptRegions\` remain scrollable and interactive.
-- Values passed to \`exemptRegions\` can be either element IDs or class names (without \`#\` or \`.\` prefixes).
+- Values passed to \`exemptRegions\` can be either element IDs (\`#\`) or class names (\`.\`) .
 - Default exempt regions include \`coneto-paper-dialog\`, \`coneto-dialog\`, and \`coneto-sidebar\`.
 - Clicking the overlay triggers the behavior configured via \`onClick\`.
       `,
@@ -127,7 +127,11 @@ export const Default: Story = {
     return (
       <>
         <Button onClick={() => ref?.current?.open()}>Open Overlay</Button>
-        <OverlayBlocker ref={ref} onClick="close" />
+        <OverlayBlocker
+          exemptRegions={["#aria-test"]}
+          ref={ref}
+          onClick="close"
+        />
       </>
     );
   },
