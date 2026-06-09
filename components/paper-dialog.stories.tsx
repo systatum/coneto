@@ -35,6 +35,7 @@ const meta: Meta<typeof PaperDialog> = {
 - ❌ Optional close button and minimize toggle
 - 🛡 Overlay blocker when restored to prevent outside interactions
 - 🎛 Trigger opening/closing externally
+- ♿ Accessibility support via \`scrollSafeAriaLabels\` (featuring prop for improved scroll-safe screen reader labels)
 - 🎨 Fully styleable via \`styles\` props
 - ⌨️ Handles "Escape" key to close the dialog
 
@@ -51,6 +52,25 @@ const meta: Meta<typeof PaperDialog> = {
 </>
 \`\`\`
 
+## 🧠 Using scrollSafeAriaLabels
+
+You can pass an array of aria label strings to improve accessibility when scroll is blocked.
+
+<OverlayBlocker
+  show={isOpen}
+  zIndex={9999}
+  scrollSafeAriaLabels={[
+    "Overlay is active",
+    "Background content is disabled",
+    "Press Escape to close"
+  ]}
+  onClick={({ close }) => {
+    close();
+  }}
+>
+  <p>Your content here</p>
+</OverlayBlocker>
+
 ### 🎨 Custom Icons
 You can override the default control icons (e.g. close and restore) by passing custom icon components:
 
@@ -62,8 +82,6 @@ You can override the default control icons (e.g. close and restore) by passing c
   }}
 />
 \`\`\`
-
-
 
 ### 📏 Resizable
 
