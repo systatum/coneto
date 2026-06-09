@@ -30,34 +30,71 @@ describe("PullRefresher", () => {
   }
 
   context("activatedAt", () => {
-    context("when given 200px", () => {
-      context("when scrolling pass the height", () => {
-        it("should activate the loading", () => {
-          cy.mount(
-            <ProductPullRefresher
-              activatedAt="200px"
-              loadingSlot={<div>Loading...</div>}
-            />
-          );
+    context("with string", () => {
+      context("when given 25dvh (187.5px)", () => {
+        context("when scrolling pass the height", () => {
+          it("should activate the loading", () => {
+            cy.viewport(550, 750);
+            cy.mount(
+              <ProductPullRefresher
+                activatedAt="25dvh"
+                loadingSlot={<div>Loading...</div>}
+              />
+            );
 
-          pull(250);
+            pull(188);
 
-          cy.contains("Loading...").should("exist");
+            cy.contains("Loading...").should("exist");
+          });
+        });
+
+        context("when scrolling not pass the height", () => {
+          it("should not activate the loading", () => {
+            cy.mount(
+              <ProductPullRefresher
+                activatedAt="25dvh"
+                loadingSlot={<div>Loading...</div>}
+              />
+            );
+
+            pull(184);
+
+            cy.contains("Loading...").should("not.exist");
+          });
         });
       });
+    });
 
-      context("when scrolling not pass the height", () => {
-        it("should not activate the loading", () => {
-          cy.mount(
-            <ProductPullRefresher
-              activatedAt="200px"
-              loadingSlot={<div>Loading...</div>}
-            />
-          );
+    context("with number", () => {
+      context("when given 200", () => {
+        context("when scrolling pass the height", () => {
+          it("should activate the loading", () => {
+            cy.mount(
+              <ProductPullRefresher
+                activatedAt={200}
+                loadingSlot={<div>Loading...</div>}
+              />
+            );
 
-          pull(190);
+            pull(250);
 
-          cy.contains("Loading...").should("not.exist");
+            cy.contains("Loading...").should("exist");
+          });
+        });
+
+        context("when scrolling not pass the height", () => {
+          it("should not activate the loading", () => {
+            cy.mount(
+              <ProductPullRefresher
+                activatedAt={200}
+                loadingSlot={<div>Loading...</div>}
+              />
+            );
+
+            pull(190);
+
+            cy.contains("Loading...").should("not.exist");
+          });
         });
       });
     });
