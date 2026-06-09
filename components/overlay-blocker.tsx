@@ -66,7 +66,7 @@ export const OverlayBlocker = forwardRef<
     const [visible, setVisible] = useState(show);
 
     useEffect(() => {
-      if (!show) return;
+      if (!visible) return;
 
       const safeRegions = exemptRegions ?? [];
 
@@ -112,7 +112,7 @@ export const OverlayBlocker = forwardRef<
 
         window.scrollTo(0, scrollY);
       };
-    }, [exemptRegions, show]);
+    }, [exemptRegions, visible]);
 
     const isInSafeZone = (target: EventTarget | null, regions: string[]) => {
       if (!(target instanceof Element)) return false;
