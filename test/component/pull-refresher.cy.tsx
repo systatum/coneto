@@ -251,6 +251,30 @@ describe("PullRefresher", () => {
       });
     });
 
+    context("slotWrapperStyle", () => {
+      context("when given background-color red", () => {
+        it("renders background color with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <ProductPullRefresher
+              styles={{
+                slotWrapperStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          pull(80);
+
+          cy.findByLabelText("pull-refresher-slot-loader").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
     context("content", () => {
       context("when given padding 20px", () => {
         it("should render container with padding 20px", () => {
