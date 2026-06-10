@@ -277,6 +277,12 @@ export interface FieldLaneThemeConfig
   dividerColor?: string;
 }
 
+// flippable.tsx
+export interface FlippableThemeConfig {
+  front?: BodyThemeConfig;
+  back?: BodyThemeConfig;
+}
+
 // file-input-box.tsx
 export interface FileInputBoxThemeConfig extends BodyThemeConfig {
   focusedBorderColor?: string;
@@ -804,6 +810,7 @@ export interface AppTheme {
   drawerTab: DrawerTabThemeConfig;
   errorSlate: ErrorSlateThemeConfig;
   fieldLane: FieldLaneThemeConfig;
+  flippable: FlippableThemeConfig;
   fileInputBox: FileInputBoxThemeConfig;
   fileDropBox: FileDropBoxThemeConfig;
   frame: FrameThemeConfig;
