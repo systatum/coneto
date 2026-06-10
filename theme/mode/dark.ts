@@ -69,6 +69,7 @@ import {
   createWheelTheme,
   createLaunchpadTheme,
   createToastTheme,
+  createFlippable,
 } from "./creator";
 
 // Dark
@@ -390,6 +391,17 @@ const darkErrorSlate = createErrorSlateTheme(darkBody, {
   cubeFaceBackground: "#ff4d4f",
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
+});
+
+const darkFlippable = createFlippable(darkBody, {
+  back: {
+    ...darkBody,
+    backgroundColor: "rgb(26, 26, 26)",
+  },
+  front: {
+    ...darkBody,
+    backgroundColor: "rgb(26, 26, 26)",
+  },
 });
 
 const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
@@ -869,6 +881,7 @@ export const darkTheme: AppTheme = {
   errorSlate: darkErrorSlate,
   fieldLane: darkFieldLane,
   fileInputBox: darkFileInputBox,
+  flippable: darkFlippable,
   fileDropBox: darkFileDropBox,
   frame: darkFrame,
   grid: darkGrid,
@@ -940,6 +953,7 @@ export {
   darkDrawerTab,
   darkErrorSlate,
   darkFieldLane,
+  darkFlippable,
   darkFileInputBox,
   darkFileDropBox,
   darkFrame,
