@@ -245,11 +245,11 @@ describe("Title", () => {
 
   context("size", () => {
     context("when given sm", () => {
-      it("should render small font size (16px)", () => {
+      it("should render small font size (17px)", () => {
         cy.mount(<Title.Small text="Small Title" />);
 
         cy.findByLabelText("title-title").should(($el) => {
-          expect(getComputedStyle($el[0]).fontSize).to.eq("16px");
+          expect(getComputedStyle($el[0]).fontSize).to.eq("17px");
         });
       });
     });
@@ -381,6 +381,37 @@ describe("Title", () => {
         );
 
         cy.findAllByLabelText("title-right-section").eq(0).should("exist");
+      });
+
+      context("when hovering", () => {
+        it("should render icon with transparent background color (0.45)", () => {
+          cy.mount(
+            <Title
+              text="Icon"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("action-button").realHover();
+
+          cy.wait(200);
+          cy.findByLabelText("action-button").should(
+            "have.css",
+            "background-color",
+            "rgba(255, 255, 255, 0.45)"
+          );
+        });
       });
     });
   });
