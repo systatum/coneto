@@ -206,6 +206,20 @@ describe("Button", () => {
     });
   });
 
+  context("size", () => {
+    context("icon", () => {
+      it("renders icon with flex 0 1 auto (will centered)", () => {
+        cy.mount(<ButtonWithIcon maxOptions={1} size="icon" />);
+
+        cy.findByLabelText("button-label").should(
+          "have.css",
+          "flex",
+          "0 1 auto"
+        );
+      });
+    });
+  });
+
   context("icon", () => {
     it("renders buttons with icons", () => {
       cy.mount(<ButtonWithIcon />);
