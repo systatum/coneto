@@ -235,6 +235,9 @@ function BaseTitleSection({
   ariaLabel,
   size,
 }: BaseTitleSectionProps) {
+  const { currentTheme } = useTheme();
+  const titleTheme = currentTheme?.title;
+
   if (!sections?.length && size === "lg") {
     return <div aria-label="title-empty-section" />;
   } else if (!sections?.length) {
@@ -281,6 +284,7 @@ function BaseTitleSection({
                 `,
               }}
               maxActionsBeforeCollapsing={section.actions?.length}
+              hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
               actions={filteredActionsWithSize}
             />
           );
