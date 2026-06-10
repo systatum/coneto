@@ -728,7 +728,8 @@ const darkTitle = createTitleTheme(darkBody, {
   },
 
   icon: {
-    backgroundColor: "#303030",
+    backgroundColor: "transparent",
+    hoverBackgroundColor: "rgba(0, 0, 0, 0.45)",
   },
 });
 
