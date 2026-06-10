@@ -672,6 +672,7 @@ export interface TitleThemeConfig
   };
 
   icon?: {
+    hoverBackgroundColor?: string;
     backgroundColor?: string;
     textColor?: string;
   };
