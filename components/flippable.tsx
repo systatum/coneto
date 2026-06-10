@@ -93,14 +93,14 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
         aria-label="flippable"
       >
         <Face
-          aria-label="flippable-face"
+          aria-label="flippable-front-face"
           $style={styles.frontStyle}
           $theme={flippableTheme}
         >
           {children}
         </Face>
         <BackFace
-          aria-label="flippable-face"
+          aria-label="flippable-back-face"
           $style={styles.backStyle}
           $theme={flippableTheme}
         >
@@ -145,6 +145,9 @@ const Face = styled.div<{ $style?: CSSProp; $theme?: FlippableThemeConfig }>`
   background-color: ${({ $theme }) => $theme?.front?.backgroundColor};
   color: ${({ $theme }) => $theme?.front?.textColor};
   border: 1px solid ${({ $theme }) => $theme?.front?.borderColor};
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.08);
 
   ${({ $style }) => $style};
 `;
