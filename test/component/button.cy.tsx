@@ -208,14 +208,64 @@ describe("Button", () => {
 
   context("size", () => {
     context("icon", () => {
-      it("renders icon with flex 0 1 auto (will centered)", () => {
-        cy.mount(<ButtonWithIcon maxOptions={1} size="icon" />);
+      context("when given via icon props", () => {
+        it("renders in the center", () => {
+          cy.mount(
+            <Button size="icon">
+              <RiAddLine size={16} />
+            </Button>
+          );
 
-        cy.findByLabelText("button-label").should(
-          "have.css",
-          "flex",
-          "0 1 auto"
-        );
+          cy.get("button").then(($button) => {
+            const buttonRect = $button[0].getBoundingClientRect();
+
+            cy.get("svg").then(($svg) => {
+              const svgRect = $svg[0].getBoundingClientRect();
+
+              const leftSpace = svgRect.left - buttonRect.left;
+              const rightSpace = buttonRect.right - svgRect.right;
+              const topSpace = svgRect.top - buttonRect.top;
+              const bottomSpace = buttonRect.bottom - svgRect.bottom;
+
+              expect(leftSpace).to.equal(10);
+              expect(rightSpace).to.equal(10);
+              expect(topSpace).to.equal(10);
+              expect(bottomSpace).to.equal(10);
+            });
+          });
+        });
+      });
+
+      context("when given via children prop", () => {
+        it("renders in the center", () => {
+          cy.mount(
+            <Button
+              icon={{
+                image: RiAddLine,
+                size: 16,
+              }}
+              size="icon"
+            />
+          );
+
+          cy.get("button").then(($button) => {
+            const buttonRect = $button[0].getBoundingClientRect();
+
+            cy.get("svg").then(($svg) => {
+              const svgRect = $svg[0].getBoundingClientRect();
+
+              const leftSpace = svgRect.left - buttonRect.left;
+              const rightSpace = buttonRect.right - svgRect.right;
+              const topSpace = svgRect.top - buttonRect.top;
+              const bottomSpace = buttonRect.bottom - svgRect.bottom;
+
+              expect(leftSpace).to.equal(10);
+              expect(rightSpace).to.equal(10);
+              expect(topSpace).to.equal(10);
+              expect(bottomSpace).to.equal(10);
+            });
+          });
+        });
       });
     });
   });
