@@ -279,6 +279,7 @@ function BaseTitleSection({
                   height: ${resolvedIconSize * 1.4}px;
                   padding: 20px;
                   border-radius: 10px;
+                  background-color: ${titleTheme?.icon?.backgroundColor};
 
                   ${section?.styles?.toggleActionStyle}
                 `,
