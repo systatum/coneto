@@ -26,6 +26,7 @@ import {
   FieldLaneThemeConfig,
   FileDropBoxThemeConfig,
   FileInputBoxThemeConfig,
+  FlippableThemeConfig,
   FrameThemeConfig,
   GridThemeConfig,
   ImageboxThemeConfig,
@@ -713,6 +714,28 @@ export function createFieldLaneTheme(
 
       helperColor: "#6b7280",
       dividerColor: "#9ca3af",
+    },
+    ...themeConfigurations
+  );
+}
+
+// flippable.tsx
+export function createFlippable(
+  body: BodyThemeConfig,
+  ...themeConfigurations: Array<Partial<FlippableThemeConfig>>
+): FlippableThemeConfig {
+  return mergeTheme<FlippableThemeConfig>(
+    {
+      front: {
+        backgroundColor: body?.backgroundColor,
+        borderColor: body?.borderColor,
+        textColor: body?.textColor,
+      },
+      back: {
+        backgroundColor: body?.backgroundColor,
+        borderColor: body?.borderColor,
+        textColor: body?.textColor,
+      },
     },
     ...themeConfigurations
   );
