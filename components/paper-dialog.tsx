@@ -254,7 +254,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
         const maxPx = parsePx(resizable.maxHeight);
         const minPx = parsePx(resizable.minHeight);
-        const DAMPING = 0.72;
 
         let pendingY = e.clientY;
         let rafId: number | null = null;
@@ -289,7 +288,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             const delta = resizeStartY.current - pendingY;
             const next = Math.min(
               maxPx,
-              Math.max(minPx, resizeStartHeight.current + delta * DAMPING)
+              Math.max(minPx, resizeStartHeight.current + delta)
             );
 
             // Target both the dialog wrapper and the content element
