@@ -131,6 +131,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+
+    const contentRef = useRef<HTMLDivElement>(null);
+
     const dragControls = useDragControls();
 
     const resizable = resolveResizable(_resizable);
@@ -195,7 +198,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               maxPx,
               Math.max(minPx, resizeStartWidth.current + delta)
             );
-            setResizeWidth(next);
 
             // Write directly to DOM — bypasses React, styled-components, and
             // Framer Motion entirely. Zero re-renders during the drag.
@@ -290,11 +292,14 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               Math.max(minPx, resizeStartHeight.current + delta * DAMPING)
             );
 
-            // Write directly to DOM — bypasses React, styled-components, and
-            // Framer Motion entirely. Zero re-renders during the drag.
+            // Target both the dialog wrapper and the content element
+
             dialogRef.current.style.minHeight = `${next}px`;
             dialogRef.current.style.maxHeight = `${next}px`;
-            setResizeHeight(next);
+
+            contentRef.current.style.height = `${next}px`;
+            contentRef.current.style.maxHeight = `${next}px`;
+
             onResize?.({ height: next });
           });
         };
@@ -318,6 +323,11 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               if (dialogRef.current) {
                 dialogRef.current.style.minHeight = "";
                 dialogRef.current.style.maxHeight = "";
+              }
+
+              if (contentRef.current) {
+                contentRef.current.style.height = "";
+                contentRef.current.style.maxHeight = "";
               }
               setResizeHeight(null);
             }, 300);
@@ -626,6 +636,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             <PaperDialogContent
+              ref={contentRef}
               $height={resolvedHeight}
               $theme={paperDialogTheme}
               aria-label="paper-dialog-content"
