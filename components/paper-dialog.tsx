@@ -131,6 +131,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+
+    const contentRef = useRef<HTMLDivElement>(null);
+
     const dragControls = useDragControls();
 
     const resizable = resolveResizable(_resizable);
@@ -149,8 +152,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resizeStartHeight = useRef(0);
 
     // Track last pointer Y and timestamp for velocity-based minimize on mobile resize
-    const lastPointerY = useRef(0);
-    const lastPointerTime = useRef(0);
     const velocityRef = useRef(0);
 
     const dialogRef = useRef<HTMLDivElement>(null);
@@ -162,50 +163,80 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         if (!resizable || mobile) return;
         e.preventDefault();
         e.stopPropagation();
+
         isResizingDesktop.current = true;
         resizeStartX.current = e.clientX;
+        // Read width once at drag start — never read DOM again during move
         resizeStartWidth.current =
           dialogRef.current?.getBoundingClientRect().width ??
-          resizeWidth ??
           window.innerWidth * 0.92;
 
         const minPx = parsePx(resizable.minWidth);
         const maxPx = parsePx(resizable.maxWidth);
 
+        let pendingX = e.clientX;
+        let rafId: number | null = null;
+
         const onMove = (ev: PointerEvent) => {
           if (!isResizingDesktop.current) return;
-          const delta = isLeft
-            ? ev.clientX - resizeStartX.current
-            : resizeStartX.current - ev.clientX;
-          const next = Math.min(
-            maxPx,
-            Math.max(minPx, resizeStartWidth.current + delta)
-          );
-          setResizeWidth(next);
-          onResize?.({ width: next });
+
+          // Store latest pointer position — no DOM work here
+          pendingX = ev.clientX;
+
+          // Multiple pointermove events between frames collapse into one write
+          if (rafId !== null) return;
+
+          rafId = requestAnimationFrame(() => {
+            rafId = null;
+            if (!isResizingDesktop.current || !dialogRef.current) return;
+
+            const delta = isLeft
+              ? pendingX - resizeStartX.current
+              : resizeStartX.current - pendingX;
+
+            const next = Math.min(
+              maxPx,
+              Math.max(minPx, resizeStartWidth.current + delta)
+            );
+
+            // Write directly to DOM — bypasses React, styled-components, and
+            // Framer Motion entirely. Zero re-renders during the drag.
+            dialogRef.current.style.minWidth = `${next}px`;
+            dialogRef.current.style.maxWidth = `${next}px`;
+            onResize?.({ width: next });
+          });
         };
 
         const onUp = () => {
           isResizingDesktop.current = false;
+
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+
           window.removeEventListener("pointermove", onMove);
           window.removeEventListener("pointerup", onUp);
-          const finalWidth = resizeWidth ?? resizeStartWidth.current;
+
+          // Read final width from DOM once, then hand back to React
+          const finalWidth =
+            dialogRef.current?.getBoundingClientRect().width ??
+            resizeStartWidth.current;
+
+          // Clear inline styles first so styled-components doesn't conflict
+          if (dialogRef.current) {
+            dialogRef.current.style.minWidth = "";
+            dialogRef.current.style.maxWidth = "";
+          }
+
+          setResizeWidth(finalWidth);
           onResizeComplete?.({ width: finalWidth });
         };
 
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onUp);
       },
-      [
-        resizable,
-        mobile,
-        isLeft,
-        resizable,
-        resizeWidth,
-        setResizeWidth,
-        onResize,
-        onResizeComplete,
-      ]
+      [resizable, mobile, onResize, onResizeComplete, isLeft]
     );
 
     const handleMobileResizePointerDown = useCallback(
@@ -213,66 +244,105 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         if (!resizable || !mobile) return;
         e.preventDefault();
         e.stopPropagation();
+
         isResizingMobile.current = true;
         resizeStartY.current = e.clientY;
+        // Read height once at drag start — never read it again during move
         resizeStartHeight.current =
           dialogRef.current?.getBoundingClientRect().height ??
-          resizeHeight ??
           window.innerHeight * 0.88;
-
-        lastPointerY.current = e.clientY;
-        lastPointerTime.current = performance.now();
 
         const maxPx = parsePx(resizable.maxHeight);
         const minPx = parsePx(resizable.minHeight);
 
+        let pendingY = e.clientY;
+        let rafId: number | null = null;
+
+        // Velocity tracking runs on every event — not inside rAF
+        // so fast flicks are not missed between frames
+        let lastVelocityY = e.clientY;
+        let lastVelocityTime = performance.now();
+        velocityRef.current = 0;
+
         const onMove = (ev: PointerEvent) => {
           if (!isResizingMobile.current) return;
-          const delta = resizeStartY.current - ev.clientY;
-          const DAMPING = 0.72;
 
-          const next = Math.min(
-            maxPx,
-            Math.max(minPx, resizeStartHeight.current + delta * DAMPING)
-          );
-
-          setResizeHeight(next);
-          onResize?.({ height: next });
-
+          // Track velocity on every event for accuracy
           const now = performance.now();
+          const dy = ev.clientY - lastVelocityY;
+          const dt = now - lastVelocityTime;
+          if (dt > 0) velocityRef.current = dy / dt;
+          lastVelocityY = ev.clientY;
+          lastVelocityTime = now;
 
-          const dy = ev.clientY - lastPointerY.current;
-          const dt = now - lastPointerTime.current;
+          // Store latest Y — actual DOM work happens in rAF
+          pendingY = ev.clientY;
 
-          if (dt > 0) {
-            velocityRef.current = dy / dt;
-          }
+          // Multiple pointermove events between frames collapse into one write
+          if (rafId !== null) return;
 
-          lastPointerY.current = ev.clientY;
-          lastPointerTime.current = performance.now();
+          rafId = requestAnimationFrame(() => {
+            rafId = null;
+            if (!isResizingMobile.current || !dialogRef.current) return;
+
+            const delta = resizeStartY.current - pendingY;
+            const next = Math.min(
+              maxPx,
+              Math.max(minPx, resizeStartHeight.current + delta)
+            );
+
+            // Target both the dialog wrapper and the content element
+
+            dialogRef.current.style.minHeight = `${next}px`;
+            dialogRef.current.style.maxHeight = `${next}px`;
+
+            contentRef.current.style.height = `${next}px`;
+            contentRef.current.style.maxHeight = `${next}px`;
+
+            onResize?.({ height: next });
+          });
         };
 
-        const onUp = (ev: PointerEvent) => {
+        const onUp = () => {
           isResizingMobile.current = false;
+
+          if (rafId !== null) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+          }
+
           window.removeEventListener("pointermove", onMove);
           window.removeEventListener("pointerup", onUp);
-
-          // Compute instantaneous velocity (px/ms, positive = downward)
-          const dt = performance.now() - lastPointerTime.current;
-          const velocity =
-            dt > 0 ? (ev.clientY - lastPointerY.current) / dt : 0;
 
           if (velocityRef.current > 0.5) {
             setDialogState("minimized");
             setShowTitlebar(true);
             setTimeout(() => {
+              // Clear inline styles so Framer Motion takes back control
+              if (dialogRef.current) {
+                dialogRef.current.style.minHeight = "";
+                dialogRef.current.style.maxHeight = "";
+              }
+
+              if (contentRef.current) {
+                contentRef.current.style.height = "";
+                contentRef.current.style.maxHeight = "";
+              }
               setResizeHeight(null);
             }, 300);
           } else {
+            // Read final height from DOM once, then hand back to React
             const finalHeight =
               dialogRef.current?.getBoundingClientRect().height ??
-              resizeHeight ??
               resizeStartHeight.current;
+
+            // Clear inline styles first so styled-components doesn't conflict
+            if (dialogRef.current) {
+              dialogRef.current.style.minHeight = "";
+              dialogRef.current.style.maxHeight = "";
+            }
+
+            setResizeHeight(finalHeight);
             onResizeComplete?.({ height: finalHeight });
           }
         };
@@ -280,18 +350,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onUp);
       },
-      [
-        resizable,
-        mobile,
-        resizable,
-        resizeHeight,
-        setResizeHeight,
-        onResize,
-        onResizeComplete,
-        lastPointerTime,
-        lastPointerY,
-        velocityRef,
-      ]
+      [resizable, mobile, onResize, onResizeComplete]
     );
 
     const resolvedWidth = resizeWidth != null ? `${resizeWidth}px` : width;
@@ -576,6 +635,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             )}
 
             <PaperDialogContent
+              ref={contentRef}
               $height={resolvedHeight}
               $theme={paperDialogTheme}
               aria-label="paper-dialog-content"
