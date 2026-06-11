@@ -3,6 +3,8 @@ import {
   MutableRefObject,
   TextareaHTMLAttributes,
   forwardRef,
+  useEffect,
+  useRef,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import {
@@ -40,6 +42,16 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
     const { currentTheme } = useTheme();
     const textareaTheme = currentTheme?.textarea;
 
+    const innerRef = useRef<HTMLTextAreaElement | null>(null);
+
+    // runs once on mount
+    useEffect(() => {
+      if (autogrow && innerRef.current) {
+        innerRef.current.style.height = "auto";
+        innerRef.current.style.height = `${innerRef.current.scrollHeight}px`;
+      }
+    }, []);
+
     return (
       <TextareaInput
         $width={width}
@@ -48,6 +60,7 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
         $autogrow={autogrow}
         id={id}
         ref={(el) => {
+          innerRef.current = el;
           if (typeof ref === "function") {
             ref(el);
           } else if (ref) {
@@ -55,6 +68,11 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
           }
         }}
         onChange={(e) => {
+          if (autogrow) {
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+          }
+
           if (onChange) {
             onChange(e);
           }
