@@ -157,6 +157,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     const isLeft = position === "left";
 
+    const widthRef = useRef<number | null>(null);
+    const heightRef = useRef<number | null>(null);
+
     const handleDesktopResizePointerDown = useCallback(
       (e: React.PointerEvent) => {
         if (!resizable || mobile) return;
@@ -166,7 +169,6 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         resizeStartX.current = e.clientX;
         resizeStartWidth.current =
           dialogRef.current?.getBoundingClientRect().width ??
-          resizeWidth ??
           window.innerWidth * 0.92;
 
         const minPx = parsePx(resizable.minWidth);
@@ -181,31 +183,38 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             maxPx,
             Math.max(minPx, resizeStartWidth.current + delta)
           );
-          setResizeWidth(next);
-          onResize?.({ width: next });
+
+          // Write to ref, batch via rAF
+          widthRef.current = next;
         };
+
+        let rafId: number;
+        const loop = () => {
+          if (widthRef.current !== null) {
+            setResizeWidth(widthRef.current);
+            onResize?.({ width: widthRef.current });
+            widthRef.current = null;
+          }
+          if (isResizingDesktop.current) rafId = requestAnimationFrame(loop);
+        };
+        rafId = requestAnimationFrame(loop);
 
         const onUp = () => {
           isResizingDesktop.current = false;
+          cancelAnimationFrame(rafId);
           window.removeEventListener("pointermove", onMove);
           window.removeEventListener("pointerup", onUp);
-          const finalWidth = resizeWidth ?? resizeStartWidth.current;
+
+          const finalWidth =
+            dialogRef.current?.getBoundingClientRect().width ??
+            resizeStartWidth.current;
           onResizeComplete?.({ width: finalWidth });
         };
 
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onUp);
       },
-      [
-        resizable,
-        mobile,
-        isLeft,
-        resizable,
-        resizeWidth,
-        setResizeWidth,
-        onResize,
-        onResizeComplete,
-      ]
+      [resizable, mobile, isLeft, onResize, onResizeComplete]
     );
 
     const handleMobileResizePointerDown = useCallback(
@@ -215,10 +224,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         e.stopPropagation();
         isResizingMobile.current = true;
         resizeStartY.current = e.clientY;
-        resizeStartHeight.current =
+
+        // Read from DOM once, store in ref — not state
+        const initialHeight =
           dialogRef.current?.getBoundingClientRect().height ??
           resizeHeight ??
           window.innerHeight * 0.88;
+        resizeStartHeight.current = initialHeight;
 
         lastPointerY.current = e.clientY;
         lastPointerTime.current = performance.now();
@@ -229,49 +241,49 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         const onMove = (ev: PointerEvent) => {
           if (!isResizingMobile.current) return;
           const delta = resizeStartY.current - ev.clientY;
-          const DAMPING = 0.72;
 
           const next = Math.min(
             maxPx,
-            Math.max(minPx, resizeStartHeight.current + delta * DAMPING)
+            Math.max(minPx, resizeStartHeight.current + delta)
           );
 
-          setResizeHeight(next);
-          onResize?.({ height: next });
+          //  Write to ref first, batch the state update via rAF
+          heightRef.current = next;
 
           const now = performance.now();
-
-          const dy = ev.clientY - lastPointerY.current;
           const dt = now - lastPointerTime.current;
-
           if (dt > 0) {
-            velocityRef.current = dy / dt;
+            velocityRef.current = (ev.clientY - lastPointerY.current) / dt;
           }
-
           lastPointerY.current = ev.clientY;
-          lastPointerTime.current = performance.now();
+          lastPointerTime.current = now;
         };
 
-        const onUp = (ev: PointerEvent) => {
+        // rAF loop drives state updates — decoupled from pointermove frequency
+        let rafId: number;
+        const loop = () => {
+          if (heightRef.current !== null) {
+            setResizeHeight(heightRef.current);
+            onResize?.({ height: heightRef.current });
+            heightRef.current = null;
+          }
+          if (isResizingMobile.current) rafId = requestAnimationFrame(loop);
+        };
+        rafId = requestAnimationFrame(loop);
+
+        const onUp = () => {
           isResizingMobile.current = false;
+          cancelAnimationFrame(rafId);
           window.removeEventListener("pointermove", onMove);
           window.removeEventListener("pointerup", onUp);
-
-          // Compute instantaneous velocity (px/ms, positive = downward)
-          const dt = performance.now() - lastPointerTime.current;
-          const velocity =
-            dt > 0 ? (ev.clientY - lastPointerY.current) / dt : 0;
 
           if (velocityRef.current > 0.5) {
             setDialogState("minimized");
             setShowTitlebar(true);
-            setTimeout(() => {
-              setResizeHeight(null);
-            }, 300);
+            setTimeout(() => setResizeHeight(null), 300);
           } else {
             const finalHeight =
               dialogRef.current?.getBoundingClientRect().height ??
-              resizeHeight ??
               resizeStartHeight.current;
             onResizeComplete?.({ height: finalHeight });
           }
@@ -280,18 +292,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onUp);
       },
-      [
-        resizable,
-        mobile,
-        resizable,
-        resizeHeight,
-        setResizeHeight,
-        onResize,
-        onResizeComplete,
-        lastPointerTime,
-        lastPointerY,
-        velocityRef,
-      ]
+      // `resizeHeight` from deps — read from DOM/ref instead
+      [resizable, mobile, onResize, onResizeComplete]
     );
 
     const resolvedWidth = resizeWidth != null ? `${resizeWidth}px` : width;
