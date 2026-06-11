@@ -240,7 +240,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           }
 
           lastPointerY.current = ev.clientY;
-          lastPointerTime.current = performance.now();
+          lastPointerTime.current = now;
         };
 
         const onUp = (ev: PointerEvent) => {
