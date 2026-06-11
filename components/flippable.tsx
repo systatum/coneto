@@ -88,11 +88,11 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
         $width={width}
         $height={height}
         $style={styles.self}
-        $flipped={isFlipped}
-        $flipDuration={flipDuration}
         aria-label="flippable"
       >
         <Face
+          $flipped={!isFlipped}
+          $flipDuration={flipDuration}
           aria-label="flippable-front-face"
           $style={styles.frontStyle}
           $theme={flippableTheme}
@@ -100,6 +100,8 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
           {children}
         </Face>
         <BackFace
+          $flipDuration={flipDuration}
+          $flipped={isFlipped}
           aria-label="flippable-back-face"
           $style={styles.backStyle}
           $theme={flippableTheme}
@@ -115,8 +117,6 @@ const Container = styled.div<{
   $width: string | number;
   $height: string | number;
   $style?: CSSProp;
-  $flipped: boolean;
-  $flipDuration?: number;
 }>`
   display: flex;
   flex-direction: column;
@@ -127,15 +127,16 @@ const Container = styled.div<{
   height: ${({ $height }) =>
     (typeof $height === "number" ? `${$height}px` : $height) ?? "100%"};
   cursor: pointer;
-  transform-style: preserve-3d;
-  transition: transform ${({ $flipDuration }) => $flipDuration ?? 0.4}s
-    cubic-bezier(0.4, 0.2, 0.2, 1);
-  transform: rotateY(${({ $flipped }) => ($flipped ? "180deg" : "0deg")});
 
   ${({ $style }) => $style};
 `;
 
-const Face = styled.div<{ $style?: CSSProp; $theme?: FlippableThemeConfig }>`
+const Face = styled.div<{
+  $style?: CSSProp;
+  $theme?: FlippableThemeConfig;
+  $flipped: boolean;
+  $flipDuration?: number;
+}>`
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
@@ -148,6 +149,10 @@ const Face = styled.div<{ $style?: CSSProp; $theme?: FlippableThemeConfig }>`
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.12),
     0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform ${({ $flipDuration }) => $flipDuration ?? 0.4}s
+    cubic-bezier(0.4, 0.2, 0.2, 1);
+  transform: ${({ $flipped }) =>
+    $flipped ? "rotateY(0deg)" : "rotateY(180deg)"};
 
   ${({ $style }) => $style};
 `;
@@ -157,6 +162,8 @@ const BackFace = styled(Face)`
   background-color: ${({ $theme }) => $theme?.back?.backgroundColor};
   color: ${({ $theme }) => $theme?.back?.textColor};
   border: 1px solid ${({ $theme }) => $theme?.back?.borderColor};
+  transform: ${({ $flipped }) =>
+    $flipped ? "rotateY(0deg)" : "rotateY(-180deg)"};
 
   ${({ $style }) => $style};
 `;
