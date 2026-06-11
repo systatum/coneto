@@ -70,6 +70,7 @@ function Messagebox({
   return (
     <Wrapper
       id={id}
+      aria-label="messagebox-container"
       className={applyClassName("messagebox", className)}
       $theme={messageboxTheme}
       $variant={variant}
@@ -88,9 +89,16 @@ function Messagebox({
         color={icon?.color ?? variantStyle.textColor}
       />
 
-      <Content $style={styles?.contentWrapperStyle}>
-        <Title $style={styles?.titleStyle}>{title}</Title>
-        <Children $style={styles?.contentStyle}>{children}</Children>
+      <Content
+        aria-label="messagebox-content-wrapper"
+        $style={styles?.contentWrapperStyle}
+      >
+        <Title aria-label="messagebox-title" $style={styles?.titleStyle}>
+          {title}
+        </Title>
+        <Children aria-label="messagebox-content" $style={styles?.contentStyle}>
+          {children}
+        </Children>
         {actionLinks && (
           <ActionList>
             {actionLinks.map((action, index) =>
@@ -177,7 +185,7 @@ const Wrapper = styled.div<{
   border-radius: 2px;
   position: relative;
   overflow: hidden;
-  height: 100%;
+  height: fit-content;
 
   background-color: ${({ $variant, $theme }) =>
     $theme[$variant].backgroundColor};
