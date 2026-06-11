@@ -5,7 +5,7 @@ describe("Messagebox", () => {
   function ProductMessagebox(props?: Partial<MessageboxProps>) {
     return (
       <Messagebox title="This is title" {...props}>
-        This is content
+        {props?.children ?? "This is content"}
       </Messagebox>
     );
   }
@@ -17,6 +17,23 @@ describe("Messagebox", () => {
         "height",
         "78.59375px"
       );
+    });
+
+    context("when given children", () => {
+      it("sizes itself to its content", () => {
+        cy.mount(
+          <ProductMessagebox>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <p key={i}>{i}</p>
+            ))}
+          </ProductMessagebox>
+        );
+        cy.findByLabelText("messagebox-container").should(
+          "have.css",
+          "height",
+          "294.125px"
+        );
+      });
     });
 
     context("when given height 400px", () => {
