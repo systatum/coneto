@@ -19,6 +19,7 @@ export interface FlippableProps {
   className?: string;
   id?: string;
   flipDuration?: number;
+  flipOnClick?: boolean;
 }
 
 export interface FlippableStyles {
@@ -45,6 +46,7 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
       className,
       id,
       flipDuration = 0.4,
+      flipOnClick,
     },
     ref
   ) => {
@@ -84,11 +86,16 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
       <Container
         id={id}
         className={applyClassName("flippable", className)}
-        onClick={toggle}
         $width={width}
         $height={height}
         $style={styles.self}
         aria-label="flippable"
+        onClick={(e) => {
+          e.stopPropagation();
+          if (flipOnClick) {
+            toggle();
+          }
+        }}
       >
         <Face
           $flipped={!isFlipped}
@@ -139,31 +146,47 @@ const Face = styled.div<{
 }>`
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: ${({ $theme }) => $theme?.front?.backgroundColor};
   color: ${({ $theme }) => $theme?.front?.textColor};
   border: 1px solid ${({ $theme }) => $theme?.front?.borderColor};
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.12),
     0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform ${({ $flipDuration }) => $flipDuration ?? 0.4}s
-    cubic-bezier(0.4, 0.2, 0.2, 1);
+
+  transition:
+    transform ${({ $flipDuration }) => ($flipDuration ?? 0.4) / 2.5}s
+      cubic-bezier(0.4, 0.2, 0.2, 1)
+      ${({ $flipped, $flipDuration }) =>
+        $flipped ? `${($flipDuration ?? 0.4) / 2.5}s` : "0s"},
+    opacity 0s linear
+      ${({ $flipped, $flipDuration }) =>
+        $flipped
+          ? `${($flipDuration ?? 0.4) / 2.5}s`
+          : `${($flipDuration ?? 0.4) / 2.5}s`},
+    visibility 0s linear
+      ${({ $flipped, $flipDuration }) =>
+        $flipped
+          ? `${($flipDuration ?? 0.4) / 2.5}s`
+          : `${($flipDuration ?? 0.4) / 2.5}s`};
+
   transform: ${({ $flipped }) =>
-    $flipped ? "rotateY(0deg)" : "rotateY(180deg)"};
+    $flipped ? "rotateY(0deg)" : "rotateY(90deg)"};
+  opacity: ${({ $flipped }) => ($flipped ? 1 : 0)};
+  visibility: ${({ $flipped }) => ($flipped ? "visible" : "hidden")};
 
   ${({ $style }) => $style};
 `;
 
 const BackFace = styled(Face)`
-  transform: rotateY(180deg);
   background-color: ${({ $theme }) => $theme?.back?.backgroundColor};
   color: ${({ $theme }) => $theme?.back?.textColor};
   border: 1px solid ${({ $theme }) => $theme?.back?.borderColor};
+
   transform: ${({ $flipped }) =>
-    $flipped ? "rotateY(0deg)" : "rotateY(-180deg)"};
+    $flipped ? "rotateY(0deg)" : "rotateY(-90deg)"};
 
   ${({ $style }) => $style};
 `;
