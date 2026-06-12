@@ -95,7 +95,9 @@ export const Default: Story = {
         <Flippable
           width={260}
           ref={ref}
-          flipOnClick
+          onClick={({ toggle }) => {
+            toggle();
+          }}
           back={
             <>
               <div>
@@ -320,7 +322,9 @@ export const OnTable: Story = {
           width={420}
           height={350}
           flipDuration={0.7}
-          flipOnClick
+          onClick={({ toggle }) => {
+            toggle();
+          }}
           back={
             person && (
               <>
