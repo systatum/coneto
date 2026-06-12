@@ -21,7 +21,7 @@ const meta: Meta<typeof Flippable> = {
 
 * 🔄 **3D flip animation**: Smooth card flip transition between front and back content.
 * 🎛 **Imperative controls**: Programmatically control flipping using \`flip\`, \`unFlip\`, and \`toggle\` methods via refs.
-* 🖱 **Click interaction**: Allow users to flip and unflip the component by enabling the \`flipOnClick\` prop.
+* 🖱 **Click interaction**: Supports automatic flipping via the flipOnClick prop and provides an onClick callback with flip, unFlip, and toggle actions for custom flip behavior.
 * ⏱ **Customizable animation duration**: Adjust flip speed using the \`flipDuration\` prop (in second).
 * 🎨 **Customizable styles**: Override container, front face, and back face styles using styled-components \`CSSProp\`.
 * 📏 **Flexible sizing**: Configure width and height using numbers or CSS values.
