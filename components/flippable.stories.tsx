@@ -95,6 +95,7 @@ export const Default: Story = {
         <Flippable
           width={260}
           ref={ref}
+          flipOnClick
           back={
             <>
               <div>
