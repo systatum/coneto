@@ -69,6 +69,7 @@ import {
   createWheelTheme,
   createLaunchpadTheme,
   createToastTheme,
+  createProgressbarTheme,
 } from "./creator";
 
 // Dark
@@ -551,6 +552,33 @@ const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
 
 const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
 
+const darkProgressbar = createProgressbarTheme({
+  primary: {
+    backgroundColor: "#1e293b",
+    textColor: "#93c5fd",
+    barColor: "#60a5fa",
+    trackColor: "#334155",
+  },
+  success: {
+    backgroundColor: "#1f2d1f",
+    textColor: "#86efac",
+    barColor: "#4ade80",
+    trackColor: "#2f4a33",
+  },
+  danger: {
+    backgroundColor: "#2d1f1f",
+    textColor: "#fca5a5",
+    barColor: "#f87171",
+    trackColor: "#4a2f2f",
+  },
+  warning: {
+    backgroundColor: "#2d241f",
+    textColor: "#fdba74",
+    barColor: "#fb923c",
+    trackColor: "#4a392f",
+  },
+});
+
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#1465d3bf",
@@ -887,6 +915,7 @@ export const darkTheme: AppTheme = {
   pagination: darkPagination,
   pinbox: darkPinbox,
   phonebox: darkPhonebox,
+  progressbar: darkProgressbar,
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
@@ -959,6 +988,7 @@ export {
   darkPagination,
   darkPinbox,
   darkPhonebox,
+  darkProgressbar,
   darkRadio,
   darkRating,
   darkRichEditor,
