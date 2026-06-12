@@ -10,6 +10,32 @@ describe("Progressbar", () => {
     return <Progressbar {...props} />;
   }
 
+  context("id", () => {
+    context("when given id", () => {
+      it("renders id in the progressbar", () => {
+        cy.mount(
+          <ProductProgressbar id="progressbar-coneto" indeterminate={true} />
+        );
+        cy.get("#progressbar-coneto").should("exist");
+      });
+    });
+  });
+
+  context("className", () => {
+    it("renders the default className", () => {
+      cy.mount(<ProductProgressbar indeterminate={true} />);
+      cy.get(".coneto-progressbar").should("exist");
+    });
+
+    context("when given class test", () => {
+      it("renders another class in the element", () => {
+        cy.mount(<ProductProgressbar className="test" indeterminate={true} />);
+        cy.get(".coneto-progressbar").should("exist");
+        cy.get(".test").should("exist");
+      });
+    });
+  });
+
   context("variant", () => {
     const variantCases: Array<{
       variant: ProgressbarVariant;
