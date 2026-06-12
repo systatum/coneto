@@ -1,5 +1,5 @@
 import { applyClassName } from "./../constants/classname";
-import {
+import React, {
   forwardRef,
   ReactNode,
   useImperativeHandle,
@@ -19,7 +19,12 @@ export interface FlippableProps {
   className?: string;
   id?: string;
   flipDuration?: number;
-  flipOnClick?: boolean;
+  onClick?: (props: {
+    event?: React.MouseEvent<HTMLDivElement>;
+    flip?: () => void;
+    unFlip?: () => void;
+    toggle?: () => void;
+  }) => void;
 }
 
 export interface FlippableStyles {
@@ -46,7 +51,7 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
       className,
       id,
       flipDuration = 0.4,
-      flipOnClick,
+      onClick,
     },
     ref
   ) => {
@@ -90,10 +95,14 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
         $height={height}
         $style={styles.self}
         aria-label="flippable"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (flipOnClick) {
-            toggle();
+        onClick={(event) => {
+          if (onClick) {
+            onClick?.({
+              event,
+              flip,
+              unFlip,
+              toggle,
+            });
           }
         }}
       >
