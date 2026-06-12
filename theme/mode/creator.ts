@@ -44,6 +44,7 @@ import {
   PaperDialogThemeConfig,
   PhoneboxThemeConfig,
   PinboxThemeConfig,
+  ProgressbarThemeConfig,
   RadioThemeConfig,
   RatingThemeConfig,
   RichEditorThemeConfig,
@@ -1169,6 +1170,70 @@ export function createPhoneboxTheme(
     },
     ...themeConfigurations
   );
+}
+
+export function createProgressbarTheme(
+  ...themeConfigurations: Array<Partial<ProgressbarThemeConfig>>
+): ProgressbarThemeConfig {
+  const defaultTheme: ProgressbarThemeConfig = {
+    primary: {
+      backgroundColor: "#e7f2fc",
+      textColor: "#5B63F6",
+      barColor: "#5B63F6",
+      trackColor: "#C7CCFF",
+    },
+
+    success: {
+      backgroundColor: "#e9f3e8",
+      textColor: "#22C55E",
+      barColor: "#22C55E",
+      trackColor: "#BBF7D0",
+    },
+
+    danger: {
+      backgroundColor: "#f6e7e7",
+      textColor: "#F43F5E",
+      barColor: "#F43F5E",
+      trackColor: "#FECDD3",
+    },
+
+    warning: {
+      backgroundColor: "#fbf0e4",
+      textColor: "#F59E0B",
+      barColor: "#F59E0B",
+      trackColor: "#FDE68A",
+    },
+
+    neutral: {
+      backgroundColor: "#f8fafc",
+      textColor: "#64748B",
+      barColor: "#64748B",
+      trackColor: "#CBD5E1",
+    },
+  };
+
+  return {
+    primary: mergeTheme(
+      defaultTheme.primary,
+      ...themeConfigurations.map((o) => o.primary ?? {})
+    ),
+    success: mergeTheme(
+      defaultTheme.success,
+      ...themeConfigurations.map((o) => o.success ?? {})
+    ),
+    danger: mergeTheme(
+      defaultTheme.danger,
+      ...themeConfigurations.map((o) => o.danger ?? {})
+    ),
+    warning: mergeTheme(
+      defaultTheme.warning,
+      ...themeConfigurations.map((o) => o.warning ?? {})
+    ),
+    neutral: mergeTheme(
+      defaultTheme.neutral,
+      ...themeConfigurations.map((o) => o.neutral ?? {})
+    ),
+  };
 }
 
 // radio.tsx

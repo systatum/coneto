@@ -15,6 +15,7 @@ describe("Textarea", () => {
     }
   ) {
     const [value, setValue] = useState("");
+
     return (
       <Textarea
         value={value}
@@ -25,6 +26,48 @@ describe("Textarea", () => {
       />
     );
   }
+
+  context("autogrow", () => {
+    it("renders with the default height of 68px", () => {
+      cy.mount(<ProductTextarea autogrow />);
+
+      cy.get("#textarea").should("have.css", "height", "68px");
+    });
+
+    context("when typing", () => {
+      it("increases the height as content grows", () => {
+        cy.mount(<ProductTextarea withOnChange autogrow />);
+
+        cy.get("#textarea")
+          .should("have.css", "height", "68px")
+          .type("halo{enter}my name{enter}is{enter}john{enter}doe");
+        cy.get("#textarea").should("have.css", "height", "104px");
+      });
+    });
+
+    context("when provides initial value", () => {
+      it("renders with a height larger than the default", () => {
+        cy.mount(
+          <ProductTextarea
+            value={`
+            Line 1
+Line 2
+Line 3
+Line 4
+Line 5
+Line 6
+Line 7
+Line 8
+Line 9
+          `}
+            autogrow
+          />
+        );
+
+        cy.get("#textarea").should("have.css", "height", "212px");
+      });
+    });
+  });
 
   context("width", () => {
     context("when given 250px", () => {

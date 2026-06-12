@@ -23,6 +23,7 @@ import { Button } from "./button";
 import { AnimatePresence, motion } from "framer-motion";
 import { applyClassName } from "./../constants/classname";
 import { BaseAction } from "./../constants/action";
+import { Progressbar } from "./progressbar";
 
 export const ToastVariant = {
   Primary: "primary",
@@ -97,14 +98,6 @@ export interface ToastProps {
 
 type ToastWithoutVariant = Omit<ToastProps, "variant">;
 
-interface ToastCardProps extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
-  children?: ReactNode;
-  variant?: ToastVariant;
-  styles?: {
-    self?: CSSProp;
-  };
-}
-
 export interface ToastAPI {
   alert(options: ToastProps): string;
 
@@ -147,6 +140,20 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     position = "top-right",
     className,
   } = item;
+
+  const [progress, setProgress] = useState(100);
+
+  useEffect(() => {
+    const start = Date.now();
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - start;
+
+      setProgress(Math.max(0, 100 - (elapsed / disappearAfterMs) * 100));
+    }, 16);
+
+    return () => clearInterval(interval);
+  }, [disappearAfterMs]);
 
   const {
     position: iconPosition = ToastIconPosition.LeftTop,
@@ -264,10 +271,17 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         </AnimatePresence>
 
         {withLoadingBar && disappearAfterMs > 0 && (
-          <ProgressBar
-            aria-label="toast-progress-bar"
-            $theme={toastTheme}
-            $ms={disappearAfterMs}
+          <Progressbar
+            styles={{
+              containerStyle: css`
+                height: 2px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+              `,
+            }}
+            variant={variant}
+            value={progress}
           />
         )}
       </Card>
@@ -606,18 +620,6 @@ const slideOut = keyframes`
 const shrinkProgress = keyframes`
   from { width: 100%; }
   to   { width: 0%; }
-`;
-
-const ProgressBar = styled.div<{ $theme?: ToastThemeConfig; $ms: number }>`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: ${({ $theme }) => $theme?.progressColor};
-  border-radius: 0 0 0 12px;
-  animation: ${({ $ms }) => css`
-    ${shrinkProgress} ${$ms}ms linear forwards
-  `};
 `;
 
 // Per-position root renderer

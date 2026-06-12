@@ -36,9 +36,16 @@ import { Figure } from "./figure";
 export interface TableColumn {
   caption: string;
   sortable?: boolean;
-  styles?: { self?: CSSProp };
+  styles?: TableColumnStyle;
   width?: string;
   id: string;
+}
+
+export interface TableColumnStyle {
+  labelStyle?: CSSProp;
+  containerStyle?: CSSProp;
+  toggleSortableStyle?: CSSProp;
+  dropdownSortableStyle?: CSSProp;
 }
 
 export const TableActionType = {
@@ -473,18 +480,16 @@ function Table({
                         : css`
                             flex: 1;
                           `}
+
+                      ${col?.styles?.containerStyle}
                     `}
                   >
-                    <span
-                      style={{
-                        display: "block",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
+                    <Label
+                      aria-label="table-column-label"
+                      $style={col?.styles?.labelStyle}
                     >
                       {col.caption}
-                    </span>
+                    </Label>
                     {col.sortable && (
                       <Toolbar
                         styles={{
@@ -502,8 +507,11 @@ function Table({
                           closedIcon={RiArrowUpDownLine}
                           openedIcon={RiArrowUpDownLine}
                           styles={{
+                            triggerStyle: col?.styles?.toggleSortableStyle,
                             dropdownStyle: css`
                               min-width: 235px;
+
+                              ${col?.styles?.dropdownSortableStyle}
                             `,
                           }}
                           subMenuList={
@@ -680,6 +688,16 @@ const Wrapper = styled.div<{
   width: 100%;
 
   color: ${({ $theme }) => $theme?.textColor};
+
+  ${({ $style }) => $style}
+`;
+
+const Label = styled.span<{ $style?: CSSProp }>`
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 
   ${({ $style }) => $style}
 `;
@@ -1614,6 +1632,7 @@ function TableRowCell({
     <CellContent
       id={id}
       className={applyClassName("table-row-cell", className)}
+      aria-label="table-row-cell"
       onClick={() => {
         if (onClick) {
           onClick();

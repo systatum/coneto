@@ -69,6 +69,7 @@ import {
   createTitleTheme,
   createToastTheme,
   createFlippable,
+  createProgressbarTheme,
 } from "./creator";
 
 // Light
@@ -176,6 +177,8 @@ const lightPagination = createPaginationTheme(lightBody, lightFieldLane);
 const lightPinbox = createPinboxTheme(lightBody, lightFieldLane);
 
 const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
+
+const lightProgressbar = createProgressbarTheme();
 
 const lightRadio = createRadioTheme(lightBody);
 
@@ -291,6 +294,7 @@ export const lightTheme: AppTheme = {
   pagination: lightPagination,
   pinbox: lightPinbox,
   phonebox: lightPhonebox,
+  progressbar: lightProgressbar,
   radio: lightRadio,
   rating: lightRating,
   richEditor: lightRichEditor,
@@ -364,6 +368,7 @@ export {
   lightPagination,
   lightPinbox,
   lightPhonebox,
+  lightProgressbar,
   lightRadio,
   lightRating,
   lightRichEditor,
