@@ -183,150 +183,170 @@ describe("RichEditor", () => {
         });
       });
     });
+  });
 
-    context("with markdown-editor", () => {
-      beforeEach(() => {
-        cy.mount(<ProductRichEditor mode="markdown-editor" value="" />);
-        cy.wait(1000);
+  context("with markdown-editor", () => {
+    beforeEach(() => {
+      cy.mount(<ProductRichEditor mode="markdown-editor" value="" />);
+      cy.wait(1000);
+    });
+
+    it("should renders the button markdown", () => {
+      cy.findAllByLabelText("rich-editor-toolbar-code-block").should("exist");
+    });
+
+    context("when pressing toolbar code block", () => {
+      it("renders the code-editor", () => {
+        cy.findByLabelText("rich-editor-code").should("not.exist");
+        cy.findAllByLabelText("rich-editor-toolbar-code-block")
+          .should("exist")
+          .click();
+        cy.findByLabelText("rich-editor-code").should("exist");
       });
 
-      it("should renders the button markdown", () => {
-        cy.findAllByLabelText("rich-editor-toolbar-code-block").should("exist");
-      });
-
-      context("when pressing toolbar code block", () => {
-        it("renders the code-editor", () => {
+      context("when open the combobox", () => {
+        it("renders properly list element (not removed padding)", () => {
           cy.findByLabelText("rich-editor-code").should("not.exist");
+          cy.findByLabelText("rich-editor-content")
+            .click()
+            .should("be.focused")
+            .type("- Test{enter}{enter}");
           cy.findAllByLabelText("rich-editor-toolbar-code-block")
             .should("exist")
             .click();
           cy.findByLabelText("rich-editor-code").should("exist");
+          cy.findByRole("combobox").click();
+
+          // editor list padding
+          cy.get("li").eq(0).should("have.css", "padding", "0px");
+
+          // combobox list padding
+          cy.get("li").eq(1).should("have.css", "padding", "8px 12px");
         });
       });
+    });
 
-      context("when typing triple backtick", () => {
-        it("renders the code-editor", () => {
-          cy.findByLabelText("rich-editor-code").should("not.exist");
-          cy.findByLabelText("rich-editor-content").realClick().type("```");
-          cy.findByLabelText("rich-editor-code").should("exist");
-        });
+    context("when typing triple backtick", () => {
+      it("renders the code-editor", () => {
+        cy.findByLabelText("rich-editor-code").should("not.exist");
+        cy.findByLabelText("rich-editor-content").realClick().type("```");
+        cy.findByLabelText("rich-editor-code").should("exist");
       });
+    });
 
-      context("complex behavior", () => {
-        beforeEach(() => {
-          cy.findByLabelText("rich-editor-code").should("not.exist");
-          cy.findByLabelText("rich-editor-content")
-            .click()
-            .should("be.focused")
-            .type("Test{enter}```");
-        });
-        context(
-          "when line 1 is text, line 2 is empty, line 3 code editor",
-          () => {
-            context("when typing arrow up", () => {
-              it("should respect the empty space", () => {
-                cy.findByLabelText("rich-editor-content")
-                  .realClick()
-                  .realType("{uparrow}");
+    context("complex behavior", () => {
+      beforeEach(() => {
+        cy.findByLabelText("rich-editor-code").should("not.exist");
+        cy.findByLabelText("rich-editor-content")
+          .click()
+          .should("be.focused")
+          .type("Test{enter}```");
+      });
+      context(
+        "when line 1 is text, line 2 is empty, line 3 code editor",
+        () => {
+          context("when typing arrow up", () => {
+            it("should respect the empty space", () => {
+              cy.findByLabelText("rich-editor-content")
+                .realClick()
+                .realType("{uparrow}");
 
-                cy.window().then((win) => {
-                  const sel = win.getSelection();
-                  const anchorNode = sel?.anchorNode;
+              cy.window().then((win) => {
+                const sel = win.getSelection();
+                const anchorNode = sel?.anchorNode;
 
-                  // The empty <p><br></p> — anchorNode will be the <p> itself or its <br>
-                  const el =
-                    anchorNode instanceof Element
-                      ? anchorNode
-                      : anchorNode?.parentElement;
+                // The empty <p><br></p> — anchorNode will be the <p> itself or its <br>
+                const el =
+                  anchorNode instanceof Element
+                    ? anchorNode
+                    : anchorNode?.parentElement;
 
-                  // Should NOT be inside the monaco/code block
-                  expect(el?.closest("[data-monaco-block-id]")).to.be.null;
+                // Should NOT be inside the monaco/code block
+                expect(el?.closest("[data-monaco-block-id]")).to.be.null;
 
-                  // Should NOT be on line 1 (a <p> with text "Test")
-                  expect(el?.textContent?.trim()).to.equal("");
+                // Should equal on the line 1 (a <p> with text "Test")
+                expect(el?.textContent?.trim()).to.equal("Test");
 
-                  // Should be a <p> with BR element (the empty line 2)
-                  expect(el?.nodeName).to.equal("P");
-                });
+                // Should be a <p> with BR element (the empty line 2)
+                expect(el?.nodeName).to.equal("P");
               });
             });
-          }
-        );
-
-        context("when triple backtick after arrow down", () => {
-          beforeEach(() => {
-            cy.findByLabelText("rich-editor-content")
-              .realClick()
-              .realType("{downarrow}```");
           });
-          it("should render double code-editor", () => {
-            cy.findAllByLabelText("rich-editor-code").should("have.length", 2);
-          });
+        }
+      );
 
-          context("when typing arrow up", () => {
-            it("should move to markdown-editor first", () => {
-              cy.realType("{uparrow}");
-
-              cy.findByLabelText("rich-editor-content").should("be.focused");
-            });
-          });
-        });
-      });
-
-      context("when code-editor was created", () => {
+      context("when triple backtick after arrow down", () => {
         beforeEach(() => {
-          cy.findByLabelText("rich-editor-code").should("not.exist");
           cy.findByLabelText("rich-editor-content")
-            .click()
-            .should("be.focused")
-            .type("```");
+            .realClick()
+            .realType("{downarrow}```");
+        });
+
+        it("should render double code-editor", () => {
+          cy.findAllByLabelText("rich-editor-code").should("have.length", 2);
         });
 
         context("when typing arrow up", () => {
-          it("should move to the upside in rich-editor", () => {
-            cy.findByLabelText("rich-editor-content").should("not.focused");
-
-            cy.findByLabelText("rich-editor-code")
-              .realClick()
-              .realType("const x = 1{uparrow}{uparrow}");
+          it("should move to markdown-editor first", () => {
+            cy.realType("{uparrow}");
 
             cy.findByLabelText("rich-editor-content").should("be.focused");
           });
         });
+      });
+    });
 
-        context("when typing arrow down", () => {
-          it("should move to the downside in rich-editor", () => {
+    context("when code-editor was created", () => {
+      beforeEach(() => {
+        cy.findByLabelText("rich-editor-code").should("not.exist");
+        cy.findByLabelText("rich-editor-content")
+          .click()
+          .should("be.focused")
+          .type("```");
+      });
+
+      context("when typing arrow up", () => {
+        it("should move to the upside in rich-editor", () => {
+          cy.findByLabelText("rich-editor-content").should("not.be.focused");
+
+          cy.findByLabelText("rich-editor-code")
+            .realClick()
+            .realType("const x = 1{uparrow}{uparrow}");
+
+          cy.findByLabelText("rich-editor-content").should("be.focused");
+        });
+      });
+
+      context("when typing arrow down", () => {
+        it("should move to the downside in rich-editor", () => {
+          cy.findByLabelText("rich-editor-content").should("not.focused");
+
+          cy.findByLabelText("rich-editor-code").realType(
+            "const x = 1{downarrow}{downarrow}"
+          );
+
+          cy.findByLabelText("rich-editor-content").should("be.focused");
+        });
+      });
+
+      context("when typing backspace", () => {
+        context("when value is empty", () => {
+          it("should remove the code editor", () => {
             cy.findByLabelText("rich-editor-content").should("not.focused");
 
-            cy.findByLabelText("rich-editor-code").realType(
-              "const x = 1{downarrow}{downarrow}"
-            );
+            cy.findByLabelText("rich-editor-code").realType("{backspace}");
 
-            cy.findByLabelText("rich-editor-content").should("be.focused");
+            cy.findByLabelText("rich-editor-code").should("not.exist");
           });
         });
 
-        context("when typing backspace", () => {
-          context("when value is empty", () => {
-            it("should remove the code editor", () => {
-              cy.findByLabelText("rich-editor-content").should("not.focused");
+        context("when value is not empty", () => {
+          it("only remove value on the code editor", () => {
+            cy.findByLabelText("rich-editor-content").should("not.focused");
 
-              cy.findByLabelText("rich-editor-code").realType("{backspace}");
+            cy.findByLabelText("rich-editor-code").realType("value{backspace}");
 
-              cy.findByLabelText("rich-editor-code").should("not.exist");
-            });
-          });
-
-          context("when value is not empty", () => {
-            it("only remove value on the code editor", () => {
-              cy.findByLabelText("rich-editor-content").should("not.focused");
-
-              cy.findByLabelText("rich-editor-code").realType(
-                "value{backspace}"
-              );
-
-              cy.shouldHaveEditorFromValue("rich-editor-code", "valu");
-            });
+            cy.shouldHaveEditorFromValue("rich-editor-code", "valu");
           });
         });
       });
@@ -338,8 +358,7 @@ describe("RichEditor", () => {
       it("renders a textarea with 300px", () => {
         cy.mount(
           <ProductRichEditor
-            autogrow
-            value={generateSentence({ minLen: 20, maxLen: 250, seed: 1234 })}
+            value={generateSentence({ minLen: 250, maxLen: 250, seed: 1234 })}
             height={300}
           />
         );
@@ -358,13 +377,13 @@ describe("RichEditor", () => {
         cy.mount(
           <ProductRichEditor
             autogrow
-            value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+            value={generateSentence({ minLen: 250, maxLen: 250, seed: 1234 })}
           />
         );
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "480px"
+          "600px"
         );
       });
 
@@ -373,18 +392,18 @@ describe("RichEditor", () => {
           cy.mount(
             <ProductRichEditor
               autogrow
-              value={generateSentence({ minLen: 200, maxLen: 250, seed: 1234 })}
+              value={generateSentence({ minLen: 250, maxLen: 250, seed: 1234 })}
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "480px")
+            .should("have.css", "height", "600px")
             .click()
             .type("{enter}{enter}{enter}");
 
           cy.findByLabelText("rich-editor-content").should(
             "have.css",
             "height",
-            "576px"
+            "696px"
           );
         });
       });
@@ -559,7 +578,7 @@ describe("RichEditor", () => {
         it("should add the empty space", () => {
           const input = `### Heading line 1
 
-Paragraph line 3`;
+  Paragraph line 3`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .find("p")
@@ -571,7 +590,7 @@ Paragraph line 3`;
       context("when the next line is paragraph", () => {
         it("should not have empty space", () => {
           const input = `### Heading line 1
-Paragraph line 2`;
+  Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .find("p")
@@ -586,8 +605,7 @@ Paragraph line 2`;
         it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
 
-
-Paragraph line 2`;
+  Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -602,9 +620,9 @@ Paragraph line 2`;
       context("when the next line all paragraph", () => {
         it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
-Paragraph line 2
-Paragraph line 3
-Paragraph line 4`;
+  Paragraph line 2
+  Paragraph line 3
+  Paragraph line 4`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -622,7 +640,7 @@ Paragraph line 4`;
         it("should render normally", () => {
           const input = `- Unordered list
 
-Paragraph line`;
+  Paragraph line`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -637,8 +655,8 @@ Paragraph line`;
       context("when a lot of list", () => {
         it("should render list as usual", () => {
           const input = `- Unordered list 1
-- Unordered list 2
-- Unordered list 3`;
+  - Unordered list 2
+  - Unordered list 3`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")

@@ -2206,7 +2206,7 @@ const EditorArea = styled.div<{
     margin: 0 !important;
   }
 
-  li {
+  li:not(#combo-list li) {
     display: list-item !important;
     padding: 0 !important;
   }
