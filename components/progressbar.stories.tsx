@@ -253,4 +253,5 @@ const Section = styled.div`
 
 const Title = styled.h2`
   margin: 0;
+  font-weight: 500;
 `;
