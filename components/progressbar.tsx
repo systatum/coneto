@@ -17,6 +17,7 @@ export interface ProgressbarStyles {
 }
 
 export const ProgressbarVariant = {
+  Neutral: "neutral",
   Primary: "primary",
   Success: "success",
   Danger: "danger",
@@ -48,7 +49,7 @@ function Progressbar({
   indeterminate = false,
   labeling = "none",
   directionTo = ProgressbarDirectionTo.Right,
-  variant = ProgressbarVariant.Primary,
+  variant = ProgressbarVariant.Neutral,
   styles,
 }: ProgressbarProps) {
   const { currentTheme } = useTheme();
@@ -130,7 +131,7 @@ const Fill = styled.div<{
   height: 100%;
   background-color: ${({ $theme, $variant }) => $theme?.[$variant]?.barColor};
 
-  transition: width 0.3s ease;
+  transition: width 0.1s linear;
 
   ${({ $indeterminate, $directionTo, $value }) => {
     if ($indeterminate) {
