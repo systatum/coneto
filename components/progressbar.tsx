@@ -64,12 +64,17 @@ function Progressbar({
       aria-valuenow={indeterminate ? undefined : clampedValue}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label="Progress"
+      aria-label="progressbar"
       $labeling={labeling}
       $style={styles?.containerStyle}
     >
-      <Track $theme={progressBarTheme} $variant={variant}>
+      <Track
+        aria-label="progressbar-track"
+        $theme={progressBarTheme}
+        $variant={variant}
+      >
         <Fill
+          aria-label="progressbar-fill"
           $value={clampedValue}
           $theme={progressBarTheme}
           $variant={variant}
@@ -81,6 +86,7 @@ function Progressbar({
 
       {showLabel && (
         <Label
+          aria-label="progressbar-label"
           $theme={progressBarTheme}
           $variant={variant}
           $style={styles?.labelStyle}
