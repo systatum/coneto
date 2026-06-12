@@ -145,17 +145,15 @@ const Fill = styled.div<{
         return css`
           right: 0;
           left: auto;
-          width: 40%;
-          animation: ${indeterminateSlideRTL} 2.1s ease-in-out infinite;
-          transform-origin: right center;
+          animation: ${indeterminateSlideRTL} 2.1s
+            cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
         `;
       } else {
         return css`
           left: 0;
           right: auto;
-          width: 40%;
-          animation: ${indeterminateSlide} 2.1s ease-in-out infinite;
-          transform-origin: left center;
+          animation: ${indeterminateSlide} 2.1s
+            cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
         `;
       }
     } else {
@@ -193,15 +191,16 @@ const Label = styled.span<{
 
   ${({ $style }) => $style}
 `;
-
 const indeterminateSlide = keyframes`
-  0%   { transform: translateX(-400%) scaleX(0.9); }
-  100% { transform: translateX(400%)  scaleX(0.9); }
+  0%   { left: -35%; right: 100%; }
+  60%  { left: 100%; right: -90%; }
+  100% { left: 100%; right: -90%; }
 `;
 
 const indeterminateSlideRTL = keyframes`
-  0%   { transform: translateX(400%)  scaleX(0.9); }
-  100% { transform: translateX(-400%) scaleX(0.9); }
+  0%   { right: -35%; left: 100%; }
+  60%  { right: 100%; left: -90%; }
+  100% { right: 100%; left: -90%; }
 `;
 
 export { Progressbar };
