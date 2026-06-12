@@ -1,5 +1,6 @@
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ProgressbarThemeConfig, useTheme } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface ProgressbarProps {
   variant?: ProgressbarVariant;
@@ -8,6 +9,8 @@ export interface ProgressbarProps {
   directionTo?: ProgressbarDirectionTo;
   styles?: ProgressbarStyles;
   value?: number;
+  className?: string;
+  id?: string;
 }
 
 export interface ProgressbarStyles {
@@ -47,10 +50,12 @@ export type ProgressbarDirectionTo =
 function Progressbar({
   value = 0,
   indeterminate = false,
-  labeling = "none",
+  labeling = ProgressbarLabelling.None,
   directionTo = ProgressbarDirectionTo.Right,
   variant = ProgressbarVariant.Neutral,
   styles,
+  className,
+  id,
 }: ProgressbarProps) {
   const { currentTheme } = useTheme();
   const progressBarTheme = currentTheme?.progressbar;
@@ -60,6 +65,8 @@ function Progressbar({
 
   return (
     <Wrapper
+      id={id}
+      className={applyClassName("progressbar", className)}
       role="progressbar"
       aria-valuenow={indeterminate ? undefined : clampedValue}
       aria-valuemin={0}
