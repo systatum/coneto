@@ -111,8 +111,7 @@ const Track = styled.div<{
 }>`
   position: relative;
   flex: 1;
-  height: 8px;
-  border-radius: 9999px;
+  height: 6px;
   background-color: ${({ $theme, $variant }) => $theme?.[$variant]?.trackColor};
   overflow: hidden;
 `;
@@ -129,7 +128,6 @@ const Fill = styled.div<{
   top: 0;
   bottom: 0;
   height: 100%;
-  border-radius: 9999px;
   background-color: ${({ $theme, $variant }) => $theme?.[$variant]?.barColor};
 
   transition: width 0.3s ease;
@@ -140,7 +138,7 @@ const Fill = styled.div<{
         return css`
           right: 0;
           left: auto;
-          width: 30%;
+          width: 40%;
           animation: ${indeterminateSlideRTL} 2.1s ease-in-out infinite;
           transform-origin: right center;
         `;
@@ -148,7 +146,7 @@ const Fill = styled.div<{
         return css`
           left: 0;
           right: auto;
-          width: 30%;
+          width: 40%;
           animation: ${indeterminateSlide} 2.1s ease-in-out infinite;
           transform-origin: left center;
         `;
