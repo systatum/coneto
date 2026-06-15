@@ -282,7 +282,10 @@ function BaseTitleSection({
                   background-color: ${titleTheme?.icon?.backgroundColor};
 
                   ${section?.styles?.toggleActionStyle}
+                  ${filteredActionsWithSize?.[index]?.styles?.self}
                 `,
+                containerStyle:
+                  filteredActionsWithSize?.[index]?.styles?.containerStyle,
               }}
               maxActionsBeforeCollapsing={section.actions?.length}
               hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
