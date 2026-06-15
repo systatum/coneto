@@ -49,16 +49,12 @@ It supports both **controlled** and **uncontrolled** modes, allowing external st
 
 #### Controlled Mode
 - Provide \`currentPage\`
-- Handle page updates through:
-  - \`onNextPageRequested\`
-  - \`onPrevPageRequested\`
-  - \`control.onChange\`
+- Handle page updates through \`onChange\`
 
 \`\`\`tsx
 <Carousel
   currentPage={page}
-  onNextPageRequested={({ nextPage }) => setPage(nextPage)}
-  onPrevPageRequested={({ prevPage }) => setPage(prevPage)}
+  onChange={({ page }) => setPage(page)}
 />
 \`\`\`
 
@@ -129,15 +125,9 @@ export const Default: Story = {
 
     return (
       <Carousel
-        control={{
-          onChange: (page) => setState(page),
-        }}
         currentPage={state}
-        onNextPageRequested={({ nextPage }) => {
-          setState(nextPage);
-        }}
-        onPrevPageRequested={({ prevPage }) => {
-          setState(prevPage);
+        onChange={({ page }) => {
+          setState(page);
         }}
       >
         {Array.from({ length: 10 }, (_, i) => (
@@ -168,15 +158,9 @@ export const AutoHeight: Story = {
 
     return (
       <Carousel
-        control={{
-          onChange: (page) => setState(page),
-        }}
         currentPage={state}
-        onNextPageRequested={({ nextPage }) => {
-          setState(nextPage);
-        }}
-        onPrevPageRequested={({ prevPage }) => {
-          setState(prevPage);
+        onChange={({ page }) => {
+          setState(page);
         }}
         autoHeight
       >
