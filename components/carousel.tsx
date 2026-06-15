@@ -13,8 +13,7 @@ import styled, { css, CSSProp } from "styled-components";
 export interface CarouselProps {
   length?: number;
   currentPage?: number;
-  onNextPageRequested?: (props?: { nextPage?: number }) => void;
-  onPrevPageRequested?: (props?: { prevPage?: number }) => void;
+  onChange?: (event?: CarouselChangeEvent) => void;
   initialPage?: number;
   control?: boolean | CarouselControl;
   styles?: CarouselStyles;
@@ -26,7 +25,11 @@ export interface CarouselProps {
 
 export interface CarouselControl {
   position?: CarouselPosition;
-  onChange?: (page?: number) => void;
+}
+
+export interface CarouselChangeEvent {
+  page: number;
+  preventDefault: () => void;
 }
 
 export const CarouselPosition = {
@@ -48,14 +51,13 @@ function Carousel({
   children,
   length,
   currentPage,
-  onNextPageRequested,
-  onPrevPageRequested,
   initialPage = 0,
   control = true,
   styles,
   id,
   className,
   autoHeight,
+  onChange,
 }: CarouselProps) {
   const slides = Children.toArray(children);
   const totalPages = length ?? slides.length;
@@ -103,31 +105,41 @@ function Carousel({
 
   const goTo = useCallback(
     (page: number) => {
-      if (!isControlled) setInternalPage(clamp(page, 0, totalPages - 1));
-      if (typeof control === "object") {
-        control?.onChange(clamp(page, 0, totalPages - 1));
+      const nextPage = clamp(page, 0, totalPages - 1);
+
+      let prevented = false;
+
+      if (onChange) {
+        onChange({
+          page: nextPage,
+          preventDefault: () => {
+            prevented = true;
+          },
+        });
+      }
+
+      if (prevented) {
+        return;
+      }
+
+      if (!isControlled) {
+        setInternalPage(nextPage);
       }
     },
-    [isControlled, totalPages]
+    [isControlled, totalPages, onChange]
   );
 
   const handlePrev = useCallback(() => {
     const prevPage = activePage - 1;
-    if (onPrevPageRequested) {
-      onPrevPageRequested({ prevPage });
-    }
 
     goTo(prevPage);
-  }, [activePage, goTo, onPrevPageRequested]);
+  }, [activePage, goTo]);
 
   const handleNext = useCallback(() => {
     const nextPage = activePage + 1;
-    if (onNextPageRequested) {
-      onNextPageRequested({ nextPage });
-    }
 
     goTo(nextPage);
-  }, [activePage, goTo, onNextPageRequested]);
+  }, [activePage, goTo]);
 
   const rootRef = useRef<HTMLDivElement>(null);
 
