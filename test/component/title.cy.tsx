@@ -1,4 +1,4 @@
-import { RiCloseFill } from "@remixicon/react";
+import { Ri24HoursFill, RiCloseFill, RiCloseLine } from "@remixicon/react";
 import { Title } from "./../../components/title";
 import { Button } from "./../../components/button";
 import { css } from "styled-components";
@@ -23,6 +23,94 @@ describe("Title", () => {
   });
 
   context("styles", () => {
+    context("title Actions (specific)", () => {
+      context("containerStyle", () => {
+        context("when given border blue color", () => {
+          it("renders the blue colors on the container", () => {
+            cy.mount(
+              <Title
+                rightSection={[
+                  {
+                    type: "actions",
+                    actions: [
+                      {
+                        icon: { image: RiCloseLine },
+                        onClick: () => {
+                          console.log("close was clicked");
+                        },
+                        styles: {
+                          containerStyle: css`
+                            border: 1px solid blue;
+                          `,
+                        },
+                      },
+                      {
+                        icon: { image: Ri24HoursFill },
+                        onClick: () => {
+                          console.log("close was clicked");
+                        },
+                      },
+                    ],
+                  },
+                ]}
+              />
+            );
+
+            cy.findAllByLabelText("action-button")
+              .parent()
+              .eq(0)
+              .should("have.css", "border", "1px solid rgb(0, 0, 255)");
+            cy.findAllByLabelText("action-button")
+              .parent()
+              .eq(1)
+              .should("not.have.css", "border", "1px solid rgb(0, 0, 255)");
+          });
+        });
+      });
+
+      context("self", () => {
+        context("when given padding 50px", () => {
+          it("renders specific style with 50px", () => {
+            cy.mount(
+              <Title
+                rightSection={[
+                  {
+                    type: "actions",
+                    actions: [
+                      {
+                        icon: { image: RiCloseLine },
+                        onClick: () => {
+                          console.log("close was clicked");
+                        },
+                        styles: {
+                          self: css`
+                            padding: 50px;
+                          `,
+                        },
+                      },
+                      {
+                        icon: { image: Ri24HoursFill },
+                        onClick: () => {
+                          console.log("close was clicked");
+                        },
+                      },
+                    ],
+                  },
+                ]}
+              />
+            );
+
+            cy.findAllByLabelText("action-button")
+              .eq(0)
+              .should("have.css", "padding", "50px");
+            cy.findAllByLabelText("action-button")
+              .eq(1)
+              .should("have.css", "padding", "20px");
+          });
+        });
+      });
+    });
+
     context("containerStyle", () => {
       context("when given gap: 20px", () => {
         it("should apply container gap", () => {
