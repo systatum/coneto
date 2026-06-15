@@ -59,3 +59,43 @@ export const Default: Story = {
     );
   },
 };
+
+export const AutoHeight: Story = {
+  render: () => {
+    const [state, setState] = useState(0);
+
+    return (
+      <Carousel
+        control={{
+          onChange: (page) => setState(page),
+        }}
+        currentPage={state}
+        onNextPageRequested={({ nextPage }) => {
+          setState(nextPage);
+        }}
+        onPrevPageRequested={({ prevPage }) => {
+          setState(prevPage);
+        }}
+        autoHeight
+      >
+        {Array.from({ length: 10 }, (_, i) => (
+          <div
+            key={i}
+            style={{
+              height: 240 - (i % 3) * 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "4rem",
+              fontWeight: 700,
+              background: `hsl(${i * 36}, 70%, 85%)`,
+              borderRadius: 12,
+            }}
+          >
+            {i + 1}
+          </div>
+        ))}
+      </Carousel>
+    );
+  },
+};
