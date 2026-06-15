@@ -273,4 +273,34 @@ describe("Carousel", () => {
       });
     });
   });
+
+  context("autoHeight", () => {
+    context("when given true", () => {
+      it("should adjust height based on active slide", () => {
+        cy.mount(
+          <Carousel autoHeight id="carousel-test">
+            <div style={{ height: "100px" }}>1</div>
+            <div style={{ height: "300px" }}>2</div>
+          </Carousel>
+        );
+
+        cy.findByLabelText("carousel").should("have.css", "height", "108px");
+
+        cy.findByLabelText("carousel-next-slide").click();
+
+        cy.findByLabelText("carousel").should("have.css", "height", "308px");
+      });
+    });
+
+    context("when given false (default)", () => {
+      it("should not set a fixed height", () => {
+        cy.mount(<ProductCarousel autoHeight={false} />);
+
+        cy.findByLabelText("carousel").should("have.css", "height", "208px");
+
+        cy.findByLabelText("carousel-next-slide").click();
+        cy.findByLabelText("carousel").should("have.css", "height", "208px");
+      });
+    });
+  });
 });
