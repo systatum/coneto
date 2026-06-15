@@ -27,7 +27,9 @@ export const Default: Story = {
 
     return (
       <Carousel
-        control
+        control={{
+          onChange: (page) => setState(page),
+        }}
         currentPage={state}
         onNextPageRequested={({ nextPage }) => {
           setState(nextPage);
