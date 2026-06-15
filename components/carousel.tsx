@@ -20,6 +20,7 @@ export interface CarouselProps {
   styles?: CarouselStyles;
   children?: ReactNode;
   className?: string;
+  autoHeight?: boolean;
   id?: string;
 }
 
@@ -54,6 +55,7 @@ function Carousel({
   styles,
   id,
   className,
+  autoHeight,
 }: CarouselProps) {
   const slides = Children.toArray(children);
   const totalPages = length ?? slides.length;
@@ -69,6 +71,35 @@ function Carousel({
   const activePage = isControlled
     ? clamp(currentPage, 0, Math.max(0, totalPages - 1))
     : internalPage;
+
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [height, setHeight] = useState<number>();
+
+  useEffect(() => {
+    if (!autoHeight) {
+      return;
+    }
+
+    const slide = slideRefs.current[activePage];
+
+    if (!slide) {
+      return;
+    }
+
+    const updateHeight = () => {
+      setHeight(slide.offsetHeight);
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+
+    resizeObserver.observe(slide);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [activePage, autoHeight]);
 
   const goTo = useCallback(
     (page: number) => {
@@ -151,6 +182,12 @@ function Carousel({
   };
 
   useEffect(() => {
+    console.log("active", activePage);
+    console.log("slide", slideRefs.current[activePage]);
+    console.log("height", slideRefs.current[activePage]?.offsetHeight);
+  }, [activePage]);
+
+  useEffect(() => {
     if (!isControlled) {
       setInternalPage(clamp(initialPage, 0, Math.max(0, totalPages - 1)));
     }
@@ -173,12 +210,16 @@ function Carousel({
       id={id}
       className={applyClassName("carousel", className)}
       $style={styles?.containerStyle}
+      $height={autoHeight ? height : undefined}
     >
       <Track $page={activePage} $dragging={dragging} $dragOffset={dragOffset}>
         {slides.map((slide, i) => (
           <Slide
             key={i}
             role="group"
+            ref={(element) => {
+              slideRefs.current[i] = element;
+            }}
             aria-roledescription="slide"
             aria-label={`carousel-slide-${i + 1}-of-${totalPages}`}
             aria-hidden={i !== activePage}
@@ -236,12 +277,19 @@ function Carousel({
   );
 }
 
-const Container = styled.div<{ $style?: CSSProp }>`
+const Container = styled.div<{ $style?: CSSProp; $height?: number }>`
   position: relative;
   width: 100%;
   overflow: hidden;
   touch-action: pan-y;
   user-select: none;
+
+  ${({ $height }) =>
+    $height &&
+    css`
+      height: ${$height}px;
+      transition: height 300ms ease;
+    `};
 
   ${({ $style }) => $style}
 `;
@@ -252,6 +300,7 @@ const Track = styled.div<{
   $dragging?: boolean;
 }>`
   display: flex;
+  align-items: flex-start;
   will-change: transform;
   transition: ${({ $dragging }) =>
     $dragging ? "none" : "transform 380ms cubic-bezier(0.4, 0, 0.2, 1)"};
