@@ -25,6 +25,7 @@ export interface CarouselProps {
 
 export interface CarouselControl {
   position?: CarouselPosition;
+  onChange?: (page?: number) => void;
 }
 
 export const CarouselPosition = {
@@ -72,6 +73,9 @@ function Carousel({
   const goTo = useCallback(
     (page: number) => {
       if (!isControlled) setInternalPage(clamp(page, 0, totalPages - 1));
+      if (typeof control === "object") {
+        control?.onChange(clamp(page, 0, totalPages - 1));
+      }
     },
     [isControlled, totalPages]
   );
@@ -356,7 +360,7 @@ const Controls = styled.div<{
   ${({ $position }) =>
     typeof $position === "boolean"
       ? controlPositionStyles["bottom-center"]
-      : controlPositionStyles[$position?.position]}
+      : controlPositionStyles[$position?.position ?? "bottom-center"]}
 
   ${({ $controlStyle }) => $controlStyle}
 `;
