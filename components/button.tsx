@@ -435,7 +435,7 @@ const ButtonLabel = styled.span<{
   white-space: nowrap;
   text-overflow: ellipsis;
   min-width: 0;
-  flex: 1;
+  flex: 0 1 auto;
 `;
 
 export interface ButtonTipMenuContainerStyles {
@@ -557,6 +557,9 @@ const SIZE_STYLES: Record<NonNullable<ButtonProps["size"]>, CSSProp> = {
     padding: 0 24px;
   `,
   icon: css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 36px;
     height: 36px;
     padding: 0;

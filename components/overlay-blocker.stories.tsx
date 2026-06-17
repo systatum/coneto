@@ -23,6 +23,8 @@ const meta: Meta<typeof OverlayBlocker> = {
   - **Function**: Custom behavior
 - 🎨 Fully styleable via \`styles.self\` (CSSProp compatible)
 - 🔧 Supports imperative \`open\` and \`close\` via \`ref\`
+- ♿ Accessibility support via \`exemptRegions\` to keep specific regions (by ID or class name) scrollable and interactive while the overlay is active
+
 
 ### 🛠 Usage
 \`\`\`tsx
@@ -39,9 +41,34 @@ const meta: Meta<typeof OverlayBlocker> = {
 </OverlayBlocker>
 \`\`\`
 
+
+## 🧠 Using \`exemptRegions\`
+
+Pass an array of ID or class locators where scroll-blocking will not take effect.
+
+<OverlayBlocker
+  show={isOpen}
+  zIndex={9999}
+  exemptRegions={[
+    ".coneto-paper-dialog",
+    ".coneto-dialog",
+    ".coneto-sidebar",
+  ]}
+  onClick={({ close }) => {
+    close();
+  }}
+>
+  <p>Your content here</p>
+</OverlayBlocker>
+
 ### 📝 Notes
 - Overlay automatically disappears when \`show={false}\`.
 - Use \`ref\` to programmatically open or close the overlay.
+- While active, the overlay prevents page scrolling by locking the document body.
+- Regions specified in \`exemptRegions\` remain scrollable and interactive.
+- Values passed to \`exemptRegions\` can be either element IDs (\`#\`) or class names (\`.\`) .
+- Default exempt regions include \`coneto-paper-dialog\`, \`coneto-dialog\`, and \`coneto-sidebar\`.
+- Clicking the overlay triggers the behavior configured via \`onClick\`.
       `,
       },
     },
@@ -100,7 +127,11 @@ export const Default: Story = {
     return (
       <>
         <Button onClick={() => ref?.current?.open()}>Open Overlay</Button>
-        <OverlayBlocker ref={ref} onClick="close" />
+        <OverlayBlocker
+          exemptRegions={["#aria-test"]}
+          ref={ref}
+          onClick="close"
+        />
       </>
     );
   },

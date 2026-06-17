@@ -69,6 +69,7 @@ import {
   createWheelTheme,
   createLaunchpadTheme,
   createToastTheme,
+  createProgressbarTheme,
 } from "./creator";
 
 // Dark
@@ -551,6 +552,43 @@ const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
 
 const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
 
+const darkProgressbar = createProgressbarTheme({
+  primary: {
+    backgroundColor: "#1e293b",
+    textColor: "#93c5fd",
+    barColor: "#6C77FF",
+    trackColor: "#334155",
+  },
+
+  success: {
+    backgroundColor: "#1f2d1f",
+    textColor: "#86efac",
+    barColor: "#3DDC84",
+    trackColor: "#2f4a33",
+  },
+
+  danger: {
+    backgroundColor: "#2d1f1f",
+    textColor: "#fca5a5",
+    barColor: "#F06B82",
+    trackColor: "#4a2f2f",
+  },
+
+  warning: {
+    backgroundColor: "#2d241f",
+    textColor: "#fdba74",
+    barColor: "#E6B84F",
+    trackColor: "#4a392f",
+  },
+
+  neutral: {
+    backgroundColor: "#1f2937",
+    textColor: "#cbd5e1",
+    barColor: "#94A3B8",
+    trackColor: "#334155",
+  },
+});
+
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#1465d3bf",
@@ -728,7 +766,8 @@ const darkTitle = createTitleTheme(darkBody, {
   },
 
   icon: {
-    backgroundColor: "#303030",
+    backgroundColor: "transparent",
+    hoverBackgroundColor: "rgba(0, 0, 0, 0.45)",
   },
 });
 
@@ -886,6 +925,7 @@ export const darkTheme: AppTheme = {
   pagination: darkPagination,
   pinbox: darkPinbox,
   phonebox: darkPhonebox,
+  progressbar: darkProgressbar,
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
@@ -958,6 +998,7 @@ export {
   darkPagination,
   darkPinbox,
   darkPhonebox,
+  darkProgressbar,
   darkRadio,
   darkRating,
   darkRichEditor,

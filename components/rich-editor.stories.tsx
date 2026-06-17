@@ -862,7 +862,7 @@ fruits.forEach(fruit => {
               actions: CODE_EDITOR_ACTIONS,
             }}
             mode="markdown-editor"
-            onChange={(e) => setValue2(e)}
+            onChange={(e) => setValue1(e)}
             value={value1}
           />
         </div>
@@ -883,7 +883,7 @@ fruits.forEach(fruit => {
               actions: CODE_EDITOR_ACTIONS,
             }}
             mode="markdown-editor"
-            onChange={(e) => setValue1(e)}
+            onChange={(e) => setValue2(e)}
             value={value2}
           />
         </div>

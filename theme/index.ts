@@ -4,6 +4,7 @@ import { ToolbarVariant } from "./../components/toolbar";
 import { BaseSteplineItem } from "./../constants/step-component-util";
 import { TipMenuVariant } from "./../components/tip-menu";
 import { ToastVariant } from "./../components/toast";
+import { ProgressbarVariant } from "./../components/progressbar";
 
 // body
 export interface BodyThemeConfig {
@@ -474,6 +475,17 @@ export interface PhoneboxThemeConfig extends BodyThemeConfig {
   optionHighlightedBackground?: string;
 }
 
+// progressbar.tsx
+export interface ProgressbarVariantTheme
+  extends Omit<BodyThemeConfig, "borderColor"> {
+  barColor: string;
+  trackColor: string;
+}
+
+export type ProgressbarThemeConfig = {
+  [K in ProgressbarVariant]: ProgressbarVariantTheme;
+};
+
 // radio.tsx
 export interface RadioThemeConfig extends BodyThemeConfig {
   checkedBorderColor?: string;
@@ -672,6 +684,7 @@ export interface TitleThemeConfig
   };
 
   icon?: {
+    hoverBackgroundColor?: string;
     backgroundColor?: string;
     textColor?: string;
   };
@@ -822,6 +835,7 @@ export interface AppTheme {
   pagination: PaginationThemeConfig;
   pinbox: PinboxThemeConfig;
   phonebox: PhoneboxThemeConfig;
+  progressbar: ProgressbarThemeConfig;
   radio: RadioThemeConfig;
   rating: RatingThemeConfig;
   richEditor: RichEditorThemeConfig;

@@ -6,6 +6,7 @@ import {
   RiDeleteBin2Line,
   RiForbid2Line,
   RiReactjsLine,
+  RiRefreshLine,
   RiSpam2Line,
 } from "@remixicon/react";
 import {
@@ -132,7 +133,7 @@ describe("Table", () => {
   }));
 
   function BasicTable(
-    props: Omit<TableProps, "children" | "columns"> & { hasRowGroup?: boolean }
+    props: Partial<Omit<TableProps, "children">> & { hasRowGroup?: boolean }
   ) {
     const [selectedItems, setSelectedItems] = useState([]);
 
@@ -185,6 +186,170 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("columns prop", () => {
+    context("styles", () => {
+      context("containerStyle", () => {
+        context("when given background with red color", () => {
+          it("renders background color with rgb(255, 0, 0)", () => {
+            cy.mount(
+              <BasicTable
+                columns={[
+                  {
+                    id: "name",
+                    caption: "Name",
+                    sortable: true,
+                    styles: {
+                      containerStyle: css`
+                        background-color: red;
+                      `,
+                    },
+                  },
+                  {
+                    id: "type",
+                    caption: "Type",
+                    sortable: true,
+                  },
+                ]}
+              />
+            );
+
+            cy.findAllByLabelText("table-row-cell")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 0, 0)");
+          });
+        });
+      });
+
+      context("labelStyle", () => {
+        context("when given blue color", () => {
+          it("renders the text column header with rgb(0, 0, 255)", () => {
+            cy.mount(
+              <BasicTable
+                columns={[
+                  {
+                    id: "name",
+                    caption: "Name",
+                    sortable: true,
+                    styles: {
+                      labelStyle: css`
+                        color: blue;
+                      `,
+                    },
+                  },
+                  {
+                    id: "type",
+                    caption: "Type",
+                    sortable: true,
+                  },
+                ]}
+              />
+            );
+
+            cy.findAllByLabelText("table-column-label")
+              .eq(0)
+              .should("have.css", "color", "rgb(0, 0, 255)");
+            cy.findAllByLabelText("table-column-label")
+              .eq(1)
+              .should("have.css", "color", "rgb(0, 0, 0)");
+          });
+        });
+      });
+
+      const TIP_MENU_ACTION = (
+        columnCaption: "from" | "content"
+      ): TableSubMenuList[] => {
+        return [
+          {
+            caption: "Sort Ascending",
+            icon: {
+              image: RiArrowUpSLine,
+            },
+            onClick: () => {},
+          },
+          {
+            caption: "Reset Sorting",
+            icon: {
+              image: RiRefreshLine,
+            },
+            onClick: () => {},
+          },
+        ];
+      };
+
+      context("dropdownSortableStyle", () => {
+        context("when given width 400px", () => {
+          it("renders the dropdown with 400px", () => {
+            cy.mount(
+              <BasicTable
+                subMenuList={TIP_MENU_ACTION}
+                columns={[
+                  {
+                    id: "name",
+                    caption: "Name",
+                    sortable: true,
+                    styles: {
+                      dropdownSortableStyle: css`
+                        width: 400px;
+                      `,
+                    },
+                  },
+                  {
+                    id: "type",
+                    caption: "Type",
+                    sortable: true,
+                  },
+                ]}
+              />
+            );
+
+            cy.get("button").eq(0).click();
+            cy.findAllByLabelText("tip-menu")
+              .eq(0)
+              .should("have.css", "width", "400px");
+
+            // check also on default width
+            cy.get("button").eq(1).click();
+            cy.findAllByLabelText("tip-menu")
+              .eq(1)
+              .should("have.css", "width", "235px");
+          });
+        });
+      });
+      context("toggleSortableStyle", () => {
+        context("when given background red", () => {
+          it("renders the trigger style with rgb(255, 0, 0)", () => {
+            cy.mount(
+              <BasicTable
+                subMenuList={TIP_MENU_ACTION}
+                columns={[
+                  {
+                    id: "name",
+                    caption: "Name",
+                    sortable: true,
+                    styles: {
+                      toggleSortableStyle: css`
+                        background-color: red;
+                      `,
+                    },
+                  },
+                  {
+                    id: "type",
+                    caption: "Type",
+                    sortable: true,
+                  },
+                ]}
+              />
+            );
+
+            cy.get("button")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 0, 0)");
+          });
+        });
+      });
+    });
+  });
 
   context("when children with function", () => {
     type SeparateMode = "row" | "group" | "group-separate-row";
