@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   KeyboardEvent,
   ReactNode,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useMemo,
@@ -2715,44 +2716,96 @@ function buildTurndownRules(tokenRenderers: Record<string, TokenRenderer>) {
 
 function useTokenPortals(
   editorRef: React.RefObject<HTMLDivElement>,
-  tokenRenderers?: Record<
-    string,
-    { endToken: string; render: (word: string) => ReactNode }
-  >
+  tokenRenderers?: Record<string, TokenRenderer>
 ) {
   const [portals, setPortals] = useState<React.ReactPortal[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+  // Track which nodes already have a portal mounted
+  const mountedNodes = useRef<Set<HTMLElement>>(new Set());
+
+  const scanAndRender = useCallback(
+    (source?: MutationRecord[]) => {
+      if (!editorRef.current || !tokenRenderers) return;
+
+      // If mutation came only from characterData inside a token, skip re-render
+      // — the onInput handler on Badge already updated data-token-word directly
+      if (source?.length) {
+        const allInsideToken = source.every((m) =>
+          (m.target as HTMLElement).closest?.("[data-token-start]")
+        );
+        if (allInsideToken) return;
+      }
+
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        const nodes = editorRef.current?.querySelectorAll<HTMLElement>(
+          "[data-token-start] > span[contenteditable='false']"
+        );
+        if (!nodes) return;
+
+        let changed = false;
+        const newPortals = Array.from(nodes).map((node) => {
+          const outer = node.closest<HTMLElement>("[data-token-start]")!;
+          const startToken = outer.dataset.tokenStart!;
+          const word = outer.dataset.tokenWord!;
+          const renderer = tokenRenderers[startToken];
+          if (!renderer) return null;
+
+          // Skip re-render if this node already has a portal
+          if (mountedNodes.current.has(node)) {
+            // Return existing portal — find it from current state
+            return (
+              portals.find((p) => (p as any).containerInfo === node) ?? null
+            );
+          }
+
+          changed = true;
+          mountedNodes.current.add(node);
+
+          return createPortal(
+            <span style={{ display: "inline-flex", alignItems: "center" }}>
+              {renderer.render(word)}
+            </span>,
+            node
+          );
+        });
+
+        // Clean up nodes that are no longer in the DOM
+        mountedNodes.current.forEach((n) => {
+          if (!editorRef.current?.contains(n)) {
+            mountedNodes.current.delete(n);
+            changed = true;
+          }
+        });
+
+        if (changed) {
+          setPortals(newPortals.filter(Boolean) as React.ReactPortal[]);
+        }
+      }, 50);
+    },
+    [tokenRenderers]
+  );
 
   useEffect(() => {
     if (!editorRef.current || !tokenRenderers) return;
 
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const nodes = editorRef.current?.querySelectorAll<HTMLElement>(
-        "[data-token-start] > span[contenteditable='false']"
-      );
-      if (!nodes) return;
+    scanAndRender();
 
-      const newPortals = Array.from(nodes).map((node) => {
-        const outer = node.closest<HTMLElement>("[data-token-start]")!;
-        const startToken = outer.dataset.tokenStart!;
-        const word = outer.dataset.tokenWord!;
-        const renderer = tokenRenderers[startToken];
-        if (!renderer) return null;
+    const observer = new MutationObserver((mutations) =>
+      scanAndRender(mutations)
+    );
+    observer.observe(editorRef.current, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
 
-        return createPortal(
-          <span style={{ display: "inline-flex", alignItems: "center" }}>
-            {renderer.render(word)}
-          </span>,
-          node
-        );
-      });
-
-      setPortals(newPortals.filter(Boolean) as React.ReactPortal[]);
-    }, 50);
-
-    return () => clearTimeout(timerRef.current);
-  }, []);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timerRef.current);
+      mountedNodes.current.clear();
+    };
+  }, [scanAndRender]);
 
   return portals;
 }
