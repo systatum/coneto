@@ -15,7 +15,7 @@ export interface CarouselProps {
   currentPage?: number;
   onChange?: (event?: CarouselChangeEvent) => void;
   initialPage?: number;
-  control?: boolean | CarouselControl;
+  controller?: boolean | CarouselControl;
   styles?: CarouselStyles;
   children?: ReactNode;
   className?: string;
@@ -24,7 +24,8 @@ export interface CarouselProps {
 }
 
 export interface CarouselControl {
-  position?: CarouselPosition;
+  circle?: CarouselCirclePosition | null;
+  arrow?: CarouselArrowPosition | null;
 }
 
 export interface CarouselChangeEvent {
@@ -32,13 +33,20 @@ export interface CarouselChangeEvent {
   preventDefault: () => void;
 }
 
-export const CarouselPosition = {
+export const CarouselCirclePosition = {
   BottomCenter: "bottom-center",
   TopCenter: "top-center",
 } as const;
 
-export type CarouselPosition =
-  (typeof CarouselPosition)[keyof typeof CarouselPosition];
+export type CarouselCirclePosition =
+  (typeof CarouselCirclePosition)[keyof typeof CarouselCirclePosition];
+
+export const CarouselArrowPosition = {
+  CenterSide: "center-side",
+} as const;
+
+export type CarouselArrowPosition =
+  (typeof CarouselArrowPosition)[keyof typeof CarouselArrowPosition];
 
 export interface CarouselStyles {
   containerStyle?: CSSProp;
@@ -52,7 +60,7 @@ function Carousel({
   length,
   currentPage,
   initialPage = 0,
-  control = true,
+  controller = true,
   styles,
   id,
   className,
@@ -243,6 +251,7 @@ function Carousel({
       </Track>
 
       <PrevButton
+        $controller={controller}
         onClick={handlePrev}
         disabled={atStart}
         aria-label="carousel-previous-slide"
@@ -255,6 +264,7 @@ function Carousel({
       </PrevButton>
 
       <NextButton
+        $controller={controller}
         onClick={handleNext}
         disabled={atEnd}
         aria-label="carousel-next-slide"
@@ -266,9 +276,9 @@ function Carousel({
         <RiArrowRightSLine />
       </NextButton>
 
-      {control && totalPages > 1 && (
+      {controller && totalPages > 1 && (
         <Controls
-          $position={control}
+          $controller={controller}
           $controlStyle={styles?.controlStyle}
           role="tablist"
           aria-label="carousel-slides"
@@ -329,7 +339,10 @@ const Slide = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const ArrowButton = styled.button<{ $style?: CSSProp }>`
+const ArrowButton = styled.button<{
+  $style?: CSSProp;
+  $controller?: CarouselControl | boolean;
+}>`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -369,13 +382,27 @@ const ArrowButton = styled.button<{ $style?: CSSProp }>`
 `;
 
 const PrevButton = styled(ArrowButton)`
-  left: 0.75rem;
+  ${({ $controller }) =>
+    shouldShowControl($controller, "arrow")
+      ? css`
+          left: 0.75rem;
+        `
+      : css`
+          display: none;
+        `}
 
   ${({ $style }) => $style}
 `;
 
 const NextButton = styled(ArrowButton)`
-  right: 0.75rem;
+  ${({ $controller }) =>
+    shouldShowControl($controller, "arrow")
+      ? css`
+          right: 0.75rem;
+        `
+      : css`
+          display: none;
+        `}
 
   ${({ $style }) => $style}
 `;
@@ -392,7 +419,7 @@ const defaultArrowCss = css`
   }
 `;
 
-const controlPositionStyles: Record<CarouselPosition, CSSProp> = {
+const controlPositionStyles: Record<CarouselCirclePosition, CSSProp> = {
   "bottom-center": css`
     position: absolute;
     bottom: 0.875rem;
@@ -410,7 +437,7 @@ const controlPositionStyles: Record<CarouselPosition, CSSProp> = {
 };
 
 const Controls = styled.div<{
-  $position: CarouselControl | boolean;
+  $controller: CarouselControl | boolean;
   $controlStyle?: CSSProp;
 }>`
   display: flex;
@@ -418,13 +445,31 @@ const Controls = styled.div<{
   gap: 0.4rem;
   pointer-events: none;
 
-  ${({ $position }) =>
-    typeof $position === "boolean"
-      ? controlPositionStyles["bottom-center"]
-      : controlPositionStyles[$position?.position ?? "bottom-center"]}
+  ${({ $controller }) =>
+    shouldShowControl($controller, "circle")
+      ? typeof $controller === "object"
+        ? controlPositionStyles[$controller.circle ?? "bottom-center"]
+        : controlPositionStyles["bottom-center"]
+      : css`
+          display: none;
+        `}
 
   ${({ $controlStyle }) => $controlStyle}
 `;
+
+const shouldShowControl = (
+  control: CarouselControl | boolean | undefined,
+  type: "arrow" | "circle"
+) => {
+  if (control === true) return true;
+  if (control === false) return false;
+
+  if (typeof control === "object") {
+    return control[type] !== null;
+  }
+
+  return false;
+};
 
 const ControlDot = styled.button<{ $active: boolean; $style?: CSSProp }>`
   pointer-events: all;
@@ -452,3 +497,6 @@ function clamp(value: number, min: number, max: number) {
 }
 
 export { Carousel };
+
+Carousel.CircleControllerPosition = CarouselCirclePosition;
+Carousel.ArrowControllerPosition = CarouselArrowPosition;
