@@ -579,6 +579,7 @@ export const CustomTokenRenderer: Story = {
   render: () => {
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
+    const editorRef = useRef<RichEditorRef>(null);
 
     const [value, setValue] = useState(
       `### Sprint Planning Notes
@@ -602,11 +603,10 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
       </RichEditor.ToolbarButton>
     );
 
-    const dispatchTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
-
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <RichEditor
+          ref={editorRef}
           onChange={(e) => setValue(e)}
           onKeyDown={(e) => {
             if (e.key !== "[") return;
@@ -674,21 +674,12 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
                       ).closest<HTMLElement>("[data-token-start]");
 
                       if (tokenSpan) {
-                        // Update data-token-word immediately — no caret jump from this
                         tokenSpan.dataset.tokenWord = `"${text}"`;
-
-                        // Debounce the dispatchEvent after 1.5 second
-                        clearTimeout(dispatchTimerRef.current);
-                        dispatchTimerRef.current = setTimeout(() => {
-                          tokenSpan
-                            .closest<HTMLElement>(
-                              "[aria-label='rich-editor-content']"
-                            )
-                            ?.dispatchEvent(
-                              new Event("input", { bubbles: true })
-                            );
-                        }, 1500);
                       }
+                    }}
+                    onBlur={() => {
+                      // Always sync immediately on blur — no debounce needed
+                      editorRef.current?.syncTokens();
                     }}
                     onClick={(e) => {
                       e.stopPropagation();
