@@ -577,6 +577,9 @@ export default Content
 
 export const CustomTokenRenderer: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+
     const [value, setValue] = useState(
       `### Sprint Planning Notes
 The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.
@@ -704,7 +707,7 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
           <pre
             style={{
               padding: 28,
-              background: "#D3D3D3",
+              background: richEditorTheme?.preBackgroundColor,
               whiteSpace: "pre-wrap",
               wordBreak: "break-word",
             }}
