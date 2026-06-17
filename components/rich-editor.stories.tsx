@@ -663,6 +663,7 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
                 return (
                   <Badge
                     contentEditable
+                    suppressContentEditableWarning
                     onInput={(e) => {
                       const text =
                         (e.currentTarget as HTMLElement).innerText
