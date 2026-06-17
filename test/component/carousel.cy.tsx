@@ -131,6 +131,20 @@ describe("Carousel", () => {
 
     context("when given object", () => {
       context("circle-position", () => {
+        context("when given null", () => {
+          it("shouldn't render the circle control", () => {
+            cy.mount(
+              <ProductCarousel
+                controller={{
+                  circle: null,
+                }}
+              />
+            );
+
+            cy.findByRole("tablist").should("not.exist");
+          });
+        });
+
         context("when given bottom-center", () => {
           it("renders controls at the bottom", () => {
             cy.mount(
@@ -161,6 +175,20 @@ describe("Carousel", () => {
       });
 
       context("arrow-position", () => {
+        context("when given null", () => {
+          it("shouldn't render the arrow control", () => {
+            cy.mount(
+              <ProductCarousel
+                controller={{
+                  arrow: null,
+                }}
+              />
+            );
+            cy.findByLabelText("carousel-previous-slide").should("not.exist");
+            cy.findByLabelText("carousel-next-slide").should("not.exist");
+          });
+        });
+
         context("when given center-side", () => {
           it("renders controls at the center side", () => {
             cy.mount(
@@ -170,6 +198,9 @@ describe("Carousel", () => {
                 }}
               />
             );
+
+            cy.findByLabelText("carousel-previous-slide").should("exist");
+            cy.findByLabelText("carousel-next-slide").should("exist");
           });
         });
       });
