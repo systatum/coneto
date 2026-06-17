@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { NavTab, NavTabTab } from "./nav-tab";
 import { Textbox } from "./textbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FormFieldGroup,
   StatefulForm,
@@ -194,9 +194,31 @@ export const Small: Story = {
     }
 
     const [activeTab, setActiveTab] = useState("1");
+    const [compilations, setCompilations] = useState<ComboboxOption[]>([]);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setCompilations([
+          {
+            text: "SmolLM2-135m (NPU)",
+            value: 1,
+          },
+          {
+            text: "Llama-3.2-1B (GPU)",
+            value: 2,
+          },
+          {
+            text: "Gemma-2B (CPU)",
+            value: 3,
+          },
+        ]);
+      }, 250);
+
+      return () => clearTimeout(timer);
+    }, []);
 
     const [formValues, setFormValues] = useState<FormValues>({
-      compilation: 1,
+      compilation: null,
       machine: 1,
     });
 
@@ -216,6 +238,7 @@ export const Small: Story = {
         title: "Inference",
         content: (
           <InferenceSection
+            compilations={compilations}
             formValues={formValues}
             setFormValues={setFormValues}
           />
@@ -330,27 +353,14 @@ export const Small: Story = {
     }
 
     function InferenceSection({
+      compilations,
       formValues,
       setFormValues,
     }: {
+      compilations?: ComboboxOption[];
       setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
       formValues?: FormValues;
     }) {
-      const COMPILATIONS_OPTIONS: ComboboxOption[] = [
-        {
-          text: "SmolLM2-135m (NPU)",
-          value: 1,
-        },
-        {
-          text: "Llama-3.2-1B (GPU)",
-          value: 2,
-        },
-        {
-          text: "Gemma-2B (CPU)",
-          value: 3,
-        },
-      ];
-
       const MACHINE_OPTIONS: ComboboxOption[] = [
         {
           text: "Local",
@@ -371,7 +381,7 @@ export const Small: Story = {
             type: "combo",
             required: true,
             combobox: {
-              options: COMPILATIONS_OPTIONS,
+              options: compilations,
             },
           },
           {
