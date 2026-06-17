@@ -1,9 +1,5 @@
 import { css } from "styled-components";
-import {
-  Carousel,
-  CarouselPosition,
-  CarouselProps,
-} from "./../../components/carousel";
+import { Carousel, CarouselProps } from "./../../components/carousel";
 
 describe("Carousel", () => {
   function ProductCarousel(props?: CarouselProps) {
@@ -116,10 +112,10 @@ describe("Carousel", () => {
     });
   });
 
-  context("control", () => {
+  context("controller", () => {
     context("when given false", () => {
       it("doesn't render controls", () => {
-        cy.mount(<ProductCarousel control={false} />);
+        cy.mount(<ProductCarousel controller={false} />);
 
         cy.findAllByRole("tab").should("have.length", 0);
       });
@@ -127,20 +123,20 @@ describe("Carousel", () => {
 
     context("when given true (default)", () => {
       it("renders controls", () => {
-        cy.mount(<ProductCarousel control />);
+        cy.mount(<ProductCarousel controller />);
 
         cy.findAllByRole("tab").should("have.length", 3);
       });
     });
 
     context("when given object", () => {
-      context("position", () => {
+      context("circle-position", () => {
         context("when given bottom-center", () => {
           it("renders controls at the bottom", () => {
             cy.mount(
               <ProductCarousel
-                control={{
-                  position: CarouselPosition.BottomCenter,
+                controller={{
+                  circle: Carousel.CircleControllerPosition.BottomCenter,
                 }}
               />
             );
@@ -153,13 +149,27 @@ describe("Carousel", () => {
           it("renders controls at the top", () => {
             cy.mount(
               <ProductCarousel
-                control={{
-                  position: CarouselPosition.TopCenter,
+                controller={{
+                  circle: Carousel.CircleControllerPosition.TopCenter,
                 }}
               />
             );
 
             cy.findByRole("tablist").should("have.css", "top", "14px");
+          });
+        });
+      });
+
+      context("arrow-position", () => {
+        context("when given center-side", () => {
+          it("renders controls at the center side", () => {
+            cy.mount(
+              <ProductCarousel
+                controller={{
+                  arrow: Carousel.ArrowControllerPosition.CenterSide,
+                }}
+              />
+            );
           });
         });
       });
@@ -186,13 +196,13 @@ describe("Carousel", () => {
       });
     });
 
-    context("controlStyle", () => {
+    context("circleControllerContainerStyle", () => {
       context("when given gap 10px", () => {
         it("should render with gap 10px", () => {
           cy.mount(
             <ProductCarousel
               styles={{
-                controlStyle: css`
+                circleControllerContainerStyle: css`
                   gap: 10px;
                 `,
               }}
@@ -200,6 +210,70 @@ describe("Carousel", () => {
           );
 
           cy.findByRole("tablist").should("have.css", "gap", "10px");
+        });
+      });
+    });
+
+    context("circleControllerCurrentPageStyle", () => {
+      context("when given red background color", () => {
+        it("should the active page with red color", () => {
+          cy.mount(
+            <ProductCarousel
+              styles={{
+                circleControllerCurrentPageStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("carousel-circle-control-slide-1").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+          cy.findByLabelText("carousel-circle-control-slide-2").should(
+            "have.css",
+            "background-color",
+            "rgba(0, 0, 0, 0.25)"
+          );
+          cy.findByLabelText("carousel-circle-control-slide-3").should(
+            "have.css",
+            "background-color",
+            "rgba(0, 0, 0, 0.25)"
+          );
+        });
+      });
+    });
+
+    context("circleControllerStyle", () => {
+      context("when given red background color", () => {
+        it("should the circle page with red color (not on active)", () => {
+          cy.mount(
+            <ProductCarousel
+              styles={{
+                circleControllerStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("carousel-circle-control-slide-1").should(
+            "have.css",
+            "background-color",
+            "rgb(59, 130, 246)"
+          );
+          cy.findByLabelText("carousel-circle-control-slide-2").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+          cy.findByLabelText("carousel-circle-control-slide-3").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
         });
       });
     });
@@ -226,13 +300,13 @@ describe("Carousel", () => {
       });
     });
 
-    context("arrowStyle", () => {
+    context("arrowControllerStyle", () => {
       context("when given color blue", () => {
         it("should render with color blue", () => {
           cy.mount(
             <ProductCarousel
               styles={{
-                arrowStyle: css`
+                arrowControllerStyle: css`
                   color: blue;
                 `,
               }}
