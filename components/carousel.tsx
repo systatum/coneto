@@ -202,12 +202,6 @@ function Carousel({
   };
 
   useEffect(() => {
-    console.log("active", activePage);
-    console.log("slide", slideRefs.current[activePage]);
-    console.log("height", slideRefs.current[activePage]?.offsetHeight);
-  }, [activePage]);
-
-  useEffect(() => {
     if (!isControlled) {
       setInternalPage(clamp(initialPage, 0, Math.max(0, totalPages - 1)));
     }
