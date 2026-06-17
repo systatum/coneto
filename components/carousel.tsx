@@ -50,9 +50,11 @@ export type CarouselArrowPosition =
 
 export interface CarouselStyles {
   containerStyle?: CSSProp;
-  controlStyle?: CSSProp;
   contentStyle?: CSSProp;
-  arrowStyle?: CSSProp;
+  circleControllerCurrentPageStyle?: CSSProp;
+  circleControllerContainerStyle?: CSSProp;
+  circleControllerStyle?: CSSProp;
+  arrowControllerStyle?: CSSProp;
 }
 
 function Carousel({
@@ -251,7 +253,7 @@ function Carousel({
         aria-label="carousel-previous-slide"
         $style={css`
           ${defaultArrowCss}
-          ${styles?.arrowStyle}
+          ${styles?.arrowControllerStyle}
         `}
       >
         <RiArrowLeftSLine />
@@ -264,7 +266,7 @@ function Carousel({
         aria-label="carousel-next-slide"
         $style={css`
           ${defaultArrowCss}
-          ${styles?.arrowStyle}
+          ${styles?.arrowControllerStyle}
         `}
       >
         <RiArrowRightSLine />
@@ -273,7 +275,7 @@ function Carousel({
       {controller && totalPages > 1 && (
         <Controls
           $controller={controller}
-          $controlStyle={styles?.controlStyle}
+          $style={styles?.circleControllerContainerStyle}
           role="tablist"
           aria-label="carousel-slides"
         >
@@ -284,7 +286,9 @@ function Carousel({
               onClick={() => goTo(i)}
               role="tab"
               aria-selected={i === activePage}
-              aria-label={`carousel-slide-${i + 1}`}
+              aria-label={`carousel-circle-control-slide-${i + 1}`}
+              $style={styles?.circleControllerStyle}
+              $activeStyle={styles?.circleControllerCurrentPageStyle}
             />
           ))}
         </Controls>
@@ -432,7 +436,7 @@ const controlPositionStyles: Record<CarouselCirclePosition, CSSProp> = {
 
 const Controls = styled.div<{
   $controller: CarouselControl | boolean;
-  $controlStyle?: CSSProp;
+  $style?: CSSProp;
 }>`
   display: flex;
   align-items: center;
@@ -448,7 +452,40 @@ const Controls = styled.div<{
           display: none;
         `}
 
-  ${({ $controlStyle }) => $controlStyle}
+  ${({ $style }) => $style}
+`;
+
+const ControlDot = styled.button<{
+  $active: boolean;
+  $style?: CSSProp;
+  $activeStyle?: CSSProp;
+}>`
+  pointer-events: all;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    width 250ms ease,
+    background 250ms ease;
+  background: rgba(0, 0, 0, 0.25);
+
+  &:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  ${({ $style }) => $style}
+
+  ${({ $active, $activeStyle }) =>
+    $active &&
+    css`
+      width: 1.5rem;
+      background: #3b82f6;
+      ${$activeStyle}
+    `}
 `;
 
 const shouldShowControl = (
@@ -464,27 +501,6 @@ const shouldShowControl = (
 
   return false;
 };
-
-const ControlDot = styled.button<{ $active: boolean; $style?: CSSProp }>`
-  pointer-events: all;
-  width: ${({ $active }) => ($active ? "1.5rem" : "0.5rem")};
-  height: 0.5rem;
-  border-radius: 9999px;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition:
-    width 250ms ease,
-    background 250ms ease;
-  background: ${({ $active }) => ($active ? "#3b82f6" : "rgba(0, 0, 0, 0.25)")};
-
-  &:focus-visible {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-  }
-
-  ${({ $style }) => $style}
-`;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
