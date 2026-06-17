@@ -4,9 +4,10 @@ import {
   RichEditorCodeAction,
   RichEditorProps,
 } from "./../../components/rich-editor";
-import { useEffect, useState } from "react";
-import { RiArrowRightSLine } from "@remixicon/react";
+import { useEffect, useRef, useState } from "react";
+import { RiArrowRightSLine, RiPrinterFill } from "@remixicon/react";
 import { generateSentence } from "./../../lib/text";
+import { Badge } from "./../../components/badge";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
@@ -31,6 +32,198 @@ describe("RichEditor", () => {
       />
     );
   }
+
+  context("tokenRenderers", () => {
+    function ProductRichEditorWithTokenRenderers() {
+      const [value, setValue] = useState(
+        `The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.`
+      );
+      const [printValue, setPrintValue] = useState("");
+
+      const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+        <RichEditor.ToolbarButton
+          icon={{ image: RiPrinterFill }}
+          onClick={() => {
+            setPrintValue(value);
+          }}
+        >
+          Print
+        </RichEditor.ToolbarButton>
+      );
+
+      const dispatchTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <RichEditor
+            onChange={(e) => setValue(e)}
+            onKeyDown={(e) => {
+              if (e.key !== "[") return;
+
+              const sel = window.getSelection();
+              if (!sel || !sel.rangeCount) return;
+
+              const range = sel.getRangeAt(0);
+              const node = range.startContainer;
+              if (node.nodeType !== Node.TEXT_NODE) return;
+
+              const beforeCaret = (node.textContent ?? "").slice(
+                0,
+                range.startOffset
+              );
+              if (!beforeCaret.endsWith("<{")) return;
+
+              e.preventDefault();
+
+              const delRange = document.createRange();
+              delRange.setStart(node, range.startOffset - 2);
+              delRange.setEnd(node, range.startOffset);
+              delRange.deleteContents();
+
+              const tokenSpan = document.createElement("span");
+              tokenSpan.dataset.tokenStart = "<{[";
+              tokenSpan.dataset.tokenEnd = "]}>";
+              tokenSpan.dataset.tokenWord = '"mention"';
+              tokenSpan.dataset.tokenType = "custom-token-";
+
+              const inner = document.createElement("span");
+              inner.contentEditable = "false";
+              tokenSpan.appendChild(inner);
+
+              const zws = document.createTextNode("\u200B");
+
+              const currentRange = sel.getRangeAt(0);
+              currentRange.insertNode(zws);
+              currentRange.insertNode(tokenSpan);
+
+              const afterRange = document.createRange();
+              afterRange.setStartAfter(zws);
+              afterRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(afterRange);
+            }}
+            value={value}
+            tokenRenderers={{
+              "<{[": {
+                endToken: "]}>",
+                render: (word) => {
+                  const parsed = JSON.parse(`[${word}]`);
+                  const [username] = parsed;
+                  return (
+                    <Badge
+                      contentEditable
+                      onInput={(e) => {
+                        const text =
+                          (e.currentTarget as HTMLElement).innerText
+                            ?.trim()
+                            .replace(/^@/, "") ?? "";
+
+                        const tokenSpan = (
+                          e.currentTarget as HTMLElement
+                        ).closest<HTMLElement>("[data-token-start]");
+
+                        if (tokenSpan) {
+                          // Update data-token-word immediately — no caret jump from this
+                          tokenSpan.dataset.tokenWord = `"${text}"`;
+
+                          // Debounce the dispatchEvent after 1.5 second
+                          clearTimeout(dispatchTimerRef.current);
+                          dispatchTimerRef.current = setTimeout(() => {
+                            tokenSpan
+                              .closest<HTMLElement>(
+                                "[aria-label='rich-editor-content']"
+                              )
+                              ?.dispatchEvent(
+                                new Event("input", { bubbles: true })
+                              );
+                          }, 1500);
+                        }
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Mention clicked:", username);
+                      }}
+                      withCircle
+                      caption={`@${username}`}
+                    />
+                  );
+                },
+              },
+            }}
+            toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+          />
+          {printValue !== "" && (
+            <pre
+              style={{
+                padding: 28,
+                background: "#D3D3D3",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {printValue}
+            </pre>
+          )}
+        </div>
+      );
+    }
+
+    context("when given rule with <{[{name}]}>", () => {
+      it("should shows the component with this rule", () => {
+        cy.mount(<ProductRichEditorWithTokenRenderers />);
+        cy.findByRole("textbox")
+          .findAllByLabelText("badge")
+          .eq(0)
+          .should("have.text", "@alim");
+      });
+
+      context("when print value", () => {
+        it("renders the markdown as well", () => {
+          cy.mount(<ProductRichEditorWithTokenRenderers />);
+
+          cy.findByText("Print").click();
+
+          cy.get("pre").should(
+            "have.text",
+            'The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.'
+          );
+        });
+      });
+
+      context("when pressing <{[ to show <{[{name}]}>", () => {
+        it("should renders new badge", () => {
+          cy.mount(<ProductRichEditorWithTokenRenderers />);
+          cy.findByRole("textbox").realClick().realType("{enter} <{[ Test 123");
+
+          cy.findAllByLabelText("badge").eq(1).should("have.text", "@mention");
+        });
+
+        context("when print value", () => {
+          it("renders the markdown properly", () => {
+            cy.mount(<ProductRichEditorWithTokenRenderers />);
+
+            cy.findByRole("textbox")
+              .realClick()
+              .realType("{enter} <{[ Test 123");
+
+            cy.findAllByLabelText("badge")
+              .eq(1)
+              .should("have.text", "@mention");
+
+            cy.findByText("Print").click();
+
+            cy.get("pre")
+              .invoke("text")
+              .then((text) => {
+                const lines = text.split("\n");
+
+                expect(lines[1].trim()).to.eq('<{["mention"]}> Test 123');
+              });
+          });
+        });
+      });
+    });
+  });
 
   context("id", () => {
     context("code-editor mode", () => {
@@ -383,7 +576,7 @@ describe("RichEditor", () => {
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "600px"
+          "576px"
         );
       });
 
@@ -396,7 +589,7 @@ describe("RichEditor", () => {
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "600px")
+            .should("have.css", "height", "576px")
             .click()
             .type("{enter}{enter}{enter}");
 
@@ -605,7 +798,8 @@ describe("RichEditor", () => {
         it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
 
-  Paragraph line 2`;
+
+Paragraph line 2`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -620,9 +814,9 @@ describe("RichEditor", () => {
       context("when the next line all paragraph", () => {
         it("should render exactly as the expected value", () => {
           const input = `Paragraph line 1
-  Paragraph line 2
-  Paragraph line 3
-  Paragraph line 4`;
+Paragraph line 2
+Paragraph line 3
+Paragraph line 4`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -640,7 +834,7 @@ describe("RichEditor", () => {
         it("should render normally", () => {
           const input = `- Unordered list
 
-  Paragraph line`;
+Paragraph line`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
@@ -655,8 +849,8 @@ describe("RichEditor", () => {
       context("when a lot of list", () => {
         it("should render list as usual", () => {
           const input = `- Unordered list 1
-  - Unordered list 2
-  - Unordered list 3`;
+- Unordered list 2
+- Unordered list 3`;
           cy.mount(<RichEditor value={input} />);
           cy.findByRole("textbox")
             .invoke("html")
