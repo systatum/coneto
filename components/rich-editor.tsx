@@ -179,6 +179,7 @@ interface RichEditorComponent
 export interface RichEditorRef {
   insertPlainText: (data: string) => void;
   insertMarkdownContent: (data: string) => void;
+  syncTokens: () => void;
 }
 
 const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
@@ -812,6 +813,14 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         handleFilteringCheckbox();
 
         handleEditorChange();
+      },
+      syncTokens: () => {
+        if (!editorRef.current) return;
+        const html = editorRef.current.innerHTML.replace(/\u00A0/g, "");
+        const cleanedHTML = cleanupHtml(html);
+        const markdown = turndownService.turndown(cleanedHTML);
+        const cleanedMarkdown = cleanSpacing(markdown);
+        onChange?.(cleanedMarkdown);
       },
     }));
 
