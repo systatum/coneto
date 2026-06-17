@@ -196,27 +196,6 @@ export const Small: Story = {
     const [activeTab, setActiveTab] = useState("1");
     const [compilations, setCompilations] = useState<ComboboxOption[]>([]);
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setCompilations([
-          {
-            text: "SmolLM2-135m (NPU)",
-            value: 1,
-          },
-          {
-            text: "Llama-3.2-1B (GPU)",
-            value: 2,
-          },
-          {
-            text: "Gemma-2B (CPU)",
-            value: 3,
-          },
-        ]);
-      }, 250);
-
-      return () => clearTimeout(timer);
-    }, []);
-
     const [formValues, setFormValues] = useState<FormValues>({
       compilation: null,
       machine: 1,
@@ -230,6 +209,7 @@ export const Small: Story = {
           <CompilationHistorySection
             setFormValues={setFormValues}
             setActiveTab={setActiveTab}
+            setCompilations={setCompilations}
           />
         ),
       },
@@ -249,9 +229,11 @@ export const Small: Story = {
     function CompilationHistorySection({
       setActiveTab,
       setFormValues,
+      setCompilations,
     }: {
       setActiveTab?: (activeTab?: string) => void;
       setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
+      setCompilations?: React.Dispatch<React.SetStateAction<ComboboxOption[]>>;
     }) {
       const [searchQuery, setSearchQuery] = useState("");
 
@@ -293,6 +275,21 @@ export const Small: Story = {
           caption: "Infer",
           icon: { image: RiFlashlightLine },
           onClick: async () => {
+            await setCompilations([
+              {
+                text: "SmolLM2-135m (NPU)",
+                value: 1,
+              },
+              {
+                text: "Llama-3.2-1B (GPU)",
+                value: 2,
+              },
+              {
+                text: "Gemma-2B (CPU)",
+                value: 3,
+              },
+            ]);
+
             await setFormValues((prev) => ({
               ...prev,
               compilation: Number(id),
