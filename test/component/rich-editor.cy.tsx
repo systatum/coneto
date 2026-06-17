@@ -3,6 +3,7 @@ import {
   RichEditor,
   RichEditorCodeAction,
   RichEditorProps,
+  RichEditorRef,
 } from "./../../components/rich-editor";
 import { useEffect, useRef, useState } from "react";
 import { RiArrowRightSLine, RiPrinterFill } from "@remixicon/react";
@@ -35,6 +36,8 @@ describe("RichEditor", () => {
 
   context("tokenRenderers", () => {
     function ProductRichEditorWithTokenRenderers() {
+      const editorRef = useRef<RichEditorRef>(null);
+
       const [value, setValue] = useState(
         `The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.`
       );
@@ -51,11 +54,10 @@ describe("RichEditor", () => {
         </RichEditor.ToolbarButton>
       );
 
-      const dispatchTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
-
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <RichEditor
+            ref={editorRef}
             onChange={(e) => setValue(e)}
             onKeyDown={(e) => {
               if (e.key !== "[") return;
@@ -112,6 +114,7 @@ describe("RichEditor", () => {
                   return (
                     <Badge
                       contentEditable
+                      suppressContentEditableWarning
                       onInput={(e) => {
                         const text =
                           (e.currentTarget as HTMLElement).innerText
@@ -123,21 +126,12 @@ describe("RichEditor", () => {
                         ).closest<HTMLElement>("[data-token-start]");
 
                         if (tokenSpan) {
-                          // Update data-token-word immediately — no caret jump from this
                           tokenSpan.dataset.tokenWord = `"${text}"`;
-
-                          // Debounce the dispatchEvent after 1.5 second
-                          clearTimeout(dispatchTimerRef.current);
-                          dispatchTimerRef.current = setTimeout(() => {
-                            tokenSpan
-                              .closest<HTMLElement>(
-                                "[aria-label='rich-editor-content']"
-                              )
-                              ?.dispatchEvent(
-                                new Event("input", { bubbles: true })
-                              );
-                          }, 1500);
                         }
+                      }}
+                      onBlur={() => {
+                        // Always sync immediately on blur — no debounce needed
+                        editorRef.current?.syncTokens();
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
