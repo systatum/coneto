@@ -31,7 +31,7 @@ It supports both **controlled** and **uncontrolled** modes, allowing external st
 ### 🧱 Component Structure
 
 \`\`\`tsx
-<Carousel control autoHeight>
+<Carousel controller autoHeight>
   <SlideOne />
   <SlideTwo />
   <SlideThree />
@@ -69,15 +69,16 @@ It supports both **controlled** and **uncontrolled** modes, allowing external st
 \`\`\`
 
 #### Pagination Controls
-- Enable using \`control\`
+- Enable using \`controller\`
 - Supports custom positioning:
   - \`bottom-center\`
   - \`top-center\`
 
 \`\`\`tsx
 <Carousel
-  control={{
-    position: CarouselPosition.TopCenter,
+  controller={{
+    arrow: Carousel.ArrowControllerPosition.CenterSide,
+    circle: Carousel.CircleControllerPosition.BottomCenter,
   }}
 >
   ...
