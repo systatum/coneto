@@ -41,6 +41,10 @@
       "import": "./dist/components/card.js",
       "types": "./dist/components/card.d.ts"
     },
+    "./carousel": {
+      "import": "./dist/components/carousel.js",
+      "types": "./dist/components/carousel.d.ts"
+    },
     "./checkbox": {
       "import": "./dist/components/checkbox.js",
       "types": "./dist/components/checkbox.d.ts"
@@ -185,6 +189,14 @@
       "import": "./dist/components/pinbox.js",
       "types": "./dist/components/pinbox.d.ts"
     },
+    "./progressbar": {
+      "import": "./dist/components/progressbar.js",
+      "types": "./dist/components/progressbar.d.ts"
+    },
+    "./pull-refresher": {
+      "import": "./dist/components/pull-refresher.js",
+      "types": "./dist/components/pull-refresher.d.ts"
+    },
     "./radio": {
       "import": "./dist/components/radio.js",
       "types": "./dist/components/radio.d.ts"
@@ -268,6 +280,10 @@
     "./title": {
       "import": "./dist/components/title.js",
       "types": "./dist/components/title.d.ts"
+    },
+    "./toast": {
+      "import": "./dist/components/toast.js",
+      "types": "./dist/components/toast.d.ts"
     },
     "./toggle": {
       "import": "./dist/components/toggle.js",
