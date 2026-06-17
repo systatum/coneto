@@ -260,7 +260,7 @@ const StatusbarWrapper = styled.div<{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  position: absolute;
+  position: fixed;
   overflow: hidden;
   z-index: 9991999;
   border-top: 1px solid ${({ $theme }) => $theme.borderColor};
@@ -335,6 +335,7 @@ export interface StatusbarSpacerProps {
 function StatusbarSpacer({ desktopWidth, mobileWidth }: StatusbarSpacerProps) {
   return (
     <StyledStatusbarSpacer
+      aria-label="statusbar-spacer"
       $desktopWidth={desktopWidth}
       $mobileWidth={mobileWidth}
     />
