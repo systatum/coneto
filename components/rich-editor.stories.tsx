@@ -583,9 +583,7 @@ export const CustomTokenRenderer: Story = {
 
     const [value, setValue] = useState(
       `### Sprint Planning Notes
-The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.
-
-Blocking issues should be escalated to <{["carol"]}>. She will coordinate with the backend team on the API contract.
+The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup. Blocking issues should be escalated to <{["carol"]}>. She will coordinate with the backend team on the API contract.
 
 Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline fails.`
     );
