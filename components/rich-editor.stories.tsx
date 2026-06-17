@@ -599,10 +599,57 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
       </RichEditor.ToolbarButton>
     );
 
+    const dispatchTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <RichEditor
           onChange={(e) => setValue(e)}
+          onKeyDown={(e) => {
+            if (e.key !== "[") return;
+
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount) return;
+
+            const range = sel.getRangeAt(0);
+            const node = range.startContainer;
+            if (node.nodeType !== Node.TEXT_NODE) return;
+
+            const beforeCaret = (node.textContent ?? "").slice(
+              0,
+              range.startOffset
+            );
+            if (!beforeCaret.endsWith("<{")) return;
+
+            e.preventDefault();
+
+            const delRange = document.createRange();
+            delRange.setStart(node, range.startOffset - 2);
+            delRange.setEnd(node, range.startOffset);
+            delRange.deleteContents();
+
+            const tokenSpan = document.createElement("span");
+            tokenSpan.dataset.tokenStart = "<{[";
+            tokenSpan.dataset.tokenEnd = "]}>";
+            tokenSpan.dataset.tokenWord = '"mention"';
+            tokenSpan.dataset.tokenType = "custom-token-";
+
+            const inner = document.createElement("span");
+            inner.contentEditable = "false";
+            tokenSpan.appendChild(inner);
+
+            const zws = document.createTextNode("\u200B");
+
+            const currentRange = sel.getRangeAt(0);
+            currentRange.insertNode(zws);
+            currentRange.insertNode(tokenSpan);
+
+            const afterRange = document.createRange();
+            afterRange.setStartAfter(zws);
+            afterRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(afterRange);
+          }}
           value={value}
           tokenRenderers={{
             "<{[": {
@@ -613,6 +660,33 @@ Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline 
                 return (
                   <Badge
                     contentEditable
+                    onInput={(e) => {
+                      const text =
+                        (e.currentTarget as HTMLElement).innerText
+                          ?.trim()
+                          .replace(/^@/, "") ?? "";
+
+                      const tokenSpan = (
+                        e.currentTarget as HTMLElement
+                      ).closest<HTMLElement>("[data-token-start]");
+
+                      if (tokenSpan) {
+                        // Update data-token-word immediately — no caret jump from this
+                        tokenSpan.dataset.tokenWord = `"${text}"`;
+
+                        // Debounce the dispatchEvent after 1.5 second
+                        clearTimeout(dispatchTimerRef.current);
+                        dispatchTimerRef.current = setTimeout(() => {
+                          tokenSpan
+                            .closest<HTMLElement>(
+                              "[aria-label='rich-editor-content']"
+                            )
+                            ?.dispatchEvent(
+                              new Event("input", { bubbles: true })
+                            );
+                        }, 1500);
+                      }
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       console.log("Mention clicked:", username);
