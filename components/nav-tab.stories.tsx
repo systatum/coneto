@@ -2,20 +2,28 @@ import { Meta, StoryObj } from "@storybook/react";
 import { NavTab, NavTabTab } from "./nav-tab";
 import { Textbox } from "./textbox";
 import { useState } from "react";
-import { StatefulOnChangeType } from "./stateful-form";
+import {
+  FormFieldGroup,
+  StatefulForm,
+  StatefulOnChangeType,
+} from "./stateful-form";
 import { Button } from "./button";
 import {
   RiAddBoxLine,
   RiAtLine,
   RiCharacterRecognitionLine,
   RiCropLine,
+  RiFlashlightLine,
   RiSearchLine,
   RiSettings5Line,
   RiTable2,
 } from "@remixicon/react";
-import { TableColumn, Table } from "./table";
+import { TableColumn, Table, TableSubMenuList } from "./table";
 import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
+import { Card } from "./card";
+import { Badge } from "./badge";
+import { Combobox, ComboboxOption } from "./combobox";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -180,29 +188,237 @@ export const Default: Story = {
 
 export const Small: Story = {
   render: () => {
-    const [activeTab, setActiveTab] = useState("2");
+    interface FormValues {
+      compilation?: number;
+      machine?: number;
+    }
+
+    const [activeTab, setActiveTab] = useState("1");
+
+    const [formValues, setFormValues] = useState<FormValues>({
+      compilation: 1,
+      machine: 1,
+    });
 
     const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
-        title: "Write",
-        content: <WriteTabContent />,
-        onClick: () => {
-          console.log("test tab 1");
-        },
+        title: "Project",
+        content: (
+          <CompilationHistorySection
+            setFormValues={setFormValues}
+            setActiveTab={setActiveTab}
+          />
+        ),
       },
       {
         id: "2",
-        title: "Review",
-        content: <ReviewTabContent />,
-        onClick: () => {
-          console.log("test tab 2");
-        },
+        title: "Inference",
+        content: (
+          <InferenceSection
+            formValues={formValues}
+            setFormValues={setFormValues}
+          />
+        ),
       },
     ];
 
+    function CompilationHistorySection({
+      setActiveTab,
+      setFormValues,
+    }: {
+      setActiveTab?: (activeTab?: string) => void;
+      setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
+    }) {
+      const [searchQuery, setSearchQuery] = useState("");
+
+      const compilationHistories = [
+        {
+          id: 1,
+          createdAt: "2026-06-15T10:00:00Z",
+          target: "NPU",
+          modelId: "SmolLM2-135m",
+        },
+        {
+          id: 2,
+          createdAt: "2026-06-16T14:30:00Z",
+          target: "GPU",
+          modelId: "Llama-3.2-1B",
+        },
+        {
+          id: 3,
+          createdAt: "2026-06-17T08:15:00Z",
+          target: "CPU",
+          modelId: "Gemma-2B",
+        },
+      ];
+
+      const filteredCompilationHistories = compilationHistories.filter(
+        (item) =>
+          item.modelId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.target.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+      const COMPILATION_HISTORY_COLUMNS: TableColumn[] = [
+        { id: "createdAt", caption: "Date", width: "30%" },
+        { id: "target", caption: "Target", width: "30%" },
+        { id: "modelId", caption: "Model", width: "40%" },
+      ];
+
+      const ROW_ACTION = (id?: string): TableSubMenuList[] => [
+        {
+          caption: "Infer",
+          icon: { image: RiFlashlightLine },
+          onClick: async () => {
+            await setFormValues((prev) => ({
+              ...prev,
+              compilation: Number(id),
+            }));
+
+            await setActiveTab("2");
+          },
+        },
+      ];
+
+      return (
+        <Card
+          title="Compilation History"
+          subtitle="smolm (model: SmolLM2-135m)"
+          styles={{
+            containerStyle: css`
+              width: 100%;
+              border: none;
+              padding: 0px;
+            `,
+          }}
+        >
+          <Table
+            columns={COMPILATION_HISTORY_COLUMNS}
+            searchable
+            searchbox={{
+              value: searchQuery,
+              onChange: (e) => setSearchQuery(e.target.value),
+            }}
+          >
+            {filteredCompilationHistories.map((compilation) => (
+              <Table.Row
+                key={compilation.id}
+                rowId={String(compilation.id)}
+                content={[
+                  <Badge
+                    withCircle
+                    caption={new Date(compilation.createdAt)
+                      .toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false,
+                      })
+                      .replace(",", "")}
+                  />,
+                  compilation.target,
+                  compilation.modelId,
+                ]}
+                actions={ROW_ACTION}
+              />
+            ))}
+          </Table>
+        </Card>
+      );
+    }
+
+    function InferenceSection({
+      formValues,
+      setFormValues,
+    }: {
+      setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
+      formValues?: FormValues;
+    }) {
+      const COMPILATIONS_OPTIONS: ComboboxOption[] = [
+        {
+          text: "SmolLM2-135m (NPU)",
+          value: 1,
+        },
+        {
+          text: "Llama-3.2-1B (GPU)",
+          value: 2,
+        },
+        {
+          text: "Gemma-2B (CPU)",
+          value: 3,
+        },
+      ];
+
+      const MACHINE_OPTIONS: ComboboxOption[] = [
+        {
+          text: "Local",
+          value: 1,
+        },
+        {
+          text: "Server",
+          value: 2,
+        },
+      ];
+
+      const FIELDS: FormFieldGroup[] = [
+        [
+          {
+            id: "compilation",
+            title: "Compilation",
+            name: "compilation",
+            type: "combo",
+            required: true,
+            combobox: {
+              options: COMPILATIONS_OPTIONS,
+            },
+          },
+          {
+            id: "machine",
+            title: "Machine",
+            name: "machine",
+            type: "combo",
+            required: true,
+            combobox: {
+              options: MACHINE_OPTIONS,
+            },
+          },
+          {
+            id: "button",
+            title: "Button",
+            name: "button",
+            type: "button",
+          },
+        ],
+      ];
+
+      return (
+        <>
+          <StatefulForm
+            styles={{
+              containerStyle: css`
+                padding: 10px;
+                height: 400px;
+              `,
+            }}
+            onChange={({ currentState }) =>
+              setFormValues((prev) => ({ ...prev, ...currentState }))
+            }
+            formValues={formValues}
+            fields={FIELDS}
+          />
+        </>
+      );
+    }
+
     return (
       <NavTab
+        styles={{
+          contentStyle: css`
+            padding: 0px;
+          `,
+        }}
         tabs={TABS_ITEMS}
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
