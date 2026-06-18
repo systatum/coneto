@@ -244,8 +244,10 @@ describe("Flippable", () => {
           ref={ref}
           width={420}
           height={350}
-          flipDuration={0.7}
-          flipOnClick
+          speed={0.7}
+          onClick={({ toggle }) => {
+            toggle();
+          }}
           back={tableOnFrontFace ? <LabelContent /> : <TableContent />}
           styles={{
             backStyle: tableOnFrontFace ? style : undefined,
@@ -291,9 +293,9 @@ describe("Flippable", () => {
     });
   });
 
-  context("flipDuration", () => {
+  context("speed", () => {
     it("should apply transition duration", () => {
-      cy.mount(<ProductFlippable flipDuration={2} />);
+      cy.mount(<ProductFlippable speed={2} />);
 
       cy.findByLabelText("flippable-front-face").should(
         "have.css",
