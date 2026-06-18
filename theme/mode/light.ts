@@ -68,6 +68,7 @@ import {
   createWheelTheme,
   createTitleTheme,
   createToastTheme,
+  createFlippable,
   createProgressbarTheme,
 } from "./creator";
 
@@ -75,6 +76,17 @@ import {
 const lightBody = createBodyTheme();
 
 const lightFieldLane = createFieldLaneTheme(lightBody);
+
+const lightFlippable = createFlippable(lightBody, {
+  front: {
+    ...lightBody,
+    backgroundColor: "#e2e2e2",
+  },
+  back: {
+    ...lightBody,
+    backgroundColor: "#e2e2e2",
+  },
+});
 
 const lightActionButton = createActionButtonTheme();
 
@@ -264,6 +276,7 @@ export const lightTheme: AppTheme = {
   fieldLane: lightFieldLane,
   fileInputBox: lightFileInputBox,
   fileDropBox: lightFileDropBox,
+  flippable: lightFlippable,
   frame: lightFrame,
   grid: lightGrid,
   imagebox: lightImagebox,
@@ -337,6 +350,7 @@ export {
   lightFieldLane,
   lightFileInputBox,
   lightFileDropBox,
+  lightFlippable,
   lightFrame,
   lightGrid,
   lightImagebox,
