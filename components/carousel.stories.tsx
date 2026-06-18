@@ -130,6 +130,10 @@ export const Default: Story = {
         onChange={({ page }) => {
           setState(page);
         }}
+        controller={{
+          arrow: Carousel.ArrowControllerPosition.CenterSide,
+          circle: Carousel.CircleControllerPosition.BottomCenter,
+        }}
       >
         {Array.from({ length: 10 }, (_, i) => (
           <div
@@ -164,6 +168,10 @@ export const AutoHeight: Story = {
           setState(page);
         }}
         autoHeight
+        controller={{
+          arrow: Carousel.ArrowControllerPosition.CenterSide,
+          circle: Carousel.CircleControllerPosition.BottomCenter,
+        }}
       >
         {Array.from({ length: 10 }, (_, i) => (
           <div
