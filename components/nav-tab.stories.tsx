@@ -194,7 +194,6 @@ export const Small: Story = {
     }
 
     const [activeTab, setActiveTab] = useState("1");
-    const [compilations, setCompilations] = useState<ComboboxOption[]>([]);
 
     const [formValues, setFormValues] = useState<FormValues>({
       compilation: null,
@@ -209,7 +208,6 @@ export const Small: Story = {
           <CompilationHistorySection
             setFormValues={setFormValues}
             setActiveTab={setActiveTab}
-            setCompilations={setCompilations}
           />
         ),
       },
@@ -218,7 +216,6 @@ export const Small: Story = {
         title: "Inference",
         content: (
           <InferenceSection
-            compilations={compilations}
             formValues={formValues}
             setFormValues={setFormValues}
           />
@@ -275,21 +272,6 @@ export const Small: Story = {
           caption: "Infer",
           icon: { image: RiFlashlightLine },
           onClick: async () => {
-            await setCompilations([
-              {
-                text: "SmolLM2-135m (NPU)",
-                value: 1,
-              },
-              {
-                text: "Llama-3.2-1B (GPU)",
-                value: 2,
-              },
-              {
-                text: "Gemma-2B (CPU)",
-                value: 3,
-              },
-            ]);
-
             await setFormValues((prev) => ({
               ...prev,
               compilation: Number(id),
@@ -350,14 +332,33 @@ export const Small: Story = {
     }
 
     function InferenceSection({
-      compilations,
       formValues,
       setFormValues,
     }: {
-      compilations?: ComboboxOption[];
       setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
       formValues?: FormValues;
     }) {
+      const [compilations, setCompilations] = useState<ComboboxOption[]>([]);
+
+      useEffect(() => {
+        if (compilations.length === 0) {
+          setCompilations([
+            {
+              text: "SmolLM2-135m (NPU)",
+              value: 1,
+            },
+            {
+              text: "Llama-3.2-1B (GPU)",
+              value: 2,
+            },
+            {
+              text: "Gemma-2B (CPU)",
+              value: 3,
+            },
+          ]);
+        }
+      }, []);
+
       const MACHINE_OPTIONS: ComboboxOption[] = [
         {
           text: "Local",
