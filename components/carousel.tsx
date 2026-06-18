@@ -15,7 +15,7 @@ export interface CarouselProps {
   currentPage?: number;
   onChange?: (event?: CarouselChangeEvent) => void;
   initialPage?: number;
-  controller?: boolean | CarouselControl;
+  controller?: CarouselController;
   styles?: CarouselStyles;
   children?: ReactNode;
   className?: string;
@@ -23,9 +23,9 @@ export interface CarouselProps {
   id?: string;
 }
 
-export interface CarouselControl {
-  circle?: CarouselCirclePosition | null;
-  arrow?: CarouselArrowPosition | null;
+export interface CarouselController {
+  circle?: CarouselCirclePosition;
+  arrow?: CarouselArrowPosition;
 }
 
 export interface CarouselChangeEvent {
@@ -62,7 +62,7 @@ function Carousel({
   length,
   currentPage,
   initialPage = 0,
-  controller = true,
+  controller,
   styles,
   id,
   className,
@@ -339,7 +339,7 @@ const Slide = styled.div<{ $style?: CSSProp }>`
 
 const ArrowButton = styled.button<{
   $style?: CSSProp;
-  $controller?: CarouselControl | boolean;
+  $controller?: CarouselController;
 }>`
   position: absolute;
   top: 50%;
@@ -381,7 +381,7 @@ const ArrowButton = styled.button<{
 
 const PrevButton = styled(ArrowButton)`
   ${({ $controller }) =>
-    shouldShowControl($controller, "arrow")
+    $controller?.arrow
       ? css`
           left: 0.75rem;
         `
@@ -394,7 +394,7 @@ const PrevButton = styled(ArrowButton)`
 
 const NextButton = styled(ArrowButton)`
   ${({ $controller }) =>
-    shouldShowControl($controller, "arrow")
+    $controller?.arrow
       ? css`
           right: 0.75rem;
         `
@@ -435,7 +435,7 @@ const controlPositionStyles: Record<CarouselCirclePosition, CSSProp> = {
 };
 
 const Controls = styled.div<{
-  $controller: CarouselControl | boolean;
+  $controller: CarouselController;
   $style?: CSSProp;
 }>`
   display: flex;
@@ -444,10 +444,8 @@ const Controls = styled.div<{
   pointer-events: none;
 
   ${({ $controller }) =>
-    shouldShowControl($controller, "circle")
-      ? typeof $controller === "object"
-        ? controlPositionStyles[$controller.circle ?? "bottom-center"]
-        : controlPositionStyles["bottom-center"]
+    $controller?.circle
+      ? controlPositionStyles[$controller.circle]
       : css`
           display: none;
         `}
@@ -487,20 +485,6 @@ const ControlDot = styled.button<{
       ${$activeStyle}
     `}
 `;
-
-const shouldShowControl = (
-  control: CarouselControl | boolean | undefined,
-  type: "arrow" | "circle"
-) => {
-  if (control === true) return true;
-  if (control === false) return false;
-
-  if (typeof control === "object") {
-    return control[type] !== null;
-  }
-
-  return false;
-};
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
