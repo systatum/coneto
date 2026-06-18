@@ -2,6 +2,7 @@ import { css, CSSProp } from "styled-components";
 import { Button, ButtonProps } from "./button";
 import { RiMoreFill } from "@remixicon/react";
 import { TipMenuItemProps } from "./tip-menu";
+import { useTheme } from "./../theme";
 
 export type ContextMenuAction = TipMenuItemProps & {
   mobile?: boolean;
@@ -37,6 +38,9 @@ export default function ContextMenu({
   open,
   iconSize = 16,
 }: ContextMenuProps) {
+  const { currentTheme } = useTheme();
+  const buttonTheme = currentTheme?.button;
+
   const buttonProps: ButtonProps = {
     variant: "ghost",
     activeBackgroundColor: activeBackgroundColor,
@@ -76,9 +80,57 @@ export default function ContextMenu({
   if (actions.length <= maxActionsBeforeCollapsing) {
     return actions.map((action, index) => {
       const resolvedIconSize = action.icon?.size ?? iconSize;
+      const variant = action?.variant;
+
+      const resolvedActiveBackgroundColor = variant
+        ? buttonTheme?.[variant]?.activeBackgroundColor
+        : activeBackgroundColor;
+      const resolvedFocusBackgroundColor = variant
+        ? buttonTheme?.[variant]?.focusBackgroundColor
+        : focusBackgroundColor;
+      const resolvedHoverBackgroundColor = variant
+        ? buttonTheme?.[variant]?.hoverBackgroundColor
+        : hoverBackgroundColor;
+
+      const resolvedButtonProps = {
+        ...buttonProps,
+        activeBackgroundColor: resolvedActiveBackgroundColor,
+        styles: {
+          self: css`
+            padding: 8px;
+            width: 32px;
+            height: 32px;
+
+            ${resolvedFocusBackgroundColor &&
+            css`
+              &:focus-visible {
+                background-color: ${resolvedFocusBackgroundColor};
+              }
+            `};
+
+            ${resolvedHoverBackgroundColor &&
+            css`
+              &:hover {
+                background-color: ${resolvedHoverBackgroundColor};
+              }
+            `};
+            ${styles?.self}
+          `,
+          containerStyle: css`
+            width: fit-content;
+            height: fit-content;
+            ${styles?.containerStyle}
+          `,
+          dropdownStyle: css`
+            margin-top: 2px;
+            ${styles?.dropdownStyle}
+          `,
+        },
+      };
+
       return (
         <Button
-          {...buttonProps}
+          {...resolvedButtonProps}
           key={index}
           onClick={(e) => {
             e.stopPropagation();

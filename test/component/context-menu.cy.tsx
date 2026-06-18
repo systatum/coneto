@@ -124,6 +124,7 @@ describe("context-menu", () => {
         onClick: () => {
           console.log(`Edit content for ${id}`);
         },
+        variant: "success",
       },
       {
         caption: "Delete",
@@ -133,6 +134,129 @@ describe("context-menu", () => {
         },
       },
     ];
+
+    const ROW_ACTION = (id: string): ListItemAction[] => [
+      {
+        caption: "Edit",
+        icon: { image: RiEdit2Line },
+        onClick: () => {
+          console.log(`Edit content for ${id}`);
+        },
+        variant: "success",
+      },
+    ];
+
+    context("variants", () => {
+      context("when given actions more than maxActionsBeforeCollapsing", () => {
+        it("shows variants button in TipMenu", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="toggle"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      groupId={group.id}
+                      actions={ROW_ACTIONS}
+                      icon={list.icon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+
+          cy.wait(100);
+
+          cy.findAllByLabelText("list-item-wrapper").eq(0).realHover().click();
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(66, 163, 64)");
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(1)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        });
+      });
+
+      context("when given actions less than maxActionsBeforeCollapsing", () => {
+        it("renders the toggle with background color depends on the variant", () => {
+          cy.mount(
+            <List
+              searchable
+              draggable
+              selectable
+              styles={{
+                containerStyle: css`
+                  padding: 16px;
+                  min-width: 350px;
+                `,
+              }}
+            >
+              {LIST_GROUPS.map((group, index) => (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  title={group.title}
+                  subtitle={group.subtitle}
+                  actions={group.actions}
+                  openerStyle="toggle"
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      id={list.id}
+                      groupId={group.id}
+                      actions={ROW_ACTION}
+                      icon={list.icon}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      selectedOptions={{
+                        checked: true,
+                      }}
+                    />
+                  ))}
+                </List.Group>
+              ))}
+            </List>
+          );
+
+          cy.wait(100);
+
+          cy.findAllByLabelText("list-item-wrapper").eq(0).realHover();
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .realHover()
+            .wait(300)
+            .should("have.css", "background-color", "rgb(43, 140, 41)");
+        });
+      });
+    });
 
     context("className", () => {
       it("renders with custom className", () => {
@@ -349,6 +473,7 @@ describe("context-menu", () => {
         className: "editable-action-tip",
         caption: "Edit",
         icon: { image: RiEdit2Line, color: "gray" },
+        variant: "success",
         onClick: (id: string) => {
           console.log(`${id} was edited`);
         },
@@ -415,6 +540,102 @@ describe("context-menu", () => {
         ],
       },
     ];
+
+    const TREE_LIST_SINGLE_ACTION_DATA: TreeListContent[] = [
+      {
+        id: "member",
+        caption: "Member of Technical Staff",
+        items: [
+          {
+            id: "mts-1",
+            caption: "Adam Noto Hakarsa",
+            actions: [ITEM_ACTIONS[0]],
+          },
+          {
+            id: "mts-2",
+            caption: "Mohamad Naufal Alim",
+            actions: [ITEM_ACTIONS[0]],
+          },
+        ],
+      },
+      {
+        id: "project",
+        caption: "Product Management Team",
+        items: [
+          {
+            id: "pmt-1",
+            caption: "Samantha Lee",
+            actions: [ITEM_ACTIONS[0]],
+          },
+          {
+            id: "pmt-2",
+            caption: "Jason Kim",
+            actions: [ITEM_ACTIONS[0]],
+          },
+          {
+            id: "pmt-3",
+            caption: "Rina Patel",
+            actions: [ITEM_ACTIONS[0]],
+          },
+        ],
+      },
+    ];
+
+    context("variants", () => {
+      context("when given actions more than maxActionsBeforeCollapsing", () => {
+        it("shows variants button in TipMenu", () => {
+          cy.mount(
+            <TreeList
+              styles={{
+                containerStyle: css`
+                  min-width: 300px;
+                `,
+              }}
+              content={TREE_LIST_DATA}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.wait(100);
+
+          cy.contains("Adam Noto Hakarsa").realHover();
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(66, 163, 64)");
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(1)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        });
+      });
+
+      context("when given actions less than maxActionsBeforeCollapsing", () => {
+        it("renders the toggle with background color depends on the variant", () => {
+          cy.mount(
+            <TreeList
+              styles={{
+                containerStyle: css`
+                  min-width: 300px;
+                `,
+              }}
+              content={TREE_LIST_SINGLE_ACTION_DATA}
+              emptySlate={<p>Not found.</p>}
+            />
+          );
+
+          cy.wait(100);
+
+          cy.contains("Adam Noto Hakarsa").realHover();
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .realHover()
+            .wait(300)
+            .should("have.css", "background-color", "rgb(43, 140, 41)");
+        });
+      });
+    });
 
     context("className", () => {
       it("renders with custom className", () => {
@@ -526,12 +747,13 @@ describe("context-menu", () => {
   context("when given in Table component", () => {
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
-    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
+    const ROW_ACTIONS = (rowId: string): TableSubMenuList[] => {
       return [
         {
           caption: "Edit",
           className: "table-editable",
           icon: { image: RiEdit2Line, color: "gray" },
+          variant: "success",
           onClick: () => {
             console.log(`${rowId} was edited`);
           },
@@ -552,7 +774,19 @@ describe("context-menu", () => {
         <Table.Row
           rowId={`${type}`}
           key={i}
-          actions={ROW_ACTION}
+          actions={ROW_ACTIONS}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
+    });
+
+    const sampleRowsWithSingleActions = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return (
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          actions={(e) => ROW_ACTIONS(e).slice(0, 1)}
           content={[`Load Balancer ${i + 1}`, type]}
         />
       );
@@ -570,6 +804,62 @@ describe("context-menu", () => {
         sortable: false,
       },
     ];
+
+    context("variants", () => {
+      context("when given actions more than maxActionsBeforeCollapsing", () => {
+        it("shows variants button in TipMenu", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableBodyStyle: css`
+                  max-height: 400px;
+                `,
+              }}
+              columns={columns}
+            >
+              {sampleRows}
+            </Table>
+          );
+
+          cy.wait(100);
+          cy.findAllByLabelText("table-row").eq(0).realHover();
+          cy.findAllByLabelText("action-button").eq(0).click({ force: true });
+
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(66, 163, 64)");
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(1)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        });
+      });
+
+      context("when given actions less than maxActionsBeforeCollapsing", () => {
+        it("renders the toggle with background color depends on the variant", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableBodyStyle: css`
+                  max-height: 400px;
+                `,
+              }}
+              columns={columns}
+            >
+              {sampleRowsWithSingleActions}
+            </Table>
+          );
+
+          cy.wait(100);
+          cy.findAllByLabelText("table-row").eq(0).realHover();
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .realHover()
+            .wait(300)
+            .should("have.css", "background-color", "rgb(43, 140, 41)");
+        });
+      });
+    });
 
     context("className", () => {
       it("renders with custom className", () => {
@@ -633,7 +923,7 @@ describe("context-menu", () => {
         cy.wait(100);
         cy.findAllByLabelText("table-row").eq(2).realHover();
         cy.findAllByLabelText("action-button").eq(2).click({ force: true });
-        ROW_ACTION("").map((props) => {
+        ROW_ACTIONS("").map((props) => {
           cy.findAllByText(props.caption)
             .eq(0)
             .should("be.visible")
@@ -659,7 +949,7 @@ describe("context-menu", () => {
           cy.wait(100);
           cy.findAllByLabelText("table-row").eq(2).realHover();
           cy.findAllByLabelText("action-button").eq(2).click({ force: true });
-          ROW_ACTION("").map((props) => {
+          ROW_ACTIONS("").map((props) => {
             cy.findAllByText(props.caption)
               .eq(0)
               .should("be.visible")
@@ -667,7 +957,7 @@ describe("context-menu", () => {
 
             cy.findAllByLabelText("table-row").eq(3).realHover();
 
-            ROW_ACTION("").map((props) => {
+            ROW_ACTIONS("").map((props) => {
               cy.findAllByText(props.caption)
                 .eq(0)
                 .should("be.visible")
@@ -688,6 +978,7 @@ describe("context-menu", () => {
         },
         icon: { image: RiSearchLine },
         className: "discover-action",
+        variant: "success",
       },
       {
         caption: "Mention",
@@ -712,6 +1003,55 @@ describe("context-menu", () => {
         actions: SUB_MENU,
       },
     ];
+
+    const TAB_WITH_ONE_SUB_ITEM = [
+      {
+        id: "1",
+        title: "Content",
+        content: "This is review content",
+        actions: SUB_MENU.slice(0, 1),
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: "This is review content",
+        actions: SUB_MENU.slice(0, 1),
+      },
+    ];
+
+    context("variants", () => {
+      context("when given actions more than maxActionsBeforeCollapsing", () => {
+        it("shows variants button in TipMenu", () => {
+          cy.mount(<NavTab tabs={TAB_WITH_SUB_ITEM} activeTab={"2"} />);
+
+          cy.wait(100);
+          cy.findByText("Review").realHover();
+          cy.findAllByLabelText("action-button").eq(0).click({ force: true });
+
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(66, 163, 64)");
+          cy.findAllByLabelText("tip-menu-item")
+            .eq(1)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        });
+      });
+
+      context("when given actions less than maxActionsBeforeCollapsing", () => {
+        it("renders the toggle with background color depends on the variant", () => {
+          cy.mount(<NavTab tabs={TAB_WITH_ONE_SUB_ITEM} activeTab={"2"} />);
+
+          cy.wait(100);
+          cy.findByText("Review").realHover();
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .realHover()
+            .wait(300)
+            .should("have.css", "background-color", "rgb(43, 140, 41)");
+        });
+      });
+    });
 
     context("className", () => {
       it("renders with custom className", () => {
