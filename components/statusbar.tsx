@@ -13,9 +13,18 @@ export interface StatusbarProps {
   hoverBackgroundColor?: string;
   transparent?: boolean;
   size?: number;
+  position?: StatusbarPosition;
   className?: string;
   id?: string;
 }
+
+export const StatusbarPosition = {
+  Absolute: "absolute",
+  Fixed: "fixed",
+} as const;
+
+export type StatusbarPosition =
+  (typeof StatusbarPosition)[keyof typeof StatusbarPosition];
 
 export interface StatusbarContent {
   left?: StatusbarItem[];
@@ -36,6 +45,7 @@ function Statusbar({
   hoverBackgroundColor,
   transparent,
   size = 11,
+  position,
   className,
   id,
 }: StatusbarProps) {
@@ -45,6 +55,7 @@ function Statusbar({
   return (
     <StatusbarWrapper
       id={id}
+      $position={position}
       className={applyClassName("status-bar", className)}
       $theme={statusbarTheme}
       aria-label="statusbar-wrapper"
@@ -246,6 +257,7 @@ const StatusbarWrapper = styled.div<{
   $style?: CSSProp;
   $transparent?: boolean;
   $theme?: StatusbarThemeConfig;
+  $position?: StatusbarPosition;
 }>`
   *,
   ::before,
@@ -256,11 +268,12 @@ const StatusbarWrapper = styled.div<{
   color: ${({ $theme }) => $theme.textColor};
   bottom: 0;
   left: 0;
+  right: 0;
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  position: absolute;
+  position: ${({ $position }) => $position ?? "absolute"};
   overflow: hidden;
   z-index: 9991999;
   border-top: 1px solid ${({ $theme }) => $theme.borderColor};
@@ -335,6 +348,7 @@ export interface StatusbarSpacerProps {
 function StatusbarSpacer({ desktopWidth, mobileWidth }: StatusbarSpacerProps) {
   return (
     <StyledStatusbarSpacer
+      aria-label="statusbar-spacer"
       $desktopWidth={desktopWidth}
       $mobileWidth={mobileWidth}
     />

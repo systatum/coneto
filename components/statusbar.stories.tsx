@@ -12,6 +12,7 @@ import {
   RiUserFollowLine,
   RiWindow2Fill,
 } from "@remixicon/react";
+import { generateSentence } from "./../lib/text";
 
 const meta: Meta<typeof Statusbar> = {
   title: "Stage/Statusbar",
@@ -35,6 +36,17 @@ It supports left and right sections, customizable styling, spacing, transparency
 - ⚖ **Flexible sizing** – Adjustable font/icon sizes
 - 🌐 **Transparent mode** – Render the statusbar with less border to make it even more minimalistic
 - 🛠 **Spacers** – Add responsive spacing with \`Statusbar.Spacer\`
+
+---
+
+### 📌 Positioning
+
+\`Statusbar\` supports both \`position: fixed\` and \`position: absolute\`.
+
+* \`position: fixed\` keeps the statusbar attached to the bottom of the viewport while scrolling.
+* \`position: absolute\` positions the statusbar relative to its nearest positioned ancestor and allows it to scroll with its container.
+
+\`Statusbar.Spacer\` can be used to reserve space for the statusbar and prevent content from being visually obscured, regardless of the positioning strategy being used.
 
 ---
 
@@ -142,84 +154,107 @@ export const Default: Story = {
       : RiFocus3Line;
 
     return (
-      <Statusbar
-        content={{
-          left: [
-            {
-              button: {
-                children: "Page 1 of 53",
-                showSubMenuOn: "self",
-                subMenu: ({ show }) =>
-                  show(<Textbox value={"@systatum/coneto 🚀"} readOnly />),
-              },
-            },
-            {
-              text: "17455 words",
-            },
-            {
-              text: "English (United States)",
-            },
-            {
-              icon: {
-                image: RiUserFollowLine,
-              },
-              text: "Accessibility: Good to go",
-            },
-          ],
-          right: [
-            {
-              button: {
-                showSubMenuOn: "self",
-                icon: {
-                  image: focusIcon,
-                },
-                subMenu: ({ list }) =>
-                  list([
-                    {
-                      caption: "Full window",
-                      icon: { image: RiFullscreenLine },
-                      onClick: () => setPressed(PRESSED_KEYS.FOCUS, true),
-                    },
-                    {
-                      caption: "Zen mode",
-                      icon: { image: RiFocus3Line },
-                      onClick: () => setPressed(PRESSED_KEYS.FOCUS, false),
-                    },
-                  ]),
-                children: "Focus",
-              },
-            },
-            {
-              button: {
-                pressed: isPressed(PRESSED_KEYS.PAGES),
-                onClick: () => togglePressed(PRESSED_KEYS.PAGES),
-                icon: { image: RiPagesLine },
-              },
-            },
-            {
-              button: {
-                pressed: isPressed(PRESSED_KEYS.WINDOW),
-                onClick: () => togglePressed(PRESSED_KEYS.WINDOW),
-                icon: { image: RiWindow2Fill },
-              },
-            },
-            {
-              button: {
-                pressed: isPressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
-                onClick: () => togglePressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
-                icon: { image: RiAlignItemLeftLine },
-              },
-            },
-            {
-              button: {
-                pressed: isPressed(PRESSED_KEYS.ALIGN_LEFT),
-                onClick: () => togglePressed(PRESSED_KEYS.ALIGN_LEFT),
-                icon: { image: RiAlignLeft },
-              },
-            },
-          ],
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          gap: "10px",
         }}
-      />
+      >
+        {Array.from({ length: 8 }).map((_, i) => {
+          return (
+            <div key={i}>
+              {generateSentence({
+                minLen: 40,
+                maxLen: 80,
+                seed: i,
+              })}
+            </div>
+          );
+        })}
+
+        <Statusbar
+          position="fixed"
+          content={{
+            left: [
+              {
+                button: {
+                  children: "Page 1 of 53",
+                  showSubMenuOn: "self",
+                  subMenu: ({ show }) =>
+                    show(<Textbox value={"@systatum/coneto 🚀"} readOnly />),
+                },
+              },
+              {
+                text: "17455 words",
+              },
+              {
+                text: "English (United States)",
+              },
+              {
+                icon: {
+                  image: RiUserFollowLine,
+                },
+                text: "Accessibility: Good to go",
+              },
+            ],
+            right: [
+              {
+                button: {
+                  showSubMenuOn: "self",
+                  icon: {
+                    image: focusIcon,
+                  },
+                  subMenu: ({ list }) =>
+                    list([
+                      {
+                        caption: "Full window",
+                        icon: { image: RiFullscreenLine },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, true),
+                      },
+                      {
+                        caption: "Zen mode",
+                        icon: { image: RiFocus3Line },
+                        onClick: () => setPressed(PRESSED_KEYS.FOCUS, false),
+                      },
+                    ]),
+                  children: "Focus",
+                },
+              },
+              {
+                button: {
+                  pressed: isPressed(PRESSED_KEYS.PAGES),
+                  onClick: () => togglePressed(PRESSED_KEYS.PAGES),
+                  icon: { image: RiPagesLine },
+                },
+              },
+              {
+                button: {
+                  pressed: isPressed(PRESSED_KEYS.WINDOW),
+                  onClick: () => togglePressed(PRESSED_KEYS.WINDOW),
+                  icon: { image: RiWindow2Fill },
+                },
+              },
+              {
+                button: {
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_ITEM_LEFT),
+                  icon: { image: RiAlignItemLeftLine },
+                },
+              },
+              {
+                button: {
+                  pressed: isPressed(PRESSED_KEYS.ALIGN_LEFT),
+                  onClick: () => togglePressed(PRESSED_KEYS.ALIGN_LEFT),
+                  icon: { image: RiAlignLeft },
+                },
+              },
+            ],
+          }}
+        />
+        <Statusbar.Spacer />
+      </div>
     );
   },
 };

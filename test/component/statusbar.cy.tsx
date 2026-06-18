@@ -136,16 +136,67 @@ describe("Statusbar", () => {
     cy.viewport(550, 750);
   });
 
-  context("styles", () => {
-    it("renders in the most bottom, justify-between, and position absolute", () => {
-      cy.mount(<ProductStatusbar />);
+  context("Statusbar.Spacer", () => {
+    context("when scroll to the bottom", () => {
+      it("should not cut the content", () => {
+        cy.mount(
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              overflow: "auto",
+            }}
+            aria-label="wrapper"
+          >
+            {Array.from({ length: 50 }).map((_, i) => {
+              return <div key={i}>Test {i + 1}</div>;
+            })}
+            <ProductStatusbar />
+            <Statusbar.Spacer />
+          </div>
+        );
+        cy.findByText("Test 50").should("not.exist");
+        cy.findByLabelText("wrapper").scrollTo("bottom", {
+          ensureScrollable: false,
+        });
 
-      cy.findByLabelText("statusbar-wrapper")
-        .should("have.css", "position", "absolute")
-        .and("have.css", "bottom", "0px")
-        .and("have.css", "justify-content", "space-between");
+        cy.wait(500);
+
+        cy.findByText("Test 50").should("exist");
+        cy.findByLabelText("statusbar-spacer").should(
+          "have.css",
+          "height",
+          "21px"
+        );
+      });
+    });
+  });
+
+  context("position", () => {
+    context("fixed", () => {
+      it("renders in the most bottom, justify-between, and position fixed", () => {
+        cy.mount(<ProductStatusbar />);
+
+        cy.findByLabelText("statusbar-wrapper")
+          .should("have.css", "position", "fixed")
+          .and("have.css", "bottom", "0px")
+          .and("have.css", "justify-content", "space-between");
+      });
     });
 
+    context("absolute", () => {
+      it("renders in the most bottom, justify-between, and position absolute", () => {
+        cy.mount(<ProductStatusbar />);
+
+        cy.findByLabelText("statusbar-wrapper")
+          .should("have.css", "position", "absolute")
+          .and("have.css", "bottom", "0px")
+          .and("have.css", "justify-content", "space-between");
+      });
+    });
+  });
+  context("styles", () => {
     context("self", () => {
       context("when given justify-start", () => {
         it("should render in the left side", () => {
