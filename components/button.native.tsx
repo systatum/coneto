@@ -1,12 +1,13 @@
 import { CSSProp } from "styled-components";
 import styled from "styled-components/native";
+import { GestureResponderEvent } from "react-native";
+import { ReactNode } from "react";
 
-const Pressable = styled.Pressable<{ $style?: CSSProp }>`
-  flex: 1;
-  background-color: white;
+const StyledPressable = styled.Pressable<{ $style?: CSSProp }>`
+  background-color: #4dec4d;
   justify-content: center;
   align-items: center;
-  user-select: none;
+  padding: 10px 20px;
 
   ${({ $style }) => $style}
 `;
@@ -19,16 +20,20 @@ const Paragraph = styled.Text<{ $style?: CSSProp }>`
 `;
 
 export function Button({
+  children,
+  onPress,
   styles,
 }: {
+  children?: ReactNode;
+  onPress?: (e: GestureResponderEvent) => void;
   styles?: {
     containerStyle?: CSSProp;
     self?: CSSProp;
   };
 }) {
   return (
-    <Pressable $style={styles?.containerStyle}>
-      <Paragraph $style={styles?.self}>Hello world</Paragraph>
-    </Pressable>
+    <StyledPressable onPress={onPress} $style={styles?.containerStyle}>
+      <Paragraph $style={styles?.self}>{children}</Paragraph>
+    </StyledPressable>
   );
 }
