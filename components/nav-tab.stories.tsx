@@ -196,7 +196,7 @@ export const Small: Story = {
     const [activeTab, setActiveTab] = useState("1");
 
     const [formValues, setFormValues] = useState<FormValues>({
-      compilation: null,
+      compilation: 1,
       machine: 1,
     });
 
@@ -226,7 +226,6 @@ export const Small: Story = {
     function CompilationHistorySection({
       setActiveTab,
       setFormValues,
-      setCompilations,
     }: {
       setActiveTab?: (activeTab?: string) => void;
       setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
