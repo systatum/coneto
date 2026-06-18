@@ -341,20 +341,24 @@ export const Small: Story = {
 
       useEffect(() => {
         if (compilations.length === 0) {
-          setCompilations([
-            {
-              text: "SmolLM2-135m (NPU)",
-              value: 1,
-            },
-            {
-              text: "Llama-3.2-1B (GPU)",
-              value: 2,
-            },
-            {
-              text: "Gemma-2B (CPU)",
-              value: 3,
-            },
-          ]);
+          const timeout = setTimeout(() => {
+            setCompilations([
+              {
+                text: "SmolLM2-135m (NPU)",
+                value: 1,
+              },
+              {
+                text: "Llama-3.2-1B (GPU)",
+                value: 2,
+              },
+              {
+                text: "Gemma-2B (CPU)",
+                value: 3,
+              },
+            ]);
+          }, 500);
+
+          return () => clearTimeout(timeout);
         }
       }, []);
 
