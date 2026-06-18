@@ -113,6 +113,10 @@
       "import": "./dist/components/file-input-box.js",
       "types": "./dist/components/file-input-box.d.ts"
     },
+    "./flippable": {
+      "import": "./dist/components/flippable.js",
+      "types": "./dist/components/flippable.d.ts"
+    },
     "./frame": {
       "import": "./dist/components/frame.js",
       "types": "./dist/components/frame.d.ts"

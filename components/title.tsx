@@ -271,23 +271,29 @@ function BaseTitleSection({
           }));
 
           return (
-            <ContextMenu
-              key={index}
-              styles={{
-                self: css`
-                  width: ${resolvedIconSize * 1.4}px;
-                  height: ${resolvedIconSize * 1.4}px;
-                  padding: 20px;
-                  border-radius: 10px;
-                  background-color: ${titleTheme?.icon?.backgroundColor};
+            <>
+              {filteredActionsWithSize.map((action, actionIndex) => (
+                <ContextMenu
+                  key={actionIndex}
+                  styles={{
+                    self: css`
+                      width: ${resolvedIconSize * 1.4}px;
+                      height: ${resolvedIconSize * 1.4}px;
+                      padding: 20px;
+                      border-radius: 10px;
+                      background-color: ${titleTheme?.icon?.backgroundColor};
 
-                  ${section?.styles?.toggleActionStyle}
-                `,
-              }}
-              maxActionsBeforeCollapsing={section.actions?.length}
-              hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-              actions={filteredActionsWithSize}
-            />
+                      ${section?.styles?.toggleActionStyle}
+                      ${action.styles?.self}
+                    `,
+                    containerStyle: action.styles?.containerStyle,
+                  }}
+                  maxActionsBeforeCollapsing={section.actions?.length}
+                  hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
+                  actions={[action]}
+                />
+              ))}
+            </>
           );
         }
 

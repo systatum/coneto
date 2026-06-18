@@ -390,6 +390,18 @@
   </item>
 
   <item>
+    <title>Flippable - Coneto React UI</title>
+    <link>https://coneto.systatum.com/?path=/docs/stage-flippable</link>
+    <guid isPermaLink="true">https://coneto.systatum.com/?path=/docs/stage-flippable</guid>
+    <description><![CDATA[Flippable is an interactive container component that displays front and back content with a smooth 3D flip animation. It supports imperative controls, customizable dimensions, animation duration, and fully customizable styles for both faces. --- ✨ Features 🔄 3D flip animation: Smooth card flip transition between front and back content.]]></description>
+    <content:encoded><![CDATA[<br/><strong>Flippable</strong> is an interactive container component that displays front and back content with a smooth 3D flip animation. It supports imperative controls, customizable dimensions, animation duration, and fully customizable styles for both faces.<br/><br/>---<br/>✨ Features<br/>
+<ul><li>🔄 <strong>3D flip animation</strong>: Smooth card flip transition between front and back content.</li><li>🎛 <strong>Imperative controls</strong>: Programmatically control flipping using `flip`, `unFlip`, and `toggle` methods via refs.</li><li>⏱ <strong>Customizable animation duration</strong>: Adjust flip speed using the `flipDuration` prop (in second).</li><li>🎨 <strong>Customizable styles</strong>: Override container, front face, and back face styles using styled-components `CSSProp`.</li><li>📏 <strong>Flexible sizing</strong>: Configure width and height using numbers or CSS values.</li><li>🧩 <strong>Flexible content</strong>: Render any ReactNode on the front and back faces.</li><li>🎭 <strong>Theme support</strong>: Supports separate theme styling for front and back faces.</li></ul><br/>---<br/>📌 Usage<br/><br/><pre><code><Flippable<br/>  width={280}<br/>  height={180}<br/>  flipDuration={0.6}<br/>  back={<br/>    <div<br/>      style={{<br/>        height: "100%",<br/>        display: "flex",<br/>        alignItems: "center",<br/>        justifyContent: "center",<br/>      }}<br/>    ><br/>      Back Side<br/>    </div><br/>  }<br/>><br/>  <div<br/>    style={{<br/>      height: "100%",<br/>      display: "flex",<br/>      alignItems: "center",<br/>      justifyContent: "center",<br/>    }}<br/>  ><br/>    Front Side<br/>  </div><br/></Flippable><br/></code></pre><br/>
+<ul><li>Click the component to toggle between front and back faces.</li><li>Use `flipDuration` to control the transition speed.</li><li>Use `width` and `height` to define the component size.</li><li>Customize appearance through `styles.self`, `styles.frontStyle`, and `styles.backStyle`.</li><li>Access `flip`, `unFlip`, and `toggle` methods through a component ref for programmatic control.</li><li>Render any ReactNode on either side to create cards, flashcards, product previews, profile cards, or interactive content.</li></ul>]]></content:encoded>
+    <pubDate>Wed, 10 Jun 2026 09:53:47 GMT</pubDate>
+    <coneto:item-digest>e5d5280c51edcf09efc30d06c27d6df3</coneto:item-digest>
+  </item>
+
+  <item>
     <title>Frame - Coneto React UI</title>
     <link>https://coneto.systatum.com/?path=/docs/stage-frame</link>
     <guid isPermaLink="true">https://coneto.systatum.com/?path=/docs/stage-frame</guid>
