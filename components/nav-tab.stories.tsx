@@ -284,7 +284,7 @@ export const Small: Story = {
       return (
         <Card
           title="Compilation History"
-          subtitle="smolm (model: SmolLM2-135m)"
+          subtitle="Record of previous compilations"
           styles={{
             containerStyle: css`
               width: 100%;
@@ -393,8 +393,8 @@ export const Small: Story = {
           },
           {
             id: "button",
-            title: "Button",
-            name: "button",
+            title: "Run",
+            name: "run",
             type: "button",
           },
         ],
