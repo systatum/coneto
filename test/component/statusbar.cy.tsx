@@ -173,16 +173,30 @@ describe("Statusbar", () => {
     });
   });
 
-  context("styles", () => {
-    it("renders in the most bottom, justify-between, and position fixed", () => {
-      cy.mount(<ProductStatusbar />);
+  context("position", () => {
+    context("fixed", () => {
+      it("renders in the most bottom, justify-between, and position fixed", () => {
+        cy.mount(<ProductStatusbar />);
 
-      cy.findByLabelText("statusbar-wrapper")
-        .should("have.css", "position", "fixed")
-        .and("have.css", "bottom", "0px")
-        .and("have.css", "justify-content", "space-between");
+        cy.findByLabelText("statusbar-wrapper")
+          .should("have.css", "position", "fixed")
+          .and("have.css", "bottom", "0px")
+          .and("have.css", "justify-content", "space-between");
+      });
     });
 
+    context("absolute", () => {
+      it("renders in the most bottom, justify-between, and position absolute", () => {
+        cy.mount(<ProductStatusbar />);
+
+        cy.findByLabelText("statusbar-wrapper")
+          .should("have.css", "position", "absolute")
+          .and("have.css", "bottom", "0px")
+          .and("have.css", "justify-content", "space-between");
+      });
+    });
+  });
+  context("styles", () => {
     context("self", () => {
       context("when given justify-start", () => {
         it("should render in the left side", () => {
