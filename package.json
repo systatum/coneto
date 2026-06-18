@@ -21,6 +21,10 @@
       "import": "./dist/components/boxbar.js",
       "types": "./dist/components/boxbar.d.ts"
     },
+    "./button.native": {
+      "import": "./dist/components/button.native.js",
+      "types": "./dist/components/button.native.d.ts"
+    },
     "./button": {
       "import": "./dist/components/button.js",
       "types": "./dist/components/button.d.ts"
@@ -392,6 +396,7 @@
     "monaco-editor": "^0.55.1",
     "pdfjs-dist": "5.4.54",
     "react-hook-form": "^7.56.3",
+    "react-native-web": "^0.21.2",
     "react-swipeable": "^7.0.2",
     "styled-components": "^6.1.19",
     "zod": "^3.24.4"
