@@ -23,7 +23,7 @@ describe("Title", () => {
   });
 
   context("styles", () => {
-    context("title Actions (specific)", () => {
+    context("actions styles", () => {
       context("containerStyle", () => {
         context("when given border blue color", () => {
           it("renders the blue colors on the container", () => {
