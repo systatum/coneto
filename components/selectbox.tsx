@@ -40,10 +40,8 @@ import { applyClassName } from "./../constants/classname";
 
 export type SelectboxSelectedOptions = number | string | number[] | string[];
 
-interface BaseSelectboxProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "children"
-> {
+interface BaseSelectboxProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
   options?: SelectboxOption[];
   navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
@@ -169,6 +167,23 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       }
       return [];
     }, [selectedOptions]);
+
+    // Sync local display state and confirmed value when selectedOptions prop changes
+    // from outside (e.g. form reset, parent-controlled value update).
+    // Only updates confirmedValue in strict mode to avoid overriding user's
+    // in-progress input in non-strict (free-text) mode.
+    useEffect(() => {
+      if (multiple) return;
+      const matched = finalOptions.find(
+        (opt) => String(opt.value) === finalSelectedOptions?.[0]
+      );
+      if (matched) {
+        setSelectedOptionsLocal(matched);
+        if (strict) {
+          setConfirmedValue(matched);
+        }
+      }
+    }, [finalSelectedOptions?.[0], finalOptions, strict, multiple]);
 
     const initialState = useMemo(
       () =>
@@ -647,8 +662,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 );
 
 export interface SelectboxProps
-  extends
-    Omit<BaseSelectboxProps, "styles">,
+  extends Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
   styles?: SelectboxStyles;
 }

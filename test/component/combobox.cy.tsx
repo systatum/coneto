@@ -7,16 +7,23 @@ import {
 } from "./../../components/combobox";
 import { Button } from "./../../components/button";
 import {
+  RiAddBoxLine,
   RiAddLine,
   RiDeleteBack2Line,
+  RiFlashlightLine,
   RiHome2Line,
   RiLogoutBoxLine,
   RiRunLine,
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "./../../components/sidebar";
+import { css } from "styled-components";
+import { NavTab, NavTabTab } from "./../../components/nav-tab";
+import { FormFieldGroup, StatefulForm } from "./../../components/stateful-form";
+import { Table, TableColumn, TableSubMenuList } from "./../../components/table";
+import { Card } from "./../../components/card";
 
 const flattenOptions = (items: ComboboxOption[]): string[] =>
   items.flatMap((item) =>
@@ -135,6 +142,302 @@ describe("Combobox", () => {
       />
     );
   }
+
+  context("dynamic options", () => {
+    context("when fetch after move", () => {
+      function ProductDynamicCombobox({ timeDelay }: { timeDelay?: number }) {
+        interface FormValues {
+          compilation?: number;
+          machine?: number;
+        }
+
+        const [activeTab, setActiveTab] = useState("1");
+
+        const [formValues, setFormValues] = useState<FormValues>({
+          compilation: 1,
+          machine: 1,
+        });
+
+        const TABS_ITEMS: NavTabTab[] = [
+          {
+            id: "1",
+            title: "Project",
+            content: (
+              <CompilationHistorySection
+                setFormValues={setFormValues}
+                setActiveTab={setActiveTab}
+              />
+            ),
+          },
+          {
+            id: "2",
+            title: "Inference",
+            content: (
+              <InferenceSection
+                timeDelay={timeDelay}
+                formValues={formValues}
+                setFormValues={setFormValues}
+              />
+            ),
+          },
+        ];
+
+        function CompilationHistorySection({
+          setActiveTab,
+          setFormValues,
+        }: {
+          setActiveTab?: (activeTab?: string) => void;
+          setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
+          setCompilations?: React.Dispatch<
+            React.SetStateAction<ComboboxOption[]>
+          >;
+        }) {
+          const [searchQuery, setSearchQuery] = useState("");
+
+          const compilationHistories = [
+            {
+              id: 1,
+              createdAt: "2026-06-15T10:00:00Z",
+              target: "NPU",
+              modelId: "SmolLM2-135m",
+            },
+            {
+              id: 2,
+              createdAt: "2026-06-16T14:30:00Z",
+              target: "GPU",
+              modelId: "Llama-3.2-1B",
+            },
+            {
+              id: 3,
+              createdAt: "2026-06-17T08:15:00Z",
+              target: "CPU",
+              modelId: "Gemma-2B",
+            },
+          ];
+
+          const filteredCompilationHistories = compilationHistories.filter(
+            (item) =>
+              item.modelId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              item.target.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+
+          const COMPILATION_HISTORY_COLUMNS: TableColumn[] = [
+            { id: "createdAt", caption: "Date", width: "30%" },
+            { id: "target", caption: "Target", width: "30%" },
+            { id: "modelId", caption: "Model", width: "40%" },
+          ];
+
+          const ROW_ACTION = (id?: string): TableSubMenuList[] => [
+            {
+              caption: "Infer",
+              icon: { image: RiFlashlightLine },
+              onClick: async () => {
+                await setFormValues((prev) => ({
+                  ...prev,
+                  compilation: Number(id),
+                }));
+
+                await setActiveTab("2");
+              },
+            },
+          ];
+
+          return (
+            <Card
+              title="Compilation History"
+              subtitle="Record of previous compilations"
+              styles={{
+                containerStyle: css`
+                  width: 100%;
+                  border: none;
+                  padding: 0px;
+                `,
+              }}
+            >
+              <Table
+                columns={COMPILATION_HISTORY_COLUMNS}
+                searchable
+                searchbox={{
+                  value: searchQuery,
+                  onChange: (e) => setSearchQuery(e.target.value),
+                }}
+              >
+                {filteredCompilationHistories.map((compilation) => (
+                  <Table.Row
+                    key={compilation.id}
+                    rowId={String(compilation.id)}
+                    content={[
+                      new Date(compilation.createdAt)
+                        .toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        })
+                        .replace(",", ""),
+                      compilation.target,
+                      compilation.modelId,
+                    ]}
+                    actions={ROW_ACTION}
+                  />
+                ))}
+              </Table>
+            </Card>
+          );
+        }
+
+        function InferenceSection({
+          formValues,
+          setFormValues,
+          timeDelay = 0,
+        }: {
+          setFormValues?: React.Dispatch<React.SetStateAction<FormValues>>;
+          formValues?: FormValues;
+          timeDelay?: number;
+        }) {
+          const [compilations, setCompilations] = useState<ComboboxOption[]>(
+            []
+          );
+
+          useEffect(() => {
+            if (compilations.length === 0) {
+              const timeout = setTimeout(() => {
+                setCompilations([
+                  {
+                    text: "SmolLM2-135m (NPU)",
+                    value: 1,
+                  },
+                  {
+                    text: "Llama-3.2-1B (GPU)",
+                    value: 2,
+                  },
+                  {
+                    text: "Gemma-2B (CPU)",
+                    value: 3,
+                  },
+                ]);
+              }, timeDelay);
+
+              return () => clearTimeout(timeout);
+            }
+          }, []);
+
+          const MACHINE_OPTIONS: ComboboxOption[] = [
+            {
+              text: "Local",
+              value: 1,
+            },
+            {
+              text: "Server",
+              value: 2,
+            },
+          ];
+
+          const FIELDS: FormFieldGroup[] = [
+            [
+              {
+                id: "compilation",
+                title: "Compilation",
+                name: "compilation",
+                type: "combo",
+                required: true,
+                combobox: {
+                  options: compilations,
+                },
+              },
+              {
+                id: "machine",
+                title: "Machine",
+                name: "machine",
+                type: "combo",
+                required: true,
+                combobox: {
+                  options: MACHINE_OPTIONS,
+                },
+              },
+              {
+                id: "button",
+                title: "Run",
+                name: "run",
+                type: "button",
+              },
+            ],
+          ];
+
+          return (
+            <>
+              <StatefulForm
+                styles={{
+                  containerStyle: css`
+                    padding: 10px;
+                    height: 400px;
+                  `,
+                }}
+                onChange={({ currentState }) =>
+                  setFormValues((prev) => ({ ...prev, ...currentState }))
+                }
+                formValues={formValues}
+                fields={FIELDS}
+              />
+            </>
+          );
+        }
+
+        return (
+          <NavTab
+            styles={{
+              contentStyle: css`
+                padding: 0px;
+              `,
+            }}
+            tabs={TABS_ITEMS}
+            activeTab={activeTab}
+            onChange={(activeTab) => setActiveTab(activeTab)}
+            size="sm"
+            actions={[
+              {
+                caption: "Add",
+                icon: { image: RiAddBoxLine },
+                onClick: () => {
+                  console.log(`Add button was clicked`);
+                },
+              },
+            ]}
+          />
+        );
+      }
+
+      it("shows properly text (not the value)", () => {
+        cy.mount(<ProductDynamicCombobox />);
+        cy.findByText("Inference").click();
+        cy.findAllByPlaceholderText("Search your item...")
+          .eq(0)
+          .should("not.have.value", "1");
+
+        cy.findAllByPlaceholderText("Search your item...")
+          .eq(0)
+          .should("have.value", "SmolLM2-135m (NPU)");
+      });
+
+      context("when given timeout 300ms", () => {
+        it("still changes to text, even the options was delayed", () => {
+          cy.mount(<ProductDynamicCombobox timeDelay={300} />);
+          cy.findByText("Inference").click();
+          cy.findAllByPlaceholderText("Search your item...")
+            .eq(0)
+            .should("have.value", "1");
+          cy.wait(300);
+
+          // changes even delayed
+          cy.findAllByPlaceholderText("Search your item...")
+            .eq(0)
+            .should("have.value", "SmolLM2-135m (NPU)");
+        });
+      });
+    });
+  });
 
   context("mobile", () => {
     beforeEach(() => {
