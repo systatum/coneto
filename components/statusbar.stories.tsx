@@ -39,6 +39,17 @@ It supports left and right sections, customizable styling, spacing, transparency
 
 ---
 
+### 📌 Positioning
+
+\`Statusbar\` supports both \`position: fixed\` and \`position: absolute\`.
+
+* \`position: fixed\` keeps the statusbar attached to the bottom of the viewport while scrolling.
+* \`position: absolute\` positions the statusbar relative to its nearest positioned ancestor and allows it to scroll with its container.
+
+\`Statusbar.Spacer\` can be used to reserve space for the statusbar and prevent content from being visually obscured, regardless of the positioning strategy being used.
+
+---
+
 ### 🛠 Usage
 
 \`\`\`tsx
