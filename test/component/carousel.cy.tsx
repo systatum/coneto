@@ -4,7 +4,13 @@ import { Carousel, CarouselProps } from "./../../components/carousel";
 describe("Carousel", () => {
   function ProductCarousel(props?: CarouselProps) {
     return (
-      <Carousel {...props}>
+      <Carousel
+        controller={{
+          arrow: Carousel.ArrowControllerPosition.CenterSide,
+          circle: Carousel.CircleControllerPosition.BottomCenter,
+        }}
+        {...props}
+      >
         <div
           style={{
             height: "200px",
@@ -113,19 +119,11 @@ describe("Carousel", () => {
   });
 
   context("controller", () => {
-    context("when given false", () => {
+    context("when not given (undefined)", () => {
       it("doesn't render controls", () => {
-        cy.mount(<ProductCarousel controller={false} />);
+        cy.mount(<ProductCarousel controller={undefined} />);
 
         cy.findAllByRole("tab").should("have.length", 0);
-      });
-    });
-
-    context("when given true (default)", () => {
-      it("renders controls", () => {
-        cy.mount(<ProductCarousel controller />);
-
-        cy.findAllByRole("tab").should("have.length", 3);
       });
     });
 
@@ -383,7 +381,14 @@ describe("Carousel", () => {
     context("when given true", () => {
       it("should adjust height based on active slide", () => {
         cy.mount(
-          <Carousel autoHeight id="carousel-test">
+          <Carousel
+            controller={{
+              arrow: Carousel.ArrowControllerPosition.CenterSide,
+              circle: Carousel.CircleControllerPosition.BottomCenter,
+            }}
+            autoHeight
+            id="carousel-test"
+          >
             <div style={{ height: "100px" }}>1</div>
             <div style={{ height: "300px" }}>2</div>
           </Carousel>
