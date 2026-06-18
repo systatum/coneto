@@ -18,7 +18,7 @@ export interface FlippableProps {
   back?: ReactNode;
   className?: string;
   id?: string;
-  flipDuration?: number;
+  speed?: number;
   onClick?: (props: {
     event?: React.MouseEvent<HTMLDivElement>;
     flip?: () => void;
@@ -50,7 +50,7 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
       onFlip,
       className,
       id,
-      flipDuration = 0.4,
+      speed = 0.4,
       onClick,
     },
     ref
@@ -108,7 +108,7 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
       >
         <Face
           $flipped={!isFlipped}
-          $flipDuration={flipDuration}
+          $speed={speed}
           aria-label="flippable-front-face"
           $style={styles.frontStyle}
           $theme={flippableTheme}
@@ -116,7 +116,7 @@ const Flippable = forwardRef<FlippableRef, FlippableProps>(
           {children}
         </Face>
         <BackFace
-          $flipDuration={flipDuration}
+          $speed={speed}
           $flipped={isFlipped}
           aria-label="flippable-back-face"
           $style={styles.backStyle}
@@ -151,7 +151,7 @@ const Face = styled.div<{
   $style?: CSSProp;
   $theme?: FlippableThemeConfig;
   $flipped: boolean;
-  $flipDuration?: number;
+  $speed?: number;
 }>`
   position: absolute;
   inset: 0;
@@ -166,20 +166,16 @@ const Face = styled.div<{
     0 2px 6px rgba(0, 0, 0, 0.08);
 
   transition:
-    transform ${({ $flipDuration }) => ($flipDuration ?? 0.4) / 2.5}s
+    transform ${({ $speed }) => ($speed ?? 0.4) / 2.5}s
       cubic-bezier(0.4, 0.2, 0.2, 1)
-      ${({ $flipped, $flipDuration }) =>
-        $flipped ? `${($flipDuration ?? 0.4) / 2.5}s` : "0s"},
+      ${({ $flipped, $speed }) =>
+        $flipped ? `${($speed ?? 0.4) / 2.5}s` : "0s"},
     opacity 0s linear
-      ${({ $flipped, $flipDuration }) =>
-        $flipped
-          ? `${($flipDuration ?? 0.4) / 2.5}s`
-          : `${($flipDuration ?? 0.4) / 2.5}s`},
+      ${({ $flipped, $speed }) =>
+        $flipped ? `${($speed ?? 0.4) / 2.5}s` : `${($speed ?? 0.4) / 2.5}s`},
     visibility 0s linear
-      ${({ $flipped, $flipDuration }) =>
-        $flipped
-          ? `${($flipDuration ?? 0.4) / 2.5}s`
-          : `${($flipDuration ?? 0.4) / 2.5}s`};
+      ${({ $flipped, $speed }) =>
+        $flipped ? `${($speed ?? 0.4) / 2.5}s` : `${($speed ?? 0.4) / 2.5}s`};
 
   transform: ${({ $flipped }) =>
     $flipped ? "rotateY(0deg)" : "rotateY(90deg)"};
