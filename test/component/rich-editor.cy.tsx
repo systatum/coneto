@@ -163,6 +163,43 @@ describe("RichEditor", () => {
     }
 
     context("when given rule with <{[{name}]}>", () => {
+      context("when pressing backspace and control z", () => {
+        context("when print the markdown", () => {
+          it("should still renders properly markdown", () => {
+            cy.mount(<ProductRichEditorWithTokenRenderers />);
+            cy.findByRole("textbox")
+              .findAllByLabelText("badge")
+              .eq(0)
+              .should("have.text", "@alim");
+            cy.findByRole("textbox").type("{selectAll}{backspace}test");
+            cy.findByText("Print").click();
+
+            cy.get("pre").should("have.text", "test");
+            cy.wait(300);
+
+            cy.window().then((win) => {
+              const editor = win.document.querySelector('[role="textbox"]');
+              editor.dispatchEvent(
+                new win.KeyboardEvent("keydown", {
+                  key: "z",
+                  metaKey: true,
+                  bubbles: true,
+                  cancelable: true,
+                })
+              );
+              win.document.execCommand("undo");
+            });
+            cy.wait(300);
+            cy.findByText("Print").click();
+
+            cy.get("pre").should(
+              "have.text",
+              'The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup.'
+            );
+          });
+        });
+      });
+
       it("should shows the component with this rule", () => {
         cy.mount(<ProductRichEditorWithTokenRenderers />);
         cy.findByRole("textbox")
