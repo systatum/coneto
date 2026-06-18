@@ -396,6 +396,7 @@
     "monaco-editor": "^0.55.1",
     "pdfjs-dist": "5.4.54",
     "react-hook-form": "^7.56.3",
+    "react-native": "^0.86.0",
     "react-native-web": "^0.21.2",
     "react-swipeable": "^7.0.2",
     "styled-components": "^6.1.19",
