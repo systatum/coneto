@@ -1137,6 +1137,14 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       }
 
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+        // Let the browser perform its native undo, then re-sync tokens and emit onChange
+        setTimeout(() => {
+          handleEditorChange();
+        }, 200);
+        return;
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
         e.preventDefault();
         return;
