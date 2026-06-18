@@ -173,6 +173,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     // Only updates confirmedValue in strict mode to avoid overriding user's
     // in-progress input in non-strict (free-text) mode.
     useEffect(() => {
+      if (multiple) return;
       const matched = finalOptions.find(
         (opt) => String(opt.value) === finalSelectedOptions?.[0]
       );
@@ -182,7 +183,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           setConfirmedValue(matched);
         }
       }
-    }, [finalSelectedOptions?.[0], finalOptions, strict]);
+    }, [finalSelectedOptions?.[0], finalOptions, strict, multiple]);
 
     const initialState = useMemo(
       () =>
