@@ -22,7 +22,7 @@ const meta: Meta<typeof Flippable> = {
 * 🔄 **3D flip animation**: Smooth card flip transition between front and back content.
 * 🎛 **Imperative controls**: Programmatically control flipping using \`flip\`, \`unFlip\`, and \`toggle\` methods via refs.
 * 🖱 **Click interaction**: Supports automatic flipping via the flipOnClick prop and provides an onClick callback with flip, unFlip, and toggle actions for custom flip behavior.
-* ⏱ **Customizable animation duration**: Adjust flip speed using the \`flipDuration\` prop (in second).
+* ⏱ **Customizable animation duration**: Adjust flip speed using the \`speed\` prop (in second).
 * 🎨 **Customizable styles**: Override container, front face, and back face styles using styled-components \`CSSProp\`.
 * 📏 **Flexible sizing**: Configure width and height using numbers or CSS values.
 * 🧩 **Flexible content**: Render any ReactNode on the front and back faces.
@@ -36,7 +36,7 @@ const meta: Meta<typeof Flippable> = {
 <Flippable
   width={280}
   height={180}
-  flipDuration={0.6}
+  speed={0.6}
   back={
     <div
       style={{
@@ -64,7 +64,7 @@ const meta: Meta<typeof Flippable> = {
 \`\`\`
 
 * Click the component to toggle between front and back faces.
-* Use \`flipDuration\` to control the transition speed.
+* Use \`speed\` to control the transition speed.
 * Use \`width\` and \`height\` to define the component size.
 * Customize appearance through \`styles.self\`, \`styles.frontStyle\`, and \`styles.backStyle\`.
 * Access \`flip\`, \`unFlip\`, and \`toggle\` methods through a component ref for programmatic control.
@@ -321,7 +321,7 @@ export const OnTable: Story = {
           ref={ref}
           width={420}
           height={350}
-          flipDuration={0.7}
+          speed={0.7}
           onClick={({ toggle }) => {
             toggle();
           }}
