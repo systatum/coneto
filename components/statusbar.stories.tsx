@@ -162,7 +162,9 @@ export const Default: Story = {
             </div>
           );
         })}
+
         <Statusbar
+          position="fixed"
           content={{
             left: [
               {
