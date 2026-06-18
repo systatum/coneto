@@ -25,13 +25,7 @@ export const Default: Story = {
   render: (args) => {
     return (
       <>
-        <Button
-          styles={{
-            containerStyle: css`
-              padding: 20px;
-            `,
-          }}
-        />
+        <Button>test</Button>
       </>
     );
   },
