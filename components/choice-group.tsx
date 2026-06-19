@@ -30,7 +30,7 @@ function ChoiceGroup({
   styles,
   className,
   id,
-  disabled = true,
+  disabled,
 }: ChoiceGroupProps) {
   const { currentTheme } = useTheme();
   const choiceGroupTheme = currentTheme.choiceGroup;
@@ -45,6 +45,7 @@ function ChoiceGroup({
   return (
     <ChoiceGroupWrapper
       id={id}
+      aria-label="choice-group"
       className={applyClassName("choice-group", className)}
       $disabled={disabled}
       $isRowDirection={isRadioButton}
