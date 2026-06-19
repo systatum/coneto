@@ -151,7 +151,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resizeStartY = useRef(0);
     const resizeStartHeight = useRef(0);
 
-    // Track last pointer Y and timestamp for velocity-based minimize on mobile resize
+    // Track last pointer Y and timestamp for velocity-based snap on mobile resize
     const velocityRef = useRef(0);
 
     const dialogRef = useRef<HTMLDivElement>(null);
@@ -330,6 +330,39 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               }
               setResizeHeight(null);
             }, 300);
+
+            // Fast flick upward → animate smoothly to max height
+          } else if (velocityRef.current < -0.5) {
+            if (!dialogRef.current || !contentRef.current) return;
+
+            // Apply smooth spring-like transition before snapping to max
+            const easing = "cubic-bezier(0.32, 0.72, 0, 1)";
+            const duration = "0.55s";
+            dialogRef.current.style.transition = `min-height ${duration} ${easing}, max-height ${duration} ${easing}`;
+            contentRef.current.style.transition = `height ${duration} ${easing}, max-height ${duration} ${easing}`;
+
+            dialogRef.current.style.minHeight = `${maxPx}px`;
+            dialogRef.current.style.maxHeight = `${maxPx}px`;
+            contentRef.current.style.height = `${maxPx}px`;
+            contentRef.current.style.maxHeight = `${maxPx}px`;
+
+            onResize?.({ height: maxPx });
+
+            // After transition ends, clear inline styles and hand off to React
+            setTimeout(() => {
+              if (dialogRef.current) {
+                dialogRef.current.style.transition = "";
+                dialogRef.current.style.minHeight = "";
+                dialogRef.current.style.maxHeight = "";
+              }
+              if (contentRef.current) {
+                contentRef.current.style.transition = "";
+                contentRef.current.style.height = "";
+                contentRef.current.style.maxHeight = "";
+              }
+              setResizeHeight(maxPx);
+              onResizeComplete?.({ height: maxPx });
+            }, 580);
           } else {
             // Read final height from DOM once, then hand back to React
             const finalHeight =
