@@ -257,24 +257,27 @@ const Label = styled.label<{
   width: 100%;
   transition: background-color 0.2s;
 
-  &:hover {
-    border: 0.5px solid
-      ${({ $highlight, $checked, $isRadio, $theme }) =>
-        $highlight && $checked && !$isRadio
-          ? $theme?.highlightCheckedBorderColor
-          : $highlight && !$isRadio
+  ${({ $disabled, $highlight, $checked, $isRadio, $theme }) =>
+    !$disabled &&
+    css`
+      &:hover {
+        border: 0.5px solid
+          ${$highlight && $checked && !$isRadio
             ? $theme?.highlightCheckedBorderColor
-            : "transparent"};
+            : $highlight && !$isRadio
+              ? $theme?.highlightCheckedBorderColor
+              : "transparent"};
 
-    background-color: ${({ $highlight, $checked, $theme }) => {
-      if ($highlight && $checked) {
-        return $theme?.highlightCheckedBackgroundColor;
-      } else if ($highlight) {
-        return $theme?.highlightBackgroundColor || $theme?.backgroundColor;
+        background-color: ${(() => {
+          if ($highlight && $checked) {
+            return $theme?.highlightCheckedBackgroundColor;
+          } else if ($highlight) {
+            return $theme?.highlightBackgroundColor || $theme?.backgroundColor;
+          }
+          return $theme?.backgroundColor;
+        })()};
       }
-      return $theme?.backgroundColor;
-    }};
-  }
+    `};
 
   ${({ $disabled }) =>
     $disabled &&
