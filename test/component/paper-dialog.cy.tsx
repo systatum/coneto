@@ -558,6 +558,46 @@ describe("PaperDialog", () => {
     });
 
     context("drag behavior", () => {
+      context("when dragging to top", () => {
+        it("should shows to the max height", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductPaperDialog
+              width="100dvw"
+              height="30dvh"
+              resizable={{
+                maxHeight: "100dvh",
+              }}
+              mobile
+            />
+          );
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+
+          cy.wait(500);
+
+          cy.findByLabelText("paper-dialog-content").should(
+            "have.css",
+            "height",
+            "164px"
+          );
+
+          cy.findByLabelText("paper-dialog-drag-indicator")
+            .should("exist")
+            .realMouseDown({ position: "center" })
+            .realMouseMove(0, -350)
+            .realMouseUp();
+
+          cy.wait(1000);
+          cy.findByLabelText("paper-dialog-content").should(
+            "have.css",
+            "height",
+            "639.7578125px"
+          );
+        });
+      });
+
       context("when dragging icon drag indicator", () => {
         it("should close the dialog", () => {
           cy.viewport(500, 700);
