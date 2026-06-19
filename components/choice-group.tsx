@@ -17,6 +17,7 @@ export interface ChoiceGroupProps {
   styles?: ChoiceGroupStyles;
   id?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export interface ChoiceGroupStyles {
@@ -24,7 +25,13 @@ export interface ChoiceGroupStyles {
   dividerStyle?: CSSProp;
 }
 
-function ChoiceGroup({ children, styles, className, id }: ChoiceGroupProps) {
+function ChoiceGroup({
+  children,
+  styles,
+  className,
+  id,
+  disabled = true,
+}: ChoiceGroupProps) {
   const { currentTheme } = useTheme();
   const choiceGroupTheme = currentTheme.choiceGroup;
 
@@ -39,6 +46,7 @@ function ChoiceGroup({ children, styles, className, id }: ChoiceGroupProps) {
     <ChoiceGroupWrapper
       id={id}
       className={applyClassName("choice-group", className)}
+      $disabled={disabled}
       $isRowDirection={isRadioButton}
       $style={styles?.containerStyle}
       $borderColor={choiceGroupTheme.borderColor}
@@ -65,6 +73,7 @@ function ChoiceGroup({ children, styles, className, id }: ChoiceGroupProps) {
 
         const modifiedChild = cloneElement(componentChild, {
           highlightOnChecked: true,
+          disabled: componentChild?.props?.disabled ?? disabled,
           ...(isRadioButton && {
             styles: {
               ...radioProps?.styles,
@@ -138,6 +147,7 @@ function ChoiceGroup({ children, styles, className, id }: ChoiceGroupProps) {
 const ChoiceGroupWrapper = styled.div<{
   $style?: CSSProp;
   $isRowDirection?: boolean;
+  $disabled?: boolean;
   $borderColor: string;
 }>`
   display: flex;
@@ -146,6 +156,14 @@ const ChoiceGroupWrapper = styled.div<{
   border-radius: 4px;
   overflow: hidden;
   width: 100%;
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.9;
+      user-select: none;
+    `}
 
   ${({ $isRowDirection }) =>
     $isRowDirection
