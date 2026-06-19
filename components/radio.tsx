@@ -301,6 +301,9 @@ const HiddenRadio = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   position: absolute;
   opacity: 0;
   pointer-events: none;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
 
   ${({ $disabled }) =>
     $disabled &&
