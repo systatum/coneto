@@ -546,6 +546,78 @@ export const Default: Story = {
   },
 };
 
+export const Loose: Story = {
+  render: () => {
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+    const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+    const STATUS = ["active", "idle", "degraded"];
+
+    const columns: TableColumn[] = [
+      { id: "name", caption: "Name", sortable: false },
+      { id: "type", caption: "Protocol", sortable: false },
+      { id: "region", caption: "Region", sortable: false },
+      { id: "status", caption: "Status", sortable: false },
+      { id: "version", caption: "Version", sortable: false },
+      { id: "uptime", caption: "Uptime", sortable: false },
+      { id: "requests", caption: "Requests/s", sortable: false },
+      { id: "latency", caption: "Latency (ms)", sortable: false },
+      { id: "errorRate", caption: "Error Rate", sortable: false },
+      { id: "cpu", caption: "CPU %", sortable: false },
+      { id: "memory", caption: "Memory %", sortable: false },
+      { id: "connections", caption: "Connections", sortable: false },
+      { id: "bandwidth", caption: "Bandwidth", sortable: false },
+      { id: "zone", caption: "Zone", sortable: false },
+      { id: "provider", caption: "Provider", sortable: false },
+    ];
+
+    const sampleRows = Array.from({ length: 15 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      const region = REGIONS[i % REGIONS.length];
+      const status = STATUS[i % STATUS.length];
+
+      const random = (base: number) => Math.floor(base + Math.random() * base);
+
+      return (
+        <Table.Row
+          key={i}
+          rowId={`lb-${i}`}
+          content={[
+            `lb-${region}-${i + 1}`,
+            type,
+            region,
+            status,
+            `v${1 + (i % 3)}.${i % 10}`,
+            `${10 + i}d`,
+            random(200),
+            random(50),
+            `${(Math.random() * 5).toFixed(2)}%`,
+            random(80),
+            random(70),
+            random(1000),
+            `${random(100)}Mbps`,
+            `zone-${(i % 3) + 1}`,
+            "aws",
+          ]}
+        />
+      );
+    });
+
+    return (
+      <Table
+        styles={{
+          tableBodyStyle: css`
+            max-height: 400px;
+          `,
+        }}
+        columns={columns}
+        loose
+      >
+        {sampleRows}
+      </Table>
+    );
+  },
+};
+
 export const Appendable: Story = {
   render: () => {
     const columns: TableColumn[] = [
