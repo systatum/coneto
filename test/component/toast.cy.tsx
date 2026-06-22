@@ -160,7 +160,7 @@ describe("Toast", () => {
         disappearAfterMs: 3000,
         withLoadingBar: true,
       });
-      cy.findByLabelText("toast-progress-bar").should(
+      cy.findByLabelText("progressbar-fill").should(
         "have.css",
         "background-color",
         THEME.success.progressColor
@@ -175,10 +175,10 @@ describe("Toast", () => {
           disappearAfterMs: 3000,
           withLoadingBar: true,
         });
-        cy.findByLabelText("toast-progress-bar")
+        cy.findByLabelText("progressbar-fill")
           .should("have.css", "position", "absolute")
           .and("have.css", "bottom", "0px")
-          .and("have.css", "height", "3px");
+          .and("have.css", "height", "6px");
       });
     });
 
