@@ -744,7 +744,7 @@ const TOAST_POSITION_STYLE: Record<ToastPosition, CSSProp> = {
 
 const Container = styled.div<{ $position: ToastPosition }>`
   position: fixed;
-  z-index: 99949999;
+  z-index: 9995999;
   display: flex;
   flex-direction: column;
   gap: 0;
