@@ -5,6 +5,53 @@ import { css } from "styled-components";
 
 describe("ChoiceGroup", () => {
   context("Radio", () => {
+    context("when given disabled", () => {
+      beforeEach(() => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <ChoiceGroup disabled>
+            {OPTIONS.map((props, index) => (
+              <Radio
+                key={index}
+                name="radioSelected"
+                label={props.label}
+                value={props.value}
+                onChange={(e) =>
+                  console.log(
+                    `The name is ${e.target.name} and the value is ${e.target.value}`
+                  )
+                }
+                styles={{
+                  labelStyle: css`
+                    font-size: 30px;
+                  `,
+                }}
+              />
+            ))}
+          </ChoiceGroup>
+        );
+      });
+
+      it("renders with transparent background", () => {
+        cy.findByLabelText("choice-group").should("have.css", "opacity", "0.9");
+      });
+
+      context("when clicking", () => {
+        it("not render the callback on the console", () => {
+          OPTIONS.map((props) => {
+            cy.findByText(props.label).click();
+            cy.get("@consoleLog").should(
+              "not.have.been.calledWith",
+              `The name is radioSelected and the value is ${props.value}`
+            );
+          });
+        });
+      });
+    });
+
     context("with onChange", () => {
       context("when clicking", () => {
         it("render the callback on the console", () => {
@@ -47,6 +94,49 @@ describe("ChoiceGroup", () => {
   });
 
   context("Checkbox", () => {
+    context("when given disabled", () => {
+      beforeEach(() => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <ChoiceGroup disabled>
+            {OPTIONS.map((option, index) => (
+              <Checkbox
+                key={index}
+                value={option.value}
+                description={option.description}
+                name={option.label}
+                label={option.label}
+                onChange={(e) =>
+                  console.log(
+                    `The name is ${e.target.name} and the value is ${e.target.value}`
+                  )
+                }
+              />
+            ))}
+          </ChoiceGroup>
+        );
+      });
+
+      it("renders with transparent background", () => {
+        cy.findByLabelText("choice-group").should("have.css", "opacity", "0.9");
+      });
+
+      context("when clicking", () => {
+        it("not render the callback with args onChange", () => {
+          OPTIONS.map((props) => {
+            cy.findByText(props.label).click();
+            cy.get("@consoleLog").should(
+              "not.have.been.calledWith",
+              `The name is ${props.label} and the value is ${props.value}`
+            );
+          });
+        });
+      });
+    });
+
     context("with onChange", () => {
       context("when clicking", () => {
         it("render the callback with args onChange", () => {

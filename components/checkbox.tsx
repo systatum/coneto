@@ -258,18 +258,21 @@ const InputWrapper = styled.label<{
       : "transparent"};
 
   transition: background-color 0.2s;
-
-  &:hover {
-    background-color: ${({ $highlight, $theme, $checked }) => {
-      if ($highlight && $checked) {
-        return $theme?.highlightCheckedBackgroundColor ?? "#E7F2FC";
-      } else if ($highlight) {
-        return $theme?.highlightHoverBackgroundColor;
-      } else {
-        return "transparent";
+  ${({ $disabled, $highlight, $theme, $checked }) =>
+    !$disabled &&
+    css`
+      &:hover {
+        background-color: ${() => {
+          if ($highlight && $checked) {
+            return $theme?.highlightCheckedBackgroundColor ?? "#E7F2FC";
+          } else if ($highlight) {
+            return $theme?.highlightHoverBackgroundColor;
+          } else {
+            return "transparent";
+          }
+        }};
       }
-    }};
-  }
+    `}
 
   ${({ $disabled }) =>
     $disabled &&
