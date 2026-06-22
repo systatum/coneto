@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
+  RiCheckboxMultipleLine,
   RiClipboardFill,
   RiClipboardLine,
   RiDeleteBin2Fill,
@@ -13,6 +14,7 @@ import {
   RiFileCopy2Line,
   RiReactjsLine,
   RiRefreshLine,
+  RiSettings3Line,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
@@ -548,6 +550,66 @@ export const Default: Story = {
 
 export const Loose: Story = {
   render: () => {
+    const [activeTab, setActiveTab] = useState({
+      withCheckbox: false,
+      withActions: false,
+    });
+
+    const TOP_ACTIONS: TableAction[] = [
+      {
+        type: "button",
+        caption: "With Checkbox",
+        pressed: activeTab.withCheckbox,
+        icon: {
+          image: RiCheckboxMultipleLine,
+        },
+        onClick: () => {
+          setActiveTab((prev) => ({
+            ...prev,
+            withCheckbox: !prev.withCheckbox,
+          }));
+        },
+      },
+      {
+        type: "button",
+        caption: "With Row Actions",
+        pressed: activeTab.withActions,
+        icon: {
+          image: RiSettings3Line,
+        },
+        onClick: () => {
+          setActiveTab((prev) => ({
+            ...prev,
+            withActions: !prev.withActions,
+          }));
+        },
+      },
+    ];
+
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
+      return [
+        {
+          caption: "Edit",
+          icon: {
+            image: RiArrowUpSLine,
+          },
+          onClick: () => {
+            console.log(`${rowId} was edited`);
+          },
+        },
+        {
+          caption: "Delete",
+          icon: {
+            image: RiDeleteBin2Fill,
+          },
+          variant: "danger",
+          onClick: () => {
+            console.log(`${rowId} was deleted`);
+          },
+        },
+      ];
+    };
+
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
     const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
     const STATUS = ["active", "idle", "degraded"];
@@ -579,6 +641,7 @@ export const Loose: Story = {
 
       return (
         <Table.Row
+          actions={activeTab.withActions ? ROW_ACTION : null}
           key={i}
           rowId={`lb-${i}`}
           content={[
@@ -609,8 +672,10 @@ export const Loose: Story = {
             max-height: 400px;
           `,
         }}
+        actions={TOP_ACTIONS}
         columns={columns}
         loose
+        selectable={activeTab.withCheckbox}
       >
         {sampleRows}
       </Table>
