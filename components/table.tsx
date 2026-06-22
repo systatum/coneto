@@ -90,6 +90,7 @@ export interface TableProps {
   sumRow?: TableSummaryRowColumn[];
   styles?: TableStyles;
   searchbox?: TableSearchbox;
+  loose?: boolean;
   id?: string;
   className?: string;
 }
@@ -153,6 +154,9 @@ const DnDContext = createContext<{
 const TableColumnContext = createContext<TableColumn[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
 
+const TableLooseContext = createContext<boolean>(false);
+const useTableLoose = () => useContext(TableLooseContext);
+
 function Table({
   selectable = false,
   columns,
@@ -177,6 +181,7 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
+  loose,
   className,
   id,
 }: TableProps & TableAlwaysShowDragIcon) {
@@ -334,304 +339,314 @@ function Table({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TableColumnContext.Provider value={columns}>
-        <Wrapper
-          id={id}
-          $theme={tableTheme}
-          className={applyClassName("table", className)}
-          $style={styles?.containerStyle}
-        >
-          {((selectedData.length > 0 &&
-            labels?.totalSelectedItemText !== null) ||
-            showPagination ||
-            actions ||
-            searchable) && (
-            <HeaderActions $theme={tableTheme} aria-label="header-wrapper">
-              {(actions || showPagination) && (
-                <ActionsWrapper>
-                  {showPagination && (
-                    <>
-                      <PaginationButton
-                        $theme={tableTheme}
-                        disabled={disablePreviousPageButton}
-                        aria-label="previous-button-pagination"
-                        onClick={onPreviousPageRequested}
-                      >
-                        <RiArrowLeftSLine size={16} />
-                      </PaginationButton>
-                      <PaginationButton
-                        $theme={tableTheme}
-                        disabled={disableNextPageButton}
-                        aria-label="next-button-pagination"
-                        onClick={onNextPageRequested}
-                      >
-                        <RiArrowRightSLine size={16} />
-                      </PaginationButton>
-                    </>
-                  )}
-                  {hasActions &&
-                    filteredActions.map((action, index) => {
-                      const { capsuleProps, ...rest } = action;
-
-                      if (action.type === "capsule") {
-                        return <ActionCapsule key={index} {...capsuleProps} />;
-                      }
-
-                      return <ActionButton key={index} {...rest} forTable />;
-                    })}
-                </ActionsWrapper>
-              )}
-              {searchable && (
-                <Searchbox
-                  autoComplete="off"
-                  name="search"
-                  {...searchbox}
-                  styles={{
-                    ...searchbox?.styles,
-                    containerStyle: css`
-                      ${actions &&
-                      css`
-                        margin-left: 40px;
-                      `};
-                      ${(showPagination || selectable) &&
-                      css`
-                        margin-right: 40px;
-                      `};
-                      max-height: 33px;
-                      ${searchbox?.styles?.containerStyle}
-                    `,
-                    self: css`
-                      background-color: transparent;
-
-                      ${searchbox?.styles?.self}
-                    `,
-                  }}
-                />
-              )}
-              {(selectable || showPagination) && (
-                <PaginationInfo
-                  aria-label="pagination-wrapper"
-                  $style={styles?.paginationWrapperStyle}
-                >
-                  {showPagination && (
-                    <PaginationNumber
-                      aria-label="pagination-number"
-                      $style={styles?.paginationNumberStyle}
-                    >
-                      {typeof labels.pageNumberText === "number"
-                        ? `Pg. ${labels.pageNumberText}`
-                        : labels.pageNumberText}
-                    </PaginationNumber>
-                  )}
-                  {selectable && (
-                    <PaginationSelectedItem
-                      aria-label="pagination-selected-item"
-                      $style={styles?.totalSelectedItemTextStyle}
-                    >
-                      {labels?.totalSelectedItemText
-                        ? labels?.totalSelectedItemText(selectedData.length)
-                        : `${selectedData.length} items selected`}
-                    </PaginationSelectedItem>
-                  )}
-                </PaginationInfo>
-              )}
-            </HeaderActions>
-          )}
-
-          <TableContainer
+      <TableLooseContext.Provider value={loose}>
+        <TableColumnContext.Provider value={columns}>
+          <Wrapper
+            id={id}
             $theme={tableTheme}
-            $hasSelected={selectedData.length > 0}
+            className={applyClassName("table", className)}
+            $style={styles?.containerStyle}
           >
-            <TableHeader
-              $theme={tableTheme}
-              aria-label="table-header"
-              $style={styles?.tableHeaderStyle}
-            >
-              {selectable && (
-                <CheckboxWrapper>
-                  <Checkbox
+            {((selectedData.length > 0 &&
+              labels?.totalSelectedItemText !== null) ||
+              showPagination ||
+              actions ||
+              searchable) && (
+              <HeaderActions $theme={tableTheme} aria-label="header-wrapper">
+                {(actions || showPagination) && (
+                  <ActionsWrapper>
+                    {showPagination && (
+                      <>
+                        <PaginationButton
+                          $theme={tableTheme}
+                          disabled={disablePreviousPageButton}
+                          aria-label="previous-button-pagination"
+                          onClick={onPreviousPageRequested}
+                        >
+                          <RiArrowLeftSLine size={16} />
+                        </PaginationButton>
+                        <PaginationButton
+                          $theme={tableTheme}
+                          disabled={disableNextPageButton}
+                          aria-label="next-button-pagination"
+                          onClick={onNextPageRequested}
+                        >
+                          <RiArrowRightSLine size={16} />
+                        </PaginationButton>
+                      </>
+                    )}
+                    {hasActions &&
+                      filteredActions.map((action, index) => {
+                        const { capsuleProps, ...rest } = action;
+
+                        if (action.type === "capsule") {
+                          return (
+                            <ActionCapsule key={index} {...capsuleProps} />
+                          );
+                        }
+
+                        return <ActionButton key={index} {...rest} forTable />;
+                      })}
+                  </ActionsWrapper>
+                )}
+                {searchable && (
+                  <Searchbox
+                    autoComplete="off"
+                    name="search"
+                    {...searchbox}
                     styles={{
-                      boxStyle: css`
-                        width: 100%;
+                      ...searchbox?.styles,
+                      containerStyle: css`
+                        ${actions &&
+                        css`
+                          margin-left: 40px;
+                        `};
+                        ${(showPagination || selectable) &&
+                        css`
+                          margin-right: 40px;
+                        `};
+                        max-height: 33px;
+                        ${searchbox?.styles?.containerStyle}
+                      `,
+                      self: css`
+                        background-color: transparent;
+
+                        ${searchbox?.styles?.self}
                       `,
                     }}
-                    onChange={handleSelectAll}
-                    checked={allRowSelectedLocal}
-                    indeterminate={someSelectedLocal}
                   />
-                </CheckboxWrapper>
-              )}
-              {columns.map((col, i) => {
-                const isLast =
-                  rowActions?.length > 0 && columns.length - 1 === i;
-                return (
-                  <TableRowCell
-                    key={i}
-                    width={col.width}
-                    contentStyle={css`
-                      display: flex;
-                      position: relative;
-                      align-items: center;
-                      ${col.width
-                        ? css`
-                            width: ${col.width};
-                            flex-direction: row;
-                          `
-                        : css`
-                            flex: 1;
-                          `}
-
-                      ${col?.styles?.containerStyle}
-                    `}
+                )}
+                {(selectable || showPagination) && (
+                  <PaginationInfo
+                    aria-label="pagination-wrapper"
+                    $style={styles?.paginationWrapperStyle}
                   >
-                    <Label
-                      aria-label="table-column-label"
-                      $style={col?.styles?.labelStyle}
-                    >
-                      {col.caption}
-                    </Label>
-                    {col.sortable && (
-                      <Toolbar
-                        styles={{
-                          self: css`
-                            width: fit-content;
-                            z-index: 20;
-                            ${isLast &&
-                            css`
-                              padding-right: 14px;
-                            `}
-                          `,
-                        }}
+                    {showPagination && (
+                      <PaginationNumber
+                        aria-label="pagination-number"
+                        $style={styles?.paginationNumberStyle}
                       >
-                        <Toolbar.Menu
-                          closedIcon={RiArrowUpDownLine}
-                          openedIcon={RiArrowUpDownLine}
-                          styles={{
-                            triggerStyle: col?.styles?.toggleSortableStyle,
-                            dropdownStyle: css`
-                              min-width: 235px;
+                        {typeof labels.pageNumberText === "number"
+                          ? `Pg. ${labels.pageNumberText}`
+                          : labels.pageNumberText}
+                      </PaginationNumber>
+                    )}
+                    {selectable && (
+                      <PaginationSelectedItem
+                        aria-label="pagination-selected-item"
+                        $style={styles?.totalSelectedItemTextStyle}
+                      >
+                        {labels?.totalSelectedItemText
+                          ? labels?.totalSelectedItemText(selectedData.length)
+                          : `${selectedData.length} items selected`}
+                      </PaginationSelectedItem>
+                    )}
+                  </PaginationInfo>
+                )}
+              </HeaderActions>
+            )}
 
-                              ${col?.styles?.dropdownSortableStyle}
+            <TableContainer
+              $theme={tableTheme}
+              $loose={loose}
+              $hasSelected={selectedData.length > 0}
+            >
+              <TableHeader
+                $theme={tableTheme}
+                $loose={loose}
+                aria-label="table-header"
+                $style={styles?.tableHeaderStyle}
+              >
+                {selectable && (
+                  <CheckboxWrapper>
+                    <Checkbox
+                      styles={{
+                        boxStyle: css`
+                          width: 100%;
+                        `,
+                      }}
+                      onChange={handleSelectAll}
+                      checked={allRowSelectedLocal}
+                      indeterminate={someSelectedLocal}
+                    />
+                  </CheckboxWrapper>
+                )}
+                {columns.map((col, i) => {
+                  const isLast =
+                    rowActions?.length > 0 && columns.length - 1 === i;
+                  return (
+                    <TableRowCell
+                      key={i}
+                      _index={i}
+                      width={col.width}
+                      contentStyle={css`
+                        display: flex;
+                        position: relative;
+                        align-items: center;
+                        ${col.width
+                          ? css`
+                              width: ${col.width};
+                              flex-direction: row;
+                            `
+                          : css`
+                              flex: 1;
+                            `}
+
+                        ${col?.styles?.containerStyle}
+                      `}
+                    >
+                      <Label
+                        aria-label="table-column-label"
+                        $style={col?.styles?.labelStyle}
+                      >
+                        {col.caption}
+                      </Label>
+                      {col.sortable && (
+                        <Toolbar
+                          styles={{
+                            self: css`
+                              width: fit-content;
+                              z-index: 20;
+                              ${isLast &&
+                              css`
+                                padding-right: 14px;
+                              `}
                             `,
                           }}
-                          subMenuList={
-                            subMenuList ? subMenuList(col.id) : undefined
-                          }
-                          variant="ghost"
-                        />
-                      </Toolbar>
-                    )}
-                  </TableRowCell>
-                );
-              })}
-            </TableHeader>
-
-            {rowChildren.length > 0 ? (
-              <TableBody
-                ref={tableBodyRef}
-                $theme={tableTheme}
-                aria-label="table-body"
-                $style={styles?.tableBodyStyle}
-              >
-                {rowChildren}
-              </TableBody>
-            ) : (
-              <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
-            )}
-
-            {sumRow && (
-              <TableSummary
-                $theme={tableTheme}
-                aria-label="table-summary-wrapper"
-                $selectable={selectable}
-              >
-                {(() => {
-                  const cells: ReactNode[] = [];
-                  let colPointer = 0;
-
-                  const totalCells = sumRow.reduce(
-                    (acc, col) => acc + (col.span ?? 1),
-                    0
-                  );
-
-                  sumRow.map((col) => {
-                    const span = col.span ?? 1;
-
-                    for (let s = 0; s < span; s++) {
-                      const columnWidth = columns[colPointer]?.width;
-
-                      const isLast =
-                        rowActions && colPointer === totalCells - 1;
-
-                      cells.push(
-                        <TableRowCell
-                          key={`${colPointer}-${s}`}
-                          width={columnWidth}
-                          bold={col.bold}
-                          contentStyle={css`
-                            display: flex;
-                            align-items: center;
-                            ${columnWidth
-                              ? css`
-                                  width: ${columnWidth};
-                                  flex-direction: row;
-                                `
-                              : css`
-                                  flex: 1;
-                                `}
-                            ${isLast &&
-                            css`
-                              padding-right: 36px;
-                            `}
-                            ${col.styles?.self}
-                          `}
                         >
-                          {s === 0 ? col.content : ""}
-                        </TableRowCell>
-                      );
+                          <Toolbar.Menu
+                            closedIcon={RiArrowUpDownLine}
+                            openedIcon={RiArrowUpDownLine}
+                            styles={{
+                              triggerStyle: col?.styles?.toggleSortableStyle,
+                              dropdownStyle: css`
+                                min-width: 235px;
 
-                      colPointer++;
-                    }
-                  });
+                                ${col?.styles?.dropdownSortableStyle}
+                              `,
+                            }}
+                            subMenuList={
+                              subMenuList ? subMenuList(col.id) : undefined
+                            }
+                            variant="ghost"
+                          />
+                        </Toolbar>
+                      )}
+                    </TableRowCell>
+                  );
+                })}
+              </TableHeader>
 
-                  return cells;
-                })()}
-              </TableSummary>
-            )}
-          </TableContainer>
+              {rowChildren.length > 0 ? (
+                <TableBody
+                  $loose={loose}
+                  ref={tableBodyRef}
+                  $theme={tableTheme}
+                  aria-label="table-body"
+                  $style={styles?.tableBodyStyle}
+                >
+                  {rowChildren}
+                </TableBody>
+              ) : (
+                <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
+              )}
 
-          {isLoading && (
-            <OverlayBlocker
-              styles={{
-                self: css`
-                  display: flex;
-                  align-items: start;
-                  padding-left: 10px;
-                  padding-top: 10px;
-                `,
-              }}
-              show={isLoading}
-              onClick="preventDefault"
-            >
-              <LoadingSpinner
+              {sumRow && (
+                <TableSummary
+                  $loose={loose}
+                  $theme={tableTheme}
+                  aria-label="table-summary-wrapper"
+                  $selectable={selectable}
+                >
+                  {(() => {
+                    const cells: ReactNode[] = [];
+                    let colPointer = 0;
+
+                    const totalCells = sumRow.reduce(
+                      (acc, col) => acc + (col.span ?? 1),
+                      0
+                    );
+
+                    sumRow.map((col, i) => {
+                      const span = col.span ?? 1;
+
+                      for (let s = 0; s < span; s++) {
+                        const columnWidth = columns[colPointer]?.width;
+
+                        const isLast =
+                          rowActions && colPointer === totalCells - 1;
+
+                        cells.push(
+                          <TableRowCell
+                            _index={i}
+                            key={`${colPointer}-${s}`}
+                            width={columnWidth}
+                            bold={col.bold}
+                            contentStyle={css`
+                              display: flex;
+                              align-items: center;
+                              ${columnWidth
+                                ? css`
+                                    width: ${columnWidth};
+                                    flex-direction: row;
+                                  `
+                                : css`
+                                    flex: 1;
+                                  `}
+                              ${isLast &&
+                              css`
+                                padding-right: 36px;
+                              `}
+                            ${col.styles?.self}
+                            `}
+                          >
+                            {s === 0 ? col.content : ""}
+                          </TableRowCell>
+                        );
+
+                        colPointer++;
+                      }
+                    });
+
+                    return cells;
+                  })()}
+                </TableSummary>
+              )}
+            </TableContainer>
+
+            {isLoading && (
+              <OverlayBlocker
                 styles={{
-                  containerStyle: css`
-                    background-color: black;
-                    border-radius: 20px;
-                    opacity: 0.8;
-                    color: white;
-                    padding: 4px;
-                    padding-right: 8px;
+                  self: css`
+                    display: flex;
+                    align-items: start;
+                    padding-left: 10px;
+                    padding-top: 10px;
                   `,
                 }}
-                label="Loading"
-                gap={10}
-                iconSize={24}
-              />
-            </OverlayBlocker>
-          )}
-        </Wrapper>
-      </TableColumnContext.Provider>
+                show={isLoading}
+                onClick="preventDefault"
+              >
+                <LoadingSpinner
+                  styles={{
+                    containerStyle: css`
+                      background-color: black;
+                      border-radius: 20px;
+                      opacity: 0.8;
+                      color: white;
+                      padding: 4px;
+                      padding-right: 8px;
+                    `,
+                  }}
+                  label="Loading"
+                  gap={10}
+                  iconSize={24}
+                />
+              </OverlayBlocker>
+            )}
+          </Wrapper>
+        </TableColumnContext.Provider>
+      </TableLooseContext.Provider>
     </DnDContext.Provider>
   );
 }
@@ -776,6 +791,7 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
 const TableContainer = styled.div<{
   $hasSelected: boolean;
   $theme?: TableThemeConfig;
+  $loose?: boolean;
 }>`
   position: relative;
   display: flex;
@@ -783,6 +799,13 @@ const TableContainer = styled.div<{
   height: 100%;
   overflow: hidden;
   background-color: ${({ $theme }) => $theme?.rowBackgroundColor};
+
+  ${({ $loose }) =>
+    $loose &&
+    css`
+      overflow-x: auto;
+      overflow-y: hidden;
+    `}
 
   ${({ $hasSelected, $theme }) =>
     $hasSelected &&
@@ -795,6 +818,7 @@ const TableHeader = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
   $theme?: TableThemeConfig;
+  $loose: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -810,10 +834,20 @@ const TableHeader = styled.div<{
     $theme?.headerBackgroundColor ||
     "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
 
+  ${({ $loose }) =>
+    $loose &&
+    css`
+      min-width: max-content;
+    `};
+
   ${({ $style }) => $style}
 `;
 
-const TableBody = styled.div<{ $style?: CSSProp; $theme: TableThemeConfig }>`
+const TableBody = styled.div<{
+  $style?: CSSProp;
+  $theme: TableThemeConfig;
+  $loose: boolean;
+}>`
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -837,12 +871,20 @@ const TableBody = styled.div<{ $style?: CSSProp; $theme: TableThemeConfig }>`
 
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
+  ${({ $loose }) =>
+    $loose &&
+    css`
+      min-width: max-content;
+      overflow-x: visible;
+    `}
+
   ${({ $style }) => $style};
 `;
 
 const TableSummary = styled.div<{
   $selectable?: boolean;
   $theme?: TableThemeConfig;
+  $loose: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -862,6 +904,12 @@ const TableSummary = styled.div<{
   color: ${({ $theme }) => $theme?.textColor};
   border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
+
+  ${({ $loose }) =>
+    $loose &&
+    css`
+      min-width: max-content;
+    `}
 `;
 
 const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
@@ -1355,6 +1403,7 @@ function TableRow({
               return (
                 <TableRowCell
                   key={i}
+                  _index={i}
                   width={column?.width}
                   contentStyle={
                     isLast
@@ -1624,13 +1673,19 @@ function TableRowCell({
   bold,
   id,
   className,
+  _index,
 }: TableRowCellProps &
   Partial<{
     bold?: boolean;
+    _index?: number;
   }>) {
+  const loose = useTableLoose();
+
   return (
     <CellContent
       id={id}
+      $loose={loose}
+      $sticky={_index === 0}
       className={applyClassName("table-row-cell", className)}
       aria-label="table-row-cell"
       onClick={() => {
@@ -1657,6 +1712,8 @@ const CellContent = styled.div<{
   $width?: string;
   $contentStyle?: CSSProp;
   $bold?: boolean;
+  $loose: boolean;
+  $sticky: boolean;
 }>`
   *,
   ::before,
@@ -1672,13 +1729,30 @@ const CellContent = styled.div<{
   white-space: pre-wrap;
   justify-content: space-between;
 
-  ${({ $width }) =>
-    !$width &&
+  ${({ $width, $loose }) =>
+    !$width && $loose
+      ? css`
+          min-width: 160px;
+          flex: unset;
+          width: 160px;
+        `
+      : !$width
+        ? css`
+            flex: 1;
+            height: fit-content;
+            width: 100%;
+          `
+        : ""};
+
+  ${({ $loose, $sticky }) =>
+    $sticky &&
+    $loose &&
     css`
-      flex: 1;
-      height: fit-content;
-      width: 100%;
-    `}
+      position: sticky;
+      left: 0;
+      z-index: 9991999;
+      background: inherit;
+    `};
 
   width: ${({ $width }) => $width};
   min-height: inherit;
@@ -1686,7 +1760,8 @@ const CellContent = styled.div<{
     $bold &&
     css`
       font-weight: 600;
-    `}
+    `};
+
   ${({ $contentStyle }) => $contentStyle};
 `;
 
