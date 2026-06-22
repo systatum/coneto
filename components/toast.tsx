@@ -92,6 +92,7 @@ export interface ToastProps {
   position?: ToastPosition;
   detailSlot?: ReactNode;
   withLoadingBar?: boolean;
+  zIndex?: number;
   className?: string;
   id?: string;
 }
@@ -627,20 +628,29 @@ interface PositionStore {
   el: HTMLDivElement;
   root: ReturnType<typeof createRoot>;
   items: ToastItemState[];
+  zIndex?: number;
   setItems?: (items: ToastItemState[]) => void;
+  setZIndex?: (z: number | undefined) => void;
 }
 
 const stores = new Map<ToastPosition, PositionStore>();
 
-function getStore(position: ToastPosition): PositionStore {
-  if (stores.has(position)) return stores.get(position)!;
+function getStore(position: ToastPosition, zIndex?: number): PositionStore {
+  if (stores.has(position)) {
+    const store = stores.get(position)!;
+    if (zIndex !== undefined) {
+      store.zIndex = zIndex;
+      store.setZIndex?.(zIndex);
+    }
+    return store;
+  }
 
   const el = document.createElement("div");
   el.setAttribute("toast-portal", position);
   document.body.appendChild(el);
 
   const root = createRoot(el);
-  const store: PositionStore = { el, root, items: [] };
+  const store: PositionStore = { el, root, items: [], zIndex };
   stores.set(position, store);
   return store;
 }
@@ -663,20 +673,29 @@ function ToastBridge({ position }: { position: ToastPosition }) {
 
 function ToastContainer({ position }: { position: ToastPosition }) {
   const [items, setItems] = useState<ToastItemState[]>([]);
+  const [zIndex, setZIndex] = useState<number | undefined>(
+    stores.get(position)?.zIndex
+  );
 
   // Register the setter so the imperative API can push updates in
   useEffect(() => {
     const store = getStore(position);
     store.setItems = setItems;
+    store.setZIndex = setZIndex;
     // Flush any items that arrived before this component mounted
     setItems([...store.items]);
+    setZIndex(store.zIndex);
     return () => {
       store.setItems = undefined;
     };
   }, [position]);
 
   return (
-    <Container $position={position}>
+    <Container
+      aria-label="toast-root-container"
+      $position={position}
+      $zIndex={zIndex}
+    >
       {items.map((item) => (
         <ToastItem
           key={item.id}
@@ -742,9 +761,9 @@ const TOAST_POSITION_STYLE: Record<ToastPosition, CSSProp> = {
   `,
 };
 
-const Container = styled.div<{ $position: ToastPosition }>`
+const Container = styled.div<{ $position: ToastPosition; $zIndex?: number }>`
   position: fixed;
-  z-index: 9995999;
+  z-index: ${({ $zIndex }) => $zIndex ?? 9995999};
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -795,7 +814,7 @@ function show(options: ToastProps): string {
   const position = options.position ?? "top-right";
   const item: ToastItemState = { ...options, id, exiting: false };
 
-  const store = getStore(position);
+  const store = getStore(position, options?.zIndex);
   store.items = [...store.items, item];
   renderStore(store, position);
 
