@@ -31,7 +31,7 @@ It supports both **controlled** and **uncontrolled** modes, allowing external st
 ### 🧱 Component Structure
 
 \`\`\`tsx
-<Carousel controller autoHeight>
+<Carousel autoHeight>
   <SlideOne />
   <SlideTwo />
   <SlideThree />
@@ -81,7 +81,7 @@ It supports both **controlled** and **uncontrolled** modes, allowing external st
     circle: Carousel.CircleControllerPosition.BottomCenter,
   }}
 >
-  ...
+  {children}
 </Carousel>
 \`\`\`
 
