@@ -94,6 +94,25 @@ describe("Toast", () => {
     });
   });
 
+  context("zIndex", () => {
+    context("when given 99999999", () => {
+      it("renders zIndex with 99999999", () => {
+        openToast({
+          variant: "success",
+          content: "Bar colour",
+          disappearAfterMs: 3000,
+          withLoadingBar: true,
+          zIndex: 99999999,
+        });
+
+        cy.findByLabelText("toast-root-container").should(
+          "have.css",
+          "z-index",
+          "99999999"
+        );
+      });
+    });
+  });
   context("variants", () => {
     const variants: ToastVariant[] = [
       "primary",
