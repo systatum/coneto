@@ -1823,7 +1823,7 @@ const CellContent = styled.div<{
     $loose &&
     css`
       position: sticky !important;
-      left: ${$selectable ? "34px" : "10px"};
+      left: ${$selectable ? "34px" : "0px"};
       z-index: 40;
       background-color: var(--row-bg, #ffffff);
 
