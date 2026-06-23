@@ -593,7 +593,11 @@ function Table({
                   })}
 
                   {loose && withRowActions && (
-                    <StickyRowActions $theme={tableTheme} $loose={loose} />
+                    <StickyRowActions
+                      aria-label="header-row-loose-action"
+                      $theme={tableTheme}
+                      $loose={loose}
+                    />
                   )}
                 </TableHeader>
               </ScrollWrapper>
@@ -710,6 +714,7 @@ function Table({
 
                     {loose && withRowActions && (
                       <StickyRowActions
+                        aria-label="summary-row-loose-action"
                         $theme={tableTheme}
                         $loose={loose}
                         $position={"summary"}
