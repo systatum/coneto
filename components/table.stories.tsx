@@ -1,5 +1,12 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TableColumn, TableSubMenuList, Table, TableAction } from "./table";
+import {
+  TableColumn,
+  TableSubMenuList,
+  Table,
+  TableAction,
+  TableSummaryRowColumn,
+  TableRowContent,
+} from "./table";
 import { useEffect, useMemo, useState } from "react";
 import {
   RiArrowDownSLine,
@@ -560,55 +567,36 @@ export const Loose: Story = {
         type: "button",
         caption: "With Checkbox",
         pressed: activeTab.withCheckbox,
-        icon: {
-          image: RiCheckboxMultipleLine,
-        },
-        onClick: () => {
+        icon: { image: RiCheckboxMultipleLine },
+        onClick: () =>
           setActiveTab((prev) => ({
             ...prev,
             withCheckbox: !prev.withCheckbox,
-          }));
-        },
+          })),
       },
       {
         type: "button",
         caption: "With Row Actions",
         pressed: activeTab.withActions,
-        icon: {
-          image: RiSettings3Line,
-        },
-        onClick: () => {
-          setActiveTab((prev) => ({
-            ...prev,
-            withActions: !prev.withActions,
-          }));
-        },
+        icon: { image: RiSettings3Line },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withActions: !prev.withActions })),
       },
     ];
 
-    const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
-      return [
-        {
-          caption: "Edit",
-          icon: {
-            image: RiArrowUpSLine,
-          },
-          onClick: () => {
-            console.log(`${rowId} was edited`);
-          },
-        },
-        {
-          caption: "Delete",
-          icon: {
-            image: RiDeleteBin2Fill,
-          },
-          variant: "danger",
-          onClick: () => {
-            console.log(`${rowId} was deleted`);
-          },
-        },
-      ];
-    };
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
+      {
+        caption: "Edit",
+        icon: { image: RiArrowUpSLine },
+        onClick: () => console.log(`${rowId} was edited`),
+      },
+      {
+        caption: "Delete",
+        icon: { image: RiDeleteBin2Fill },
+        variant: "danger",
+        onClick: () => console.log(`${rowId} was deleted`),
+      },
+    ];
 
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
     const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
@@ -632,38 +620,100 @@ export const Loose: Story = {
       { id: "provider", caption: "Provider", sortable: false },
     ];
 
-    const sampleRows = Array.from({ length: 15 }, (_, i) => {
-      const type = TYPES_DATA[i % TYPES_DATA.length];
-      const region = REGIONS[i % REGIONS.length];
-      const status = STATUS[i % STATUS.length];
+    const rowData = useMemo(
+      () =>
+        Array.from({ length: 15 }, (_, i) => {
+          const type = TYPES_DATA[i % TYPES_DATA.length];
+          const region = REGIONS[i % REGIONS.length];
+          const status = STATUS[i % STATUS.length];
 
-      const random = (base: number) => Math.floor(base + Math.random() * base);
+          const seed = (i + 1) * 17;
+          const req = 200 + (seed % 200);
+          const lat = 50 + (seed % 50);
+          const errRate = ((seed % 500) / 100).toFixed(2);
+          const cpu = 80 + (seed % 80);
+          const mem = 70 + (seed % 70);
+          const conn = 1000 + (seed % 1000);
+          const bw = 100 + (seed % 100);
 
-      return (
-        <Table.Row
-          actions={activeTab.withActions ? ROW_ACTION : null}
-          key={i}
-          rowId={`lb-${i}`}
-          content={[
-            `lb-${region}-${i + 1}`,
-            type,
-            region,
-            status,
-            `v${1 + (i % 3)}.${i % 10}`,
-            `${10 + i}d`,
-            random(200),
-            random(50),
-            `${(Math.random() * 5).toFixed(2)}%`,
-            random(80),
-            random(70),
-            random(1000),
-            `${random(100)}Mbps`,
-            `zone-${(i % 3) + 1}`,
-            "aws",
-          ]}
-        />
-      );
-    });
+          return {
+            id: `lb-${i}`,
+            content: [
+              `lb-${region}-${i + 1}`,
+              type,
+              region,
+              status,
+              `v${1 + (i % 3)}.${i % 10}`,
+              `${10 + i}d`,
+              req,
+              lat,
+              `${errRate}%`,
+              cpu,
+              mem,
+              conn,
+              `${bw}Mbps`,
+              `zone-${(i % 3) + 1}`,
+              "aws",
+            ] as TableRowContent,
+            req,
+            lat,
+            errRate: parseFloat(errRate),
+            cpu,
+            mem,
+            conn,
+            bw,
+          };
+        }),
+      []
+    );
+
+    const totals = useMemo(
+      () => ({
+        req: rowData.reduce((s, r) => s + r.req, 0),
+        lat: Math.round(
+          rowData.reduce((s, r) => s + r.lat, 0) / rowData.length
+        ),
+        errRate: (
+          rowData.reduce((s, r) => s + r.errRate, 0) / rowData.length
+        ).toFixed(2),
+        cpu: Math.round(
+          rowData.reduce((s, r) => s + r.cpu, 0) / rowData.length
+        ),
+        mem: Math.round(
+          rowData.reduce((s, r) => s + r.mem, 0) / rowData.length
+        ),
+        conn: rowData.reduce((s, r) => s + r.conn, 0),
+        bw: rowData.reduce((s, r) => s + r.bw, 0),
+      }),
+      [rowData]
+    );
+
+    const sampleRows = rowData.map((row, i) => (
+      <Table.Row
+        key={row.id}
+        rowId={row.id}
+        actions={activeTab.withActions ? ROW_ACTION : null}
+        content={row.content}
+      />
+    ));
+
+    const sumRow: TableSummaryRowColumn[] = [
+      { content: "Totals / Avg", bold: true },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: totals.req, bold: true },
+      { content: `${totals.lat} ms`, bold: true },
+      { content: `${totals.errRate}%`, bold: true },
+      { content: `${totals.cpu}%`, bold: true },
+      { content: `${totals.mem}%`, bold: true },
+      { content: totals.conn, bold: true },
+      { content: `${totals.bw}Mbps`, bold: true },
+      { content: "" },
+      { content: "" },
+    ];
 
     return (
       <Table
@@ -672,10 +722,11 @@ export const Loose: Story = {
             max-height: 400px;
           `,
         }}
+        loose
         actions={TOP_ACTIONS}
         columns={columns}
-        loose
         selectable={activeTab.withCheckbox}
+        sumRow={sumRow}
       >
         {sampleRows}
       </Table>
@@ -2598,6 +2649,7 @@ export const WithRowAppendix: Story = {
           columns={columns}
           subMenuList={TIP_MENU_ACTION}
           searchbox={{ onChange: (e) => setSearch(e.target.value) }}
+          selectable
           sumRow={[
             {
               span: 2,
