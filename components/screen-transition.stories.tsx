@@ -5,6 +5,7 @@ import { RiArrowLeftSLine } from "@remixicon/react";
 import styled, { css } from "styled-components";
 import { Button } from "./button";
 import { useTheme } from "./../theme";
+import { useState } from "react";
 
 const meta: Meta<typeof ScreenTransition> = {
   title: "Mobile/ScreenTransition",
@@ -22,9 +23,11 @@ export const Default: Story = {
     const { currentTheme } = useTheme();
     const bodyTheme = currentTheme?.body;
 
+    const [activeScreens, setActiveScreens] = useState([]);
+
     function PageTitle({
       text,
-      gotoPrevScreen = null,
+      goBack = null,
     }: {
       text?: string;
     } & Partial<ScreenProps>) {
@@ -32,7 +35,7 @@ export const Default: Story = {
         <Title
           size="md"
           leftSection={
-            gotoPrevScreen
+            goBack
               ? [
                   {
                     styles: {
@@ -49,7 +52,7 @@ export const Default: Story = {
                         caption: "back",
                         icon: { image: RiArrowLeftSLine },
                         onClick: () => {
-                          gotoPrevScreen();
+                          goBack();
                         },
                       },
                     ],
@@ -73,7 +76,7 @@ export const Default: Story = {
               justify-content: center;
               font-size: 20px;
 
-              ${gotoPrevScreen &&
+              ${goBack &&
               css`
                 padding-right: 40px;
               `}
@@ -84,49 +87,53 @@ export const Default: Story = {
       );
     }
 
-    function PageC() {
+    function PageC({ goBack, goToScreen }: ScreenProps) {
       return (
-        <ScreenTransition>
-          {({ gotoPrevScreen }) => (
-            <Wrapper>
-              <PageTitle text="Page C" gotoPrevScreen={gotoPrevScreen} />
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page C" goBack={goBack} />
+          <Button onClick={() => goToScreen("a")}>Go to Page A</Button>
+        </Wrapper>
       );
     }
 
-    function PageB() {
+    function PageB({ goBack, goToScreen }: ScreenProps) {
       return (
-        <ScreenTransition nextScreen={PageC}>
-          {({ gotoPrevScreen, gotoNextScreen }) => (
-            <Wrapper>
-              <PageTitle text="Page B" gotoPrevScreen={gotoPrevScreen} />
-              <Button onClick={gotoNextScreen ?? undefined}>
-                Go to Page C
-              </Button>
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page B" goBack={goBack} />
+          <Button onClick={() => goToScreen("c")}>Go to Page C</Button>
+        </Wrapper>
       );
     }
 
-    function PageA() {
+    function PageA({ goBack, goToScreen }: ScreenProps) {
       return (
-        <ScreenTransition nextScreen={PageB}>
-          {({ gotoNextScreen }) => (
-            <Wrapper>
-              <PageTitle text="Page A" gotoPrevScreen={null} />
-              <Button onClick={gotoNextScreen ?? undefined}>
-                Go to Page B
-              </Button>
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page A" goBack={goBack} />
+          <Button onClick={() => goToScreen("b")}>Go to Page B</Button>
+        </Wrapper>
       );
     }
 
-    return <PageA />;
+    return (
+      <>
+        {/* Imagine this generated in index.tsx */}
+        <Wrapper>
+          <PageTitle text="Index Screen" />
+          <Button onClick={() => setActiveScreens(["a"])}>Go to Page A</Button>
+        </Wrapper>
+
+        {/* Imagine this generated in app.tsx */}
+        <ScreenTransition
+          screens={{
+            a: PageA,
+            b: PageB,
+            c: PageC,
+          }}
+          activeScreens={activeScreens}
+          onScreenChange={(screens) => setActiveScreens(screens)}
+        />
+      </>
+    );
   },
 };
 
