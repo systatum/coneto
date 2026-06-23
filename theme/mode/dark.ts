@@ -744,6 +744,9 @@ const darkTable = createTableTheme(darkBody, {
   scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
 
   toggleRowBackgroundColor: "#374151",
+
+  looseEffectColor:
+    "linear-gradient(to right, rgba(255, 255, 255, 0.03), transparent)",
 });
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {

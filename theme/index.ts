@@ -628,6 +628,8 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   headerActionBackgroundColor?: string;
   headerActionBorderColor?: string;
 
+  looseEffectColor?: string;
+
   headerBackgroundColor?: string;
   headerBorderColor?: string;
 

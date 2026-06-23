@@ -1613,6 +1613,8 @@ export function createTableTheme(
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
       scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
       toggleRowBackgroundColor: "#d4d4d4",
+      looseEffectColor:
+        "linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent)",
     },
     ...themeConfigurations
   );
