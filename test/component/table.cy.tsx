@@ -438,6 +438,46 @@ describe("Table", () => {
         });
       });
 
+      context("with actions", () => {
+        it("renders the row actions sticky in the right side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.wait(300);
+
+          cy.get(".coneto-button")
+            .eq(4)
+            .should("have.css", "position", "sticky")
+            .and("have.css", "right", "0px");
+        });
+
+        it("renders the header row loose action", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.findAllByLabelText("action-button").eq(2).click();
+          cy.wait(300);
+
+          cy.findByLabelText("header-row-loose-action")
+            .should("exist")
+            .and("have.css", "width", "54px");
+        });
+
+        context("when activate summary", () => {
+          it("renders the summary row loose action", () => {
+            cy.mount(<ProductTableLoose loose />);
+
+            cy.findAllByLabelText("action-button").eq(1).click();
+            cy.findAllByLabelText("action-button").eq(2).click();
+            cy.wait(300);
+
+            cy.findByLabelText("summary-row-loose-action")
+              .should("exist")
+              .and("have.css", "width", "54px");
+          });
+        });
+      });
+
       context("with summary", () => {
         it("renders the first column summary stick in the left side", () => {
           cy.mount(<ProductTableLoose loose />);
