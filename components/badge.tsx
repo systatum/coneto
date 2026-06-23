@@ -16,10 +16,8 @@ export const BadgeVariant = {
 
 export type BadgeVariant = (typeof BadgeVariant)[keyof typeof BadgeVariant];
 
-export interface BadgeProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+export interface BadgeProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   id?: string;
   metadata?: Record<string, unknown>;
   variant?: BadgeVariant;
@@ -28,9 +26,7 @@ export interface BadgeProps extends Omit<
   backgroundColor?: string;
   textColor?: string;
   circleColor?: string;
-  onClick?: (
-    e?: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLDivElement>
-  ) => void;
+  onClick?: (e?: MouseEvent<HTMLSpanElement>) => void;
   actions?: BadgeAction[];
   styles?: BadgeStyles;
 }
@@ -246,7 +242,7 @@ function Badge({
   );
 }
 
-const BadgeIconWrapper = styled.div<{
+const BadgeIconWrapper = styled.span<{
   $style?: CSSProp;
 }>`
   display: flex;
@@ -256,7 +252,7 @@ const BadgeIconWrapper = styled.div<{
   ${({ $style }) => $style};
 `;
 
-const BadgeWrapper = styled.div<{
+const BadgeWrapper = styled.span<{
   $backgroundColor: string;
   $textColor: string;
   $theme?: BadgeThemeConfig;
@@ -296,7 +292,7 @@ const BadgeLabel = styled.span`
   flex: 1;
 `;
 
-const BadgeContent = styled.div<{ $withCircle?: boolean }>`
+const BadgeContent = styled.span<{ $withCircle?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
