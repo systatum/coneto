@@ -1828,9 +1828,12 @@ function TableRowCell({
   }>) {
   const { loose, selectable } = useTableLoose();
   const isFirst = _index === 0;
+  const { currentTheme } = useTheme();
+  const tableTheme = currentTheme?.table;
 
   return (
     <CellContent
+      $theme={tableTheme}
       id={id}
       $loose={loose}
       $selectable={selectable}
@@ -1864,6 +1867,7 @@ const CellContent = styled.div<{
   $loose: boolean;
   $sticky: boolean;
   $selectable?: boolean;
+  $theme: TableThemeConfig;
 }>`
   *,
   ::before,
@@ -1897,7 +1901,7 @@ const CellContent = styled.div<{
           `
         : ""};
 
-  ${({ $loose, $sticky, $selectable }) =>
+  ${({ $loose, $sticky, $selectable, $theme }) =>
     $sticky &&
     $loose &&
     css`
@@ -1913,7 +1917,7 @@ const CellContent = styled.div<{
         right: -6px;
         bottom: 0;
         width: 6px;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+        background: ${$theme?.looseEffectColor};
         pointer-events: none;
       }
     `}
