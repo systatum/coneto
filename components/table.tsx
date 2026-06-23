@@ -839,7 +839,7 @@ const StickyRowActions = styled.div<{
   display: flex;
   align-items: center;
   height: auto;
-  width: 54px;
+  width: 48px;
   transform: none;
   padding-left: 8px;
   padding-right: 8px;
@@ -1001,20 +1001,6 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
-    border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
-  }
-
   ${({ $loose, $theme }) =>
     $loose
       ? css`
@@ -1023,6 +1009,20 @@ const TableBody = styled.div<{
           --row-bg: ${$theme?.headerBackgroundColor ?? "#e4e4e4"};
         `
       : css`
+          &::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background-color: ${$theme?.scrollbarThumbColor};
+            border-radius: 2px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: ${$theme?.scrollbarTrackColor};
+          }
+
           overflow-y: auto;
           overflow-x: hidden;
         `}
