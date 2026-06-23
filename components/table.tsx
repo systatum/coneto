@@ -973,9 +973,9 @@ const TableHeader = styled.div<{
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
   border-left: 1px solid
-    ${({ $theme }) => $theme?.headerBackgroundColor || "#d1d5db"};
+    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
   border-right: 1px solid
-    ${({ $theme }) => $theme?.headerBackgroundColor || "#d1d5db"};
+    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
