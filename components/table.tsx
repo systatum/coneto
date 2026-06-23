@@ -658,8 +658,6 @@ function Table({
                               contentStyle={css`
                                 display: flex;
                                 align-items: center;
-                                background: ${tableTheme?.summaryBackgroundColor ??
-                                "#e4e4e4"};
 
                                 ${columnWidth
                                   ? css`
@@ -681,6 +679,8 @@ function Table({
                                   ${isFirst &&
                                   css`
                                     z-index: 40;
+                                    background: ${tableTheme?.summaryBackgroundColor ??
+                                    "#e4e4e4"};
                                   `}
                                 `}
                             ${col.styles?.self}
@@ -913,7 +913,6 @@ const TableHeader = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  align-items: center;
   font-weight: 600;
   color: ${({ $textColor }) => $textColor};
   border-bottom: 1px solid
@@ -986,10 +985,10 @@ const TableSummary = styled.div<{
 
   align-items: center;
   border-bottom-width: 1px;
-  background: ${({ $theme }) => $theme?.summaryBackgroundColor};
   color: ${({ $theme }) => $theme?.textColor};
   border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
+  background: ${({ $theme }) => $theme?.summaryBackgroundColor};
 
   ${({ $loose, $theme }) =>
     $loose &&
