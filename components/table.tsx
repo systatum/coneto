@@ -157,9 +157,12 @@ const useTableColumns = () => useContext(TableColumnContext);
 const TableLooseContext = createContext<{
   loose?: boolean;
   selectable?: boolean;
+  withRowActions?: boolean;
+  setWithRowActions?: (value: boolean) => void;
 }>({
   loose: false,
   selectable: false,
+  withRowActions: false,
 });
 const useTableLoose = () => useContext(TableLooseContext);
 
@@ -206,6 +209,8 @@ function Table({
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>("");
+
+  const [withRowActions, setWithRowActions] = useState(false);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -371,7 +376,9 @@ function Table({
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TableLooseContext.Provider value={{ loose, selectable }}>
+      <TableLooseContext.Provider
+        value={{ loose, selectable, withRowActions, setWithRowActions }}
+      >
         <TableColumnContext.Provider value={columns}>
           <Wrapper
             id={id}
@@ -584,6 +591,10 @@ function Table({
                       </TableRowCell>
                     );
                   })}
+
+                  {loose && withRowActions && (
+                    <StickyRowActions $theme={tableTheme} $loose={loose} />
+                  )}
                 </TableHeader>
               </ScrollWrapper>
 
@@ -696,6 +707,14 @@ function Table({
 
                       return cells;
                     })()}
+
+                    {loose && withRowActions && (
+                      <StickyRowActions
+                        $theme={tableTheme}
+                        $loose={loose}
+                        $position={"summary"}
+                      />
+                    )}
                   </TableSummary>
                 </ScrollWrapper>
               )}
@@ -803,6 +822,37 @@ const Wrapper = styled.div<{
   color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $style }) => $style}
+`;
+
+const StickyRowActions = styled.div<{
+  $loose?: boolean;
+  $theme?: TableThemeConfig;
+  $position?: "header" | "summary";
+}>`
+  position: sticky;
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: 54px;
+  transform: none;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: ${({ $theme, $position }) =>
+    $position === "summary"
+      ? $theme?.summaryBackgroundColor
+      : $theme?.headerBackgroundColor};
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -6px;
+    bottom: 0;
+    width: 6px;
+    background: ${({ $theme }) => $theme?.looseEffectColor};
+    pointer-events: none;
+  }
 `;
 
 const Label = styled.span<{ $style?: CSSProp }>`
@@ -982,8 +1032,8 @@ const TableSummary = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-
-  align-items: center;
+  align-items: stretch;
+  height: 100%;
   border-bottom-width: 1px;
   color: ${({ $theme }) => $theme?.textColor};
   border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
@@ -994,10 +1044,8 @@ const TableSummary = styled.div<{
     $loose &&
     css`
       min-width: max-content;
-      bottom: 0;
-      position: sticky;
-      left: 0;
       z-index: 40;
+
       --row-bg: ${$theme?.summaryBackgroundColor ?? "#e4e4e4"};
     `}
 `;
@@ -1376,7 +1424,13 @@ function TableRow({
       isLast?: boolean;
     };
 
-  const { loose } = useTableLoose();
+  const { loose, setWithRowActions } = useTableLoose();
+
+  useEffect(() => {
+    if (actions) {
+      setWithRowActions(true);
+    }
+  }, [actions]);
 
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
@@ -1620,7 +1674,7 @@ function TableRow({
                       : openRowId === rowId) &&
                     css`
                       display: inherit;
-                    `}
+                    `};
 
                     ${draggable
                       ? css`
@@ -1628,7 +1682,31 @@ function TableRow({
                         `
                       : css`
                           right: 0.5rem;
-                        `}
+                        `};
+
+                    ${loose &&
+                    css`
+                      position: sticky;
+                      right: 0;
+                      display: flex;
+                      align-items: center;
+                      height: auto;
+                      transform: none;
+                      padding-left: 8px;
+                      padding-right: 8px;
+                      background-color: var(--row-bg, #ffffff);
+
+                      &::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: -6px;
+                        bottom: 0;
+                        width: 6px;
+                        background: ${tableTheme?.looseEffectColor};
+                        pointer-events: none;
+                      }
+                    `};
                   `,
                 }}
                 focusBackgroundColor={
@@ -1725,6 +1803,7 @@ const TableRowWrapper = styled.div<{
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
   cursor: default;
+  height: 100%;
 
   ${({ $isHovered, $isSelected, $theme }) =>
     $isHovered
