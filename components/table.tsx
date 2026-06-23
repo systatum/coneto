@@ -343,6 +343,32 @@ function Table({
 
   const hasActions = filteredActions.length > 0;
 
+  // Scroll sync for loose mode.
+  // Header and summary don't scroll on their own — their scrollLeft is driven
+  // by TableBody (the only real scroll container).
+
+  const headerScrollRef = useRef<HTMLDivElement>(null);
+  const summaryScrollRef = useRef<HTMLDivElement>(null);
+
+  // Sync horizontal scroll: wrapper → summary
+  const handleWrapperScroll = () => {
+    const scrollLeft = tableBodyRef.current?.scrollLeft ?? 0;
+    if (headerScrollRef.current)
+      headerScrollRef.current.scrollLeft = scrollLeft;
+    if (summaryScrollRef.current)
+      summaryScrollRef.current.scrollLeft = scrollLeft;
+  };
+
+  // Sync horizontal scroll: summary → wrapper (if user drags summary scrollbar)
+  const handleSummaryScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollLeft = e.currentTarget.scrollLeft;
+    if (tableBodyRef.current) tableBodyRef.current.scrollLeft = scrollLeft;
+    if (headerScrollRef.current)
+      headerScrollRef.current.scrollLeft = scrollLeft;
+    if (summaryScrollRef.current)
+      summaryScrollRef.current.scrollLeft = scrollLeft;
+  };
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableLooseContext.Provider value={{ loose, selectable }}>
@@ -457,9 +483,14 @@ function Table({
               $loose={loose}
               $hasSelected={selectedData.length > 0}
             >
-              <TableScrollWrapper $loose={loose}>
+              <ScrollWrapper
+                ref={headerScrollRef}
+                onScroll={loose ? handleSummaryScroll : undefined}
+                $loose={loose}
+              >
                 <TableHeader
                   $theme={tableTheme}
+                  $loose={loose}
                   aria-label="table-header"
                   $style={styles?.tableHeaderStyle}
                 >
@@ -484,6 +515,7 @@ function Table({
                   {columns.map((col, i) => {
                     const isLast =
                       rowActions?.length > 0 && columns.length - 1 === i;
+
                     return (
                       <TableRowCell
                         key={i}
@@ -501,9 +533,13 @@ function Table({
                                 width: ${col.width};
                                 flex-direction: row;
                               `
-                            : css`
-                                flex: 1;
-                              `}
+                            : loose
+                              ? css`
+                                  flex: unset;
+                                `
+                              : css`
+                                  flex: 1;
+                                `}
 
                           ${col?.styles?.containerStyle}
                         `}
@@ -549,28 +585,50 @@ function Table({
                     );
                   })}
                 </TableHeader>
+              </ScrollWrapper>
 
-                {rowChildren.length > 0 ? (
-                  <TableBody
-                    ref={tableBodyRef}
-                    $theme={tableTheme}
-                    aria-label="table-body"
-                    $loose={loose}
-                    $style={styles?.tableBodyStyle}
-                  >
-                    {rowChildren}
-                  </TableBody>
-                ) : (
-                  <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
-                )}
+              {rowChildren.length > 0 ? (
+                <TableBody
+                  ref={tableBodyRef}
+                  onScroll={loose ? handleWrapperScroll : undefined}
+                  $theme={tableTheme}
+                  aria-label="table-body"
+                  $loose={loose}
+                  $style={styles?.tableBodyStyle}
+                >
+                  {rowChildren}
+                </TableBody>
+              ) : (
+                <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
+              )}
 
-                {sumRow && (
+              {sumRow && (
+                <ScrollWrapper
+                  ref={summaryScrollRef}
+                  $loose={loose}
+                  onScroll={loose ? handleSummaryScroll : undefined}
+                >
                   <TableSummary
                     $loose={loose}
                     $theme={tableTheme}
-                    aria-label="table-summary-wrapper"
                     $selectable={selectable}
+                    aria-label="table-summary-wrapper"
                   >
+                    {selectable && (
+                      <CheckboxWrapper
+                        aria-label="empty-checkbox"
+                        $position="header"
+                        $theme={tableTheme}
+                        $loose={loose}
+                        $style={
+                          loose &&
+                          css`
+                            width: 36px;
+                            height: 49px;
+                          `
+                        }
+                      />
+                    )}
                     {(() => {
                       const cells: ReactNode[] = [];
                       let colPointer = 0;
@@ -589,6 +647,8 @@ function Table({
                           const isLast =
                             rowActions && colPointer === totalCells - 1;
 
+                          const isFirst = i === 0;
+
                           cells.push(
                             <TableRowCell
                               _index={i}
@@ -598,6 +658,9 @@ function Table({
                               contentStyle={css`
                                 display: flex;
                                 align-items: center;
+                                background: ${tableTheme?.summaryBackgroundColor ??
+                                "#e4e4e4"};
+
                                 ${columnWidth
                                   ? css`
                                       width: ${columnWidth};
@@ -609,6 +672,16 @@ function Table({
                                 ${isLast &&
                                 css`
                                   padding-right: 36px;
+                                `}
+
+                                ${loose &&
+                                css`
+                                  flex: unset;
+
+                                  ${isFirst &&
+                                  css`
+                                    z-index: 40;
+                                  `}
                                 `}
                             ${col.styles?.self}
                               `}
@@ -624,8 +697,8 @@ function Table({
                       return cells;
                     })()}
                   </TableSummary>
-                )}
-              </TableScrollWrapper>
+                </ScrollWrapper>
+              )}
             </TableContainer>
 
             {isLoading && (
@@ -664,6 +737,17 @@ function Table({
     </DnDContext.Provider>
   );
 }
+
+const ScrollWrapper = styled.div<{ $loose?: boolean }>`
+  flex-shrink: 0;
+  overflow-x: ${({ $loose }) => ($loose ? "auto" : "hidden")};
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 function ActionCapsule(capsule: CapsuleProps) {
   const { currentTheme } = useTheme();
@@ -825,6 +909,7 @@ const TableHeader = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
   $theme?: TableThemeConfig;
+  $loose?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -833,27 +918,21 @@ const TableHeader = styled.div<{
   color: ${({ $textColor }) => $textColor};
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+  border-left: 1px solid
+    ${({ $theme }) => $theme?.headerBackgroundColor || "#d1d5db"};
+  border-right: 1px solid
+    ${({ $theme }) => $theme?.headerBackgroundColor || "#d1d5db"};
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
-  min-width: max-content;
-
-  position: sticky;
-  top: 0;
-  z-index: 50;
-
-  ${({ $style }) => $style}
-`;
-
-const TableScrollWrapper = styled.div<{ $loose?: boolean }>`
-  display: flex;
-  flex-direction: column;
 
   ${({ $loose }) =>
     $loose &&
     css`
-      overflow: auto;
+      min-width: max-content;
     `}
+
+  ${({ $style }) => $style}
 `;
 
 const TableBody = styled.div<{
@@ -868,29 +947,30 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
+  }
+
   ${({ $loose, $theme }) =>
     $loose
       ? css`
-          min-width: max-content;
-          overflow: visible;
+          overflow: auto;
+
           --row-bg: ${$theme?.headerBackgroundColor ?? "#e4e4e4"};
         `
       : css`
-          overflow: auto;
-
-          &::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-          }
-
-          &::-webkit-scrollbar-thumb {
-            background-color: ${$theme?.scrollbarThumbColor};
-            border-radius: 2px;
-          }
-
-          &::-webkit-scrollbar-track {
-            background: ${$theme?.scrollbarTrackColor};
-          }
+          overflow-y: auto;
+          overflow-x: hidden;
         `}
 
   ${({ $style }) => $style};
@@ -903,16 +983,7 @@ const TableSummary = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  padding: 10px;
-  ${({ $selectable }) =>
-    $selectable
-      ? css`
-          padding-left: 42px;
-        `
-      : css`
-          padding-left: 10px;
-        `}
-  padding-right: 15px;
+
   align-items: center;
   border-bottom-width: 1px;
   background: ${({ $theme }) => $theme?.summaryBackgroundColor};
@@ -920,10 +991,15 @@ const TableSummary = styled.div<{
   border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
 
-  ${({ $loose }) =>
+  ${({ $loose, $theme }) =>
     $loose &&
     css`
       min-width: max-content;
+      bottom: 0;
+      position: sticky;
+      left: 0;
+      z-index: 40;
+      --row-bg: ${$theme?.summaryBackgroundColor ?? "#e4e4e4"};
     `}
 `;
 
@@ -938,6 +1014,7 @@ const CheckboxWrapper = styled.div<{
   $loose: boolean;
   $theme?: TableThemeConfig;
   $position?: "header" | "content";
+  $style?: CSSProp;
 }>`
   min-width: 2rem;
   display: flex;
@@ -972,6 +1049,8 @@ const CheckboxWrapper = styled.div<{
         top: 0px;
       `}
     `}
+
+    ${({ $style }) => $style}
 `;
 
 export interface TableRowGroupProps {
@@ -1823,7 +1902,7 @@ const CellContent = styled.div<{
     $loose &&
     css`
       position: sticky !important;
-      left: ${$selectable ? "34px" : "0px"};
+      left: ${$selectable ? "34px" : "-0.5px"};
       z-index: 40;
       background-color: var(--row-bg, #ffffff);
 
