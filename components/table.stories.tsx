@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
+  RiBookMarkedLine,
   RiCheckboxMultipleLine,
   RiClipboardFill,
   RiClipboardLine,
@@ -560,6 +561,7 @@ export const Loose: Story = {
     const [activeTab, setActiveTab] = useState({
       withCheckbox: false,
       withActions: false,
+      withSummary: false,
     });
 
     const TOP_ACTIONS: TableAction[] = [
@@ -581,6 +583,14 @@ export const Loose: Story = {
         icon: { image: RiSettings3Line },
         onClick: () =>
           setActiveTab((prev) => ({ ...prev, withActions: !prev.withActions })),
+      },
+      {
+        type: "button",
+        caption: "With Summary",
+        pressed: activeTab.withSummary,
+        icon: { image: RiBookMarkedLine },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withSummary: !prev.withSummary })),
       },
     ];
 
@@ -719,14 +729,14 @@ export const Loose: Story = {
       <Table
         styles={{
           tableBodyStyle: css`
-            max-height: 400px;
+            max-height: 250px;
           `,
         }}
         loose
         actions={TOP_ACTIONS}
         columns={columns}
         selectable={activeTab.withCheckbox}
-        sumRow={sumRow}
+        sumRow={activeTab.withSummary && sumRow}
       >
         {sampleRows}
       </Table>
