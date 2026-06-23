@@ -617,7 +617,7 @@ function Table({
                     {selectable && (
                       <CheckboxWrapper
                         aria-label="empty-checkbox"
-                        $position="header"
+                        $position="summary"
                         $theme={tableTheme}
                         $loose={loose}
                         $style={
@@ -1013,7 +1013,7 @@ const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
 const CheckboxWrapper = styled.div<{
   $loose: boolean;
   $theme?: TableThemeConfig;
-  $position?: "header" | "content";
+  $position?: "header" | "content" | "summary";
   $style?: CSSProp;
 }>`
   min-width: 2rem;
@@ -1032,9 +1032,13 @@ const CheckboxWrapper = styled.div<{
       ? css`
           background-color: ${$theme?.rowContentBackgroundColor};
         `
-      : css`
-          background: ${$theme?.headerBackgroundColor};
-        `}
+      : $position === "summary"
+        ? css`
+            background: ${$theme?.summaryBackgroundColor};
+          `
+        : css`
+            background: ${$theme?.headerBackgroundColor};
+          `}
 
   ${({ $loose, $position }) =>
     $loose &&
