@@ -205,6 +205,49 @@ Supports embedded Monaco code blocks.
 
 ---
 
+
+### 🧩 Token Renderers (\`tokenRenderers\`)
+
+Extend the editor with custom inline token rendering. Tokens are parsed from Markdown and rendered as interactive React components inside the editor.
+
+\`\`\`tsx
+<RichEditor
+  tokenRenderers={{
+    "<{[": {
+      endToken: "]}>",
+      render: (word) => {
+        const parsed = JSON.parse(\`[\${word}]\`);
+        const [surah, ayah] = parsed;
+        return <Badge caption={\`\${surah}:\${ayah}\`} />;
+      },
+    },
+  }}
+/>
+\`\`\`
+
+Token syntax in Markdown:
+\`\`\`
+<{["Q", "17:32"]}>
+\`\`\`
+
+
+#### Token delimiter rules
+
+- Start token is the object key (e.g. \`"<{["\`)
+- End token is \`endToken\` (e.g. \`"]}>"\`  )
+- Content between delimiters can include any character **except** the full end token sequence
+- Tokens are parsed as **inline** elements — they flow naturally within paragraphs alongside regular text
+
+
+### Notes for tokenRenderers
+
+- Multiple token types can be registered simultaneously
+- Token content is **HTML-attribute-safe encoded** in the DOM (\`"\` → \`&quot;\`) and automatically decoded before being passed to \`render\`
+- Tokens survive editor operations: Enter, Backspace, bold/italic, list formatting
+
+---
+
+
 ### 🎯 Imperative API
 
 - \`insertPlainText(text)\`
@@ -522,6 +565,141 @@ export default Content
               background: richEditorTheme?.preBackgroundColor,
               wordBreak: "break-word",
               whiteSpace: "pre-wrap",
+            }}
+          >
+            {printValue}
+          </pre>
+        )}
+      </div>
+    );
+  },
+};
+
+export const CustomTokenRenderer: Story = {
+  render: () => {
+    const { currentTheme } = useTheme();
+    const richEditorTheme = currentTheme?.richEditor;
+    const editorRef = useRef<RichEditorRef>(null);
+
+    const [value, setValue] = useState(
+      `### Sprint Planning Notes
+The authentication redesign has been assigned to <{["alim"]}> . Please review the latest mockups before the standup. Blocking issues should be escalated to <{["carol"]}>. She will coordinate with the backend team on the API contract.
+
+Reminder: deployment is owned by <{["devops-team"]}>. Ping them if the pipeline fails.`
+    );
+    const [printValue, setPrintValue] = useState("");
+
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        icon={{ image: RiPrinterFill }}
+        onClick={() => {
+          setPrintValue(value);
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RichEditor
+          ref={editorRef}
+          onChange={(e) => setValue(e)}
+          onKeyDown={(e) => {
+            if (e.key !== "[") return;
+
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount) return;
+
+            const range = sel.getRangeAt(0);
+            const node = range.startContainer;
+            if (node.nodeType !== Node.TEXT_NODE) return;
+
+            const beforeCaret = (node.textContent ?? "").slice(
+              0,
+              range.startOffset
+            );
+            if (!beforeCaret.endsWith("<{")) return;
+
+            e.preventDefault();
+
+            const delRange = document.createRange();
+            delRange.setStart(node, range.startOffset - 2);
+            delRange.setEnd(node, range.startOffset);
+            delRange.deleteContents();
+
+            const tokenSpan = document.createElement("span");
+            tokenSpan.dataset.tokenStart = "<{[";
+            tokenSpan.dataset.tokenEnd = "]}>";
+            tokenSpan.dataset.tokenWord = '"mention"';
+            tokenSpan.dataset.tokenType = "custom-token-";
+
+            const inner = document.createElement("span");
+            inner.contentEditable = "false";
+            tokenSpan.appendChild(inner);
+
+            const zws = document.createTextNode("\u200B");
+
+            const currentRange = sel.getRangeAt(0);
+            currentRange.insertNode(zws);
+            currentRange.insertNode(tokenSpan);
+
+            const afterRange = document.createRange();
+            afterRange.setStartAfter(zws);
+            afterRange.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(afterRange);
+          }}
+          value={value}
+          tokenRenderers={{
+            "<{[": {
+              endToken: "]}>",
+              render: (word) => {
+                const parsed = JSON.parse(`[${word}]`);
+                const [username] = parsed;
+                return (
+                  <Badge
+                    contentEditable
+                    suppressContentEditableWarning
+                    onInput={(e) => {
+                      const text =
+                        (e.currentTarget as HTMLElement).innerText
+                          ?.trim()
+                          .replace(/^@/, "") ?? "";
+
+                      const tokenSpan = (
+                        e.currentTarget as HTMLElement
+                      ).closest<HTMLElement>("[data-token-start]");
+
+                      if (tokenSpan) {
+                        tokenSpan.dataset.tokenWord = `"${text}"`;
+                      }
+                    }}
+                    onBlur={() => {
+                      // Always sync immediately on blur — no debounce needed
+                      editorRef.current?.syncTokens();
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Mention clicked:", username);
+                    }}
+                    withCircle
+                    caption={`@${username}`}
+                  />
+                );
+              },
+            },
+          }}
+          toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
+        />
+        {printValue !== "" && (
+          <pre
+            style={{
+              padding: 28,
+              background: richEditorTheme?.preBackgroundColor,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
             }}
           >
             {printValue}

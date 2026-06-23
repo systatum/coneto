@@ -84,6 +84,16 @@ export function ActionButton({
             border-bottom-right-radius: 0px;
           `};
 
+          ${subMenu && showSubMenuOn === "caret"
+            ? css`
+                border-top: 1px solid ${actionButtonTheme.borderColor};
+                border-left: 1px solid ${actionButtonTheme.borderColor};
+                border-bottom: 1px solid ${actionButtonTheme.borderColor};
+              `
+            : css`
+                border: 1px solid ${actionButtonTheme.borderColor};
+              `}
+
           ${variant === "default" &&
           !pressed &&
           css`
@@ -98,16 +108,6 @@ export function ActionButton({
               opacity: 0.5;
               cursor: not-allowed;
             }
-
-            ${subMenu && showSubMenuOn === "caret"
-              ? css`
-                  border-top: 1px solid ${actionButtonTheme.borderColor};
-                  border-left: 1px solid ${actionButtonTheme.borderColor};
-                  border-bottom: 1px solid ${actionButtonTheme.borderColor};
-                `
-              : css`
-                  border: 1px solid ${actionButtonTheme.borderColor};
-                `}
           `}
           ${styles?.self}
         `,

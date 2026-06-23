@@ -16,35 +16,56 @@ import { List, ListGroupContent } from "./../../components/list";
 import { css } from "styled-components";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { TableColumn, Table, TableAction } from "./../../components/table";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 describe("ActionButton", () => {
   context("card", () => {
     context("when given pressed", () => {
+      function CardComponent() {
+        const [isPressed, setIsPressed] = useState(true);
+
+        return (
+          <Card
+            title="This is title"
+            subtitle="This is subtitle"
+            headerActions={[
+              {
+                caption: "Button",
+                variant: "primary",
+                className: "card-button-in-header",
+                pressed: isPressed,
+                onClick: () => setIsPressed((prev) => !prev),
+              },
+            ]}
+          >
+            Test
+          </Card>
+        );
+      }
       it("should render button with pressed", () => {
-        function CardComponent() {
-          return (
-            <Card
-              title="This is title"
-              subtitle="This is subtitle"
-              headerActions={[
-                {
-                  caption: "Button",
-                  variant: "primary",
-                  className: "card-button-in-header",
-                  pressed: true,
-                },
-              ]}
-            >
-              Test
-            </Card>
-          );
-        }
         cy.mount(<CardComponent />);
 
         cy.findAllByLabelText("action-button")
           .eq(0)
-          .and("have.css", "background-color", "rgb(42, 115, 195)");
+          .should("have.css", "background-color", "rgb(42, 115, 195)");
+      });
+
+      context("when pressing the button", () => {
+        it("should render properly unpressed button", () => {
+          cy.mount(<CardComponent />);
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(42, 115, 195)")
+            .and("have.css", "border-width", "1px");
+
+          cy.findByText("Button").click();
+          cy.wait(300);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(86, 154, 236)")
+            .and("have.css", "border-width", "1px");
+        });
       });
     });
 
@@ -194,29 +215,50 @@ describe("ActionButton", () => {
 
   context("nav-tab", () => {
     context("when given pressed", () => {
+      function NavTabComponent() {
+        const [isPressed, setIsPressed] = useState(true);
+
+        return (
+          <NavTab
+            actions={[
+              {
+                caption: "Add",
+                icon: { image: RiAddBoxLine },
+                variant: "secondary",
+                pressed: isPressed,
+                onClick: () => setIsPressed((prev) => !prev),
+              },
+            ]}
+            tabs={TABS_ITEMS}
+            activeTab={"2"}
+          />
+        );
+      }
       it("should render nav-tab button with pressed", () => {
-        function NavTabComponent() {
-          return (
-            <NavTab
-              actions={[
-                {
-                  caption: "Add",
-                  icon: { image: RiAddBoxLine },
-                  onClick: () => {},
-                  variant: "secondary",
-                  pressed: true,
-                },
-              ]}
-              tabs={TABS_ITEMS}
-              activeTab={"2"}
-            />
-          );
-        }
         cy.mount(<NavTabComponent />);
 
         cy.findAllByLabelText("action-button")
           .eq(2)
           .should("have.css", "background-color", "rgb(179, 179, 179)");
+      });
+
+      context("when pressing the button", () => {
+        it("should render properly unpressed button", () => {
+          cy.mount(<NavTabComponent />);
+          cy.findAllByLabelText("action-button")
+            .eq(2)
+            .should("have.css", "background-color", "rgb(179, 179, 179)")
+            .and("have.css", "border-width", "1px 1px 2px");
+
+          cy.findAllByLabelText("action-button").eq(2).click();
+
+          cy.wait(300);
+
+          cy.findAllByLabelText("action-button")
+            .eq(2)
+            .should("have.css", "background-color", "rgb(236, 236, 236)")
+            .and("have.css", "border-width", "1px 1px 2px");
+        });
       });
     });
 
@@ -378,64 +420,86 @@ describe("ActionButton", () => {
 
   context("list", () => {
     context("when given pressed", () => {
+      function ListComponent() {
+        const [isPressed, setIsPressed] = useState(true);
+
+        return (
+          <List
+            styles={{
+              containerStyle: css`
+                padding: 16px;
+                min-width: 400px;
+              `,
+            }}
+          >
+            {LIST_GROUPS.map((group, index) => {
+              return (
+                <List.Group
+                  key={index}
+                  id={group.id}
+                  subtitle={group.subtitle}
+                  title={group.title}
+                  actions={[
+                    {
+                      pressed: isPressed,
+                      caption: "Back",
+                      onClick: () => setIsPressed((prev) => !prev),
+                    },
+                  ]}
+                >
+                  {group.items.map((list, i) => (
+                    <List.Item
+                      key={i}
+                      openable={list.openable}
+                      id={list.id}
+                      subtitle={list.subtitle}
+                      title={list.title}
+                      groupId={group.id}
+                      leftSideContent={({ badge }) =>
+                        badge(list.leftSideContent as ReactNode, {
+                          withStyle: css`
+                            background-color: #488cac;
+                            color: white;
+                            min-width: 30px;
+                            max-width: 30px;
+                          `,
+                        })
+                      }
+                    >
+                      {list.children}
+                    </List.Item>
+                  ))}
+                </List.Group>
+              );
+            })}
+          </List>
+        );
+      }
       it("should render list button with pressed", () => {
-        function ListComponent() {
-          return (
-            <List
-              styles={{
-                containerStyle: css`
-                  padding: 16px;
-                  min-width: 400px;
-                `,
-              }}
-            >
-              {LIST_GROUPS.map((group, index) => {
-                return (
-                  <List.Group
-                    key={index}
-                    id={group.id}
-                    subtitle={group.subtitle}
-                    title={group.title}
-                    actions={[
-                      {
-                        pressed: true,
-                        caption: "Back",
-                      },
-                    ]}
-                  >
-                    {group.items.map((list, i) => (
-                      <List.Item
-                        key={i}
-                        openable={list.openable}
-                        id={list.id}
-                        subtitle={list.subtitle}
-                        title={list.title}
-                        groupId={group.id}
-                        leftSideContent={({ badge }) =>
-                          badge(list.leftSideContent as ReactNode, {
-                            withStyle: css`
-                              background-color: #488cac;
-                              color: white;
-                              min-width: 30px;
-                              max-width: 30px;
-                            `,
-                          })
-                        }
-                      >
-                        {list.children}
-                      </List.Item>
-                    ))}
-                  </List.Group>
-                );
-              })}
-            </List>
-          );
-        }
         cy.mount(<ListComponent />);
 
         cy.findAllByLabelText("action-button")
           .eq(0)
           .should("have.css", "background-color", "rgb(207, 207, 207)");
+      });
+
+      context("when pressing the button", () => {
+        it("should render properly unpressed button", () => {
+          cy.mount(<ListComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(207, 207, 207)")
+            .and("have.css", "border-width", "1px");
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.wait(300);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+            .and("have.css", "border-width", "1px");
+        });
       });
     });
 
@@ -768,49 +832,77 @@ describe("ActionButton", () => {
 
   context("table", () => {
     context("when given pressed", () => {
-      it("should render table button with pressed", () => {
-        function TableComponent() {
-          const columns: TableColumn[] = [
-            {
-              id: "name",
-              caption: "Name",
-              sortable: false,
+      function TableComponent() {
+        const [isPressed, setIsPressed] = useState(true);
+
+        const TOP_ACTIONS_WITH_PRESSED: TableAction[] = [
+          {
+            className: "table-delete-action",
+            caption: "Delete",
+            pressed: isPressed,
+            icon: {
+              image: RiDeleteBin2Line,
             },
-            {
-              id: "type",
-              caption: "Type",
-              sortable: false,
+            onClick: () => setIsPressed((prev) => !prev),
+          },
+          {
+            caption: "Copy",
+            icon: {
+              image: RiClipboardFill,
             },
-          ];
+            onClick: () => {},
+            subMenu: ({ list }) => list(LIST_OPTIONS),
+            variant: "danger",
+            styles: {
+              dropdownStyle: css`
+                min-width: 150px;
+              `,
+            },
+          },
+        ];
 
-          const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+        const columns: TableColumn[] = [
+          {
+            id: "name",
+            caption: "Name",
+            sortable: false,
+          },
+          {
+            id: "type",
+            caption: "Type",
+            sortable: false,
+          },
+        ];
 
-          const sampleRows = Array.from({ length: 20 }, (_, i) => {
-            const type = TYPES_DATA[i % TYPES_DATA.length];
-            return (
-              <Table.Row
-                rowId={`${type}`}
-                key={i}
-                content={[`Load Balancer ${i + 1}`, type]}
-              />
-            );
-          });
+        const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
+        const sampleRows = Array.from({ length: 20 }, (_, i) => {
+          const type = TYPES_DATA[i % TYPES_DATA.length];
           return (
-            <Table
-              selectable
-              styles={{
-                tableBodyStyle: css`
-                  max-height: 400px;
-                `,
-              }}
-              columns={columns}
-              actions={TOP_ACTIONS}
-            >
-              {sampleRows}
-            </Table>
+            <Table.Row
+              rowId={`${type}`}
+              key={i}
+              content={[`Load Balancer ${i + 1}`, type]}
+            />
           );
-        }
+        });
+
+        return (
+          <Table
+            selectable
+            styles={{
+              tableBodyStyle: css`
+                max-height: 400px;
+              `,
+            }}
+            columns={columns}
+            actions={TOP_ACTIONS_WITH_PRESSED}
+          >
+            {sampleRows}
+          </Table>
+        );
+      }
+      it("should render table button with pressed", () => {
         cy.mount(<TableComponent />);
 
         cy.findAllByLabelText("action-button")
@@ -818,6 +910,25 @@ describe("ActionButton", () => {
           .should("have.css", "background-color", "rgb(207, 207, 207)")
           .parent()
           .should("have.class", "table-delete-action");
+      });
+
+      context("when pressing the button", () => {
+        it("should render properly unpressed button", () => {
+          cy.mount(<TableComponent />);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(207, 207, 207)")
+            .and("have.css", "border-width", "1px");
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.wait(300);
+
+          cy.findAllByLabelText("action-button")
+            .eq(0)
+            .should("have.css", "background-color", "rgba(0, 0, 0, 0)")
+            .and("have.css", "border-width", "1px");
+        });
       });
     });
 

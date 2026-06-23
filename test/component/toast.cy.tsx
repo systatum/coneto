@@ -1,3 +1,4 @@
+import { PaperDialog, PaperDialogRef } from "./../../components/paper-dialog";
 import { Button } from "./../../components/button";
 import {
   Toast,
@@ -6,6 +7,7 @@ import {
   ToastIconPosition,
   ToastVariant,
 } from "./../../components/toast";
+import { useRef } from "react";
 
 const THEME = {
   primary: {
@@ -50,6 +52,67 @@ describe("Toast", () => {
     Toast.closeAll();
   });
 
+  // bug
+  context("when open the paper dialog", () => {
+    context("when clicking the toast", () => {
+      it("still shows the Toast", () => {
+        function ProductPaperDialogAndToast() {
+          const dialogRef = useRef<PaperDialogRef>(null);
+          return (
+            <>
+              <PaperDialog width="100dvw" ref={dialogRef}>
+                <Button
+                  onClick={() => {
+                    Toast.success({
+                      content: "This is Toast component",
+                    });
+                  }}
+                >
+                  Open Toast
+                </Button>
+              </PaperDialog>
+
+              <Button onClick={() => dialogRef?.current?.openDialog()}>
+                Open Paper
+              </Button>
+            </>
+          );
+        }
+        cy.mount(<ProductPaperDialogAndToast />);
+
+        cy.findByText("Open Toast").should("not.exist");
+
+        cy.findByText("Open Paper").click();
+        cy.wait(300);
+
+        cy.findByText("This is Toast component").should("not.exist");
+
+        cy.findByText("Open Toast").should("exist").click();
+
+        cy.findByText("This is Toast component").should("exist");
+      });
+    });
+  });
+
+  context("zIndex", () => {
+    context("when given 99999999", () => {
+      it("renders zIndex with 99999999", () => {
+        openToast({
+          variant: "success",
+          content: "Bar colour",
+          disappearAfterMs: 3000,
+          withLoadingBar: true,
+          zIndex: 99999999,
+        });
+
+        cy.findByLabelText("toast-root-container").should(
+          "have.css",
+          "z-index",
+          "99999999"
+        );
+      });
+    });
+  });
   context("variants", () => {
     const variants: ToastVariant[] = [
       "primary",
@@ -97,7 +160,7 @@ describe("Toast", () => {
         disappearAfterMs: 3000,
         withLoadingBar: true,
       });
-      cy.findByLabelText("toast-progress-bar").should(
+      cy.findByLabelText("progressbar-fill").should(
         "have.css",
         "background-color",
         THEME.success.progressColor
@@ -112,10 +175,10 @@ describe("Toast", () => {
           disappearAfterMs: 3000,
           withLoadingBar: true,
         });
-        cy.findByLabelText("toast-progress-bar")
+        cy.findByLabelText("progressbar-fill")
           .should("have.css", "position", "absolute")
           .and("have.css", "bottom", "0px")
-          .and("have.css", "height", "3px");
+          .and("have.css", "height", "6px");
       });
     });
 
