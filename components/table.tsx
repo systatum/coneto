@@ -1046,7 +1046,7 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  ${({ $theme, $isFirefox }) =>
+  ${({ $isFirefox }) =>
     $isFirefox &&
     css`
       scrollbar-width: thin;
