@@ -562,7 +562,8 @@ function Table({
                             styles={{
                               self: css`
                                 width: fit-content;
-                                z-index: 20;
+                                z-index: 50;
+
                                 ${isLast &&
                                 css`
                                   padding-right: 14px;
@@ -764,8 +765,8 @@ function Table({
 
 const ScrollWrapper = styled.div<{ $loose?: boolean }>`
   flex-shrink: 0;
-  overflow-x: ${({ $loose }) => ($loose ? "auto" : "hidden")};
-  overflow-y: hidden;
+  overflow-x: ${({ $loose }) => ($loose ? "auto" : "visible")};
+  overflow-y: ${({ $loose }) => ($loose ? "hidden" : "visible")};
 
   scrollbar-width: none;
   &::-webkit-scrollbar {
