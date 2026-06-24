@@ -671,7 +671,6 @@ function ChipsItem({
         e.preventDefault();
         e.stopPropagation();
         await onOptionClicked?.(chip);
-        await inputRef.current.focus();
       }}
       $theme={chipsTheme}
       onMouseEnter={() => setHovered(chip.id)}
