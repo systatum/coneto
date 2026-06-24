@@ -270,31 +270,27 @@ function BaseTitleSection({
             },
           }));
 
-          return (
-            <>
-              {filteredActionsWithSize.map((action, actionIndex) => (
-                <ContextMenu
-                  key={actionIndex}
-                  styles={{
-                    self: css`
-                      width: ${resolvedIconSize * 1.4}px;
-                      height: ${resolvedIconSize * 1.4}px;
-                      padding: 20px;
-                      border-radius: 10px;
-                      background-color: ${titleTheme?.icon?.backgroundColor};
+          return filteredActionsWithSize.map((action, actionIndex) => (
+            <ContextMenu
+              key={actionIndex}
+              styles={{
+                self: css`
+                  width: ${resolvedIconSize * 1.4}px;
+                  height: ${resolvedIconSize * 1.4}px;
+                  padding: 20px;
+                  border-radius: 10px;
+                  background-color: ${titleTheme?.icon?.backgroundColor};
 
-                      ${section?.styles?.toggleActionStyle}
-                      ${action.styles?.self}
-                    `,
-                    containerStyle: action.styles?.containerStyle,
-                  }}
-                  maxActionsBeforeCollapsing={section.actions?.length}
-                  hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-                  actions={[action]}
-                />
-              ))}
-            </>
-          );
+                  ${section?.styles?.toggleActionStyle}
+                  ${action.styles?.self}
+                `,
+                containerStyle: action.styles?.containerStyle,
+              }}
+              maxActionsBeforeCollapsing={section.actions?.length}
+              hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
+              actions={[action]}
+            />
+          ));
         }
 
         return null;
@@ -442,10 +438,13 @@ function BaseAllText({
           `}
         >
           {Object?.values(TEXT_VARIANTS)?.map(
-            ({ as, ariaLabel, style, size: sizeStyle, customStyle, content }) =>
+            (
+              { as, ariaLabel, style, size: sizeStyle, customStyle, content },
+              index
+            ) =>
               content && (
                 <BaseText
-                  key={ariaLabel}
+                  key={index}
                   as={as}
                   aria-label={ariaLabel}
                   $theme={titleTheme}
