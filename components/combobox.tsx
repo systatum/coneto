@@ -389,7 +389,6 @@ function ComboboxDrawer({
   inputRef,
   handleKeyDown,
   maxSelectableItems,
-  name,
   interactionMode,
   setInteractionMode,
   setConfirmedValue,
