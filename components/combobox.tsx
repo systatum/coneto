@@ -1183,30 +1183,34 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $multiple, $hasNestedOptions, $drawerHeight }) => css`
-    min-height: ${$drawerHeight};
-    max-height: ${$drawerHeight};
+  ${({ $mobile, $theme, $multiple, $hasNestedOptions, $drawerHeight }) => {
+    const $mobileHeight = $drawerHeight ?? "220px";
 
-    ${$mobile &&
-    css`
-      width: 100%;
-      z-index: 9992999;
-      border-radius: 14px;
-      min-height: ${$drawerHeight ? $drawerHeight : "220px"};
-      max-height: ${$drawerHeight ? $drawerHeight : "220px"};
-      border-width: 0.5;
-      ${!$multiple &&
+    return css`
+      min-height: ${$drawerHeight};
+      max-height: ${$drawerHeight};
+
+      ${$mobile &&
       css`
-        padding: calc(${$mobile ? $drawerHeight : "220px"} * 0.4545) 0;
-      `}
+        width: 100%;
+        z-index: 9992999;
+        border-radius: 14px;
+        min-height: ${$mobileHeight};
+        max-height: ${$mobileHeight};
+        border-width: 0.5;
+        ${!$multiple &&
+        css`
+          padding: calc(${$mobileHeight} * 0.4545) 0;
+        `}
 
-      background-color: ${$mobile && $hasNestedOptions
-        ? $theme.mobileGroupBackgroundColor
-        : $mobile
-          ? $theme.mobileBackgroundColor
-          : $theme.backgroundColor};
-    `}
-  `}
+        background-color: ${$mobile && $hasNestedOptions
+          ? $theme.mobileGroupBackgroundColor
+          : $mobile
+            ? $theme.mobileBackgroundColor
+            : $theme.backgroundColor};
+      `}
+    `;
+  }}
 
   ${({ $style }) => $style}
 `;
