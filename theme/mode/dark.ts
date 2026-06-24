@@ -745,8 +745,7 @@ const darkTable = createTableTheme(darkBody, {
 
   toggleRowBackgroundColor: "#374151",
 
-  looseEffectColor:
-    "linear-gradient(to right, rgba(255, 255, 255, 0.03), transparent)",
+  looseEffectColor: "linear-gradient(to right, rgb(8 8 8 / 38%), transparent)",
 });
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
