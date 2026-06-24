@@ -4,34 +4,37 @@ import React, {
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from "react";
 import { PaperDialog, PaperDialogRef } from "./paper-dialog";
 import { css } from "styled-components";
 
-export interface ScreenProps {
-  goToScreen: ((key: string) => void) | null;
+export interface ScreenProps<TScreenKey extends string = string> {
+  goToScreen: ((key: TScreenKey) => void) | null;
   goBack: (() => void) | null;
 }
 
 type ScreensMap = Record<string, ComponentType<Partial<ScreenProps>>>;
 
-export interface ScreenTransitionProps {
+export interface ScreenTransitionProps<TScreens extends ScreensMap> {
   /** Registry of every screen this transition can render, keyed by id */
-  screens: ScreensMap;
+  screens: TScreens;
   /** Ordered stack of active screen keys. First = base, rest = nested dialogs */
-  activeScreens: string[];
+  activeScreens: (keyof TScreens)[] | string[];
   /** Called with the next stack whenever navigation happens */
-  onScreenChange: (screens: string[]) => void;
+  onScreenChange: (screens: (keyof TScreens)[]) => void;
 }
 
-function ScreenTransition({
+function ScreenTransition<TScreens extends ScreensMap>({
   screens,
   activeScreens,
   onScreenChange,
-}: ScreenTransitionProps) {
+}: ScreenTransitionProps<TScreens>) {
   const dialogRefsRef = useRef<
     Map<number, React.RefObject<PaperDialogRef | null>>
   >(new Map());
+
+  type ScreenKey = keyof TScreens;
 
   const mountedIndicesRef = useRef<Set<number> | null>(null);
   if (mountedIndicesRef.current === null) {
@@ -51,9 +54,11 @@ function ScreenTransition({
   };
 
   const goToScreen = useCallback(
-    (key: string) => {
+    (key: ScreenKey) => {
       if (!screens[key]) {
-        console.warn(`ScreenTransition: screen "${key}" is not registered`);
+        console.warn(
+          `ScreenTransition: screen "${String(key)}" is not registered`
+        );
         return;
       }
       onScreenChange([...activeScreens, key]);
@@ -81,7 +86,9 @@ function ScreenTransition({
 
     const ScreenComponent = screens[key] as ComponentType<Partial<ScreenProps>>;
     if (!ScreenComponent) {
-      console.warn(`ScreenTransition: screen "${key}" is not registered`);
+      console.warn(
+        `ScreenTransition: screen "${String(key)}" is not registered`
+      );
       return null;
     }
 
