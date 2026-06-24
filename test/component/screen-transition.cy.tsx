@@ -7,16 +7,32 @@ import styled, { css } from "styled-components";
 import { RiArrowLeftSLine } from "@remixicon/react";
 import { Title } from "./../../components/title";
 import { Button } from "./../../components/button";
+import { useState } from "react";
 
 describe("Screen Transition", () => {
-  //   with function children
-  function ProductTransition() {
+  function ProductTransition({
+    initializeScreen = [],
+    onScreenChange,
+  }: {
+    initializeScreen?: ("a" | "b" | "c")[];
+    onScreenChange?: (screens: ("a" | "b" | "c")[]) => void;
+  }) {
     const { currentTheme } = useTheme();
+    const screens = {
+      a: PageA,
+      b: PageB,
+      c: PageC,
+    };
+
+    type ScreenKey = keyof typeof screens;
     const bodyTheme = currentTheme?.body;
+
+    const [activeScreens, setActiveScreens] =
+      useState<ScreenKey[]>(initializeScreen);
 
     function PageTitle({
       text,
-      gotoPrevScreen = null,
+      goBack = null,
     }: {
       text?: string;
     } & Partial<ScreenProps>) {
@@ -24,7 +40,7 @@ describe("Screen Transition", () => {
         <Title
           size="md"
           leftSection={
-            gotoPrevScreen
+            goBack
               ? [
                   {
                     styles: {
@@ -41,7 +57,7 @@ describe("Screen Transition", () => {
                         caption: "back",
                         icon: { image: RiArrowLeftSLine },
                         onClick: () => {
-                          gotoPrevScreen();
+                          goBack();
                         },
                       },
                     ],
@@ -65,7 +81,7 @@ describe("Screen Transition", () => {
               justify-content: center;
               font-size: 20px;
 
-              ${gotoPrevScreen &&
+              ${goBack &&
               css`
                 padding-right: 40px;
               `}
@@ -76,292 +92,178 @@ describe("Screen Transition", () => {
       );
     }
 
-    function PageC() {
+    function PageC({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
-        <ScreenTransition>
-          {({ gotoPrevScreen }) => (
-            <Wrapper aria-label="wrapper">
-              <PageTitle text="Page C" gotoPrevScreen={gotoPrevScreen} />
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page C" goBack={goBack} />
+          <Button onClick={() => goToScreen("a")}>Go to Page A</Button>
+        </Wrapper>
       );
     }
 
-    function PageB() {
+    function PageB({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
-        <ScreenTransition nextScreen={PageC}>
-          {({ gotoPrevScreen, gotoNextScreen }) => (
-            <Wrapper aria-label="wrapper">
-              <PageTitle text="Page B" gotoPrevScreen={gotoPrevScreen} />
-              <Button onClick={gotoNextScreen ?? undefined}>
-                Go to Page C
-              </Button>
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page B" goBack={goBack} />
+          <Button onClick={() => goToScreen("c")}>Go to Page C</Button>
+        </Wrapper>
       );
     }
 
-    function PageA() {
+    function PageA({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
-        <ScreenTransition nextScreen={PageB}>
-          {({ gotoNextScreen }) => (
-            <Wrapper aria-label="wrapper">
-              <PageTitle text="Page A" gotoPrevScreen={null} />
-              <Button onClick={gotoNextScreen ?? undefined}>
-                Go to Page B
-              </Button>
-            </Wrapper>
-          )}
-        </ScreenTransition>
+        <Wrapper>
+          <PageTitle text="Page A" goBack={goBack} />
+          <Button onClick={() => goToScreen("b")}>Go to Page B</Button>
+        </Wrapper>
       );
     }
 
-    return <PageA />;
-  }
+    return (
+      <>
+        {/* Imagine this generated in index.tsx */}
+        <Wrapper>
+          <PageTitle text="Index Screen" />
+          <Button onClick={() => setActiveScreens(["a"])}>Go to Page A</Button>
+        </Wrapper>
 
-  //   with separate children
-  function ProductWithSeparateChildren() {
-    const { currentTheme } = useTheme();
-    const bodyTheme = currentTheme?.body;
-
-    function PageTitle({
-      text,
-      gotoPrevScreen = null,
-    }: {
-      text?: string;
-    } & Partial<ScreenProps>) {
-      return (
-        <Title
-          size="md"
-          leftSection={
-            gotoPrevScreen
-              ? [
-                  {
-                    styles: {
-                      toggleActionStyle: css`
-                        padding: 4px;
-                        height: 30px;
-                        width: 30px;
-                        border-radius: 4px;
-                      `,
-                    },
-                    type: "actions",
-                    actions: [
-                      {
-                        caption: "back",
-                        icon: { image: RiArrowLeftSLine },
-                        onClick: () => {
-                          gotoPrevScreen();
-                        },
-                      },
-                    ],
-                  },
-                ]
-              : []
-          }
-          text={text}
-          styles={{
-            containerStyle: css`
-              border-bottom: 1px solid ${bodyTheme?.borderColor || "#ececec"};
-              height: 53px;
-              justify-content: center;
-              align-items: center;
-              padding: 0 6px;
-            `,
-            textContainerStyle: css`
-              align-items: center;
-            `,
-            titleStyle: css`
-              justify-content: center;
-              font-size: 20px;
-
-              ${gotoPrevScreen &&
-              css`
-                padding-right: 40px;
-              `}
-              align-items: center;
-            `,
+        {/* Imagine this generated in app.tsx */}
+        <ScreenTransition
+          screens={screens}
+          activeScreens={activeScreens}
+          onScreenChange={(screens) => {
+            setActiveScreens(screens);
+            onScreenChange?.(screens as ("a" | "b" | "c")[]);
           }}
         />
-      );
-    }
-
-    function PageCScreen({ gotoPrevScreen }: Partial<ScreenProps>) {
-      return (
-        <Wrapper aria-label="wrapper">
-          <PageTitle text="Page C" gotoPrevScreen={gotoPrevScreen} />
-        </Wrapper>
-      );
-    }
-
-    function PageC() {
-      return (
-        <ScreenTransition>
-          <PageCScreen />
-        </ScreenTransition>
-      );
-    }
-
-    function PageBScreen({
-      gotoPrevScreen,
-      gotoNextScreen,
-    }: Partial<ScreenProps>) {
-      return (
-        <Wrapper aria-label="wrapper">
-          <PageTitle text="Page B" gotoPrevScreen={gotoPrevScreen} />
-
-          <Button onClick={gotoNextScreen ?? undefined}>Go to Page C</Button>
-        </Wrapper>
-      );
-    }
-
-    function PageB() {
-      return (
-        <ScreenTransition nextScreen={PageC}>
-          <PageBScreen />
-        </ScreenTransition>
-      );
-    }
-
-    function PageAScreen({ gotoNextScreen }: Partial<ScreenProps>) {
-      return (
-        <Wrapper aria-label="wrapper">
-          <PageTitle text="Page A" gotoPrevScreen={null} />
-
-          <Button onClick={gotoNextScreen ?? undefined}>Go to Page B</Button>
-        </Wrapper>
-      );
-    }
-
-    function PageA() {
-      return (
-        <ScreenTransition nextScreen={PageB}>
-          <PageAScreen />
-        </ScreenTransition>
-      );
-    }
-
-    return <PageA />;
+      </>
+    );
   }
 
-  context("when clicking next button", () => {
-    it("should move to the page B", () => {
-      cy.mount(<ProductTransition />);
-      cy.findByLabelText("title-title").should("not.have.text", "Page B");
-      cy.findAllByLabelText("wrapper")
-        .eq(0)
-        .then(() => {
-          cy.findByText("Go to Page B").should("be.visible").click();
-        });
-
-      cy.wait(700);
-      cy.findAllByLabelText("title-title").eq(1).should("have.text", "Page B");
-      cy.findAllByLabelText("wrapper")
-        .eq(1)
-        .then(() => {
-          cy.findByText("Go to Page C").should("be.visible");
-        });
-    });
-
+  context("screens", () => {
     context("when clicking next button", () => {
-      it("should move to the page C", () => {
-        cy.mount(<ProductTransition />);
-        cy.findByLabelText("title-title").should("not.have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(0)
-          .then(() => {
-            cy.findByText("Go to Page B").should("be.visible").click();
-          });
-
-        cy.wait(700);
-        cy.findAllByLabelText("title-title")
-          .eq(1)
-          .should("have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(1)
-          .then(() => {
-            cy.findByText("Go to Page C").should("be.visible").click();
-          });
-
-        cy.wait(700);
-        cy.findAllByLabelText("title-title")
-          .eq(2)
-          .should("have.text", "Page C");
-        cy.findAllByLabelText("wrapper").eq(2).should("exist");
-      });
-    });
-
-    context("when clicking chevron icon", () => {
       it("should move to the page A", () => {
         cy.mount(<ProductTransition />);
-        cy.findByLabelText("title-title").should("not.have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(0)
-          .then(() => {
-            cy.findByText("Go to Page B").should("be.visible").click();
-          });
+        cy.findByLabelText("title-title").should("have.text", "Index Screen");
+
+        cy.findByText("Go to Page A").should("be.visible").click();
 
         cy.wait(700);
         cy.findAllByLabelText("title-title")
           .eq(1)
-          .should("have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(1)
-          .then(() => {
-            cy.findByLabelText("action-button").click();
-          });
+          .should("have.text", "Page A");
+      });
 
-        cy.wait(700);
-        cy.findAllByLabelText("wrapper").eq(1).should("not.exist");
-        cy.findAllByLabelText("title-title").eq(1).should("not.exist");
+      context("when clicking next button", () => {
+        it("should move to the page C", () => {
+          cy.mount(<ProductTransition />);
+          cy.findByLabelText("title-title").should("have.text", "Index Screen");
+
+          cy.findByText("Go to Page A").should("be.visible").click();
+          cy.wait(700);
+
+          cy.findAllByLabelText("title-title")
+            .eq(1)
+            .should("have.text", "Page A");
+
+          cy.findByText("Go to Page B").should("be.visible").click();
+          cy.wait(700);
+
+          cy.findAllByLabelText("title-title")
+            .eq(2)
+            .should("have.text", "Page B");
+        });
+      });
+
+      context("when clicking chevron icon", () => {
+        it("should move to the initial screen", () => {
+          cy.mount(<ProductTransition />);
+          cy.findByLabelText("title-title").should("have.text", "Index Screen");
+
+          cy.findByText("Go to Page A").should("be.visible").click();
+
+          cy.wait(700);
+          cy.findAllByLabelText("title-title")
+            .eq(1)
+            .should("have.text", "Page A");
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+        });
       });
     });
   });
 
-  context("children", () => {
-    context("when using function", () => {
-      it("still can use next and previous function", () => {
-        cy.mount(<ProductTransition />);
-        cy.findByLabelText("title-title").should("not.have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(0)
-          .then(() => {
-            cy.findByText("Go to Page B").should("be.visible").click();
-          });
+  context("activeScreens", () => {
+    context("when initialize 3 screen", () => {
+      it("should render 3 screen", () => {
+        cy.mount(<ProductTransition initializeScreen={["b", "c", "a"]} />);
+        cy.findAllByLabelText("paper-dialog-wrapper").should("have.length", 3);
+      });
 
-        cy.wait(700);
-        cy.findAllByLabelText("title-title")
-          .eq(1)
-          .should("have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(1)
-          .then(() => {
-            cy.findByText("Go to Page C").should("be.visible");
-          });
+      context("when move to back", () => {
+        it("closes screens in reverse order", () => {
+          cy.mount(<ProductTransition initializeScreen={["b", "c", "a"]} />);
+          cy.findAllByLabelText("title-title")
+            .eq(3)
+            .should("have.text", "Page A");
+          cy.findAllByLabelText("title-title")
+            .eq(2)
+            .should("have.text", "Page C");
+          cy.findAllByLabelText("title-title")
+            .eq(1)
+            .should("have.text", "Page B");
+
+          cy.findAllByLabelText("action-button").eq(2).click();
+
+          cy.findAllByLabelText("title-title").eq(3).should("not.exist");
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.findAllByLabelText("title-title").eq(2).should("not.exist");
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.findAllByLabelText("title-title").eq(1).should("not.exist");
+        });
       });
     });
+  });
 
-    context("when using separate children", () => {
-      it("still can use next and previous function", () => {
-        cy.mount(<ProductWithSeparateChildren />);
-        cy.findByLabelText("title-title").should("not.have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(0)
-          .then(() => {
-            cy.findByText("Go to Page B").should("be.visible").click();
-          });
+  context("onScreenChange", () => {
+    context("when pressing goToScreen('b')", () => {
+      it("should give callback when with last value ['a', 'b']", () => {
+        const onScreenChangeSpy = cy.stub().as("onScreenChange");
 
-        cy.wait(700);
-        cy.findAllByLabelText("title-title")
-          .eq(1)
-          .should("have.text", "Page B");
-        cy.findAllByLabelText("wrapper")
-          .eq(1)
-          .then(() => {
-            cy.findByText("Go to Page C").should("be.visible");
-          });
+        cy.mount(
+          <ProductTransition
+            initializeScreen={["a"]}
+            onScreenChange={onScreenChangeSpy}
+          />
+        );
+
+        cy.findByText("Go to Page B").should("be.visible").click();
+
+        cy.get("@onScreenChange").should("have.been.calledWith", ["a", "b"]);
+      });
+
+      context("when pressing goBack", () => {
+        it("give callback in onScreenPage with with last value ['a']", () => {
+          const onScreenChangeSpy = cy.stub().as("onScreenChange");
+
+          cy.mount(
+            <ProductTransition
+              initializeScreen={["a"]}
+              onScreenChange={onScreenChangeSpy}
+            />
+          );
+
+          cy.findByText("Go to Page B").should("be.visible").click();
+
+          cy.get("@onScreenChange").should("have.been.calledWith", ["a", "b"]);
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.wait(400);
+
+          cy.get("@onScreenChange").should("have.been.calledWith", ["a"]);
+        });
       });
     });
   });
