@@ -4,7 +4,6 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { PaperDialog, PaperDialogRef } from "./paper-dialog";
 import { css } from "styled-components";
@@ -27,24 +26,26 @@ export interface ScreenTransitionProps<TScreens extends ScreensMap> {
 
 function ScreenTransition<TScreens extends ScreensMap>({
   screens,
-  activeScreens,
+  activeScreens = [],
   onScreenChange,
 }: ScreenTransitionProps<TScreens>) {
   const dialogRefsRef = useRef<
     Map<number, React.RefObject<PaperDialogRef | null>>
   >(new Map());
+  const mountedIndicesRef = useRef<Set<number>>(
+    new Set(activeScreens.map((_, i) => i))
+  );
 
   type ScreenKey = keyof TScreens;
 
-  const mountedIndicesRef = useRef<Set<number> | null>(null);
-  if (mountedIndicesRef.current === null) {
-    const seeded = new Set<number>();
-    // Seed all initial screens — including index 0 — so none animate on mount
-    for (let i = 0; i < activeScreens.length; i++) {
-      seeded.add(i);
-    }
-    mountedIndicesRef.current = seeded;
-  }
+  const getSkipInitialAnimation = (index: number) =>
+    mountedIndicesRef.current.has(index);
+
+  useEffect(() => {
+    activeScreens.forEach((_, index) => {
+      mountedIndicesRef.current.add(index);
+    });
+  }, [activeScreens.length]);
 
   const getDialogRef = (index: number) => {
     if (!dialogRefsRef.current.has(index)) {
@@ -97,8 +98,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
       goBack,
     };
 
-    const skipInitialAnimation = mountedIndicesRef.current!.has(index);
-    if (!skipInitialAnimation) mountedIndicesRef.current!.add(index);
+    const skipInitialAnimation = getSkipInitialAnimation(index);
 
     return (
       <DialogLevel
