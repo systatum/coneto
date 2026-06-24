@@ -159,10 +159,14 @@ const TableLooseContext = createContext<{
   selectable?: boolean;
   withRowActions?: boolean;
   setWithRowActions?: (value: boolean) => void;
+  isScrolledLeft?: boolean;
+  isScrolledRight?: boolean;
 }>({
   loose: false,
   selectable: false,
   withRowActions: false,
+  isScrolledLeft: false,
+  isScrolledRight: false,
 });
 const useTableLoose = () => useContext(TableLooseContext);
 
@@ -211,6 +215,12 @@ function Table({
   const [openRowId, setOpenRowId] = useState<string | null>("");
 
   const [withRowActions, setWithRowActions] = useState(false);
+
+  // Tracks whether the table body has been scrolled horizontally.
+  // isScrolledLeft: activates the shadow effect on sticky left columns (e.g. first cell).
+  // isScrolledRight: activates the shadow effect on sticky right actions — true when there's still content to scroll right.
+  const [isScrolledLeft, setIsScrolledLeft] = useState(false);
+  const [isScrolledRight, setIsScrolledRight] = useState(false);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -357,7 +367,13 @@ function Table({
 
   // Sync horizontal scroll: wrapper → summary
   const handleWrapperScroll = () => {
-    const scrollLeft = tableBodyRef.current?.scrollLeft ?? 0;
+    const el = tableBodyRef.current;
+    const scrollLeft = el?.scrollLeft ?? 0;
+    const scrollRight = el ? el.scrollWidth - el.clientWidth - scrollLeft : 0;
+
+    setIsScrolledLeft(scrollLeft > 0);
+    setIsScrolledRight(scrollRight > 0);
+
     if (headerScrollRef.current)
       headerScrollRef.current.scrollLeft = scrollLeft;
     if (summaryScrollRef.current)
@@ -377,7 +393,14 @@ function Table({
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableLooseContext.Provider
-        value={{ loose, selectable, withRowActions, setWithRowActions }}
+        value={{
+          loose,
+          selectable,
+          withRowActions,
+          setWithRowActions,
+          isScrolledLeft,
+          isScrolledRight,
+        }}
       >
         <TableColumnContext.Provider value={columns}>
           <Wrapper
@@ -598,6 +621,7 @@ function Table({
                       aria-label="header-row-loose-action"
                       $theme={tableTheme}
                       $loose={loose}
+                      $isScrolledRight={isScrolledRight}
                     />
                   )}
                 </TableHeader>
@@ -719,6 +743,7 @@ function Table({
                         $theme={tableTheme}
                         $loose={loose}
                         $position={"summary"}
+                        $isScrolledRight={isScrolledRight}
                       />
                     )}
                   </TableSummary>
@@ -834,6 +859,7 @@ const StickyRowActions = styled.div<{
   $loose?: boolean;
   $theme?: TableThemeConfig;
   $position?: "header" | "summary";
+  $isScrolledRight?: boolean;
 }>`
   position: sticky;
   right: 0;
@@ -856,7 +882,8 @@ const StickyRowActions = styled.div<{
     left: -6px;
     bottom: 0;
     width: 6px;
-    background: ${({ $theme }) => $theme?.looseEffectColor};
+    background: ${({ $isScrolledRight, $theme }) =>
+      $isScrolledRight ? $theme?.looseEffectColor : "transparent"};
     pointer-events: none;
   }
 `;
@@ -1430,7 +1457,7 @@ function TableRow({
       isLast?: boolean;
     };
 
-  const { loose, setWithRowActions } = useTableLoose();
+  const { loose, setWithRowActions, isScrolledRight } = useTableLoose();
 
   useEffect(() => {
     if (actions) {
@@ -1709,7 +1736,9 @@ function TableRow({
                         left: -6px;
                         bottom: 0;
                         width: 6px;
-                        background: ${tableTheme?.looseEffectColor};
+                        background: ${isScrolledRight
+                          ? tableTheme?.looseEffectColor
+                          : "transparent"};
                         pointer-events: none;
                       }
                     `};
@@ -1914,7 +1943,7 @@ function TableRowCell({
     bold?: boolean;
     _index?: number;
   }>) {
-  const { loose, selectable } = useTableLoose();
+  const { loose, selectable, isScrolledLeft } = useTableLoose();
   const isFirst = _index === 0;
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme?.table;
@@ -1925,6 +1954,7 @@ function TableRowCell({
       id={id}
       $loose={loose}
       $selectable={selectable}
+      $isScrolledLeft={isScrolledLeft}
       $sticky={isFirst}
       className={applyClassName("table-row-cell", className)}
       aria-label="table-row-cell"
@@ -1956,6 +1986,7 @@ const CellContent = styled.div<{
   $sticky: boolean;
   $selectable?: boolean;
   $theme: TableThemeConfig;
+  $isScrolledLeft?: boolean;
 }>`
   *,
   ::before,
@@ -1989,7 +2020,7 @@ const CellContent = styled.div<{
           `
         : ""};
 
-  ${({ $loose, $sticky, $selectable, $theme }) =>
+  ${({ $loose, $sticky, $selectable, $theme, $isScrolledLeft }) =>
     $sticky &&
     $loose &&
     css`
@@ -2005,7 +2036,9 @@ const CellContent = styled.div<{
         right: -6px;
         bottom: 0;
         width: 6px;
-        background: ${$theme?.looseEffectColor};
+        background: ${$isScrolledLeft
+          ? $theme?.looseEffectColor
+          : "transparent"};
         pointer-events: none;
       }
     `}
