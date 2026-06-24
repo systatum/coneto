@@ -399,6 +399,9 @@ function Table({
       summaryScrollRef.current.scrollLeft = scrollLeft;
   };
 
+  const isFirefox =
+    typeof navigator !== "undefined" && navigator.userAgent.includes("Firefox");
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
       <TableLooseContext.Provider
@@ -627,6 +630,7 @@ function Table({
 
                   {loose && withRowActions && (
                     <StickyRowActions
+                      $isFirefox={isFirefox}
                       aria-label="header-row-loose-action"
                       $theme={tableTheme}
                       $loose={loose}
@@ -643,6 +647,7 @@ function Table({
                   $theme={tableTheme}
                   aria-label="table-body"
                   $loose={loose}
+                  $isFirefox={isFirefox}
                   $style={styles?.tableBodyStyle}
                 >
                   {rowChildren}
@@ -748,6 +753,7 @@ function Table({
 
                     {loose && withRowActions && (
                       <StickyRowActions
+                        $isFirefox={isFirefox}
                         aria-label="summary-row-loose-action"
                         $theme={tableTheme}
                         $loose={loose}
@@ -869,13 +875,14 @@ const StickyRowActions = styled.div<{
   $theme?: TableThemeConfig;
   $position?: "header" | "summary";
   $isScrolledRight?: boolean;
+  $isFirefox?: boolean;
 }>`
   position: sticky;
   right: 0;
   display: flex;
   align-items: center;
   height: auto;
-  width: 53px;
+  width: ${({ $isFirefox }) => ($isFirefox ? "59px" : "53px")};
   transform: none;
   padding-left: 8px;
   padding-right: 8px;
@@ -1030,6 +1037,7 @@ const TableBody = styled.div<{
   $style?: CSSProp;
   $theme: TableThemeConfig;
   $loose?: boolean;
+  $isFirefox?: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -1038,6 +1046,13 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
+  ${({ $theme, $isFirefox }) =>
+    $isFirefox &&
+    css`
+      scrollbar-width: thin;
+    `}
+
+  /* Chrome, Edge, Safari */
   &::-webkit-scrollbar {
     width: 5px;
     height: 5px;
