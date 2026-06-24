@@ -58,6 +58,8 @@ export interface PaperDialogProps {
   resizable?: boolean | PaperDialogResizable;
   onResize?: (size: { width?: number; height?: number }) => void;
   onResizeComplete?: (size: { width?: number; height?: number }) => void;
+  initialDialogState?: PaperDialogState;
+  skipInitialAnimation?: boolean;
 }
 
 export interface PaperDialogResizable {
@@ -126,6 +128,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       resizable: _resizable = false,
       onResize,
       onResizeComplete,
+      initialDialogState = "closed",
+      skipInitialAnimation,
     },
     ref
   ) => {
@@ -139,7 +143,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resizable = resolveResizable(_resizable);
 
     const [showTitlebar, setShowTitlebar] = useState(false);
-    const [dialogState, setDialogState] = useState<PaperDialogState>("closed");
+    const [dialogState, setDialogState] =
+      useState<PaperDialogState>(initialDialogState);
 
     const [resizeWidth, setResizeWidth] = useState<number | null>(null);
     const [resizeHeight, setResizeHeight] = useState<number | null>(null);
@@ -538,7 +543,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               `}
               ${styles?.containerStyle}
             `}
-            initial={mobile ? { y: "100%" } : { x: isLeft ? "-100%" : "100%" }}
+            initial={
+              skipInitialAnimation
+                ? false
+                : mobile
+                  ? { y: "100%" }
+                  : { x: isLeft ? "-100%" : "100%" }
+            }
             animate={
               dialogState === "minimized"
                 ? mobile
