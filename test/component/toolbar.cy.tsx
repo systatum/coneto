@@ -134,6 +134,42 @@ describe("Toolbar", () => {
   });
 
   context("tipMenu", () => {
+    context("when inside of overflow scroll/auto", () => {
+      it("doesn't hidden the tip menu", () => {
+        cy.viewport(800, 700);
+        cy.mount(
+          <div
+            style={{
+              display: "flex",
+              overflow: "scroll",
+            }}
+          >
+            <Toolbar>
+              <Toolbar.Menu
+                styles={{
+                  dropdownStyle: css`
+                    min-width: 235px;
+                  `,
+                }}
+                onClick={() => {
+                  console.log("test");
+                }}
+                caption="Default Mode"
+                icon={{ image: RiMessage2Line, color: "red" }}
+                subMenuList={TIP_MENU_ITEMS}
+              />
+            </Toolbar>
+          </div>
+        );
+
+        cy.findByLabelText("toolbar-menu-toggle").click();
+
+        TIP_MENU_ITEMS.filter((menu) => !menu.hidden).map((menu) => {
+          cy.findByText(menu.caption).should("be.visible");
+        });
+      });
+    });
+
     context("when click", () => {
       it("renders background color active by variant", () => {
         cy.viewport(800, 700);
