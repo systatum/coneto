@@ -384,7 +384,7 @@ describe("Table", () => {
         </Table>
       );
     }
-    context("when given true false", () => {
+    context("when given false", () => {
       it("should render the body element with overflow x hidden", () => {
         cy.mount(<ProductTableLoose loose={false} />);
 
@@ -471,6 +471,42 @@ describe("Table", () => {
                     "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
                   );
                 });
+            });
+
+            const isFirefox =
+              typeof navigator !== "undefined" &&
+              navigator.userAgent.includes("Firefox");
+
+            const widthValue = isFirefox ? "59px" : "53px";
+
+            it(`renders header loose actions with width ${widthValue}`, () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("header-row-loose-action").should(
+                "have.css",
+                "width",
+                widthValue
+              );
+            });
+
+            it(`renders summary row loose actions with width ${widthValue}`, () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action").should(
+                "have.css",
+                "width",
+                widthValue
+              );
             });
 
             context("when scrolling to the right", () => {
