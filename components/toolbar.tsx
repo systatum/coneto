@@ -23,6 +23,7 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { ToolbarThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { createPortal } from "react-dom";
 
 export interface ToolbarProps {
   children: ReactNode;
@@ -358,23 +359,29 @@ function ToolbarMenu({
         )}
       </MenuWrapper>
 
-      {isOpen && subMenuList && (
-        <div
-          ref={refs.setFloating}
-          style={{ ...floatingStyles, zIndex: 9999 }}
-          onMouseEnter={() => setHovered("dropdown")}
-          onMouseLeave={() => setHovered("original")}
-        >
-          <TipMenu
-            setIsOpen={() => {
-              setIsOpen(false);
-              setHovered("original");
+      {isOpen &&
+        subMenuList &&
+        createPortal(
+          <div
+            ref={refs.setFloating}
+            style={{
+              ...floatingStyles,
+              zIndex: 9995999,
             }}
-            styles={{ self: styles?.dropdownStyle }}
-            subMenuList={filteredSubMenuList}
-          />
-        </div>
-      )}
+            onMouseEnter={() => setHovered("dropdown")}
+            onMouseLeave={() => setHovered("original")}
+          >
+            <TipMenu
+              setIsOpen={() => {
+                setIsOpen(false);
+                setHovered("original");
+              }}
+              styles={{ self: styles?.dropdownStyle }}
+              subMenuList={filteredSubMenuList}
+            />
+          </div>,
+          document.body
+        )}
     </ToolbarContainer>
   );
 }
