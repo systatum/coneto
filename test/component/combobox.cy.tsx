@@ -143,6 +143,58 @@ describe("Combobox", () => {
     );
   }
 
+  context("drawerHeight", () => {
+    context("when given 60dvh", () => {
+      it("should render with 420px", () => {
+        cy.viewport(500, 700);
+
+        cy.mount(
+          <ProductCombobox options={FRUIT_OPTIONS} drawerHeight={"60dvh"} />
+        );
+
+        cy.findByRole("textbox").click();
+
+        cy.window().then((win) => {
+          const expectedHeight = `${win.innerHeight * 0.6}px`;
+
+          cy.findByLabelText("combobox-drawer").should(
+            "have.css",
+            "height",
+            expectedHeight
+          );
+        });
+      });
+    });
+
+    context("when given mobile", () => {
+      context("when given 60dvh", () => {
+        it("should render with 420px", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductCombobox
+              mobile
+              options={FRUIT_OPTIONS}
+              drawerHeight={"60dvh"}
+            />
+          );
+
+          cy.findByRole("textbox").click();
+
+          cy.window().then((win) => {
+            const expectedHeight = `${win.innerHeight * 0.6}px`;
+
+            cy.findByLabelText("combobox-drawer-mobile").should(
+              "have.css",
+              "height",
+              expectedHeight
+            );
+          });
+        });
+      });
+    });
+  });
+
   context("dynamic options", () => {
     context("when fetch after move", () => {
       function ProductDynamicCombobox({ timeDelay }: { timeDelay?: number }) {
@@ -480,37 +532,6 @@ describe("Combobox", () => {
           "height",
           "220px"
         );
-      });
-    });
-
-    context("object", () => {
-      context("drawerHeight", () => {
-        context("when given 60dvh", () => {
-          it("should render with px", () => {
-            cy.viewport(500, 700);
-
-            cy.mount(
-              <ProductCombobox
-                options={FRUIT_OPTIONS}
-                mobile={{
-                  drawerHeight: "60dvh",
-                }}
-              />
-            );
-
-            cy.findByRole("textbox").click();
-
-            cy.window().then((win) => {
-              const expectedHeight = `${win.innerHeight * 0.6}px`;
-
-              cy.findByLabelText("combobox-drawer-mobile").should(
-                "have.css",
-                "height",
-                expectedHeight
-              );
-            });
-          });
-        });
       });
     });
 
