@@ -23,7 +23,15 @@ export const Default: Story = {
     const { currentTheme } = useTheme();
     const bodyTheme = currentTheme?.body;
 
-    const [activeScreens, setActiveScreens] = useState([]);
+    const screens = {
+      a: PageA,
+      b: PageB,
+      c: PageC,
+    };
+
+    type ScreenKey = keyof typeof screens;
+
+    const [activeScreens, setActiveScreens] = useState<ScreenKey[]>([]);
 
     function PageTitle({
       text,
@@ -87,7 +95,7 @@ export const Default: Story = {
       );
     }
 
-    function PageC({ goBack, goToScreen }: ScreenProps) {
+    function PageC({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page C" goBack={goBack} />
@@ -96,7 +104,7 @@ export const Default: Story = {
       );
     }
 
-    function PageB({ goBack, goToScreen }: ScreenProps) {
+    function PageB({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page B" goBack={goBack} />
@@ -105,7 +113,7 @@ export const Default: Story = {
       );
     }
 
-    function PageA({ goBack, goToScreen }: ScreenProps) {
+    function PageA({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page A" goBack={goBack} />
@@ -124,11 +132,7 @@ export const Default: Story = {
 
         {/* Imagine this generated in app.tsx */}
         <ScreenTransition
-          screens={{
-            a: PageA,
-            b: PageB,
-            c: PageC,
-          }}
+          screens={screens}
           activeScreens={activeScreens}
           onScreenChange={(screens) => setActiveScreens(screens)}
         />
@@ -142,7 +146,19 @@ export const WithInitializeScreens: Story = {
     const { currentTheme } = useTheme();
     const bodyTheme = currentTheme?.body;
 
-    const [activeScreens, setActiveScreens] = useState(["a", "b", "c"]);
+    const screens = {
+      a: PageA,
+      b: PageB,
+      c: PageC,
+    };
+
+    type ScreenKey = keyof typeof screens;
+
+    const [activeScreens, setActiveScreens] = useState<ScreenKey[]>([
+      "a",
+      "b",
+      "c",
+    ]);
 
     function PageTitle({
       text,
@@ -206,7 +222,7 @@ export const WithInitializeScreens: Story = {
       );
     }
 
-    function PageC({ goBack, goToScreen }: ScreenProps) {
+    function PageC({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page C" goBack={goBack} />
@@ -215,7 +231,7 @@ export const WithInitializeScreens: Story = {
       );
     }
 
-    function PageB({ goBack, goToScreen }: ScreenProps) {
+    function PageB({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page B" goBack={goBack} />
@@ -224,7 +240,7 @@ export const WithInitializeScreens: Story = {
       );
     }
 
-    function PageA({ goBack, goToScreen }: ScreenProps) {
+    function PageA({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
       return (
         <Wrapper>
           <PageTitle text="Page A" goBack={goBack} />
@@ -243,11 +259,7 @@ export const WithInitializeScreens: Story = {
 
         {/* Imagine this generated in app.tsx */}
         <ScreenTransition
-          screens={{
-            a: PageA,
-            b: PageB,
-            c: PageC,
-          }}
+          screens={screens}
           activeScreens={activeScreens}
           onScreenChange={(screens) => setActiveScreens(screens)}
         />
