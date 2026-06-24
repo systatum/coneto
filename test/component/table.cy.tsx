@@ -403,18 +403,128 @@ describe("Table", () => {
           .and("have.css", "overflow-y", "auto");
       });
 
-      it("renders loose effect on the first column", () => {
-        cy.mount(<ProductTableLoose loose />);
+      context("loose effect", () => {
+        context("first column", () => {
+          it("shouldn't render loose effect on the first column", () => {
+            cy.mount(<ProductTableLoose loose />);
 
-        cy.findAllByLabelText("table-row-cell")
-          .first()
-          .then(($el) => {
-            const after = window.getComputedStyle($el[0], "::after");
+            cy.findAllByLabelText("table-row-cell")
+              .first()
+              .then(($el) => {
+                const after = window.getComputedStyle($el[0], "::after");
 
-            expect(after.backgroundImage).to.equal(
-              "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
-            );
+                expect(after.backgroundImage).to.not.equal(
+                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                );
+              });
           });
+
+          context("when scrolling to the right", () => {});
+          it("should render loose effect on the first column", () => {
+            cy.mount(<ProductTableLoose loose />);
+
+            cy.findByLabelText("table-body").then(($el) => {
+              const el = $el[0];
+
+              const scrollToEnd = () => {
+                const maxScroll = el.scrollWidth - el.clientWidth;
+                el.scrollLeft = maxScroll;
+                el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                if (el.scrollLeft < maxScroll) {
+                  scrollToEnd();
+                }
+              };
+
+              scrollToEnd();
+            });
+            cy.wait(300);
+
+            cy.findAllByLabelText("table-row-cell")
+              .first()
+              .then(($el) => {
+                const after = window.getComputedStyle($el[0], "::after");
+
+                expect(after.backgroundImage).to.equal(
+                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                );
+              });
+          });
+        });
+
+        context("last column", () => {
+          context("with actions", () => {
+            it("should render loose effect on the last column", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.get(".coneto-button")
+                .eq(3)
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            context("when scrolling to the right", () => {
+              it("shouldn't render loose effect on the last column", () => {
+                cy.mount(<ProductTableLoose loose />);
+
+                cy.findAllByLabelText("action-button").eq(1).click();
+                cy.findAllByLabelText("action-button").eq(2).click();
+
+                cy.findByLabelText("table-body").then(($el) => {
+                  const el = $el[0];
+
+                  const scrollToEnd = () => {
+                    const maxScroll = el.scrollWidth - el.clientWidth;
+                    el.scrollLeft = maxScroll;
+                    el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                    if (el.scrollLeft < maxScroll) {
+                      scrollToEnd();
+                    }
+                  };
+
+                  scrollToEnd();
+                });
+
+                cy.wait(300);
+
+                cy.get(".coneto-button")
+                  .eq(3)
+                  .then(($el) => {
+                    const after = window.getComputedStyle($el[0], "::before");
+
+                    expect(after.backgroundImage).to.not.equal(
+                      "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    );
+                  });
+              });
+            });
+          });
+
+          context("when activate summary", () => {
+            it("renders the summary row loose action", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action")
+                .should("exist")
+                .and("have.css", "width", "53px");
+            });
+          });
+        });
       });
 
       context("with checkbox", () => {
@@ -449,32 +559,6 @@ describe("Table", () => {
             .eq(4)
             .should("have.css", "position", "sticky")
             .and("have.css", "right", "0px");
-        });
-
-        it("renders the header row loose action", () => {
-          cy.mount(<ProductTableLoose loose />);
-
-          cy.findAllByLabelText("action-button").eq(1).click();
-          cy.findAllByLabelText("action-button").eq(2).click();
-          cy.wait(300);
-
-          cy.findByLabelText("header-row-loose-action")
-            .should("exist")
-            .and("have.css", "width", "54px");
-        });
-
-        context("when activate summary", () => {
-          it("renders the summary row loose action", () => {
-            cy.mount(<ProductTableLoose loose />);
-
-            cy.findAllByLabelText("action-button").eq(1).click();
-            cy.findAllByLabelText("action-button").eq(2).click();
-            cy.wait(300);
-
-            cy.findByLabelText("summary-row-loose-action")
-              .should("exist")
-              .and("have.css", "width", "54px");
-          });
         });
       });
 
