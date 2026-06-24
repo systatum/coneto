@@ -1486,6 +1486,8 @@ function TableRow({
   useEffect(() => {
     if (actions) {
       setWithRowActions(true);
+    } else {
+      setWithRowActions(false);
     }
   }, [actions]);
 
