@@ -438,7 +438,6 @@ function ChipsDrawer({
                         !isClicked && (
                           <Divider $theme={chipsTheme} aria-label="divider" />
                         )}
-
                       <ChipsItem
                         chip={chip}
                         chipContainerStyle={styles?.chipContainerStyle}
@@ -668,8 +667,9 @@ function ChipsItem({
     <ChipItemWrapper
       $hovered={hovered === chip.id}
       $style={chipContainerStyle}
-      onClick={async (e) => {
-        await e.stopPropagation();
+      onMouseDown={async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         await onOptionClicked?.(chip);
         await inputRef.current.focus();
       }}
