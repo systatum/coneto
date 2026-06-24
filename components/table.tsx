@@ -371,14 +371,23 @@ function Table({
     const scrollLeft = el?.scrollLeft ?? 0;
     const scrollRight = el ? el.scrollWidth - el.clientWidth - scrollLeft : 0;
 
-    setIsScrolledLeft(scrollLeft > 0);
-    setIsScrolledRight(scrollRight > 0);
+    setIsScrolledLeft(scrollLeft > 5);
+    setIsScrolledRight(scrollRight > 5);
 
     if (headerScrollRef.current)
       headerScrollRef.current.scrollLeft = scrollLeft;
     if (summaryScrollRef.current)
       summaryScrollRef.current.scrollLeft = scrollLeft;
   };
+
+  // On mount, check if the table body already overflows horizontally.
+  // This ensures the right shadow appears immediately without needing to scroll first.
+  useEffect(() => {
+    const el = tableBodyRef.current;
+    if (!el) return;
+    const scrollRight = el.scrollWidth - el.clientWidth;
+    setIsScrolledRight(scrollRight > 5);
+  }, []);
 
   // Sync horizontal scroll: summary → wrapper (if user drags summary scrollbar)
   const handleSummaryScroll = (e: React.UIEvent<HTMLDivElement>) => {
