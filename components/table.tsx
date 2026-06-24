@@ -630,7 +630,6 @@ function Table({
 
                   {loose && withRowActions && (
                     <StickyRowActions
-                      $isFirefox={isFirefox}
                       aria-label="header-row-loose-action"
                       $theme={tableTheme}
                       $loose={loose}
@@ -753,7 +752,6 @@ function Table({
 
                     {loose && withRowActions && (
                       <StickyRowActions
-                        $isFirefox={isFirefox}
                         aria-label="summary-row-loose-action"
                         $theme={tableTheme}
                         $loose={loose}
@@ -875,14 +873,13 @@ const StickyRowActions = styled.div<{
   $theme?: TableThemeConfig;
   $position?: "header" | "summary";
   $isScrolledRight?: boolean;
-  $isFirefox?: boolean;
 }>`
   position: sticky;
   right: 0;
   display: flex;
   align-items: center;
   height: auto;
-  width: ${({ $isFirefox }) => ($isFirefox ? "59px" : "53px")};
+  width: 59px;
   transform: none;
   padding-left: 8px;
   padding-right: 8px;
@@ -1046,26 +1043,9 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  ${({ $isFirefox }) =>
-    $isFirefox &&
-    css`
-      scrollbar-width: thin;
-    `}
-
-  /* Chrome, Edge, Safari */
-  &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
-    border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
-  }
+  scrollbar-width: thin;
+  scrollbar-color: ${({ $theme }) =>
+    `${$theme.scrollbarThumbColor} ${$theme.scrollbarTrackColor}`};
 
   ${({ $loose, $theme }) =>
     $loose
