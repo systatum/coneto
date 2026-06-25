@@ -123,7 +123,7 @@ function Avatar({
           src={profileImageUrl}
         />
       ) : (
-        <div>{initials}</div>
+        initials
       )}
       {changeable ? (
         <AvatarChange $overlayBg={avatarTheme.overlayBackgroundColor}>
@@ -268,6 +268,7 @@ export interface AvatarStackAction extends Omit<BaseAction, "caption"> {
   styles?: AvatarStackActionStyles;
   hoverCaption?: string;
   hoverCaptionPosition?: AvatarHoverCaptionPosition;
+  pressed?: boolean;
 }
 
 export interface AvatarStackActionStyles {
@@ -324,6 +325,7 @@ function AvatarStack({
                 z-index: ${key};
 
                 padding: 0px;
+                border: 2px solid ${bodyTheme?.backgroundColor};
                 height: ${`${frameSize}px`};
                 width: ${`${frameSize}px`};
                 border-radius: 9999px;
