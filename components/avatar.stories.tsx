@@ -25,6 +25,7 @@ It automatically generates a background color and initials when no image is prov
 - 📷 Optional **image upload (changeable mode)**
 - 🖱️ Clickable interaction support
 - 🧩 Customizable size and styles
+- 👥 Built-in **Avatar Stack** support for grouped users
 
 ---
 
@@ -61,11 +62,62 @@ It automatically generates a background color and initials when no image is prov
 
 ---
 
+### 👥 Avatar Stack
+
+The **Avatar.Stack** component groups multiple avatars into a compact, overlapping layout, making it useful for displaying team members, collaborators, participants, or shared ownership.
+
+#### Features
+
+* Supports profile images and generated initials
+* Optional hover captions per avatar
+* Customizable stacking behavior
+* Action buttons for common operations such as inviting or adding users
+* Automatic overlap handling for large groups
+
+#### Example
+
+\`\`\`tsx
+const avatars = [
+  {
+    firstName: "Adam",
+    lastName: "Hakarsa",
+    profileImageUrl: "...",
+    hoverCaption: "Adam Hakarsa",
+  },
+  {
+    firstName: "Liam",
+    lastName: "Anderson",
+    profileImageUrl: "...",
+    hoverCaption: "Liam Anderson",
+  },
+];
+
+const actions = [
+  {
+    hoverCaption: "Add another person",
+    onClick: () => {},
+  },
+];
+
+<Avatar.Stack avatars={avatars} actions={actions} />
+\`\`\`
+
+#### Usage Guidelines
+
+* Use when displaying multiple users in a limited space
+* Provide \`hoverCaption\` to improve discoverability
+* Use actions for invite, add member, or management workflows
+* Prefer Avatar Stack over individual avatars when representing a group
+
+---
+
 ### 🎯 Usage Guidelines
-- Use for **user identity representation**
-- Provide \`profileImageUrl\` when available
-- Enable \`changeable\` for editable profile flows
-- Adjust \`frameSize\` and \`fontSize\` for layout consistency
+
+* Use for **user identity representation**
+* Provide \`profileImageUrl\` when available
+* Enable \`changeable\` for editable profile flows
+* Adjust \`frameSize\` and \`fontSize\` for layout consistency
+
         `,
       },
     },
