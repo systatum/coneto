@@ -3,6 +3,7 @@ import { AvatarProps, AvatarStackAction, AvatarStackAvatar } from "./avatar";
 import { ChangeEvent, useState } from "react";
 import { ModalDialog, ModalDialogAction } from "./modal-dialog";
 import { Avatar } from "./avatar";
+import { Dialog } from "./dialog";
 
 const meta: Meta<typeof Avatar> = {
   title: "Content/Avatar",
@@ -409,7 +410,22 @@ export const Stacked: Story = {
       {
         hoverCaption: "Add another person",
         onClick: () => {
-          console.log("was added");
+          Dialog.show({
+            mobile: true,
+            title: "Avatar Stack Full",
+            subtitle:
+              "The maximum number of avatars has been reached. Remove an existing member before adding another.",
+            actions: [
+              {
+                id: "close",
+                caption: "Got it",
+                variant: "primary",
+              },
+            ],
+            onClick: ({ closeDialog }) => {
+              closeDialog?.();
+            },
+          });
         },
       },
     ];
