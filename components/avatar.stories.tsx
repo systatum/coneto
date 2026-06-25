@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { AvatarProps } from "./avatar";
+import { AvatarProps, AvatarStackAction, AvatarStackAvatar } from "./avatar";
 import { ChangeEvent, useState } from "react";
 import { ModalDialog, ModalDialogAction } from "./modal-dialog";
 import { Avatar } from "./avatar";
@@ -316,5 +316,52 @@ export const WithImage: Story = {
         )}
       </div>
     );
+  },
+};
+
+export const Stacked: Story = {
+  render: () => {
+    const AVATARS: AvatarStackAvatar[] = [
+      {
+        firstName: "Adam",
+        lastName: "Hakarsa",
+        profileImageUrl: "https://randomuser.me/api/portraits/men/1.jpg",
+        hoverCaption: "Adam Hakarsa",
+      },
+      {
+        firstName: "Liam",
+        lastName: "Anderson",
+        profileImageUrl: "https://randomuser.me/api/portraits/men/2.jpg",
+        hoverCaption: "Liam Anderson",
+      },
+      {
+        firstName: "Sophia",
+        lastName: "Brown",
+        profileImageUrl: "https://randomuser.me/api/portraits/women/3.jpg",
+        hoverCaption: "Sophia Brown",
+      },
+      {
+        firstName: "Noah",
+        lastName: "Taylor",
+        hoverCaption: "Noah Taylor",
+      },
+      {
+        firstName: "Emma",
+        lastName: "Wilson",
+        profileImageUrl: "https://randomuser.me/api/portraits/women/4.jpg",
+        hoverCaption: "Emma Wilson",
+      },
+    ];
+
+    const ONE_ACTIONS: AvatarStackAction[] = [
+      {
+        hoverCaption: "Add another person",
+        onClick: () => {
+          console.log("was added");
+        },
+      },
+    ];
+
+    return <Avatar.Stack avatars={AVATARS} actions={ONE_ACTIONS} />;
   },
 };
