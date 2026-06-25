@@ -46,7 +46,9 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
     const [showX, setShowX] = useState(false);
     const [thumbY, setThumbY] = useState({ height: 0, top: 0 });
     const [thumbX, setThumbX] = useState({ width: 0, left: 0 });
-    const [isDragging, setIsDragging] = useState(false);
+
+    const [isDraggingXState, setIsDraggingXState] = useState(false);
+    const [isDraggingYState, setIsDraggingYState] = useState(false);
 
     const hideTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
     const isDraggingY = useRef(false);
@@ -127,6 +129,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
     const onMouseDownY = useCallback((e: React.MouseEvent) => {
       e.preventDefault();
       isDraggingY.current = true;
+      setIsDraggingYState(true);
       dragStartY.current = e.clientY;
       dragStartScrollTop.current = viewportRef.current?.scrollTop ?? 0;
 
@@ -146,6 +149,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
 
       const onMouseUp = () => {
         isDraggingY.current = false;
+        setIsDraggingYState(false);
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
 
@@ -163,6 +167,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
     const onMouseDownX = useCallback((e: React.MouseEvent) => {
       e.preventDefault();
       isDraggingX.current = true;
+      setIsDraggingXState(true);
       dragStartX.current = e.clientX;
       dragStartScrollLeft.current = viewportRef.current?.scrollLeft ?? 0;
 
@@ -182,6 +187,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
 
       const onMouseUp = () => {
         isDraggingX.current = false;
+        setIsDraggingXState(false);
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
         if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
@@ -209,13 +215,12 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
         {overflowY === "scroll" && (
           <TrackY
             $theme={scrollbarTheme}
-            onMouseEnter={() => setIsDragging(true)}
-            onMouseLeave={() => setIsDragging(false)}
             $visible={showY}
-            $isDragging={isDragging}
+            $isDragging={isDraggingYState}
           >
             <Thumb
               $theme={scrollbarTheme}
+              $isDragging={isDraggingYState}
               ref={thumbYRef}
               style={{ height: thumbY.height, top: thumbY.top }}
               onMouseDown={onMouseDownY}
@@ -226,13 +231,12 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
         {overflowX === "scroll" && (
           <TrackX
             $theme={scrollbarTheme}
-            onMouseEnter={() => setIsDragging(true)}
-            onMouseLeave={() => setIsDragging(false)}
             $visible={showX}
-            $isDragging={isDragging}
+            $isDragging={isDraggingXState}
           >
             <Thumb
               $theme={scrollbarTheme}
+              $isDragging={isDraggingXState}
               ref={thumbXRef}
               style={{ width: thumbX.width, left: thumbX.left }}
               onMouseDown={onMouseDownX}
@@ -309,16 +313,22 @@ const TrackX = styled.div<{
   }
 `;
 
-const Thumb = styled.div<{ $theme?: ScrollbarThemeConfig }>`
+const Thumb = styled.div<{
+  $theme?: ScrollbarThemeConfig;
+  $isDragging?: boolean;
+}>`
   position: absolute;
-  background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
+  background-color: ${({ $theme, $isDragging }) =>
+    $isDragging
+      ? $theme?.scrollbarThumbActiveColor
+      : $theme?.scrollbarThumbColor};
   border-radius: 5px;
   cursor: pointer;
   width: 100%;
   height: 100%;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${({ $theme }) => $theme?.scrollbarThumbActiveColor};
   }
 `;
 
