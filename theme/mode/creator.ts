@@ -48,6 +48,7 @@ import {
   RadioThemeConfig,
   RatingThemeConfig,
   RichEditorThemeConfig,
+  ScrollbarThemeConfig,
   SearchboxThemeConfig,
   SelectboxThemeConfig,
   SeparatorThemeConfig,
@@ -1302,6 +1303,19 @@ export function createRichEditorTheme(
       toolbarButtonFocused: button?.hoverBackgroundColor,
       scrollThumb: "#9ca3af",
       preBackgroundColor: "#D3D3D3",
+    },
+    ...themeConfigurations
+  );
+}
+
+// scrollbar.tsx
+export function createScrollbar(
+  ...themeConfigurations: Array<Partial<ScrollbarThemeConfig>>
+): ScrollbarThemeConfig {
+  return mergeTheme<ScrollbarThemeConfig>(
+    {
+      scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+      scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
     },
     ...themeConfigurations
   );

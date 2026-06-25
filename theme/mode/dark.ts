@@ -71,6 +71,7 @@ import {
   createToastTheme,
   createFlippable,
   createProgressbarTheme,
+  createScrollbar,
 } from "./creator";
 
 // Dark
@@ -636,6 +637,11 @@ const darkRichEditor = createRichEditorTheme(
   }
 );
 
+const darkScrollbar = createScrollbar({
+  scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
+  scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
+});
+
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
   textColor: darkBody.textColor,
@@ -947,6 +953,7 @@ export const darkTheme: AppTheme = {
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
+  scrollbar: darkScrollbar,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,
   separator: darkSeparator,
@@ -1021,6 +1028,7 @@ export {
   darkRadio,
   darkRating,
   darkRichEditor,
+  darkScrollbar,
   darkSearchbox,
   darkSelectbox,
   darkSeparator,

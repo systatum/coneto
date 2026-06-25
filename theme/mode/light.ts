@@ -70,6 +70,7 @@ import {
   createToastTheme,
   createFlippable,
   createProgressbarTheme,
+  createScrollbar,
 } from "./creator";
 
 // Light
@@ -190,6 +191,8 @@ const lightRichEditor = createRichEditorTheme(
   lightButton?.default
 );
 
+const lightScrollbar = createScrollbar();
+
 const lightSearchbox = createSearchboxTheme(lightBody);
 
 const lightSelectbox = createSelectboxTheme(lightBody, lightFieldLane);
@@ -298,6 +301,7 @@ export const lightTheme: AppTheme = {
   radio: lightRadio,
   rating: lightRating,
   richEditor: lightRichEditor,
+  scrollbar: lightScrollbar,
   searchbox: lightSearchbox,
   selectbox: lightSelectbox,
   separator: lightSeparator,
@@ -372,6 +376,7 @@ export {
   lightRadio,
   lightRating,
   lightRichEditor,
+  lightScrollbar,
   lightSearchbox,
   lightSelectbox,
   lightSeparator,
