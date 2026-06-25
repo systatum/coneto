@@ -1315,7 +1315,7 @@ export function createScrollbar(
   return mergeTheme<ScrollbarThemeConfig>(
     {
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
-      scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
+      scrollbarTrackColor: "transparent",
     },
     ...themeConfigurations
   );

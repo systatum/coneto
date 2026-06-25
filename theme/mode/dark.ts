@@ -639,7 +639,7 @@ const darkRichEditor = createRichEditorTheme(
 
 const darkScrollbar = createScrollbar({
   scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
-  scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
+  scrollbarTrackColor: "transparent",
 });
 
 const darkSearchbox = createSearchboxTheme(darkBody, {
