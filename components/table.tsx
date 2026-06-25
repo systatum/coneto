@@ -32,6 +32,7 @@ import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
+import { Scrollbar, ScrollbarRef } from "./scrollbar";
 
 export interface TableColumn {
   caption: string;
@@ -333,23 +334,25 @@ function Table({
     return null;
   });
 
-  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const tableBodyRef = useRef<ScrollbarRef>(null);
+
+  const getViewport = () => tableBodyRef.current?.getViewport();
 
   useEffect(() => {
-    const el = tableBodyRef.current;
-    if (!el || openRowId === null) return;
+    const viewport = getViewport();
+    if (!viewport || openRowId === null) return;
 
-    const startScrollTop = el.scrollTop;
+    const startScrollTop = viewport.scrollTop;
 
     const handleScroll = () => {
-      const delta = Math.abs(el.scrollTop - startScrollTop);
+      const delta = Math.abs(viewport.scrollTop - startScrollTop);
       if (delta >= 100) {
         setOpenRowId(null);
       }
     };
 
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
+    viewport.addEventListener("scroll", handleScroll, { passive: true });
+    return () => viewport.removeEventListener("scroll", handleScroll);
   }, [openRowId]);
 
   const filteredActions = Array.isArray(actions)
@@ -365,11 +368,14 @@ function Table({
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const summaryScrollRef = useRef<HTMLDivElement>(null);
 
-  // Sync horizontal scroll: wrapper → summary
+  // Sync horizontal scroll: body → header & summary
   const handleWrapperScroll = () => {
-    const el = tableBodyRef.current;
-    const scrollLeft = el?.scrollLeft ?? 0;
-    const scrollRight = el ? el.scrollWidth - el.clientWidth - scrollLeft : 0;
+    const viewport = getViewport();
+    if (!viewport) return;
+
+    const scrollLeft = viewport.scrollLeft;
+    const scrollRight =
+      viewport.scrollWidth - viewport.clientWidth - scrollLeft;
 
     setIsScrolledLeft(scrollLeft > 5);
     setIsScrolledRight(scrollRight > 5);
@@ -383,24 +389,22 @@ function Table({
   // On mount, check if the table body already overflows horizontally.
   // This ensures the right shadow appears immediately without needing to scroll first.
   useEffect(() => {
-    const el = tableBodyRef.current;
-    if (!el) return;
-    const scrollRight = el.scrollWidth - el.clientWidth;
+    const viewport = getViewport();
+    if (!viewport) return;
+    const scrollRight = viewport.scrollWidth - viewport.clientWidth;
     setIsScrolledRight(scrollRight > 5);
   }, []);
 
-  // Sync horizontal scroll: summary → wrapper (if user drags summary scrollbar)
+  // Sync horizontal scroll: summary → body & header
   const handleSummaryScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollLeft = e.currentTarget.scrollLeft;
-    if (tableBodyRef.current) tableBodyRef.current.scrollLeft = scrollLeft;
+    const viewport = getViewport();
+    if (viewport) viewport.scrollLeft = scrollLeft;
     if (headerScrollRef.current)
       headerScrollRef.current.scrollLeft = scrollLeft;
     if (summaryScrollRef.current)
       summaryScrollRef.current.scrollLeft = scrollLeft;
   };
-
-  const isFirefox =
-    typeof navigator !== "undefined" && navigator.userAgent.includes("Firefox");
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
@@ -630,7 +634,6 @@ function Table({
 
                   {loose && withRowActions && (
                     <StickyRowActions
-                      $isFirefox={isFirefox}
                       aria-label="header-row-loose-action"
                       $theme={tableTheme}
                       $loose={loose}
@@ -641,17 +644,23 @@ function Table({
               </ScrollWrapper>
 
               {rowChildren.length > 0 ? (
-                <TableBody
-                  ref={tableBodyRef}
+                <Scrollbar
+                  style={{ height: "100%", width: "100%" }}
+                  overflowX={loose ? "scroll" : "hidden"}
+                  overflowY="scroll"
+                  autoHideDelay={800}
                   onScroll={loose ? handleWrapperScroll : undefined}
-                  $theme={tableTheme}
-                  aria-label="table-body"
-                  $loose={loose}
-                  $isFirefox={isFirefox}
-                  $style={styles?.tableBodyStyle}
+                  ref={tableBodyRef}
                 >
-                  {rowChildren}
-                </TableBody>
+                  <TableBody
+                    $theme={tableTheme}
+                    aria-label="table-body"
+                    $loose={loose}
+                    $style={styles?.tableBodyStyle}
+                  >
+                    {rowChildren}
+                  </TableBody>
+                </Scrollbar>
               ) : (
                 <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
               )}
@@ -753,7 +762,6 @@ function Table({
 
                     {loose && withRowActions && (
                       <StickyRowActions
-                        $isFirefox={isFirefox}
                         aria-label="summary-row-loose-action"
                         $theme={tableTheme}
                         $loose={loose}
@@ -882,7 +890,7 @@ const StickyRowActions = styled.div<{
   display: flex;
   align-items: center;
   height: auto;
-  width: ${({ $isFirefox }) => ($isFirefox ? "48px" : "53px")};
+  width: 48px;
   transform: none;
   padding-left: 8px;
   padding-right: 8px;
@@ -1046,39 +1054,12 @@ const TableBody = styled.div<{
   height: 100%;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
-  ${({ $isFirefox }) =>
-    $isFirefox &&
-    css`
-      scrollbar-gutter: stable both-edges;
-      scrollbar-width: thin;
-    `};
-
-  /* Chrome, Edge, Safari */
-  &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
-    border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
-  }
-
   ${({ $loose, $theme }) =>
-    $loose
-      ? css`
-          overflow: auto;
-
-          --row-bg: ${$theme?.headerBackgroundColor ?? "#e4e4e4"};
-        `
-      : css`
-          overflow-y: auto;
-          overflow-x: hidden;
-        `}
+    $loose &&
+    css`
+      --row-bg: ${$theme?.headerBackgroundColor ?? "#e4e4e4"};
+      min-width: max-content;
+    `}
 
   ${({ $style }) => $style};
 `;
