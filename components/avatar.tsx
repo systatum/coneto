@@ -254,6 +254,8 @@ export interface AvatarStackProps {
   actions?: AvatarStackAction[];
   frameSize?: number;
   fontSize?: number;
+  className?: string;
+  id?: string;
 }
 
 export type AvatarStackAvatar = AvatarProps;
@@ -281,6 +283,8 @@ function AvatarStack({
   actions = [],
   fontSize = 18,
   frameSize = 50,
+  className,
+  id,
 }: AvatarStackProps) {
   const { currentTheme } = useTheme();
   const bodyTheme = currentTheme?.body;
@@ -288,7 +292,12 @@ function AvatarStack({
   const avatarLength = avatars?.length;
 
   return (
-    <ContainerAvatarStack $style={styles?.containerStyle}>
+    <ContainerAvatarStack
+      id={id}
+      className={applyClassName("avatar-stack", className)}
+      aria-label="avatar-stack"
+      $style={styles?.containerStyle}
+    >
       {avatars.map((avatar, index) => {
         const avatarProps = {
           ...avatar,
@@ -341,7 +350,13 @@ function AvatarStack({
             },
           };
 
-          const baseAction = <Button key={key} {...finalAction} />;
+          const baseAction = (
+            <Button
+              key={key}
+              aria-label="avatar-stack-action"
+              {...finalAction}
+            />
+          );
 
           if (hoverCaption) {
             return (
@@ -375,6 +390,7 @@ const ContainerAvatarStack = styled.div<{ $style?: CSSProp }>`
   position: relative;
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   > *:not(:first-child) {
     margin-left: -6px;
