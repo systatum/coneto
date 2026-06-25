@@ -899,7 +899,7 @@ const StickyRowActions = styled.div<{
     bottom: 0;
     width: 6px;
     background: ${({ $isScrolledRight, $theme }) =>
-      $isScrolledRight ? $theme?.looseEffectColor : "transparent"};
+      $isScrolledRight ? $theme?.rightLooseEffectColor : "transparent"};
     pointer-events: none;
   }
 `;
@@ -1763,7 +1763,7 @@ function TableRow({
                         bottom: 0;
                         width: 6px;
                         background: ${isScrolledRight
-                          ? tableTheme?.looseEffectColor
+                          ? tableTheme?.rightLooseEffectColor
                           : "transparent"};
                         pointer-events: none;
                       }
@@ -2063,7 +2063,7 @@ const CellContent = styled.div<{
         bottom: 0;
         width: 6px;
         background: ${$isScrolledLeft
-          ? $theme?.looseEffectColor
+          ? $theme?.leftLooseEffectColor
           : "transparent"};
         pointer-events: none;
       }
