@@ -389,8 +389,9 @@ describe("Table", () => {
         cy.mount(<ProductTableLoose loose={false} />);
 
         cy.findByLabelText("table-body")
+          .parent()
           .should("have.css", "overflow-x", "hidden")
-          .and("have.css", "overflow-y", "auto");
+          .and("have.css", "overflow-y", "scroll");
       });
     });
 
@@ -399,8 +400,9 @@ describe("Table", () => {
         cy.mount(<ProductTableLoose loose />);
 
         cy.findByLabelText("table-body")
-          .should("have.css", "overflow-x", "auto")
-          .and("have.css", "overflow-y", "auto");
+          .parent()
+          .should("have.css", "overflow-x", "scroll")
+          .and("have.css", "overflow-y", "scroll");
       });
 
       context("loose effect", () => {
@@ -423,21 +425,23 @@ describe("Table", () => {
           it("should render loose effect on the first column", () => {
             cy.mount(<ProductTableLoose loose />);
 
-            cy.findByLabelText("table-body").then(($el) => {
-              const el = $el[0];
+            cy.findByLabelText("table-body")
+              .parent()
+              .then(($el) => {
+                const el = $el[0];
 
-              const scrollToEnd = () => {
-                const maxScroll = el.scrollWidth - el.clientWidth;
-                el.scrollLeft = maxScroll;
-                el.dispatchEvent(new Event("scroll", { bubbles: true }));
+                const scrollToEnd = () => {
+                  const maxScroll = el.scrollWidth - el.clientWidth;
+                  el.scrollLeft = maxScroll;
+                  el.dispatchEvent(new Event("scroll", { bubbles: true }));
 
-                if (el.scrollLeft < maxScroll) {
-                  scrollToEnd();
-                }
-              };
+                  if (el.scrollLeft < maxScroll) {
+                    scrollToEnd();
+                  }
+                };
 
-              scrollToEnd();
-            });
+                scrollToEnd();
+              });
             cy.wait(300);
 
             cy.findAllByLabelText("table-row-cell")
@@ -473,13 +477,7 @@ describe("Table", () => {
                 });
             });
 
-            const isFirefox =
-              typeof navigator !== "undefined" &&
-              navigator.userAgent.includes("Firefox");
-
-            const widthValue = isFirefox ? "59px" : "53px";
-
-            it(`renders header loose actions with width ${widthValue}`, () => {
+            it(`renders header loose actions with width 48px`, () => {
               cy.mount(<ProductTableLoose loose />);
 
               cy.findAllByLabelText("action-button").eq(1).click();
@@ -488,7 +486,7 @@ describe("Table", () => {
               cy.wait(300);
 
               cy.findByLabelText("header-row-loose-action")
-                .should("have.css", "width", widthValue)
+                .should("have.css", "width", "48px")
                 .then(($el) => {
                   const after = window.getComputedStyle($el[0], "::before");
 
@@ -498,7 +496,7 @@ describe("Table", () => {
                 });
             });
 
-            it(`renders summary row loose actions with width ${widthValue}`, () => {
+            it(`renders summary row loose actions with width 48px`, () => {
               cy.mount(<ProductTableLoose loose />);
 
               cy.findAllByLabelText("action-button").eq(1).click();
@@ -507,7 +505,7 @@ describe("Table", () => {
               cy.wait(300);
 
               cy.findByLabelText("summary-row-loose-action")
-                .should("have.css", "width", widthValue)
+                .should("have.css", "width", "48px")
                 .then(($el) => {
                   const after = window.getComputedStyle($el[0], "::before");
 
@@ -524,21 +522,23 @@ describe("Table", () => {
                 cy.findAllByLabelText("action-button").eq(1).click();
                 cy.findAllByLabelText("action-button").eq(2).click();
 
-                cy.findByLabelText("table-body").then(($el) => {
-                  const el = $el[0];
+                cy.findByLabelText("table-body")
+                  .parent()
+                  .then(($el) => {
+                    const el = $el[0];
 
-                  const scrollToEnd = () => {
-                    const maxScroll = el.scrollWidth - el.clientWidth;
-                    el.scrollLeft = maxScroll;
-                    el.dispatchEvent(new Event("scroll", { bubbles: true }));
+                    const scrollToEnd = () => {
+                      const maxScroll = el.scrollWidth - el.clientWidth;
+                      el.scrollLeft = maxScroll;
+                      el.dispatchEvent(new Event("scroll", { bubbles: true }));
 
-                    if (el.scrollLeft < maxScroll) {
-                      scrollToEnd();
-                    }
-                  };
+                      if (el.scrollLeft < maxScroll) {
+                        scrollToEnd();
+                      }
+                    };
 
-                  scrollToEnd();
-                });
+                    scrollToEnd();
+                  });
 
                 cy.wait(300);
 
@@ -565,7 +565,7 @@ describe("Table", () => {
 
               cy.findByLabelText("summary-row-loose-action")
                 .should("exist")
-                .and("have.css", "width", "53px");
+                .and("have.css", "width", "48px");
             });
           });
         });
@@ -628,8 +628,9 @@ describe("Table", () => {
           cy.mount(<ProductTableLoose loose />);
 
           cy.findByLabelText("table-body")
-            .should("have.css", "overflow-x", "auto")
-            .and("have.css", "overflow-y", "auto");
+            .parent()
+            .should("have.css", "overflow-x", "scroll")
+            .and("have.css", "overflow-y", "scroll");
 
           cy.findAllByText("aws").eq(0).should("not.be.visible");
 
@@ -2956,10 +2957,12 @@ describe("Table", () => {
           .should("exist")
           .and("be.visible");
 
-        cy.findByLabelText("table-body").then(($el) => {
-          const start = $el[0].scrollTop;
-          cy.wrap($el).scrollTo(0, start + 101);
-        });
+        cy.findByLabelText("table-body")
+          .parent()
+          .then(($el) => {
+            const start = $el[0].scrollTop;
+            cy.wrap($el).scrollTo(0, start + 101);
+          });
 
         cy.findByLabelText("button-dropdown-wrapper").should("not.exist");
       });
