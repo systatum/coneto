@@ -882,7 +882,7 @@ const StickyRowActions = styled.div<{
   display: flex;
   align-items: center;
   height: auto;
-  width: ${({ $isFirefox }) => ($isFirefox ? "59px" : "53px")};
+  width: ${({ $isFirefox }) => ($isFirefox ? "48px" : "53px")};
   transform: none;
   padding-left: 8px;
   padding-right: 8px;
@@ -1049,6 +1049,7 @@ const TableBody = styled.div<{
   ${({ $isFirefox }) =>
     $isFirefox &&
     css`
+      scrollbar-gutter: stable both-edges;
       scrollbar-width: thin;
     `};
 
