@@ -468,7 +468,7 @@ describe("Table", () => {
                   const after = window.getComputedStyle($el[0], "::before");
 
                   expect(after.backgroundImage).to.equal(
-                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
                   );
                 });
             });
@@ -487,11 +487,15 @@ describe("Table", () => {
 
               cy.wait(300);
 
-              cy.findByLabelText("header-row-loose-action").should(
-                "have.css",
-                "width",
-                widthValue
-              );
+              cy.findByLabelText("header-row-loose-action")
+                .should("have.css", "width", widthValue)
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
             });
 
             it(`renders summary row loose actions with width ${widthValue}`, () => {
@@ -502,11 +506,15 @@ describe("Table", () => {
 
               cy.wait(300);
 
-              cy.findByLabelText("summary-row-loose-action").should(
-                "have.css",
-                "width",
-                widthValue
-              );
+              cy.findByLabelText("summary-row-loose-action")
+                .should("have.css", "width", widthValue)
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
             });
 
             context("when scrolling to the right", () => {
