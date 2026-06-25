@@ -121,6 +121,7 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   autoFocusField?: string;
   styles?: StatefulFormStyles;
   disabled?: boolean;
+  mobile?: boolean;
   className?: string;
   id?: string;
 }
@@ -214,6 +215,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   styles,
   autoFocusField,
   disabled,
+  mobile,
   className,
   id,
 }: StatefulFormProps<Z>) {
@@ -336,25 +338,24 @@ function StatefulForm<Z extends ZodTypeAny>({
   }
 
   return (
-    <>
-      <FormFields
-        id={id}
-        className={className}
-        labelSize={labelSize}
-        fieldSize={fieldSize}
-        control={control}
-        fields={fields}
-        disabled={disabled}
-        formValues={formValues}
-        register={register}
-        errors={errors}
-        setValue={setValue}
-        onChange={handleFieldChange}
-        autoFocusField={autoFocusField}
-        styles={styles}
-        shouldShowError={shouldShowError}
-      />
-    </>
+    <FormFields
+      id={id}
+      mobile={mobile}
+      className={className}
+      labelSize={labelSize}
+      fieldSize={fieldSize}
+      control={control}
+      fields={fields}
+      disabled={disabled}
+      formValues={formValues}
+      register={register}
+      errors={errors}
+      setValue={setValue}
+      onChange={handleFieldChange}
+      autoFocusField={autoFocusField}
+      styles={styles}
+      shouldShowError={shouldShowError}
+    />
   );
 }
 
@@ -426,6 +427,7 @@ interface FormFieldsProps<T extends FieldValues> {
   styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
   disabled?: boolean;
+  mobile?: boolean;
   className?: string;
   id?: string;
 }
@@ -445,6 +447,7 @@ function FormFields<T extends FieldValues>({
   autoFocusField,
   rowWithFrame,
   disabled,
+  mobile,
   className,
   id,
 }: FormFieldsProps<T>) {
@@ -492,6 +495,28 @@ function FormFields<T extends FieldValues>({
         );
         const hasFieldTitle = nonButtonFields.some((f) => f.title);
 
+        const mobileInputStyle =
+          mobile &&
+          css`
+            background-color: transparent;
+            border: transparent;
+            &:focus {
+              border: transparent;
+              box-shadow: none;
+            }
+
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
+              -webkit-box-shadow: 0 0 0 1000px transparent inset;
+              box-shadow: 0 0 0 1000px transparent inset;
+
+              background-color: transparent !important;
+              transition: background-color 9999s ease-in-out 0s;
+            }
+          `;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
@@ -502,10 +527,19 @@ function FormFields<T extends FieldValues>({
                 justify-content: ${rowJustifiedContent};
               `};
 
-              ${rowWithFrame &&
+              ${(rowWithFrame || mobile) &&
               css`
                 background-color: ${statefulFormTheme?.rowFrameBackgroundColor};
                 padding: 10px;
+              `}
+
+              ${mobile &&
+              css`
+                min-height: 40px;
+                padding: 0 0 0 10px;
+                border-radius: 10px;
+                flex-direction: column;
+                justify-content: center;
               `}
 
               ${rowAlignedItem &&
@@ -518,6 +552,10 @@ function FormFields<T extends FieldValues>({
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
+              const labelPosition = mobile
+                ? (field?.labelPosition ?? "left")
+                : field?.labelPosition;
+
               if (field.type === "frame") {
                 return (
                   <Frame
@@ -529,6 +567,7 @@ function FormFields<T extends FieldValues>({
                       containerStyle: css`
                         margin-top: 10px;
                         min-width: 0;
+
                         ${styles?.frameContainerStyle}
                         ${field?.frame?.styles?.containerStyle}
                       `,
@@ -545,6 +584,7 @@ function FormFields<T extends FieldValues>({
                       <FormFields
                         labelSize={labelSize}
                         fieldSize={fieldSize}
+                        mobile={mobile}
                         control={control}
                         fields={field?.fields}
                         formValues={formValues}
@@ -578,7 +618,7 @@ function FormFields<T extends FieldValues>({
                   type={field.type}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   placeholder={field.placeholder}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
@@ -619,6 +659,7 @@ function FormFields<T extends FieldValues>({
                         font-size: ${fieldSize};
                       `}
                       height: 34px;
+                      ${mobileInputStyle}
                       ${field.textbox?.styles?.self}
                     `,
                     containerStyle: css`
@@ -651,7 +692,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       name={field.name}
                       className={field?.className}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
                       required={field.required}
@@ -702,6 +743,13 @@ function FormFields<T extends FieldValues>({
                             justify-content: end;
                           `}
                           ${field.pinbox?.styles?.bodyStyle}
+                        `,
+                        self: css`
+                          ${mobile &&
+                          css`
+                            background-color: transparent;
+                          `}
+                          ${field.pinbox?.styles?.self}
                         `,
                       }}
                       ref={controllerField.ref}
@@ -769,7 +817,7 @@ function FormFields<T extends FieldValues>({
                   label={field.title}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   value={formValues[field.name as keyof T] ?? ""}
                   required={field.required}
                   helper={field.helper}
@@ -797,6 +845,7 @@ function FormFields<T extends FieldValues>({
                       css`
                         font-size: ${fieldSize};
                       `};
+
                       max-width: none;
                       min-width: 0;
                       width: 40px;
@@ -808,6 +857,12 @@ function FormFields<T extends FieldValues>({
                     `,
                     inputWrapperStyle: css`
                       width: 100%;
+
+                      ${mobile &&
+                      css`
+                        width: fit-content;
+                      `}
+
                       ${field.timebox?.styles?.inputWrapperStyle};
                     `,
 
@@ -818,6 +873,7 @@ function FormFields<T extends FieldValues>({
                       css`
                         width: ${field.width};
                       `}
+
                       ${field.timebox?.styles?.containerStyle}
                     `,
                     labelStyle: css`
@@ -852,7 +908,7 @@ function FormFields<T extends FieldValues>({
                   rows={field.rows}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   placeholder={field.placeholder}
                   className={field?.className}
                   value={formValues[field.name as keyof T] ?? ""}
@@ -889,6 +945,8 @@ function FormFields<T extends FieldValues>({
                       ${field.textarea?.styles?.labelStyle}
                     `,
                     self: css`
+                      ${mobileInputStyle}
+
                       ${fieldSize &&
                       css`
                         font-size: ${fieldSize};
@@ -926,7 +984,7 @@ function FormFields<T extends FieldValues>({
                       label={field.placeholder}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       name={field.name}
                       value={field.name}
@@ -1028,7 +1086,7 @@ function FormFields<T extends FieldValues>({
                       label={field.placeholder}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       name={field.name}
                       title={field.title}
@@ -1110,7 +1168,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       required={field.required}
                       ref={(el) => {
@@ -1200,7 +1258,7 @@ function FormFields<T extends FieldValues>({
                       helper={field.helper}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
                         const { ref } = register(field.name as Path<T>);
@@ -1226,6 +1284,7 @@ function FormFields<T extends FieldValues>({
                           css`
                             font-size: ${labelSize};
                           `}
+
                           ${field.colorbox?.styles?.labelStyle}
                         `,
                         containerStyle: css`
@@ -1235,11 +1294,17 @@ function FormFields<T extends FieldValues>({
                           `}
                           ${field.colorbox?.styles?.containerStyle}
                         `,
-                        self: css`
+                        textInputStyle: css`
                           ${fieldSize &&
                           css`
                             font-size: ${fieldSize};
                           `}
+                          ${mobileInputStyle}
+                          ${field.colorbox?.styles?.textInputStyle}
+                        `,
+                        self: css`
+                          ${mobileInputStyle}
+
                           ${field.colorbox?.styles?.self}
                         `,
                         bodyStyle: css`
@@ -1265,7 +1330,7 @@ function FormFields<T extends FieldValues>({
                   className={field?.className}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   helper={field.helper}
                   name={field.name}
                   required={field.required}
@@ -1297,6 +1362,13 @@ function FormFields<T extends FieldValues>({
                       `}
                       ${field.fileDropBox?.styles?.containerStyle}
                     `,
+                    dragOverStyle: css`
+                      ${mobile &&
+                      css`
+                        background-color: transparent;
+                      `}
+                      ${field.fileDropBox?.styles?.dragOverStyle}
+                    `,
                   }}
                 />
               ) : field.type === "file" ? (
@@ -1305,7 +1377,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   className={field?.className}
                   label={field.title}
                   placeholder={field.placeholder}
@@ -1377,7 +1449,7 @@ function FormFields<T extends FieldValues>({
                   id={field.id}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   className={field?.className}
                   name={field.name}
                   helper={field.helper}
@@ -1457,7 +1529,7 @@ function FormFields<T extends FieldValues>({
                   label={field.title}
                   labelGap={field.labelGap}
                   labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
+                  labelPosition={labelPosition}
                   className={field?.className}
                   helper={field.helper}
                   required={field.required}
@@ -1517,7 +1589,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
@@ -1610,7 +1682,7 @@ function FormFields<T extends FieldValues>({
                       showError={shouldShowError(field.name)}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       ref={(el) => {
                         if (el) refs.current[field.name] = el;
                         const { ref } = register(field.name as Path<T>);
@@ -1686,7 +1758,7 @@ function FormFields<T extends FieldValues>({
                       name={field.name}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       placeholder={field.placeholder}
                       className={field?.className}
                       label={field.title}
@@ -1736,6 +1808,8 @@ function FormFields<T extends FieldValues>({
                             font-size: ${fieldSize};
                           `}
 
+                          ${mobileInputStyle}
+
                           ${field?.combobox?.styles?.selectboxStyle}
                         `,
                         containerStyle: css`
@@ -1767,7 +1841,7 @@ function FormFields<T extends FieldValues>({
                       helper={field.helper}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       required={field.required}
                       filterPlaceholder={field.placeholder}
@@ -1817,7 +1891,7 @@ function FormFields<T extends FieldValues>({
                       id={field.id}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       label={field.title}
                       helper={field.helper}
@@ -1871,7 +1945,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       value={controllerField.value ?? false}
                       required={field.required}
@@ -1940,7 +2014,7 @@ function FormFields<T extends FieldValues>({
                       name={controllerField.name}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       placeholder={field.placeholder}
                       checked={controllerField.value ?? false}
@@ -2018,7 +2092,7 @@ function FormFields<T extends FieldValues>({
                       label={field.title}
                       labelGap={field.labelGap}
                       labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
+                      labelPosition={labelPosition}
                       className={field?.className}
                       required={field.required}
                       activeTab={controllerField.value}
@@ -2083,10 +2157,8 @@ function FormFields<T extends FieldValues>({
   );
 }
 
-export interface StatefulFormLabelProps extends Omit<
-  LabelHTMLAttributes<HTMLLabelElement>,
-  "label" | "style"
-> {
+export interface StatefulFormLabelProps
+  extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
   helper?: string;
   styles: { self?: CSSProp };
