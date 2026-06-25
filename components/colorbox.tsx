@@ -30,6 +30,7 @@ interface BaseColorboxProps
 }
 
 export interface BaseColorboxStyles {
+  textInputStyle?: CSSProp;
   self?: CSSProp;
 }
 
@@ -115,6 +116,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           $hovered={hovered}
           $theme={colorboxTheme}
           $showError={!!showError}
+          $style={styles?.textInputStyle}
         >
           <Prefix $theme={colorboxTheme} $showError={!!showError}>
             #
@@ -312,6 +314,7 @@ const TextInputGroup = styled.span<{
   $showError: boolean;
   $disabled?: boolean;
   $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   display: flex;
   align-items: center;
@@ -333,6 +336,8 @@ const TextInputGroup = styled.span<{
             : $theme.borderColor};
 
   width: 100%;
+
+  ${({ $style }) => $style};
 `;
 
 const Prefix = styled.span<{
