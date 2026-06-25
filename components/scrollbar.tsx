@@ -244,8 +244,6 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
   }
 );
 
-Scrollbar.displayName = "Scrollbar";
-
 const Wrapper = styled.div`
   position: relative;
   height: 100%;
