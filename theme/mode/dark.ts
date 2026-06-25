@@ -638,7 +638,8 @@ const darkRichEditor = createRichEditorTheme(
 );
 
 const darkScrollbar = createScrollbar({
-  scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
+  scrollbarThumbActiveColor: "rgba(255, 255, 255, 0.7)",
+  scrollbarThumbColor: "rgba(255, 255, 255, 0.3)",
   scrollbarTrackColor: "transparent",
 });
 

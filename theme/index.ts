@@ -781,6 +781,7 @@ export interface TreeListThemeConfig
 
 // scrollbar.tsx
 export interface ScrollbarThemeConfig {
+  scrollbarThumbActiveColor?: string;
   scrollbarThumbColor?: string;
   scrollbarTrackColor?: string;
 }
