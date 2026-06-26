@@ -32,6 +32,7 @@ interface BaseColorboxProps
 export interface BaseColorboxStyles {
   textInputGroupStyle?: CSSProp;
   textInputStyle?: CSSProp;
+  boxStyle?: CSSProp;
   self?: CSSProp;
 }
 
@@ -92,6 +93,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         }}
       >
         <ColorBox
+          $style={styles?.boxStyle}
           $theme={colorboxTheme}
           $disabled={disabled}
           onClick={() => {
@@ -101,6 +103,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           }}
           tabIndex={0}
           $bgColor={value}
+          aria-label={"colorbox-box"}
           $showError={!!showError}
         />
 
@@ -196,8 +199,13 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       id: props.id,
     });
 
-    const { self, textInputGroupStyle, textInputStyle, ...fieldLaneInput } =
-      styles ?? {};
+    const {
+      self,
+      textInputGroupStyle,
+      textInputStyle,
+      boxStyle,
+      ...fieldLaneInput
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -225,6 +233,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           styles={{
             textInputGroupStyle,
             textInputStyle,
+            boxStyle,
             self: css`
               ${dropdowns &&
               css`
@@ -283,6 +292,7 @@ const ColorBox = styled.div<{
   $showError?: boolean;
   $disabled?: boolean;
   $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   min-width: 24px;
   min-height: 24px;
@@ -305,6 +315,8 @@ const ColorBox = styled.div<{
       user-select: none;
       cursor: not-allowed;
     `};
+
+  ${({ $style }) => $style}
 `;
 
 const HiddenColorInput = styled.input`
