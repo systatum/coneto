@@ -616,8 +616,7 @@ export interface StatusbarThemeConfig extends BodyThemeConfig {
   };
 }
 
-export interface StatefulFormThemeConfig
-  extends Omit<BodyThemeConfig, "borderColor"> {
+export interface StatefulFormThemeConfig extends BodyThemeConfig {
   rowFrameBackgroundColor: string;
 }
 
