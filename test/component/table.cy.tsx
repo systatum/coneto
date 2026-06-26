@@ -421,38 +421,39 @@ describe("Table", () => {
               });
           });
 
-          context("when scrolling to the right", () => {});
-          it("should render loose effect on the first column", () => {
-            cy.mount(<ProductTableLoose loose />);
+          context("when scrolling to the right", () => {
+            it("should render loose effect on the first column", () => {
+              cy.mount(<ProductTableLoose loose />);
 
-            cy.findByLabelText("table-body")
-              .parent()
-              .then(($el) => {
-                const el = $el[0];
+              cy.findByLabelText("table-body")
+                .parent()
+                .then(($el) => {
+                  const el = $el[0];
 
-                const scrollToEnd = () => {
-                  const maxScroll = el.scrollWidth - el.clientWidth;
-                  el.scrollLeft = maxScroll;
-                  el.dispatchEvent(new Event("scroll", { bubbles: true }));
+                  const scrollToEnd = () => {
+                    const maxScroll = el.scrollWidth - el.clientWidth;
+                    el.scrollLeft = maxScroll;
+                    el.dispatchEvent(new Event("scroll", { bubbles: true }));
 
-                  if (el.scrollLeft < maxScroll) {
-                    scrollToEnd();
-                  }
-                };
+                    if (el.scrollLeft < maxScroll) {
+                      scrollToEnd();
+                    }
+                  };
 
-                scrollToEnd();
-              });
-            cy.wait(300);
+                  scrollToEnd();
+                });
+              cy.wait(300);
 
-            cy.findAllByLabelText("table-row-cell")
-              .first()
-              .then(($el) => {
-                const after = window.getComputedStyle($el[0], "::after");
+              cy.findAllByLabelText("table-row-cell")
+                .first()
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::after");
 
-                expect(after.backgroundImage).to.equal(
-                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
-                );
-              });
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
           });
         });
 
@@ -477,7 +478,7 @@ describe("Table", () => {
                 });
             });
 
-            it(`renders header loose actions with width 48px`, () => {
+            it("renders header loose actions with width 48px", () => {
               cy.mount(<ProductTableLoose loose />);
 
               cy.findAllByLabelText("action-button").eq(1).click();
@@ -496,7 +497,7 @@ describe("Table", () => {
                 });
             });
 
-            it(`renders summary row loose actions with width 48px`, () => {
+            it("renders summary row loose actions with width 48px", () => {
               cy.mount(<ProductTableLoose loose />);
 
               cy.findAllByLabelText("action-button").eq(1).click();
