@@ -84,6 +84,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         $theme={colorboxTheme}
         $disabled={disabled}
         $style={styles?.self}
+        aria-label="colorbox"
         $hovered={hovered}
         $showError={!!showError}
         onBlur={() => {
