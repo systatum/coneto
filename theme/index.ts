@@ -98,6 +98,7 @@ export interface CalendarThemeConfig extends BodyThemeConfig {
 
 // capsule.tsx
 export interface CapsuleThemeConfig extends BodyThemeConfig {
+  errorBorderColor?: string;
   boxShadow?: string;
   tab?: {
     textColor?: string;
