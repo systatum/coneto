@@ -1,7 +1,73 @@
 import { RiFile2Line, RiNewspaperLine } from "@remixicon/react";
-import { Capsule, CapsuleContentProps } from "./../../components/capsule";
+import { Capsule, CapsuleProps, CapsuleTab } from "./../../components/capsule";
+import { useState } from "react";
 
 describe("Capsule", () => {
+  context("withError", () => {
+    function ProductCapsuleError(props: CapsuleProps) {
+      const [activeTab, setActiveTab] = useState("correct");
+
+      const ERROR_TABS: CapsuleTab[] = [
+        {
+          id: "correct",
+          title: "Correct",
+        },
+        {
+          id: "error",
+          title: "Error",
+        },
+      ];
+
+      return (
+        <Capsule
+          {...props}
+          tabs={ERROR_TABS}
+          activeTab={activeTab}
+          showError={activeTab === "error"}
+          errorMessage={
+            activeTab === "error"
+              ? "Please choose the correct answer to remove the error message."
+              : ""
+          }
+          onTabChange={setActiveTab}
+        />
+      );
+    }
+
+    context("when move to the wrong answer", () => {
+      it("should render the error state", () => {
+        cy.mount(<ProductCapsuleError tabs={VIEW_ONLY_TITLE_MODES} />);
+
+        cy.findByText("Correct").should("exist");
+        cy.findByText("Error").should("exist");
+
+        cy.findByText("Error").click();
+
+        cy.findByText(
+          "Please choose the correct answer to remove the error message."
+        ).should("exist");
+      });
+
+      it("should render the border with red color", () => {
+        cy.mount(<ProductCapsuleError tabs={VIEW_ONLY_TITLE_MODES} />);
+
+        cy.findByLabelText("capsule").should(
+          "have.css",
+          "border",
+          "1px solid rgb(235, 235, 235)"
+        );
+
+        cy.findByText("Error").click();
+
+        cy.findByLabelText("capsule").should(
+          "have.css",
+          "border",
+          "1px solid rgb(239, 68, 68)"
+        );
+      });
+    });
+  });
+
   context("style", () => {
     it("renders capsule with 8px for active", () => {
       cy.mount(<Capsule activeTab="new" tabs={VIEW_ONLY_TITLE_MODES} />);
@@ -126,7 +192,7 @@ describe("Capsule", () => {
   });
 });
 
-const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
+const VIEW_WITH_ICON_MODES: CapsuleTab[] = [
   {
     id: "new",
     title: "New",
@@ -143,7 +209,7 @@ const VIEW_WITH_ICON_MODES: CapsuleContentProps[] = [
   },
 ];
 
-const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
+const VIEW_ONLY_TITLE_MODES: CapsuleTab[] = [
   {
     id: "new",
     title: "New",
@@ -154,7 +220,7 @@ const VIEW_ONLY_TITLE_MODES: CapsuleContentProps[] = [
   },
 ];
 
-const VIEW_ONLY_ICON_MODES: CapsuleContentProps[] = [
+const VIEW_ONLY_ICON_MODES: CapsuleTab[] = [
   {
     id: "new",
     icon: {
