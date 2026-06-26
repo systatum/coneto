@@ -1407,16 +1407,37 @@ function FormFields<T extends FieldValues>({
                             `}
                             ${field.colorbox?.styles?.containerStyle}
                           `,
+                          textInputGroupStyle: css`
+                            ${mobileInputStyle};
+                            ${field.colorbox?.styles?.textInputGroupStyle};
+                          `,
                           textInputStyle: css`
                             ${fieldSize &&
                             css`
                               font-size: ${fieldSize};
+                            `};
+                            ${mobile &&
+                            css`
+                              &:-webkit-autofill,
+                              &:-webkit-autofill:hover,
+                              &:-webkit-autofill:focus,
+                              &:-webkit-autofill:active {
+                                -webkit-box-shadow: 0 0 0 1000px transparent
+                                  inset;
+                                box-shadow: 0 0 0 1000px transparent inset;
+
+                                background-color: transparent !important;
+                                transition: background-color 9999s ease-in-out
+                                  0s;
+                                color: ${statefulFormTheme.textColor};
+                                -webkit-text-fill-color: ${statefulFormTheme.textColor};
+                              }
                             `}
-                            ${mobileInputStyle}
-                          ${field.colorbox?.styles?.textInputStyle}
+
+                            ${field.colorbox?.styles?.textInputStyle}
                           `,
                           self: css`
-                            ${mobileInputStyle}
+                            ${mobileInputStyle};
 
                             ${field.colorbox?.styles?.self}
                           `,
@@ -1426,7 +1447,7 @@ function FormFields<T extends FieldValues>({
                             css`
                               min-height: 60px;
                               justify-content: end;
-                            `}
+                            `};
 
                             ${field.colorbox?.styles?.bodyStyle}
                           `,
