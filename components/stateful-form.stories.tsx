@@ -1257,40 +1257,41 @@ export const Mobile: Story = {
     ];
 
     const FIELDS: FormFieldGroup[] = [
-      {
-        name: "text",
-        title: "Text",
-        type: "text",
-        required: true,
-        placeholder: "Enter text",
-      },
-      {
-        name: "email",
-        title: "Email",
-        type: "email",
-        required: true,
-        placeholder: "Enter email address",
-      },
+      [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: true,
+          placeholder: "Enter email address",
+        },
+        {
+          name: "number",
+          title: "Number",
+          type: "number",
+          required: true,
+          placeholder: "Enter number",
+        },
+        {
+          name: "password",
+          title: "Password",
+          type: "password",
+          required: true,
+          placeholder: "Enter password",
+        },
+      ],
       {
         name: "time",
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
-      },
-      {
-        name: "number",
-        title: "Number",
-        type: "number",
-        required: true,
-        placeholder: "Enter number",
-      },
-      {
-        name: "password",
-        title: "Password",
-        type: "password",
-        required: true,
-        placeholder: "Enter password",
       },
       {
         name: "textarea",
@@ -1415,7 +1416,6 @@ export const Mobile: Story = {
         name: "toggle",
         title: "Toggle",
         type: "toggle",
-        placeholder: "Toggle",
         required: true,
       },
       {
@@ -1473,7 +1473,7 @@ export const Mobile: Story = {
             display: flex;
             width: 100%;
             padding: 1rem;
-            max-width: 600px;
+            max-width: 500px;
           `,
         }}
         onChange={({ currentState }) => {
