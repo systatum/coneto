@@ -264,3 +264,43 @@ export const WithIcon: Story = {
     );
   },
 };
+
+export const WithError: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  args: {
+    tabs: [
+      {
+        id: "correct",
+        title: "Correct",
+        icon: { image: RiFile2Line },
+      },
+      {
+        id: "error",
+        title: "Error Value",
+        icon: { image: RiNewspaperLine },
+      },
+    ],
+    activeTab: "correct",
+  },
+  render: (args) => {
+    const [{ activeTab }, updateArgs] = useArgs();
+
+    const showError = activeTab === "error";
+
+    return (
+      <Capsule
+        {...args}
+        activeTab={activeTab}
+        showError={showError}
+        errorMessage={
+          showError
+            ? "Please choose correct answer to removes the error message."
+            : ""
+        }
+        onTabChange={(id: string) => updateArgs({ activeTab: id })}
+      />
+    );
+  },
+};
