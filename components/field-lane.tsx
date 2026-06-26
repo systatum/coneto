@@ -496,7 +496,7 @@ const InputWrapper = styled.label<{ $style?: CSSProp }>`
   width: 100%;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
+  height: fit-content;
 
   ${({ $style }) => $style}
 `;
