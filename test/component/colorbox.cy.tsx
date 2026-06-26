@@ -75,6 +75,29 @@ describe("Colorbox", () => {
       });
     });
 
+    context("boxStyle", () => {
+      context("when given background red", () => {
+        it("should render box with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <ProductColorbox
+              withOnChange
+              styles={{
+                boxStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("colorbox-box").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
     context("textInputStyle", () => {
       context("when given font-size 20px", () => {
         it("should render with font-size 20px", () => {
