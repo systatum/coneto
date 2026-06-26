@@ -27,6 +27,7 @@ interface BasePinboxProps {
   value?: string;
   disabled?: boolean;
   id?: string;
+  showIconError?: boolean;
   required?: boolean;
   styles?: BasePinboxStyles;
 }
@@ -58,6 +59,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
       onBlur,
       required,
       styles,
+      showIconError = true,
     },
     ref
   ) => {
@@ -442,7 +444,7 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
             </PinboxInputContent>
           );
         })}
-        {showError && errorMessage && (
+        {showError && errorMessage && showIconError && (
           <RiErrorWarningLine
             size={fontSize * 1.25}
             style={{
