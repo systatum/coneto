@@ -868,6 +868,16 @@ function FormFields<T extends FieldValues>({
                     labelPosition={labelPosition}
                     value={formValues[field.name as keyof T] ?? ""}
                     required={required}
+                    placeholder={
+                      typeof field.placeholder === "string"
+                        ? (() => {
+                            const [hour = "", minute = "", second = ""] =
+                              field.placeholder.split(/[:/]/);
+
+                            return { hour, minute, second };
+                          })()
+                        : field.placeholder
+                    }
                     helper={field.helper}
                     className={field?.className}
                     mobile={mobile}
@@ -905,8 +915,28 @@ function FormFields<T extends FieldValues>({
                         max-height: 32px;
 
                         ${mobileInputStyle}
+                        ${mobile &&
+                        css`
+                          background-color: transparent;
+                          border: none;
+                          box-shadow: none;
+                          border-bottom: 1px solid
+                            ${shouldShowError(field.name)
+                              ? pinboxTheme.errorBorderColor || "#f87171"
+                              : pinboxTheme.borderColor || "#d1d5db"};
 
-                        ${field.timebox?.styles?.self};
+                          &:focus {
+                            border: none;
+                            box-shadow: none;
+                            border-bottom: 1px solid
+                              ${shouldShowError(field.name)
+                                ? pinboxTheme.errorBorderColor || "#f87171"
+                                : pinboxTheme.borderColor || "#d1d5db"};
+                            z-index: 9999;
+                          }
+                        `}
+
+                        ${field?.timebox?.styles?.self};
                       `,
                       inputWrapperStyle: css`
                         width: 100%;
@@ -917,7 +947,6 @@ function FormFields<T extends FieldValues>({
                         `}
 
                         ${mobileInputStyle}
-
 
                         ${field.timebox?.styles?.inputWrapperStyle};
                       `,
@@ -1463,8 +1492,8 @@ function FormFields<T extends FieldValues>({
                     labelWidth={field.labelWidth}
                     labelPosition={labelPosition}
                     className={field?.className}
-                    label={field.title}
-                    placeholder={field.placeholder}
+                    label={label}
+                    placeholder={placeholder}
                     required={required}
                     showError={shouldShowError(field.name)}
                     helper={field.helper}
@@ -1526,6 +1555,10 @@ function FormFields<T extends FieldValues>({
                         `}
 
                         ${field.fileInputBox?.styles?.bodyStyle}
+                      `,
+                      self: css`
+                        background-color: transparent;
+                        ${field.fileInputBox?.styles?.self}
                       `,
                     }}
                   />
