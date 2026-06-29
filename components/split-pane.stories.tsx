@@ -292,12 +292,10 @@ export const WithCellRef: Story = {
       {
         id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 

@@ -14,6 +14,9 @@ import {
   RiArrowDownSLine,
   RiRefreshLine,
   RiAddBoxLine,
+  RiArrowUpDownLine,
+  RiArrowDownLine,
+  RiArrowUpLine,
 } from "@remixicon/react";
 import { Toolbar, ToolbarSubMenuList } from "./toolbar";
 import { Searchbox } from "./searchbox";
@@ -22,7 +25,12 @@ import { Checkbox } from "./checkbox";
 import { Button } from "./button";
 import { List, ListGroupContent, ListItemProps } from "./list";
 import { css } from "styled-components";
-import { TableColumn, TableSubMenuList, Table } from "./table";
+import {
+  TableColumn,
+  TableSubMenuList,
+  Table,
+  TableColumnAction,
+} from "./table";
 import { DormantText } from "./dormant-text";
 import { Textbox } from "./textbox";
 import { useTheme } from "./../theme/provider";
@@ -799,26 +807,31 @@ export const WithFullWidthContent: Story = {
       subtitle: value.subtitle,
     });
 
+    const columnActions = (id?: DepartmentKeys): TableColumnAction => ({
+      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      title: "Column Action",
+    });
+
     const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "code",
         caption: "Code",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "lead",
         caption: "Lead",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "members",
         caption: "Members",
-        sortable: true,
+        actions: columnActions,
       },
     ];
 
@@ -1031,7 +1044,6 @@ export const WithFullWidthContent: Story = {
           }}
           columns={columns}
           onItemsSelected={handleItemsSelected}
-          subMenuList={TIP_MENU_ACTION}
           labels={{ totalSelectedItemText: (n) => `${n} Department selected` }}
         >
           {rows.map((rowValue, rowIndex) => (
@@ -1110,23 +1122,43 @@ export const Toggleable: Story = {
         setRows(sorted);
       };
 
-      const tipMenu = (column: keyof T): TableSubMenuList[] => [
-        {
-          caption: "Sort Ascending",
-          icon: { image: RiArrowUpSLine, color: "gray" },
-          onClick: () => handleSorting({ mode: "asc", column }),
+      const sortableColumns: TableColumn[] = columns.map((column) => ({
+        ...column,
+        actions: {
+          title: "Sort",
+          icon: { image: RiArrowUpDownLine },
+          subMenu: ({ list }) =>
+            list([
+              {
+                caption: "Sort Ascending",
+                icon: { image: RiArrowUpLine },
+                onClick: () =>
+                  handleSorting({
+                    mode: "asc",
+                    column: column.id as keyof T,
+                  }),
+              },
+              {
+                caption: "Sort Descending",
+                icon: { image: RiArrowDownLine },
+                onClick: () =>
+                  handleSorting({
+                    mode: "desc",
+                    column: column.id as keyof T,
+                  }),
+              },
+              {
+                caption: "Reset Sorting",
+                icon: { image: RiArrowUpDownLine },
+                onClick: () =>
+                  handleSorting({
+                    mode: "original",
+                    column: column.id as keyof T,
+                  }),
+              },
+            ]),
         },
-        {
-          caption: "Sort Descending",
-          icon: { image: RiArrowDownSLine, color: "gray" },
-          onClick: () => handleSorting({ mode: "desc", column }),
-        },
-        {
-          caption: "Reset Sorting",
-          icon: { image: RiRefreshLine, color: "gray" },
-          onClick: () => handleSorting({ mode: "original", column }),
-        },
-      ];
+      }));
 
       return (
         <Table
@@ -1136,8 +1168,7 @@ export const Toggleable: Story = {
             `,
           }}
           selectable
-          columns={columns}
-          subMenuList={tipMenu}
+          columns={sortableColumns}
         >
           {rows.map((row, index) => (
             <Table.Row
@@ -1184,10 +1215,10 @@ export const Toggleable: Story = {
     ];
 
     const departmentColumns: TableColumn[] = [
-      { id: "departmentName", caption: "Department", sortable: true },
-      { id: "head", caption: "Department Head", sortable: true },
-      { id: "employeeCount", caption: "Employees", sortable: true },
-      { id: "budget", caption: "Annual Budget", sortable: true },
+      { id: "departmentName", caption: "Department" },
+      { id: "head", caption: "Department Head" },
+      { id: "employeeCount", caption: "Employees" },
+      { id: "budget", caption: "Annual Budget" },
     ];
 
     const [departmentRows, setDepartmentRows] = useState(DEPARTMENTS);
@@ -1226,10 +1257,10 @@ export const Toggleable: Story = {
     ];
 
     const assetColumns: TableColumn[] = [
-      { id: "assetName", caption: "Asset Name", sortable: true },
-      { id: "category", caption: "Category", sortable: true },
-      { id: "assignedTo", caption: "Assigned To", sortable: true },
-      { id: "condition", caption: "Condition", sortable: true },
+      { id: "assetName", caption: "Asset Name" },
+      { id: "category", caption: "Category" },
+      { id: "assignedTo", caption: "Assigned To" },
+      { id: "condition", caption: "Condition" },
     ];
 
     const [assetRows, setAssetRows] = useState(ASSETS);
