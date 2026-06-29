@@ -5,7 +5,6 @@ import {
   Table,
   TableAction,
   TableSummaryRowColumn,
-  TableRowContent,
   TableColumnAction,
 } from "./table";
 import { useEffect, useMemo, useState } from "react";
@@ -86,13 +85,35 @@ The **Table** component is a powerful and flexible data display component design
 {
   id: string;
   caption: string;
-  sortable?: boolean;
   width?: string;
-  styles?: {
-    self?: CSSProp;
-  };
+  action?: TableColumnAction;
+  styles?: TableColumnStyles;
 }
 \`\`\`
+
+#### Column Actions
+
+Columns can expose an action button (typically rendered in the header) that opens a contextual menu.
+
+\`\`\`tsx
+{
+  action: {
+    title: "Protocol",
+    icon: {
+      image: RiFilterLine,
+    },
+    subMenu: ({ show }) =>
+      show(<ProtocolMenu />),
+  },
+}
+\`\`\`
+
+This is useful for features such as:
+
+- Filtering
+- Sorting
+- Column-specific settings
+- Custom contextual actions
 
 ---
 
@@ -294,12 +315,34 @@ Displays a loading overlay on top of the table.
       description: `
 Defines the table columns.
 
-Each column includes:
-- \`id\`: unique identifier
-- \`caption\`: header label
-- \`sortable\`: enable sorting menu
-- \`width\`: optional fixed width
-    `,
+Each column supports:
+
+- \`id\`: Unique identifier for the column.
+- \`caption\`: Header label displayed at the top of the column.
+- \`width\`: Optional fixed width (e.g. \`"120px"\`).
+- \`styles\`: Custom styles for the column.
+- \`actions\`: Optional header action or contextual menu. Can be provided as a \`TableColumnAction\` object or a callback that returns one.
+
+Example:
+
+\`\`\`tsx
+const columns: TableColumn[] = [
+  {
+    id: "protocol",
+    caption: "Protocol",
+    width: "160px",
+    actions: {
+      title: "Protocol",
+      icon: {
+        image: RiFilterLine,
+      },
+      subMenu: ({ show }) =>
+        show(<ProtocolMenu />),
+    },
+  },
+];
+\`\`\`
+  `,
       control: false,
       table: {
         type: { summary: "TableColumn[]" },
@@ -745,8 +788,8 @@ export const Loose: Story = {
       setRows(sorted);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: keyof (typeof initialRows)[number]
+    const COLUMN_ACTIONS = (
+      columnId: keyof (typeof initialRows)[number]
     ): TableSubMenuList[] => {
       return [
         {
@@ -755,7 +798,7 @@ export const Loose: Story = {
             image: RiArrowUpLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
@@ -764,7 +807,7 @@ export const Loose: Story = {
             image: RiArrowDownLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
@@ -773,7 +816,7 @@ export const Loose: Story = {
             image: RiArrowUpDownLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
@@ -828,26 +871,26 @@ export const Loose: Story = {
         icon: {
           image: imageStatus,
         },
-        subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+        subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       };
     };
 
     const columns: TableColumn[] = [
       { id: "name", caption: "Name", actions: columnActions },
       { id: "type", caption: "Protocol", actions: columnActions },
-      { id: "region", caption: "Region", actions: columnActions },
-      { id: "status", caption: "Status", actions: columnActions },
-      { id: "version", caption: "Version", actions: columnActions },
-      { id: "uptime", caption: "Uptime", actions: columnActions },
-      { id: "requests", caption: "Requests/s", actions: columnActions },
-      { id: "latency", caption: "Latency (ms)", actions: columnActions },
-      { id: "errorRate", caption: "Error Rate", actions: columnActions },
-      { id: "cpu", caption: "CPU %", actions: columnActions },
-      { id: "memory", caption: "Memory %", actions: columnActions },
-      { id: "connections", caption: "Connections", actions: columnActions },
-      { id: "bandwidth", caption: "Bandwidth", actions: columnActions },
-      { id: "zone", caption: "Zone", actions: columnActions },
-      { id: "provider", caption: "Provider", actions: columnActions },
+      { id: "region", caption: "Region" },
+      { id: "status", caption: "Status" },
+      { id: "version", caption: "Version" },
+      { id: "uptime", caption: "Uptime" },
+      { id: "requests", caption: "Requests/s" },
+      { id: "latency", caption: "Latency (ms)" },
+      { id: "errorRate", caption: "Error Rate" },
+      { id: "cpu", caption: "CPU %" },
+      { id: "memory", caption: "Memory %" },
+      { id: "connections", caption: "Connections" },
+      { id: "bandwidth", caption: "Bandwidth" },
+      { id: "zone", caption: "Zone" },
+      { id: "provider", caption: "Provider" },
     ];
 
     const totals = useMemo(
@@ -1067,8 +1110,8 @@ export const Appendable: Story = {
       console.log("Selected rows:", ids);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: "from" | "content"
+    const COLUMN_ACTIONS = (
+      columnId: "from" | "content"
     ): TableSubMenuList[] => {
       return [
         {
@@ -1077,7 +1120,7 @@ export const Appendable: Story = {
             image: RiArrowUpSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
@@ -1086,7 +1129,7 @@ export const Appendable: Story = {
             image: RiArrowDownSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
@@ -1095,7 +1138,7 @@ export const Appendable: Story = {
             image: RiRefreshLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
@@ -1135,7 +1178,7 @@ export const Appendable: Story = {
     };
 
     const columnActions = (id?: "from" | "content"): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -1312,8 +1355,8 @@ export const WithOneAction: Story = {
       console.log("Selected rows:", ids);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: "from" | "content"
+    const COLUMN_ACTIONS = (
+      columnId: "from" | "content"
     ): TableSubMenuList[] => {
       return [
         {
@@ -1322,7 +1365,7 @@ export const WithOneAction: Story = {
             image: RiArrowUpSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
@@ -1331,7 +1374,7 @@ export const WithOneAction: Story = {
             image: RiArrowDownSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
@@ -1340,14 +1383,14 @@ export const WithOneAction: Story = {
             image: RiRefreshLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
     };
 
     const columnActions = (id?: "from" | "content"): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -1515,7 +1558,7 @@ export const SortableWithPagination: Story = {
     };
 
     const columnActions = (id?: "from" | "content"): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -1532,8 +1575,8 @@ export const SortableWithPagination: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId.toLowerCase() as keyof (typeof rawRows)[0];
 
       return [
         {
@@ -1789,7 +1832,7 @@ export const WithSummary: Story = {
     const columnActions = (
       id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
     ): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -1850,8 +1893,8 @@ export const WithSummary: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -2165,7 +2208,7 @@ export const WithRowGroup: Story = {
     const columnActions = (
       id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
     ): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -2331,9 +2374,9 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
       const column =
-        columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+        columnId.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -2640,7 +2683,7 @@ export const WithRowAppendix: Story = {
     const columnActions = (
       id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
     ): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -2701,8 +2744,8 @@ export const WithRowAppendix: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -2992,7 +3035,7 @@ export const Draggable: Story = {
       rowNumber?: number,
       category?: TableCategoryState
     ): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id, rowNumber, category)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id, rowNumber, category)),
       title: "Column Action",
     });
 
@@ -3271,13 +3314,13 @@ export const Draggable: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string,
+    const COLUMN_ACTIONS = (
+      columnId: string,
       rowNumber?: number,
       category?: TableCategoryState
     ): TableSubMenuList[] => {
       const column =
-        columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
+        columnId.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
 
       return [
         {
