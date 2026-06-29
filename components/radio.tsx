@@ -69,6 +69,7 @@ function BaseRadio({
 
   return (
     <Label
+      aria-label="radio-label"
       $isRadio={mode === "radio"}
       htmlFor={props.disabled ? null : id}
       $highlight={highlightOnChecked}
