@@ -606,7 +606,6 @@ const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#1465d3bf",
   checkedOutsideBorderColor: "#374151",
-  backgroundColor: "inherit",
   checkedBackgroundColor: "white",
   textColor: "#ffffff",
   descriptionColor: "#d1d5db",

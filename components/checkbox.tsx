@@ -70,7 +70,7 @@ function BaseCheckbox({
 
   return (
     <InputWrapper
-      aria-label="input-wrapper-checkbox"
+      aria-label="checkbox-label"
       htmlFor={props.disabled ? null : id}
       $hasDescription={!!description}
       $highlight={!!highlightOnChecked}

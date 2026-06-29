@@ -1248,7 +1248,7 @@ export function createRadioTheme(
     {
       borderColor: "#6b7280",
       checkedBorderColor: "#61A9F9",
-      backgroundColor: "#ffffff",
+      backgroundColor: body?.backgroundColor ?? "#ffffff",
       checkedBackgroundColor: "#ffffff",
       checkedOutsideBorderColor: "#61A9F9",
       iconColor: "#ffffff",
