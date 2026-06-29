@@ -36,7 +36,7 @@ import { CapsuleTab } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
 import { generateSentence } from "./../lib/text";
-import { useTheme } from "./../theme";
+import { TableThemeConfig, useTheme } from "./../theme";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -798,16 +798,22 @@ export const Loose: Story = {
     const columnProtocol = (): TableColumnAction => ({
       subMenu: ({ show }) =>
         show(
-          <ProtocolList>
-            {TYPES_DATA.map((protocol, index) => (
-              <ProtocolItem key={index}>
-                <ProtocolName>{protocol.name}</ProtocolName>
-                <ProtocolDescription>
-                  {protocol.description}
-                </ProtocolDescription>
-              </ProtocolItem>
-            ))}
-          </ProtocolList>
+          TYPES_DATA.map((protocol, index) => (
+            <ProtocolItem $theme={tableTheme} key={index}>
+              <ProtocolName $theme={tableTheme}>{protocol.name}</ProtocolName>
+              <ProtocolDescription $theme={tableTheme}>
+                {protocol.description}
+              </ProtocolDescription>
+            </ProtocolItem>
+          )),
+          {
+            drawerStyle: css`
+              padding: 6px;
+              gap: 6px;
+              display: flex;
+              flex-direction: column;
+            `,
+          }
         ),
       title: "Info Action",
       icon: {
@@ -816,31 +822,6 @@ export const Loose: Story = {
     });
 
     const withSorter = activeTab.withSorter ? columnActions : null;
-
-    const ProtocolItem = styled.div`
-      padding: 10px 12px;
-      border-radius: 6px;
-      background: ${tableTheme.backgroundColor};
-    `;
-
-    const ProtocolName = styled.div`
-      font-weight: 600;
-      font-size: 13px;
-      color: ${tableTheme?.textColor};
-    `;
-
-    const ProtocolDescription = styled.div`
-      margin-top: 2px;
-      font-size: 12px;
-      color: ${tableTheme?.rowGroupSubtitleTextColor};
-    `;
-
-    const ProtocolList = styled.div`
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 6px;
-    `;
 
     const columns: TableColumn[] = [
       { id: "name", caption: "Name", actions: withSorter },
@@ -944,6 +925,24 @@ export const Loose: Story = {
     );
   },
 };
+
+const ProtocolItem = styled.div<{ $theme?: TableThemeConfig }>`
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: ${({ $theme }) => $theme?.backgroundColor};
+`;
+
+const ProtocolName = styled.div<{ $theme?: TableThemeConfig }>`
+  font-weight: 600;
+  font-size: 13px;
+  color: ${({ $theme }) => $theme?.textColor};
+`;
+
+const ProtocolDescription = styled.div<{ $theme?: TableThemeConfig }>`
+  margin-top: 2px;
+  font-size: 12px;
+  color: ${({ $theme }) => $theme?.rowGroupSubtitleTextColor};
+`;
 
 export const Appendable: Story = {
   render: () => {
