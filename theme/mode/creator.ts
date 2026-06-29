@@ -1826,6 +1826,7 @@ export function createTitleTheme(
       textColor: body.textColor,
       backgroundColor: "transparent",
       hoverBackgroundColor: "rgba(255, 255, 255, 0.45)",
+      activeBackgroundColor: "",
     },
   };
 

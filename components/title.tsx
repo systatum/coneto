@@ -5,7 +5,8 @@ import { TitleThemeConfig, useTheme } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { darkenColor, lightenColor } from "./../lib/color";
 import { Capsule, CapsuleProps } from "./capsule";
-import ContextMenu, { ContextMenuAction } from "./context-menu";
+import { Button, ButtonStyles, ButtonVariant } from "./button";
+import { BaseAction } from "./../constants/action";
 
 export const TitleSize = {
   Small: "sm",
@@ -214,9 +215,17 @@ export interface TitleSection {
   styles?: TitleSectionStyles;
 }
 
-export interface TitleSectionAction extends ContextMenuAction {
-  icon: FigureProps;
+export interface TitleSectionAction extends BaseAction {
+  icon?: TitleSectionActionIcon;
+  variant?: TitleSectionActionVariant;
+  styles?: TitleSectionActionStyles;
+  id?: string;
+  className?: string;
 }
+
+export type TitleSectionActionIcon = FigureProps;
+export type TitleSectionActionVariant = ButtonVariant;
+export type TitleSectionActionStyles = ButtonStyles;
 
 export interface TitleSectionStyles {
   toggleActionStyle?: CSSProp;
@@ -271,8 +280,11 @@ function BaseTitleSection({
           }));
 
           return filteredActionsWithSize.map((action, actionIndex) => (
-            <ContextMenu
+            <Button
               key={actionIndex}
+              {...action}
+              aria-label="title-action"
+              variant={action?.variant ?? "ghost"}
               styles={{
                 self: css`
                   width: ${resolvedIconSize * 1.4}px;
@@ -286,9 +298,9 @@ function BaseTitleSection({
                 `,
                 containerStyle: action.styles?.containerStyle,
               }}
-              maxActionsBeforeCollapsing={section.actions?.length}
               hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-              actions={[action]}
+              activeBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
+              icon={action?.icon}
             />
           ));
         }
