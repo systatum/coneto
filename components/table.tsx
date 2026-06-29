@@ -548,6 +548,9 @@ function Table({
                     >
                       <Checkbox
                         styles={{
+                          controlStyle: css`
+                            height: 100%;
+                          `,
                           boxStyle: css`
                             width: 100%;
                           `,
@@ -1615,6 +1618,9 @@ function TableRow({
               name={rowId}
               value={isSelected ? "true" : "false"}
               styles={{
+                controlStyle: css`
+                  height: 100%;
+                `,
                 boxStyle: css`
                   width: 100%;
                 `,
