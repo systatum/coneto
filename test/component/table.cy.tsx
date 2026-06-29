@@ -591,6 +591,18 @@ describe("Table", () => {
 
           cy.get(".coneto-checkbox").eq(0).parent().should("be.visible");
         });
+
+        it("renders height same with table-row-cell", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          ["field-lane-control", "table-row-cell"].forEach((label) => {
+            cy.findAllByLabelText(label)
+              .eq(0)
+              .should("have.css", "height", "48px");
+          });
+        });
       });
 
       context("with actions", () => {
