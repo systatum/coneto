@@ -60,6 +60,7 @@ export const OverlayBlocker = forwardRef<
       ".coneto-paper-dialog",
       ".coneto-dialog",
       ".coneto-sidebar",
+      ".sbdocs",
       ...(_exemptRegions ?? []),
     ];
 
@@ -69,6 +70,12 @@ export const OverlayBlocker = forwardRef<
       if (!visible) return;
 
       const safeRegions = exemptRegions ?? [];
+
+      // Check if the overlay is rendered inside a safe region
+      const isRenderedInsideSafeZone = isInSafeZone(
+        document.querySelector('[aria-label="overlay-blocker"]'),
+        safeRegions
+      );
 
       const scrollY = window.scrollY;
       const body = document.body;
@@ -80,10 +87,13 @@ export const OverlayBlocker = forwardRef<
         width: body.style.width,
       };
 
-      body.style.overflow = "hidden";
-      body.style.position = "fixed";
-      body.style.top = `-${scrollY}px`;
-      body.style.width = "100%";
+      // Only lock the body if NOT inside a safe zone
+      if (!isRenderedInsideSafeZone) {
+        body.style.overflow = "hidden";
+        body.style.position = "fixed";
+        body.style.top = `-${scrollY}px`;
+        body.style.width = "100%";
+      }
 
       const allow = (target: EventTarget | null) =>
         isInSafeZone(target, safeRegions);
@@ -102,15 +112,16 @@ export const OverlayBlocker = forwardRef<
       window.addEventListener("touchmove", blockTouch, { passive: false });
 
       return () => {
-        body.style.overflow = prev.overflow;
-        body.style.position = prev.position;
-        body.style.top = prev.top;
-        body.style.width = prev.width;
+        if (!isRenderedInsideSafeZone) {
+          body.style.overflow = prev.overflow;
+          body.style.position = prev.position;
+          body.style.top = prev.top;
+          body.style.width = prev.width;
+          window.scrollTo(0, scrollY);
+        }
 
         window.removeEventListener("wheel", blockWheel);
         window.removeEventListener("touchmove", blockTouch);
-
-        window.scrollTo(0, scrollY);
       };
     }, [exemptRegions, visible]);
 
