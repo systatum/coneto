@@ -48,6 +48,7 @@ import {
   RadioThemeConfig,
   RatingThemeConfig,
   RichEditorThemeConfig,
+  ScrollbarThemeConfig,
   SearchboxThemeConfig,
   SelectboxThemeConfig,
   SeparatorThemeConfig,
@@ -1309,6 +1310,20 @@ export function createRichEditorTheme(
   );
 }
 
+// scrollbar.tsx
+export function createScrollbar(
+  ...themeConfigurations: Array<Partial<ScrollbarThemeConfig>>
+): ScrollbarThemeConfig {
+  return mergeTheme<ScrollbarThemeConfig>(
+    {
+      scrollbarThumbActiveColor: "rgba(145, 142, 142, 0.7)",
+      scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+      scrollbarTrackColor: "transparent",
+    },
+    ...themeConfigurations
+  );
+}
+
 // searchbox.tsx
 export function createSearchboxTheme(
   body: BodyThemeConfig,
@@ -1615,6 +1630,11 @@ export function createTableTheme(
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
       scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
       toggleRowBackgroundColor: "#d4d4d4",
+
+      leftLooseEffectColor:
+        "linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent)",
+      rightLooseEffectColor:
+        "linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent)",
     },
     ...themeConfigurations
   );
