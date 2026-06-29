@@ -449,6 +449,140 @@ describe("Title", () => {
     });
 
     context("with actions", () => {
+      context("when given id", () => {
+        it("should render the id from action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      id: "Test",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                    {
+                      caption: "Not Editable",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get("#Test").should("exist").and("have.length", 1);
+        });
+      });
+
+      context("when given className", () => {
+        it("should render the className", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get(".test-className").should("exist").and("have.length", 1);
+          cy.get(".test-another-className")
+            .should("exist")
+            .and("have.length", 1);
+        });
+      });
+
+      context("when given hidden", () => {
+        it("should not shows the action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                      hidden: true,
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get(".test-className").should("not.exist");
+          cy.get(".test-another-className")
+            .should("exist")
+            .and("have.length", 1);
+        });
+      });
+
+      context("when given disabled", () => {
+        it("should disabled the action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                      disabled: true,
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("action-button").eq(0).should("be.disabled");
+          cy.findAllByLabelText("action-button")
+            .eq(1)
+            .should("not.be.disabled");
+        });
+      });
+
       it("should render actions section", () => {
         cy.mount(
           <Title
