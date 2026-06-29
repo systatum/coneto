@@ -10,7 +10,10 @@ import {
 } from "./table";
 import { useEffect, useMemo, useState } from "react";
 import {
+  RiArrowDownLine,
   RiArrowDownSLine,
+  RiArrowUpDownLine,
+  RiArrowUpLine,
   RiArrowUpSLine,
   RiBookMarkedLine,
   RiCheckboxMultipleLine,
@@ -21,13 +24,14 @@ import {
   RiDownload2Fill,
   RiEditLine,
   RiFileCopy2Line,
+  RiInformationLine,
   RiReactjsLine,
   RiRefreshLine,
   RiSettings3Line,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { CapsuleTab } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
@@ -537,11 +541,122 @@ export const Default: Story = {
 
 export const Loose: Story = {
   render: () => {
+    const { currentTheme } = useTheme();
+    const tableTheme = currentTheme?.table;
+
+    interface LoadBalancerRow {
+      id: string;
+      name: string;
+      type: string;
+      region: string;
+      status: string;
+      version: string;
+      uptime: string;
+
+      requests: number;
+      latency: number;
+      errorRate: number;
+      cpu: number;
+      memory: number;
+      connections: number;
+      bandwidth: number;
+
+      zone: string;
+      provider: string;
+    }
+
+    const TYPES_DATA = [
+      {
+        name: "HTTP",
+        description: "Standard protocol for transferring web pages.",
+      },
+      {
+        name: "HTTPS",
+        description: "Secure version of HTTP using TLS encryption.",
+      },
+      {
+        name: "TCP",
+        description: "Reliable, connection-oriented transport protocol.",
+      },
+      {
+        name: "UDP",
+        description:
+          "Fast, connectionless protocol for low-latency communication.",
+      },
+      {
+        name: "QUIC",
+        description:
+          "Modern transport protocol providing faster and more secure connections.",
+      },
+    ];
+    const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+    const STATUS = ["active", "idle", "degraded"];
+    const PROVIDERS = [
+      "AWS",
+      "Google Cloud",
+      "Microsoft Azure",
+      "Cloudflare",
+      "DigitalOcean",
+      "Oracle Cloud",
+      "Alibaba Cloud",
+      "IBM Cloud",
+      "Linode",
+      "Vultr",
+      "Hetzner",
+      "Akamai",
+    ];
+
+    const initialRows = useMemo<LoadBalancerRow[]>(
+      () =>
+        Array.from({ length: 15 }, (_, i) => {
+          const type = TYPES_DATA[i % TYPES_DATA.length].name;
+          const region = REGIONS[i % REGIONS.length];
+          const status = STATUS[i % STATUS.length];
+
+          const seed = (i + 1) * 17;
+          const req = 200 + (seed % 200);
+          const lat = 50 + (seed % 50);
+          const errRate = (seed % 500) / 100;
+          const cpu = 80 + (seed % 80);
+          const mem = 70 + (seed % 70);
+          const conn = 1000 + (seed % 1000);
+          const bw = 100 + (seed % 100);
+          const provider = PROVIDERS[i % PROVIDERS.length];
+
+          return {
+            id: `lb-${i}`,
+            name: `lb-${region}-${i + 1}`,
+            type,
+            region,
+            status,
+            version: `v${1 + (i % 3)}.${i % 10}`,
+            uptime: `${10 + i}d`,
+
+            requests: req,
+            latency: lat,
+            errorRate: errRate,
+            cpu,
+            memory: mem,
+            connections: conn,
+            bandwidth: bw,
+
+            zone: `zone-${(i % 3) + 1}`,
+            provider,
+          };
+        }),
+      []
+    );
+
+    const [rows, setRows] = useState(initialRows);
     const [activeTab, setActiveTab] = useState({
       withCheckbox: false,
       withActions: false,
       withSummary: false,
+      withSorter: false,
     });
+    const [status, setStatus] = useState<"desc" | "asc" | "original">(
+      "original"
+    );
 
     const TOP_ACTIONS: TableAction[] = [
       {
@@ -571,6 +686,14 @@ export const Loose: Story = {
         onClick: () =>
           setActiveTab((prev) => ({ ...prev, withSummary: !prev.withSummary })),
       },
+      {
+        type: "button",
+        caption: "With Sorter",
+        pressed: activeTab.withSorter,
+        icon: { image: RiArrowUpDownLine },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withSorter: !prev.withSorter })),
+      },
     ];
 
     const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
@@ -587,102 +710,201 @@ export const Loose: Story = {
       },
     ];
 
-    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
-    const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
-    const STATUS = ["active", "idle", "degraded"];
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof (typeof initialRows)[number];
+    }) => {
+      setStatus(mode);
+
+      if (mode === "original") {
+        setRows(initialRows);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+
+        if (typeof aVal === "string" && typeof bVal === "string") {
+          return mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+        }
+
+        if (typeof aVal === "number" && typeof bVal === "number") {
+          return mode === "asc" ? aVal - bVal : bVal - aVal;
+        }
+
+        return 0;
+      });
+
+      setRows(sorted);
+    };
+
+    const TIP_MENU_ACTION = (
+      columnCaption: keyof (typeof initialRows)[number]
+    ): TableSubMenuList[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: {
+            image: RiArrowUpLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: {
+            image: RiArrowDownLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnCaption });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: {
+            image: RiArrowUpDownLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnCaption });
+          },
+        },
+      ];
+    };
+
+    const imageStatus =
+      status === "asc"
+        ? RiArrowUpLine
+        : status === "desc"
+          ? RiArrowDownLine
+          : RiArrowUpDownLine;
+
+    const columnActions = (
+      id?: keyof (typeof initialRows)[number]
+    ): TableColumnAction => ({
+      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      title: "Sorter Action",
+      icon: {
+        image: imageStatus,
+      },
+    });
+
+    const columnProtocol = (): TableColumnAction => ({
+      subMenu: ({ show }) =>
+        show(
+          <ProtocolList>
+            {TYPES_DATA.map((protocol, index) => (
+              <ProtocolItem key={index}>
+                <ProtocolName>{protocol.name}</ProtocolName>
+                <ProtocolDescription>
+                  {protocol.description}
+                </ProtocolDescription>
+              </ProtocolItem>
+            ))}
+          </ProtocolList>
+        ),
+      title: "Info Action",
+      icon: {
+        image: RiInformationLine,
+      },
+    });
+
+    const withSorter = activeTab.withSorter ? columnActions : null;
+
+    const ProtocolItem = styled.div`
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: ${tableTheme.backgroundColor};
+    `;
+
+    const ProtocolName = styled.div`
+      font-weight: 600;
+      font-size: 13px;
+      color: ${tableTheme?.textColor};
+    `;
+
+    const ProtocolDescription = styled.div`
+      margin-top: 2px;
+      font-size: 12px;
+      color: ${tableTheme?.rowGroupSubtitleTextColor};
+    `;
+
+    const ProtocolList = styled.div`
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px;
+    `;
 
     const columns: TableColumn[] = [
-      { id: "name", caption: "Name" },
-      { id: "type", caption: "Protocol" },
-      { id: "region", caption: "Region" },
-      { id: "status", caption: "Status" },
-      { id: "version", caption: "Version" },
-      { id: "uptime", caption: "Uptime" },
-      { id: "requests", caption: "Requests/s" },
-      { id: "latency", caption: "Latency (ms)" },
-      { id: "errorRate", caption: "Error Rate" },
-      { id: "cpu", caption: "CPU %" },
-      { id: "memory", caption: "Memory %" },
-      { id: "connections", caption: "Connections" },
-      { id: "bandwidth", caption: "Bandwidth" },
-      { id: "zone", caption: "Zone" },
-      { id: "provider", caption: "Provider" },
+      { id: "name", caption: "Name", actions: withSorter },
+      {
+        id: "type",
+        caption: "Protocol",
+        actions: activeTab?.withSorter ? columnProtocol : null,
+      },
+      { id: "region", caption: "Region", actions: withSorter },
+      { id: "status", caption: "Status", actions: withSorter },
+      { id: "version", caption: "Version", actions: withSorter },
+      { id: "uptime", caption: "Uptime", actions: withSorter },
+      { id: "requests", caption: "Requests/s", actions: withSorter },
+      { id: "latency", caption: "Latency (ms)", actions: withSorter },
+      { id: "errorRate", caption: "Error Rate", actions: withSorter },
+      { id: "cpu", caption: "CPU %", actions: withSorter },
+      { id: "memory", caption: "Memory %", actions: withSorter },
+      { id: "connections", caption: "Connections", actions: withSorter },
+      { id: "bandwidth", caption: "Bandwidth", actions: withSorter },
+      { id: "zone", caption: "Zone", actions: withSorter },
+      { id: "provider", caption: "Provider", actions: withSorter },
     ];
-
-    const rowData = useMemo(
-      () =>
-        Array.from({ length: 15 }, (_, i) => {
-          const type = TYPES_DATA[i % TYPES_DATA.length];
-          const region = REGIONS[i % REGIONS.length];
-          const status = STATUS[i % STATUS.length];
-
-          const seed = (i + 1) * 17;
-          const req = 200 + (seed % 200);
-          const lat = 50 + (seed % 50);
-          const errRate = ((seed % 500) / 100).toFixed(2);
-          const cpu = 80 + (seed % 80);
-          const mem = 70 + (seed % 70);
-          const conn = 1000 + (seed % 1000);
-          const bw = 100 + (seed % 100);
-
-          return {
-            id: `lb-${i}`,
-            content: [
-              `lb-${region}-${i + 1}`,
-              type,
-              region,
-              status,
-              `v${1 + (i % 3)}.${i % 10}`,
-              `${10 + i}d`,
-              req,
-              lat,
-              `${errRate}%`,
-              cpu,
-              mem,
-              conn,
-              `${bw}Mbps`,
-              `zone-${(i % 3) + 1}`,
-              "aws",
-            ] as TableRowContent,
-            req,
-            lat,
-            errRate: parseFloat(errRate),
-            cpu,
-            mem,
-            conn,
-            bw,
-          };
-        }),
-      []
-    );
 
     const totals = useMemo(
       () => ({
-        req: rowData.reduce((s, r) => s + r.req, 0),
-        lat: Math.round(
-          rowData.reduce((s, r) => s + r.lat, 0) / rowData.length
+        requests: rows.reduce((s, r) => s + r.requests, 0),
+        latency: Math.round(
+          rows.reduce((s, r) => s + r.latency, 0) / rows.length
         ),
-        errRate: (
-          rowData.reduce((s, r) => s + r.errRate, 0) / rowData.length
+        errorRate: (
+          rows.reduce((s, r) => s + r.errorRate, 0) / rows.length
         ).toFixed(2),
-        cpu: Math.round(
-          rowData.reduce((s, r) => s + r.cpu, 0) / rowData.length
+        cpu: Math.round(rows.reduce((s, r) => s + r.cpu, 0) / rows.length),
+        memory: Math.round(
+          rows.reduce((s, r) => s + r.memory, 0) / rows.length
         ),
-        mem: Math.round(
-          rowData.reduce((s, r) => s + r.mem, 0) / rowData.length
-        ),
-        conn: rowData.reduce((s, r) => s + r.conn, 0),
-        bw: rowData.reduce((s, r) => s + r.bw, 0),
+        connections: rows.reduce((s, r) => s + r.connections, 0),
+        bandwidth: rows.reduce((s, r) => s + r.bandwidth, 0),
       }),
-      [rowData]
+      [rows]
     );
 
-    const sampleRows = rowData.map((row, i) => (
+    const sampleRows = rows.map((row) => (
       <Table.Row
         key={row.id}
         rowId={row.id}
         actions={activeTab.withActions ? ROW_ACTION : null}
-        content={row.content}
+        content={[
+          row.name,
+          row.type,
+          row.region,
+          row.status,
+          row.version,
+          row.uptime,
+          row.requests,
+          row.latency,
+          row.errorRate,
+          row.cpu,
+          row.memory,
+          row.connections,
+          row.bandwidth,
+          row.zone,
+          row.provider,
+        ]}
       />
     ));
 
@@ -693,13 +915,13 @@ export const Loose: Story = {
       { content: "" },
       { content: "" },
       { content: "" },
-      { content: totals.req, bold: true },
-      { content: `${totals.lat} ms`, bold: true },
-      { content: `${totals.errRate}%`, bold: true },
+      { content: totals.requests, bold: true },
+      { content: `${totals.latency} ms`, bold: true },
+      { content: `${totals.errorRate}%`, bold: true },
       { content: `${totals.cpu}%`, bold: true },
-      { content: `${totals.mem}%`, bold: true },
-      { content: totals.conn, bold: true },
-      { content: `${totals.bw}Mbps`, bold: true },
+      { content: `${totals.memory}%`, bold: true },
+      { content: totals.connections, bold: true },
+      { content: `${totals.bandwidth}Mbps`, bold: true },
       { content: "" },
       { content: "" },
     ];
