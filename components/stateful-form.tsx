@@ -1512,12 +1512,12 @@ function FormFields<T extends FieldValues>({
                       <FileDropBox
                         key={index}
                         id={field.id}
-                        label={label}
-                        placeholder={placeholder}
+                        label={field.title}
+                        placeholder={field.placeholder}
                         className={field?.className}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
-                        labelPosition={labelPosition}
+                        labelPosition={field.labelPosition}
                         helper={field.helper}
                         name={field.name}
                         required={required}
@@ -1568,10 +1568,10 @@ function FormFields<T extends FieldValues>({
                         id={field.id}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
-                        labelPosition={labelPosition}
+                        labelPosition={field.labelPosition}
                         className={field?.className}
-                        label={label}
-                        placeholder={placeholder}
+                        label={field.title}
+                        placeholder={field.placeholder}
                         required={required}
                         showError={shouldShowError(field.name)}
                         helper={field.helper}
