@@ -808,7 +808,7 @@ export const WithFullWidthContent: Story = {
     });
 
     const columnActions = (id?: DepartmentKeys): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
       title: "Column Action",
     });
 
@@ -931,29 +931,27 @@ export const WithFullWidthContent: Story = {
       console.log("Selected rows:", data);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: DepartmentKeys
-    ): TableSubMenuList[] => {
+    const COLUMN_ACTIONS = (columnId: DepartmentKeys): TableSubMenuList[] => {
       return [
         {
           caption: "Sort Ascending",
           icon: { image: RiArrowUpSLine, color: "gray" },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
           caption: "Sort Descending",
           icon: { image: RiArrowDownSLine, color: "gray" },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
           caption: "Reset Sorting",
           icon: { image: RiRefreshLine, color: "gray" },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
