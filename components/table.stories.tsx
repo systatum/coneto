@@ -654,6 +654,7 @@ export const Loose: Story = {
       withSummary: false,
       withSorter: false,
     });
+
     const [status, setStatus] = useState<"desc" | "asc" | "original">(
       "original"
     );
@@ -786,63 +787,67 @@ export const Loose: Story = {
           : RiArrowUpDownLine;
 
     const columnActions = (
-      id?: keyof (typeof initialRows)[number]
-    ): TableColumnAction => ({
-      subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
-      title: "Sorter Action",
-      icon: {
-        image: imageStatus,
-      },
-    });
+      id: keyof (typeof initialRows)[number]
+    ): TableColumnAction | null => {
+      if (!activeTab.withSorter) {
+        return null;
+      }
 
-    const columnProtocol = (): TableColumnAction => ({
-      subMenu: ({ show }) =>
-        show(
-          TYPES_DATA.map((protocol, index) => (
-            <ProtocolItem $theme={tableTheme} key={index}>
-              <ProtocolName $theme={tableTheme}>{protocol.name}</ProtocolName>
-              <ProtocolDescription $theme={tableTheme}>
-                {protocol.description}
-              </ProtocolDescription>
-            </ProtocolItem>
-          )),
-          {
-            drawerStyle: css`
-              padding: 6px;
-              gap: 6px;
-              display: flex;
-              flex-direction: column;
-            `,
-          }
-        ),
-      title: "Info Action",
-      icon: {
-        image: RiInformationLine,
-      },
-    });
+      if (id === "type") {
+        return {
+          title: "Info Action",
+          icon: {
+            image: RiInformationLine,
+          },
+          subMenu: ({ show }) =>
+            show(
+              TYPES_DATA.map((protocol, index) => (
+                <ProtocolItem $theme={tableTheme} key={index}>
+                  <ProtocolName $theme={tableTheme}>
+                    {protocol.name}
+                  </ProtocolName>
+                  <ProtocolDescription $theme={tableTheme}>
+                    {protocol.description}
+                  </ProtocolDescription>
+                </ProtocolItem>
+              )),
+              {
+                drawerStyle: css`
+                  display: flex;
+                  flex-direction: column;
+                  gap: 6px;
+                  padding: 6px;
+                `,
+              }
+            ),
+        };
+      }
 
-    const withSorter = activeTab.withSorter ? columnActions : null;
+      return {
+        title: "Sorter Action",
+        icon: {
+          image: imageStatus,
+        },
+        subMenu: ({ list }) => list(TIP_MENU_ACTION(id)),
+      };
+    };
 
     const columns: TableColumn[] = [
-      { id: "name", caption: "Name", actions: withSorter },
-      {
-        id: "type",
-        caption: "Protocol",
-        actions: activeTab?.withSorter ? columnProtocol : null,
-      },
-      { id: "region", caption: "Region", actions: withSorter },
-      { id: "status", caption: "Status", actions: withSorter },
-      { id: "version", caption: "Version", actions: withSorter },
-      { id: "uptime", caption: "Uptime", actions: withSorter },
-      { id: "requests", caption: "Requests/s", actions: withSorter },
-      { id: "latency", caption: "Latency (ms)", actions: withSorter },
-      { id: "errorRate", caption: "Error Rate", actions: withSorter },
-      { id: "cpu", caption: "CPU %", actions: withSorter },
-      { id: "memory", caption: "Memory %", actions: withSorter },
-      { id: "connections", caption: "Connections", actions: withSorter },
-      { id: "bandwidth", caption: "Bandwidth", actions: withSorter },
-      { id: "zone", caption: "Zone", actions: withSorter },
-      { id: "provider", caption: "Provider", actions: withSorter },
+      { id: "name", caption: "Name", actions: columnActions },
+      { id: "type", caption: "Protocol", actions: columnActions },
+      { id: "region", caption: "Region", actions: columnActions },
+      { id: "status", caption: "Status", actions: columnActions },
+      { id: "version", caption: "Version", actions: columnActions },
+      { id: "uptime", caption: "Uptime", actions: columnActions },
+      { id: "requests", caption: "Requests/s", actions: columnActions },
+      { id: "latency", caption: "Latency (ms)", actions: columnActions },
+      { id: "errorRate", caption: "Error Rate", actions: columnActions },
+      { id: "cpu", caption: "CPU %", actions: columnActions },
+      { id: "memory", caption: "Memory %", actions: columnActions },
+      { id: "connections", caption: "Connections", actions: columnActions },
+      { id: "bandwidth", caption: "Bandwidth", actions: columnActions },
+      { id: "zone", caption: "Zone", actions: columnActions },
+      { id: "provider", caption: "Provider", actions: columnActions },
     ];
 
     const totals = useMemo(
