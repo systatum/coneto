@@ -224,7 +224,10 @@ export interface TitleSectionAction extends BaseAction {
 }
 
 export type TitleSectionActionIcon = FigureProps;
-export type TitleSectionActionVariant = ButtonVariant;
+export type TitleSectionActionVariant = Exclude<
+  ButtonVariant,
+  "outline-default" | "outline-success" | "outline-primary" | "outline-danger"
+>;
 export type TitleSectionActionStyles = ButtonStyles;
 
 export interface TitleSectionStyles {
@@ -279,30 +282,39 @@ function BaseTitleSection({
             },
           }));
 
-          return filteredActionsWithSize.map((action, actionIndex) => (
-            <Button
-              key={actionIndex}
-              {...action}
-              aria-label="title-action"
-              variant={action?.variant ?? "ghost"}
-              styles={{
-                self: css`
-                  width: ${resolvedIconSize * 1.4}px;
-                  height: ${resolvedIconSize * 1.4}px;
-                  padding: 20px;
-                  border-radius: 10px;
-                  background-color: ${titleTheme?.icon?.backgroundColor};
+          return filteredActionsWithSize.map((action, actionIndex) => {
+            const variant = action?.variant ?? "ghost";
 
-                  ${section?.styles?.toggleActionStyle}
-                  ${action.styles?.self}
-                `,
-                containerStyle: action.styles?.containerStyle,
-              }}
-              hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-              activeBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-              icon={action?.icon}
-            />
-          ));
+            return (
+              <Button
+                key={actionIndex}
+                {...action}
+                aria-label="title-action"
+                variant={variant}
+                styles={{
+                  self: css`
+                    width: ${resolvedIconSize * 1.4}px;
+                    height: ${resolvedIconSize * 1.4}px;
+                    padding: 20px;
+                    border-radius: 10px;
+                    background-color: ${variant === "ghost" &&
+                    titleTheme?.icon?.backgroundColor};
+
+                    ${section?.styles?.toggleActionStyle}
+                    ${action.styles?.self}
+                  `,
+                  containerStyle: action.styles?.containerStyle,
+                }}
+                hoverBackgroundColor={
+                  variant === "ghost" && titleTheme?.icon?.hoverBackgroundColor
+                }
+                activeBackgroundColor={
+                  variant === "ghost" && titleTheme?.icon?.hoverBackgroundColor
+                }
+                icon={action?.icon}
+              />
+            );
+          });
         }
 
         return null;
