@@ -110,12 +110,10 @@ describe("Table", () => {
     {
       id: "name",
       caption: "Name",
-      sortable: true,
     },
     {
       id: "type",
       caption: "Type",
-      sortable: true,
     },
   ];
 
@@ -255,21 +253,21 @@ describe("Table", () => {
       const STATUS = ["active", "idle", "degraded"];
 
       const columns: TableColumn[] = [
-        { id: "name", caption: "Name", sortable: false },
-        { id: "type", caption: "Protocol", sortable: false },
-        { id: "region", caption: "Region", sortable: false },
-        { id: "status", caption: "Status", sortable: false },
-        { id: "version", caption: "Version", sortable: false },
-        { id: "uptime", caption: "Uptime", sortable: false },
-        { id: "requests", caption: "Requests/s", sortable: false },
-        { id: "latency", caption: "Latency (ms)", sortable: false },
-        { id: "errorRate", caption: "Error Rate", sortable: false },
-        { id: "cpu", caption: "CPU %", sortable: false },
-        { id: "memory", caption: "Memory %", sortable: false },
-        { id: "connections", caption: "Connections", sortable: false },
-        { id: "bandwidth", caption: "Bandwidth", sortable: false },
-        { id: "zone", caption: "Zone", sortable: false },
-        { id: "provider", caption: "Provider", sortable: false },
+        { id: "name", caption: "Name" },
+        { id: "type", caption: "Protocol" },
+        { id: "region", caption: "Region" },
+        { id: "status", caption: "Status" },
+        { id: "version", caption: "Version" },
+        { id: "uptime", caption: "Uptime" },
+        { id: "requests", caption: "Requests/s" },
+        { id: "latency", caption: "Latency (ms)" },
+        { id: "errorRate", caption: "Error Rate" },
+        { id: "cpu", caption: "CPU %" },
+        { id: "memory", caption: "Memory %" },
+        { id: "connections", caption: "Connections" },
+        { id: "bandwidth", caption: "Bandwidth" },
+        { id: "zone", caption: "Zone" },
+        { id: "provider", caption: "Provider" },
       ];
 
       const rowData = useMemo(
@@ -680,7 +678,7 @@ describe("Table", () => {
                   {
                     id: "name",
                     caption: "Name",
-                    sortable: true,
+
                     styles: {
                       containerStyle: css`
                         background-color: red;
@@ -690,7 +688,6 @@ describe("Table", () => {
                   {
                     id: "type",
                     caption: "Type",
-                    sortable: true,
                   },
                 ]}
               />
@@ -712,7 +709,7 @@ describe("Table", () => {
                   {
                     id: "name",
                     caption: "Name",
-                    sortable: true,
+
                     styles: {
                       labelStyle: css`
                         color: blue;
@@ -722,7 +719,6 @@ describe("Table", () => {
                   {
                     id: "type",
                     caption: "Type",
-                    sortable: true,
                   },
                 ]}
               />
@@ -738,9 +734,7 @@ describe("Table", () => {
         });
       });
 
-      const TIP_MENU_ACTION = (
-        columnCaption: "from" | "content"
-      ): TableSubMenuList[] => {
+      const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
         return [
           {
             caption: "Sort Ascending",
@@ -758,78 +752,6 @@ describe("Table", () => {
           },
         ];
       };
-
-      context("dropdownSortableStyle", () => {
-        context("when given width 400px", () => {
-          it("renders the dropdown with 400px", () => {
-            cy.mount(
-              <BasicTable
-                subMenuList={TIP_MENU_ACTION}
-                columns={[
-                  {
-                    id: "name",
-                    caption: "Name",
-                    sortable: true,
-                    styles: {
-                      dropdownSortableStyle: css`
-                        width: 400px;
-                      `,
-                    },
-                  },
-                  {
-                    id: "type",
-                    caption: "Type",
-                    sortable: true,
-                  },
-                ]}
-              />
-            );
-
-            cy.get("button").eq(0).click();
-            cy.findAllByLabelText("tip-menu")
-              .eq(0)
-              .should("have.css", "width", "400px");
-
-            // check also on default width
-            cy.get("button").eq(1).click();
-            cy.findAllByLabelText("tip-menu")
-              .eq(1)
-              .should("have.css", "width", "235px");
-          });
-        });
-      });
-      context("toggleSortableStyle", () => {
-        context("when given background red", () => {
-          it("renders the trigger style with rgb(255, 0, 0)", () => {
-            cy.mount(
-              <BasicTable
-                subMenuList={TIP_MENU_ACTION}
-                columns={[
-                  {
-                    id: "name",
-                    caption: "Name",
-                    sortable: true,
-                    styles: {
-                      toggleSortableStyle: css`
-                        background-color: red;
-                      `,
-                    },
-                  },
-                  {
-                    id: "type",
-                    caption: "Type",
-                    sortable: true,
-                  },
-                ]}
-              />
-            );
-
-            cy.get("button")
-              .eq(0)
-              .should("have.css", "background-color", "rgb(255, 0, 0)");
-          });
-        });
-      });
     });
   });
 
@@ -838,8 +760,8 @@ describe("Table", () => {
 
     function TableSeparateContent({ mode = "row" }: { mode?: SeparateMode }) {
       const columns: TableColumn[] = [
-        { id: "itemId", caption: "Item ID", sortable: true },
-        { id: "name", caption: "Name", sortable: true, width: "60%" },
+        { id: "itemId", caption: "Item ID" },
+        { id: "name", caption: "Name", width: "60%" },
       ];
 
       function TableSeparateRow({ test }: { test: boolean }) {
@@ -1460,6 +1382,7 @@ describe("Table", () => {
           },
         ]}
         searchable
+        selectable
       >
         {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
           <Table.Row.Group
@@ -1767,19 +1690,16 @@ describe("Table", () => {
     {
       id: "title",
       caption: "Title",
-      sortable: false,
       width: "45%",
     },
     {
       id: "category",
       caption: "Category",
-      sortable: false,
       width: "30%",
     },
     {
       id: "author",
       caption: "Author",
-      sortable: false,
       width: "25%",
     },
   ];
@@ -2213,12 +2133,10 @@ describe("Table", () => {
           {
             id: "name",
             caption: "Name",
-            sortable: true,
           },
           {
             id: "type",
             caption: "Type",
-            sortable: true,
           },
         ];
 
@@ -2264,12 +2182,10 @@ describe("Table", () => {
           {
             id: "name",
             caption: "Name",
-            sortable: true,
           },
           {
             id: "type",
             caption: "Type",
-            sortable: true,
           },
         ];
         const selectedItems = [
