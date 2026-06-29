@@ -1408,7 +1408,7 @@ export interface TableRowProps {
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TableRowAction[];
+  actions?: (columnId: string) => TableRowAction[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
