@@ -1107,113 +1107,120 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         control={control}
                         name={field.name as Path<T>}
-                        render={({ field: controllerField }) => (
-                          <Checkbox
-                            id={field.id}
-                            title={field.title}
-                            label={field.placeholder}
-                            labelGap={field.labelGap}
-                            labelWidth={field.labelWidth}
-                            labelPosition={labelPosition}
-                            className={field?.className}
-                            name={field.name}
-                            value={field.name}
-                            placeholder={field.placeholder}
-                            checked={controllerField.value ?? false}
-                            helper={field.helper}
-                            ref={(el) => {
-                              if (el) refs.current[field.name] = el;
-                              const { ref } = register(field.name as Path<T>);
-                              if (ref) ref(el);
-                            }}
-                            errorMessage={
-                              errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
-                            }
-                            required={required}
-                            showError={shouldShowError(field.name)}
-                            onChange={(e) => {
-                              controllerField?.onChange(e);
-                              controllerField?.onBlur();
-                              if (onChange) {
-                                onChange(
-                                  field.name as keyof T,
-                                  e.target.checked
-                                );
+                        render={({ field: controllerField }) => {
+                          const titleCheckbox =
+                            field.title ?? field.placeholder;
+                          const placeholderCheckbox = mobile
+                            ? undefined
+                            : field.placeholder;
+                          return (
+                            <Checkbox
+                              id={field.id}
+                              title={titleCheckbox}
+                              label={placeholderCheckbox}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              name={field.name}
+                              value={field.name}
+                              placeholder={placeholderCheckbox}
+                              checked={controllerField.value ?? false}
+                              helper={field.helper}
+                              ref={(el) => {
+                                if (el) refs.current[field.name] = el;
+                                const { ref } = register(field.name as Path<T>);
+                                if (ref) ref(el);
+                              }}
+                              errorMessage={
+                                errors[field.name as keyof T]?.message as
+                                  | string
+                                  | undefined
                               }
-                              field.onChange?.(e);
-                            }}
-                            disabled={field.disabled || disabled}
-                            {...field.checkbox}
-                            styles={{
-                              ...field.checkbox?.styles,
-                              titleStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${field.checkbox?.styles?.titleStyle}
-                              `,
-                              labelStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${field.checkbox?.styles?.labelStyle}
-                              `,
-                              self: css`
-                                ${labelSize &&
-                                css`
-                                  width: calc(${labelSize} + 2px);
-                                  height: calc(${labelSize} + 2px);
-                                `};
-                                ${field.checkbox?.styles?.self}
-                              `,
-                              iconStyle: css`
-                                ${labelSize &&
-                                css`
-                                  width: calc(${labelSize} - 4px);
-                                  height: calc(${labelSize} - 4px);
-                                `};
-                                ${field.checkbox?.styles?.iconStyle}
-                              `,
-                              containerStyle: css`
-                                width: 100%;
-                                ${field.width &&
-                                css`
-                                  width: ${field.width};
-                                `};
-                                ${field.checkbox?.styles?.containerStyle}
-                              `,
-                              boxStyle: css`
-                                ${labelSize &&
-                                css`
-                                  width: calc(${labelSize} + 2px);
-                                  height: calc(${labelSize} + 2px);
-                                `};
-                                ${field.checkbox?.styles?.boxStyle}
-                              `,
-                              bodyStyle: css`
-                                ${!field.title &&
-                                hasFieldTitle &&
-                                css`
-                                  min-height: 60px;
-                                  justify-content: end;
-                                `};
-                                min-height: 34px;
-                                ${mobileBodyStyle};
+                              required={required}
+                              showError={shouldShowError(field.name)}
+                              onChange={(e) => {
+                                controllerField?.onChange(e);
+                                controllerField?.onBlur();
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.checked
+                                  );
+                                }
+                                field.onChange?.(e);
+                              }}
+                              disabled={field.disabled || disabled}
+                              {...field.checkbox}
+                              styles={{
+                                ...field.checkbox?.styles,
+                                titleStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${field.checkbox?.styles?.titleStyle}
+                                `,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${field.checkbox?.styles?.labelStyle}
+                                `,
+                                self: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} + 2px);
+                                    height: calc(${labelSize} + 2px);
+                                  `};
+                                  ${field.checkbox?.styles?.self}
+                                `,
+                                iconStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} - 4px);
+                                    height: calc(${labelSize} - 4px);
+                                  `};
+                                  ${field.checkbox?.styles?.iconStyle}
+                                `,
+                                containerStyle: css`
+                                  width: 100%;
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+                                  ${field.checkbox?.styles?.containerStyle}
+                                `,
+                                boxStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} + 2px);
+                                    height: calc(${labelSize} + 2px);
+                                  `};
+                                  ${field.checkbox?.styles?.boxStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
+                                  min-height: 34px;
+                                  ${mobileBodyStyle};
 
-                                ${field.checkbox?.styles?.bodyStyle}
-                              `,
-                              controlStyle: css`
-                                ${mobileControlStyle};
+                                  ${field.checkbox?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
 
-                                ${field.checkbox?.styles?.controlStyle}
-                              `,
-                            }}
-                          />
-                        )}
+                                  ${field.checkbox?.styles?.controlStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
                       />
                     );
                   }
@@ -1224,90 +1231,96 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         control={control}
                         name={field.name as Path<T>}
-                        render={({ field: controllerField }) => (
-                          <Radio
-                            id={field.id}
-                            label={field.placeholder}
-                            labelGap={field.labelGap}
-                            labelWidth={field.labelWidth}
-                            labelPosition={labelPosition}
-                            className={field?.className}
-                            name={field.name}
-                            title={field.title}
-                            placeholder={field.placeholder}
-                            checked={controllerField.value ?? false}
-                            errorMessage={
-                              errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
-                            }
-                            helper={field.helper}
-                            required={required}
-                            showError={shouldShowError(field.name)}
-                            onChange={(e) => {
-                              controllerField?.onChange(e);
-                              controllerField?.onBlur();
-                              if (onChange) {
-                                onChange(
-                                  field.name as keyof T,
-                                  e.target.checked
-                                );
+                        render={({ field: controllerField }) => {
+                          const titleRadio = field.title ?? field.placeholder;
+                          const placeholderRadio = mobile
+                            ? undefined
+                            : field.placeholder;
+                          return (
+                            <Radio
+                              {...field.radio}
+                              id={field.id}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              name={field.name}
+                              title={titleRadio}
+                              label={placeholderRadio}
+                              placeholder={placeholderRadio}
+                              checked={controllerField.value ?? false}
+                              errorMessage={
+                                errors[field.name as keyof T]?.message as
+                                  | string
+                                  | undefined
                               }
-                              field.onChange?.(e);
-                            }}
-                            disabled={field.disabled || disabled}
-                            {...field.radio}
-                            styles={{
-                              ...field.radio?.styles,
-                              labelStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${field.radio?.styles?.labelStyle}
-                              `,
-                              titleStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${field.radio?.styles?.titleStyle}
-                              `,
-                              self: css`
-                                ${fieldSize &&
-                                css`
-                                  width: ${fieldSize};
-                                  height: ${fieldSize};
-                                `}
-                                ${field.radio?.styles?.self}
-                              `,
-                              containerStyle: css`
-                                width: 100%;
-                                ${field.width &&
-                                css`
-                                  width: ${field.width};
-                                `};
-                                ${field.radio?.styles?.containerStyle}
-                              `,
-                              bodyStyle: css`
-                                ${!field.title &&
-                                hasFieldTitle &&
-                                css`
-                                  min-height: 60px;
-                                  justify-content: end;
-                                `};
-                                ${mobileBodyStyle};
+                              helper={field.helper}
+                              required={required}
+                              showError={shouldShowError(field.name)}
+                              onChange={(e) => {
+                                controllerField?.onChange(e);
+                                controllerField?.onBlur();
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.checked
+                                  );
+                                }
+                                field.onChange?.(e);
+                              }}
+                              disabled={field.disabled || disabled}
+                              styles={{
+                                ...field.radio?.styles,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${field.radio?.styles?.labelStyle}
+                                `,
+                                titleStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${field.radio?.styles?.titleStyle}
+                                `,
+                                self: css`
+                                  ${fieldSize &&
+                                  css`
+                                    width: ${fieldSize};
+                                    height: ${fieldSize};
+                                  `}
+                                  ${field.radio?.styles?.self}
+                                `,
+                                containerStyle: css`
+                                  width: 100%;
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+                                  ${field.radio?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
+                                  ${mobileBodyStyle};
 
-                                ${field.radio?.styles?.bodyStyle}
-                              `,
-                              controlStyle: css`
-                                ${mobileControlStyle};
+                                  ${field.radio?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
 
-                                ${field.radio?.styles?.controlStyle}
-                              `,
-                            }}
-                          />
-                        )}
+                                  ${field.radio?.styles?.controlStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
                       />
                     );
                   }
