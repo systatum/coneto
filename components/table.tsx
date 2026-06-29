@@ -465,9 +465,9 @@ function Table({
                     )}
                     {hasActions &&
                       filteredActions.map((action, index) => {
-                        const { capsuleProps, ...rest } = action;
+                        const { capsuleProps, type, ...rest } = action;
 
-                        if (action.type === "capsule") {
+                        if (type === "capsule") {
                           return (
                             <ActionCapsule key={index} {...capsuleProps} />
                           );
