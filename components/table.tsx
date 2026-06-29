@@ -580,27 +580,29 @@ function Table({
                         ? col.actions(col.id)
                         : col.actions;
 
-                    const finalColumnAction: ButtonProps = columnAction && {
-                      ...columnAction,
-                      icon: {
-                        ...columnAction?.icon,
-                        image: columnAction?.icon?.image ?? RiArrowUpDownLine,
-                        size: columnAction?.icon?.size ?? 20,
-                      },
-                      showSubMenuOn: "self",
-                      tipMenuSize: columnAction?.tipMenuSize ?? "md",
-                      styles: {
-                        ...columnAction?.styles,
-                        self: css`
-                          padding: 0px;
-                          height: 40px;
-                          width: 40px;
-                          border-radius: 6px;
-                          ${columnAction?.styles?.self};
-                        `,
-                      },
-                      variant: columnAction?.variant ?? "ghost",
-                    };
+                    const finalColumnAction: ButtonProps = columnAction &&
+                      !columnAction.hidden && {
+                        ...columnAction,
+                        icon: {
+                          ...columnAction?.icon,
+                          image: columnAction?.icon?.image ?? RiArrowUpDownLine,
+                          size: columnAction?.icon?.size ?? 20,
+                        },
+                        showSubMenuOn: "self",
+                        tipMenuSize: columnAction?.tipMenuSize ?? "md",
+                        styles: {
+                          ...columnAction?.styles,
+                          self: css`
+                            padding: 0px;
+                            height: 40px;
+                            width: 40px;
+                            border-radius: 6px;
+                            ${columnAction?.styles?.self};
+                          `,
+                        },
+                        variant: columnAction?.variant ?? "ghost",
+                        "aria-label": "table-column-action",
+                      };
 
                     return (
                       <TableRowCell
@@ -1040,6 +1042,7 @@ const TableHeader = styled.div<{
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
+  background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
 
   ${({ $loose }) =>
     $loose &&
