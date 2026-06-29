@@ -56,11 +56,11 @@ describe("Title", () => {
               />
             );
 
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .parent()
               .eq(0)
               .should("have.css", "border", "1px solid rgb(0, 0, 255)");
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .parent()
               .eq(1)
               .should("not.have.css", "border", "1px solid rgb(0, 0, 255)");
@@ -100,10 +100,10 @@ describe("Title", () => {
               />
             );
 
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .eq(0)
               .should("have.css", "padding", "50px");
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .eq(1)
               .should("have.css", "padding", "20px");
           });
@@ -576,10 +576,8 @@ describe("Title", () => {
             />
           );
 
-          cy.findAllByLabelText("action-button").eq(0).should("be.disabled");
-          cy.findAllByLabelText("action-button")
-            .eq(1)
-            .should("not.be.disabled");
+          cy.findAllByLabelText("title-action").eq(0).should("be.disabled");
+          cy.findAllByLabelText("title-action").eq(1).should("not.be.disabled");
         });
       });
 
@@ -625,10 +623,10 @@ describe("Title", () => {
             />
           );
 
-          cy.findByLabelText("action-button").realHover();
+          cy.findByLabelText("title-action").realHover();
 
           cy.wait(200);
-          cy.findByLabelText("action-button").should(
+          cy.findByLabelText("title-action").should(
             "have.css",
             "background-color",
             "rgba(255, 255, 255, 0.45)"
