@@ -97,6 +97,7 @@ function BaseRadio({
           disabled={props.disabled}
         />
         <Circle
+          aria-label="radio-circle"
           $isRadio={mode === "radio"}
           $error={showError}
           $style={styles?.self}
