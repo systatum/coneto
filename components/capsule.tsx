@@ -28,6 +28,7 @@ interface BaseCapsuleProps {
   name?: string;
   fontSize?: number;
   disabled?: boolean;
+  showError?: boolean;
 }
 
 interface BaseCapsuleStyles {
@@ -46,6 +47,7 @@ function BaseCapsule({
   id,
   fontSize = 12,
   disabled,
+  showError,
 }: BaseCapsuleProps) {
   const { currentTheme } = useTheme();
   const capsuleTheme = currentTheme.capsule;
@@ -160,6 +162,7 @@ function BaseCapsule({
   return (
     <CapsuleWrapper
       id={id}
+      $showError={showError}
       $theme={capsuleTheme}
       $disabled={disabled}
       aria-label="capsule"
@@ -246,8 +249,7 @@ function BaseCapsule({
 export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
 
 export interface CapsuleProps
-  extends
-    Omit<BaseCapsuleProps, "styles">,
+  extends Omit<BaseCapsuleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: CapsuleStyles;
 }
@@ -265,6 +267,7 @@ function Capsule({
   labelGap,
   labelWidth,
   className,
+  errorIconPosition,
   ...rest
 }: CapsuleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -286,6 +289,7 @@ function Capsule({
       helper={helper}
       disabled={disabled}
       required={rest.required}
+      errorIconPosition={errorIconPosition}
       styles={{
         bodyStyle: styles?.bodyStyle,
         controlStyle: styles?.controlStyle,
@@ -297,6 +301,7 @@ function Capsule({
         {...rest}
         id={inputId}
         disabled={disabled}
+        showError={showError}
         styles={{
           capsuleWrapperStyle: styles?.capsuleWrapperStyle,
           tabStyle: styles?.tabStyle,
@@ -311,6 +316,7 @@ const CapsuleWrapper = styled.div<{
   $containerStyle?: CSSProp;
   $disabled?: boolean;
   $theme?: CapsuleThemeConfig;
+  $showError?: boolean;
 }>`
   *,
   ::before,
@@ -326,8 +332,11 @@ const CapsuleWrapper = styled.div<{
 
   padding-left: 0.1rem;
   padding-right: 0.1rem;
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
+  border: 1px solid
+    ${({ $theme, $showError }) =>
+      $showError ? $theme?.errorBorderColor : $theme?.borderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
 
   ${({ $full, $theme }) =>
     $full

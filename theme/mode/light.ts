@@ -108,7 +108,7 @@ const lightButtonTipMenuContainer = createTipMenuContainerTheme(lightBody);
 
 const lightCalendar = createCalendarTheme(lightBody, lightFieldLane);
 
-const lightCapsule = createCapsuleTheme(lightBody);
+const lightCapsule = createCapsuleTheme(lightBody, lightFieldLane);
 
 const lightCapsuleTab = createCapsuleTabTheme(lightBody);
 

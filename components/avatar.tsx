@@ -2,14 +2,16 @@
 
 import { strToColor } from "./../lib/code-color";
 import { ChangeEvent, HTMLAttributes, useRef } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
+import { Tooltip } from "./tooltip";
+import { BaseAction } from "./../constants/action";
+import { Button } from "./button";
+import { RiAddLine } from "@remixicon/react";
 
-export interface AvatarProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "title" | "style" | "onChange"
-> {
+export interface AvatarProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style" | "onChange"> {
   firstName: string;
   lastName?: string;
   profileImageUrl?: string | null | undefined;
@@ -17,8 +19,18 @@ export interface AvatarProps extends Omit<
   onChange?: (e: ChangeEvent<HTMLInputElement>, file?: File) => void;
   frameSize?: number;
   fontSize?: number;
+  hoverCaption?: string;
+  hoverCaptionPosition?: AvatarHoverCaptionPosition;
   styles?: AvatarStyles;
 }
+
+export const AvatarHoverCaptionPosition = {
+  TopCenter: "top-center",
+  BottomCenter: "bottom-center",
+} as const;
+
+export type AvatarHoverCaptionPosition =
+  (typeof AvatarHoverCaptionPosition)[keyof typeof AvatarHoverCaptionPosition];
 
 export interface AvatarStyles {
   self?: CSSProp;
@@ -55,6 +67,8 @@ function Avatar({
   onClick,
   className,
   id,
+  hoverCaption,
+  hoverCaptionPosition = AvatarHoverCaptionPosition.TopCenter,
   ...props
 }: AvatarProps) {
   const { currentTheme } = useTheme();
@@ -83,7 +97,7 @@ function Avatar({
     }
   };
 
-  return (
+  const baseAvatar = (
     <AvatarContainer
       {...props}
       onClick={changeable ? handleClick : onClick}
@@ -109,7 +123,7 @@ function Avatar({
           src={profileImageUrl}
         />
       ) : (
-        <div>{initials}</div>
+        initials
       )}
       {changeable ? (
         <AvatarChange $overlayBg={avatarTheme.overlayBackgroundColor}>
@@ -127,6 +141,29 @@ function Avatar({
       ) : null}
     </AvatarContainer>
   );
+
+  if (hoverCaption) {
+    return (
+      <Tooltip
+        styles={{
+          triggerStyle: css`
+            flex-shrink: 1;
+            border-radius: 9999px;
+            overflow: hidden;
+          `,
+          containerStyle: css`
+            border-radius: 9999px;
+          `,
+        }}
+        dialogPlacement={hoverCaptionPosition}
+        dialog={hoverCaption}
+      >
+        {baseAvatar}
+      </Tooltip>
+    );
+  }
+
+  return baseAvatar;
 }
 
 const AvatarContainer = styled.div<{
@@ -210,5 +247,158 @@ export function getInitials(
     ? `${firstInitial}${lastInitial}`
     : `${firstOptionInitial}`;
 }
+
+export interface AvatarStackProps {
+  avatars?: AvatarStackAvatar[];
+  styles?: AvatarStackStyles;
+  actions?: AvatarStackAction[];
+  frameSize?: number;
+  fontSize?: number;
+  className?: string;
+  id?: string;
+}
+
+export type AvatarStackAvatar = AvatarProps;
+
+export interface AvatarStackStyles {
+  containerStyle?: CSSProp;
+  actionButtonStyle?: CSSProp;
+  avatarStyle?: CSSProp;
+}
+
+export interface AvatarStackAction extends Omit<BaseAction, "caption"> {
+  styles?: AvatarStackActionStyles;
+  hoverCaption?: string;
+  hoverCaptionPosition?: AvatarHoverCaptionPosition;
+  pressed?: boolean;
+}
+
+export interface AvatarStackActionStyles {
+  self: CSSProp;
+}
+
+function AvatarStack({
+  avatars = [],
+  styles,
+  actions = [],
+  fontSize = 18,
+  frameSize = 50,
+  className,
+  id,
+}: AvatarStackProps) {
+  const { currentTheme } = useTheme();
+  const bodyTheme = currentTheme?.body;
+
+  const avatarLength = avatars?.length;
+
+  return (
+    <ContainerAvatarStack
+      id={id}
+      className={applyClassName("avatar-stack", className)}
+      aria-label="avatar-stack"
+      $style={styles?.containerStyle}
+    >
+      {avatars.map((avatar, index) => {
+        const avatarProps = {
+          ...avatar,
+          styles: {
+            ...avatar.styles,
+            self: css`
+              border: 2px solid ${bodyTheme?.backgroundColor};
+              z-index: ${index};
+              ${styles?.avatarStyle}
+              ${avatar?.styles?.self}
+            `,
+          },
+          frameSize: avatar?.frameSize ?? frameSize,
+          fontSize: avatar?.fontSize ?? fontSize,
+        };
+
+        return <Avatar key={index} {...avatarProps} />;
+      })}
+
+      {actions
+        ?.filter((action) => !action?.hidden)
+        .map((action, index) => {
+          const key = avatarLength + index;
+          const { hoverCaption, hoverCaptionPosition, ...restAction } = action;
+
+          const finalAction = {
+            ...restAction,
+            styles: {
+              ...restAction?.styles,
+              containerStyle: css`
+                border-radius: 9999px;
+              `,
+              self: css`
+                z-index: ${key};
+
+                padding: 0px;
+                border: 2px solid ${bodyTheme?.backgroundColor};
+                height: ${`${frameSize}px`};
+                width: ${`${frameSize}px`};
+                border-radius: 9999px;
+
+                ${styles?.actionButtonStyle}
+                ${restAction?.styles?.self}
+              `,
+            },
+            icon: {
+              ...restAction?.icon,
+              image: restAction?.icon?.image ?? RiAddLine,
+              size: restAction?.icon?.size ?? fontSize * 1.4,
+            },
+          };
+
+          const baseAction = (
+            <Button
+              key={key}
+              aria-label="avatar-stack-action"
+              {...finalAction}
+            />
+          );
+
+          if (hoverCaption) {
+            return (
+              <Tooltip
+                key={index}
+                styles={{
+                  triggerStyle: css`
+                    flex-shrink: 1;
+                    border-radius: 9999px;
+                    overflow: hidden;
+                  `,
+                  containerStyle: css`
+                    border-radius: 9999px;
+                  `,
+                }}
+                dialogPlacement={hoverCaptionPosition ?? "top-center"}
+                dialog={hoverCaption}
+              >
+                {baseAction}
+              </Tooltip>
+            );
+          }
+
+          return baseAction;
+        })}
+    </ContainerAvatarStack>
+  );
+}
+
+const ContainerAvatarStack = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > *:not(:first-child) {
+    margin-left: -6px;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+Avatar.Stack = AvatarStack;
 
 export { Avatar };

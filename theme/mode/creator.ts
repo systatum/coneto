@@ -379,10 +379,12 @@ export function createCalendarTheme(
 // capsule.tsx
 export function createCapsuleTheme(
   body: BodyThemeConfig,
+  fieldLane: FieldLaneThemeConfig,
   ...themeConfigurations: Array<Partial<CapsuleThemeConfig>>
 ): CapsuleThemeConfig {
   const defaultTheme: CapsuleThemeConfig = {
     backgroundColor: body.backgroundColor,
+    errorBorderColor: fieldLane?.errorBorderColor,
     borderColor: "#ebebeb",
     boxShadow: "0 1px 1px -2px #5b5b5b, 0 1px 1px rgba(0, 0, 0, 0.05)",
     textColor: body.textColor,

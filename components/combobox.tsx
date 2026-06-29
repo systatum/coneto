@@ -56,10 +56,7 @@ interface BaseComboboxProps {
   navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
-  mobile?: boolean | ComboboxMobile;
-}
-
-export interface ComboboxMobile {
+  mobile?: boolean;
   drawerHeight?: string;
 }
 
@@ -160,6 +157,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       labels,
       className,
       mobile,
+      drawerHeight,
     },
     ref
   ) => {
@@ -356,6 +354,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               actions={actions}
               onClick={onClick}
               options={filteredForDrawer}
+              drawerHeight={drawerHeight}
               maxSelectableItems={maxSelectableItems}
               multiple={multiple}
               openedCategoryGroup={openedCategoryGroup}
@@ -390,7 +389,6 @@ function ComboboxDrawer({
   inputRef,
   handleKeyDown,
   maxSelectableItems,
-  name,
   interactionMode,
   setInteractionMode,
   setConfirmedValue,
@@ -399,6 +397,7 @@ function ComboboxDrawer({
   styles,
   navigableOptions,
   mobile,
+  drawerHeight,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -842,6 +841,7 @@ function ComboboxDrawer({
       $hasNestedOptions={hasNestedOptions}
       style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
+      $drawerHeight={drawerHeight}
       id="combo-list"
       aria-label="combobox-drawer"
       role="listbox"
@@ -1117,7 +1117,7 @@ function ComboboxDrawer({
 
 const DrawerContainer = styled.div<{
   $theme?: ComboboxThemeConfig;
-  $mobile?: boolean | ComboboxMobile;
+  $mobile?: boolean;
 }>`
   *,
   ::before,
@@ -1140,9 +1140,10 @@ const DrawerWrapper = styled.ul<{
   $width?: number;
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
-  $mobile?: boolean | ComboboxMobile;
+  $mobile?: boolean;
   $multiple?: boolean;
   $hasNestedOptions?: boolean;
+  $drawerHeight?: string;
 }>`
   *,
   ::before,
@@ -1181,34 +1182,34 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $multiple, $hasNestedOptions }) =>
-    $mobile &&
-    css`
-      width: 100%;
-      z-index: 9992999;
-      border-radius: 14px;
-      min-height: ${typeof $mobile === "object"
-        ? $mobile?.drawerHeight
-        : "220px"};
-      max-height: ${typeof $mobile === "object"
-        ? $mobile?.drawerHeight
-        : "220px"};
-      border-width: 0.5;
-      ${!$multiple &&
-      css`
-        padding: calc(
-            ${typeof $mobile === "object" ? $mobile.drawerHeight : "220px"} *
-              0.4545
-          )
-          0;
-      `}
+  ${({ $mobile, $theme, $multiple, $hasNestedOptions, $drawerHeight }) => {
+    const $mobileHeight = $drawerHeight ?? "220px";
 
-      background-color: ${$mobile && $hasNestedOptions
-        ? $theme.mobileGroupBackgroundColor
-        : $mobile
-          ? $theme.mobileBackgroundColor
-          : $theme.backgroundColor};
-    `}
+    return css`
+      min-height: ${$drawerHeight};
+      max-height: ${$drawerHeight};
+
+      ${$mobile &&
+      css`
+        width: 100%;
+        z-index: 9992999;
+        border-radius: 14px;
+        min-height: ${$mobileHeight};
+        max-height: ${$mobileHeight};
+        border-width: 0.5;
+        ${!$multiple &&
+        css`
+          padding: calc(${$mobileHeight} * 0.4545) 0;
+        `}
+
+        background-color: ${$mobile && $hasNestedOptions
+          ? $theme.mobileGroupBackgroundColor
+          : $mobile
+            ? $theme.mobileBackgroundColor
+            : $theme.backgroundColor};
+      `}
+    `;
+  }}
 
   ${({ $style }) => $style}
 `;

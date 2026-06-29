@@ -272,7 +272,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
 });
 
-const darkCapsule = createCapsuleTheme(darkBody, {
+const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {
   borderColor: "#303030",
   boxShadow: "0 1px 2px rgba(0,0,0,0.4)",
 
