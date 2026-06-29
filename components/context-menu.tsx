@@ -92,8 +92,9 @@ export default function ContextMenu({
         ? buttonTheme?.[variant]?.hoverBackgroundColor
         : hoverBackgroundColor;
 
-      const resolvedButtonProps = {
+      const resolvedButtonProps: ButtonProps = {
         ...buttonProps,
+        ...action,
         activeBackgroundColor: resolvedActiveBackgroundColor,
         styles: {
           self: css`
