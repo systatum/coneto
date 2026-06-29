@@ -12,7 +12,6 @@ import React, {
 } from "react";
 import { Checkbox } from "./checkbox";
 import { LoadingSpinner } from "./loading-spinner";
-import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
@@ -33,20 +32,26 @@ import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
 import { Scrollbar, ScrollbarRef } from "./scrollbar";
+import { Button, ButtonProps } from "./button";
 
 export interface TableColumn {
   caption: string;
-  sortable?: boolean;
   styles?: TableColumnStyle;
   width?: string;
   id: string;
+  actions?: ((id?: string) => TableColumnAction) | TableColumnAction;
 }
+
+export interface TableColumnAction
+  extends Omit<ActionButtonProps, "showSubMenuOn" | "caption" | "onClick"> {
+  title?: string;
+}
+
+export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableColumnStyle {
   labelStyle?: CSSProp;
   containerStyle?: CSSProp;
-  toggleSortableStyle?: CSSProp;
-  dropdownSortableStyle?: CSSProp;
 }
 
 export const TableActionType = {
@@ -79,7 +84,6 @@ export interface TableProps {
   onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => TableSubMenuList[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -97,8 +101,6 @@ export interface TableProps {
 }
 
 type TableSearchbox = SearchboxProps;
-
-export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableStyles {
   containerStyle?: CSSProp;
@@ -178,7 +180,6 @@ function Table({
   selectedItems = [],
   children,
   isLoading,
-  subMenuList,
   emptySlate,
   actions,
   onLastRowReached,
@@ -565,6 +566,23 @@ function Table({
                     const isLast =
                       rowActions?.length > 0 && columns.length - 1 === i;
 
+                    const columnAction =
+                      typeof col.actions === "function"
+                        ? col.actions(col.id)
+                        : col.actions;
+
+                    const finalColumnAction: ButtonProps = columnAction
+                      ? {
+                          ...columnAction,
+                          icon: {
+                            ...columnAction?.icon,
+                            image:
+                              columnAction?.icon?.image ?? RiArrowUpDownLine,
+                          },
+                          showSubMenuOn: "self",
+                        }
+                      : {};
+
                     return (
                       <TableRowCell
                         key={i}
@@ -599,37 +617,8 @@ function Table({
                         >
                           {col.caption}
                         </Label>
-                        {col.sortable && (
-                          <Toolbar
-                            styles={{
-                              self: css`
-                                width: fit-content;
-                                z-index: 50;
-
-                                ${isLast &&
-                                css`
-                                  padding-right: 14px;
-                                `}
-                              `,
-                            }}
-                          >
-                            <Toolbar.Menu
-                              closedIcon={RiArrowUpDownLine}
-                              openedIcon={RiArrowUpDownLine}
-                              styles={{
-                                triggerStyle: col?.styles?.toggleSortableStyle,
-                                dropdownStyle: css`
-                                  min-width: 235px;
-
-                                  ${col?.styles?.dropdownSortableStyle}
-                                `,
-                              }}
-                              subMenuList={
-                                subMenuList ? subMenuList(col.id) : undefined
-                              }
-                              variant="ghost"
-                            />
-                          </Toolbar>
+                        {finalColumnAction && (
+                          <ActionButton {...finalColumnAction} />
                         )}
                       </TableRowCell>
                     );
