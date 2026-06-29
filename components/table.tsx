@@ -43,9 +43,18 @@ export interface TableColumn {
 }
 
 export interface TableColumnAction
-  extends Omit<ActionButtonProps, "showSubMenuOn" | "caption" | "onClick"> {
+  extends Omit<
+    ActionButtonProps,
+    "showSubMenuOn" | "caption" | "onClick" | "variant"
+  > {
   title?: string;
+  variant?: TableColumnVariant;
 }
+
+export type TableColumnVariant = Exclude<
+  ButtonProps["variant"],
+  `outline-${string}`
+>;
 
 export type TableSubMenuList = TipMenuItemProps;
 
@@ -571,17 +580,27 @@ function Table({
                         ? col.actions(col.id)
                         : col.actions;
 
-                    const finalColumnAction: ButtonProps = columnAction
-                      ? {
-                          ...columnAction,
-                          icon: {
-                            ...columnAction?.icon,
-                            image:
-                              columnAction?.icon?.image ?? RiArrowUpDownLine,
-                          },
-                          showSubMenuOn: "self",
-                        }
-                      : {};
+                    const finalColumnAction: ButtonProps = columnAction && {
+                      ...columnAction,
+                      icon: {
+                        ...columnAction?.icon,
+                        image: columnAction?.icon?.image ?? RiArrowUpDownLine,
+                        size: columnAction?.icon?.size ?? 20,
+                      },
+                      showSubMenuOn: "self",
+                      tipMenuSize: columnAction?.tipMenuSize ?? "md",
+                      styles: {
+                        ...columnAction?.styles,
+                        self: css`
+                          padding: 0px;
+                          height: 40px;
+                          width: 40px;
+                          border-radius: 6px;
+                          ${columnAction?.styles?.self};
+                        `,
+                      },
+                      variant: columnAction?.variant ?? "ghost",
+                    };
 
                     return (
                       <TableRowCell
@@ -617,9 +636,7 @@ function Table({
                         >
                           {col.caption}
                         </Label>
-                        {finalColumnAction && (
-                          <ActionButton {...finalColumnAction} />
-                        )}
+                        {finalColumnAction && <Button {...finalColumnAction} />}
                       </TableRowCell>
                     );
                   })}
