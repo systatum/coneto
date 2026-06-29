@@ -1887,7 +1887,6 @@ export const AllCase: Story = {
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
         helper: "This field allows you to select a time",
       },
       {
@@ -2246,7 +2245,6 @@ export const AllCaseDisabled: Story = {
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
         helper: "This field allows you to select a time",
       },
       {
