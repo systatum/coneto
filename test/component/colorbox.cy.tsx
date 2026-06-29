@@ -7,6 +7,7 @@ import {
   RiUser2Line,
 } from "@remixicon/react";
 import { useState } from "react";
+import { css } from "styled-components";
 
 describe("Colorbox", () => {
   function ProductColorbox(
@@ -26,6 +27,100 @@ describe("Colorbox", () => {
       />
     );
   }
+
+  context("styles", () => {
+    context("self", () => {
+      context("when given border-radius 12px", () => {
+        it("should render with border-radius 12px", () => {
+          cy.mount(
+            <ProductColorbox
+              withOnChange
+              styles={{
+                self: css`
+                  border-radius: 12px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("colorbox").should(
+            "have.css",
+            "border-radius",
+            "12px"
+          );
+        });
+      });
+    });
+
+    context("textInputGroupStyle", () => {
+      context("when given padding 30px", () => {
+        it("should render with padding 30px", () => {
+          cy.mount(
+            <ProductColorbox
+              withOnChange
+              styles={{
+                textInputGroupStyle: css`
+                  padding: 30px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("colorbox-input-group")
+            .should("have.css", "padding-top", "30px")
+            .and("have.css", "padding-right", "30px")
+            .and("have.css", "padding-bottom", "30px")
+            .and("have.css", "padding-left", "30px");
+        });
+      });
+    });
+
+    context("boxStyle", () => {
+      context("when given background red", () => {
+        it("should render box with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <ProductColorbox
+              withOnChange
+              styles={{
+                boxStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("colorbox-box").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
+    context("textInputStyle", () => {
+      context("when given font-size 20px", () => {
+        it("should render with font-size 20px", () => {
+          cy.mount(
+            <ProductColorbox
+              withOnChange
+              styles={{
+                textInputStyle: css`
+                  font-size: 20px;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("colorbox-input").should(
+            "have.css",
+            "font-size",
+            "20px"
+          );
+        });
+      });
+    });
+  });
 
   context("onChange", () => {
     context("when given", () => {

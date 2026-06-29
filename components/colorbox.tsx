@@ -30,7 +30,9 @@ interface BaseColorboxProps
 }
 
 export interface BaseColorboxStyles {
+  textInputGroupStyle?: CSSProp;
   textInputStyle?: CSSProp;
+  boxStyle?: CSSProp;
   self?: CSSProp;
 }
 
@@ -83,6 +85,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         $theme={colorboxTheme}
         $disabled={disabled}
         $style={styles?.self}
+        aria-label="colorbox"
         $hovered={hovered}
         $showError={!!showError}
         onBlur={() => {
@@ -90,6 +93,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         }}
       >
         <ColorBox
+          $style={styles?.boxStyle}
           $theme={colorboxTheme}
           $disabled={disabled}
           onClick={() => {
@@ -99,6 +103,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           }}
           tabIndex={0}
           $bgColor={value}
+          aria-label={"colorbox-box"}
           $showError={!!showError}
         />
 
@@ -116,18 +121,21 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           $hovered={hovered}
           $theme={colorboxTheme}
           $showError={!!showError}
-          $style={styles?.textInputStyle}
+          aria-label="colorbox-input-group"
+          $style={styles?.textInputGroupStyle}
         >
           <Prefix $theme={colorboxTheme} $showError={!!showError}>
             #
           </Prefix>
           <TextInput
             {...props}
+            aria-label="colorbox-input"
             $theme={colorboxTheme}
             $disabled={disabled}
             type="text"
             ref={ref}
             disabled={disabled}
+            $style={styles?.textInputStyle}
             value={value?.replace(/^#/, "")}
             onChange={(e) => {
               const cleanValue = e.target.value.replace(/#/g, "");
@@ -191,6 +199,14 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       id: props.id,
     });
 
+    const {
+      self,
+      textInputGroupStyle,
+      textInputStyle,
+      boxStyle,
+      ...fieldLaneInput
+    } = styles ?? {};
+
     return (
       <FieldLane
         id={inputId}
@@ -207,10 +223,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
         disabled={disabled}
         required={rest.required}
         className={applyClassName("colorbox", className)}
-        styles={{
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
-        }}
+        styles={fieldLaneInput}
       >
         <BaseColorbox
           {...rest}
@@ -218,13 +231,16 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           showError={showError}
           disabled={disabled}
           styles={{
+            textInputGroupStyle,
+            textInputStyle,
+            boxStyle,
             self: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${self}
             `,
           }}
           ref={ref}
@@ -276,6 +292,7 @@ const ColorBox = styled.div<{
   $showError?: boolean;
   $disabled?: boolean;
   $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   min-width: 24px;
   min-height: 24px;
@@ -298,6 +315,8 @@ const ColorBox = styled.div<{
       user-select: none;
       cursor: not-allowed;
     `};
+
+  ${({ $style }) => $style}
 `;
 
 const HiddenColorInput = styled.input`
@@ -337,7 +356,7 @@ const TextInputGroup = styled.span<{
 
   width: 100%;
 
-  ${({ $style }) => $style};
+  ${({ $style }) => $style}
 `;
 
 const Prefix = styled.span<{
@@ -352,6 +371,7 @@ const TextInput = styled.input<{
   $showError: boolean;
   $disabled?: boolean;
   $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   flex: 1;
   width: 100%;
@@ -374,6 +394,8 @@ const TextInput = styled.input<{
       : $showError
         ? $theme.errorTextColor
         : $theme.textColor};
+
+  ${({ $style }) => $style}
 `;
 
 export { Colorbox };

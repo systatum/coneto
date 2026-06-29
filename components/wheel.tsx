@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, Fragment } from "react";
+import { useState, useRef, useCallback, Fragment, useEffect } from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme, WheelThemeConfig } from "./../theme";
 
@@ -18,7 +18,7 @@ export type WheelValues = Record<string, string>;
 export interface WheelProps {
   parts?: WheelPart[];
   values?: WheelValues;
-  onChange?: (values: WheelValues) => void;
+  onChange?: (values: WheelValues, changedId?: string) => void;
   styles?: WheelStyles;
 }
 
@@ -44,7 +44,7 @@ function Wheel({ parts = [], values = {}, onChange, styles }: WheelProps) {
   } = styles ?? {};
 
   const handleChange = (partId: string, newValue: string) => {
-    onChange({ ...values, [partId]: newValue });
+    onChange({ ...values, [partId]: newValue }, partId);
   };
 
   return (
@@ -322,6 +322,8 @@ function WheelColumn({
       lastTime.current === null
     )
       return;
+    e.preventDefault();
+
     const y = e.clientY;
     const now = performance.now();
     const dt = now - lastTime.current;
@@ -334,6 +336,7 @@ function WheelColumn({
   const onPointerUp = useCallback(
     (_e: React.PointerEvent<HTMLDivElement>) => {
       if (startY.current === null) return;
+      _e.preventDefault();
       setDragging(false);
       startY.current = null;
 
@@ -362,27 +365,30 @@ function WheelColumn({
 
   const wheelAccumulator = useRef(0);
 
-  const onWheel = useCallback(
-    (e: React.WheelEvent<HTMLDivElement>) => {
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+
       wheelAccumulator.current += e.deltaY;
 
       const threshold = 40;
-
       if (Math.abs(wheelAccumulator.current) >= threshold) {
         const direction = wheelAccumulator.current > 0 ? 1 : -1;
-
         const next = Math.max(
           0,
           Math.min(values.length - 1, selectedIndex + direction)
         );
-
         onChange(values[next].value);
-
         wheelAccumulator.current = 0;
       }
-    },
-    [selectedIndex, values, onChange]
-  );
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, [selectedIndex, values]);
 
   const padCount = Math.floor(VISIBLE_ITEMS / 2);
   const paddedValues: (WheelValue | null)[] = [
@@ -394,8 +400,8 @@ function WheelColumn({
   return (
     <ColumnWrapper
       ref={containerRef}
+      tabIndex={-1}
       $width={width}
-      onWheel={onWheel}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
