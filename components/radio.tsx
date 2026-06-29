@@ -231,11 +231,10 @@ const Label = styled.label<{
       return (
         $theme?.highlightCheckedBackgroundColor ||
         $theme?.checkedBackgroundColor ||
-        $theme?.backgroundColor ||
         "transparent"
       );
 
-    return $theme?.backgroundColor || "transparent";
+    return "transparent";
   }};
 
   ${({ $highlight, $checked, $isRadio, $theme }) =>
@@ -272,9 +271,9 @@ const Label = styled.label<{
           if ($highlight && $checked) {
             return $theme?.highlightCheckedBackgroundColor;
           } else if ($highlight) {
-            return $theme?.highlightBackgroundColor || $theme?.backgroundColor;
+            return $theme?.highlightBackgroundColor;
           }
-          return $theme?.backgroundColor;
+          return "transparent";
         })()};
       }
     `};
@@ -326,7 +325,8 @@ const Circle = styled.div<{
   height: 16px;
   border-radius: 9999px;
   border: 1px solid ${({ $theme }) => $theme?.borderColor || "#4b5563"};
-  background-color: ${({ $theme }) => $theme?.backgroundColor || "transparent"};
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  overflow: hidden;
 
   ${({ $error }) =>
     $error &&
