@@ -388,6 +388,7 @@ function ComboboxDrawer({
   setSelectedOptionsLocal,
   selectedOptionsLocal,
   selectedOptions,
+  isOpen,
   setIsOpen,
   actions,
   onClick,
@@ -460,6 +461,12 @@ function ComboboxDrawer({
 
     onChange(castValue(values[0], selectedOptions));
   };
+
+  useEffect(() => {
+    if (isOpen && selectedIndex) {
+      setHighlightedIndex(selectedIndex);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (
@@ -714,6 +721,19 @@ function ComboboxDrawer({
 
     return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent);
   };
+
+  const content = useMemo(
+    () => generateContent(),
+    [
+      options,
+      finalSelectedOptions,
+      highlightedIndex,
+      highlightOnMatch,
+      flatIndexMap,
+      multiple,
+      mobile,
+    ]
+  );
 
   const onMouseDown = (props: {
     event: React.MouseEvent;
@@ -1089,7 +1109,7 @@ function ComboboxDrawer({
               `,
             }}
             showHierarchyLine
-            content={generateContent()}
+            content={content}
           />
         </>
       )}
