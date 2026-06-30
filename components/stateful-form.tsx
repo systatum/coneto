@@ -834,6 +834,7 @@ function FormFields<T extends FieldValues>({
                     return (
                       <Button
                         key={index}
+                        mobile={mobile}
                         {...field.button}
                         className={field?.className}
                         id={field.id}
@@ -866,6 +867,11 @@ function FormFields<T extends FieldValues>({
                               justify-content: end;
                               align-items: end;
                             `};
+
+                            ${mobile &&
+                            css`
+                              width: 100%;
+                            `}
 
                             ${field.button?.styles?.containerStyle};
                           `,
