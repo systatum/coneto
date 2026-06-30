@@ -1491,6 +1491,7 @@ function FormFields<T extends FieldValues>({
                               `,
                               textInputGroupStyle: css`
                                 ${mobileInputStyle};
+
                                 ${field.colorbox?.styles?.textInputGroupStyle};
                               `,
                               textInputStyle: css`
@@ -1514,12 +1515,17 @@ function FormFields<T extends FieldValues>({
                                     color: ${statefulFormTheme.textColor};
                                     -webkit-text-fill-color: ${statefulFormTheme.textColor};
                                   }
+                                  margin-bottom: 3px;
                                 `};
 
                                 ${field.colorbox?.styles?.textInputStyle}
                               `,
                               self: css`
                                 ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  flex-direction: row-reverse;
+                                `}
 
                                 ${field.colorbox?.styles?.self}
                               `,
