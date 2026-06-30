@@ -161,9 +161,10 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       left: 50%;
       transform: translateX(-50%);
       padding: 20px;
-      border-radius: 20px;
+      border-radius: 14px;
       border: 1px solid ${calendarTheme?.mobileBackgroundColor};
       background-color: ${calendarTheme?.mobileBackgroundColor};
+      box-shadow: ${calendarTheme?.boxShadow};
     `;
 
   const calendarStyle: CalendarStyles = {
