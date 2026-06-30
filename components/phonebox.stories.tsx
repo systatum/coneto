@@ -25,6 +25,7 @@ const meta: Meta = {
 
 ### ✨ Features
 - 🌐 **Country code selector**: Choose your country code with flags and search.
+- 📱 **Mobile-friendly**: Optimized for touch interactions and mobile keyboards.
 - 🔢 **Phone input formatting**: Formats the number automatically based on selected country.
 - 👆 **Keyboard & mouse navigation**: Supports arrow keys, Enter, and Escape in dropdown.
 - ⚠️ **Error handling**: Visual feedback and optional error messages.
@@ -54,7 +55,7 @@ export default meta;
 
 type Story = StoryObj<typeof Phonebox>;
 
-export const DefaultPhonebox: Story = {
+export const Default: Story = {
   args: {
     label: "Phone Number",
     placeholder: "Enter your phone number",
@@ -84,6 +85,43 @@ export const DefaultPhonebox: Story = {
         {...args}
         value={value.phone}
         countryCodeValue={value.country_code}
+        onChange={handleChange}
+      />
+    );
+  },
+};
+
+export const Mobile: Story = {
+  args: {
+    label: "Phone Number",
+    placeholder: "Enter your phone number",
+  },
+  render: (args) => {
+    interface ValueProps {
+      phone?: string;
+      country_code?: PhoneboxCountryCode;
+    }
+
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+
+    const [value, setValue] = useState<ValueProps>({
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    });
+
+    const handleChange = (e: StatefulOnChangeType) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    return (
+      <Phonebox
+        {...args}
+        value={value.phone}
+        countryCodeValue={value.country_code}
+        mobile
         onChange={handleChange}
       />
     );
