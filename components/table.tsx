@@ -39,7 +39,7 @@ export interface TableColumn {
   styles?: TableColumnStyle;
   width?: string;
   id: string;
-  actions?: ((id?: string) => TableColumnAction) | TableColumnAction;
+  actions?: (id?: string) => TableColumnAction;
 }
 
 export interface TableColumnAction
@@ -572,13 +572,8 @@ function Table({
                     </CheckboxWrapper>
                   )}
                   {columns.map((col, i) => {
-                    const isLast =
-                      rowActions?.length > 0 && columns.length - 1 === i;
-
                     const columnAction =
-                      typeof col.actions === "function"
-                        ? col.actions(col.id)
-                        : col.actions;
+                      typeof col.actions === "function" && col.actions(col.id);
 
                     const finalColumnAction: ButtonProps = columnAction &&
                       !columnAction.hidden && {
@@ -1043,6 +1038,7 @@ const TableHeader = styled.div<{
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
   background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
+  min-height: 64px;
 
   ${({ $loose }) =>
     $loose &&
