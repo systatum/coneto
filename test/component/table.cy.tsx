@@ -311,6 +311,7 @@ describe("Table", () => {
         withSummary: false,
         withSorter: false,
       });
+
       const [status, setStatus] = useState<"desc" | "asc" | "original">(
         "original"
       );
@@ -435,10 +436,7 @@ describe("Table", () => {
               image: RiArrowUpDownLine,
             },
             onClick: () => {
-              handleSortingRequested({
-                mode: "original",
-                column: columnId,
-              });
+              handleSortingRequested({ mode: "original", column: columnId });
             },
           },
         ];
@@ -452,63 +450,67 @@ describe("Table", () => {
             : RiArrowUpDownLine;
 
       const columnActions = (
-        id?: keyof (typeof initialRows)[number]
-      ): TableColumnAction => ({
-        subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
-        title: "Sorter Action",
-        icon: {
-          image: imageStatus,
-        },
-      });
+        id: keyof (typeof initialRows)[number]
+      ): TableColumnAction | null => {
+        if (!activeTab.withSorter) {
+          return null;
+        }
 
-      const columnProtocol = (): TableColumnAction => ({
-        subMenu: ({ show }) =>
-          show(
-            TYPES_DATA.map((protocol, index) => (
-              <ProtocolItem $theme={tableTheme} key={index}>
-                <ProtocolName $theme={tableTheme}>{protocol.name}</ProtocolName>
-                <ProtocolDescription $theme={tableTheme}>
-                  {protocol.description}
-                </ProtocolDescription>
-              </ProtocolItem>
-            )),
-            {
-              drawerStyle: css`
-                padding: 6px;
-                gap: 6px;
-                display: flex;
-                flex-direction: column;
-              `,
-            }
-          ),
-        title: "Info Action",
-        icon: {
-          image: RiInformationLine,
-        },
-      });
+        if (id === "type") {
+          return {
+            title: "Info Action",
+            icon: {
+              image: RiInformationLine,
+            },
+            subMenu: ({ show }) =>
+              show(
+                TYPES_DATA.map((protocol, index) => (
+                  <ProtocolItem $theme={tableTheme} key={index}>
+                    <ProtocolName $theme={tableTheme}>
+                      {protocol.name}
+                    </ProtocolName>
+                    <ProtocolDescription $theme={tableTheme}>
+                      {protocol.description}
+                    </ProtocolDescription>
+                  </ProtocolItem>
+                )),
+                {
+                  drawerStyle: css`
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    padding: 6px;
+                  `,
+                }
+              ),
+          };
+        }
 
-      const withSorter = activeTab.withSorter ? columnActions : null;
+        return {
+          title: "Sorter Action",
+          icon: {
+            image: imageStatus,
+          },
+          subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+        };
+      };
 
       const columns: TableColumn[] = [
-        { id: "name", caption: "Name", actions: withSorter },
-        {
-          id: "type",
-          caption: "Protocol",
-          actions: activeTab?.withSorter ? columnProtocol : null,
-        },
-        { id: "region", caption: "Region", actions: withSorter },
-        { id: "status", caption: "Status", actions: withSorter },
-        { id: "version", caption: "Version", actions: withSorter },
-        { id: "uptime", caption: "Uptime", actions: withSorter },
-        { id: "requests", caption: "Requests/s", actions: withSorter },
-        { id: "latency", caption: "Latency (ms)", actions: withSorter },
-        { id: "errorRate", caption: "Error Rate", actions: withSorter },
-        { id: "cpu", caption: "CPU %", actions: withSorter },
-        { id: "memory", caption: "Memory %", actions: withSorter },
-        { id: "connections", caption: "Connections", actions: withSorter },
-        { id: "bandwidth", caption: "Bandwidth", actions: withSorter },
-        { id: "zone", caption: "Zone", actions: withSorter },
-        { id: "provider", caption: "Provider", actions: withSorter },
+        { id: "name", caption: "Name", actions: columnActions },
+        { id: "type", caption: "Protocol", actions: columnActions },
+        { id: "region", caption: "Region" },
+        { id: "status", caption: "Status" },
+        { id: "version", caption: "Version" },
+        { id: "uptime", caption: "Uptime" },
+        { id: "requests", caption: "Requests/s" },
+        { id: "latency", caption: "Latency (ms)" },
+        { id: "errorRate", caption: "Error Rate" },
+        { id: "cpu", caption: "CPU %" },
+        { id: "memory", caption: "Memory %" },
+        { id: "connections", caption: "Connections" },
+        { id: "bandwidth", caption: "Bandwidth" },
+        { id: "zone", caption: "Zone" },
+        { id: "provider", caption: "Provider" },
       ];
 
       const totals = useMemo(
@@ -590,6 +592,7 @@ describe("Table", () => {
         </Table>
       );
     }
+
     context("when given false", () => {
       it("should render the body element with overflow x hidden", () => {
         cy.mount(<ProductTableLoose loose={false} />);
@@ -609,6 +612,40 @@ describe("Table", () => {
           .parent()
           .should("have.css", "overflow-x", "scroll")
           .and("have.css", "overflow-y", "scroll");
+      });
+
+      context("height in table header", () => {
+        it("renders height with 65px", () => {
+          cy.mount(<ProductTableLoose loose />);
+          cy.findByLabelText("table-header").should(
+            "have.css",
+            "height",
+            "65px"
+          );
+        });
+
+        context("when given actions in table column", () => {
+          it("should consistently with height 65px", () => {
+            cy.mount(<ProductTableLoose loose />);
+            cy.findByLabelText("table-header").should(
+              "have.css",
+              "height",
+              "65px"
+            );
+            cy.findAllByLabelText("column-action").should("not.exist");
+
+            cy.findAllByRole("button").eq(3).click();
+
+            cy.findByLabelText("table-header").should(
+              "have.css",
+              "height",
+              "65px"
+            );
+            cy.findAllByLabelText("table-column-action")
+              .should("exist")
+              .and("have.length", 2);
+          });
+        });
       });
 
       context("loose effect", () => {
