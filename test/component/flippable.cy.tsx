@@ -178,12 +178,10 @@ describe("Flippable", () => {
         {
           id: "name",
           caption: "Name",
-          sortable: false,
         },
         {
           id: "role",
           caption: "Role",
-          sortable: false,
         },
       ];
 

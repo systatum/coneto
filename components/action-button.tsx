@@ -8,6 +8,7 @@ import {
 import { ReactNode } from "react";
 import { useTheme } from "./../theme/provider";
 import { BaseAction } from "../constants/action";
+import { TipMenuSize } from "./tip-menu";
 
 export type ActionButtonSubMenu = ButtonSubMenu;
 export type ActionButtonShowSubMenuPosition = ButtonShowSubMenuPosition;
@@ -19,6 +20,7 @@ export interface ActionButtonProps extends BaseAction {
   variant?: ButtonVariants["variant"];
   className?: string;
   pressed?: boolean;
+  tipMenuSize?: TipMenuSize;
 }
 
 export interface ActionButtonStyles {
@@ -42,6 +44,7 @@ export function ActionButton({
   pressed,
   hidden,
   id,
+  tipMenuSize = "sm",
 }: ActionButtonProps & { forTable?: boolean }) {
   const { currentTheme } = useTheme();
   const actionButtonTheme = currentTheme.actionButton;
@@ -63,7 +66,7 @@ export function ActionButton({
       disabled={disabled}
       showSubMenuOn={showSubMenuOn}
       size="sm"
-      tipMenuSize="sm"
+      tipMenuSize={tipMenuSize}
       variant={variant}
       className={className}
       pressed={pressed}

@@ -557,12 +557,10 @@ export const WithSubItems: Story = {
       {
         id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 

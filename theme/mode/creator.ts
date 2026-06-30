@@ -1613,11 +1613,15 @@ export function createTableTheme(
       textColor: body.textColor || "#111827",
       backgroundColor: body?.backgroundColor,
       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+
       headerActionBackgroundColor:
         "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
       headerActionBorderColor: "rgb(229, 231, 235)",
+      headerActionHoverBackgroundColor: "rgb(227, 227, 227)",
+
       headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
       headerBorderColor: "rgb(229, 231, 235)",
+
       rowGroupBackgroundColor: "rgb(249, 250, 251)",
       rowGroupSubtitleTextColor: "#1f2937",
       rowBackgroundColor: "rgb(249, 250, 251)",
@@ -1627,10 +1631,13 @@ export function createTableTheme(
       rowContentBackgroundColor:
         "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
       rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
+
       summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
       summaryBorderColor: "#d1d5db",
+
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
       scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
+
       toggleRowBackgroundColor: "#d4d4d4",
 
       leftLooseEffectColor:
