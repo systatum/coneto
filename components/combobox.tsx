@@ -1183,23 +1183,23 @@ const DrawerWrapper = styled.ul<{
   }
 
   ${({ $mobile, $theme, $multiple, $hasNestedOptions, $drawerHeight }) => {
-    const $mobileHeight = $drawerHeight ?? "220px";
+    const $height = $drawerHeight ?? "220px";
 
     return css`
-      min-height: ${$drawerHeight};
-      max-height: ${$drawerHeight};
+      min-height: ${$height};
+      max-height: ${$height};
 
       ${$mobile &&
       css`
         width: 100%;
         z-index: 9992999;
         border-radius: 14px;
-        min-height: ${$mobileHeight};
-        max-height: ${$mobileHeight};
+        min-height: ${$height};
+        max-height: ${$height};
         border-width: 0.5;
         ${!$multiple &&
         css`
-          padding: calc(${$mobileHeight} * 0.4545) 0;
+          padding: calc(${$height} * 0.4545) 0;
         `}
 
         background-color: ${$mobile && $hasNestedOptions
