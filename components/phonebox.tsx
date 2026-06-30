@@ -121,25 +121,22 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
     useImperativeHandle(ref, () => phoneInputRef.current!);
 
-    const FINAL_COUNTRY_OPTIONS: ComboboxOption[] = COUNTRY_CODES.map(
-      (country) => ({
-        value: country.id,
-        text: `${country.code}-${country.flag}`,
-        render: (
-          <>
-            <span style={{ marginRight: "8px" }}>{country.flag}</span>
-            <span>{country.name}</span>
-            <span
-              style={{
-                marginLeft: "auto",
-                color: "#6a7282",
-              }}
-            >
-              {country.code}
-            </span>
-          </>
-        ),
-      })
+    const FINAL_COUNTRY_OPTIONS: ComboboxOption[] = useMemo(
+      () =>
+        COUNTRY_CODES.map((country) => ({
+          value: country.id,
+          text: `${country.code}-${country.flag}`,
+          render: (
+            <>
+              <span style={{ marginRight: "8px" }}>{country.flag}</span>
+              <span>{country.name}</span>
+              <span style={{ marginLeft: "auto", color: "#6a7282" }}>
+                {country.code}
+              </span>
+            </>
+          ),
+        })),
+      []
     );
 
     const FILTERED_COUNTRY_OPTIONS: ComboboxOption[] = useMemo(() => {
@@ -190,6 +187,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
     const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
+    // Keep the highlighted option visible while navigating the list.
     useEffect(() => {
       if (isOpen && listRef.current[highlightedIndex]) {
         listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
