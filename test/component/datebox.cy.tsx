@@ -17,7 +17,7 @@ describe("Datebox", () => {
 
       cy.findByLabelText("calendar")
         .should("have.css", "position", "fixed")
-        .and("have.css", "bottom", "20px");
+        .and("have.css", "bottom", "10px");
     });
 
     it("renders in with 96dvh (480px from 500px)", () => {
