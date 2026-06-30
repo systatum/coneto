@@ -590,8 +590,8 @@ function Table({
                           ...columnAction?.styles,
                           self: css`
                             padding: 0px;
-                            height: 40px;
-                            width: 40px;
+                            height: 34px;
+                            width: 34px;
                             border-radius: 6px;
                             &:not(:focus-visible):not(:active):not(:hover):not(
                                 :focus
@@ -632,6 +632,11 @@ function Table({
                               : css`
                                   flex: 1;
                                 `}
+
+                          ${finalColumnAction &&
+                          css`
+                            padding: 4px 19.2px;
+                          `}
 
                           ${col?.styles?.containerStyle}
                         `}
@@ -1047,7 +1052,6 @@ const TableHeader = styled.div<{
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
   background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
-  min-height: 64px;
 
   ${({ $loose }) =>
     $loose &&
