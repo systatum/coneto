@@ -148,7 +148,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
 });
 
 function CalendarDrawer(props: CalendarDrawerProps) {
-  const { mobile, ...rest } = props;
+  const { mobile, ...rest } = props ?? {};
   const { currentTheme } = useTheme();
   const calendarTheme = currentTheme?.calendar;
 
@@ -172,7 +172,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
     self: css`
       ${mobile &&
       css`
-        width: 350px;
+        width: 300px;
         left: 50%;
       `}
       ${props.styles?.self}
