@@ -728,6 +728,7 @@ const darkTable = createTableTheme(darkBody, {
   headerActionBackgroundColor:
     "linear-gradient(rgb(33, 33, 33), rgb(37, 38, 38))",
   headerActionBorderColor: "rgb(61, 61, 61)",
+  headerActionHoverBackgroundColor: "rgb(52, 52, 52)",
 
   headerBackgroundColor: "linear-gradient(rgb(42, 42, 42), rgb(41, 44, 46))",
   headerBorderColor: "rgb(39, 39, 48)",

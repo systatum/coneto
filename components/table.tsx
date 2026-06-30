@@ -12,7 +12,6 @@ import React, {
 } from "react";
 import { Checkbox } from "./checkbox";
 import { LoadingSpinner } from "./loading-spinner";
-import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
@@ -33,20 +32,35 @@ import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
 import { Scrollbar, ScrollbarRef } from "./scrollbar";
+import { Button, ButtonProps } from "./button";
 
 export interface TableColumn {
   caption: string;
-  sortable?: boolean;
   styles?: TableColumnStyle;
   width?: string;
   id: string;
+  actions?: (id?: string) => TableColumnAction;
 }
+
+export interface TableColumnAction
+  extends Omit<
+    ActionButtonProps,
+    "showSubMenuOn" | "caption" | "onClick" | "variant"
+  > {
+  title?: string;
+  variant?: TableColumnVariant;
+}
+
+export type TableColumnVariant = Exclude<
+  ButtonProps["variant"],
+  `outline-${string}`
+>;
+
+export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableColumnStyle {
   labelStyle?: CSSProp;
   containerStyle?: CSSProp;
-  toggleSortableStyle?: CSSProp;
-  dropdownSortableStyle?: CSSProp;
 }
 
 export const TableActionType = {
@@ -79,7 +93,6 @@ export interface TableProps {
   onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => TableSubMenuList[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -97,8 +110,6 @@ export interface TableProps {
 }
 
 type TableSearchbox = SearchboxProps;
-
-export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableStyles {
   containerStyle?: CSSProp;
@@ -178,7 +189,6 @@ function Table({
   selectedItems = [],
   children,
   isLoading,
-  subMenuList,
   emptySlate,
   actions,
   onLastRowReached,
@@ -455,9 +465,9 @@ function Table({
                     )}
                     {hasActions &&
                       filteredActions.map((action, index) => {
-                        const { capsuleProps, ...rest } = action;
+                        const { capsuleProps, type, ...rest } = action;
 
-                        if (action.type === "capsule") {
+                        if (type === "capsule") {
                           return (
                             <ActionCapsule key={index} {...capsuleProps} />
                           );
@@ -562,8 +572,41 @@ function Table({
                     </CheckboxWrapper>
                   )}
                   {columns.map((col, i) => {
-                    const isLast =
-                      rowActions?.length > 0 && columns.length - 1 === i;
+                    const columnAction =
+                      typeof col.actions === "function" && col.actions(col.id);
+
+                    const variant = columnAction?.variant ?? "ghost";
+                    const finalColumnAction: ButtonProps = columnAction &&
+                      !columnAction.hidden && {
+                        ...columnAction,
+                        icon: {
+                          ...columnAction?.icon,
+                          image: columnAction?.icon?.image ?? RiArrowUpDownLine,
+                          size: columnAction?.icon?.size ?? 20,
+                        },
+                        showSubMenuOn: "self",
+                        tipMenuSize: columnAction?.tipMenuSize ?? "md",
+                        styles: {
+                          ...columnAction?.styles,
+                          self: css`
+                            padding: 0px;
+                            height: 34px;
+                            width: 34px;
+                            border-radius: 6px;
+                            &:not(:focus-visible):not(:active):not(:hover):not(
+                                :focus
+                              ) {
+                              background-color: transparent;
+                            }
+                            ${columnAction?.styles?.self};
+                          `,
+                        },
+                        hoverBackgroundColor:
+                          variant === "ghost" &&
+                          tableTheme?.headerActionHoverBackgroundColor,
+                        variant,
+                        "aria-label": "table-column-action",
+                      };
 
                     return (
                       <TableRowCell
@@ -590,6 +633,11 @@ function Table({
                                   flex: 1;
                                 `}
 
+                          ${finalColumnAction &&
+                          css`
+                            padding: 4px 19.2px;
+                          `}
+
                           ${col?.styles?.containerStyle}
                         `}
                       >
@@ -599,38 +647,7 @@ function Table({
                         >
                           {col.caption}
                         </Label>
-                        {col.sortable && (
-                          <Toolbar
-                            styles={{
-                              self: css`
-                                width: fit-content;
-                                z-index: 50;
-
-                                ${isLast &&
-                                css`
-                                  padding-right: 14px;
-                                `}
-                              `,
-                            }}
-                          >
-                            <Toolbar.Menu
-                              closedIcon={RiArrowUpDownLine}
-                              openedIcon={RiArrowUpDownLine}
-                              styles={{
-                                triggerStyle: col?.styles?.toggleSortableStyle,
-                                dropdownStyle: css`
-                                  min-width: 235px;
-
-                                  ${col?.styles?.dropdownSortableStyle}
-                                `,
-                              }}
-                              subMenuList={
-                                subMenuList ? subMenuList(col.id) : undefined
-                              }
-                              variant="ghost"
-                            />
-                          </Toolbar>
-                        )}
+                        {finalColumnAction && <Button {...finalColumnAction} />}
                       </TableRowCell>
                     );
                   })}
@@ -1034,6 +1051,7 @@ const TableHeader = styled.div<{
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
+  background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
 
   ${({ $loose }) =>
     $loose &&
@@ -1399,7 +1417,7 @@ export interface TableRowProps {
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TableRowAction[];
+  actions?: (columnId: string) => TableRowAction[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
