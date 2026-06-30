@@ -279,7 +279,7 @@ describe("List", () => {
         </List>
       );
 
-      cy.findByLabelText("input-wrapper-checkbox")
+      cy.findByLabelText("checkbox-label")
         .should("have.css", "width", "14px")
         .and("have.css", "height", "14px");
     });

@@ -2573,13 +2573,13 @@ describe("Table", () => {
           </Table>
         );
 
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(0)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(1)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(2)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
       });

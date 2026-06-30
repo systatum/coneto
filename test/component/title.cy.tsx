@@ -56,11 +56,11 @@ describe("Title", () => {
               />
             );
 
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .parent()
               .eq(0)
               .should("have.css", "border", "1px solid rgb(0, 0, 255)");
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .parent()
               .eq(1)
               .should("not.have.css", "border", "1px solid rgb(0, 0, 255)");
@@ -100,10 +100,10 @@ describe("Title", () => {
               />
             );
 
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .eq(0)
               .should("have.css", "padding", "50px");
-            cy.findAllByLabelText("action-button")
+            cy.findAllByLabelText("title-action")
               .eq(1)
               .should("have.css", "padding", "20px");
           });
@@ -449,6 +449,138 @@ describe("Title", () => {
     });
 
     context("with actions", () => {
+      context("when given id", () => {
+        it("should render the id from action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      id: "Test",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                    {
+                      caption: "Not Editable",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get("#Test").should("exist").and("have.length", 1);
+        });
+      });
+
+      context("when given className", () => {
+        it("should render the className", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get(".test-className").should("exist").and("have.length", 1);
+          cy.get(".test-another-className")
+            .should("exist")
+            .and("have.length", 1);
+        });
+      });
+
+      context("when given hidden", () => {
+        it("should not shows the action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                      hidden: true,
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.get(".test-className").should("not.exist");
+          cy.get(".test-another-className")
+            .should("exist")
+            .and("have.length", 1);
+        });
+      });
+
+      context("when given disabled", () => {
+        it("should disabled the action", () => {
+          cy.mount(
+            <Title
+              text="With Actions"
+              rightSection={[
+                {
+                  type: "actions",
+                  actions: [
+                    {
+                      className: "test-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                      disabled: true,
+                    },
+                    {
+                      className: "test-another-className",
+                      caption: "Edit",
+                      icon: { image: RiCloseFill },
+                      onClick: cy.stub(),
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("title-action").eq(0).should("be.disabled");
+          cy.findAllByLabelText("title-action").eq(1).should("not.be.disabled");
+        });
+      });
+
       it("should render actions section", () => {
         cy.mount(
           <Title
@@ -491,10 +623,10 @@ describe("Title", () => {
             />
           );
 
-          cy.findByLabelText("action-button").realHover();
+          cy.findByLabelText("title-action").realHover();
 
           cy.wait(200);
-          cy.findByLabelText("action-button").should(
+          cy.findByLabelText("title-action").should(
             "have.css",
             "background-color",
             "rgba(255, 255, 255, 0.45)"

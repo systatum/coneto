@@ -5,7 +5,8 @@ import { TitleThemeConfig, useTheme } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { darkenColor, lightenColor } from "./../lib/color";
 import { Capsule, CapsuleProps } from "./capsule";
-import ContextMenu, { ContextMenuAction } from "./context-menu";
+import { Button, ButtonStyles, ButtonVariant } from "./button";
+import { BaseAction } from "./../constants/action";
 
 export const TitleSize = {
   Small: "sm",
@@ -214,9 +215,20 @@ export interface TitleSection {
   styles?: TitleSectionStyles;
 }
 
-export interface TitleSectionAction extends ContextMenuAction {
-  icon: FigureProps;
+export interface TitleSectionAction extends BaseAction {
+  icon?: TitleSectionActionIcon;
+  variant?: TitleSectionActionVariant;
+  styles?: TitleSectionActionStyles;
+  id?: string;
+  className?: string;
 }
+
+export type TitleSectionActionIcon = FigureProps;
+export type TitleSectionActionVariant = Exclude<
+  ButtonVariant,
+  "outline-default" | "outline-success" | "outline-primary" | "outline-danger"
+>;
+export type TitleSectionActionStyles = ButtonStyles;
 
 export interface TitleSectionStyles {
   toggleActionStyle?: CSSProp;
@@ -270,31 +282,39 @@ function BaseTitleSection({
             },
           }));
 
-          return (
-            <>
-              {filteredActionsWithSize.map((action, actionIndex) => (
-                <ContextMenu
-                  key={actionIndex}
-                  styles={{
-                    self: css`
-                      width: ${resolvedIconSize * 1.4}px;
-                      height: ${resolvedIconSize * 1.4}px;
-                      padding: 20px;
-                      border-radius: 10px;
-                      background-color: ${titleTheme?.icon?.backgroundColor};
+          return filteredActionsWithSize.map((action, actionIndex) => {
+            const variant = action?.variant ?? "ghost";
 
-                      ${section?.styles?.toggleActionStyle}
-                      ${action.styles?.self}
-                    `,
-                    containerStyle: action.styles?.containerStyle,
-                  }}
-                  maxActionsBeforeCollapsing={section.actions?.length}
-                  hoverBackgroundColor={titleTheme?.icon?.hoverBackgroundColor}
-                  actions={[action]}
-                />
-              ))}
-            </>
-          );
+            return (
+              <Button
+                key={actionIndex}
+                {...action}
+                aria-label="title-action"
+                variant={variant}
+                styles={{
+                  self: css`
+                    width: ${resolvedIconSize * 1.4}px;
+                    height: ${resolvedIconSize * 1.4}px;
+                    padding: 20px;
+                    border-radius: 10px;
+                    background-color: ${variant === "ghost" &&
+                    titleTheme?.icon?.backgroundColor};
+
+                    ${section?.styles?.toggleActionStyle}
+                    ${action.styles?.self}
+                  `,
+                  containerStyle: action.styles?.containerStyle,
+                }}
+                hoverBackgroundColor={
+                  variant === "ghost" && titleTheme?.icon?.hoverBackgroundColor
+                }
+                activeBackgroundColor={
+                  variant === "ghost" && titleTheme?.icon?.hoverBackgroundColor
+                }
+                icon={action?.icon}
+              />
+            );
+          });
         }
 
         return null;
