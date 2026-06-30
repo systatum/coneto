@@ -307,7 +307,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             onClick={handleToggleDropdown}
             disabled={disabled}
             $disabled={disabled}
-            aria-label="Select country code"
+            aria-label="phonebox-country-toggle"
             tabIndex={0}
             $hasError={showError}
             $style={styles?.toggleStyle}
@@ -335,7 +335,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             onKeyDown={(e) => onKeyDown?.(e)}
             disabled={disabled}
             $disabled={disabled}
-            aria-label="phonebox-number"
+            aria-label="phonebox-input-number"
           />
         </InputWrapper>
 
@@ -352,7 +352,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             setHighlightedIndex={setHighlightedIndex}
             interactionMode={interactionMode}
             setInteractionMode={setInteractionMode}
-            selectedOptions={countryCodeValue.id}
+            selectedOptions={countryCodeState?.id}
             selectedOptionsLocal={{
               text: searchTerm,
               value: "",
