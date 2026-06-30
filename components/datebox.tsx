@@ -18,6 +18,7 @@ import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
 import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
+import { CalendarThemeConfig } from "theme";
 
 type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
   name?: string;
@@ -89,6 +90,15 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     id,
   });
 
+  const {
+    bodyStyle,
+    controlStyle,
+    selectboxStyle,
+    labelStyle,
+    containerStyle,
+    self,
+  } = styles ?? {};
+
   return (
     <Selectbox
       {...rest}
@@ -108,7 +118,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
       required={rest.required}
       isLoading={isLoading}
       styles={{
-        ...styles,
+        controlStyle,
+        bodyStyle,
+        labelStyle,
         self: css`
           ${dropdowns &&
           css`
@@ -116,7 +128,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             border-bottom-left-radius: 0px;
           `}
 
-          ${styles?.selectboxStyle}
+          ${selectboxStyle}
         `,
       }}
       placeholder={placeholder}
@@ -136,7 +148,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             disableWeekend={disableWeekend}
             calendarSelectabilityMode={calendarSelectabilityMode}
             styles={{
-              self: styles?.self,
+              self,
+              containerStyle,
             }}
             onChange={onChange}
             selectedDates={selectedDates}
@@ -148,24 +161,11 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
 });
 
 function CalendarDrawer(props: CalendarDrawerProps) {
-  const { mobile, ...rest } = props ?? {};
+  const { mobile, styles, ...rest } = props ?? {};
   const { currentTheme } = useTheme();
   const calendarTheme = currentTheme?.calendar;
 
-  const calendarMobileWrapper =
-    mobile &&
-    css`
-      position: fixed;
-      bottom: 20px;
-      min-width: 96dvw;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 20px;
-      border-radius: 14px;
-      border: 1px solid ${calendarTheme?.mobileBackgroundColor};
-      background-color: ${calendarTheme?.mobileBackgroundColor};
-      box-shadow: ${calendarTheme?.boxShadow};
-    `;
+  const { self, containerStyle } = styles ?? {};
 
   const calendarStyle: CalendarStyles = {
     ...props.styles,
@@ -175,7 +175,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         width: 300px;
         left: 50%;
       `}
-      ${props.styles?.self}
+      ${self}
     `,
     controlStyle: css`
       ${mobile &&
@@ -193,17 +193,16 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         !mobile
           ? {
               ...(props.floatingStyles ?? {}),
-              backgroundColor: calendarTheme?.backgroundColor,
-              borderColor: props.showError
-                ? "#dc2626"
-                : calendarTheme?.borderColor,
             }
           : {}
       }
+      $mobile={mobile}
+      $showError={props?.showError}
+      $theme={calendarTheme}
       tabIndex={-1}
       role="listbox"
-      aria-label="Calendar"
-      $style={calendarMobileWrapper}
+      aria-label="calendar"
+      $style={containerStyle}
     >
       <Calendar
         {...rest}
@@ -228,6 +227,9 @@ function CalendarDrawer(props: CalendarDrawerProps) {
 
 const CalendarWrapper = styled.ul<{
   $style?: CSSProp;
+  $theme?: CalendarThemeConfig;
+  $mobile?: boolean;
+  $showError?: boolean;
 }>`
   list-style: none;
   margin: 0;
@@ -247,6 +249,23 @@ const CalendarWrapper = styled.ul<{
   list-style: none;
   outline: none;
   z-index: 9992999;
+  ${({ $theme, $showError, $mobile }) => css`
+    background-color: ${$theme?.backgroundColor};
+    border-color: ${$showError ? "#dc2626" : $theme?.borderColor};
+    ${$mobile &&
+    css`
+      position: fixed;
+      bottom: 20px;
+      min-width: 96dvw;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid ${$theme?.mobileBackgroundColor};
+      background-color: ${$theme?.mobileBackgroundColor};
+      box-shadow: ${$theme?.boxShadow};
+    `};
+  `};
 
   ${({ $style }) => $style}
 `;
