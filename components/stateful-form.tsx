@@ -532,6 +532,12 @@ function FormFields<T extends FieldValues>({
             width: fit-content;
           `;
 
+        const mobileLabelStyle =
+          mobile &&
+          css`
+            width: 100%;
+          `;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
@@ -597,6 +603,7 @@ function FormFields<T extends FieldValues>({
                         font-size: 12px;
                         color: black;
                         margin-top: 2px;
+
                         ${styles?.frameTitleStyle};
                         ${field?.frame?.styles?.titleStyle}
                       `,
@@ -680,6 +687,8 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `};
+
+                            ${mobileLabelStyle};
 
                             ${field.textbox?.styles?.labelStyle};
                           `,
@@ -769,6 +778,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `}
+                                ${mobileLabelStyle};
+
                                 ${field.pinbox?.styles?.labelStyle}
                               `,
                               bodyStyle: css`
@@ -987,6 +998,7 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `};
+                            ${mobileLabelStyle};
 
                             ${field.timebox?.styles?.labelStyle}
                           `,
@@ -1068,6 +1080,8 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `}
+                            ${mobileLabelStyle};
+
                             ${field.textarea?.styles?.labelStyle}
                           `,
                           self: css`
@@ -1159,6 +1173,7 @@ function FormFields<T extends FieldValues>({
                                   css`
                                     font-size: ${labelSize};
                                   `};
+                                  ${mobileLabelStyle};
                                   ${field.checkbox?.styles?.titleStyle}
                                 `,
                                 labelStyle: css`
@@ -1166,6 +1181,7 @@ function FormFields<T extends FieldValues>({
                                   css`
                                     font-size: ${labelSize};
                                   `};
+
                                   ${field.checkbox?.styles?.labelStyle}
                                 `,
                                 self: css`
@@ -1276,6 +1292,7 @@ function FormFields<T extends FieldValues>({
                                   css`
                                     font-size: ${labelSize};
                                   `};
+
                                   ${field.radio?.styles?.labelStyle}
                                 `,
                                 titleStyle: css`
@@ -1283,6 +1300,7 @@ function FormFields<T extends FieldValues>({
                                   css`
                                     font-size: ${labelSize};
                                   `};
+                                  ${mobileLabelStyle};
                                   ${field.radio?.styles?.titleStyle}
                                 `,
                                 self: css`
@@ -1382,6 +1400,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
                                 ${field.phonebox?.styles?.labelStyle}
                               `,
                               self: css`
@@ -1459,6 +1478,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
 
                                 ${field.colorbox?.styles?.labelStyle}
                               `,
@@ -1553,6 +1573,8 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `};
+                            ${mobileLabelStyle};
+
                             ${field.fileDropBox?.styles?.labelStyle}
                           `,
                           containerStyle: css`
@@ -1628,6 +1650,8 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `};
+                            ${mobileLabelStyle};
+
                             ${field.fileInputBox?.styles?.labelStyle}
                           `,
                           containerStyle: css`
@@ -1717,14 +1741,16 @@ function FormFields<T extends FieldValues>({
                             ${field.width &&
                             css`
                               width: ${field.width};
-                            `}
+                            `};
                             ${field.imagebox?.styles?.containerStyle}
                           `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
                               font-size: ${labelSize};
-                            `}
+                            `};
+                            ${mobileLabelStyle};
+
                             ${field.imagebox?.styles?.labelStyle}
                           `,
                           bodyStyle: css`
@@ -1788,6 +1814,8 @@ function FormFields<T extends FieldValues>({
                             css`
                               font-size: ${labelSize};
                             `};
+                            ${mobileLabelStyle};
+
                             ${field.signbox?.styles?.labelStyle}
                           `,
                           containerStyle: css`
@@ -1879,7 +1907,9 @@ function FormFields<T extends FieldValues>({
                                 ${labelSize &&
                                 css`
                                   font-size: ${labelSize};
-                                `}
+                                `};
+                                ${mobileLabelStyle};
+
                                 ${field.money?.styles?.labelStyle}
                               `,
                               containerStyle: css`
@@ -1968,6 +1998,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
 
                                 ${field.date?.styles?.labelStyle}
                               `,
@@ -2077,6 +2108,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
 
                                 ${field.combobox?.styles?.labelStyle}
                               `,
@@ -2118,6 +2150,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
+
                                 ${field.chips?.styles?.labelStyle}
                               `,
                               chipSelectedStyle: css`
@@ -2188,7 +2222,9 @@ function FormFields<T extends FieldValues>({
                                 ${labelSize &&
                                 css`
                                   font-size: ${labelSize};
-                                `}
+                                `};
+                                ${mobileLabelStyle};
+
                                 ${field.rating?.styles?.labelStyle}
                               `,
                               containerStyle: css`
@@ -2271,6 +2307,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
+
                                 ${field.thumbField?.styles?.labelStyle}
                               `,
                               triggerWrapperStyle: css`
@@ -2349,6 +2387,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
+
                                 ${field.toggle?.styles?.titleStyle}
                               `,
                               labelStyle: css`
@@ -2356,7 +2396,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
-                                ${field.toggle?.styles?.labelStyle}
+
+                                ${field.toggle?.styles?.labelStyle};
                               `,
                               containerStyle: css`
                                 ${field.width &&
@@ -2407,6 +2448,7 @@ function FormFields<T extends FieldValues>({
                             required={required}
                             activeTab={controllerField.value}
                             helper={field.helper}
+                            errorIconPosition={mobile ? "none" : "absolute"}
                             disabled={field.disabled || disabled}
                             onTabChange={(e) => {
                               const inputValueEvent = {
@@ -2433,6 +2475,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
+
                                 ${field.capsule?.styles?.labelStyle}
                               `,
                               capsuleWrapperStyle: css`
