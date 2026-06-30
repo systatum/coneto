@@ -293,7 +293,9 @@ function BaseCalendar({
     [currentDate]
   );
 
-  const handleClickPrevMonth = () => {
+  const handleClickPrevMonth = (e: React.MouseEvent) => {
+    e.preventDefault();
+
     if (onCalendarPeriodChanged) {
       onCalendarPeriodChanged(prevMonth);
     }
@@ -306,7 +308,9 @@ function BaseCalendar({
     }));
   };
 
-  const handleClickNextMonth = () => {
+  const handleClickNextMonth = (e: React.MouseEvent) => {
+    e.preventDefault();
+
     setCurrentDate(nextMonth);
     if (onCalendarPeriodChanged) {
       onCalendarPeriodChanged(nextMonth);
@@ -544,6 +548,7 @@ function BaseCalendar({
 
   return (
     <CalendarContainer
+      onMouseDown={(e) => e.preventDefault()}
       $style={
         floatingStyles
           ? css`
@@ -591,7 +596,8 @@ function BaseCalendar({
                 `,
               }}
               aria-label="calendar-select-date"
-              onClick={() => {
+              onMouseDown={(e) => {
+                e.preventDefault();
                 if (!calendarState.open) {
                   handleClickMode("open");
                 }
@@ -622,7 +628,6 @@ function BaseCalendar({
                 styles={{
                   containerStyle: css`
                     min-width: 90px;
-                    max-width: 90px;
                   `,
                 }}
                 onChange={(value: string[]) => {
@@ -639,7 +644,6 @@ function BaseCalendar({
                 styles={{
                   containerStyle: css`
                     min-width: 75px;
-                    max-width: 75px;
                   `,
                 }}
                 onChange={(value: string[]) => {
@@ -708,7 +712,7 @@ function BaseCalendar({
                 size: 24,
               }}
               aria-label="previous-month"
-              onClick={handleClickPrevMonth}
+              onMouseDown={handleClickPrevMonth}
             />
 
             <Button
@@ -728,7 +732,7 @@ function BaseCalendar({
                   padding: 0px;
                 `,
               }}
-              onClick={handleClickNextMonth}
+              onMouseDown={handleClickNextMonth}
               aria-label="next-month"
               icon={{
                 image: RiArrowRightSLine,
@@ -1062,7 +1066,6 @@ const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.25rem;
   text-align: center;
-  font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.25rem;
   user-select: none;

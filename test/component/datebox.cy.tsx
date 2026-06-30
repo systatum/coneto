@@ -6,8 +6,101 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
+import { css } from "styled-components";
 
 describe("Datebox", () => {
+  context("mobile", () => {
+    it("renders in with fixed and bottom of screen", () => {
+      cy.viewport(500, 750);
+      cy.mount(<Datebox mobile />);
+      cy.findByPlaceholderText("mm/dd/yyyy").click();
+
+      cy.findByLabelText("calendar")
+        .should("have.css", "position", "fixed")
+        .and("have.css", "bottom", "20px");
+    });
+
+    it("renders in with 96dvh (480px from 500px)", () => {
+      cy.viewport(500, 750);
+      cy.mount(<Datebox mobile />);
+      cy.findByPlaceholderText("mm/dd/yyyy").click();
+
+      cy.findByLabelText("calendar").should("have.css", "width", "480px");
+    });
+
+    context("with light mode", () => {
+      it("renders in with background rgb(249, 250, 251)", () => {
+        cy.viewport(500, 750);
+        cy.mount(<Datebox mobile />);
+        cy.findByPlaceholderText("mm/dd/yyyy").click();
+
+        cy.findByLabelText("calendar").should(
+          "have.css",
+          "background-color",
+          "rgb(249, 250, 251)"
+        );
+      });
+    });
+
+    context("with dark mode", () => {
+      it("renders in with background rgb(44, 44, 46)", () => {
+        cy.viewport(500, 750);
+        cy.mount(<Datebox mobile />, {
+          mode: "dark",
+        });
+        cy.findByPlaceholderText("mm/dd/yyyy").click();
+
+        cy.findByLabelText("calendar").should(
+          "have.css",
+          "background-color",
+          "rgb(44, 44, 46)"
+        );
+      });
+    });
+  });
+
+  context("styles", () => {
+    context("containerStyle", () => {
+      context("when given padding 40px", () => {
+        it("should render padding with 40px", () => {
+          cy.mount(
+            <Datebox
+              mobile
+              styles={{
+                containerStyle: css`
+                  padding: 40px;
+                `,
+              }}
+            />
+          );
+          cy.findByPlaceholderText("mm/dd/yyyy").click();
+
+          cy.findByLabelText("calendar").should("have.css", "padding", "40px");
+        });
+      });
+    });
+    context("self", () => {
+      context("when given font-size 20px", () => {
+        it("should render the date text with 20px", () => {
+          cy.mount(
+            <Datebox
+              mobile
+              styles={{
+                self: css`
+                  font-size: 20px;
+                `,
+              }}
+            />
+          );
+          cy.findByPlaceholderText("mm/dd/yyyy").click();
+          ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => {
+            cy.findByText(day).should("have.css", "font-size", "20px");
+          });
+        });
+      });
+    });
+  });
+
   context("labels", () => {
     context("loadingText", () => {
       context("when not given text within isLoading true", () => {

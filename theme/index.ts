@@ -93,6 +93,9 @@ export interface CalendarThemeConfig extends BodyThemeConfig {
   highlightedDateTextColor?: string;
   hightlightDateColor?: string;
 
+  mobileBackgroundColor?: string;
+  mobileBorderColor?: string;
+
   boxShadow?: string;
 }
 
