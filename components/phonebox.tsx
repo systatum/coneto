@@ -76,6 +76,7 @@ export interface PhoneboxStyles {
   self?: CSSProp;
   inputWrapperStyle?: CSSProp;
   toggleStyle?: CSSProp;
+  drawerStyle?: CSSProp;
 }
 
 export type PhoneboxDropdownOption = FieldLaneDropdownOption;
@@ -338,6 +339,9 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
         {isOpen && (
           <Combobox.Drawer
+            styles={{
+              drawerStyle: styles?.drawerStyle,
+            }}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             refs={refs as unknown as ComboboxDrawerProps["refs"]}
