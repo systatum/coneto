@@ -221,6 +221,7 @@ export interface TitleSectionAction extends BaseAction {
   styles?: TitleSectionActionStyles;
   id?: string;
   className?: string;
+  mobile?: boolean;
 }
 
 export type TitleSectionActionIcon = FigureProps;
