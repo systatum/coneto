@@ -96,6 +96,9 @@ export const Mobile: Story = {
     label: "Phone Number",
     placeholder: "Enter your phone number",
   },
+  parameters: {
+    layout: "padded",
+  },
   render: (args) => {
     interface ValueProps {
       phone?: string;
@@ -122,6 +125,11 @@ export const Mobile: Story = {
         value={value.phone}
         countryCodeValue={value.country_code}
         mobile
+        styles={{
+          self: css`
+            width: 400px;
+          `,
+        }}
         onChange={handleChange}
       />
     );
