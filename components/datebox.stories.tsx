@@ -231,6 +231,7 @@ export const Mobile: Story = {
           monthNames={MONTH_NAMES}
         />
         <Datebox
+          mobile
           id="mobile-range"
           label="Mobile Range Datebox"
           calendarSelectabilityMode="ranged"
