@@ -1,9 +1,18 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TableColumn, TableSubMenuList, Table, TableAction } from "./table";
+import {
+  TableColumn,
+  TableSubMenuList,
+  Table,
+  TableAction,
+  TableSummaryRowColumn,
+  TableRowContent,
+} from "./table";
 import { useEffect, useMemo, useState } from "react";
 import {
   RiArrowDownSLine,
   RiArrowUpSLine,
+  RiBookMarkedLine,
+  RiCheckboxMultipleLine,
   RiClipboardFill,
   RiClipboardLine,
   RiDeleteBin2Fill,
@@ -13,6 +22,7 @@ import {
   RiFileCopy2Line,
   RiReactjsLine,
   RiRefreshLine,
+  RiSettings3Line,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
@@ -539,6 +549,194 @@ export const Default: Story = {
           `,
         }}
         columns={columns}
+      >
+        {sampleRows}
+      </Table>
+    );
+  },
+};
+
+export const Loose: Story = {
+  render: () => {
+    const [activeTab, setActiveTab] = useState({
+      withCheckbox: false,
+      withActions: false,
+      withSummary: false,
+    });
+
+    const TOP_ACTIONS: TableAction[] = [
+      {
+        type: "button",
+        caption: "With Checkbox",
+        pressed: activeTab.withCheckbox,
+        icon: { image: RiCheckboxMultipleLine },
+        onClick: () =>
+          setActiveTab((prev) => ({
+            ...prev,
+            withCheckbox: !prev.withCheckbox,
+          })),
+      },
+      {
+        type: "button",
+        caption: "With Row Actions",
+        pressed: activeTab.withActions,
+        icon: { image: RiSettings3Line },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withActions: !prev.withActions })),
+      },
+      {
+        type: "button",
+        caption: "With Summary",
+        pressed: activeTab.withSummary,
+        icon: { image: RiBookMarkedLine },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withSummary: !prev.withSummary })),
+      },
+    ];
+
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
+      {
+        caption: "Edit",
+        icon: { image: RiArrowUpSLine },
+        onClick: () => console.log(`${rowId} was edited`),
+      },
+      {
+        caption: "Delete",
+        icon: { image: RiDeleteBin2Fill },
+        variant: "danger",
+        onClick: () => console.log(`${rowId} was deleted`),
+      },
+    ];
+
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+    const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+    const STATUS = ["active", "idle", "degraded"];
+
+    const columns: TableColumn[] = [
+      { id: "name", caption: "Name", sortable: false },
+      { id: "type", caption: "Protocol", sortable: false },
+      { id: "region", caption: "Region", sortable: false },
+      { id: "status", caption: "Status", sortable: false },
+      { id: "version", caption: "Version", sortable: false },
+      { id: "uptime", caption: "Uptime", sortable: false },
+      { id: "requests", caption: "Requests/s", sortable: false },
+      { id: "latency", caption: "Latency (ms)", sortable: false },
+      { id: "errorRate", caption: "Error Rate", sortable: false },
+      { id: "cpu", caption: "CPU %", sortable: false },
+      { id: "memory", caption: "Memory %", sortable: false },
+      { id: "connections", caption: "Connections", sortable: false },
+      { id: "bandwidth", caption: "Bandwidth", sortable: false },
+      { id: "zone", caption: "Zone", sortable: false },
+      { id: "provider", caption: "Provider", sortable: false },
+    ];
+
+    const rowData = useMemo(
+      () =>
+        Array.from({ length: 15 }, (_, i) => {
+          const type = TYPES_DATA[i % TYPES_DATA.length];
+          const region = REGIONS[i % REGIONS.length];
+          const status = STATUS[i % STATUS.length];
+
+          const seed = (i + 1) * 17;
+          const req = 200 + (seed % 200);
+          const lat = 50 + (seed % 50);
+          const errRate = ((seed % 500) / 100).toFixed(2);
+          const cpu = 80 + (seed % 80);
+          const mem = 70 + (seed % 70);
+          const conn = 1000 + (seed % 1000);
+          const bw = 100 + (seed % 100);
+
+          return {
+            id: `lb-${i}`,
+            content: [
+              `lb-${region}-${i + 1}`,
+              type,
+              region,
+              status,
+              `v${1 + (i % 3)}.${i % 10}`,
+              `${10 + i}d`,
+              req,
+              lat,
+              `${errRate}%`,
+              cpu,
+              mem,
+              conn,
+              `${bw}Mbps`,
+              `zone-${(i % 3) + 1}`,
+              "aws",
+            ] as TableRowContent,
+            req,
+            lat,
+            errRate: parseFloat(errRate),
+            cpu,
+            mem,
+            conn,
+            bw,
+          };
+        }),
+      []
+    );
+
+    const totals = useMemo(
+      () => ({
+        req: rowData.reduce((s, r) => s + r.req, 0),
+        lat: Math.round(
+          rowData.reduce((s, r) => s + r.lat, 0) / rowData.length
+        ),
+        errRate: (
+          rowData.reduce((s, r) => s + r.errRate, 0) / rowData.length
+        ).toFixed(2),
+        cpu: Math.round(
+          rowData.reduce((s, r) => s + r.cpu, 0) / rowData.length
+        ),
+        mem: Math.round(
+          rowData.reduce((s, r) => s + r.mem, 0) / rowData.length
+        ),
+        conn: rowData.reduce((s, r) => s + r.conn, 0),
+        bw: rowData.reduce((s, r) => s + r.bw, 0),
+      }),
+      [rowData]
+    );
+
+    const sampleRows = rowData.map((row, i) => (
+      <Table.Row
+        key={row.id}
+        rowId={row.id}
+        actions={activeTab.withActions ? ROW_ACTION : null}
+        content={row.content}
+      />
+    ));
+
+    const sumRow: TableSummaryRowColumn[] = [
+      { content: "Totals / Avg", bold: true },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: totals.req, bold: true },
+      { content: `${totals.lat} ms`, bold: true },
+      { content: `${totals.errRate}%`, bold: true },
+      { content: `${totals.cpu}%`, bold: true },
+      { content: `${totals.mem}%`, bold: true },
+      { content: totals.conn, bold: true },
+      { content: `${totals.bw}Mbps`, bold: true },
+      { content: "" },
+      { content: "" },
+    ];
+
+    return (
+      <Table
+        styles={{
+          tableBodyStyle: css`
+            max-height: 250px;
+          `,
+        }}
+        loose
+        actions={TOP_ACTIONS}
+        columns={columns}
+        selectable={activeTab.withCheckbox}
+        sumRow={activeTab.withSummary && sumRow}
       >
         {sampleRows}
       </Table>
@@ -2461,6 +2659,7 @@ export const WithRowAppendix: Story = {
           columns={columns}
           subMenuList={TIP_MENU_ACTION}
           searchbox={{ onChange: (e) => setSearch(e.target.value) }}
+          selectable
           sumRow={[
             {
               span: 2,

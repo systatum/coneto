@@ -71,6 +71,7 @@ import {
   createToastTheme,
   createFlippable,
   createProgressbarTheme,
+  createScrollbar,
 } from "./creator";
 
 // Dark
@@ -605,7 +606,6 @@ const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#1465d3bf",
   checkedOutsideBorderColor: "#374151",
-  backgroundColor: "inherit",
   checkedBackgroundColor: "white",
   textColor: "#ffffff",
   descriptionColor: "#d1d5db",
@@ -635,6 +635,12 @@ const darkRichEditor = createRichEditorTheme(
     preBackgroundColor: "#2D2D2D",
   }
 );
+
+const darkScrollbar = createScrollbar({
+  scrollbarThumbActiveColor: "rgba(255, 255, 255, 0.7)",
+  scrollbarThumbColor: "rgba(255, 255, 255, 0.3)",
+  scrollbarTrackColor: "transparent",
+});
 
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
@@ -744,6 +750,11 @@ const darkTable = createTableTheme(darkBody, {
   scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
 
   toggleRowBackgroundColor: "#374151",
+
+  leftLooseEffectColor:
+    "linear-gradient(to right, rgb(8 8 8 / 38%), transparent)",
+  rightLooseEffectColor:
+    "linear-gradient(to left, rgb(8 8 8 / 38%), transparent)",
 });
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
@@ -942,6 +953,7 @@ export const darkTheme: AppTheme = {
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
+  scrollbar: darkScrollbar,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,
   separator: darkSeparator,
@@ -1016,6 +1028,7 @@ export {
   darkRadio,
   darkRating,
   darkRichEditor,
+  darkScrollbar,
   darkSearchbox,
   darkSelectbox,
   darkSeparator,

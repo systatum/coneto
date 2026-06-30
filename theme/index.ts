@@ -628,6 +628,9 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   headerActionBackgroundColor?: string;
   headerActionBorderColor?: string;
 
+  leftLooseEffectColor?: string;
+  rightLooseEffectColor?: string;
+
   headerBackgroundColor?: string;
   headerBorderColor?: string;
 
@@ -776,6 +779,13 @@ export interface TreeListThemeConfig
   rowActionBackgroundColor?: string;
 }
 
+// scrollbar.tsx
+export interface ScrollbarThemeConfig {
+  scrollbarThumbActiveColor?: string;
+  scrollbarThumbColor?: string;
+  scrollbarTrackColor?: string;
+}
+
 // split-pane.tsx
 export interface SplitPaneThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
@@ -846,6 +856,7 @@ export interface AppTheme {
   radio: RadioThemeConfig;
   rating: RatingThemeConfig;
   richEditor: RichEditorThemeConfig;
+  scrollbar: ScrollbarThemeConfig;
   searchbox: SearchboxThemeConfig;
   selectbox: SelectboxThemeConfig;
   separator: SeparatorThemeConfig;

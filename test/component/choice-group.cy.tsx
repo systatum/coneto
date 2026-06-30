@@ -52,6 +52,56 @@ describe("ChoiceGroup", () => {
       });
     });
 
+    context("when hovering", () => {
+      it("renders still consistently coloring with same background", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <ChoiceGroup>
+            {OPTIONS.map((props, index) => (
+              <Radio
+                key={index}
+                name="radioSelected"
+                label={props.label}
+                value={props.value}
+                onChange={(e) =>
+                  console.log(
+                    `The name is ${e.target.name} and the value is ${e.target.value}`
+                  )
+                }
+                styles={{
+                  labelStyle: css`
+                    font-size: 30px;
+                  `,
+                }}
+              />
+            ))}
+          </ChoiceGroup>
+        );
+
+        cy.findAllByLabelText("radio-label")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+
+        cy.findAllByLabelText("radio-circle")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+        cy.findByText("Email").realHover();
+        cy.wait(200);
+
+        cy.findAllByLabelText("radio-label")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(231, 242, 252)");
+
+        cy.findAllByLabelText("radio-circle")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+      });
+    });
+
     context("with onChange", () => {
       context("when clicking", () => {
         it("render the callback on the console", () => {
@@ -134,6 +184,50 @@ describe("ChoiceGroup", () => {
             );
           });
         });
+      });
+    });
+
+    context("when hovering", () => {
+      it("renders still consistently coloring with same background", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <ChoiceGroup>
+            {OPTIONS.map((option, index) => (
+              <Checkbox
+                key={index}
+                value={option.value}
+                description={option.description}
+                name={option.label}
+                label={option.label}
+                onChange={(e) =>
+                  console.log(
+                    `The name is ${e.target.name} and the value is ${e.target.value}`
+                  )
+                }
+              />
+            ))}
+          </ChoiceGroup>
+        );
+
+        cy.findAllByLabelText("checkbox-label")
+          .eq(0)
+          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+        cy.findAllByLabelText("checkbox")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+        cy.findByText("Email").realHover();
+        cy.wait(200);
+
+        cy.findAllByLabelText("checkbox-label")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(231, 242, 252)");
+
+        cy.findAllByLabelText("checkbox")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
       });
     });
 

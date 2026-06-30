@@ -1,12 +1,15 @@
 import {
   RiArchive2Fill,
   RiArrowUpSLine,
+  RiBookMarkedLine,
+  RiCheckboxMultipleLine,
   RiClipboardFill,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
   RiForbid2Line,
   RiReactjsLine,
   RiRefreshLine,
+  RiSettings3Line,
   RiSpam2Line,
 } from "@remixicon/react";
 import {
@@ -17,13 +20,15 @@ import {
   TableProps,
   TableRowProps,
   TableRowGroupProps,
+  TableSummaryRowColumn,
+  TableRowContent,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 interface TableSummaryProps {
   id?: string;
@@ -186,6 +191,483 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("loose", () => {
+    function ProductTableLoose({ loose = true }: { loose?: boolean }) {
+      const [activeTab, setActiveTab] = useState({
+        withCheckbox: false,
+        withActions: false,
+        withSummary: false,
+      });
+
+      const TOP_ACTIONS: TableAction[] = [
+        {
+          type: "button",
+          caption: "With Checkbox",
+          pressed: activeTab.withCheckbox,
+          icon: { image: RiCheckboxMultipleLine },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withCheckbox: !prev.withCheckbox,
+            })),
+        },
+        {
+          type: "button",
+          caption: "With Row Actions",
+          pressed: activeTab.withActions,
+          icon: { image: RiSettings3Line },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withActions: !prev.withActions,
+            })),
+        },
+        {
+          type: "button",
+          caption: "With Summary",
+          pressed: activeTab.withSummary,
+          icon: { image: RiBookMarkedLine },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withSummary: !prev.withSummary,
+            })),
+        },
+      ];
+
+      const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
+        {
+          caption: "Edit",
+          icon: { image: RiArrowUpSLine },
+          onClick: () => console.log(`${rowId} was edited`),
+        },
+        {
+          caption: "Delete",
+          icon: { image: RiDeleteBin2Fill },
+          variant: "danger",
+          onClick: () => console.log(`${rowId} was deleted`),
+        },
+      ];
+
+      const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+      const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+      const STATUS = ["active", "idle", "degraded"];
+
+      const columns: TableColumn[] = [
+        { id: "name", caption: "Name", sortable: false },
+        { id: "type", caption: "Protocol", sortable: false },
+        { id: "region", caption: "Region", sortable: false },
+        { id: "status", caption: "Status", sortable: false },
+        { id: "version", caption: "Version", sortable: false },
+        { id: "uptime", caption: "Uptime", sortable: false },
+        { id: "requests", caption: "Requests/s", sortable: false },
+        { id: "latency", caption: "Latency (ms)", sortable: false },
+        { id: "errorRate", caption: "Error Rate", sortable: false },
+        { id: "cpu", caption: "CPU %", sortable: false },
+        { id: "memory", caption: "Memory %", sortable: false },
+        { id: "connections", caption: "Connections", sortable: false },
+        { id: "bandwidth", caption: "Bandwidth", sortable: false },
+        { id: "zone", caption: "Zone", sortable: false },
+        { id: "provider", caption: "Provider", sortable: false },
+      ];
+
+      const rowData = useMemo(
+        () =>
+          Array.from({ length: 15 }, (_, i) => {
+            const type = TYPES_DATA[i % TYPES_DATA.length];
+            const region = REGIONS[i % REGIONS.length];
+            const status = STATUS[i % STATUS.length];
+
+            const seed = (i + 1) * 17;
+            const req = 200 + (seed % 200);
+            const lat = 50 + (seed % 50);
+            const errRate = ((seed % 500) / 100).toFixed(2);
+            const cpu = 80 + (seed % 80);
+            const mem = 70 + (seed % 70);
+            const conn = 1000 + (seed % 1000);
+            const bw = 100 + (seed % 100);
+
+            return {
+              id: `lb-${i}`,
+              content: [
+                `lb-${region}-${i + 1}`,
+                type,
+                region,
+                status,
+                `v${1 + (i % 3)}.${i % 10}`,
+                `${10 + i}d`,
+                req,
+                lat,
+                `${errRate}%`,
+                cpu,
+                mem,
+                conn,
+                `${bw}Mbps`,
+                `zone-${(i % 3) + 1}`,
+                "aws",
+              ] as TableRowContent,
+              req,
+              lat,
+              errRate: parseFloat(errRate),
+              cpu,
+              mem,
+              conn,
+              bw,
+            };
+          }),
+        []
+      );
+
+      const totals = useMemo(
+        () => ({
+          req: rowData.reduce((s, r) => s + r.req, 0),
+          lat: Math.round(
+            rowData.reduce((s, r) => s + r.lat, 0) / rowData.length
+          ),
+          errRate: (
+            rowData.reduce((s, r) => s + r.errRate, 0) / rowData.length
+          ).toFixed(2),
+          cpu: Math.round(
+            rowData.reduce((s, r) => s + r.cpu, 0) / rowData.length
+          ),
+          mem: Math.round(
+            rowData.reduce((s, r) => s + r.mem, 0) / rowData.length
+          ),
+          conn: rowData.reduce((s, r) => s + r.conn, 0),
+          bw: rowData.reduce((s, r) => s + r.bw, 0),
+        }),
+        [rowData]
+      );
+
+      const sampleRows = rowData.map((row, i) => (
+        <Table.Row
+          key={row.id}
+          rowId={row.id}
+          actions={activeTab.withActions ? ROW_ACTION : null}
+          content={row.content}
+        />
+      ));
+
+      const sumRow: TableSummaryRowColumn[] = [
+        { content: "Totals / Avg", bold: true },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: totals.req, bold: true },
+        { content: `${totals.lat} ms`, bold: true },
+        { content: `${totals.errRate}%`, bold: true },
+        { content: `${totals.cpu}%`, bold: true },
+        { content: `${totals.mem}%`, bold: true },
+        { content: totals.conn, bold: true },
+        { content: `${totals.bw}Mbps`, bold: true },
+        { content: "" },
+        { content: "" },
+      ];
+
+      return (
+        <Table
+          styles={{
+            tableBodyStyle: css`
+              max-height: 250px;
+            `,
+          }}
+          loose={loose}
+          actions={TOP_ACTIONS}
+          columns={columns}
+          selectable={activeTab.withCheckbox}
+          sumRow={activeTab.withSummary && sumRow}
+        >
+          {sampleRows}
+        </Table>
+      );
+    }
+    context("when given false", () => {
+      it("should render the body element with overflow x hidden", () => {
+        cy.mount(<ProductTableLoose loose={false} />);
+
+        cy.findByLabelText("table-body")
+          .parent()
+          .should("have.css", "overflow-x", "hidden")
+          .and("have.css", "overflow-y", "scroll");
+      });
+    });
+
+    context("when given true", () => {
+      it("should render the by overflow auto in body element", () => {
+        cy.mount(<ProductTableLoose loose />);
+
+        cy.findByLabelText("table-body")
+          .parent()
+          .should("have.css", "overflow-x", "scroll")
+          .and("have.css", "overflow-y", "scroll");
+      });
+
+      context("loose effect", () => {
+        context("first column", () => {
+          it("shouldn't render loose effect on the first column", () => {
+            cy.mount(<ProductTableLoose loose />);
+
+            cy.findAllByLabelText("table-row-cell")
+              .first()
+              .then(($el) => {
+                const after = window.getComputedStyle($el[0], "::after");
+
+                expect(after.backgroundImage).to.not.equal(
+                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                );
+              });
+          });
+
+          context("when scrolling to the right", () => {
+            it("should render loose effect on the first column", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findByLabelText("table-body")
+                .parent()
+                .then(($el) => {
+                  const el = $el[0];
+
+                  const scrollToEnd = () => {
+                    const maxScroll = el.scrollWidth - el.clientWidth;
+                    el.scrollLeft = maxScroll;
+                    el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                    if (el.scrollLeft < maxScroll) {
+                      scrollToEnd();
+                    }
+                  };
+
+                  scrollToEnd();
+                });
+              cy.wait(300);
+
+              cy.findAllByLabelText("table-row-cell")
+                .first()
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::after");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+          });
+        });
+
+        context("last column", () => {
+          context("with actions", () => {
+            it("should render loose effect on the last column", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.get(".coneto-button")
+                .eq(3)
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            it("renders header loose actions with width 48px", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("header-row-loose-action")
+                .should("have.css", "width", "48px")
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            it("renders summary row loose actions with width 48px", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action")
+                .should("have.css", "width", "48px")
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            context("when scrolling to the right", () => {
+              it("shouldn't render loose effect on the last column", () => {
+                cy.mount(<ProductTableLoose loose />);
+
+                cy.findAllByLabelText("action-button").eq(1).click();
+                cy.findAllByLabelText("action-button").eq(2).click();
+
+                cy.findByLabelText("table-body")
+                  .parent()
+                  .then(($el) => {
+                    const el = $el[0];
+
+                    const scrollToEnd = () => {
+                      const maxScroll = el.scrollWidth - el.clientWidth;
+                      el.scrollLeft = maxScroll;
+                      el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                      if (el.scrollLeft < maxScroll) {
+                        scrollToEnd();
+                      }
+                    };
+
+                    scrollToEnd();
+                  });
+
+                cy.wait(300);
+
+                cy.get(".coneto-button")
+                  .eq(3)
+                  .then(($el) => {
+                    const after = window.getComputedStyle($el[0], "::before");
+
+                    expect(after.backgroundImage).to.not.equal(
+                      "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    );
+                  });
+              });
+            });
+          });
+
+          context("when activate summary", () => {
+            it("renders the summary row loose action", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action")
+                .should("exist")
+                .and("have.css", "width", "48px");
+            });
+          });
+        });
+      });
+
+      context("with checkbox", () => {
+        it("renders checkbox stick in the left side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          cy.get(".coneto-checkbox")
+            .eq(0)
+            .parent()
+            .should("be.visible")
+            .and("have.css", "position", "sticky")
+            .and("have.css", "left", "0px");
+
+          cy.findAllByText("aws").eq(0).should("not.be.visible");
+
+          cy.findAllByText("aws").eq(0).scrollIntoView().should("be.visible");
+
+          cy.get(".coneto-checkbox").eq(0).parent().should("be.visible");
+        });
+
+        it("renders height same with table-row-cell", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          ["field-lane-control", "table-row-cell"].forEach((label) => {
+            cy.findAllByLabelText(label)
+              .eq(0)
+              .should("have.css", "height", "48px");
+          });
+        });
+      });
+
+      context("with actions", () => {
+        it("renders the row actions sticky in the right side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.wait(300);
+
+          cy.get(".coneto-button")
+            .eq(4)
+            .should("have.css", "position", "sticky")
+            .and("have.css", "right", "0px");
+        });
+      });
+
+      context("with summary", () => {
+        it("renders the first column summary stick in the left side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(2).click();
+          cy.wait(300);
+
+          cy.findByText("Totals / Avg").should("be.visible");
+
+          cy.findAllByText("aws").eq(0).should("not.be.visible");
+
+          cy.findAllByText("aws").eq(0).scrollIntoView().should("be.visible");
+
+          cy.findByText("Totals / Avg").should("be.visible");
+        });
+      });
+
+      context("when scrolling to the right", () => {
+        it("shows the most right content", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findByLabelText("table-body")
+            .parent()
+            .should("have.css", "overflow-x", "scroll")
+            .and("have.css", "overflow-y", "scroll");
+
+          cy.findAllByText("aws").eq(0).should("not.be.visible");
+
+          cy.findAllByText("aws").eq(0).scrollIntoView().should("be.visible");
+        });
+
+        it("the first column still visible", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findByText("Name").should("be.visible");
+          cy.findByText("lb-SG-1").should("be.visible");
+          cy.findByText("lb-ID-2").should("be.visible");
+
+          cy.findAllByText("aws").eq(0).should("not.be.visible");
+
+          cy.findAllByText("aws").eq(0).scrollIntoView().should("be.visible");
+
+          cy.findByText("Name").should("be.visible");
+          cy.findByText("lb-SG-1").should("be.visible");
+          cy.findByText("lb-ID-2").should("be.visible");
+        });
+      });
+    });
+  });
 
   context("columns prop", () => {
     context("styles", () => {
@@ -1125,12 +1607,10 @@ describe("Table", () => {
     });
 
     context("with selectable", () => {
-      it("renders with selectable and add padding right on wrapper", () => {
+      it("renders with empty checkbox", () => {
         cy.mount(<TableWithAppendix />);
 
-        cy.findAllByLabelText("table-summary-wrapper")
-          .eq(0)
-          .should("have.css", "padding-left", "10px");
+        cy.findAllByLabelText("empty-checkbox").eq(0).should("exist");
       });
     });
   });
@@ -1766,13 +2246,13 @@ describe("Table", () => {
           </Table>
         );
 
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(0)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(1)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(2)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
       });
@@ -2490,10 +2970,12 @@ describe("Table", () => {
           .should("exist")
           .and("be.visible");
 
-        cy.findByLabelText("table-body").then(($el) => {
-          const start = $el[0].scrollTop;
-          cy.wrap($el).scrollTo(0, start + 101);
-        });
+        cy.findByLabelText("table-body")
+          .parent()
+          .then(($el) => {
+            const start = $el[0].scrollTop;
+            cy.wrap($el).scrollTo(0, start + 101);
+          });
 
         cy.findByLabelText("button-dropdown-wrapper").should("not.exist");
       });
