@@ -70,6 +70,7 @@ interface BasePhoneboxProps {
   id?: string;
   required?: boolean;
   mobile?: boolean;
+  drawerHeight?: string;
 }
 
 export interface PhoneboxStyles {
@@ -96,6 +97,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       required,
       onBlur,
       mobile,
+      drawerHeight,
     },
     ref
   ) => {
@@ -342,6 +344,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             styles={{
               drawerStyle: styles?.drawerStyle,
             }}
+            drawerHeight={drawerHeight}
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             refs={refs as unknown as ComboboxDrawerProps["refs"]}
