@@ -412,6 +412,14 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       ...rest
     } = props;
 
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      ...phoneboxStyle
+    } = styles ?? {};
+
     const inputId = StatefulForm.sanitizeId({
       prefix: "phonebox",
       name: props.name,
@@ -434,10 +442,10 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
         className={applyClassName("phonebox", className)}
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
         }}
       >
         <BasePhonebox
@@ -446,15 +454,14 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           showError={showError}
           disabled={disabled}
           styles={{
-            self: styles?.self,
-            toggleStyle: styles?.toggleStyle,
+            ...phoneboxStyle,
             inputWrapperStyle: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${phoneboxStyle?.inputWrapperStyle}
             `,
           }}
           onChange={onChange}
