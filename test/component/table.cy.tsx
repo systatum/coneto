@@ -615,22 +615,22 @@ describe("Table", () => {
       });
 
       context("height in table header", () => {
-        it("renders height with 65px", () => {
+        it("renders height with 49px", () => {
           cy.mount(<ProductTableLoose loose />);
           cy.findByLabelText("table-header").should(
             "have.css",
             "height",
-            "65px"
+            "49px"
           );
         });
 
         context("when given actions in table column", () => {
-          it("should consistently with height 65px", () => {
+          it("should consistently with height 49px", () => {
             cy.mount(<ProductTableLoose loose />);
             cy.findByLabelText("table-header").should(
               "have.css",
               "height",
-              "65px"
+              "49px"
             );
             cy.findAllByLabelText("column-action").should("not.exist");
 
@@ -639,7 +639,7 @@ describe("Table", () => {
             cy.findByLabelText("table-header").should(
               "have.css",
               "height",
-              "65px"
+              "49px"
             );
             cy.findAllByLabelText("table-column-action")
               .should("exist")
@@ -938,10 +938,10 @@ describe("Table", () => {
     });
 
     context("actions", () => {
-      it("renders with height and width 40px", () => {
+      it("renders with height and width 34px", () => {
         cy.findByLabelText("table-column-action")
-          .should("have.css", "height", "40px")
-          .and("have.css", "width", "40px");
+          .should("have.css", "height", "34px")
+          .and("have.css", "width", "34px");
       });
 
       const ICON_DEFAULT =
@@ -3028,12 +3028,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -3081,12 +3081,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -3135,12 +3135,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -3188,12 +3188,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
