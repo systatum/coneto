@@ -1066,7 +1066,6 @@ const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 0.25rem;
   text-align: center;
-  font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.25rem;
   user-select: none;
