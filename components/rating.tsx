@@ -26,8 +26,9 @@ interface BaseRatingProps {
   id?: string;
 }
 interface BaseRatingStyles {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
+  ratingWrapperStyle?: CSSProp;
+  starsWrapperStyle?: CSSProp;
+  ratingLabelStyle?: CSSProp;
 }
 
 function BaseRating({
@@ -39,6 +40,7 @@ function BaseRating({
   size = "md",
   name,
   disabled,
+  styles,
 }: BaseRatingProps) {
   const { currentTheme } = useTheme();
   const ratingTheme = currentTheme?.rating;
@@ -137,8 +139,14 @@ function BaseRating({
   };
 
   return (
-    <RatingWrapper aria-label="rating-wrapper">
-      <StarsWrapper>
+    <RatingWrapper
+      aria-label="rating-wrapper"
+      $style={styles?.ratingWrapperStyle}
+    >
+      <StarsWrapper
+        aria-label="rating-stars-wrapper"
+        $style={styles?.starsWrapperStyle}
+      >
         {Array.from({ length: 5 }).map((_, i) => (
           <StarSpan
             role="img"
@@ -162,7 +170,13 @@ function BaseRating({
       />
 
       {withLabel && (
-        <RatingLabel $disabled={disabled} $theme={ratingTheme} $size={size}>
+        <RatingLabel
+          aria-label="rating-label"
+          $disabled={disabled}
+          $theme={ratingTheme}
+          $size={size}
+          $style={styles?.ratingLabelStyle}
+        >
           {ratingLocal.toFixed(1)} / 5
         </RatingLabel>
       )}
@@ -204,7 +218,7 @@ function Rating({
     controlStyle,
     containerStyle,
     labelStyle,
-    ...RatingStyles
+    ...ratingStyles
   } = styles ?? {};
 
   return (
@@ -233,22 +247,24 @@ function Rating({
         disabled={disabled}
         name={name}
         id={inputId}
-        styles={RatingStyles}
+        styles={ratingStyles}
       />
     </FieldLane>
   );
 }
 
-const RatingWrapper = styled.div`
+const RatingWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   align-items: center;
   gap: 8px;
+  ${({ $style }) => $style}
 `;
 
-const StarsWrapper = styled.div`
+const StarsWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 2px;
+  ${({ $style }) => $style}
 `;
 
 const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
@@ -269,6 +285,7 @@ const RatingLabel = styled.span<{
   $size: "sm" | "md" | "lg";
   $theme: RatingThemeConfig;
   $disabled?: boolean;
+  $style?: CSSProp;
 }>`
   font-weight: 500;
   color: ${({ $disabled, $theme }) =>
@@ -289,6 +306,8 @@ const RatingLabel = styled.span<{
         `;
     }
   }}
+
+  ${({ $style }) => $style}
 `;
 
 export { Rating };
