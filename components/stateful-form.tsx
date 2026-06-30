@@ -1445,9 +1445,9 @@ function FormFields<T extends FieldValues>({
                           <Colorbox
                             id={field.id}
                             name={field.name}
-                            label={label}
+                            label={field.title}
+                            placeholder={field.placeholder}
                             required={required}
-                            placeholder={placeholder}
                             className={field?.className}
                             helper={field.helper}
                             labelGap={field.labelGap}
@@ -1478,7 +1478,6 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
-                                ${mobileLabelStyle};
 
                                 ${field.colorbox?.styles?.labelStyle}
                               `,
@@ -2156,7 +2155,6 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
-                                ${mobileLabelStyle};
 
                                 ${field.chips?.styles?.labelStyle}
                               `,
