@@ -143,7 +143,10 @@ function BaseRating({
       aria-label="rating-wrapper"
       $style={styles?.ratingWrapperStyle}
     >
-      <StarsWrapper $style={styles?.starsWrapperStyle}>
+      <StarsWrapper
+        aria-label="rating-stars-wrapper"
+        $style={styles?.starsWrapperStyle}
+      >
         {Array.from({ length: 5 }).map((_, i) => (
           <StarSpan
             role="img"
@@ -168,6 +171,7 @@ function BaseRating({
 
       {withLabel && (
         <RatingLabel
+          aria-label="rating-label"
           $disabled={disabled}
           $theme={ratingTheme}
           $size={size}
