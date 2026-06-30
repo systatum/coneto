@@ -270,6 +270,9 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
+
+  mobileBorderColor: "#2c2c2e",
+  mobileBackgroundColor: "#2c2c2e",
 });
 
 const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {

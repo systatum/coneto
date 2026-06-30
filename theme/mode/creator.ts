@@ -359,6 +359,8 @@ export function createCalendarTheme(
       backgroundColor: body.backgroundColor || "#ffffff",
       borderColor: fieldLane?.borderColor || "#d1d5db",
       textColor: body.textColor || "#111827",
+      mobileBackgroundColor: "rgb(249, 250, 251)",
+      mobileBorderColor: "rgb(249, 250, 251)",
 
       dayTextColor: "#6b7280",
 
