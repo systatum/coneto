@@ -1484,6 +1484,10 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobile &&
+                                css`
+                                  width: 100%;
+                                `}
 
                                 ${field.colorbox?.styles?.labelStyle}
                               `,
