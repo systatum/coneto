@@ -575,6 +575,7 @@ function Table({
                     const columnAction =
                       typeof col.actions === "function" && col.actions(col.id);
 
+                    const variant = columnAction?.variant ?? "ghost";
                     const finalColumnAction: ButtonProps = columnAction &&
                       !columnAction.hidden && {
                         ...columnAction,
@@ -592,10 +593,18 @@ function Table({
                             height: 40px;
                             width: 40px;
                             border-radius: 6px;
+                            &:not(:focus-visible):not(:active):not(:hover):not(
+                                :focus
+                              ) {
+                              background-color: transparent;
+                            }
                             ${columnAction?.styles?.self};
                           `,
                         },
-                        variant: columnAction?.variant ?? "ghost",
+                        hoverBackgroundColor:
+                          variant === "ghost" &&
+                          tableTheme?.headerActionHoverBackgroundColor,
+                        variant,
                         "aria-label": "table-column-action",
                       };
 
