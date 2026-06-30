@@ -2195,65 +2195,75 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         name={field.name as Path<T>}
                         control={control}
-                        render={({ field: controllerField, fieldState }) => (
-                          <Rating
-                            editable
-                            id={field.id}
-                            labelGap={field.labelGap}
-                            labelWidth={field.labelWidth}
-                            labelPosition={labelPosition}
-                            className={field?.className}
-                            label={field.title}
-                            helper={field.helper}
-                            required={required}
-                            name={field.name}
-                            rating={controllerField.value}
-                            onChange={(e) => {
-                              controllerField.onChange(e.target.value);
-                              controllerField?.onBlur();
-                              field.onChange?.(e);
-                              if (onChange) {
-                                onChange(field.name as keyof T, e.target.value);
-                              }
-                            }}
-                            showError={!!fieldState.error}
-                            errorMessage={fieldState.error?.message}
-                            disabled={field.disabled || disabled}
-                            {...field.rating}
-                            styles={{
-                              ...field.rating?.styles,
-                              labelStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${mobileLabelStyle};
+                        render={({ field: controllerField, fieldState }) => {
+                          const size = mobile
+                            ? (field?.rating?.size ?? "lg")
+                            : field?.rating?.size;
 
-                                ${field.rating?.styles?.labelStyle}
-                              `,
-                              containerStyle: css`
-                                ${fieldSize &&
-                                css`
-                                  font-size: ${fieldSize};
-                                `};
-                                ${field.width &&
-                                css`
-                                  width: ${field.width};
-                                `};
+                          return (
+                            <Rating
+                              editable
+                              id={field.id}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              size={size}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              label={field.title}
+                              helper={field.helper}
+                              required={required}
+                              name={field.name}
+                              rating={controllerField.value}
+                              onChange={(e) => {
+                                controllerField.onChange(e.target.value);
+                                controllerField?.onBlur();
+                                field.onChange?.(e);
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.value
+                                  );
+                                }
+                              }}
+                              showError={!!fieldState.error}
+                              errorMessage={fieldState.error?.message}
+                              disabled={field.disabled || disabled}
+                              {...field.rating}
+                              styles={{
+                                ...field.rating?.styles,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
 
-                                ${field.rating?.styles?.containerStyle}
-                              `,
-                              bodyStyle: css`
-                                ${mobileBodyStyle};
-                                ${field.rating?.styles?.bodyStyle}
-                              `,
-                              controlStyle: css`
-                                ${mobileControlStyle};
-                                ${field.rating?.styles?.controlStyle}
-                              `,
-                            }}
-                          />
-                        )}
+                                  ${field.rating?.styles?.labelStyle}
+                                `,
+                                containerStyle: css`
+                                  ${fieldSize &&
+                                  css`
+                                    font-size: ${fieldSize};
+                                  `};
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+
+                                  ${field.rating?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${mobileBodyStyle};
+                                  ${field.rating?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
+                                  ${field.rating?.styles?.controlStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
                       />
                     );
                   }
