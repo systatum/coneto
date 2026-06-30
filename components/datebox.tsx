@@ -10,6 +10,7 @@ import {
   Calendar,
   BaseCalendarProps,
   CalendarSelectabilityMode,
+  CalendarStyles,
 } from "./calendar";
 import styled, { css, CSSProp } from "styled-components";
 import { forwardRef, ReactNode } from "react";
@@ -18,7 +19,7 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 
-type BaseDateboxProps = BaseCalendarProps & {
+type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
   name?: string;
   label?: string;
   showError?: boolean;
@@ -32,6 +33,7 @@ type BaseDateboxProps = BaseCalendarProps & {
   helper?: string;
   id?: string;
   isLoading?: boolean;
+  mobile?: boolean;
   labels?: SelectboxLabels;
 };
 
@@ -41,6 +43,7 @@ type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
       selectedOptionsLocal?: SelectboxOption;
+      mobile?: boolean;
       setSelectedOptionsLocal?: (option: SelectboxOption) => void;
       calendarFooter?: ReactNode;
       calendarTodayButtonCaption?: string;
@@ -145,24 +148,65 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
 });
 
 function CalendarDrawer(props: CalendarDrawerProps) {
+  const { mobile, ...rest } = props;
   const { currentTheme } = useTheme();
   const calendarTheme = currentTheme?.calendar;
+
+  const calendarMobileWrapper =
+    mobile &&
+    css`
+      position: fixed;
+      bottom: 20px;
+      min-width: 96dvw;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid ${calendarTheme?.mobileBackgroundColor};
+      background-color: ${calendarTheme?.mobileBackgroundColor};
+    `;
+
+  const calendarStyle: CalendarStyles = {
+    ...props.styles,
+    self: css`
+      ${mobile &&
+      css`
+        width: 350px;
+        left: 50%;
+      `}
+      ${props.styles?.self}
+    `,
+    controlStyle: css`
+      ${mobile &&
+      css`
+        justify-content: center;
+      `}
+    `,
+  };
 
   return (
     <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
-      style={{
-        ...(props.floatingStyles ?? {}),
-        backgroundColor: calendarTheme?.backgroundColor,
-        borderColor: props.showError ? "#dc2626" : calendarTheme?.borderColor,
-      }}
+      style={
+        !mobile
+          ? {
+              ...(props.floatingStyles ?? {}),
+              backgroundColor: calendarTheme?.backgroundColor,
+              borderColor: props.showError
+                ? "#dc2626"
+                : calendarTheme?.borderColor,
+            }
+          : {}
+      }
       tabIndex={-1}
       role="listbox"
       aria-label="Calendar"
+      $style={calendarMobileWrapper}
     >
       <Calendar
-        {...props}
+        {...rest}
+        styles={calendarStyle}
         footer={props.calendarFooter}
         onChange={(data: string[]) => {
           if (props.onChange) {
