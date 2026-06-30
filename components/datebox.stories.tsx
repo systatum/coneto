@@ -166,6 +166,85 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  parameters: {
+    layout: "padded",
+  },
+  render: () => {
+    const DAY_NAMES = [
+      { text: "Su", value: "1" },
+      { text: "Mo", value: "2" },
+      { text: "Tu", value: "3" },
+      { text: "We", value: "4" },
+      { text: "Th", value: "5" },
+      { text: "Fr", value: "6" },
+      { text: "Sa", value: "7" },
+    ];
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
+
+    const [value1, setValue1] = useState<string[]>([]);
+    const [value2, setValue2] = useState<string[]>([]);
+    const [value3, setValue3] = useState<string[]>([]);
+
+    return (
+      <div
+        style={{
+          width: "300px",
+          gap: "4px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Datebox
+          mobile
+          id="mobile"
+          label="Mobile Datebox"
+          options={DAY_NAMES}
+          selectedDates={value1}
+          onChange={setValue1}
+          dayNames={DAY_NAMES}
+          monthNames={MONTH_NAMES}
+        />
+        <Datebox
+          mobile
+          id="mobile-multiple"
+          label="Mobile Multiple Datebox"
+          calendarSelectabilityMode="multiple"
+          options={DAY_NAMES}
+          selectedDates={value2}
+          onChange={setValue2}
+          dayNames={DAY_NAMES}
+          monthNames={MONTH_NAMES}
+        />
+        <Datebox
+          id="mobile-range"
+          label="Mobile Range Datebox"
+          calendarSelectabilityMode="ranged"
+          options={DAY_NAMES}
+          selectedDates={value3}
+          onChange={setValue3}
+          dayNames={DAY_NAMES}
+          monthNames={MONTH_NAMES}
+        />
+      </div>
+    );
+  },
+};
+
 export const WithLoading: Story = {
   render: () => {
     return (
