@@ -493,7 +493,7 @@ function ComboboxDrawer({
     if (
       highlightedIndex !== null &&
       listRef.current[highlightedIndex] &&
-      multiple &&
+      withSearchbox &&
       interactionMode === "keyboard"
     ) {
       const element = listRef.current[highlightedIndex];
@@ -516,7 +516,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, multiple, interactionMode]);
+  }, [highlightedIndex, withSearchbox, interactionMode]);
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
