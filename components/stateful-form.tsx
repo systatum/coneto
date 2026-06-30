@@ -1961,6 +1961,7 @@ function FormFields<T extends FieldValues>({
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
+                            mobile={mobile}
                             ref={(el) => {
                               if (el) refs.current[field.name] = el;
                               const { ref } = register(field.name as Path<T>);
