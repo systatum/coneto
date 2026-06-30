@@ -695,7 +695,6 @@ export const Loose: Story = {
       withCheckbox: false,
       withActions: false,
       withSummary: false,
-      withSorter: false,
     });
 
     const [status, setStatus] = useState<"desc" | "asc" | "original">(
@@ -729,14 +728,6 @@ export const Loose: Story = {
         icon: { image: RiBookMarkedLine },
         onClick: () =>
           setActiveTab((prev) => ({ ...prev, withSummary: !prev.withSummary })),
-      },
-      {
-        type: "button",
-        caption: "With Sorter",
-        pressed: activeTab.withSorter,
-        icon: { image: RiArrowUpDownLine },
-        onClick: () =>
-          setActiveTab((prev) => ({ ...prev, withSorter: !prev.withSorter })),
       },
     ];
 
@@ -832,10 +823,6 @@ export const Loose: Story = {
     const columnActions = (
       id: keyof (typeof initialRows)[number]
     ): TableColumnAction | null => {
-      if (!activeTab.withSorter) {
-        return null;
-      }
-
       if (id === "type") {
         return {
           title: "Info Action",
