@@ -4,6 +4,7 @@ import React, {
   KeyboardEvent,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -29,10 +30,11 @@ import {
 } from "./field-lane";
 import { Figure } from "./figure";
 import { StatefulForm } from "./stateful-form";
-import { Searchbox } from "./searchbox";
 import { PhoneboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
+import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
+import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
 
 export interface PhoneboxCountryCode {
   id: string;
@@ -67,6 +69,7 @@ interface BasePhoneboxProps {
   styles?: PhoneboxStyles;
   id?: string;
   required?: boolean;
+  mobile?: boolean;
 }
 
 export interface PhoneboxStyles {
@@ -91,6 +94,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       id,
       required,
       onBlur,
+      mobile,
     },
     ref
   ) => {
@@ -105,18 +109,53 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
     const [selectedCountry, setSelectedCountry] =
       useState<PhoneboxCountryCode>(countryCodeState);
     const [phoneNumber, setPhoneNumber] = useState("");
+
     const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [interactionMode, setInteractionMode] = useState<
+      "mouse" | "keyboard"
+    >("keyboard");
+    const [hasInteracted, setHasInteracted] = useState(false);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
     const phoneInputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => phoneInputRef.current!);
 
-    const FILTERED_COUNTRIES = COUNTRY_CODES.filter(
-      (country) =>
-        country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        country.code.includes(searchTerm)
+    const FINAL_COUNTRY_OPTIONS: ComboboxOption[] = COUNTRY_CODES.map(
+      (country) => ({
+        value: country.id,
+        text: `${country.code}-${country.flag}`,
+        render: (
+          <>
+            <span style={{ marginRight: "8px" }}>{country.flag}</span>
+            <span>{country.name}</span>
+            <span
+              style={{
+                marginLeft: "auto",
+                color: "#6a7282",
+              }}
+            >
+              {country.code}
+            </span>
+          </>
+        ),
+      })
     );
+
+    const FILTERED_COUNTRY_OPTIONS: ComboboxOption[] = useMemo(() => {
+      if (!hasInteracted || !searchTerm) return FINAL_COUNTRY_OPTIONS;
+
+      const search = searchTerm.toLowerCase();
+
+      return FINAL_COUNTRY_OPTIONS.filter((opt) => {
+        const country = COUNTRY_CODES.find((c) => c.id === opt.value);
+        if (!country) return false;
+        return (
+          country.name.toLowerCase().includes(search) ||
+          country.code.includes(searchTerm)
+        );
+      });
+    }, [hasInteracted, searchTerm, FINAL_COUNTRY_OPTIONS]);
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -149,23 +188,24 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
       setPhoneNumber(formatted);
     }, [value]);
 
-    const listRef = useRef<(HTMLDivElement | null)[]>([]);
+    const listRef = useRef<(HTMLLIElement | null)[]>([]);
+
     useEffect(() => {
       if (isOpen && listRef.current[highlightedIndex]) {
         listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
       }
     }, [highlightedIndex, isOpen]);
 
-    const handleDropdownKeyDown = async (
-      e: React.KeyboardEvent<HTMLInputElement>
-    ) => {
+    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (disabled) return;
+
+      setInteractionMode("keyboard");
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
         if (!isOpen) await setIsOpen(true);
         await setHighlightedIndex((prev) =>
-          Math.min(prev + 1, FILTERED_COUNTRIES.length - 1)
+          Math.min(prev + 1, FILTERED_COUNTRY_OPTIONS.length - 1)
         );
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
@@ -173,9 +213,12 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
       } else if (e.key === "Enter") {
         e.preventDefault();
-        const selected = FILTERED_COUNTRIES[highlightedIndex];
-        if (selected) {
-          await handleSelectCountry(selected);
+        const selectedOption = FILTERED_COUNTRY_OPTIONS[highlightedIndex];
+        const selectedCountry = COUNTRY_CODES.find(
+          (country) => country.id === selectedOption.value
+        );
+        if (selectedCountry) {
+          await handleSelectCountry(selectedCountry);
         }
       } else if (e.key === "Escape") {
         e.preventDefault();
@@ -296,86 +339,43 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
         </InputWrapper>
 
         {isOpen && (
-          <DropdownContainer
-            aria-label="phonebox-drawer"
-            {...getFloatingProps({
-              ref: refs.setFloating,
-              id: "country-listbox",
-              role: "listbox",
-              style: {
-                ...floatingStyles,
-                width: refs.reference.current?.getBoundingClientRect().width,
-              },
-              tabIndex: -1,
-            })}
-            $theme={phoneboxTheme}
-          >
-            <Searchbox
-              type="text"
-              disabled={disabled}
-              ref={searchInputRef}
-              placeholder="Search your country..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setHighlightedIndex(0);
-              }}
-              styles={{
-                containerStyle: css`
-                  position: sticky;
-                  top: 0;
-                  padding: 4px;
-                  margin: 0px;
-                  min-width: 0;
-                  width: 100%;
-                  background-color: ${phoneboxTheme?.backgroundColor};
-                `,
-                self: css`
-                  border-radius: 2px;
-                  max-height: 28px;
-                  width: 100%;
-                `,
-              }}
-              onKeyDown={handleDropdownKeyDown}
-              aria-label="phonebox-search-countries"
-              autoComplete="off"
-            />
-
-            {FILTERED_COUNTRIES.length > 0 ? (
-              FILTERED_COUNTRIES.map((country, index) => (
-                <CountryOption
-                  key={country.id}
-                  $theme={phoneboxTheme}
-                  id={`country-option-${index}`}
-                  role="option"
-                  aria-selected={highlightedIndex === index}
-                  tabIndex={-1}
-                  ref={(el) => {
-                    listRef.current[index] = el;
-                  }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    handleSelectCountry(country);
-                  }}
-                  onMouseEnter={() => setHighlightedIndex(index)}
-                  $highlighted={highlightedIndex === index}
-                >
-                  <span style={{ marginRight: "8px" }}>{country.flag}</span>
-                  <span>{country.name}</span>
-                  <span
-                    style={{
-                      marginLeft: "auto",
-                      color: "#6a7282",
-                    }}
-                  >
-                    {country.code}
-                  </span>
-                </CountryOption>
-              ))
-            ) : (
-              <EmptyOption>No country found.</EmptyOption>
-            )}
-          </DropdownContainer>
+          <Combobox.Drawer
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            refs={refs as unknown as ComboboxDrawerProps["refs"]}
+            highlightedIndex={highlightedIndex}
+            setHighlightedIndex={setHighlightedIndex}
+            interactionMode={interactionMode}
+            setInteractionMode={setInteractionMode}
+            selectedOptions={countryCodeValue.id}
+            selectedOptionsLocal={{
+              text: searchTerm,
+              value: "",
+            }}
+            onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
+              const selectedCountry = await COUNTRY_CODES.find(
+                (c) => c.id === selectedOptions
+              );
+              if (selectedCountry) {
+                await handleSelectCountry(selectedCountry);
+              }
+            }}
+            setSelectedOptionsLocal={(
+              selectedOptionsLocal?: SelectboxOption
+            ) => {
+              setSearchTerm(selectedOptionsLocal?.text);
+            }}
+            setHasInteracted={setHasInteracted}
+            options={FILTERED_COUNTRY_OPTIONS}
+            navigableOptions={FILTERED_COUNTRY_OPTIONS}
+            inputRef={searchInputRef}
+            mobile={mobile}
+            withSearchbox
+            floatingStyles={floatingStyles}
+            getFloatingProps={getFloatingProps}
+            listRef={listRef}
+            handleKeyDown={handleKeyDown}
+          />
         )}
       </>
     );
@@ -383,8 +383,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 );
 
 export interface PhoneboxProps
-  extends
-    Omit<BasePhoneboxProps, "styles">,
+  extends Omit<BasePhoneboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "onChange" | "actions"> {
   styles?: PhoneboxStyles & FieldLaneStyles;
 }
@@ -581,56 +580,6 @@ const PhoneInput = styled.input<{
   }
 
   ${({ $style }) => $style}
-`;
-
-const DropdownContainer = styled.div<{
-  $theme: PhoneboxThemeConfig;
-}>`
-  position: absolute;
-  left: 0;
-  border-radius: var(--radius-xs);
-  max-height: 240px;
-  overflow-y: auto;
-  z-index: 9992999;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  background-color: ${({ $theme }) => $theme?.backgroundColor};
-  border: 1px solid ${({ $theme }) => $theme?.borderColor};
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #d1d5db;
-    border-radius: 4px;
-  }
-`;
-
-const CountryOption = styled.div<{
-  $highlighted?: boolean;
-  $theme: PhoneboxThemeConfig;
-}>`
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  ${({ $highlighted, $theme }) =>
-    $highlighted &&
-    css`
-      background-color: ${$theme?.optionHighlightedBackground};
-    `}
-`;
-
-const EmptyOption = styled.div`
-  padding: 12px;
-  text-align: center;
-  font-size: 12px;
-  color: #6b7280;
 `;
 
 function trimPhone(input: string): string {
