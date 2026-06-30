@@ -19,6 +19,7 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
 import { CalendarThemeConfig } from "theme";
+import { createPortal } from "react-dom";
 
 type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
   name?: string;
@@ -185,7 +186,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
     `,
   };
 
-  return (
+  return createPortal(
     <CalendarWrapper
       {...(props.getFloatingProps?.() ?? {})}
       ref={props.refs?.setFloating ?? null}
@@ -221,7 +222,8 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         selectabilityMode={props.calendarSelectabilityMode}
         label={null}
       />
-    </CalendarWrapper>
+    </CalendarWrapper>,
+    document.body
   );
 }
 
@@ -249,6 +251,7 @@ const CalendarWrapper = styled.ul<{
   list-style: none;
   outline: none;
   z-index: 9992999;
+
   ${({ $theme, $showError, $mobile }) => css`
     background-color: ${$theme?.backgroundColor};
     border-color: ${$showError ? "#dc2626" : $theme?.borderColor};
