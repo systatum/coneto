@@ -270,6 +270,9 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
+
+  mobileBorderColor: "#2c2c2e",
+  mobileBackgroundColor: "#2c2c2e",
 });
 
 const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {
@@ -728,6 +731,7 @@ const darkTable = createTableTheme(darkBody, {
   headerActionBackgroundColor:
     "linear-gradient(rgb(33, 33, 33), rgb(37, 38, 38))",
   headerActionBorderColor: "rgb(61, 61, 61)",
+  headerActionHoverBackgroundColor: "rgb(52, 52, 52)",
 
   headerBackgroundColor: "linear-gradient(rgb(42, 42, 42), rgb(41, 44, 46))",
   headerBorderColor: "rgb(39, 39, 48)",

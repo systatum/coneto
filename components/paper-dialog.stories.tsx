@@ -966,7 +966,7 @@ export const Nested: Story = {
               <Table.Row
                 key={rowIndex}
                 rowId={`${rowValue.name}-${rowValue.status}-${rowValue.gender}-${rowValue.birthday}`}
-                actions={(columnCaption) => ROW_ACTIONS(columnCaption, true)}
+                actions={(columnId) => ROW_ACTIONS(columnId, true)}
                 content={[
                   rowValue.name,
                   rowValue.status,

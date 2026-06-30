@@ -796,12 +796,10 @@ describe("context-menu", () => {
       {
         id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 

@@ -93,6 +93,9 @@ export interface CalendarThemeConfig extends BodyThemeConfig {
   highlightedDateTextColor?: string;
   hightlightDateColor?: string;
 
+  mobileBackgroundColor?: string;
+  mobileBorderColor?: string;
+
   boxShadow?: string;
 }
 
@@ -627,6 +630,7 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
 
   headerActionBackgroundColor?: string;
   headerActionBorderColor?: string;
+  headerActionHoverBackgroundColor?: string;
 
   leftLooseEffectColor?: string;
   rightLooseEffectColor?: string;
