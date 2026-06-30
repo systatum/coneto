@@ -2267,6 +2267,13 @@ function FormFields<T extends FieldValues>({
                                   ${mobileControlStyle};
                                   ${field.rating?.styles?.controlStyle}
                                 `,
+                                starsWrapperStyle: css`
+                                  ${mobile &&
+                                  css`
+                                    gap: 4px;
+                                  `};
+                                  ${field.rating?.styles?.starsWrapperStyle}
+                                `,
                               }}
                             />
                           );
@@ -2337,7 +2344,19 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${fieldSize};
                                 `};
+
                                 ${field.thumbField?.styles?.triggerWrapperStyle}
+                              `,
+                              triggerStyle: css`
+                                ${mobile &&
+                                css`
+                                  svg {
+                                    width: 32px;
+                                    height: 32px;
+                                  }
+                                `};
+
+                                ${field.thumbField?.styles?.triggerStyle};
                               `,
                               containerStyle: css`
                                 ${field.width &&
