@@ -454,6 +454,7 @@ function FormFields<T extends FieldValues>({
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
   const pinboxTheme = currentTheme?.pinbox;
+  const phoneboxTheme = currentTheme?.phonebox;
 
   const refs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -1409,13 +1410,29 @@ function FormFields<T extends FieldValues>({
                                 ${mobileLabelStyle};
                                 ${field.phonebox?.styles?.labelStyle}
                               `,
+                              toggleStyle: css`
+                                background-color: transparent;
+                                &:hover {
+                                  background-color: transparent;
+                                }
+                                ${field.phonebox?.styles?.toggleStyle}
+                              `,
+                              inputWrapperStyle: css`
+                                ${mobileInputStyle};
+
+                                justify-content: space-between;
+                                ${field.phonebox?.styles?.inputWrapperStyle}
+                              `,
                               self: css`
                                 ${fieldSize &&
                                 css`
                                   font-size: ${fieldSize};
                                 `}
                                 ${mobileInputStyle};
-                                ${field.phonebox?.styles?.inputWrapperStyle}
+                                text-align: end;
+
+                                width: fit-content;
+                                ${field.phonebox?.styles?.inputWrapperStyle};
                               `,
                               containerStyle: css`
                                 ${field.width &&
