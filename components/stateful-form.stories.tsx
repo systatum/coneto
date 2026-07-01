@@ -1327,7 +1327,7 @@ export const Mobile: Story = {
         title: "Color",
         type: "color",
         required: true,
-        placeholder: "Enter the color here",
+        placeholder: "000000",
       },
       {
         name: "combo",
@@ -1460,6 +1460,9 @@ export const Mobile: Story = {
         required: true,
         disabled: !isFormValid,
         rowJustifyPosition: "end",
+        button: {
+          variant: "primary",
+        },
       },
     ];
 
