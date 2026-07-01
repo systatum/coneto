@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 import {
   FileDropBox,
+  FileDropBoxProps,
   OnCompleteFunctionArgs,
   OnFileDroppedFunctionArgs,
 } from "./../../components/file-drop-box";
@@ -9,6 +10,175 @@ import { useState } from "react";
 import { RiDeleteBin2Fill } from "@remixicon/react";
 
 describe("FileDropBox", () => {
+  function ProductFileDropbox(props?: FileDropBoxProps) {
+    const [files, setFiles] = useState<File[]>([]);
+
+    const onFileDropped = async ({
+      error,
+      files,
+      setProgressLabel,
+      succeed,
+    }: OnFileDroppedFunctionArgs) => {
+      const file = files[0];
+      setFiles((prev) => [...prev, file]);
+      setProgressLabel(`Uploading ${file.name}`);
+
+      return new Promise<void>((resolve) => {
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 20;
+
+          if (progress >= 100) {
+            clearInterval(interval);
+            if (file === null) {
+              error(file, `file ${file.name} is not uploaded`);
+            } else {
+              succeed(file);
+            }
+            setProgressLabel(`Uploaded ${files[0].name}`);
+            resolve();
+          }
+        }, 300);
+      });
+    };
+
+    const onComplete = async ({
+      failedFiles,
+      setProgressLabel,
+      succeedFiles,
+      hideProgressLabel,
+      showUploaderForm,
+    }: OnCompleteFunctionArgs) => {
+      console.log(succeedFiles, "This is succeedFiles");
+      console.log(failedFiles, "This is failedFiles");
+      await setProgressLabel(
+        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
+      );
+      await hideProgressLabel();
+      await showUploaderForm();
+    };
+
+    return (
+      <FileDropBox
+        onFileDropped={onFileDropped}
+        onComplete={onComplete}
+        {...props}
+      >
+        <Table
+          styles={{
+            containerStyle: css`
+              ${files.length === 0 &&
+              css`
+                display: none;
+              `}
+            `,
+          }}
+          columns={[
+            {
+              id: "file_name",
+              caption: "File Name",
+            },
+            {
+              id: "date",
+              caption: "Date",
+            },
+          ]}
+        >
+          {files.map((props) => (
+            <Table.Row
+              actions={(id) => [
+                {
+                  caption: "Delete",
+                  icon: { image: RiDeleteBin2Fill },
+                  onClick: () => {
+                    if (id) {
+                      setFiles((prev) => prev.filter((val) => val.name !== id));
+                    }
+                  },
+                },
+              ]}
+              rowId={props.name}
+              content={[
+                props.name,
+                new Date(props.lastModified).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "2-digit",
+                }),
+              ]}
+            />
+          ))}
+        </Table>
+      </FileDropBox>
+    );
+  }
+
+  context("placeholder", () => {
+    context("when given ReactNode", () => {
+      it("renders the ReactNode placeholder", () => {
+        cy.mount(
+          <ProductFileDropbox
+            placeholder={<div aria-label="test">Tester</div>}
+          />
+        );
+
+        cy.findByLabelText("test").should("have.text", "Tester");
+      });
+    });
+
+    context("when given string", () => {
+      it("renders the string placeholder", () => {
+        cy.mount(<ProductFileDropbox placeholder="test" />);
+
+        cy.findByLabelText("file-drop-box-placeholder").should(
+          "have.text",
+          "test"
+        );
+      });
+    });
+  });
+
+  context("description", () => {
+    context("when given ReactNode", () => {
+      it("renders the ReactNode description", () => {
+        cy.mount(
+          <ProductFileDropbox
+            description={<div aria-label="test">Tester</div>}
+          />
+        );
+
+        cy.findByLabelText("test").should("have.text", "Tester");
+      });
+    });
+
+    context("when given string", () => {
+      it("renders the string description", () => {
+        cy.mount(<ProductFileDropbox description="test" />);
+
+        cy.findByLabelText("file-drop-box-description").should(
+          "have.text",
+          "test"
+        );
+      });
+    });
+
+    context("when not given", () => {
+      it("renders the default description", () => {
+        cy.mount(<ProductFileDropbox />);
+
+        cy.findByLabelText("file-drop-box-description").should(
+          "contain.text",
+          "Select some files"
+        );
+
+        cy.findByLabelText("file-drop-box-description").should(
+          "contain.text",
+          "from your computer"
+        );
+      });
+    });
+  });
+
   context("children", () => {
     context("when click on the children area", () => {
       function FileDropBoxContent() {

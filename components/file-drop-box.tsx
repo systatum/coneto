@@ -34,7 +34,8 @@ export interface OnCompleteFunctionArgs {
 }
 
 export interface FileDropBoxProps {
-  placeholder?: string;
+  description?: ReactNode;
+  placeholder?: ReactNode;
   accept?: string;
   label?: string;
   onFileDropped?: (props: OnFileDroppedFunctionArgs) => void;
@@ -59,12 +60,15 @@ export interface FileDropBoxStyles {
   successStyle?: CSSProp;
   labelStyle?: CSSProp;
   contentStyle?: CSSProp;
+  placeholderStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
 }
 
 type ProgressProps = "idle" | "loading" | "succeed" | null;
 
 function FileDropBox({
   placeholder = "Drag and Drop Your File",
+  description,
   accept = "*",
   onFileDropped,
   onComplete,
@@ -238,13 +242,31 @@ function FileDropBox({
                 />
               ))}
             </IconsRow>
-            <PlaceholderText $theme={fileDropBoxTheme} $isDragging={isDragging}>
+            <PlaceholderText
+              aria-label="file-drop-box-placeholder"
+              $style={styles?.placeholderStyle}
+              $theme={fileDropBoxTheme}
+              $isDragging={isDragging}
+            >
               {placeholder}
             </PlaceholderText>
-            <div>
-              <LinkText $theme={fileDropBoxTheme}>Select some files</LinkText>{" "}
-              from your computer
-            </div>
+            <DescriptionText
+              aria-label="file-drop-box-description"
+              $style={styles?.descriptionStyle}
+              $theme={fileDropBoxTheme}
+              $isDragging={isDragging}
+            >
+              {description ? (
+                description
+              ) : (
+                <>
+                  <LinkText $theme={fileDropBoxTheme}>
+                    Select some files
+                  </LinkText>{" "}
+                  from your computer
+                </>
+              )}
+            </DescriptionText>
           </UploadContent>
           {children && (
             <ContentWrapper
@@ -509,8 +531,18 @@ const IconsRow = styled.div`
 const PlaceholderText = styled.span<{
   $isDragging: boolean;
   $theme: FileDropBoxThemeConfig;
+  $style?: CSSProp;
 }>`
   font-size: 1.25rem;
+  color: ${({ $theme, $isDragging }) =>
+    $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
+`;
+
+const DescriptionText = styled.span<{
+  $isDragging: boolean;
+  $theme: FileDropBoxThemeConfig;
+  $style?: CSSProp;
+}>`
   color: ${({ $theme, $isDragging }) =>
     $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
 `;
