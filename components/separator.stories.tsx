@@ -1,10 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Separator, SeparatorAction } from "./separator";
 import {
+  Separator,
+  SeparatorAction,
+  SeparatorActionSubMenuList,
+} from "./separator";
+import {
+  RiCalendar2Fill,
+  RiDeleteBinLine,
+  RiFileCopyLine,
   RiFileList3Line,
   RiGitBranchLine,
+  RiInboxArchiveLine,
   RiUserAddLine,
 } from "@remixicon/react";
+import { Calendar } from "./calendar";
+import { css } from "styled-components";
+import { useTheme } from "./../theme";
 
 const meta: Meta<typeof Separator> = {
   title: "Stage/Separator",
@@ -143,6 +154,76 @@ export const WithActions: Story = {
       { icon: { image: RiUserAddLine }, caption: "Invite" },
       { icon: { image: RiGitBranchLine }, caption: "Branch" },
       { icon: { image: RiFileList3Line }, caption: "Specs", alwaysShow: false },
+    ];
+
+    return <Separator {...args} actions={ACTIONS} />;
+  },
+};
+
+export const WithSubMenu: Story = {
+  args: {
+    title: "Introduces the Antrikan Mobile",
+  },
+  render: (args) => {
+    const { currentTheme } = useTheme();
+    const bodyTheme = currentTheme.body;
+
+    const ACTIONS: SeparatorAction[] = [
+      {
+        icon: { image: RiUserAddLine },
+        subMenu: ({ list }) => list(TIP_MENU_PROJECT),
+      },
+      {
+        icon: { image: RiGitBranchLine },
+        subMenu: ({ show }) =>
+          show(
+            <>
+              <span>
+                <strong>Branch:</strong>{" "}
+                mobile/introduces-the-antrikan-mobile-app-design
+              </span>
+              <span>Last updated 2 hours ago.</span>
+            </>,
+            {
+              drawerStyle: css`
+                padding: 10px;
+                color: ${bodyTheme.textColor};
+                background-color: ${bodyTheme.backgroundColor};
+                display: flex;
+                flex-direction: column;
+              `,
+            }
+          ),
+      },
+      {
+        icon: { image: RiCalendar2Fill },
+        subMenu: ({ render }) => render(<Calendar />),
+      },
+    ];
+
+    const TIP_MENU_PROJECT: SeparatorActionSubMenuList[] = [
+      {
+        caption: "Duplicate Project",
+        icon: {
+          image: RiFileCopyLine,
+        },
+        onClick: () => console.log("Duplicate project"),
+      },
+      {
+        caption: "Archive Project",
+        icon: {
+          image: RiInboxArchiveLine,
+        },
+        onClick: () => console.log("Archive project"),
+      },
+      {
+        caption: "Delete Project",
+        icon: {
+          image: RiDeleteBinLine,
+        },
+        variant: "danger",
+        onClick: () => console.log("Delete project"),
+      },
     ];
 
     return <Separator {...args} actions={ACTIONS} />;
