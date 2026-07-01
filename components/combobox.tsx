@@ -1,8 +1,10 @@
 import {
   forwardRef,
+  ForwardRefExoticComponent,
   KeyboardEvent,
   ReactNode,
   Ref,
+  RefAttributes,
   RefObject,
   useEffect,
   useMemo,
@@ -58,6 +60,7 @@ interface BaseComboboxProps {
   labels?: ComboboxLabelsProps;
   mobile?: boolean;
   drawerHeight?: string;
+  withSearchbox?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -98,7 +101,7 @@ export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
 
 export type ComboboxAction = TreeListAction;
 
-type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
+export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
     inputRef?: Ref<HTMLInputElement>;
     handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
@@ -347,6 +350,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               inputRef={props.ref}
               name={name}
               disabled={disabled}
+              withSearchbox={multiple}
               selectedOptions={selectedOptions}
               onChange={onChange}
               highlightOnMatch={highlightOnMatch}
@@ -365,7 +369,11 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       </Selectbox>
     );
   }
-);
+) as ForwardRefExoticComponent<
+  ComboboxProps & RefAttributes<HTMLInputElement>
+> & {
+  Drawer: typeof ComboboxDrawer;
+};
 
 function ComboboxDrawer({
   floatingStyles,
@@ -380,6 +388,7 @@ function ComboboxDrawer({
   setSelectedOptionsLocal,
   selectedOptionsLocal,
   selectedOptions,
+  isOpen,
   setIsOpen,
   actions,
   onClick,
@@ -398,6 +407,7 @@ function ComboboxDrawer({
   navigableOptions,
   mobile,
   drawerHeight,
+  withSearchbox,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -453,6 +463,12 @@ function ComboboxDrawer({
   };
 
   useEffect(() => {
+    if (isOpen && selectedIndex) {
+      setHighlightedIndex(selectedIndex);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (
       !hasScrolled &&
       finalSelectedOptions?.length > 0 &&
@@ -477,7 +493,7 @@ function ComboboxDrawer({
     if (
       highlightedIndex !== null &&
       listRef.current[highlightedIndex] &&
-      multiple &&
+      withSearchbox &&
       interactionMode === "keyboard"
     ) {
       const element = listRef.current[highlightedIndex];
@@ -500,7 +516,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, multiple, interactionMode]);
+  }, [highlightedIndex, withSearchbox, interactionMode]);
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
@@ -527,7 +543,7 @@ function ComboboxDrawer({
               self: css`
                 ${rowStyle({
                   interactionMode,
-                  multiple,
+                  multiple: withSearchbox,
                   theme: comboboxTheme,
                   mobile: !!mobile,
                   hasNestedOptions,
@@ -546,7 +562,7 @@ function ComboboxDrawer({
     const map: Record<string, number> = {};
     const offset = filteredActions.length;
 
-    navigableOptions.forEach((opt, i) => {
+    navigableOptions?.forEach((opt, i) => {
       map[String(opt.value)] = i + offset;
     });
 
@@ -706,6 +722,19 @@ function ComboboxDrawer({
     return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent);
   };
 
+  const content = useMemo(
+    () => generateContent(),
+    [
+      options,
+      finalSelectedOptions,
+      highlightedIndex,
+      highlightOnMatch,
+      flatIndexMap,
+      multiple,
+      mobile,
+    ]
+  );
+
   const onMouseDown = (props: {
     event: React.MouseEvent;
     item?: TreeListContent;
@@ -745,7 +774,7 @@ function ComboboxDrawer({
       if (hasChildren) return;
 
       setIsOpen(false);
-      setConfirmedValue(option);
+      setConfirmedValue?.(option);
       setSelectedOptionsLocal(option);
       handleOnChange([optionValue]);
       setHasInteracted(false);
@@ -833,8 +862,8 @@ function ComboboxDrawer({
         },
       })}
       ref={(node) => {
-        if (typeof refs.setFloating === "function") {
-          refs.setFloating(node);
+        if (typeof refs?.setFloating === "function") {
+          refs?.setFloating(node);
         }
         floatingRef.current = node;
       }}
@@ -845,14 +874,14 @@ function ComboboxDrawer({
       id="combo-list"
       aria-label="combobox-drawer"
       role="listbox"
-      $width={refs.reference.current?.getBoundingClientRect().width}
+      $width={refs?.reference?.current?.getBoundingClientRect().width}
       $mobile={mobile}
       $style={styles?.drawerStyle}
-      $multiple={multiple}
+      $withSearchbox={withSearchbox}
     >
       {(finalOptions || actions) && (
         <>
-          {multiple && (
+          {withSearchbox && (
             <Searchbox
               onKeyDown={handleKeyDown}
               onChange={(e) => {
@@ -876,7 +905,7 @@ function ComboboxDrawer({
                   height: 38px;
                   top: 0;
                   ${mobile &&
-                  !multiple &&
+                  !withSearchbox &&
                   css`
                     transform: translateY(-90px);
                   `};
@@ -1080,7 +1109,7 @@ function ComboboxDrawer({
               `,
             }}
             showHierarchyLine
-            content={generateContent()}
+            content={content}
           />
         </>
       )}
@@ -1094,7 +1123,7 @@ function ComboboxDrawer({
         $theme={comboboxTheme}
         $mobile={mobile}
       >
-        {!multiple && (
+        {!withSearchbox && (
           <FadeTop
             aria-label="combobox-fade-top"
             $theme={comboboxTheme}
@@ -1141,7 +1170,7 @@ const DrawerWrapper = styled.ul<{
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
   $mobile?: boolean;
-  $multiple?: boolean;
+  $withSearchbox?: boolean;
   $hasNestedOptions?: boolean;
   $drawerHeight?: string;
 }>`
@@ -1182,7 +1211,7 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $multiple, $hasNestedOptions, $drawerHeight }) => {
+  ${({ $mobile, $theme, $withSearchbox, $hasNestedOptions, $drawerHeight }) => {
     const $height = $drawerHeight ?? "220px";
 
     return css`
@@ -1197,7 +1226,7 @@ const DrawerWrapper = styled.ul<{
         min-height: ${$height};
         max-height: ${$height};
         border-width: 0.5;
-        ${!$multiple &&
+        ${!$withSearchbox &&
         css`
           padding: calc(${$height} * 0.4545) 0;
         `}
@@ -1332,5 +1361,7 @@ const FadeBottom = styled.div<{
 
   ${({ $style }) => $style}
 `;
+
+Combobox.Drawer = ComboboxDrawer;
 
 export { Combobox };
