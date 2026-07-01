@@ -299,6 +299,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
         })}
       >
         <Button
+          pressed={isOpen}
           aria-label="moneybox-currency-toggle"
           anchorRef={boxRef}
           variant="ghost"
