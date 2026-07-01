@@ -502,6 +502,7 @@ function FormFields<T extends FieldValues>({
           css`
             background-color: transparent;
             border: transparent;
+            padding: 0px;
             &:focus {
               border: transparent;
               box-shadow: none;
@@ -559,7 +560,7 @@ function FormFields<T extends FieldValues>({
               css`
                 min-height: 40px;
                 padding: 10px 20px;
-                border-radius: 30px;
+                border-radius: 24px;
                 flex-direction: column;
                 justify-content: center;
               `}
@@ -1501,6 +1502,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
                                 ${mobile &&
                                 css`
                                   width: 100%;
@@ -1517,6 +1519,10 @@ function FormFields<T extends FieldValues>({
                               `,
                               textInputGroupStyle: css`
                                 ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  width: fit-content;
+                                `};
 
                                 ${field.colorbox?.styles?.textInputGroupStyle};
                               `,
@@ -1541,7 +1547,7 @@ function FormFields<T extends FieldValues>({
                                     color: ${statefulFormTheme.textColor};
                                     -webkit-text-fill-color: ${statefulFormTheme.textColor};
                                   }
-                                  margin-bottom: 3px;
+                                  width: 52px;
                                 `};
 
                                 ${field.colorbox?.styles?.textInputStyle}
@@ -2183,6 +2189,7 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
+                                ${mobileLabelStyle};
 
                                 ${field.chips?.styles?.labelStyle}
                               `,
