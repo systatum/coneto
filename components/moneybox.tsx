@@ -66,12 +66,15 @@ interface BaseMoneyboxProps
   editableCurrency?: boolean;
   currencyOptions?: MoneyboxCurrencyOption[];
   mobile?: boolean;
+  drawerHeight?: string;
   id?: string;
 }
 
 export interface MoneyboxStyles {
   self?: CSSProp;
+  toggleStyle?: CSSProp;
   inputWrapperStyle?: CSSProp;
+  drawerStyle?: CSSProp;
 }
 
 export type MoneyboxDropdownOption = FieldLaneDropdownOption;
@@ -95,6 +98,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
       mobile,
+      drawerHeight,
       ...props
     },
     ref
@@ -294,7 +298,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
         })}
       >
         <Button
-          aria-label="currency"
+          aria-label="moneybox-currency-toggle"
           anchorRef={boxRef}
           variant="ghost"
           styles={{
@@ -326,6 +330,8 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
                 background-color: transparent;
                 cursor: default;
               `}
+
+              ${styles?.toggleStyle}
             `,
           }}
           onClick={handleToggleDropdown}
@@ -335,7 +341,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
         <MoneyboxInput
           ref={moneyInputRef}
           $theme={moneyboxTheme}
-          aria-label="input-moneybox"
+          aria-label="moneybox-input"
           autoComplete="off"
           name={name}
           value={inputValue}
@@ -361,6 +367,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
             interactionMode={interactionMode}
             setInteractionMode={setInteractionMode}
             selectedOptions={selectedCurrency}
+            drawerHeight={drawerHeight}
             selectedOptionsLocal={{
               text: searchTerm,
               value: "",
@@ -418,7 +425,15 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       labelPosition,
       className,
       ...rest
-    } = props;
+    } = props ?? {};
+
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      ...moneyboxStyle
+    } = styles ?? {};
 
     const inputId = StatefulForm.sanitizeId({
       prefix: "moneybox",
@@ -443,10 +458,10 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         errorIconPosition="relative"
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
         }}
       >
         <BaseMoneybox
@@ -455,15 +470,15 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           showError={showError}
           disabled={disabled}
           styles={{
+            ...moneyboxStyle,
             inputWrapperStyle: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.inputWrapperStyle}
+              ${moneyboxStyle?.inputWrapperStyle}
             `,
-            self: styles?.self,
           }}
           type={type}
           ref={ref}
