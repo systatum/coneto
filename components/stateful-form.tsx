@@ -1362,6 +1362,7 @@ function FormFields<T extends FieldValues>({
                             id={field.id}
                             name={field.name}
                             label={label}
+                            mobile={mobile}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
