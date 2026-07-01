@@ -238,7 +238,7 @@ function SeparatorAction({
         aria-label="separator-action"
         subMenu={subMenu}
         showSubMenuOn="self"
-        onClick={(e) => onClick?.(e)}
+        onMouseDown={(e) => onClick?.(e)}
         disabled={disabled}
         styles={{
           containerStyle: css`
