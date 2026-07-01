@@ -1453,17 +1453,26 @@ export const Mobile: Story = {
           tabs: CAPSULE_TABS,
         },
       },
-      {
-        name: "text",
-        title: "Save",
-        type: "button",
-        required: true,
-        disabled: !isFormValid,
-        rowJustifyPosition: "end",
-        button: {
-          variant: "primary",
+      [
+        {
+          name: "text",
+          title: "Back",
+          type: "button",
+          required: true,
+          rowJustifyPosition: "end",
         },
-      },
+        {
+          name: "text",
+          title: "Save",
+          type: "button",
+          required: true,
+          disabled: !isFormValid,
+          rowJustifyPosition: "end",
+          button: {
+            variant: "primary",
+          },
+        },
+      ],
     ];
 
     return (
