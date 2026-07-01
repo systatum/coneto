@@ -203,6 +203,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
 
     const handleToggleDropdown = () => {
       if (disabled) return;
+      setSearchTerm("");
       setIsOpen((prev) => {
         const newState = !prev;
         if (newState) {
