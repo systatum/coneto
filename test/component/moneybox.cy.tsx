@@ -24,12 +24,54 @@ describe("Moneybox", () => {
     );
   }
 
+  context("mobile", () => {
+    it("renders the drawer with in the bottom screen", () => {
+      cy.mount(<ProductMoneybox editableCurrency mobile withOnChange />);
+      cy.findByLabelText("moneybox-currency-toggle").click();
+      cy.findByLabelText("combobox-drawer-mobile")
+        .should("have.css", "bottom", "10px")
+        .and("have.css", "position", "fixed");
+    });
+
+    it("renders the drawer with height 220px", () => {
+      cy.mount(<ProductMoneybox editableCurrency mobile withOnChange />);
+
+      cy.findByLabelText("moneybox-currency-toggle").click();
+      cy.findByLabelText("combobox-drawer-mobile").should(
+        "have.css",
+        "height",
+        "220px"
+      );
+    });
+
+    context("drawerHeight", () => {
+      context("when given 400px", () => {
+        it("renders the drawer with height 400px", () => {
+          cy.mount(
+            <ProductMoneybox
+              editableCurrency
+              mobile
+              drawerHeight="400px"
+              withOnChange
+            />
+          );
+          cy.findByLabelText("moneybox-currency-toggle").click();
+          cy.findByLabelText("combobox-drawer-mobile").should(
+            "have.css",
+            "height",
+            "400px"
+          );
+        });
+      });
+    });
+  });
+
   context("style", () => {
     context("currency", () => {
       it("should renders absolute from left 8px", () => {
         cy.mount(<ProductMoneybox />);
 
-        cy.findByLabelText("currency")
+        cy.findByLabelText("moneybox-currency-toggle")
           .parent()
           .should("have.css", "left", "8px")
           .and("have.css", "position", "absolute");
@@ -117,7 +159,7 @@ describe("Moneybox", () => {
     context("when clicking currency", () => {
       it("renders the dropdown options", () => {
         cy.mount(<EditableCurrency />);
-        cy.findByLabelText("currency").click();
+        cy.findByLabelText("moneybox-currency-toggle").click();
         CURRENCY_OPTIONS.map((props) => {
           cy.findByText(props.name).should("exist");
         });
@@ -126,7 +168,7 @@ describe("Moneybox", () => {
       context("when selecting options", () => {
         it("should change the currency", () => {
           cy.mount(<EditableCurrency />);
-          cy.findByLabelText("currency").click();
+          cy.findByLabelText("moneybox-currency-toggle").click();
 
           cy.findByText("Indonesian Rupiah").click();
           CURRENCY_OPTIONS.map((props) => {
