@@ -126,8 +126,8 @@ export const Mobile: Story = {
         countryCodeValue={value.country_code}
         mobile
         styles={{
-          self: css`
-            width: 400px;
+          inputWrapperStyle: css`
+            max-width: 400px;
           `,
         }}
         onChange={handleChange}
