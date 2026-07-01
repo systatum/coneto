@@ -18,16 +18,17 @@ import { TreeListThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 
-export interface TreeListProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  | "style"
-  | "onChange"
-  | "content"
-  | "onMouseDown"
-  | "onMouseMove"
-  | "onKeyDown"
-  | "onMouseEnter"
-> {
+export interface TreeListProps
+  extends Omit<
+    HTMLAttributes<HTMLDivElement>,
+    | "style"
+    | "onChange"
+    | "content"
+    | "onMouseDown"
+    | "onMouseMove"
+    | "onKeyDown"
+    | "onMouseEnter"
+  > {
   content: TreeListContent[];
   children?: ReactNode;
   emptySlate?: ReactNode;
@@ -135,10 +136,8 @@ export interface TreeListContent {
   collapsible?: boolean;
 }
 
-export interface TreeListContentAction extends Omit<
-  ContextMenuAction,
-  "onClick"
-> {
+export interface TreeListContentAction
+  extends Omit<ContextMenuAction, "onClick"> {
   onClick?: (id?: string) => void;
 }
 
@@ -734,11 +733,11 @@ function TreeList({
               </GroupWrapper>
             );
           })
-        ) : (
+        ) : emptySlate ? (
           <EmptyContent $style={styles?.emptySlateStyle}>
             {emptySlate}
           </EmptyContent>
-        )}
+        ) : null}
 
         {children}
       </TreeListWrapper>
