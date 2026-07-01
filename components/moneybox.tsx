@@ -5,6 +5,8 @@ import {
   InputHTMLAttributes,
   KeyboardEvent,
   useEffect,
+  useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -20,6 +22,18 @@ import { StatefulForm } from "./stateful-form";
 import { useTheme } from "./../theme/provider";
 import { MoneyboxThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import {
+  autoUpdate,
+  flip,
+  offset,
+  Placement,
+  shift,
+  useDismiss,
+  useFloating,
+  useInteractions,
+} from "@floating-ui/react";
+import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
+import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
 
 export const MoneyboxSeparator = {
   Dot: "dot",
@@ -51,6 +65,7 @@ interface BaseMoneyboxProps
   styles?: MoneyboxStyles;
   editableCurrency?: boolean;
   currencyOptions?: MoneyboxCurrencyOption[];
+  mobile?: boolean;
   id?: string;
 }
 
@@ -75,9 +90,11 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       onKeyDown,
       editableCurrency,
       id,
+      disabled,
       currencyOptions = [
         { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
       ],
+      mobile,
       ...props
     },
     ref
@@ -85,8 +102,113 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
     const { currentTheme } = useTheme();
     const moneyboxTheme = currentTheme.moneybox;
 
+    const moneyInputRef = useRef<HTMLInputElement>(null);
+    const currencyInputRef = useRef<HTMLInputElement>(null);
+
+    useImperativeHandle(ref, () => moneyInputRef.current!);
+
+    const [selectedCurrency, setSelectedCurrency] = useState<string>(currency);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [interactionMode, setInteractionMode] = useState<
+      "mouse" | "keyboard"
+    >("keyboard");
+    const [hasInteracted, setHasInteracted] = useState(false);
+
+    const { refs, floatingStyles, context } = useFloating({
+      placement: "bottom-start" as Placement,
+      open: isOpen,
+      onOpenChange: setIsOpen,
+      middleware: [offset(4), flip(), shift()],
+      whileElementsMounted: autoUpdate,
+    });
+
+    const dismiss = useDismiss(context);
+    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
+
+    const FINAL_CURRENCY_OPTIONS: ComboboxOption[] = useMemo(
+      () =>
+        currencyOptions.map((currency) => ({
+          text: `${currency.symbol} - ${currency.name}`,
+          value: currency.id,
+          render: (
+            <>
+              <span>{currency.name}</span>
+              <span style={{ marginLeft: "auto" }}>{currency.symbol}</span>
+            </>
+          ),
+        })),
+      []
+    );
+
+    const FILTERED_CURRENCY_OPTIONS: ComboboxOption[] = useMemo(() => {
+      if (!hasInteracted || !searchTerm) return FINAL_CURRENCY_OPTIONS;
+
+      return FINAL_CURRENCY_OPTIONS.filter((option) => {
+        const currency = currencyOptions.find(
+          (currency) => currency.id === option.value
+        );
+        if (!currency) return false;
+        return (
+          currency.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          currency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          currency.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }, [searchTerm, FINAL_CURRENCY_OPTIONS]);
+
+    const listRef = useRef<(HTMLLIElement | null)[]>([]);
+
+    // Keep the highlighted option visible while navigating the list.
+    useEffect(() => {
+      if (isOpen && listRef.current[highlightedIndex]) {
+        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+      }
+    }, [highlightedIndex, isOpen]);
+
+    const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (disabled) return;
+
+      setInteractionMode("keyboard");
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (!isOpen) await setIsOpen(true);
+        await setHighlightedIndex((prev) =>
+          Math.min(prev + 1, FILTERED_CURRENCY_OPTIONS.length - 1)
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!isOpen) await setIsOpen(true);
+        await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const selectedOption = FILTERED_CURRENCY_OPTIONS[highlightedIndex];
+        const selectedCurrency = currencyOptions.find(
+          (currency) => currency.id === selectedOption.value
+        );
+        if (selectedCurrency) {
+          await handleSelectCurrency(selectedCurrency.id);
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        await setIsOpen(false);
+      }
+    };
+
+    const handleToggleDropdown = () => {
+      if (disabled) return;
+      setIsOpen((prev) => {
+        const newState = !prev;
+        if (newState) {
+          setTimeout(() => currencyInputRef.current?.focus(), 0);
+        }
+        return newState;
+      });
+    };
+
     const [focus, setFocus] = useState(false);
-    const [isTipMenuOpen, setIsTipMenuOpen] = useState(false);
 
     const [inputValue, setInputValue] = useState(() =>
       formatMoneyboxNumber(
@@ -129,22 +251,51 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       }
     };
 
+    const handleSelectCurrency = async (currency: string) => {
+      if (disabled) return;
+
+      await setSelectedCurrency(currency);
+      await setIsOpen(false);
+      await setSearchTerm("");
+      await setHighlightedIndex(0);
+
+      if (onChange) {
+        const syntheticEvent = {
+          target: {
+            name: "currency",
+            value: currency,
+          },
+        } as ChangeEvent<HTMLInputElement>;
+        await onChange(syntheticEvent);
+      }
+
+      await moneyInputRef?.current?.focus();
+    };
+
     return (
       <Box
         $theme={moneyboxTheme}
         onBlur={() => setFocus(false)}
         ref={boxRef}
-        $disabled={props.disabled}
+        $disabled={disabled}
         $error={showError}
         $focus={focus}
         $style={styles?.inputWrapperStyle}
+        {...getReferenceProps({
+          ref: refs.setReference,
+          tabIndex: -1,
+          "aria-expanded": isOpen,
+          "aria-haspopup": "listbox",
+          role: "combobox",
+          "aria-controls": "currency-listbox",
+          "aria-activedescendant": isOpen
+            ? `currency-option-${highlightedIndex}`
+            : undefined,
+        })}
       >
         <Button
           aria-label="currency"
-          open={isTipMenuOpen}
-          onOpen={(prop: boolean) => setIsTipMenuOpen(prop)}
           anchorRef={boxRef}
-          showSubMenuOn="self"
           variant="ghost"
           styles={{
             containerStyle: css`
@@ -158,7 +309,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
                 cursor: default;
               `}
 
-              ${props.disabled &&
+              ${disabled &&
               css`
                 cursor: not-allowed;
               `}
@@ -169,7 +320,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
               padding: 0px;
               display: flex;
               font-size: 12px;
-              ${(!editableCurrency || props.disabled) &&
+              ${(!editableCurrency || disabled) &&
               css`
                 pointer-events: none;
                 background-color: transparent;
@@ -177,72 +328,15 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
               `}
             `,
           }}
-          subMenu={
-            editableCurrency && !props.disabled
-              ? ({ show }) =>
-                  show(
-                    <List
-                      styles={{
-                        containerStyle: css`
-                          gap: 0px;
-                          border: 1px solid #d1d5db;
-                          max-height: 200px;
-                          overflow: auto;
-                        `,
-                      }}
-                    >
-                      {currencyOptions.map((props) => {
-                        return (
-                          <List.Item
-                            onMouseDown={async () => {
-                              const syntheticEvent = {
-                                target: {
-                                  name: "currency",
-                                  value: props.id,
-                                },
-                              } as ChangeEvent<HTMLInputElement>;
-                              if (onChange) {
-                                await onChange(syntheticEvent);
-                              }
-
-                              await setIsTipMenuOpen(false);
-                            }}
-                            id={props.id}
-                            title={props.name}
-                            styles={{
-                              rowStyle: css`
-                                border-radius: 0px;
-                                padding: 0.5rem 0.75rem;
-                                transition: background-color 0ms;
-                                overflow: hidden;
-                              `,
-                              titleStyle: css`
-                                font-size: 12px;
-                              `,
-                            }}
-                            rightSideContent={props.symbol}
-                          />
-                        );
-                      })}
-                    </List>,
-                    {
-                      drawerStyle: css`
-                        background-color: white;
-                        overflow: hidden;
-                        border-radius: 2px;
-                      `,
-                    }
-                  )
-              : undefined
-          }
+          onClick={handleToggleDropdown}
         >
           {selectionCurrency}
         </Button>
         <MoneyboxInput
+          ref={moneyInputRef}
           $theme={moneyboxTheme}
           aria-label="input-moneybox"
           autoComplete="off"
-          ref={ref}
           name={name}
           value={inputValue}
           onChange={handleChange}
@@ -253,9 +347,50 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           type="text"
           $style={styles?.self}
           inputMode="decimal"
-          $disabled={props.disabled}
+          $disabled={disabled}
           {...props}
         />
+
+        {isOpen && (
+          <Combobox.Drawer
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            refs={refs as unknown as ComboboxDrawerProps["refs"]}
+            highlightedIndex={highlightedIndex}
+            setHighlightedIndex={setHighlightedIndex}
+            interactionMode={interactionMode}
+            setInteractionMode={setInteractionMode}
+            selectedOptions={selectedCurrency}
+            selectedOptionsLocal={{
+              text: searchTerm,
+              value: "",
+            }}
+            onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
+              const selectedCurrency = await currencyOptions.find(
+                (currency) => currency.id === selectedOptions
+              );
+              if (selectedCurrency) {
+                await handleSelectCurrency(selectedCurrency.id);
+              }
+              moneyInputRef.current?.focus();
+            }}
+            setSelectedOptionsLocal={(
+              selectedOptionsLocal?: SelectboxOption
+            ) => {
+              setSearchTerm(selectedOptionsLocal?.text);
+            }}
+            setHasInteracted={setHasInteracted}
+            options={FILTERED_CURRENCY_OPTIONS}
+            navigableOptions={FILTERED_CURRENCY_OPTIONS}
+            inputRef={currencyInputRef}
+            mobile={mobile}
+            withSearchbox
+            floatingStyles={floatingStyles}
+            getFloatingProps={getFloatingProps}
+            listRef={listRef}
+            handleKeyDown={handleKeyDown}
+          />
+        )}
       </Box>
     );
   }
