@@ -71,6 +71,7 @@ import {
   createToastTheme,
   createFlippable,
   createProgressbarTheme,
+  createScrollbar,
 } from "./creator";
 
 // Dark
@@ -269,9 +270,12 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   highlightedDateTextColor: "#ffffff",
 
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.25)",
+
+  mobileBorderColor: "#2c2c2e",
+  mobileBackgroundColor: "#2c2c2e",
 });
 
-const darkCapsule = createCapsuleTheme(darkBody, {
+const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {
   borderColor: "#303030",
   boxShadow: "0 1px 2px rgba(0,0,0,0.4)",
 
@@ -605,7 +609,6 @@ const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
   checkedBorderColor: "#1465d3bf",
   checkedOutsideBorderColor: "#374151",
-  backgroundColor: "inherit",
   checkedBackgroundColor: "white",
   textColor: "#ffffff",
   descriptionColor: "#d1d5db",
@@ -635,6 +638,12 @@ const darkRichEditor = createRichEditorTheme(
     preBackgroundColor: "#2D2D2D",
   }
 );
+
+const darkScrollbar = createScrollbar({
+  scrollbarThumbActiveColor: "rgba(255, 255, 255, 0.7)",
+  scrollbarThumbColor: "rgba(255, 255, 255, 0.3)",
+  scrollbarTrackColor: "transparent",
+});
 
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
@@ -722,6 +731,7 @@ const darkTable = createTableTheme(darkBody, {
   headerActionBackgroundColor:
     "linear-gradient(rgb(33, 33, 33), rgb(37, 38, 38))",
   headerActionBorderColor: "rgb(61, 61, 61)",
+  headerActionHoverBackgroundColor: "rgb(52, 52, 52)",
 
   headerBackgroundColor: "linear-gradient(rgb(42, 42, 42), rgb(41, 44, 46))",
   headerBorderColor: "rgb(39, 39, 48)",
@@ -744,6 +754,11 @@ const darkTable = createTableTheme(darkBody, {
   scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
 
   toggleRowBackgroundColor: "#374151",
+
+  leftLooseEffectColor:
+    "linear-gradient(to right, rgb(8 8 8 / 38%), transparent)",
+  rightLooseEffectColor:
+    "linear-gradient(to left, rgb(8 8 8 / 38%), transparent)",
 });
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
@@ -942,6 +957,7 @@ export const darkTheme: AppTheme = {
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
+  scrollbar: darkScrollbar,
   searchbox: darkSearchbox,
   selectbox: darkSelectbox,
   separator: darkSeparator,
@@ -1016,6 +1032,7 @@ export {
   darkRadio,
   darkRating,
   darkRichEditor,
+  darkScrollbar,
   darkSearchbox,
   darkSelectbox,
   darkSeparator,

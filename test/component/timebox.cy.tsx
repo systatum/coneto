@@ -52,6 +52,48 @@ describe("Timebox", () => {
         cy.findByLabelText("wheel-container").should("not.exist");
       });
 
+      context("when have overflow in a whole page", () => {
+        context("when scrolling", () => {
+          it("should prevents scroll only on the drawer", () => {
+            cy.viewport(500, 500);
+
+            cy.mount(
+              <div
+                aria-label="wrapper"
+                style={{
+                  height: "900px",
+                  overflow: "auto",
+                }}
+              >
+                <ProductTimebox withSeconds withOnChange mobile label="Test" />
+              </div>
+            );
+
+            cy.findByLabelText("wheel-container").should("not.exist");
+            cy.findByText("Test").eq(0).click();
+
+            cy.findByLabelText("wrapper")
+              .invoke("prop", "scrollTop")
+              .should("eq", 0);
+
+            Cypress._.times(9, () => {
+              cy.findAllByLabelText("wheel-column-container")
+                .eq(0)
+                .realMouseWheel({ deltaY: 400 });
+            });
+
+            cy.findAllByLabelText("wheel-column-item")
+              .filter('[aria-selected="true"]')
+              .eq(0)
+              .should("contain", "9");
+
+            cy.findByLabelText("wrapper")
+              .invoke("prop", "scrollTop")
+              .should("eq", 0);
+          });
+        });
+      });
+
       context("when typing", () => {
         it("not shows changes the value", () => {
           cy.mount(<ProductTimebox withSeconds withOnChange mobile />);

@@ -48,6 +48,7 @@ import {
   RadioThemeConfig,
   RatingThemeConfig,
   RichEditorThemeConfig,
+  ScrollbarThemeConfig,
   SearchboxThemeConfig,
   SelectboxThemeConfig,
   SeparatorThemeConfig,
@@ -358,6 +359,8 @@ export function createCalendarTheme(
       backgroundColor: body.backgroundColor || "#ffffff",
       borderColor: fieldLane?.borderColor || "#d1d5db",
       textColor: body.textColor || "#111827",
+      mobileBackgroundColor: "rgb(249, 250, 251)",
+      mobileBorderColor: "rgb(249, 250, 251)",
 
       dayTextColor: "#6b7280",
 
@@ -378,10 +381,12 @@ export function createCalendarTheme(
 // capsule.tsx
 export function createCapsuleTheme(
   body: BodyThemeConfig,
+  fieldLane: FieldLaneThemeConfig,
   ...themeConfigurations: Array<Partial<CapsuleThemeConfig>>
 ): CapsuleThemeConfig {
   const defaultTheme: CapsuleThemeConfig = {
     backgroundColor: body.backgroundColor,
+    errorBorderColor: fieldLane?.errorBorderColor,
     borderColor: "#ebebeb",
     boxShadow: "0 1px 1px -2px #5b5b5b, 0 1px 1px rgba(0, 0, 0, 0.05)",
     textColor: body.textColor,
@@ -1245,7 +1250,7 @@ export function createRadioTheme(
     {
       borderColor: "#6b7280",
       checkedBorderColor: "#61A9F9",
-      backgroundColor: "#ffffff",
+      backgroundColor: body?.backgroundColor ?? "#ffffff",
       checkedBackgroundColor: "#ffffff",
       checkedOutsideBorderColor: "#61A9F9",
       iconColor: "#ffffff",
@@ -1302,6 +1307,20 @@ export function createRichEditorTheme(
       toolbarButtonFocused: button?.hoverBackgroundColor,
       scrollThumb: "#9ca3af",
       preBackgroundColor: "#D3D3D3",
+    },
+    ...themeConfigurations
+  );
+}
+
+// scrollbar.tsx
+export function createScrollbar(
+  ...themeConfigurations: Array<Partial<ScrollbarThemeConfig>>
+): ScrollbarThemeConfig {
+  return mergeTheme<ScrollbarThemeConfig>(
+    {
+      scrollbarThumbActiveColor: "rgba(145, 142, 142, 0.7)",
+      scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+      scrollbarTrackColor: "transparent",
     },
     ...themeConfigurations
   );
@@ -1594,11 +1613,15 @@ export function createTableTheme(
       textColor: body.textColor || "#111827",
       backgroundColor: body?.backgroundColor,
       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+
       headerActionBackgroundColor:
         "linear-gradient(to bottom, #fbf9f9, #f0f0f0)",
       headerActionBorderColor: "rgb(229, 231, 235)",
+      headerActionHoverBackgroundColor: "rgb(227, 227, 227)",
+
       headerBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
       headerBorderColor: "rgb(229, 231, 235)",
+
       rowGroupBackgroundColor: "rgb(249, 250, 251)",
       rowGroupSubtitleTextColor: "#1f2937",
       rowBackgroundColor: "rgb(249, 250, 251)",
@@ -1608,11 +1631,19 @@ export function createTableTheme(
       rowContentBackgroundColor:
         "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)",
       rowContentBoxShadow: "rgba(0, 0, 0, 0.15) 0px 4px 5px inset",
+
       summaryBackgroundColor: "linear-gradient(to bottom, #f0f0f0, #e4e4e4)",
       summaryBorderColor: "#d1d5db",
+
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
       scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
+
       toggleRowBackgroundColor: "#d4d4d4",
+
+      leftLooseEffectColor:
+        "linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent)",
+      rightLooseEffectColor:
+        "linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent)",
     },
     ...themeConfigurations
   );

@@ -22,10 +22,11 @@ import { TimeboxThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Wheel } from "./wheel";
 
-interface BaseTimeboxProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  "style" | "placeholder" | "value" | "name"
-> {
+interface BaseTimeboxProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    "style" | "placeholder" | "value" | "name"
+  > {
   withSeconds?: boolean;
   editable?: boolean;
   styles?: TimeboxStyles;
@@ -213,7 +214,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 
         setNext(type, trimmedCurrent);
 
-        if (nextType) {
+        if (nextType && !mobile) {
           refMap[nextType].current?.focus();
 
           const base = nextType === "minute" ? nextMinute : nextSecond;
@@ -268,7 +269,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           $disabled={disabled}
           $theme={timeboxTheme}
           onKeyDown={(e) => {
-            if (onKeyDown) {
+            if (onKeyDown && !mobile) {
               onKeyDown(e);
             }
           }}
@@ -447,11 +448,14 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
                 z-index: 9992999;
               `,
             }}
-            onChange={(value) => {
-              if (value.hour !== undefined) handleChange("hour", value.hour);
-              if (value.minute !== undefined)
+            onChange={(value, changedId) => {
+              if (changedId === "hour") {
+                handleChange("hour", value.hour);
+              }
+              if (changedId === "minute") {
                 handleChange("minute", value.minute);
-              if (withSeconds && value.second !== undefined) {
+              }
+              if (withSeconds && changedId === "second") {
                 handleChange("second", value.second);
               }
             }}
@@ -473,8 +477,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
 );
 
 export interface TimeboxProps
-  extends
-    Omit<BaseTimeboxProps, "styles" | "inputId">,
+  extends Omit<BaseTimeboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
   styles?: TimeboxStyles & FieldLaneStyles;
 }

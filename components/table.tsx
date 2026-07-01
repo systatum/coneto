@@ -12,7 +12,6 @@ import React, {
 } from "react";
 import { Checkbox } from "./checkbox";
 import { LoadingSpinner } from "./loading-spinner";
-import { Toolbar } from "./toolbar";
 import { TipMenuItemProps } from "./tip-menu";
 import {
   RiArrowDownSLine,
@@ -32,20 +31,36 @@ import { useTheme } from "./../theme/provider";
 import { TableThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
+import { Scrollbar, ScrollbarRef } from "./scrollbar";
+import { Button, ButtonProps } from "./button";
 
 export interface TableColumn {
   caption: string;
-  sortable?: boolean;
   styles?: TableColumnStyle;
   width?: string;
   id: string;
+  actions?: (id?: string) => TableColumnAction;
 }
+
+export interface TableColumnAction
+  extends Omit<
+    ActionButtonProps,
+    "showSubMenuOn" | "caption" | "onClick" | "variant"
+  > {
+  title?: string;
+  variant?: TableColumnVariant;
+}
+
+export type TableColumnVariant = Exclude<
+  ButtonProps["variant"],
+  `outline-${string}`
+>;
+
+export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableColumnStyle {
   labelStyle?: CSSProp;
   containerStyle?: CSSProp;
-  toggleSortableStyle?: CSSProp;
-  dropdownSortableStyle?: CSSProp;
 }
 
 export const TableActionType = {
@@ -78,7 +93,6 @@ export interface TableProps {
   onItemsSelected?: (items: string[]) => void;
   children: ReactNode;
   isLoading?: boolean;
-  subMenuList?: (columnCaption: string) => TableSubMenuList[];
   emptySlate?: ReactNode;
   onLastRowReached?: () => void;
   showPagination?: boolean;
@@ -90,13 +104,12 @@ export interface TableProps {
   sumRow?: TableSummaryRowColumn[];
   styles?: TableStyles;
   searchbox?: TableSearchbox;
+  loose?: boolean;
   id?: string;
   className?: string;
 }
 
 type TableSearchbox = SearchboxProps;
-
-export type TableSubMenuList = TipMenuItemProps;
 
 export interface TableStyles {
   containerStyle?: CSSProp;
@@ -153,6 +166,22 @@ const DnDContext = createContext<{
 const TableColumnContext = createContext<TableColumn[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
 
+const TableLooseContext = createContext<{
+  loose?: boolean;
+  selectable?: boolean;
+  withRowActions?: boolean;
+  setWithRowActions?: (value: boolean) => void;
+  isScrolledLeft?: boolean;
+  isScrolledRight?: boolean;
+}>({
+  loose: false,
+  selectable: false,
+  withRowActions: false,
+  isScrolledLeft: false,
+  isScrolledRight: false,
+});
+const useTableLoose = () => useContext(TableLooseContext);
+
 function Table({
   selectable = false,
   columns,
@@ -160,7 +189,6 @@ function Table({
   selectedItems = [],
   children,
   isLoading,
-  subMenuList,
   emptySlate,
   actions,
   onLastRowReached,
@@ -177,6 +205,7 @@ function Table({
   styles,
   alwaysShowDragIcon = true,
   searchbox,
+  loose,
   className,
   id,
 }: TableProps & TableAlwaysShowDragIcon) {
@@ -195,6 +224,14 @@ function Table({
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>("");
+
+  const [withRowActions, setWithRowActions] = useState(false);
+
+  // Tracks whether the table body has been scrolled horizontally.
+  // isScrolledLeft: activates the shadow effect on sticky left columns (e.g. first cell).
+  // isScrolledRight: activates the shadow effect on sticky right actions — true when there's still content to scroll right.
+  const [isScrolledLeft, setIsScrolledLeft] = useState(false);
+  const [isScrolledRight, setIsScrolledRight] = useState(false);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -307,23 +344,25 @@ function Table({
     return null;
   });
 
-  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const tableBodyRef = useRef<ScrollbarRef>(null);
+
+  const getViewport = () => tableBodyRef.current?.getViewport();
 
   useEffect(() => {
-    const el = tableBodyRef.current;
-    if (!el || openRowId === null) return;
+    const viewport = getViewport();
+    if (!viewport || openRowId === null) return;
 
-    const startScrollTop = el.scrollTop;
+    const startScrollTop = viewport.scrollTop;
 
     const handleScroll = () => {
-      const delta = Math.abs(el.scrollTop - startScrollTop);
+      const delta = Math.abs(viewport.scrollTop - startScrollTop);
       if (delta >= 100) {
         setOpenRowId(null);
       }
     };
 
-    el.addEventListener("scroll", handleScroll, { passive: true });
-    return () => el.removeEventListener("scroll", handleScroll);
+    viewport.addEventListener("scroll", handleScroll, { passive: true });
+    return () => viewport.removeEventListener("scroll", handleScroll);
   }, [openRowId]);
 
   const filteredActions = Array.isArray(actions)
@@ -332,309 +371,476 @@ function Table({
 
   const hasActions = filteredActions.length > 0;
 
+  // Scroll sync for loose mode.
+  // Header and summary don't scroll on their own — their scrollLeft is driven
+  // by TableBody (the only real scroll container).
+
+  const headerScrollRef = useRef<HTMLDivElement>(null);
+  const summaryScrollRef = useRef<HTMLDivElement>(null);
+
+  // Sync horizontal scroll: body → header & summary
+  const handleWrapperScroll = () => {
+    const viewport = getViewport();
+    if (!viewport) return;
+
+    const scrollLeft = viewport.scrollLeft;
+    const scrollRight =
+      viewport.scrollWidth - viewport.clientWidth - scrollLeft;
+
+    setIsScrolledLeft(scrollLeft > 5);
+    setIsScrolledRight(scrollRight > 5);
+
+    if (headerScrollRef.current)
+      headerScrollRef.current.scrollLeft = scrollLeft;
+    if (summaryScrollRef.current)
+      summaryScrollRef.current.scrollLeft = scrollLeft;
+  };
+
+  // On mount, check if the table body already overflows horizontally.
+  // This ensures the right shadow appears immediately without needing to scroll first.
+  useEffect(() => {
+    const viewport = getViewport();
+    if (!viewport) return;
+    const scrollRight = viewport.scrollWidth - viewport.clientWidth;
+    setIsScrolledRight(scrollRight > 5);
+  }, []);
+
+  // Sync horizontal scroll: summary → body & header
+  const handleSummaryScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollLeft = e.currentTarget.scrollLeft;
+    const viewport = getViewport();
+    if (viewport) viewport.scrollLeft = scrollLeft;
+    if (headerScrollRef.current)
+      headerScrollRef.current.scrollLeft = scrollLeft;
+    if (summaryScrollRef.current)
+      summaryScrollRef.current.scrollLeft = scrollLeft;
+  };
+
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
-      <TableColumnContext.Provider value={columns}>
-        <Wrapper
-          id={id}
-          $theme={tableTheme}
-          className={applyClassName("table", className)}
-          $style={styles?.containerStyle}
-        >
-          {((selectedData.length > 0 &&
-            labels?.totalSelectedItemText !== null) ||
-            showPagination ||
-            actions ||
-            searchable) && (
-            <HeaderActions $theme={tableTheme} aria-label="header-wrapper">
-              {(actions || showPagination) && (
-                <ActionsWrapper>
-                  {showPagination && (
-                    <>
-                      <PaginationButton
-                        $theme={tableTheme}
-                        disabled={disablePreviousPageButton}
-                        aria-label="previous-button-pagination"
-                        onClick={onPreviousPageRequested}
-                      >
-                        <RiArrowLeftSLine size={16} />
-                      </PaginationButton>
-                      <PaginationButton
-                        $theme={tableTheme}
-                        disabled={disableNextPageButton}
-                        aria-label="next-button-pagination"
-                        onClick={onNextPageRequested}
-                      >
-                        <RiArrowRightSLine size={16} />
-                      </PaginationButton>
-                    </>
-                  )}
-                  {hasActions &&
-                    filteredActions.map((action, index) => {
-                      const { capsuleProps, ...rest } = action;
-
-                      if (action.type === "capsule") {
-                        return <ActionCapsule key={index} {...capsuleProps} />;
-                      }
-
-                      return <ActionButton key={index} {...rest} forTable />;
-                    })}
-                </ActionsWrapper>
-              )}
-              {searchable && (
-                <Searchbox
-                  autoComplete="off"
-                  name="search"
-                  {...searchbox}
-                  styles={{
-                    ...searchbox?.styles,
-                    containerStyle: css`
-                      ${actions &&
-                      css`
-                        margin-left: 40px;
-                      `};
-                      ${(showPagination || selectable) &&
-                      css`
-                        margin-right: 40px;
-                      `};
-                      max-height: 33px;
-                      ${searchbox?.styles?.containerStyle}
-                    `,
-                    self: css`
-                      background-color: transparent;
-
-                      ${searchbox?.styles?.self}
-                    `,
-                  }}
-                />
-              )}
-              {(selectable || showPagination) && (
-                <PaginationInfo
-                  aria-label="pagination-wrapper"
-                  $style={styles?.paginationWrapperStyle}
-                >
-                  {showPagination && (
-                    <PaginationNumber
-                      aria-label="pagination-number"
-                      $style={styles?.paginationNumberStyle}
-                    >
-                      {typeof labels.pageNumberText === "number"
-                        ? `Pg. ${labels.pageNumberText}`
-                        : labels.pageNumberText}
-                    </PaginationNumber>
-                  )}
-                  {selectable && (
-                    <PaginationSelectedItem
-                      aria-label="pagination-selected-item"
-                      $style={styles?.totalSelectedItemTextStyle}
-                    >
-                      {labels?.totalSelectedItemText
-                        ? labels?.totalSelectedItemText(selectedData.length)
-                        : `${selectedData.length} items selected`}
-                    </PaginationSelectedItem>
-                  )}
-                </PaginationInfo>
-              )}
-            </HeaderActions>
-          )}
-
-          <TableContainer
+      <TableLooseContext.Provider
+        value={{
+          loose,
+          selectable,
+          withRowActions,
+          setWithRowActions,
+          isScrolledLeft,
+          isScrolledRight,
+        }}
+      >
+        <TableColumnContext.Provider value={columns}>
+          <Wrapper
+            id={id}
             $theme={tableTheme}
-            $hasSelected={selectedData.length > 0}
+            className={applyClassName("table", className)}
+            $style={styles?.containerStyle}
           >
-            <TableHeader
-              $theme={tableTheme}
-              aria-label="table-header"
-              $style={styles?.tableHeaderStyle}
-            >
-              {selectable && (
-                <CheckboxWrapper>
-                  <Checkbox
+            {((selectedData.length > 0 &&
+              labels?.totalSelectedItemText !== null) ||
+              showPagination ||
+              actions ||
+              searchable) && (
+              <HeaderActions $theme={tableTheme} aria-label="header-wrapper">
+                {(actions || showPagination) && (
+                  <ActionsWrapper>
+                    {showPagination && (
+                      <>
+                        <PaginationButton
+                          $theme={tableTheme}
+                          disabled={disablePreviousPageButton}
+                          aria-label="previous-button-pagination"
+                          onClick={onPreviousPageRequested}
+                        >
+                          <RiArrowLeftSLine size={16} />
+                        </PaginationButton>
+                        <PaginationButton
+                          $theme={tableTheme}
+                          disabled={disableNextPageButton}
+                          aria-label="next-button-pagination"
+                          onClick={onNextPageRequested}
+                        >
+                          <RiArrowRightSLine size={16} />
+                        </PaginationButton>
+                      </>
+                    )}
+                    {hasActions &&
+                      filteredActions.map((action, index) => {
+                        const { capsuleProps, type, ...rest } = action;
+
+                        if (type === "capsule") {
+                          return (
+                            <ActionCapsule key={index} {...capsuleProps} />
+                          );
+                        }
+
+                        return <ActionButton key={index} {...rest} forTable />;
+                      })}
+                  </ActionsWrapper>
+                )}
+                {searchable && (
+                  <Searchbox
+                    autoComplete="off"
+                    name="search"
+                    {...searchbox}
                     styles={{
-                      boxStyle: css`
-                        width: 100%;
+                      ...searchbox?.styles,
+                      containerStyle: css`
+                        ${actions &&
+                        css`
+                          margin-left: 40px;
+                        `};
+                        ${(showPagination || selectable) &&
+                        css`
+                          margin-right: 40px;
+                        `};
+                        max-height: 33px;
+                        ${searchbox?.styles?.containerStyle}
+                      `,
+                      self: css`
+                        background-color: transparent;
+
+                        ${searchbox?.styles?.self}
                       `,
                     }}
-                    onChange={handleSelectAll}
-                    checked={allRowSelectedLocal}
-                    indeterminate={someSelectedLocal}
                   />
-                </CheckboxWrapper>
-              )}
-              {columns.map((col, i) => {
-                const isLast =
-                  rowActions?.length > 0 && columns.length - 1 === i;
-                return (
-                  <TableRowCell
-                    key={i}
-                    width={col.width}
-                    contentStyle={css`
-                      display: flex;
-                      position: relative;
-                      align-items: center;
-                      ${col.width
-                        ? css`
-                            width: ${col.width};
-                            flex-direction: row;
-                          `
-                        : css`
-                            flex: 1;
-                          `}
-
-                      ${col?.styles?.containerStyle}
-                    `}
+                )}
+                {(selectable || showPagination) && (
+                  <PaginationInfo
+                    aria-label="pagination-wrapper"
+                    $style={styles?.paginationWrapperStyle}
                   >
-                    <Label
-                      aria-label="table-column-label"
-                      $style={col?.styles?.labelStyle}
-                    >
-                      {col.caption}
-                    </Label>
-                    {col.sortable && (
-                      <Toolbar
-                        styles={{
-                          self: css`
-                            width: fit-content;
-                            z-index: 20;
-                            ${isLast &&
-                            css`
-                              padding-right: 14px;
-                            `}
-                          `,
-                        }}
+                    {showPagination && (
+                      <PaginationNumber
+                        aria-label="pagination-number"
+                        $style={styles?.paginationNumberStyle}
                       >
-                        <Toolbar.Menu
-                          closedIcon={RiArrowUpDownLine}
-                          openedIcon={RiArrowUpDownLine}
-                          styles={{
-                            triggerStyle: col?.styles?.toggleSortableStyle,
-                            dropdownStyle: css`
-                              min-width: 235px;
-
-                              ${col?.styles?.dropdownSortableStyle}
-                            `,
-                          }}
-                          subMenuList={
-                            subMenuList ? subMenuList(col.id) : undefined
-                          }
-                          variant="ghost"
-                        />
-                      </Toolbar>
+                        {typeof labels.pageNumberText === "number"
+                          ? `Pg. ${labels.pageNumberText}`
+                          : labels.pageNumberText}
+                      </PaginationNumber>
                     )}
-                  </TableRowCell>
-                );
-              })}
-            </TableHeader>
-
-            {rowChildren.length > 0 ? (
-              <TableBody
-                ref={tableBodyRef}
-                $theme={tableTheme}
-                aria-label="table-body"
-                $style={styles?.tableBodyStyle}
-              >
-                {rowChildren}
-              </TableBody>
-            ) : (
-              <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
+                    {selectable && (
+                      <PaginationSelectedItem
+                        aria-label="pagination-selected-item"
+                        $style={styles?.totalSelectedItemTextStyle}
+                      >
+                        {labels?.totalSelectedItemText
+                          ? labels?.totalSelectedItemText(selectedData.length)
+                          : `${selectedData.length} items selected`}
+                      </PaginationSelectedItem>
+                    )}
+                  </PaginationInfo>
+                )}
+              </HeaderActions>
             )}
 
-            {sumRow && (
-              <TableSummary
-                $theme={tableTheme}
-                aria-label="table-summary-wrapper"
-                $selectable={selectable}
+            <TableContainer
+              $theme={tableTheme}
+              $loose={loose}
+              $hasSelected={selectedData.length > 0}
+            >
+              <ScrollWrapper
+                ref={headerScrollRef}
+                onScroll={loose ? handleSummaryScroll : undefined}
+                $loose={loose}
               >
-                {(() => {
-                  const cells: ReactNode[] = [];
-                  let colPointer = 0;
+                <TableHeader
+                  $theme={tableTheme}
+                  $loose={loose}
+                  aria-label="table-header"
+                  $style={styles?.tableHeaderStyle}
+                >
+                  {selectable && (
+                    <CheckboxWrapper
+                      $position="header"
+                      $theme={tableTheme}
+                      $loose={loose}
+                    >
+                      <Checkbox
+                        styles={{
+                          controlStyle: css`
+                            height: 100%;
+                          `,
+                          boxStyle: css`
+                            width: 100%;
+                          `,
+                        }}
+                        onChange={handleSelectAll}
+                        checked={allRowSelectedLocal}
+                        indeterminate={someSelectedLocal}
+                      />
+                    </CheckboxWrapper>
+                  )}
+                  {columns.map((col, i) => {
+                    const columnAction =
+                      typeof col.actions === "function" && col.actions(col.id);
 
-                  const totalCells = sumRow.reduce(
-                    (acc, col) => acc + (col.span ?? 1),
-                    0
-                  );
+                    const variant = columnAction?.variant ?? "ghost";
+                    const finalColumnAction: ButtonProps = columnAction &&
+                      !columnAction.hidden && {
+                        ...columnAction,
+                        icon: {
+                          ...columnAction?.icon,
+                          image: columnAction?.icon?.image ?? RiArrowUpDownLine,
+                          size: columnAction?.icon?.size ?? 20,
+                        },
+                        showSubMenuOn: "self",
+                        tipMenuSize: columnAction?.tipMenuSize ?? "md",
+                        styles: {
+                          ...columnAction?.styles,
+                          self: css`
+                            padding: 0px;
+                            height: 34px;
+                            width: 34px;
+                            border-radius: 6px;
+                            &:not(:focus-visible):not(:active):not(:hover):not(
+                                :focus
+                              ) {
+                              background-color: transparent;
+                            }
+                            ${columnAction?.styles?.self};
+                          `,
+                        },
+                        hoverBackgroundColor:
+                          variant === "ghost" &&
+                          tableTheme?.headerActionHoverBackgroundColor,
+                        variant,
+                        "aria-label": "table-column-action",
+                      };
 
-                  sumRow.map((col) => {
-                    const span = col.span ?? 1;
+                    return (
+                      <TableRowCell
+                        key={i}
+                        _index={i}
+                        width={col.width}
+                        contentStyle={css`
+                          display: flex;
+                          align-items: center;
 
-                    for (let s = 0; s < span; s++) {
-                      const columnWidth = columns[colPointer]?.width;
+                          background: ${tableTheme?.headerBackgroundColor ||
+                          "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
 
-                      const isLast =
-                        rowActions && colPointer === totalCells - 1;
-
-                      cells.push(
-                        <TableRowCell
-                          key={`${colPointer}-${s}`}
-                          width={columnWidth}
-                          bold={col.bold}
-                          contentStyle={css`
-                            display: flex;
-                            align-items: center;
-                            ${columnWidth
+                          ${col.width
+                            ? css`
+                                width: ${col.width};
+                                flex-direction: row;
+                              `
+                            : loose
                               ? css`
-                                  width: ${columnWidth};
-                                  flex-direction: row;
+                                  flex: unset;
                                 `
                               : css`
                                   flex: 1;
                                 `}
-                            ${isLast &&
-                            css`
-                              padding-right: 36px;
-                            `}
-                            ${col.styles?.self}
+
+                          ${finalColumnAction &&
+                          css`
+                            padding: 4px 19.2px;
                           `}
+
+                          ${col?.styles?.containerStyle}
+                        `}
+                      >
+                        <Label
+                          aria-label="table-column-label"
+                          $style={col?.styles?.labelStyle}
                         >
-                          {s === 0 ? col.content : ""}
-                        </TableRowCell>
+                          {col.caption}
+                        </Label>
+                        {finalColumnAction && <Button {...finalColumnAction} />}
+                      </TableRowCell>
+                    );
+                  })}
+
+                  {loose && withRowActions && (
+                    <StickyRowActions
+                      aria-label="header-row-loose-action"
+                      $theme={tableTheme}
+                      $loose={loose}
+                      $isScrolledRight={isScrolledRight}
+                    />
+                  )}
+                </TableHeader>
+              </ScrollWrapper>
+
+              {rowChildren.length > 0 ? (
+                <Scrollbar
+                  style={{ height: "100%", width: "100%" }}
+                  overflowX={loose ? "scroll" : "hidden"}
+                  overflowY="scroll"
+                  autoHideDelay={800}
+                  onScroll={loose ? handleWrapperScroll : undefined}
+                  ref={tableBodyRef}
+                >
+                  <TableBody
+                    $theme={tableTheme}
+                    aria-label="table-body"
+                    $loose={loose}
+                    $style={styles?.tableBodyStyle}
+                  >
+                    {rowChildren}
+                  </TableBody>
+                </Scrollbar>
+              ) : (
+                <EmptyState $theme={tableTheme}>{emptySlate}</EmptyState>
+              )}
+
+              {sumRow && (
+                <ScrollWrapper
+                  ref={summaryScrollRef}
+                  $loose={loose}
+                  onScroll={loose ? handleSummaryScroll : undefined}
+                >
+                  <TableSummary
+                    $loose={loose}
+                    $theme={tableTheme}
+                    $selectable={selectable}
+                    aria-label="table-summary-wrapper"
+                  >
+                    {selectable && (
+                      <CheckboxWrapper
+                        aria-label="empty-checkbox"
+                        $position="summary"
+                        $theme={tableTheme}
+                        $loose={loose}
+                        $style={
+                          loose &&
+                          css`
+                            width: 36px;
+                            height: 49px;
+                          `
+                        }
+                      />
+                    )}
+                    {(() => {
+                      const cells: ReactNode[] = [];
+                      let colPointer = 0;
+
+                      const totalCells = sumRow.reduce(
+                        (acc, col) => acc + (col.span ?? 1),
+                        0
                       );
 
-                      colPointer++;
-                    }
-                  });
+                      sumRow.map((col, i) => {
+                        const span = col.span ?? 1;
 
-                  return cells;
-                })()}
-              </TableSummary>
-            )}
-          </TableContainer>
+                        for (let s = 0; s < span; s++) {
+                          const columnWidth = columns[colPointer]?.width;
 
-          {isLoading && (
-            <OverlayBlocker
-              styles={{
-                self: css`
-                  display: flex;
-                  align-items: start;
-                  padding-left: 10px;
-                  padding-top: 10px;
-                `,
-              }}
-              show={isLoading}
-              onClick="preventDefault"
-            >
-              <LoadingSpinner
+                          const isLast =
+                            rowActions && colPointer === totalCells - 1;
+
+                          const isFirst = i === 0;
+
+                          cells.push(
+                            <TableRowCell
+                              _index={i}
+                              key={`${colPointer}-${s}`}
+                              width={columnWidth}
+                              bold={col.bold}
+                              contentStyle={css`
+                                display: flex;
+                                align-items: center;
+
+                                ${columnWidth
+                                  ? css`
+                                      width: ${columnWidth};
+                                      flex-direction: row;
+                                    `
+                                  : css`
+                                      flex: 1;
+                                    `}
+                                ${isLast &&
+                                css`
+                                  padding-right: 36px;
+                                `}
+
+                                ${loose &&
+                                css`
+                                  flex: unset;
+
+                                  ${isFirst &&
+                                  css`
+                                    z-index: 40;
+                                    background: ${tableTheme?.summaryBackgroundColor ??
+                                    "#e4e4e4"};
+                                  `}
+                                `}
+                            ${col.styles?.self}
+                              `}
+                            >
+                              {s === 0 ? col.content : ""}
+                            </TableRowCell>
+                          );
+
+                          colPointer++;
+                        }
+                      });
+
+                      return cells;
+                    })()}
+
+                    {loose && withRowActions && (
+                      <StickyRowActions
+                        aria-label="summary-row-loose-action"
+                        $theme={tableTheme}
+                        $loose={loose}
+                        $position={"summary"}
+                        $isScrolledRight={isScrolledRight}
+                      />
+                    )}
+                  </TableSummary>
+                </ScrollWrapper>
+              )}
+            </TableContainer>
+
+            {isLoading && (
+              <OverlayBlocker
                 styles={{
-                  containerStyle: css`
-                    background-color: black;
-                    border-radius: 20px;
-                    opacity: 0.8;
-                    color: white;
-                    padding: 4px;
-                    padding-right: 8px;
+                  self: css`
+                    display: flex;
+                    align-items: start;
+                    padding-left: 10px;
+                    padding-top: 10px;
                   `,
                 }}
-                label="Loading"
-                gap={10}
-                iconSize={24}
-              />
-            </OverlayBlocker>
-          )}
-        </Wrapper>
-      </TableColumnContext.Provider>
+                show={isLoading}
+                onClick="preventDefault"
+              >
+                <LoadingSpinner
+                  styles={{
+                    containerStyle: css`
+                      background-color: black;
+                      border-radius: 20px;
+                      opacity: 0.8;
+                      color: white;
+                      padding: 4px;
+                      padding-right: 8px;
+                    `,
+                  }}
+                  label="Loading"
+                  gap={10}
+                  iconSize={24}
+                />
+              </OverlayBlocker>
+            )}
+          </Wrapper>
+        </TableColumnContext.Provider>
+      </TableLooseContext.Provider>
     </DnDContext.Provider>
   );
 }
+
+const ScrollWrapper = styled.div<{ $loose?: boolean }>`
+  flex-shrink: 0;
+  overflow-x: ${({ $loose }) => ($loose ? "auto" : "visible")};
+  overflow-y: ${({ $loose }) => ($loose ? "hidden" : "visible")};
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 function ActionCapsule(capsule: CapsuleProps) {
   const { currentTheme } = useTheme();
@@ -690,6 +896,40 @@ const Wrapper = styled.div<{
   color: ${({ $theme }) => $theme?.textColor};
 
   ${({ $style }) => $style}
+`;
+
+const StickyRowActions = styled.div<{
+  $loose?: boolean;
+  $theme?: TableThemeConfig;
+  $position?: "header" | "summary";
+  $isScrolledRight?: boolean;
+  $isFirefox?: boolean;
+}>`
+  position: sticky;
+  right: 0;
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: 48px;
+  transform: none;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: ${({ $theme, $position }) =>
+    $position === "summary"
+      ? $theme?.summaryBackgroundColor
+      : $theme?.headerBackgroundColor};
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -6px;
+    bottom: 0;
+    width: 6px;
+    background: ${({ $isScrolledRight, $theme }) =>
+      $isScrolledRight ? $theme?.rightLooseEffectColor : "transparent"};
+    pointer-events: none;
+  }
 `;
 
 const Label = styled.span<{ $style?: CSSProp }>`
@@ -776,6 +1016,7 @@ const PaginationSelectedItem = styled.span<{ $style?: CSSProp }>`
 const TableContainer = styled.div<{
   $hasSelected: boolean;
   $theme?: TableThemeConfig;
+  $loose?: boolean;
 }>`
   position: relative;
   display: flex;
@@ -795,47 +1036,51 @@ const TableHeader = styled.div<{
   $style?: CSSProp;
   $textColor?: string;
   $theme?: TableThemeConfig;
+  $loose?: boolean;
 }>`
   display: flex;
   flex-direction: row;
-  padding: 0.75rem;
-  align-items: center;
   font-weight: 600;
   color: ${({ $textColor }) => $textColor};
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+  border-left: 1px solid
+    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+  border-right: 1px solid
+    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
-  background: ${({ $theme }) =>
-    $theme?.headerBackgroundColor ||
-    "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
+  align-items: stretch;
+  background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
+
+  ${({ $loose }) =>
+    $loose &&
+    css`
+      min-width: max-content;
+    `}
 
   ${({ $style }) => $style}
 `;
 
-const TableBody = styled.div<{ $style?: CSSProp; $theme: TableThemeConfig }>`
+const TableBody = styled.div<{
+  $style?: CSSProp;
+  $theme: TableThemeConfig;
+  $loose?: boolean;
+  $isFirefox?: boolean;
+}>`
   display: flex;
   flex-direction: column;
-  overflow: auto;
   position: relative;
   width: 100%;
   height: 100%;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: ${({ $theme }) => $theme?.scrollbarThumbColor};
-    border-radius: 2px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${({ $theme }) => $theme?.scrollbarTrackColor};
-  }
-
   background-color: ${({ $theme }) => $theme?.backgroundColor};
+
+  ${({ $loose, $theme }) =>
+    $loose &&
+    css`
+      --row-bg: ${$theme?.headerBackgroundColor ?? "#e4e4e4"};
+      min-width: max-content;
+    `}
 
   ${({ $style }) => $style};
 `;
@@ -843,25 +1088,26 @@ const TableBody = styled.div<{ $style?: CSSProp; $theme: TableThemeConfig }>`
 const TableSummary = styled.div<{
   $selectable?: boolean;
   $theme?: TableThemeConfig;
+  $loose: boolean;
 }>`
   display: flex;
   flex-direction: row;
-  padding: 10px;
-  ${({ $selectable }) =>
-    $selectable
-      ? css`
-          padding-left: 42px;
-        `
-      : css`
-          padding-left: 10px;
-        `}
-  padding-right: 15px;
-  align-items: center;
+  align-items: stretch;
+  height: 100%;
   border-bottom-width: 1px;
-  background: ${({ $theme }) => $theme?.summaryBackgroundColor};
   color: ${({ $theme }) => $theme?.textColor};
   border-bottom: 1px solid ${({ $theme }) => $theme?.summaryBorderColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
+  background: ${({ $theme }) => $theme?.summaryBackgroundColor};
+
+  ${({ $loose, $theme }) =>
+    $loose &&
+    css`
+      min-width: max-content;
+      z-index: 40;
+
+      --row-bg: ${$theme?.summaryBackgroundColor ?? "#e4e4e4"};
+    `}
 `;
 
 const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
@@ -871,7 +1117,12 @@ const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
   border-right: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#d1d5db"};
 `;
 
-const CheckboxWrapper = styled.div`
+const CheckboxWrapper = styled.div<{
+  $loose: boolean;
+  $theme?: TableThemeConfig;
+  $position?: "header" | "content" | "summary";
+  $style?: CSSProp;
+}>`
   min-width: 2rem;
   display: flex;
   position: relative;
@@ -879,6 +1130,38 @@ const CheckboxWrapper = styled.div`
   align-items: center;
   cursor: pointer;
   pointer-events: auto;
+  padding-left: 1rem;
+  background-color: inherit;
+  padding-right: 2px;
+
+  ${({ $theme, $position }) =>
+    $position === "content"
+      ? css`
+          background-color: ${$theme?.rowContentBackgroundColor};
+        `
+      : $position === "summary"
+        ? css`
+            background: ${$theme?.summaryBackgroundColor};
+          `
+        : css`
+            background: ${$theme?.headerBackgroundColor};
+          `}
+
+  ${({ $loose, $position }) =>
+    $loose &&
+    css`
+      position: sticky;
+      left: 0px;
+      z-index: 40;
+
+      ${$position === "header" &&
+      css`
+        z-index: 50;
+        top: 0px;
+      `}
+    `}
+
+    ${({ $style }) => $style}
 `;
 
 export interface TableRowGroupProps {
@@ -1134,7 +1417,7 @@ export interface TableRowProps {
   handleSelect?: (data: string) => void;
   rowId?: string;
   children?: ReactNode;
-  actions?: (columnCaption: string) => TableRowAction[];
+  actions?: (columnId: string) => TableRowAction[];
   onClick?: (args?: {
     toggleCheckbox: () => void;
     isFirstClick?: boolean;
@@ -1201,6 +1484,16 @@ function TableRow({
       isLast?: boolean;
     };
 
+  const { loose, setWithRowActions, isScrolledRight } = useTableLoose();
+
+  useEffect(() => {
+    if (actions) {
+      setWithRowActions(true);
+    } else {
+      setWithRowActions(false);
+    }
+  }, [actions]);
+
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
     null
@@ -1236,6 +1529,7 @@ function TableRow({
       <TableRowWrapper
         ref={rowRef}
         id={id}
+        $loose={loose}
         className={applyClassName("table-row", className)}
         $theme={tableTheme}
         $isHovered={isHovered === rowId || openRowId === rowId || !!rowContent}
@@ -1328,6 +1622,9 @@ function TableRow({
       >
         {selectable && (
           <CheckboxWrapper
+            $position="content"
+            $theme={tableTheme}
+            $loose={loose}
             onClick={(e) => {
               e.stopPropagation();
               if (rowId) {
@@ -1339,6 +1636,9 @@ function TableRow({
               name={rowId}
               value={isSelected ? "true" : "false"}
               styles={{
+                controlStyle: css`
+                  height: 100%;
+                `,
                 boxStyle: css`
                   width: 100%;
                 `,
@@ -1355,6 +1655,7 @@ function TableRow({
               return (
                 <TableRowCell
                   key={i}
+                  _index={i}
                   width={column?.width}
                   contentStyle={
                     isLast
@@ -1438,7 +1739,7 @@ function TableRow({
                       : openRowId === rowId) &&
                     css`
                       display: inherit;
-                    `}
+                    `};
 
                     ${draggable
                       ? css`
@@ -1446,7 +1747,33 @@ function TableRow({
                         `
                       : css`
                           right: 0.5rem;
-                        `}
+                        `};
+
+                    ${loose &&
+                    css`
+                      position: sticky;
+                      right: 0;
+                      display: flex;
+                      align-items: center;
+                      height: auto;
+                      transform: none;
+                      padding-left: 8px;
+                      padding-right: 8px;
+                      background-color: var(--row-bg, #ffffff);
+
+                      &::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: -6px;
+                        bottom: 0;
+                        width: 6px;
+                        background: ${isScrolledRight
+                          ? tableTheme?.rightLooseEffectColor
+                          : "transparent"};
+                        pointer-events: none;
+                      }
+                    `};
                   `,
                 }}
                 focusBackgroundColor={
@@ -1532,10 +1859,10 @@ const TableRowWrapper = styled.div<{
   $rowCellStyle?: CSSProp;
   $isHovered?: boolean;
   $theme?: TableThemeConfig;
+  $loose: boolean;
 }>`
   display: flex;
   position: relative;
-  padding: 12px;
   align-items: stretch;
 
   border-left: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
@@ -1543,6 +1870,7 @@ const TableRowWrapper = styled.div<{
   border-bottom: 1px solid
     ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
   cursor: default;
+  height: 100%;
 
   ${({ $isHovered, $isSelected, $theme }) =>
     $isHovered
@@ -1557,6 +1885,19 @@ const TableRowWrapper = styled.div<{
         : css`
             background-color: ${$theme?.rowBackgroundColor || "white"};
           `}
+
+  ${({ $loose, $isHovered, $isSelected, $theme }) => css`
+    ${$loose &&
+    css`
+      min-width: max-content;
+    `};
+
+    --row-bg: ${$isHovered
+      ? ($theme?.rowHoverBackgroundColor ?? "#e7f2fc")
+      : $isSelected
+        ? ($theme?.rowSelectedBackgroundColor ?? "#dbeafe")
+        : ($theme?.rowBackgroundColor ?? "#ffffff")};
+  `}
 
   ${({ $rowCellStyle }) => $rowCellStyle}
 `;
@@ -1573,6 +1914,10 @@ const TableRowContent = styled(motion.div)<{
     $theme?.rowContentBackgroundColor ||
     "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)"};
   border: 0;
+
+  --row-bg: ${({ $theme }) =>
+    $theme?.rowContentBackgroundColor ||
+    "linear-gradient(to bottom, #ececec 0%, #f6f6f6 35%, #f0f0f0 100%)"};
 
   ${({ $style }) => $style}
 `;
@@ -1624,13 +1969,25 @@ function TableRowCell({
   bold,
   id,
   className,
+  _index,
 }: TableRowCellProps &
   Partial<{
     bold?: boolean;
+    _index?: number;
   }>) {
+  const { loose, selectable, isScrolledLeft } = useTableLoose();
+  const isFirst = _index === 0;
+  const { currentTheme } = useTheme();
+  const tableTheme = currentTheme?.table;
+
   return (
     <CellContent
+      $theme={tableTheme}
       id={id}
+      $loose={loose}
+      $selectable={selectable}
+      $isScrolledLeft={isScrolledLeft}
+      $sticky={isFirst}
       className={applyClassName("table-row-cell", className)}
       aria-label="table-row-cell"
       onClick={() => {
@@ -1657,6 +2014,11 @@ const CellContent = styled.div<{
   $width?: string;
   $contentStyle?: CSSProp;
   $bold?: boolean;
+  $loose: boolean;
+  $sticky: boolean;
+  $selectable?: boolean;
+  $theme: TableThemeConfig;
+  $isScrolledLeft?: boolean;
 }>`
   *,
   ::before,
@@ -1664,20 +2026,53 @@ const CellContent = styled.div<{
     border-width: 0;
   }
 
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: 1.2rem;
+  padding-right: 1.2rem;
+  padding-top: 12px;
+  padding-bottom: 12px;
   display: flex;
   align-items: center;
   word-break: break-word;
   white-space: pre-wrap;
   justify-content: space-between;
+  position: relative;
 
-  ${({ $width }) =>
-    !$width &&
+  ${({ $width, $loose }) =>
+    $loose
+      ? css`
+          min-width: 160px;
+          flex: unset;
+          width: 160px;
+        `
+      : !$width
+        ? css`
+            flex: 1;
+            height: fit-content;
+            width: 100%;
+          `
+        : ""};
+
+  ${({ $loose, $sticky, $selectable, $theme, $isScrolledLeft }) =>
+    $sticky &&
+    $loose &&
     css`
-      flex: 1;
-      height: fit-content;
-      width: 100%;
+      position: sticky !important;
+      left: ${$selectable ? "34px" : "-0.5px"};
+      z-index: 40;
+      background-color: var(--row-bg, #ffffff);
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: -6px;
+        bottom: 0;
+        width: 6px;
+        background: ${$isScrolledLeft
+          ? $theme?.leftLooseEffectColor
+          : "transparent"};
+        pointer-events: none;
+      }
     `}
 
   width: ${({ $width }) => $width};
@@ -1686,7 +2081,8 @@ const CellContent = styled.div<{
     $bold &&
     css`
       font-weight: 600;
-    `}
+    `};
+
   ${({ $contentStyle }) => $contentStyle};
 `;
 

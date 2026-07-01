@@ -865,12 +865,10 @@ describe("ActionButton", () => {
           {
             id: "name",
             caption: "Name",
-            sortable: false,
           },
           {
             id: "type",
             caption: "Type",
-            sortable: false,
           },
         ];
 
@@ -939,12 +937,10 @@ describe("ActionButton", () => {
             {
               id: "name",
               caption: "Name",
-              sortable: false,
             },
             {
               id: "type",
               caption: "Type",
-              sortable: false,
             },
           ];
 
@@ -992,12 +988,10 @@ describe("ActionButton", () => {
             {
               id: "name",
               caption: "Name",
-              sortable: false,
             },
             {
               id: "type",
               caption: "Type",
-              sortable: false,
             },
           ];
 
@@ -1045,12 +1039,10 @@ describe("ActionButton", () => {
               {
                 id: "name",
                 caption: "Name",
-                sortable: false,
               },
               {
                 id: "type",
                 caption: "Type",
-                sortable: false,
               },
             ];
 
@@ -1098,12 +1090,10 @@ describe("ActionButton", () => {
               {
                 id: "name",
                 caption: "Name",
-                sortable: false,
               },
               {
                 id: "type",
                 caption: "Type",
-                sortable: false,
               },
             ];
 
@@ -1167,12 +1157,10 @@ describe("ActionButton", () => {
               {
                 id: "name",
                 caption: "Name",
-                sortable: false,
               },
               {
                 id: "type",
                 caption: "Type",
-                sortable: false,
               },
             ];
 

@@ -1,9 +1,21 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TableColumn, TableSubMenuList, Table, TableAction } from "./table";
+import {
+  TableColumn,
+  TableSubMenuList,
+  Table,
+  TableAction,
+  TableSummaryRowColumn,
+  TableColumnAction,
+} from "./table";
 import { useEffect, useMemo, useState } from "react";
 import {
+  RiArrowDownLine,
   RiArrowDownSLine,
+  RiArrowUpDownLine,
+  RiArrowUpLine,
   RiArrowUpSLine,
+  RiBookMarkedLine,
+  RiCheckboxMultipleLine,
   RiClipboardFill,
   RiClipboardLine,
   RiDeleteBin2Fill,
@@ -11,17 +23,19 @@ import {
   RiDownload2Fill,
   RiEditLine,
   RiFileCopy2Line,
+  RiInformationLine,
   RiReactjsLine,
   RiRefreshLine,
+  RiSettings3Line,
 } from "@remixicon/react";
 import { EmptySlate } from "./empty-slate";
 import { Button } from "./button";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { CapsuleTab } from "./capsule";
 import { List } from "./list";
 import { Card } from "./card";
 import { generateSentence } from "./../lib/text";
-import { useTheme } from "./../theme";
+import { TableThemeConfig, useTheme } from "./../theme";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -71,13 +85,35 @@ The **Table** component is a powerful and flexible data display component design
 {
   id: string;
   caption: string;
-  sortable?: boolean;
   width?: string;
-  styles?: {
-    self?: CSSProp;
-  };
+  action?: TableColumnAction;
+  styles?: TableColumnStyles;
 }
 \`\`\`
+
+#### Column Actions
+
+Columns can expose an action button (typically rendered in the header) that opens a contextual menu.
+
+\`\`\`tsx
+{
+  action: {
+    title: "Protocol",
+    icon: {
+      image: RiFilterLine,
+    },
+    subMenu: ({ show }) =>
+      show(<ProtocolMenu />),
+  },
+}
+\`\`\`
+
+This is useful for features such as:
+
+- Filtering
+- Sorting
+- Column-specific settings
+- Custom contextual actions
 
 ---
 
@@ -279,12 +315,34 @@ Displays a loading overlay on top of the table.
       description: `
 Defines the table columns.
 
-Each column includes:
-- \`id\`: unique identifier
-- \`caption\`: header label
-- \`sortable\`: enable sorting menu
-- \`width\`: optional fixed width
-    `,
+Each column supports:
+
+- \`id\`: Unique identifier for the column.
+- \`caption\`: Header label displayed at the top of the column.
+- \`width\`: Optional fixed width (e.g. \`"120px"\`).
+- \`styles\`: Custom styles for the column.
+- \`actions\`: Optional header action or contextual menu. Can be provided as a \`TableColumnAction\` object or a callback that returns one.
+
+Example:
+
+\`\`\`tsx
+const columns: TableColumn[] = [
+  {
+    id: "protocol",
+    caption: "Protocol",
+    width: "160px",
+    actions: {
+      title: "Protocol",
+      icon: {
+        image: RiFilterLine,
+      },
+      subMenu: ({ show }) =>
+        show(<ProtocolMenu />),
+    },
+  },
+];
+\`\`\`
+  `,
       control: false,
       table: {
         type: { summary: "TableColumn[]" },
@@ -337,26 +395,6 @@ Used to define rows and grouping structure.
         type: { summary: "ReactNode" },
       },
     },
-
-    subMenuList: {
-      description: `
-Generates sorting menu for each column.
-
-\`\`\`ts
-(columnId: string) => TableSubMenuList[]
-\`\`\`
-
-- Used when \`sortable: true\` in column
-- Allows custom sorting options (ASC, DESC, etc.)
-    `,
-      control: false,
-      table: {
-        type: {
-          summary: "(columnId: string) => TableSubMenuList[]",
-        },
-      },
-    },
-
     emptySlate: {
       description: `
 Content displayed when there are no rows.
@@ -522,12 +560,10 @@ export const Default: Story = {
       {
         id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 
@@ -546,23 +582,405 @@ export const Default: Story = {
   },
 };
 
-export const Appendable: Story = {
+export const Loose: Story = {
   render: () => {
-    const columns: TableColumn[] = [
+    const { currentTheme } = useTheme();
+    const tableTheme = currentTheme?.table;
+
+    interface LoadBalancerRow {
+      id: string;
+      name: string;
+      type: string;
+      region: string;
+      status: string;
+      version: string;
+      uptime: string;
+
+      requests: number;
+      latency: number;
+      errorRate: number;
+      cpu: number;
+      memory: number;
+      connections: number;
+      bandwidth: number;
+
+      zone: string;
+      provider: string;
+    }
+
+    const TYPES_DATA = [
       {
-        id: "from",
-        caption: "From",
-        sortable: true,
-        width: "40%",
+        name: "HTTP",
+        description: "Standard protocol for transferring web pages.",
       },
       {
-        id: "content",
-        caption: "Content",
-        sortable: true,
-        width: "60%",
+        name: "HTTPS",
+        description: "Secure version of HTTP using TLS encryption.",
+      },
+      {
+        name: "TCP",
+        description: "Reliable, connection-oriented transport protocol.",
+      },
+      {
+        name: "UDP",
+        description:
+          "Fast, connectionless protocol for low-latency communication.",
+      },
+      {
+        name: "QUIC",
+        description:
+          "Modern transport protocol providing faster and more secure connections.",
+      },
+    ];
+    const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+    const STATUS = ["active", "idle", "degraded"];
+    const PROVIDERS = [
+      "AWS",
+      "Google Cloud",
+      "Microsoft Azure",
+      "Cloudflare",
+      "DigitalOcean",
+      "Oracle Cloud",
+      "Alibaba Cloud",
+      "IBM Cloud",
+      "Linode",
+      "Vultr",
+      "Hetzner",
+      "Akamai",
+    ];
+
+    const initialRows = useMemo<LoadBalancerRow[]>(
+      () =>
+        Array.from({ length: 15 }, (_, i) => {
+          const type = TYPES_DATA[i % TYPES_DATA.length].name;
+          const region = REGIONS[i % REGIONS.length];
+          const status = STATUS[i % STATUS.length];
+
+          const seed = (i + 1) * 17;
+          const req = 200 + (seed % 200);
+          const lat = 50 + (seed % 50);
+          const errRate = (seed % 500) / 100;
+          const cpu = 80 + (seed % 80);
+          const mem = 70 + (seed % 70);
+          const conn = 1000 + (seed % 1000);
+          const bw = 100 + (seed % 100);
+          const provider = PROVIDERS[i % PROVIDERS.length];
+
+          return {
+            id: `lb-${i}`,
+            name: `lb-${region}-${i + 1}`,
+            type,
+            region,
+            status,
+            version: `v${1 + (i % 3)}.${i % 10}`,
+            uptime: `${10 + i}d`,
+
+            requests: req,
+            latency: lat,
+            errorRate: errRate,
+            cpu,
+            memory: mem,
+            connections: conn,
+            bandwidth: bw,
+
+            zone: `zone-${(i % 3) + 1}`,
+            provider,
+          };
+        }),
+      []
+    );
+
+    const [rows, setRows] = useState(initialRows);
+    const [activeTab, setActiveTab] = useState({
+      withCheckbox: false,
+      withActions: false,
+      withSummary: false,
+    });
+
+    const [status, setStatus] = useState<"desc" | "asc" | "original">(
+      "original"
+    );
+
+    const TOP_ACTIONS: TableAction[] = [
+      {
+        type: "button",
+        caption: "With Checkbox",
+        pressed: activeTab.withCheckbox,
+        icon: { image: RiCheckboxMultipleLine },
+        onClick: () =>
+          setActiveTab((prev) => ({
+            ...prev,
+            withCheckbox: !prev.withCheckbox,
+          })),
+      },
+      {
+        type: "button",
+        caption: "With Row Actions",
+        pressed: activeTab.withActions,
+        icon: { image: RiSettings3Line },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withActions: !prev.withActions })),
+      },
+      {
+        type: "button",
+        caption: "With Summary",
+        pressed: activeTab.withSummary,
+        icon: { image: RiBookMarkedLine },
+        onClick: () =>
+          setActiveTab((prev) => ({ ...prev, withSummary: !prev.withSummary })),
       },
     ];
 
+    const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
+      {
+        caption: "Edit",
+        icon: { image: RiArrowUpSLine },
+        onClick: () => console.log(`${rowId} was edited`),
+      },
+      {
+        caption: "Delete",
+        icon: { image: RiDeleteBin2Fill },
+        variant: "danger",
+        onClick: () => console.log(`${rowId} was deleted`),
+      },
+    ];
+
+    const handleSortingRequested = ({
+      mode,
+      column,
+    }: {
+      mode: "asc" | "desc" | "original";
+      column: keyof (typeof initialRows)[number];
+    }) => {
+      setStatus(mode);
+
+      if (mode === "original") {
+        setRows(initialRows);
+        return;
+      }
+
+      const sorted = [...rows].sort((a, b) => {
+        const aVal = a[column];
+        const bVal = b[column];
+
+        if (typeof aVal === "string" && typeof bVal === "string") {
+          return mode === "asc"
+            ? aVal.localeCompare(bVal)
+            : bVal.localeCompare(aVal);
+        }
+
+        if (typeof aVal === "number" && typeof bVal === "number") {
+          return mode === "asc" ? aVal - bVal : bVal - aVal;
+        }
+
+        return 0;
+      });
+
+      setRows(sorted);
+    };
+
+    const COLUMN_ACTIONS = (
+      columnId: keyof (typeof initialRows)[number]
+    ): TableSubMenuList[] => {
+      return [
+        {
+          caption: "Sort Ascending",
+          icon: {
+            image: RiArrowUpLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "asc", column: columnId });
+          },
+        },
+        {
+          caption: "Sort Descending",
+          icon: {
+            image: RiArrowDownLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "desc", column: columnId });
+          },
+        },
+        {
+          caption: "Reset Sorting",
+          icon: {
+            image: RiArrowUpDownLine,
+          },
+          onClick: () => {
+            handleSortingRequested({ mode: "original", column: columnId });
+          },
+        },
+      ];
+    };
+
+    const imageStatus =
+      status === "asc"
+        ? RiArrowUpLine
+        : status === "desc"
+          ? RiArrowDownLine
+          : RiArrowUpDownLine;
+
+    const columnActions = (
+      id: keyof (typeof initialRows)[number]
+    ): TableColumnAction | null => {
+      if (id === "type") {
+        return {
+          title: "Info Action",
+          icon: {
+            image: RiInformationLine,
+          },
+          subMenu: ({ show }) =>
+            show(
+              TYPES_DATA.map((protocol, index) => (
+                <ProtocolItem $theme={tableTheme} key={index}>
+                  <ProtocolName $theme={tableTheme}>
+                    {protocol.name}
+                  </ProtocolName>
+                  <ProtocolDescription $theme={tableTheme}>
+                    {protocol.description}
+                  </ProtocolDescription>
+                </ProtocolItem>
+              )),
+              {
+                drawerStyle: css`
+                  display: flex;
+                  flex-direction: column;
+                  gap: 6px;
+                  padding: 6px;
+                `,
+              }
+            ),
+        };
+      }
+
+      return {
+        title: "Sorter Action",
+        icon: {
+          image: imageStatus,
+        },
+        subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      };
+    };
+
+    const columns: TableColumn[] = [
+      { id: "name", caption: "Name", actions: columnActions },
+      { id: "type", caption: "Protocol", actions: columnActions },
+      { id: "region", caption: "Region" },
+      { id: "status", caption: "Status" },
+      { id: "version", caption: "Version" },
+      { id: "uptime", caption: "Uptime" },
+      { id: "requests", caption: "Requests/s" },
+      { id: "latency", caption: "Latency (ms)" },
+      { id: "errorRate", caption: "Error Rate" },
+      { id: "cpu", caption: "CPU %" },
+      { id: "memory", caption: "Memory %" },
+      { id: "connections", caption: "Connections" },
+      { id: "bandwidth", caption: "Bandwidth" },
+      { id: "zone", caption: "Zone" },
+      { id: "provider", caption: "Provider" },
+    ];
+
+    const totals = useMemo(
+      () => ({
+        requests: rows.reduce((s, r) => s + r.requests, 0),
+        latency: Math.round(
+          rows.reduce((s, r) => s + r.latency, 0) / rows.length
+        ),
+        errorRate: (
+          rows.reduce((s, r) => s + r.errorRate, 0) / rows.length
+        ).toFixed(2),
+        cpu: Math.round(rows.reduce((s, r) => s + r.cpu, 0) / rows.length),
+        memory: Math.round(
+          rows.reduce((s, r) => s + r.memory, 0) / rows.length
+        ),
+        connections: rows.reduce((s, r) => s + r.connections, 0),
+        bandwidth: rows.reduce((s, r) => s + r.bandwidth, 0),
+      }),
+      [rows]
+    );
+
+    const sampleRows = rows.map((row) => (
+      <Table.Row
+        key={row.id}
+        rowId={row.id}
+        actions={activeTab.withActions ? ROW_ACTION : null}
+        content={[
+          row.name,
+          row.type,
+          row.region,
+          row.status,
+          row.version,
+          row.uptime,
+          row.requests,
+          row.latency,
+          row.errorRate,
+          row.cpu,
+          row.memory,
+          row.connections,
+          row.bandwidth,
+          row.zone,
+          row.provider,
+        ]}
+      />
+    ));
+
+    const sumRow: TableSummaryRowColumn[] = [
+      { content: "Totals / Avg", bold: true },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: "" },
+      { content: totals.requests, bold: true },
+      { content: `${totals.latency} ms`, bold: true },
+      { content: `${totals.errorRate}%`, bold: true },
+      { content: `${totals.cpu}%`, bold: true },
+      { content: `${totals.memory}%`, bold: true },
+      { content: totals.connections, bold: true },
+      { content: `${totals.bandwidth}Mbps`, bold: true },
+      { content: "" },
+      { content: "" },
+    ];
+
+    return (
+      <Table
+        styles={{
+          tableBodyStyle: css`
+            max-height: 250px;
+          `,
+        }}
+        loose
+        actions={TOP_ACTIONS}
+        columns={columns}
+        selectable={activeTab.withCheckbox}
+        sumRow={activeTab.withSummary && sumRow}
+      >
+        {sampleRows}
+      </Table>
+    );
+  },
+};
+
+const ProtocolItem = styled.div<{ $theme?: TableThemeConfig }>`
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: ${({ $theme }) => $theme?.backgroundColor};
+`;
+
+const ProtocolName = styled.div<{ $theme?: TableThemeConfig }>`
+  font-weight: 600;
+  font-size: 13px;
+  color: ${({ $theme }) => $theme?.textColor};
+`;
+
+const ProtocolDescription = styled.div<{ $theme?: TableThemeConfig }>`
+  margin-top: 2px;
+  font-size: 12px;
+  color: ${({ $theme }) => $theme?.rowGroupSubtitleTextColor};
+`;
+
+export const Appendable: Story = {
+  render: () => {
     const generate20RandomSender = () => {
       const names = [
         "adam.h",
@@ -679,8 +1097,8 @@ export const Appendable: Story = {
       console.log("Selected rows:", ids);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: "from" | "content"
+    const COLUMN_ACTIONS = (
+      columnId: "from" | "content"
     ): TableSubMenuList[] => {
       return [
         {
@@ -689,7 +1107,7 @@ export const Appendable: Story = {
             image: RiArrowUpSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
@@ -698,7 +1116,7 @@ export const Appendable: Story = {
             image: RiArrowDownSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
@@ -707,7 +1125,7 @@ export const Appendable: Story = {
             image: RiRefreshLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
@@ -746,6 +1164,26 @@ export const Appendable: Story = {
       setRows((prev) => [...prev, ...moreEmails]);
     };
 
+    const columnActions = (id?: "from" | "content"): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
+
+    const columns: TableColumn[] = [
+      {
+        id: "from",
+        caption: "From",
+        width: "40%",
+        actions: columnActions,
+      },
+      {
+        id: "content",
+        caption: "Content",
+        width: "60%",
+        actions: columnActions,
+      },
+    ];
+
     return (
       <Table
         selectable
@@ -757,7 +1195,6 @@ export const Appendable: Story = {
         labels={{ totalSelectedItemText: null }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
-        subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
       >
         {rows.map((rowValue, rowIndex) => (
@@ -789,21 +1226,6 @@ export const Appendable: Story = {
 
 export const WithOneAction: Story = {
   render: () => {
-    const columns: TableColumn[] = [
-      {
-        id: "from",
-        caption: "From",
-        sortable: true,
-        width: "40%",
-      },
-      {
-        id: "content",
-        caption: "Content",
-        sortable: true,
-        width: "60%",
-      },
-    ];
-
     const generate20RandomSender = () => {
       const names = [
         "adam.h",
@@ -920,8 +1342,8 @@ export const WithOneAction: Story = {
       console.log("Selected rows:", ids);
     };
 
-    const TIP_MENU_ACTION = (
-      columnCaption: "from" | "content"
+    const COLUMN_ACTIONS = (
+      columnId: "from" | "content"
     ): TableSubMenuList[] => {
       return [
         {
@@ -930,7 +1352,7 @@ export const WithOneAction: Story = {
             image: RiArrowUpSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "asc", column: columnCaption });
+            handleSortingRequested({ mode: "asc", column: columnId });
           },
         },
         {
@@ -939,7 +1361,7 @@ export const WithOneAction: Story = {
             image: RiArrowDownSLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "desc", column: columnCaption });
+            handleSortingRequested({ mode: "desc", column: columnId });
           },
         },
         {
@@ -948,11 +1370,16 @@ export const WithOneAction: Story = {
             image: RiRefreshLine,
           },
           onClick: () => {
-            handleSortingRequested({ mode: "original", column: columnCaption });
+            handleSortingRequested({ mode: "original", column: columnId });
           },
         },
       ];
     };
+
+    const columnActions = (id?: "from" | "content"): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
 
     const ROW_ACTION = (rowId: string): TableSubMenuList[] => {
       return [
@@ -977,6 +1404,21 @@ export const WithOneAction: Story = {
       setRows((prev) => [...prev, ...moreEmails]);
     };
 
+    const columns: TableColumn[] = [
+      {
+        id: "from",
+        caption: "From",
+        width: "40%",
+        actions: columnActions,
+      },
+      {
+        id: "content",
+        caption: "Content",
+        width: "60%",
+        actions: columnActions,
+      },
+    ];
+
     return (
       <Table
         selectable
@@ -987,7 +1429,6 @@ export const WithOneAction: Story = {
         }}
         columns={columns}
         onItemsSelected={handleItemsSelected}
-        subMenuList={TIP_MENU_ACTION}
         onLastRowReached={handleFetchData}
         labels={{ totalSelectedItemText: (n) => `${n} emails selected` }}
       >
@@ -1103,21 +1544,26 @@ export const SortableWithPagination: Story = {
       setPagedRows(sorted);
     };
 
+    const columnActions = (id?: "from" | "content"): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
+
     const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: true,
+        actions: columnActions,
       },
     ];
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption.toLowerCase() as keyof (typeof rawRows)[0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId.toLowerCase() as keyof (typeof rawRows)[0];
 
       return [
         {
@@ -1172,7 +1618,6 @@ export const SortableWithPagination: Story = {
           showPagination
           columns={columns}
           onItemsSelected={handleItemsSelected}
-          subMenuList={TIP_MENU_ACTION}
           labels={{ pageNumberText: page }}
           onPreviousPageRequested={handlePrevious}
           onNextPageRequested={handleNext}
@@ -1220,16 +1665,15 @@ export const WithLoading: Story = {
         />
       );
     });
+
     const columns: TableColumn[] = [
       {
         id: "name",
         caption: "Name",
-        sortable: false,
       },
       {
         id: "type",
         caption: "Type",
-        sortable: false,
       },
     ];
 
@@ -1372,28 +1816,35 @@ export const WithSummary: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
 
+    const columnActions = (
+      id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
+    ): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
+
     const columns: TableColumn[] = [
       {
         id: "itemId",
         caption: "Item ID",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "name",
         caption: "Name",
-        sortable: true,
         width: "40%",
+        actions: columnActions,
       },
       {
         id: "cost",
         caption: "Cost",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "quantity",
         caption: "Quantity",
-        sortable: true,
         width: "20%",
+        actions: columnActions,
       },
     ];
 
@@ -1429,8 +1880,8 @@ export const WithSummary: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -1543,7 +1994,6 @@ export const WithSummary: Story = {
             `,
           }}
           columns={columns}
-          subMenuList={TIP_MENU_ACTION}
           searchbox={{ onChange: (e) => setSearch(e.target.value) }}
           sumRow={[
             {
@@ -1742,23 +2192,30 @@ export const WithRowGroup: Story = {
     });
     const [isFocus, setIsFocus] = useState(false);
 
+    const columnActions = (
+      id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
+    ): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
+
     const columns: TableColumn[] = [
       {
         id: "title",
         caption: "Title",
-        sortable: true,
         width: "45%",
+        actions: columnActions,
       },
       {
         id: "category",
         caption: "Category",
-        sortable: true,
         width: "30%",
+        actions: columnActions,
       },
       {
         id: "author",
         caption: "Author",
-        sortable: true,
+        actions: columnActions,
         width: "25%",
       },
     ];
@@ -1904,9 +2361,9 @@ export const WithRowGroup: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
       const column =
-        columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+        columnId.toLowerCase() as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -2104,7 +2561,6 @@ export const WithRowGroup: Story = {
           }}
           columns={columns}
           onItemsSelected={handleItemsSelected}
-          subMenuList={TIP_MENU_ACTION}
           actions={TOP_ACTIONS}
           searchable
           searchbox={{
@@ -2211,28 +2667,35 @@ export const WithRowAppendix: Story = {
     const [rows, setRows] = useState(TABLE_ITEMS);
     const [search, setSearch] = useState("");
 
+    const columnActions = (
+      id?: keyof (typeof TABLE_ITEMS)[0]["items"][0]
+    ): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+      title: "Column Action",
+    });
+
     const columns: TableColumn[] = [
       {
         id: "itemId",
         caption: "Item ID",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "name",
         caption: "Name",
-        sortable: true,
         width: "40%",
+        actions: columnActions,
       },
       {
         id: "cost",
         caption: "Cost",
-        sortable: true,
+        actions: columnActions,
       },
       {
         id: "quantity",
         caption: "Quantity",
-        sortable: true,
         width: "20%",
+        actions: columnActions,
       },
     ];
 
@@ -2268,8 +2731,8 @@ export const WithRowAppendix: Story = {
       setRows(sortedRows);
     };
 
-    const TIP_MENU_ACTION = (columnCaption: string): TableSubMenuList[] => {
-      const column = columnCaption as keyof (typeof TABLE_ITEMS)[0]["items"][0];
+    const COLUMN_ACTIONS = (columnId: string): TableSubMenuList[] => {
+      const column = columnId as keyof (typeof TABLE_ITEMS)[0]["items"][0];
 
       return [
         {
@@ -2459,8 +2922,8 @@ export const WithRowAppendix: Story = {
             `,
           }}
           columns={columns}
-          subMenuList={TIP_MENU_ACTION}
           searchbox={{ onChange: (e) => setSearch(e.target.value) }}
+          selectable
           sumRow={[
             {
               span: 2,
@@ -2554,18 +3017,33 @@ export const Draggable: Story = {
 
     const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
 
-    const columnsDefault = (sortable?: boolean): TableColumn[] => {
-      let sortableValue = sortable;
+    const columnActions = (
+      id?: string,
+      rowNumber?: number,
+      category?: TableCategoryState
+    ): TableColumnAction => ({
+      subMenu: ({ list }) => list(COLUMN_ACTIONS(id, rowNumber, category)),
+      title: "Column Action",
+    });
+
+    const columnsDefault = (
+      sortable?: boolean,
+      rowNumber?: number,
+      category?: TableCategoryState
+    ): TableColumn[] => {
+      const withActions = (id?: string) =>
+        sortable ? columnActions(id, rowNumber, category) : undefined;
+
       return [
         {
           id: "name",
           caption: "Name",
-          sortable: sortableValue,
+          actions: withActions,
         },
         {
           id: "type",
           caption: "Type",
-          sortable: sortableValue,
+          actions: withActions,
         },
       ];
     };
@@ -2654,24 +3132,27 @@ export const Draggable: Story = {
 
     const [selected, setSelected] = useState([]);
 
+    // groupColumn
+    const groupColumnActions = (id: string) => columnActions(id, 3, "group");
+
     const columnsGroup: TableColumn[] = [
       {
         id: "title",
         caption: "Title",
-        sortable: true,
         width: "45%",
+        actions: groupColumnActions,
       },
       {
         id: "category",
         caption: "Category",
-        sortable: true,
         width: "30%",
+        actions: groupColumnActions,
       },
       {
         id: "author",
         caption: "Author",
-        sortable: true,
         width: "25%",
+        actions: groupColumnActions,
       },
     ];
 
@@ -2820,13 +3301,13 @@ export const Draggable: Story = {
       },
     ];
 
-    const TIP_MENU_ACTION = (
-      columnCaption: string,
+    const COLUMN_ACTIONS = (
+      columnId: string,
       rowNumber?: number,
       category?: TableCategoryState
     ): TableSubMenuList[] => {
       const column =
-        columnCaption.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
+        columnId.toLowerCase() as keyof (typeof TABLE_ITEMS_GROUPS)[0]["items"][0];
 
       return [
         {
@@ -3045,8 +3526,7 @@ export const Draggable: Story = {
                 max-height: 400px;
               `,
             }}
-            columns={columnsDefault(false)}
-            subMenuList={(props) => TIP_MENU_ACTION(props, 1, "simple")}
+            columns={columnsDefault(false, 1, "simple")}
             onItemsSelected={handleItemsSelected}
             searchbox={{
               onChange: (e) => {
@@ -3092,9 +3572,8 @@ export const Draggable: Story = {
                 max-height: 400px;
               `,
             }}
-            columns={columnsDefault(true)}
+            columns={columnsDefault(true, 2, "simple")}
             onItemsSelected={handleItemsSelected}
-            subMenuList={(props) => TIP_MENU_ACTION(props, 2, "simple")}
             actions={TOP_ACTIONS}
             searchbox={{
               onChange: (e) => {
@@ -3143,7 +3622,6 @@ export const Draggable: Story = {
             }}
             columns={columnsGroup}
             onItemsSelected={handleItemsSelected}
-            subMenuList={(props) => TIP_MENU_ACTION(props, 1, "group")}
             actions={TOP_ACTIONS}
             searchbox={{
               onChange: (e) => {

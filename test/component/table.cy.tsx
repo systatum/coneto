@@ -1,12 +1,19 @@
 import {
   RiArchive2Fill,
+  RiArrowDownLine,
+  RiArrowUpDownLine,
+  RiArrowUpLine,
   RiArrowUpSLine,
+  RiBookMarkedLine,
+  RiCheckboxMultipleLine,
   RiClipboardFill,
   RiDeleteBin2Fill,
   RiDeleteBin2Line,
   RiForbid2Line,
+  RiInformationLine,
   RiReactjsLine,
   RiRefreshLine,
+  RiSettings3Line,
   RiSpam2Line,
 } from "@remixicon/react";
 import {
@@ -17,14 +24,18 @@ import {
   TableProps,
   TableRowProps,
   TableRowGroupProps,
+  TableSummaryRowColumn,
+  TableColumnAction,
 } from "./../../components/table";
 import { TipMenuItemProps } from "./../../components/tip-menu";
-import { css } from "styled-components";
+import styled, { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { generateSentence } from "./../../lib/text";
+import { TableThemeConfig, useTheme } from "./../../theme";
+
 interface TableSummaryProps {
   id?: string;
   title: string;
@@ -105,12 +116,10 @@ describe("Table", () => {
     {
       id: "name",
       caption: "Name",
-      sortable: true,
     },
     {
       id: "type",
       caption: "Type",
-      sortable: true,
     },
   ];
 
@@ -187,7 +196,943 @@ describe("Table", () => {
     );
   }
 
+  context("loose", () => {
+    function ProductTableLoose({ loose = true }: { loose?: boolean }) {
+      const { currentTheme } = useTheme();
+      const tableTheme = currentTheme?.table;
+
+      interface LoadBalancerRow {
+        id: string;
+        name: string;
+        type: string;
+        region: string;
+        status: string;
+        version: string;
+        uptime: string;
+
+        requests: number;
+        latency: number;
+        errorRate: number;
+        cpu: number;
+        memory: number;
+        connections: number;
+        bandwidth: number;
+
+        zone: string;
+        provider: string;
+      }
+
+      const TYPES_DATA = [
+        {
+          name: "HTTP",
+          description: "Standard protocol for transferring web pages.",
+        },
+        {
+          name: "HTTPS",
+          description: "Secure version of HTTP using TLS encryption.",
+        },
+        {
+          name: "TCP",
+          description: "Reliable, connection-oriented transport protocol.",
+        },
+        {
+          name: "UDP",
+          description:
+            "Fast, connectionless protocol for low-latency communication.",
+        },
+        {
+          name: "QUIC",
+          description:
+            "Modern transport protocol providing faster and more secure connections.",
+        },
+      ];
+      const REGIONS = ["SG", "ID", "US-W", "EU", "JP"];
+      const STATUS = ["active", "idle", "degraded"];
+      const PROVIDERS = [
+        "AWS",
+        "Google Cloud",
+        "Microsoft Azure",
+        "Cloudflare",
+        "DigitalOcean",
+        "Oracle Cloud",
+        "Alibaba Cloud",
+        "IBM Cloud",
+        "Linode",
+        "Vultr",
+        "Hetzner",
+        "Akamai",
+      ];
+
+      const initialRows = useMemo<LoadBalancerRow[]>(
+        () =>
+          Array.from({ length: 15 }, (_, i) => {
+            const type = TYPES_DATA[i % TYPES_DATA.length].name;
+            const region = REGIONS[i % REGIONS.length];
+            const status = STATUS[i % STATUS.length];
+
+            const seed = (i + 1) * 17;
+            const req = 200 + (seed % 200);
+            const lat = 50 + (seed % 50);
+            const errRate = (seed % 500) / 100;
+            const cpu = 80 + (seed % 80);
+            const mem = 70 + (seed % 70);
+            const conn = 1000 + (seed % 1000);
+            const bw = 100 + (seed % 100);
+            const provider = PROVIDERS[i % PROVIDERS.length];
+
+            return {
+              id: `lb-${i}`,
+              name: `lb-${region}-${i + 1}`,
+              type,
+              region,
+              status,
+              version: `v${1 + (i % 3)}.${i % 10}`,
+              uptime: `${10 + i}d`,
+
+              requests: req,
+              latency: lat,
+              errorRate: errRate,
+              cpu,
+              memory: mem,
+              connections: conn,
+              bandwidth: bw,
+
+              zone: `zone-${(i % 3) + 1}`,
+              provider,
+            };
+          }),
+        []
+      );
+
+      const [rows, setRows] = useState(initialRows);
+      const [activeTab, setActiveTab] = useState({
+        withCheckbox: false,
+        withActions: false,
+        withSummary: false,
+        withSorter: false,
+      });
+
+      const [status, setStatus] = useState<"desc" | "asc" | "original">(
+        "original"
+      );
+
+      const TOP_ACTIONS: TableAction[] = [
+        {
+          type: "button",
+          caption: "With Checkbox",
+          pressed: activeTab.withCheckbox,
+          icon: { image: RiCheckboxMultipleLine },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withCheckbox: !prev.withCheckbox,
+            })),
+        },
+        {
+          type: "button",
+          caption: "With Row Actions",
+          pressed: activeTab.withActions,
+          icon: { image: RiSettings3Line },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withActions: !prev.withActions,
+            })),
+        },
+        {
+          type: "button",
+          caption: "With Summary",
+          pressed: activeTab.withSummary,
+          icon: { image: RiBookMarkedLine },
+          onClick: () =>
+            setActiveTab((prev) => ({
+              ...prev,
+              withSummary: !prev.withSummary,
+            })),
+        },
+        {
+          type: "button",
+          caption: "With Sorter",
+          pressed: activeTab.withSorter,
+          icon: { image: RiArrowUpDownLine },
+          onClick: () =>
+            setActiveTab((prev) => ({ ...prev, withSorter: !prev.withSorter })),
+        },
+      ];
+
+      const ROW_ACTION = (rowId: string): TableSubMenuList[] => [
+        {
+          caption: "Edit",
+          icon: { image: RiArrowUpSLine },
+          onClick: () => console.log(`${rowId} was edited`),
+        },
+        {
+          caption: "Delete",
+          icon: { image: RiDeleteBin2Fill },
+          variant: "danger",
+          onClick: () => console.log(`${rowId} was deleted`),
+        },
+      ];
+
+      const handleSortingRequested = ({
+        mode,
+        column,
+      }: {
+        mode: "asc" | "desc" | "original";
+        column: keyof (typeof initialRows)[number];
+      }) => {
+        setStatus(mode);
+
+        if (mode === "original") {
+          setRows(initialRows);
+          return;
+        }
+
+        const sorted = [...rows].sort((a, b) => {
+          const aVal = a[column];
+          const bVal = b[column];
+
+          if (typeof aVal === "string" && typeof bVal === "string") {
+            return mode === "asc"
+              ? aVal.localeCompare(bVal)
+              : bVal.localeCompare(aVal);
+          }
+
+          if (typeof aVal === "number" && typeof bVal === "number") {
+            return mode === "asc" ? aVal - bVal : bVal - aVal;
+          }
+
+          return 0;
+        });
+
+        setRows(sorted);
+      };
+
+      const COLUMN_ACTIONS = (
+        columnId: keyof (typeof initialRows)[number]
+      ): TableSubMenuList[] => {
+        return [
+          {
+            caption: "Sort Ascending",
+            icon: {
+              image: RiArrowUpLine,
+            },
+            onClick: () => {
+              handleSortingRequested({ mode: "asc", column: columnId });
+            },
+          },
+          {
+            caption: "Sort Descending",
+            icon: {
+              image: RiArrowDownLine,
+            },
+            onClick: () => {
+              handleSortingRequested({ mode: "desc", column: columnId });
+            },
+          },
+          {
+            caption: "Reset Sorting",
+            icon: {
+              image: RiArrowUpDownLine,
+            },
+            onClick: () => {
+              handleSortingRequested({ mode: "original", column: columnId });
+            },
+          },
+        ];
+      };
+
+      const imageStatus =
+        status === "asc"
+          ? RiArrowUpLine
+          : status === "desc"
+            ? RiArrowDownLine
+            : RiArrowUpDownLine;
+
+      const columnActions = (
+        id: keyof (typeof initialRows)[number]
+      ): TableColumnAction | null => {
+        if (!activeTab.withSorter) {
+          return null;
+        }
+
+        if (id === "type") {
+          return {
+            title: "Info Action",
+            icon: {
+              image: RiInformationLine,
+            },
+            subMenu: ({ show }) =>
+              show(
+                TYPES_DATA.map((protocol, index) => (
+                  <ProtocolItem $theme={tableTheme} key={index}>
+                    <ProtocolName $theme={tableTheme}>
+                      {protocol.name}
+                    </ProtocolName>
+                    <ProtocolDescription $theme={tableTheme}>
+                      {protocol.description}
+                    </ProtocolDescription>
+                  </ProtocolItem>
+                )),
+                {
+                  drawerStyle: css`
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    padding: 6px;
+                  `,
+                }
+              ),
+          };
+        }
+
+        return {
+          title: "Sorter Action",
+          icon: {
+            image: imageStatus,
+          },
+          subMenu: ({ list }) => list(COLUMN_ACTIONS(id)),
+        };
+      };
+
+      const columns: TableColumn[] = [
+        { id: "name", caption: "Name", actions: columnActions },
+        { id: "type", caption: "Protocol", actions: columnActions },
+        { id: "region", caption: "Region" },
+        { id: "status", caption: "Status" },
+        { id: "version", caption: "Version" },
+        { id: "uptime", caption: "Uptime" },
+        { id: "requests", caption: "Requests/s" },
+        { id: "latency", caption: "Latency (ms)" },
+        { id: "errorRate", caption: "Error Rate" },
+        { id: "cpu", caption: "CPU %" },
+        { id: "memory", caption: "Memory %" },
+        { id: "connections", caption: "Connections" },
+        { id: "bandwidth", caption: "Bandwidth" },
+        { id: "zone", caption: "Zone" },
+        { id: "provider", caption: "Provider" },
+      ];
+
+      const totals = useMemo(
+        () => ({
+          requests: rows.reduce((s, r) => s + r.requests, 0),
+          latency: Math.round(
+            rows.reduce((s, r) => s + r.latency, 0) / rows.length
+          ),
+          errorRate: (
+            rows.reduce((s, r) => s + r.errorRate, 0) / rows.length
+          ).toFixed(2),
+          cpu: Math.round(rows.reduce((s, r) => s + r.cpu, 0) / rows.length),
+          memory: Math.round(
+            rows.reduce((s, r) => s + r.memory, 0) / rows.length
+          ),
+          connections: rows.reduce((s, r) => s + r.connections, 0),
+          bandwidth: rows.reduce((s, r) => s + r.bandwidth, 0),
+        }),
+        [rows]
+      );
+
+      const sampleRows = rows.map((row) => (
+        <Table.Row
+          key={row.id}
+          rowId={row.id}
+          actions={activeTab.withActions ? ROW_ACTION : null}
+          content={[
+            row.name,
+            row.type,
+            row.region,
+            row.status,
+            row.version,
+            row.uptime,
+            row.requests,
+            row.latency,
+            row.errorRate,
+            row.cpu,
+            row.memory,
+            row.connections,
+            row.bandwidth,
+            row.zone,
+            row.provider,
+          ]}
+        />
+      ));
+
+      const sumRow: TableSummaryRowColumn[] = [
+        { content: "Totals / Avg", bold: true },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: totals.requests, bold: true },
+        { content: `${totals.latency} ms`, bold: true },
+        { content: `${totals.errorRate}%`, bold: true },
+        { content: `${totals.cpu}%`, bold: true },
+        { content: `${totals.memory}%`, bold: true },
+        { content: totals.connections, bold: true },
+        { content: `${totals.bandwidth}Mbps`, bold: true },
+        { content: "" },
+        { content: "" },
+      ];
+
+      return (
+        <Table
+          styles={{
+            tableBodyStyle: css`
+              max-height: 250px;
+            `,
+          }}
+          loose={loose}
+          actions={TOP_ACTIONS}
+          columns={columns}
+          selectable={activeTab.withCheckbox}
+          sumRow={activeTab.withSummary && sumRow}
+        >
+          {sampleRows}
+        </Table>
+      );
+    }
+
+    context("when given false", () => {
+      it("should render the body element with overflow x hidden", () => {
+        cy.mount(<ProductTableLoose loose={false} />);
+
+        cy.findByLabelText("table-body")
+          .parent()
+          .should("have.css", "overflow-x", "hidden")
+          .and("have.css", "overflow-y", "scroll");
+      });
+    });
+
+    context("when given true", () => {
+      it("should render the by overflow auto in body element", () => {
+        cy.mount(<ProductTableLoose loose />);
+
+        cy.findByLabelText("table-body")
+          .parent()
+          .should("have.css", "overflow-x", "scroll")
+          .and("have.css", "overflow-y", "scroll");
+      });
+
+      context("height in table header", () => {
+        it("renders height with 49px", () => {
+          cy.mount(<ProductTableLoose loose />);
+          cy.findByLabelText("table-header").should(
+            "have.css",
+            "height",
+            "49px"
+          );
+        });
+
+        context("when given actions in table column", () => {
+          it("should consistently with height 49px", () => {
+            cy.mount(<ProductTableLoose loose />);
+            cy.findByLabelText("table-header").should(
+              "have.css",
+              "height",
+              "49px"
+            );
+            cy.findAllByLabelText("column-action").should("not.exist");
+
+            cy.findAllByRole("button").eq(3).click();
+
+            cy.findByLabelText("table-header").should(
+              "have.css",
+              "height",
+              "49px"
+            );
+            cy.findAllByLabelText("table-column-action")
+              .should("exist")
+              .and("have.length", 2);
+          });
+        });
+      });
+
+      context("loose effect", () => {
+        context("first column", () => {
+          it("shouldn't render loose effect on the first column", () => {
+            cy.mount(<ProductTableLoose loose />);
+
+            cy.findAllByLabelText("table-row-cell")
+              .first()
+              .then(($el) => {
+                const after = window.getComputedStyle($el[0], "::after");
+
+                expect(after.backgroundImage).to.not.equal(
+                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                );
+              });
+          });
+
+          context("when scrolling to the right", () => {
+            it("should render loose effect on the first column", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findByLabelText("table-body")
+                .parent()
+                .then(($el) => {
+                  const el = $el[0];
+
+                  const scrollToEnd = () => {
+                    const maxScroll = el.scrollWidth - el.clientWidth;
+                    el.scrollLeft = maxScroll;
+                    el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                    if (el.scrollLeft < maxScroll) {
+                      scrollToEnd();
+                    }
+                  };
+
+                  scrollToEnd();
+                });
+              cy.wait(300);
+
+              cy.findAllByLabelText("table-row-cell")
+                .first()
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::after");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+          });
+        });
+
+        context("last column", () => {
+          context("with actions", () => {
+            it("should render loose effect on the last column", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.get(".coneto-button")
+                .eq(4)
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            it("renders header loose actions with width 48px", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("header-row-loose-action")
+                .should("have.css", "width", "48px")
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            it("renders summary row loose actions with width 48px", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action")
+                .should("have.css", "width", "48px")
+                .then(($el) => {
+                  const after = window.getComputedStyle($el[0], "::before");
+
+                  expect(after.backgroundImage).to.equal(
+                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                  );
+                });
+            });
+
+            context("when scrolling to the right", () => {
+              it("shouldn't render loose effect on the last column", () => {
+                cy.mount(<ProductTableLoose loose />);
+
+                cy.findAllByLabelText("action-button").eq(1).click();
+                cy.findAllByLabelText("action-button").eq(2).click();
+
+                cy.findByLabelText("table-body")
+                  .parent()
+                  .then(($el) => {
+                    const el = $el[0];
+
+                    const scrollToEnd = () => {
+                      const maxScroll = el.scrollWidth - el.clientWidth;
+                      el.scrollLeft = maxScroll;
+                      el.dispatchEvent(new Event("scroll", { bubbles: true }));
+
+                      if (el.scrollLeft < maxScroll) {
+                        scrollToEnd();
+                      }
+                    };
+
+                    scrollToEnd();
+                  });
+
+                cy.wait(300);
+
+                cy.get(".coneto-button")
+                  .eq(4)
+                  .then(($el) => {
+                    const after = window.getComputedStyle($el[0], "::before");
+
+                    expect(after.backgroundImage).to.not.equal(
+                      "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    );
+                  });
+              });
+            });
+          });
+
+          context("when activate summary", () => {
+            it("renders the summary row loose action", () => {
+              cy.mount(<ProductTableLoose loose />);
+
+              cy.findAllByLabelText("action-button").eq(1).click();
+              cy.findAllByLabelText("action-button").eq(2).click();
+              cy.wait(300);
+
+              cy.findByLabelText("summary-row-loose-action")
+                .should("exist")
+                .and("have.css", "width", "48px");
+            });
+          });
+        });
+      });
+
+      context("with checkbox", () => {
+        it("renders checkbox stick in the left side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          cy.get(".coneto-checkbox")
+            .eq(0)
+            .parent()
+            .should("be.visible")
+            .and("have.css", "position", "sticky")
+            .and("have.css", "left", "0px");
+
+          cy.findAllByText("AWS").eq(0).should("not.be.visible");
+
+          cy.findAllByText("AWS").eq(0).scrollIntoView().should("be.visible");
+
+          cy.get(".coneto-checkbox").eq(0).parent().should("be.visible");
+        });
+
+        it("renders height same with table-row-cell", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(0).click();
+
+          ["field-lane-control", "table-row-cell"].forEach((label) => {
+            cy.findAllByLabelText(label)
+              .eq(0)
+              .should("have.css", "height", "48px");
+          });
+        });
+      });
+
+      context("with actions", () => {
+        it("renders the row actions sticky in the right side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.wait(300);
+
+          cy.get(".coneto-button")
+            .eq(4)
+            .should("have.css", "position", "sticky")
+            .and("have.css", "right", "0px");
+        });
+      });
+
+      context("with summary", () => {
+        it("renders the first column summary stick in the left side", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findAllByLabelText("action-button").eq(2).click();
+          cy.wait(300);
+
+          cy.findByText("Totals / Avg").should("be.visible");
+
+          cy.findAllByText("AWS").eq(0).should("not.be.visible");
+
+          cy.findAllByText("AWS").eq(0).scrollIntoView().should("be.visible");
+
+          cy.findByText("Totals / Avg").should("be.visible");
+        });
+      });
+
+      context("when scrolling to the right", () => {
+        it("shows the most right content", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findByLabelText("table-body")
+            .parent()
+            .should("have.css", "overflow-x", "scroll")
+            .and("have.css", "overflow-y", "scroll");
+
+          cy.findAllByText("AWS").eq(0).should("not.be.visible");
+
+          cy.findAllByText("AWS").eq(0).scrollIntoView().should("be.visible");
+        });
+
+        it("the first column still visible", () => {
+          cy.mount(<ProductTableLoose loose />);
+
+          cy.findByText("Name").should("be.visible");
+          cy.findByText("lb-SG-1").should("be.visible");
+          cy.findByText("lb-ID-2").should("be.visible");
+
+          cy.findAllByText("AWS").eq(0).should("not.be.visible");
+
+          cy.findAllByText("AWS").eq(0).scrollIntoView().should("be.visible");
+
+          cy.findByText("Name").should("be.visible");
+          cy.findByText("lb-SG-1").should("be.visible");
+          cy.findByText("lb-ID-2").should("be.visible");
+        });
+      });
+    });
+  });
+
   context("columns prop", () => {
+    beforeEach(() => {
+      const columnsWithShow: TableColumn[] = [
+        {
+          id: "name",
+          caption: "Name",
+          actions: () => ({
+            subMenu: ({ show }) => show(<div aria-label="test">test</div>),
+            className: "test",
+            id: "test",
+          }),
+        },
+        {
+          id: "type",
+          caption: "Type",
+          actions: () => ({
+            subMenu: ({ show }) => show(<div aria-label="test">test</div>),
+            className: "test",
+            hidden: true,
+          }),
+        },
+      ];
+      cy.mount(<BasicTable columns={columnsWithShow} />);
+    });
+
+    context("actions", () => {
+      it("renders with height and width 34px", () => {
+        cy.findByLabelText("table-column-action")
+          .should("have.css", "height", "34px")
+          .and("have.css", "width", "34px");
+      });
+
+      const ICON_DEFAULT =
+        "M11.9498 7.94975L10.5356 9.36396L8.00079 6.828L8.00004 20H6.00004L6.00079 6.828L3.46451 9.36396L2.05029 7.94975L7.00004 3L11.9498 7.94975ZM21.9498 16.0503L17 21L12.0503 16.0503L13.4645 14.636L16.0008 17.172L16 4H18L18.0008 17.172L20.5356 14.636L21.9498 16.0503Z";
+
+      context("icon", () => {
+        it("renders with up and down arrow (by default)", () => {
+          cy.get("svg path")
+            .eq(0)
+            .invoke("attr", "d")
+            .should("equal", ICON_DEFAULT);
+        });
+        context("when given another icon", () => {
+          it("should not equal value on icon default", () => {
+            const columnsWithShow: TableColumn[] = [
+              {
+                id: "name",
+                caption: "Name",
+                actions: () => ({
+                  subMenu: ({ show }) =>
+                    show(<div aria-label="test">test</div>),
+                  className: "test",
+                  id: "test",
+                  icon: {
+                    image: RiArchive2Fill,
+                  },
+                }),
+              },
+              {
+                id: "type",
+                caption: "Type",
+                actions: () => ({
+                  subMenu: ({ show }) =>
+                    show(<div aria-label="test">test</div>),
+                  className: "test",
+                  hidden: true,
+                }),
+              },
+            ];
+            cy.mount(<BasicTable columns={columnsWithShow} />);
+            cy.get("svg path")
+              .eq(0)
+              .invoke("attr", "d")
+              .should("not.equal", ICON_DEFAULT);
+          });
+        });
+      });
+
+      context("hidden", () => {
+        context("when given true in another action", () => {
+          it("should renders only with hidden false", () => {
+            cy.findByLabelText("table-column-action").should(
+              "not.have.length",
+              2
+            );
+          });
+        });
+      });
+
+      context("id", () => {
+        context("when given with test", () => {
+          it("should render id with test", () => {
+            cy.get("#test").should("exist");
+          });
+        });
+      });
+
+      context("className", () => {
+        it("should render coneto-button by default", () => {
+          cy.get(".coneto-button").should("exist");
+        });
+
+        context("when given test", () => {
+          it("should render test", () => {
+            cy.get(".test").should("exist");
+          });
+        });
+      });
+
+      context("subMenu", () => {
+        context("list()", () => {
+          beforeEach(() => {
+            const onAscending = cy.stub().as("onAscending");
+            const onDescending = cy.stub().as("onDescending");
+            const onReset = cy.stub().as("onReset");
+
+            const COLUMN_ACTIONS = (): TableSubMenuList[] => [
+              {
+                caption: "Sort Ascending",
+                icon: { image: RiArrowUpLine },
+                onClick: onAscending,
+              },
+              {
+                caption: "Sort Descending",
+                icon: { image: RiArrowDownLine },
+                onClick: onDescending,
+              },
+              {
+                caption: "Reset Sorting",
+                icon: { image: RiArrowUpDownLine },
+                onClick: onReset,
+              },
+            ];
+
+            const columnsWithList: TableColumn[] = [
+              {
+                id: "name",
+                caption: "Name",
+                actions: () => ({
+                  subMenu: ({ list }) => list(COLUMN_ACTIONS()),
+                }),
+              },
+              {
+                id: "type",
+                caption: "Type",
+              },
+            ];
+            cy.mount(<BasicTable columns={columnsWithList} />);
+          });
+
+          context("when clicking action", () => {
+            it("shows the tip-menu", () => {
+              cy.findByLabelText("table-column-action").click();
+              cy.findByLabelText("tip-menu").should("exist");
+            });
+
+            context("when clicking the tip menu item", () => {
+              it("should render the console", () => {
+                cy.findByLabelText("table-column-action").click();
+                cy.findByLabelText("tip-menu").should("exist");
+                cy.findByText("Sort Ascending").click();
+                cy.get("@onAscending").should("have.been.calledOnce");
+              });
+            });
+          });
+        });
+
+        context("show()", () => {
+          context("when given show", () => {
+            const columnsWithShow: TableColumn[] = [
+              {
+                id: "name",
+                caption: "Name",
+                actions: () => ({
+                  subMenu: ({ show }) =>
+                    show(<div aria-label="test">test</div>),
+                }),
+              },
+              {
+                id: "type",
+                caption: "Type",
+              },
+            ];
+            it("renders with tooltip container", () => {
+              cy.mount(<BasicTable columns={columnsWithShow} />);
+              cy.findByLabelText("table-column-action").click();
+
+              cy.findByLabelText("tooltip-drawer").should("exist");
+              cy.findByLabelText("test").should("exist");
+            });
+          });
+        });
+
+        context("render()", () => {
+          context("when given render", () => {
+            const columnWithRender: TableColumn[] = [
+              {
+                id: "name",
+                caption: "Name",
+                actions: () => ({
+                  subMenu: ({ render }) =>
+                    render(<div aria-label="render">render content</div>),
+                }),
+              },
+              {
+                id: "type",
+                caption: "Type",
+              },
+            ];
+            it("renders just drawer", () => {
+              cy.mount(<BasicTable columns={columnWithRender} />);
+              cy.findByLabelText("table-column-action").click();
+
+              cy.findByLabelText("tooltip-drawer").should("not.exist");
+              cy.findByLabelText("render").should("exist");
+            });
+          });
+        });
+      });
+    });
+
     context("styles", () => {
       context("containerStyle", () => {
         context("when given background with red color", () => {
@@ -198,7 +1143,7 @@ describe("Table", () => {
                   {
                     id: "name",
                     caption: "Name",
-                    sortable: true,
+
                     styles: {
                       containerStyle: css`
                         background-color: red;
@@ -208,7 +1153,6 @@ describe("Table", () => {
                   {
                     id: "type",
                     caption: "Type",
-                    sortable: true,
                   },
                 ]}
               />
@@ -230,7 +1174,7 @@ describe("Table", () => {
                   {
                     id: "name",
                     caption: "Name",
-                    sortable: true,
+
                     styles: {
                       labelStyle: css`
                         color: blue;
@@ -240,7 +1184,6 @@ describe("Table", () => {
                   {
                     id: "type",
                     caption: "Type",
-                    sortable: true,
                   },
                 ]}
               />
@@ -255,99 +1198,6 @@ describe("Table", () => {
           });
         });
       });
-
-      const TIP_MENU_ACTION = (
-        columnCaption: "from" | "content"
-      ): TableSubMenuList[] => {
-        return [
-          {
-            caption: "Sort Ascending",
-            icon: {
-              image: RiArrowUpSLine,
-            },
-            onClick: () => {},
-          },
-          {
-            caption: "Reset Sorting",
-            icon: {
-              image: RiRefreshLine,
-            },
-            onClick: () => {},
-          },
-        ];
-      };
-
-      context("dropdownSortableStyle", () => {
-        context("when given width 400px", () => {
-          it("renders the dropdown with 400px", () => {
-            cy.mount(
-              <BasicTable
-                subMenuList={TIP_MENU_ACTION}
-                columns={[
-                  {
-                    id: "name",
-                    caption: "Name",
-                    sortable: true,
-                    styles: {
-                      dropdownSortableStyle: css`
-                        width: 400px;
-                      `,
-                    },
-                  },
-                  {
-                    id: "type",
-                    caption: "Type",
-                    sortable: true,
-                  },
-                ]}
-              />
-            );
-
-            cy.get("button").eq(0).click();
-            cy.findAllByLabelText("tip-menu")
-              .eq(0)
-              .should("have.css", "width", "400px");
-
-            // check also on default width
-            cy.get("button").eq(1).click();
-            cy.findAllByLabelText("tip-menu")
-              .eq(1)
-              .should("have.css", "width", "235px");
-          });
-        });
-      });
-      context("toggleSortableStyle", () => {
-        context("when given background red", () => {
-          it("renders the trigger style with rgb(255, 0, 0)", () => {
-            cy.mount(
-              <BasicTable
-                subMenuList={TIP_MENU_ACTION}
-                columns={[
-                  {
-                    id: "name",
-                    caption: "Name",
-                    sortable: true,
-                    styles: {
-                      toggleSortableStyle: css`
-                        background-color: red;
-                      `,
-                    },
-                  },
-                  {
-                    id: "type",
-                    caption: "Type",
-                    sortable: true,
-                  },
-                ]}
-              />
-            );
-
-            cy.get("button")
-              .eq(0)
-              .should("have.css", "background-color", "rgb(255, 0, 0)");
-          });
-        });
-      });
     });
   });
 
@@ -356,8 +1206,8 @@ describe("Table", () => {
 
     function TableSeparateContent({ mode = "row" }: { mode?: SeparateMode }) {
       const columns: TableColumn[] = [
-        { id: "itemId", caption: "Item ID", sortable: true },
-        { id: "name", caption: "Name", sortable: true, width: "60%" },
+        { id: "itemId", caption: "Item ID" },
+        { id: "name", caption: "Name", width: "60%" },
       ];
 
       function TableSeparateRow({ test }: { test: boolean }) {
@@ -978,6 +1828,7 @@ describe("Table", () => {
           },
         ]}
         searchable
+        selectable
       >
         {TABLE_SUMMARY?.map((groupValue, groupIndex) => (
           <Table.Row.Group
@@ -1125,12 +1976,10 @@ describe("Table", () => {
     });
 
     context("with selectable", () => {
-      it("renders with selectable and add padding right on wrapper", () => {
+      it("renders with empty checkbox", () => {
         cy.mount(<TableWithAppendix />);
 
-        cy.findAllByLabelText("table-summary-wrapper")
-          .eq(0)
-          .should("have.css", "padding-left", "10px");
+        cy.findAllByLabelText("empty-checkbox").eq(0).should("exist");
       });
     });
   });
@@ -1287,19 +2136,16 @@ describe("Table", () => {
     {
       id: "title",
       caption: "Title",
-      sortable: false,
       width: "45%",
     },
     {
       id: "category",
       caption: "Category",
-      sortable: false,
       width: "30%",
     },
     {
       id: "author",
       caption: "Author",
-      sortable: false,
       width: "25%",
     },
   ];
@@ -1733,12 +2579,10 @@ describe("Table", () => {
           {
             id: "name",
             caption: "Name",
-            sortable: true,
           },
           {
             id: "type",
             caption: "Type",
-            sortable: true,
           },
         ];
 
@@ -1766,13 +2610,13 @@ describe("Table", () => {
           </Table>
         );
 
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(0)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(1)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-        cy.findAllByLabelText("input-wrapper-checkbox")
+        cy.findAllByLabelText("checkbox-label")
           .eq(2)
           .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
       });
@@ -1784,12 +2628,10 @@ describe("Table", () => {
           {
             id: "name",
             caption: "Name",
-            sortable: true,
           },
           {
             id: "type",
             caption: "Type",
-            sortable: true,
           },
         ];
         const selectedItems = [
@@ -1825,7 +2667,7 @@ describe("Table", () => {
         cy.get('input[type="checkbox"]').eq(0).should("not.be.checked");
         cy.get('input[type="checkbox"]').eq(1).should("be.checked");
         cy.get('input[type="checkbox"]').eq(2).should("not.be.checked");
-        cy.get('input[type="checkbox"]').eq(3).should("be.checked");
+        cy.get('input[type="checkbox"]').eq(4).should("be.checked");
         cy.get('input[type="checkbox"]').eq(4).should("be.checked");
       });
     });
@@ -2186,12 +3028,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -2239,12 +3081,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -2293,12 +3135,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -2346,12 +3188,12 @@ describe("Table", () => {
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-left",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "not.have.css",
           "margin-right",
-          "40px"
+          "34px"
         );
         cy.findByLabelText("textbox-search-wrapper").should(
           "have.css",
@@ -2366,7 +3208,7 @@ describe("Table", () => {
     function TableWithRowActions({
       actions,
     }: {
-      actions?: (columnCaption: string) => TableSubMenuList[];
+      actions?: (columnId: string) => TableSubMenuList[];
     }) {
       return (
         <Table
@@ -2490,10 +3332,12 @@ describe("Table", () => {
           .should("exist")
           .and("be.visible");
 
-        cy.findByLabelText("table-body").then(($el) => {
-          const start = $el[0].scrollTop;
-          cy.wrap($el).scrollTo(0, start + 101);
-        });
+        cy.findByLabelText("table-body")
+          .parent()
+          .then(($el) => {
+            const start = $el[0].scrollTop;
+            cy.wrap($el).scrollTo(0, start + 101);
+          });
 
         cy.findByLabelText("button-dropdown-wrapper").should("not.exist");
       });
@@ -2559,3 +3403,21 @@ describe("Table", () => {
     });
   });
 });
+
+const ProtocolItem = styled.div<{ $theme?: TableThemeConfig }>`
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: ${({ $theme }) => $theme?.backgroundColor};
+`;
+
+const ProtocolName = styled.div<{ $theme?: TableThemeConfig }>`
+  font-weight: 600;
+  font-size: 13px;
+  color: ${({ $theme }) => $theme?.textColor};
+`;
+
+const ProtocolDescription = styled.div<{ $theme?: TableThemeConfig }>`
+  margin-top: 2px;
+  font-size: 12px;
+  color: ${({ $theme }) => $theme?.rowGroupSubtitleTextColor};
+`;
