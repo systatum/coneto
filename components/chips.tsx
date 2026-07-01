@@ -31,6 +31,9 @@ import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { ChipsThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
+import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
+import { props } from "cypress/types/bluebird";
 
 export type ChipAction = BadgeAction;
 
@@ -45,8 +48,8 @@ interface BaseChipsProps {
   filterPlaceholder?: string;
   missingOptionLabel?: string;
   creatable?: boolean;
-  onOptionClicked?: (badge: ChipProps) => void;
-  selectedOptions?: ChipProps[];
+  selectedOptions?: string[];
+  onOptionClicked?: (badgeIds: string[]) => void;
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
@@ -56,6 +59,8 @@ interface BaseChipsProps {
   name?: string;
   id?: string;
   disabled?: boolean;
+  mobile?: boolean;
+  drawerHeight?: string;
 }
 
 export interface BaseChipsStyles {
@@ -79,16 +84,45 @@ export interface MissingOptionFormProps {
   closeForm?: () => void;
 }
 
-function BaseChips(props: BaseChipsProps) {
+function BaseChips({
+  creatable,
+  disabled,
+  emptySlate = null,
+  filterPlaceholder = "Change or add labels...",
+  inputValue,
+  missingOptionLabel = "Create a new label:",
+  id,
+  missingOptionForm,
+  name = "search",
+  onOptionClicked,
+  options = [],
+  renderer,
+  selectedOptions = [],
+  setInputValue,
+  styles,
+  mobile,
+  drawerHeight,
+}: BaseChipsProps) {
   const { currentTheme } = useTheme();
   const chipsTheme = currentTheme.chips;
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputMissingRef = useRef<HTMLInputElement>(null);
+
+  const [mode, setMode] = useState<"idle" | "create">("idle");
+
   const [isOpen, setIsOpen] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [interactionMode, setInteractionMode] = useState<"mouse" | "keyboard">(
+    "keyboard"
+  );
+
+  const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
-    onOpenChange: props?.disabled ? null : setIsOpen,
+    onOpenChange: disabled ? null : setIsOpen,
     middleware: [
       offset(6),
       flip({ fallbackPlacements: ["bottom-end", "top-start", "top-end"] }),
@@ -107,38 +141,110 @@ function BaseChips(props: BaseChipsProps) {
     role,
   ]);
 
-  const ALL_OPTIONS = useMemo(() => {
-    const selectedIds = new Set(props.selectedOptions.map((d) => d.id));
+  // Keep selected options at the top, following the order in selectedOptions.
+  // Unselected options preserve their original order.
+  const sortedOptions = [...options].sort((a, b) => {
+    const aIndex = selectedOptions?.findIndex((id) => id === a.id) ?? -1;
+    const bIndex = selectedOptions?.findIndex((id) => id === b.id) ?? -1;
 
-    const clickedOptions = props.selectedOptions;
-    const unClickedOptions = props.options.filter(
-      (opt) => !selectedIds.has(opt.id)
-    );
-
-    const allOpts = [...clickedOptions, ...unClickedOptions];
-
-    if (hasInteracted && props.inputValue) {
-      return allOpts.filter((opt) =>
-        opt.caption.toLowerCase().includes(props.inputValue.toLowerCase())
-      );
+    if (aIndex !== -1 && bIndex !== -1) {
+      return aIndex - bIndex;
     }
 
-    return allOpts;
-  }, [props.selectedOptions, props.options, props.inputValue, hasInteracted]);
+    if (aIndex !== -1) return -1;
+    if (bIndex !== -1) return 1;
 
-  const CLICKED_OPTIONS = props.selectedOptions;
+    return 0;
+  });
+
+  const FINAL_OPTIONS: ComboboxOption[] = useMemo(() => {
+    return sortedOptions.map((badge, index) => {
+      const isSelected = selectedOptions?.some(
+        (selectedOption) => selectedOption === badge.id
+      );
+
+      return {
+        text: badge.caption,
+        value: badge.id,
+        render: (
+          <Fragment key={badge.id}>
+            {index > 0 &&
+              sortedOptions[index - 1] &&
+              selectedOptions?.some(
+                (selectedOption) =>
+                  selectedOption === sortedOptions[index - 1].id
+              ) &&
+              !isSelected && (
+                <Divider $theme={chipsTheme} aria-label="divider" />
+              )}
+
+            <Badge
+              {...badge}
+              onMouseDown={(e) => e.preventDefault()}
+              styles={{
+                self: css`
+                  cursor: pointer;
+                  width: 100%;
+                  ${mobile
+                    ? css`
+                        margin-top: 2px;
+
+                        font-size: 18px;
+                      `
+                    : css`
+                        margin-top: 2px;
+                      `}
+
+                  ${styles?.chipStyle}
+                `,
+              }}
+              withCircle
+            />
+          </Fragment>
+        ),
+      };
+    });
+  }, [sortedOptions, selectedOptions, styles?.chipStyle, chipsTheme]);
+
+  const FILTERED_OPTIONS: ComboboxOption[] = useMemo(() => {
+    if (!hasInteracted || !inputValue) return FINAL_OPTIONS;
+
+    const search = inputValue.toLowerCase();
+
+    return FINAL_OPTIONS.filter((option) => {
+      return option.text?.toLowerCase().includes(search);
+    });
+  }, [hasInteracted, inputValue, FINAL_OPTIONS]);
+
+  const hasNoFilter = FILTERED_OPTIONS.length === 0 && inputValue.length > 1;
+
+  const RENDER_SELECTED_OPTIONS: BadgeProps[] = useMemo(() => {
+    return sortedOptions.filter((badge) =>
+      selectedOptions?.some((selectedOption) => selectedOption === badge.id)
+    );
+  }, [sortedOptions, selectedOptions]);
+
+  useEffect(() => {
+    if (isOpen && mode === "idle") {
+      inputRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  const finalDrawerHeight = mobile
+    ? (drawerHeight ?? "320px")
+    : (drawerHeight ?? "220px");
 
   return (
     <>
       <InputGroup
-        id={props?.id}
+        id={id}
         aria-label="chip-input"
-        $disabled={props?.disabled}
-        $containerStyle={props?.styles?.chipsContainerStyle}
+        $disabled={disabled}
+        $containerStyle={styles?.chipsContainerStyle}
       >
-        {CLICKED_OPTIONS.map((badge) =>
-          typeof props.renderer === "function" ? (
-            props.renderer({
+        {RENDER_SELECTED_OPTIONS.map((badge) =>
+          typeof renderer === "function" ? (
+            renderer({
               id: badge.id,
               caption: badge.caption,
               metadata: badge.metadata,
@@ -148,7 +254,6 @@ function BaseChips(props: BaseChipsProps) {
               key={badge.id}
               onClick={(e) => {
                 e.stopPropagation();
-                dismiss;
               }}
               variant={badge.variant}
               backgroundColor={badge.backgroundColor}
@@ -156,7 +261,7 @@ function BaseChips(props: BaseChipsProps) {
               styles={{
                 self: css`
                   border-radius: 4px;
-                  ${props.styles?.chipSelectedStyle}
+                  ${styles?.chipSelectedStyle}
                 `,
               }}
               textColor={badge.textColor}
@@ -168,7 +273,7 @@ function BaseChips(props: BaseChipsProps) {
 
         <AddButton
           $theme={chipsTheme}
-          $disabled={props?.disabled}
+          $disabled={disabled}
           ref={refs.setReference}
           role="button"
           $isOpen={isOpen}
@@ -177,14 +282,157 @@ function BaseChips(props: BaseChipsProps) {
       </InputGroup>
 
       {isOpen && (
-        <ChipsDrawer
-          {...props}
-          getFloatingProps={getFloatingProps}
+        <Combobox.Drawer
+          emptySlate={emptySlate}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          withSearchbox={mobile && mode === "idle"}
+          refs={refs as unknown as ComboboxDrawerProps["refs"]}
+          highlightedIndex={highlightedIndex}
+          setHighlightedIndex={setHighlightedIndex}
+          interactionMode={interactionMode}
+          setInteractionMode={setInteractionMode}
+          selectedOptions={selectedOptions}
+          multiple
+          selectedOptionsLocal={{
+            text: inputValue,
+            value: "",
+          }}
+          styles={{
+            drawerStyle: css`
+              ${!mobile &&
+              css`
+                width: fit-content;
+                max-width: 240px;
+                background-color: ${chipsTheme.backgroundColor};
+              `};
+
+              ${finalDrawerHeight &&
+              css`
+                min-height: ${finalDrawerHeight};
+                max-height: ${finalDrawerHeight};
+              `};
+
+              ${FILTERED_OPTIONS?.length < 5 && mobile
+                ? css`
+                    min-height: 80px;
+                  `
+                : FILTERED_OPTIONS?.length < 5 &&
+                  !mobile &&
+                  css`
+                    min-height: fit-content;
+                  `};
+
+              ${mobile &&
+              mode === "create" &&
+              css`
+                padding: 0px;
+              `};
+
+              ${mode === "create" &&
+              css`
+                min-width: 240px;
+              `}
+            `,
+          }}
+          onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
+            if (!Array.isArray(selectedOptions)) return;
+            onOptionClicked?.(selectedOptions as string[]);
+          }}
+          setSelectedOptionsLocal={(selectedOptionsLocal?: SelectboxOption) => {
+            setInputValue?.({
+              target: {
+                name,
+                value: selectedOptionsLocal?.text || "",
+              },
+            } as ChangeEvent<HTMLInputElement>);
+          }}
           setHasInteracted={setHasInteracted}
+          options={mode === "idle" ? FILTERED_OPTIONS : []}
+          navigableOptions={mode === "idle" ? FILTERED_OPTIONS : []}
+          mobile={mobile}
           floatingStyles={floatingStyles}
-          refs={refs}
-          options={ALL_OPTIONS}
-        />
+          getFloatingProps={getFloatingProps}
+          listRef={listRef}
+          inputRef={inputRef}
+        >
+          {mode === "idle" && (
+            <>
+              {!mobile && (
+                <>
+                  <Textbox
+                    ref={inputRef}
+                    name={name}
+                    type="text"
+                    aria-label="chip-input-box"
+                    placeholder={filterPlaceholder}
+                    value={inputValue}
+                    styles={{
+                      containerStyle: css`
+                        position: sticky;
+                        top: 1px;
+                        z-index: 99993999;
+                      `,
+                      self: css`
+                        border: none;
+                        min-height: 34px;
+                        border-radius: 0;
+                        border-width: 2px;
+                      `,
+                    }}
+                    autoComplete="off"
+                    onChange={(e) => {
+                      setHasInteracted?.(true);
+                      setInputValue(e);
+                      setHighlightedIndex(0);
+                      setInteractionMode("keyboard");
+                    }}
+                  />
+                  <Divider $theme={chipsTheme} aria-label="divider" />
+                </>
+              )}
+
+              {hasNoFilter && creatable && (
+                <EmptyOptionContainer
+                  onClick={async () => {
+                    await setMode("create");
+                    await inputMissingRef?.current?.focus();
+                  }}
+                  $hovered={highlightedIndex === 0}
+                  $theme={chipsTheme}
+                >
+                  <RiAddLine size={14} style={{ minWidth: "14px" }} />
+                  <span
+                    style={{
+                      fontWeight: 500,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {missingOptionLabel}&nbsp;
+                    <span style={{ color: chipsTheme?.mutedTextColor }}>
+                      "{inputValue}"
+                    </span>
+                  </span>
+                </EmptyOptionContainer>
+              )}
+            </>
+          )}
+          {mode === "create" && (
+            <>
+              {typeof missingOptionForm === "function"
+                ? missingOptionForm({
+                    firstInputRef: inputMissingRef,
+                    closeForm: async () => {
+                      await setMode("idle");
+                      await inputRef.current?.focus();
+                    },
+                  })
+                : missingOptionForm}
+            </>
+          )}
+        </Combobox.Drawer>
       )}
     </>
   );
@@ -244,252 +492,6 @@ const AddButton = styled(RiAddLine)<{
     `}
 `;
 
-type ChipsDrawerProps = BaseChipsProps & {
-  getFloatingProps: ReturnType<typeof useInteractions>["getFloatingProps"];
-  floatingStyles: CSSProperties;
-  refs: ReturnType<typeof useFloating>["refs"];
-  setHasInteracted: (data: boolean) => void;
-};
-
-function ChipsDrawer({
-  floatingStyles,
-  getFloatingProps,
-  refs,
-  setHasInteracted,
-  filterPlaceholder = "Change or add labels...",
-  inputValue,
-  missingOptionLabel = "Create a new label:",
-  options,
-  setInputValue,
-  creatable,
-  onOptionClicked,
-  selectedOptions,
-  missingOptionForm,
-  emptySlate,
-  name = "chips",
-  styles,
-}: ChipsDrawerProps) {
-  const { currentTheme } = useTheme();
-  const chipsTheme = currentTheme.chips;
-
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [mode, setMode] = useState<"idle" | "create">("idle");
-  const [isTyping, setIsTyping] = useState(false);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const inputMissingRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (mode === "idle") {
-      inputRef.current?.focus();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isTyping) setTimeout(() => setIsTyping(false), 50);
-  }, [isTyping]);
-
-  const filteredSearch = options.filter(
-    (opt) => opt.caption.toLowerCase() === inputValue.toLowerCase()
-  );
-
-  const hasNoFilter = filteredSearch.length === 0 && inputValue.length > 1;
-
-  useEffect(() => {
-    if (isTyping && hasNoFilter && creatable) {
-      setHovered("0");
-    } else if (isTyping && options && options.length > 0) {
-      setHovered(options[0]?.id);
-    }
-  }, [inputValue, options, mode, creatable, hasNoFilter, isTyping]);
-
-  const handleKeyDown = async (e: KeyboardEvent<HTMLUListElement>) => {
-    if (mode !== "idle") return;
-
-    const index = options.findIndex((opt) => opt.id === hovered);
-    const hasCreateOption = hasNoFilter && creatable;
-    const allOptions = [{ id: "0" }, ...options];
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-
-      if (hasCreateOption) {
-        const currentIndex = allOptions.findIndex((opt) => opt.id === hovered);
-        const nextIndex = (currentIndex + 1) % allOptions.length;
-        setHovered(allOptions[nextIndex].id);
-      } else {
-        const nextIndex = (index + 1) % options.length;
-        setHovered(options[nextIndex].id);
-      }
-    }
-
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-
-      if (hasCreateOption) {
-        const currentIndex = allOptions.findIndex((opt) => opt.id === hovered);
-        const prevIndex =
-          (currentIndex - 1 + allOptions.length) % allOptions.length;
-        setHovered(allOptions[prevIndex].id);
-      } else {
-        const prevIndex = (index - 1 + options.length) % options.length;
-        setHovered(options[prevIndex].id);
-      }
-    }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      e.stopPropagation();
-      const selected = options.find((opt) => opt.id === hovered);
-      if (hovered === "0") {
-        await setMode("create");
-        await inputMissingRef.current?.focus();
-      } else if (selected && onOptionClicked) {
-        onOptionClicked(selected);
-      }
-    }
-  };
-
-  return (
-    <ChipsDrawerWrapper
-      {...getFloatingProps()}
-      ref={refs.setFloating}
-      style={floatingStyles}
-      tabIndex={-1}
-      role="listbox"
-      $theme={chipsTheme}
-      $style={styles?.chipsDrawerStyle}
-      onKeyDown={handleKeyDown}
-    >
-      {mode === "idle" && (
-        <>
-          <Textbox
-            ref={inputRef}
-            name={name}
-            type="text"
-            aria-label="chip-input-box"
-            placeholder={filterPlaceholder}
-            value={inputValue}
-            styles={{
-              self: {
-                border: "none",
-                minHeight: "34px",
-                borderRadius: 0,
-              },
-            }}
-            autoComplete="off"
-            onChange={(e) => {
-              setHasInteracted?.(true);
-              setInputValue(e);
-              setIsTyping(true);
-            }}
-          />
-          <Divider $theme={chipsTheme} aria-label="divider" />
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-              padding: "4px",
-            }}
-          >
-            {hasNoFilter && creatable && (
-              <EmptyOptionContainer
-                onClick={async () => {
-                  await setMode("create");
-                  await inputMissingRef.current?.focus();
-                }}
-                onMouseEnter={() => setHovered("0")}
-                $hovered={hovered === "0"}
-                $theme={chipsTheme}
-              >
-                <RiAddLine size={14} style={{ minWidth: "14px" }} />
-                <span
-                  style={{
-                    fontWeight: 500,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {missingOptionLabel}&nbsp;
-                  <span style={{ color: chipsTheme?.mutedTextColor }}>
-                    "{inputValue}"
-                  </span>
-                </span>
-              </EmptyOptionContainer>
-            )}
-
-            {options && options.length > 0 ? (
-              <>
-                {options.map((chip, index) => {
-                  const isClicked = selectedOptions?.some(
-                    (clicked) => clicked.id === chip.id
-                  );
-
-                  return (
-                    <div key={chip.id}>
-                      {index > 0 &&
-                        options[index - 1] &&
-                        selectedOptions?.some(
-                          (clicked) => clicked.id === options[index - 1].id
-                        ) &&
-                        !isClicked && (
-                          <Divider $theme={chipsTheme} aria-label="divider" />
-                        )}
-                      <ChipsItem
-                        chip={chip}
-                        chipContainerStyle={styles?.chipContainerStyle}
-                        hovered={hovered}
-                        isClicked={isClicked}
-                        inputRef={inputRef}
-                        setHovered={setHovered}
-                        onOptionClicked={onOptionClicked}
-                        chipStyle={styles?.chipStyle}
-                      />
-                    </div>
-                  );
-                })}
-              </>
-            ) : hasNoFilter && emptySlate && !creatable ? (
-              <Fragment>{emptySlate}</Fragment>
-            ) : (
-              hasNoFilter &&
-              !creatable && (
-                <span
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "#4b5563",
-                    textAlign: "center",
-                    padding: "8px",
-                  }}
-                >
-                  No matching actions
-                </span>
-              )
-            )}
-          </div>
-        </>
-      )}
-
-      {mode === "create" && (
-        <Fragment>
-          {typeof missingOptionForm === "function"
-            ? missingOptionForm({
-                firstInputRef: inputMissingRef,
-                closeForm: async () => {
-                  await setMode("idle");
-                  await inputRef.current?.focus();
-                },
-              })
-            : missingOptionForm}
-        </Fragment>
-      )}
-    </ChipsDrawerWrapper>
-  );
-}
-
 export type ChipsStyles = BaseChipsStyles & FieldLaneStyles;
 
 export interface ChipsProps
@@ -505,13 +507,14 @@ function Chips({
   errorMessage,
   helper,
   disabled,
-  name,
+  name = "chips",
   id,
   labelGap,
   labelWidth,
   labelPosition,
   className,
-  ...rest
+  required,
+  ...props
 }: ChipsProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "chips",
@@ -539,7 +542,7 @@ function Chips({
       labelWidth={labelWidth}
       labelPosition={labelPosition}
       className={applyClassName("chips", className)}
-      required={rest.required}
+      required={required}
       styles={{
         bodyStyle: css`
           align-items: center;
@@ -551,8 +554,9 @@ function Chips({
       }}
     >
       <BaseChips
-        {...rest}
+        {...props}
         id={inputId}
+        name={name}
         styles={baseChipStyles}
         disabled={disabled}
       />
@@ -563,38 +567,13 @@ function Chips({
 const Divider = styled.div<{
   $theme?: ChipsThemeConfig;
 }>`
-  width: 100%;
+  position: absolute;
+  top: 0;
+  width: calc(100%);
+  transform: translateX(-8%);
   height: 1px;
 
   border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor};
-`;
-
-const ChipsDrawerWrapper = styled.ul<{
-  $style?: CSSProp;
-  $theme?: ChipsThemeConfig;
-}>`
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-
-  background-color: ${({ $theme }) => $theme.backgroundColor};
-  border: 1px solid ${({ $theme }) => $theme.borderColor};
-  color: ${({ $theme }) => $theme.textColor};
-
-  font-size: 0.875rem;
-  border-radius: 2px;
-  width: fit-content;
-  max-width: 240px;
-
-  box-shadow: ${({ $theme }) => $theme.boxShadow};
-
-  list-style: none;
-  outline: none;
-  z-index: 9992999;
-
-  ${({ $style }) => $style}
 `;
 
 const EmptyOptionContainer = styled.div<{
@@ -614,137 +593,18 @@ const EmptyOptionContainer = styled.div<{
 
   width: 100%;
   border-radius: 2px;
+  cursor: pointer;
 
-  ${({ $hovered, $theme }) =>
-    $hovered &&
+  ${({ $hovered, $theme }) => css`
+    &:hover {
+      background-color: ${$theme.hoverBackgroundColor};
+    }
+
+    ${$hovered &&
     css`
-      cursor: pointer;
       background-color: ${$theme.hoverBackgroundColor};
     `}
+  `}
 `;
-
-function ChipsItem({
-  chip,
-  isClicked,
-  hovered,
-  setHovered,
-  onOptionClicked,
-  chipContainerStyle,
-  chipStyle,
-  inputRef,
-}: {
-  chip: ChipProps;
-  isClicked: boolean;
-  hovered: string | null;
-  setHovered: (number: string) => void;
-  onOptionClicked?: (badge: ChipProps) => void;
-  chipStyle?: CSSProp;
-  chipContainerStyle?: CSSProp;
-  inputRef?: RefObject<HTMLInputElement>;
-}) {
-  const { currentTheme } = useTheme();
-  const chipsTheme = currentTheme.chips;
-
-  const finalValueActions =
-    chip.actions
-      ?.filter((action) => !action?.hidden)
-      .map((action) => ({
-        ...action,
-        styles: {
-          self: css`
-            opacity: 0;
-            ${hovered === chip.id &&
-            css`
-              opacity: 1;
-            `}
-          `,
-        },
-        size: 14,
-        onClick: () => action.onClick && action.onClick?.(chip),
-      })) ?? [];
-
-  return (
-    <ChipItemWrapper
-      $hovered={hovered === chip.id}
-      $style={chipContainerStyle}
-      onMouseDown={async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        await onOptionClicked?.(chip);
-      }}
-      $theme={chipsTheme}
-      onMouseEnter={() => setHovered(chip.id)}
-    >
-      <Checkbox
-        checked={isClicked}
-        styles={{
-          boxStyle: css`
-            width: 14px;
-            height: 14px;
-          `,
-          self: css`
-            width: 14px;
-            height: 14px;
-          `,
-          containerStyle: css`
-            margin-bottom: 1px;
-            width: fit-content;
-          `,
-          iconStyle: css`
-            min-width: 9px;
-            min-height: 9px;
-          `,
-        }}
-        readOnly
-      />
-      <Badge
-        {...chip}
-        styles={{
-          self: css`
-            cursor: pointer;
-            ${finalValueActions &&
-            css`
-              padding-right: 0px;
-            `}
-
-            ${chipStyle}
-          `,
-        }}
-        actions={finalValueActions}
-        withCircle
-      />
-    </ChipItemWrapper>
-  );
-}
-
-const ChipItemWrapper = styled.div<{
-  $hovered: boolean;
-  $style?: CSSProp;
-  $theme: ChipsThemeConfig;
-}>`
-  display: flex;
-  flex-direction: row;
-  padding: 4px 12px;
-  gap: 2px;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  position: relative;
-
-  ${({ $hovered, $theme }) =>
-    $hovered &&
-    css`
-      background-color: ${$theme?.selectedBackgroundColor};
-
-      [aria-label="badge-action"] {
-        opacity: 1;
-        transition: opacity 0.2s;
-      }
-    `}
-
-  ${({ $style }) => $style}
-`;
-
-Chips.Item = ChipsItem;
 
 export { Chips };
