@@ -147,8 +147,10 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
 
       const search = searchTerm.toLowerCase();
 
-      return FINAL_COUNTRY_OPTIONS.filter((opt) => {
-        const country = COUNTRY_CODES.find((c) => c.id === opt.value);
+      return FINAL_COUNTRY_OPTIONS.filter((option) => {
+        const country = COUNTRY_CODES.find(
+          (country) => country.id === option.value
+        );
         if (!country) return false;
         return (
           country.name.toLowerCase().includes(search) ||
@@ -359,7 +361,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             }}
             onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
               const selectedCountry = await COUNTRY_CODES.find(
-                (c) => c.id === selectedOptions
+                (country) => country.id === selectedOptions
               );
               if (selectedCountry) {
                 await handleSelectCountry(selectedCountry);
