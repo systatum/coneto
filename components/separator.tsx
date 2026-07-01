@@ -4,7 +4,8 @@ import { Button, ButtonSubMenu } from "./button";
 import { Tooltip } from "./tooltip";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
+import { TipMenuItemProps } from "./tip-menu";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -169,6 +170,7 @@ export interface SeparatorAction extends BaseAction {
 }
 
 export type SeparatorActionSubMenu = ButtonSubMenu;
+export type SeparatorActionSubMenuList = TipMenuItemProps;
 
 export interface SeparatorActionStyles {
   self?: CSSProp;
