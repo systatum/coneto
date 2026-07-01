@@ -53,7 +53,7 @@ interface BaseChipsProps {
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
-  emptySlate?: ReactNode;
+  emptySlate?: string;
   renderer?: (props: ChipRendererProps) => ReactNode;
   styles?: BaseChipsStyles;
   name?: string;
