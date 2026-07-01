@@ -1376,6 +1376,7 @@ function FormFields<T extends FieldValues>({
                             value={controllerField.value}
                             helper={field.helper}
                             placeholder={placeholder}
+                            errorIconPosition={mobile ? "none" : "absolute"}
                             onChange={(
                               e:
                                 | {
@@ -2190,7 +2191,6 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${labelSize};
                                 `};
-                                ${mobileLabelStyle};
 
                                 ${field.chips?.styles?.labelStyle}
                               `,
