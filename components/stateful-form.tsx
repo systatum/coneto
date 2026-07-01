@@ -1547,7 +1547,7 @@ function FormFields<T extends FieldValues>({
                                     color: ${statefulFormTheme.textColor};
                                     -webkit-text-fill-color: ${statefulFormTheme.textColor};
                                   }
-                                  width: 52px;
+                                  width: 60px;
                                 `};
 
                                 ${field.colorbox?.styles?.textInputStyle}
