@@ -55,12 +55,10 @@ interface BaseComboboxProps {
   onClick?: () => void;
   strict?: boolean;
   options: ComboboxOption[];
-  navigableOptions?: SelectboxOption[];
   isLoading?: boolean;
   labels?: ComboboxLabelsProps;
   mobile?: boolean;
   drawerHeight?: string;
-  withSearchbox?: boolean;
 }
 
 export const ComboboxGroupInitialState = {
@@ -109,7 +107,7 @@ export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     setSelectedOptionsLocal: (value: SelectboxOption) => void;
     setHasInteracted?: (value: boolean) => void;
     setConfirmedValue?: (option: SelectboxOption | null) => void;
-    openedCategoryGroup?: Set<String>;
+    openedCategoryGroup?: Set<string>;
     setOpenedCategoryGroup?: (
       updater: (prev: Set<string>) => Set<string>
     ) => void;
@@ -117,6 +115,9 @@ export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
       setFloating?: Ref<HTMLUListElement>;
       reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
     };
+    children?: ReactNode;
+    navigableOptions?: SelectboxOption[];
+    withSearchbox?: boolean;
   };
 
 export interface ComboboxProps
@@ -408,6 +409,7 @@ function ComboboxDrawer({
   mobile,
   drawerHeight,
   withSearchbox,
+  children,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -852,15 +854,7 @@ function ComboboxDrawer({
 
   const mainCombobox = (
     <DrawerWrapper
-      {...getFloatingProps({
-        onMouseDown: (e: React.MouseEvent) => {
-          e.preventDefault();
-        },
-        onClick: (e: React.MouseEvent) => {
-          e.preventDefault();
-          e.stopPropagation(); // handles touch-generated click on mobile
-        },
-      })}
+      {...getFloatingProps()}
       ref={(node) => {
         if (typeof refs?.setFloating === "function") {
           refs?.setFloating(node);
@@ -879,66 +873,69 @@ function ComboboxDrawer({
       $style={styles?.drawerStyle}
       $withSearchbox={withSearchbox}
     >
-      {(finalOptions || actions) && (
-        <>
-          {withSearchbox && (
-            <Searchbox
-              onKeyDown={handleKeyDown}
-              onChange={(e) => {
-                const { value } = e.target;
-                setHasInteracted(true);
-                setHighlightedIndex(0);
-                setSelectedOptionsLocal({
-                  ...selectedOptionsLocal,
-                  text: value,
-                });
-              }}
-              ref={inputRef}
-              value={selectedOptionsLocal.text}
-              styles={{
-                containerStyle: css`
-                  position: sticky;
-                  background-color: ${mobile
-                    ? comboboxTheme?.mobileBackgroundColor
-                    : comboboxTheme?.backgroundColor};
-                  z-index: 10000;
-                  height: 38px;
-                  top: 0;
-                  ${mobile &&
-                  !withSearchbox &&
-                  css`
-                    transform: translateY(-90px);
-                  `};
-                  ${mobile &&
-                  css`
-                    max-height: 46px;
-                    height: 46px;
-                  `}
-                `,
-                iconStyle: css`
-                  left: 16px;
-                `,
-                self: css`
-                  max-height: 35px;
-                  margin-top: 7px;
-                  margin-bottom: 7px;
-                  padding-bottom: 7px;
-                  padding-top: 7px;
-                  margin-left: 4px;
-                  margin-right: 4px;
-                  background-color: ${mobile
-                    ? comboboxTheme?.mobileBackgroundColor
-                    : comboboxTheme?.backgroundColor};
-                  &:focus {
-                    background-color: ${mobile
-                      ? comboboxTheme?.mobileBackgroundColor
-                      : comboboxTheme?.backgroundColor};
-                  }
-                `,
-              }}
-            />
-          )}
+      {withSearchbox && (
+        <Searchbox
+          onKeyDown={handleKeyDown}
+          onChange={(e) => {
+            const { value } = e.target;
+            setHasInteracted(true);
+            setHighlightedIndex(0);
+            setSelectedOptionsLocal({
+              ...selectedOptionsLocal,
+              text: value,
+            });
+          }}
+          autoComplete="off"
+          ref={inputRef}
+          value={selectedOptionsLocal.text}
+          styles={{
+            containerStyle: css`
+              position: sticky;
+              background-color: ${mobile
+                ? comboboxTheme?.mobileBackgroundColor
+                : comboboxTheme?.backgroundColor};
+              z-index: 10000;
+              height: 38px;
+              top: 0;
+              ${mobile &&
+              !withSearchbox &&
+              css`
+                transform: translateY(-90px);
+              `};
+              ${mobile &&
+              css`
+                max-height: 46px;
+                height: 46px;
+              `}
+            `,
+            iconStyle: css`
+              left: 16px;
+            `,
+            self: css`
+              max-height: 35px;
+              margin-top: 7px;
+              margin-bottom: 7px;
+              padding-bottom: 7px;
+              padding-top: 7px;
+              margin-left: 4px;
+              margin-right: 4px;
+              background-color: ${mobile
+                ? comboboxTheme?.mobileBackgroundColor
+                : comboboxTheme?.backgroundColor};
+              &:focus {
+                background-color: ${mobile
+                  ? comboboxTheme?.mobileBackgroundColor
+                  : comboboxTheme?.backgroundColor};
+              }
+            `,
+          }}
+        />
+      )}
 
+      {children}
+
+      {(finalOptions || actions || children) && (
+        <>
           <TreeList
             ref={({ el, item }) => {
               const index = flatIndexMap[item.id];
