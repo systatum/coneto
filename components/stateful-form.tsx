@@ -540,6 +540,28 @@ function FormFields<T extends FieldValues>({
             width: 100%;
           `;
 
+        const isButton = visibleFields.find((f) => f.type === "button");
+
+        const mobileRowFormFieldStyle =
+          mobile &&
+          css`
+            background-color: ${statefulFormTheme?.rowFrameBackgroundColor};
+            min-height: 40px;
+            padding: 10px 20px;
+            border-radius: 24px;
+            flex-direction: column;
+            justify-content: center;
+
+            ${isButton &&
+            css`
+              min-height: 48px;
+              padding: 0px;
+              flex-direction: row;
+              gap: 0px;
+              overflow: hidden;
+            `}
+          `;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
@@ -550,20 +572,13 @@ function FormFields<T extends FieldValues>({
                 justify-content: ${rowJustifiedContent};
               `};
 
-              ${(rowWithFrame || mobile) &&
+              ${rowWithFrame &&
               css`
                 background-color: ${statefulFormTheme?.rowFrameBackgroundColor};
                 padding: 10px;
               `}
 
-              ${mobile &&
-              css`
-                min-height: 40px;
-                padding: 10px 20px;
-                border-radius: 24px;
-                flex-direction: column;
-                justify-content: center;
-              `}
+              ${mobileRowFormFieldStyle}
 
               ${rowAlignedItem &&
               css`
@@ -579,7 +594,8 @@ function FormFields<T extends FieldValues>({
                 ? (field?.labelPosition ?? "left")
                 : field?.labelPosition;
               const isLast = index === visibleFields.length - 1;
-              const showSeparator = mobile && !isLast && Array.isArray(group);
+              const showSeparator =
+                mobile && !isLast && Array.isArray(group) && !isButton;
               const label = mobile ? null : field?.title;
               const placeholder = mobile
                 ? (field.placeholder ?? field.title)
@@ -833,6 +849,12 @@ function FormFields<T extends FieldValues>({
                   }
 
                   case "button": {
+                    const mobileButtonStyle =
+                      mobile &&
+                      css`
+                        height: 48px;
+                        width: 100%;
+                      `;
                     return (
                       <Button
                         key={index}
@@ -855,6 +877,7 @@ function FormFields<T extends FieldValues>({
                             width:100%;
                             height: 34px;
                             font-size: ${labelSize ?? "12px"};
+                            ${mobileButtonStyle};
                             ${field.button?.styles?.self};
                           `,
                           containerStyle: css`
@@ -870,10 +893,7 @@ function FormFields<T extends FieldValues>({
                               align-items: end;
                             `};
 
-                            ${mobile &&
-                            css`
-                              width: 100%;
-                            `}
+                            ${mobileButtonStyle};
 
                             ${field.button?.styles?.containerStyle};
                           `,
