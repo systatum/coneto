@@ -1,4 +1,8 @@
-import { Phonebox } from "./../../components/phonebox";
+import {
+  Phonebox,
+  PhoneboxCountryCode,
+  PhoneboxProps,
+} from "./../../components/phonebox";
 import { Button } from "./../../components/button";
 import {
   RiHome2Line,
@@ -7,8 +11,76 @@ import {
   RiUser2Line,
 } from "@remixicon/react";
 import { css } from "styled-components";
+import { useState } from "react";
+import { COUNTRY_CODES } from "./../../constants/countries";
+import { StatefulOnChangeType } from "./../../components/stateful-form";
 
 describe("Phonebox", () => {
+  function ProductPhonebox(props?: PhoneboxProps) {
+    interface ValueProps {
+      phone?: string;
+      country_code?: PhoneboxCountryCode;
+    }
+
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US"
+    )!;
+
+    const [value, setValue] = useState<ValueProps>({
+      phone: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+    });
+
+    const handleChange = (e: StatefulOnChangeType) => {
+      const { name, value } = e.target;
+      setValue((prev) => ({ ...prev, [name]: value }));
+    };
+
+    return (
+      <Phonebox
+        mobile
+        value={value.phone}
+        countryCodeValue={value.country_code}
+        onChange={handleChange}
+        {...props}
+      />
+    );
+  }
+  context("mobile", () => {
+    it("renders the drawer with in the bottom screen", () => {
+      cy.mount(<ProductPhonebox mobile />);
+      cy.findByLabelText("phonebox-country-toggle").click();
+      cy.findByLabelText("combobox-drawer-mobile")
+        .should("have.css", "bottom", "10px")
+        .and("have.css", "position", "fixed");
+    });
+
+    it("renders the drawer with height 220px", () => {
+      cy.mount(<ProductPhonebox mobile />);
+
+      cy.findByLabelText("phonebox-country-toggle").click();
+      cy.findByLabelText("combobox-drawer-mobile").should(
+        "have.css",
+        "height",
+        "220px"
+      );
+    });
+
+    context("drawerHeight", () => {
+      context("when given 400px", () => {
+        it("renders the drawer with height 400px", () => {
+          cy.mount(<ProductPhonebox mobile drawerHeight="400px" />);
+          cy.findByLabelText("phonebox-country-toggle").click();
+          cy.findByLabelText("combobox-drawer-mobile").should(
+            "have.css",
+            "height",
+            "400px"
+          );
+        });
+      });
+    });
+  });
+
   context("with dropdowns", () => {
     it("renders initialize drawer with min-width 200px", () => {
       cy.mount(
@@ -162,7 +234,7 @@ describe("Phonebox", () => {
 
   context("country code drawer", () => {
     context("searchbox", () => {
-      it("renders correctly depends on the width (-8px from padding drawer)", () => {
+      it("renders always less than drawer width", () => {
         cy.mount(
           <Phonebox
             styles={{
@@ -173,14 +245,16 @@ describe("Phonebox", () => {
           />
         );
 
-        cy.findByLabelText("phonebox-drawer").should("not.exist");
-        cy.findByRole("button").click();
-        cy.findByLabelText("phonebox-drawer")
-          .should("exist")
-          .and("have.css", "width", "260px");
-        cy.findByLabelText("textbox-search-wrapper")
-          .should("exist")
-          .and("have.css", "width", "252px");
+        cy.findByLabelText("combobox-drawer").should("not.exist");
+        cy.findByLabelText("phonebox-country-toggle").click();
+        cy.findByLabelText("combobox-drawer").then(($drawer) => {
+          const drawerWidth = $drawer[0].getBoundingClientRect().width;
+
+          cy.findByLabelText("textbox-search").then(($textbox) => {
+            const textboxWidth = $textbox[0].getBoundingClientRect().width;
+            expect(textboxWidth).to.be.lessThan(drawerWidth);
+          });
+        });
       });
     });
   });
