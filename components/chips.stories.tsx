@@ -378,13 +378,9 @@ export const Default: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
           `,
           chipsDrawerStyle: css`
             max-width: 300px;
@@ -614,13 +610,9 @@ export const Mobile: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
           `,
         }}
         onChange={handleOptionClicked}
@@ -732,14 +724,9 @@ export const DarkBackground: Story = {
           setInputValue((prev) => ({ ...prev, search: e.target.value }))
         }
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 8px;
-            justify-content: start;
           `,
         }}
         onChange={handleOptionClicked}
@@ -958,13 +945,9 @@ export const Deletable: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
           `,
           chipsDrawerStyle: css`
             max-width: 250px;
@@ -1291,14 +1274,11 @@ export const CustomRenderer: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
           `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
+
           chipsDrawerStyle: css`
             max-width: 250px;
           `,
