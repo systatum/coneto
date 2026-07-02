@@ -156,6 +156,17 @@ function BaseChips({
         (selectedOption) => selectedOption === badge.id
       );
 
+      const badgeActions = badge?.actions?.map((action) => ({
+        ...action,
+        onClick: ({ badge, event }) => {
+          event?.preventDefault();
+          action?.onClick?.({
+            badge,
+            event,
+          });
+        },
+      }));
+
       return {
         text: badge.caption,
         value: badge.id,
@@ -176,14 +187,16 @@ function BaseChips({
 
             <Badge
               {...badge}
+              backgroundColor={badge?.backgroundColor ?? "transparent"}
               aria-label="chips-option"
+              actions={badgeActions}
               onMouseDown={(e) => e.preventDefault()}
               styles={{
                 self: css`
                   cursor: pointer;
-                  width: 100%;
-                  background-color: transparent;
                   border-color: transparent;
+                  width: 100%;
+
                   ${mobile &&
                   css`
                     font-size: 18px;
@@ -292,7 +305,7 @@ function BaseChips({
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              aria-label="chip-selected"
+              aria-label="chips-selected"
               variant={badge.variant}
               backgroundColor={badge.backgroundColor}
               circleColor={badge.circleColor}
@@ -400,11 +413,6 @@ function BaseChips({
               css`
                 padding: 0px;
               `};
-
-              ${mode === "create" &&
-              css`
-                min-width: 240px;
-              `}
 
               ${styles?.chipsDrawerStyle};
             `,
