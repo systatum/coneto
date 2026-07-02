@@ -854,7 +854,10 @@ function FormFields<T extends FieldValues>({
                     const mobileButtonStyle =
                       mobile &&
                       css`
-                        height: 48px;
+                        ${isButtonRow &&
+                        css`
+                          height: 48px;
+                        `};
                         width: 100%;
                       `;
                     return (
@@ -888,7 +891,8 @@ function FormFields<T extends FieldValues>({
                               width: ${field.width};
                             `};
 
-                            ${hasFieldTitle &&
+                            ${!mobile &&
+                            hasFieldTitle &&
                             css`
                               margin-top: 26px;
                               justify-content: end;
