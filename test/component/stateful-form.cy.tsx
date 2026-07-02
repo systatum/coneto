@@ -304,13 +304,10 @@ const ALL_INPUT: FormFieldGroup[] = [
     chips: {
       options: BADGE_OPTIONS_SHORT,
       styles: {
-        chipStyle: css`
+        chipOptionStyle: css`
           width: 100%;
           gap: 0.5rem;
           border-color: transparent;
-        `,
-        chipContainerStyle: css`
-          gap: 4px;
         `,
         chipsDrawerStyle: css`
           min-width: 250px;
@@ -828,7 +825,7 @@ describe("StatefulForm", () => {
         cy.findAllByLabelText("field-lane-wrapper")
           .should("have.css", "cursor", "not-allowed")
           .and("have.css", "user-select", "none");
-        cy.findAllByLabelText("chip-input")
+        cy.findAllByLabelText("chips-container-input")
           .should("have.css", "cursor", "not-allowed")
           .and("have.css", "user-select", "none");
         cy.findAllByLabelText("file-drop-box-container")
@@ -890,7 +887,7 @@ describe("StatefulForm", () => {
           cy.findAllByLabelText("field-lane-wrapper")
             .should("have.css", "cursor", "not-allowed")
             .and("have.css", "user-select", "none");
-          cy.findAllByLabelText("chip-input")
+          cy.findAllByLabelText("chips-container-input")
             .should("have.css", "cursor", "not-allowed")
             .and("have.css", "user-select", "none");
           cy.findAllByLabelText("file-drop-box-container")

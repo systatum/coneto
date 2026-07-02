@@ -66,7 +66,7 @@ const meta: Meta<typeof Chips> = {
       control: "boolean",
       description: "If true, allows creating new chips not present in options.",
     },
-    onOptionClicked: {
+    onChange: {
       action: "clicked",
       description: "Callback fired when a chip option is clicked.",
     },
@@ -211,7 +211,7 @@ export const Default: Story = {
       background_color: string;
       text_color: string;
       circle_color: string;
-      selectedOptions: BadgeProps[];
+      selectedOptions: string[];
     }
 
     const [inputValue, setInputValue] = useState<InputValueProps>({
@@ -237,16 +237,246 @@ export const Default: Story = {
       }
     };
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = inputValue.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
+    const handleOptionClicked = (badgeIds: string[]) => {
       setInputValue((prev) => ({
         ...prev,
-        selectedOptions: isAlreadySelected
-          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
-          : [...prev.selectedOptions, badge],
+        selectedOptions: badgeIds,
+      }));
+    };
+
+    const handleNewTagClicked = () => {
+      console.log("clicked new tag");
+    };
+
+    console.log(inputValue);
+
+    const MissingOptionForm = ({
+      firstInputRef,
+      closeForm,
+    }: MissingOptionFormProps) => (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          minWidth: "240px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            padding: "8px 12px",
+            gap: "8px",
+            fontSize: "0.75rem",
+            fontWeight: 500,
+            alignItems: "center",
+          }}
+        >
+          <RiAddBoxFill size={18} />
+          <span
+            style={{
+              paddingTop: "2px",
+            }}
+          >
+            Create a new tag
+          </span>
+        </div>
+        <Divider aria-label="divider" />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            padding: "12px",
+            gap: "12px",
+          }}
+        >
+          <Textbox
+            ref={firstInputRef}
+            id="colorbox-name-tag"
+            name="name_tag"
+            placeholder={"Create a new label"}
+            value={inputValue.name_tag}
+            autoComplete="off"
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            id="colorbox-background-color"
+            placeholder="Select background color..."
+            name={"background_color"}
+            value={inputValue.background_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            id="colorbox-text-color"
+            placeholder="Select text color..."
+            name={"text_color"}
+            value={inputValue.text_color}
+            onChange={onChangeValue}
+          />
+          <Colorbox
+            id="colorbox-circle-color"
+            placeholder="Select circle color..."
+            name={"circle_color"}
+            value={inputValue.circle_color}
+            onChange={onChangeValue}
+          />
+          <Badge
+            textColor={inputValue.text_color}
+            backgroundColor={inputValue.background_color}
+            circleColor={inputValue.circle_color}
+            caption={inputValue.name_tag}
+            withCircle
+          />
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button
+              onClick={async () => {
+                const inputSearchEvent = {
+                  target: {
+                    name: "search",
+                    value: inputValue.name_tag,
+                  },
+                } as ChangeEvent<HTMLInputElement>;
+                await onChangeValue(inputSearchEvent);
+                await closeForm();
+              }}
+              size="sm"
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleNewTagClicked}
+              size="sm"
+              variant="primary"
+              styles={{
+                self: {
+                  fontSize: "12px",
+                },
+              }}
+            >
+              Add
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <Chips
+        inputValue={inputValue.search}
+        setInputValue={onChangeValue}
+        styles={{
+          chipOptionStyle: css`
+            width: 100%;
+            gap: 8px;
+          `,
+          chipsDrawerStyle: css`
+            max-width: 300px;
+          `,
+        }}
+        onChange={handleOptionClicked}
+        selectedOptions={inputValue.selectedOptions}
+        options={BADGE_OPTIONS as BadgeProps[]}
+        missingOptionForm={MissingOptionForm}
+        creatable
+      />
+    );
+  },
+};
+
+export const Mobile: Story = {
+  render: () => {
+    const BADGE_OPTIONS: BadgeProps[] = [
+      {
+        id: "1",
+        caption: "Anime",
+      },
+      {
+        id: "2",
+        caption: "Manga",
+      },
+      {
+        id: "3",
+        caption: "Comics",
+      },
+      {
+        id: "4",
+        caption: "Movies",
+      },
+      {
+        id: "5",
+        caption: "Podcasts",
+      },
+      {
+        id: "6",
+        caption: "TV Shows",
+      },
+      {
+        id: "7",
+        caption: "Novels",
+      },
+      {
+        id: "8",
+        caption: "Music",
+      },
+      {
+        id: "9",
+        caption: "Games",
+      },
+      {
+        id: "10",
+        caption: "Webtoons",
+      },
+    ];
+
+    interface InputValueProps {
+      search: string;
+      name_tag: string;
+      background_color: string;
+      text_color: string;
+      circle_color: string;
+      selectedOptions: string[];
+    }
+
+    const [inputValue, setInputValue] = useState<InputValueProps>({
+      search: "",
+      name_tag: "",
+      background_color: "",
+      text_color: "",
+      circle_color: "",
+      selectedOptions: [],
+    });
+
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      if (name === "chips") {
+        setInputValue((prev) => ({
+          ...prev,
+          ["search"]: value,
+          ["name_tag"]: value,
+        }));
+      } else {
+        setInputValue((prev) => ({ ...prev, [name]: value }));
+      }
+    };
+
+    const handleOptionClicked = (badgeIds: string[]) => {
+      setInputValue((prev) => ({
+        ...prev,
+        selectedOptions: badgeIds,
       }));
     };
 
@@ -303,6 +533,7 @@ export const Default: Story = {
             onChange={onChangeValue}
           />
           <Colorbox
+            id="colorbox-background"
             placeholder="Select background color..."
             name={"background_color"}
             value={inputValue.background_color}
@@ -375,22 +606,16 @@ export const Default: Story = {
 
     return (
       <Chips
+        mobile
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
-          chipsDrawerStyle: css`
-            max-width: 300px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
@@ -476,7 +701,7 @@ export const DarkBackground: Story = {
     ];
     interface InputValueProps {
       search: string;
-      selectedOptions: BadgeProps[];
+      selectedOptions: string[];
     }
 
     const [inputValue, setInputValue] = useState<InputValueProps>({
@@ -484,37 +709,27 @@ export const DarkBackground: Story = {
       selectedOptions: [],
     });
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = inputValue.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
+    const handleOptionClicked = (selectedOptions: string[]) => {
       setInputValue((prev) => ({
         ...prev,
-        selectedOptions: isAlreadySelected
-          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
-          : [...prev.selectedOptions, badge],
+        selectedOptions,
       }));
     };
 
     return (
       <Chips
+        name="search"
         inputValue={inputValue.search}
         setInputValue={(e) =>
-          setInputValue((prev) => ({ ...prev, searchText: e.target.value }))
+          setInputValue((prev) => ({ ...prev, search: e.target.value }))
         }
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 8px;
-            justify-content: start;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
       />
@@ -530,7 +745,7 @@ export const Deletable: Story = {
       background_color: string;
       text_color: string;
       circle_color: string;
-      selectedOptions: BadgeProps[];
+      selectedOptions: string[];
     }
 
     const BADGE_OPTIONS: BadgeProps[] = Array.from({ length: 10 }, (_, i) => ({
@@ -595,16 +810,10 @@ export const Deletable: Story = {
       }
     };
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = inputValue.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
+    const handleOptionClicked = (selectedOptions: string[]) => {
       setInputValue((prev) => ({
         ...prev,
-        selectedOptions: isAlreadySelected
-          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
-          : [...prev.selectedOptions, badge],
+        selectedOptions,
       }));
     };
 
@@ -736,19 +945,15 @@ export const Deletable: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
-          `,
-          chipContainerStyle: css`
-            gap: 4px;
           `,
           chipsDrawerStyle: css`
             max-width: 250px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS}
         missingOptionForm={MissingOptionForm}
@@ -766,7 +971,7 @@ export const CustomRenderer: Story = {
       background_color: string;
       text_color: string;
       circle_color: string;
-      selectedOptions: BadgeProps[];
+      selectedOptions: string[];
     }
 
     const BADGE_OPTIONS: BadgeProps[] = Array.from({ length: 10 }, (_, i) => ({
@@ -843,16 +1048,10 @@ export const CustomRenderer: Story = {
       }
     };
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = inputValue.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
+    const handleOptionClicked = (selectedOptions: string[]) => {
       setInputValue((prev) => ({
         ...prev,
-        selectedOptions: isAlreadySelected
-          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
-          : [...prev.selectedOptions, badge],
+        selectedOptions,
       }));
     };
 
@@ -1075,14 +1274,11 @@ export const CustomRenderer: Story = {
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
         styles={{
-          chipStyle: css`
+          chipOptionStyle: css`
             width: 100%;
             gap: 8px;
-            border-color: transparent;
           `,
-          chipContainerStyle: css`
-            gap: 4px;
-          `,
+
           chipsDrawerStyle: css`
             max-width: 250px;
           `,
@@ -1144,7 +1340,7 @@ export const CustomRenderer: Story = {
             </Tooltip>
           );
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
