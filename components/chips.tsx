@@ -1,14 +1,10 @@
 import { RiAddLine } from "@remixicon/react";
 import { Badge, BadgeAction, BadgeProps } from "./badge";
-import { Checkbox } from "./checkbox";
 import {
   ChangeEvent,
-  CSSProperties,
   Fragment,
-  KeyboardEvent,
   ReactNode,
   Ref,
-  RefObject,
   useEffect,
   useMemo,
   useRef,
@@ -24,7 +20,6 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
-import { Textbox } from "./textbox";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
@@ -33,7 +28,6 @@ import { ChipsThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
 import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
-import { props } from "cypress/types/bluebird";
 
 export type ChipAction = BadgeAction;
 
@@ -217,15 +211,10 @@ function BaseChips({
                 self: css`
                   cursor: pointer;
                   width: 100%;
-                  ${mobile
-                    ? css`
-                        margin-top: 2px;
-
-                        font-size: 18px;
-                      `
-                    : css`
-                        margin-top: 2px;
-                      `}
+                  ${mobile &&
+                  css`
+                    font-size: 18px;
+                  `};
 
                   ${styles?.chipStyle}
                 `,
@@ -279,18 +268,23 @@ function BaseChips({
       await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const selectedOption = FILTERED_OPTIONS[highlightedIndex];
-      if (!selectedOption) return;
+      if (hasNoFilter) {
+        await setMode("create");
+        await inputMissingRef?.current?.focus();
+      } else {
+        const selectedOption = FILTERED_OPTIONS[highlightedIndex];
+        if (!selectedOption) return;
 
-      const optionId = String(selectedOption.value);
-      const isSelected = selectedOptions?.some((id) => id === optionId);
+        const optionId = String(selectedOption.value);
+        const isSelected = selectedOptions?.some((id) => id === optionId);
 
-      const finalSelectedOptions = isSelected
-        ? selectedOptions?.filter((id) => id !== optionId)
-        : [...(selectedOptions ?? []), optionId];
+        const finalSelectedOptions = isSelected
+          ? selectedOptions?.filter((id) => id !== optionId)
+          : [...(selectedOptions ?? []), optionId];
 
-      if (onChange) {
-        onChange(finalSelectedOptions);
+        if (onChange) {
+          onChange(finalSelectedOptions);
+        }
       }
     } else if (e.key === "Escape") {
       e.preventDefault();
@@ -301,6 +295,8 @@ function BaseChips({
   const finalDrawerHeight = mobile
     ? (drawerHeight ?? "320px")
     : (drawerHeight ?? "220px");
+
+  const hasFewOptions = FILTERED_OPTIONS?.length < 5;
 
   return (
     <>
@@ -355,7 +351,24 @@ function BaseChips({
           emptySlate={emptySlate}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          withSearchbox={mobile && mode === "idle"}
+          checkbox={{
+            styles: {
+              containerStyle: css`
+                ${mobile
+                  ? css`
+                      margin-top: 10px;
+                    `
+                  : css`
+                      margin-top: 5px;
+                    `}
+              `,
+            },
+          }}
+          searchbox={
+            mode === "idle" && {
+              placeholder: filterPlaceholder,
+            }
+          }
           refs={refs as unknown as ComboboxDrawerProps["refs"]}
           highlightedIndex={highlightedIndex}
           setHighlightedIndex={setHighlightedIndex}
@@ -382,11 +395,11 @@ function BaseChips({
                 max-height: ${finalDrawerHeight};
               `};
 
-              ${FILTERED_OPTIONS?.length < 5 && mobile
+              ${hasFewOptions && mobile
                 ? css`
                     min-height: 80px;
                   `
-                : FILTERED_OPTIONS?.length < 5 &&
+                : hasFewOptions &&
                   !mobile &&
                   css`
                     min-height: fit-content;
@@ -406,7 +419,7 @@ function BaseChips({
               ${styles?.chipsDrawerStyle};
             `,
           }}
-          fadeEffect={hasNoFilter ? [] : ["bottom"]}
+          fadeEffect={hasFewOptions ? [] : ["bottom"]}
           onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
             if (!Array.isArray(selectedOptions)) return;
             onChange?.(selectedOptions as string[]);
@@ -428,72 +441,30 @@ function BaseChips({
           listRef={listRef}
           inputRef={inputRef}
         >
-          {mode === "idle" && (
-            <>
-              {!mobile && (
-                <>
-                  <Textbox
-                    onKeyDown={handleKeyDown}
-                    ref={inputRef}
-                    name={name}
-                    type="text"
-                    aria-label="chip-input-box"
-                    placeholder={filterPlaceholder}
-                    value={inputValue}
-                    styles={{
-                      containerStyle: css`
-                        position: sticky;
-                        top: 0px;
-                        z-index: 99993999;
-                      `,
-                      self: css`
-                        border: none;
-                        min-height: 34px;
-                        border-radius: 0;
-                        border-width: 2px;
-                        &:focus {
-                          border-color: ${textboxTheme?.borderColor};
-                          box-shadow: 0 0 0 0.5px ${textboxTheme?.borderColor};
-                        }
-                      `,
-                    }}
-                    autoComplete="off"
-                    onChange={(e) => {
-                      setHasInteracted?.(true);
-                      setInputValue(e);
-                      setHighlightedIndex(0);
-                      setInteractionMode("keyboard");
-                    }}
-                  />
-                </>
-              )}
-
-              {hasNoFilter && creatable && (
-                <EmptyOptionContainer
-                  onClick={async () => {
-                    await setMode("create");
-                    await inputMissingRef?.current?.focus();
-                  }}
-                  $hovered={highlightedIndex === 0}
-                  $theme={chipsTheme}
-                >
-                  <RiAddLine size={14} style={{ minWidth: "14px" }} />
-                  <span
-                    style={{
-                      fontWeight: 500,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {missingOptionLabel}&nbsp;
-                    <span style={{ color: chipsTheme?.mutedTextColor }}>
-                      "{inputValue}"
-                    </span>
-                  </span>
-                </EmptyOptionContainer>
-              )}
-            </>
+          {mode === "idle" && hasNoFilter && creatable && (
+            <EmptyOptionContainer
+              onClick={async () => {
+                await setMode("create");
+                await inputMissingRef?.current?.focus();
+              }}
+              $hovered={highlightedIndex === 0}
+              $theme={chipsTheme}
+            >
+              <RiAddLine size={14} style={{ minWidth: "14px" }} />
+              <span
+                style={{
+                  fontWeight: 500,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {missingOptionLabel}&nbsp;
+                <span style={{ color: chipsTheme?.mutedTextColor }}>
+                  "{inputValue}"
+                </span>
+              </span>
+            </EmptyOptionContainer>
           )}
           {mode === "create" && (
             <>
