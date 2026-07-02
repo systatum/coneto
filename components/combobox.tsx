@@ -1254,7 +1254,7 @@ const DrawerWrapper = styled.ul<{
     const $height = $drawerHeight ?? "220px";
 
     return css`
-      min-height: ${$height};
+      min-height: fit-content;
       max-height: ${$height};
 
       ${$mobile &&
