@@ -187,6 +187,7 @@ function BaseChips({
 
             <Badge
               {...badge}
+              backgroundColor={badge?.backgroundColor ?? "transparent"}
               aria-label="chips-option"
               actions={badgeActions}
               onMouseDown={(e) => e.preventDefault()}
@@ -195,9 +196,6 @@ function BaseChips({
                   cursor: pointer;
                   border-color: transparent;
                   width: 100%;
-                  background-color: ${badge?.backgroundColor
-                    ? badge?.backgroundColor
-                    : "transparent"};
 
                   ${mobile &&
                   css`
@@ -307,7 +305,7 @@ function BaseChips({
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              aria-label="chip-selected"
+              aria-label="chips-selected"
               variant={badge.variant}
               backgroundColor={badge.backgroundColor}
               circleColor={badge.circleColor}
