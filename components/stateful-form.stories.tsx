@@ -1597,7 +1597,7 @@ export const AllCase: Story = {
       check: boolean;
       chips?: {
         searchText: string;
-        selectedOptions: BadgeProps[];
+        selectedOptions: string[];
       };
       color: string;
       combo: string[];
@@ -1680,32 +1680,15 @@ export const AllCase: Story = {
       },
     ];
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = value.chips.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
+    const handleOptionClicked = (selectedOptions: string[]) => {
       setValue((prev) => ({
         ...prev,
         chips: {
           ...prev.chips,
-          selectedOptions: isAlreadySelected
-            ? prev.chips.selectedOptions.filter((data) => data.id !== badge.id)
-            : [...prev.chips.selectedOptions, badge],
+          selectedOptions,
         },
       }));
     };
-
-    const badgeSchema = z.object({
-      id: z.string().optional(),
-      metadata: z.record(z.unknown()).optional(),
-      variant: z.string().optional(),
-      withCircle: z.boolean().optional(),
-      caption: z.string().optional(),
-      backgroundColor: z.string().optional(),
-      textColor: z.string().optional(),
-      circleColor: z.string().optional(),
-    });
 
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
@@ -1719,7 +1702,7 @@ export const AllCase: Story = {
       check: z.boolean(),
       chips: z.object({
         searchText: z.string().optional(),
-        selectedOptions: z.array(badgeSchema).optional(),
+        selectedOptions: z.array(z.string()).optional(),
       }),
       color: z.string().min(4, "Color is required"),
       combo: z
@@ -2152,7 +2135,7 @@ export const AllCaseDisabled: Story = {
       check: boolean;
       chips?: {
         searchText: string;
-        selectedOptions: BadgeProps[];
+        selectedOptions: string[];
       };
       color: string;
       combo: string[];

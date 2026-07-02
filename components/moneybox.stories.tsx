@@ -204,6 +204,49 @@ export const Default: Story = {
   },
 };
 
+export const Mobile: Story = {
+  args: {
+    value: "2000",
+    name: "value",
+    currency: "USD",
+    editableCurrency: true,
+    currencyOptions: [
+      { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+      { id: "USD", name: "US Dollar", symbol: "$" },
+      { id: "EUR", name: "Euro", symbol: "€" },
+      { id: "JPY", name: "Japanese Yen", symbol: "¥" },
+      { id: "GBP", name: "British Pound", symbol: "£" },
+      { id: "SGD", name: "Singapore Dollar", symbol: "$" },
+      { id: "AUD", name: "Australian Dollar", symbol: "$" },
+      { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
+      { id: "KRW", name: "South Korean Won", symbol: "₩" },
+      { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
+    ],
+  },
+  render: (args) => {
+    const [currentArgs, setUpdateArgs] = useArgs();
+    const onChangeValue = (e: ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setUpdateArgs({ ...currentArgs, [name]: value });
+    };
+    return (
+      <Moneybox
+        {...args}
+        label="Mobile"
+        styles={{
+          containerStyle: css`
+            max-width: 300px;
+          `,
+        }}
+        mobile
+        value={currentArgs.value}
+        onChange={onChangeValue}
+        separator="dot"
+      />
+    );
+  },
+};
+
 export const WithDropdown: Story = {
   render: () => {
     const [value, setValue] = useState({
