@@ -145,7 +145,7 @@ describe("Chips", () => {
     });
   });
 
-  context("styles", () => {
+  context("options", () => {
     it("renders the option with transparent badge option", () => {
       cy.mount(<ProductChips />);
 
@@ -157,6 +157,108 @@ describe("Chips", () => {
         .and("have.css", "border-color", "rgba(0, 0, 0, 0)");
     });
 
+    context("when given backgroundColor on the options", () => {
+      const BADGE_OPTIONS_WITH_COLORS: BadgeProps[] = [
+        {
+          id: "1",
+          backgroundColor: "#1c0f13",
+          textColor: "#ffffff",
+          caption: "Anime",
+          circleColor: "#ff6f61",
+        },
+        {
+          id: "2",
+          backgroundColor: "#120f1f",
+          textColor: "#ffffff",
+          caption: "Manga",
+          circleColor: "#6b5b95",
+        },
+        {
+          id: "3",
+          backgroundColor: "#0e1a0e",
+          textColor: "#ffffff",
+          caption: "Comics",
+          circleColor: "#88b04b",
+        },
+        {
+          id: "4",
+          backgroundColor: "#1a1212",
+          textColor: "#ffffff",
+          caption: "Movies",
+          circleColor: "#f7cac9",
+        },
+        {
+          id: "5",
+          backgroundColor: "#0e1626",
+          textColor: "#ffffff",
+          caption: "Podcasts",
+          circleColor: "#92a8d1",
+        },
+        {
+          id: "6",
+          backgroundColor: "#1b0d0d",
+          textColor: "#ffffff",
+          caption: "TV Shows",
+          circleColor: "#955251",
+        },
+        {
+          id: "7",
+          backgroundColor: "#160d18",
+          textColor: "#ffffff",
+          caption: "Novels",
+          circleColor: "#b565a7",
+        },
+        {
+          id: "8",
+          backgroundColor: "#0d1a17",
+          textColor: "#ffffff",
+          caption: "Music",
+          circleColor: "#009b77",
+        },
+        {
+          id: "9",
+          backgroundColor: "#1c0e0c",
+          textColor: "#ffffff",
+          caption: "Games",
+          circleColor: "#dd4124",
+        },
+        {
+          id: "10",
+          backgroundColor: "#0d1c1a",
+          textColor: "#ffffff",
+          caption: "Webtoons",
+          circleColor: "#45b8ac",
+        },
+      ];
+      it("renders options with coloring", () => {
+        cy.mount(<ProductChips options={BADGE_OPTIONS_WITH_COLORS} />);
+        cy.findByRole("button").click();
+
+        cy.findAllByLabelText("chips-option").should(
+          "not.have.css",
+          "background-color",
+          "rgba(0, 0, 0, 0)"
+        );
+      });
+
+      context("when select one option", () => {
+        it("renders option selected with coloring", () => {
+          cy.mount(<ProductChips options={BADGE_OPTIONS_WITH_COLORS} />);
+          cy.findByRole("button").click();
+
+          cy.findAllByLabelText("chips-option")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(28, 15, 19)")
+            .click();
+          cy.wait(400);
+          cy.findAllByLabelText("chips-selected")
+            .eq(0)
+            .should("have.css", "background-color", "rgb(28, 15, 19)");
+        });
+      });
+    });
+  });
+  context("styles", () => {
     it("renders gap in option wrapper with 4px (by default)", () => {
       cy.mount(<ProductChips />);
       cy.findByRole("button").click();
@@ -201,7 +303,7 @@ describe("Chips", () => {
 
           cy.findByText("Anime").click();
 
-          cy.findByLabelText("chip-selected").should(
+          cy.findByLabelText("chips-selected").should(
             "have.css",
             "border-radius",
             "20px"
