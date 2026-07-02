@@ -629,6 +629,37 @@ describe("StatefulForm", () => {
       });
     });
 
+    context("moneybox", () => {
+      context("when clicking the currency button", () => {
+        it("renders in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "money",
+                  title: "Money",
+                  type: "money",
+                  required: false,
+                  money: {
+                    editableCurrency: true,
+                  },
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByLabelText("moneybox-currency-toggle").click();
+
+          cy.findByLabelText("combobox-drawer-mobile")
+            .should("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+
     context("chips", () => {
       context("when clicking the button", () => {
         it("renders in the bottom of screen", () => {
