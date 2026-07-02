@@ -354,13 +354,7 @@ function BaseChips({
           checkbox={{
             styles: {
               containerStyle: css`
-                ${mobile
-                  ? css`
-                      margin-top: 10px;
-                    `
-                  : css`
-                      margin-top: 5px;
-                    `}
+                margin: 0px;
               `,
             },
           }}
@@ -381,6 +375,14 @@ function BaseChips({
             value: "",
           }}
           styles={{
+            rowStyle: css`
+              justify-content: center;
+              align-items: center;
+            `,
+            rowContainerStyle: css`
+              padding: 0px 12px;
+              min-height: 32px;
+            `,
             drawerStyle: css`
               ${!mobile &&
               css`
