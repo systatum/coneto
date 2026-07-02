@@ -622,9 +622,6 @@ export const Mobile: Story = {
           chipContainerStyle: css`
             gap: 4px;
           `,
-          chipsDrawerStyle: css`
-            max-width: 300px;
-          `,
         }}
         onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
