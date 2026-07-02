@@ -1386,14 +1386,14 @@ export const Mobile: Story = {
       },
       [
         {
-          name: "text",
+          name: "back",
           title: "Back",
           type: "button",
           required: true,
           rowJustifyPosition: "end",
         },
         {
-          name: "text",
+          name: "save",
           title: "Save",
           type: "button",
           required: true,
