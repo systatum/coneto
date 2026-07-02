@@ -1,9 +1,11 @@
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { Button } from "./button";
+import { Button, ButtonSubMenu } from "./button";
 import { Tooltip } from "./tooltip";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
+import { ReactNode } from "react";
+import { TipMenuItemProps } from "./tip-menu";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -164,12 +166,16 @@ export interface SeparatorAction extends BaseAction {
   styles?: SeparatorActionStyles;
   id?: string;
   className?: string;
+  subMenu?: (props: SeparatorActionSubMenu) => ReactNode;
 }
+
+export type SeparatorActionSubMenu = ButtonSubMenu;
+export type SeparatorActionSubMenuList = TipMenuItemProps;
 
 export interface SeparatorActionStyles {
   self?: CSSProp;
   containerStyle?: CSSProp;
-  drawerStyle?: CSSProp;
+  captionDrawerStyle?: CSSProp;
   arrowStyle?: CSSProp;
 }
 
@@ -181,15 +187,32 @@ function SeparatorAction({
   onClick,
   styles,
   disabled,
+  subMenu,
   className,
   id,
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
+  const bodyTheme = currentTheme?.body;
   const separatorTheme = currentTheme?.separator;
 
   if (hidden) {
     return;
   }
+
+  const finalSubMenu = (props: SeparatorActionSubMenu) =>
+    subMenu?.({
+      ...props,
+      show: (content, options) =>
+        props?.show(content, {
+          ...options,
+          drawerStyle: css`
+            color: ${bodyTheme?.textColor};
+            background-color: ${separatorTheme?.tooltipBackgroundColor};
+
+            ${options?.drawerStyle}
+          `,
+        }),
+    });
 
   return (
     <Tooltip
@@ -221,7 +244,7 @@ function SeparatorAction({
 
           ${styles?.containerStyle}
         `,
-        drawerStyle: styles?.drawerStyle,
+        drawerStyle: styles?.captionDrawerStyle,
       }}
     >
       <Button
@@ -229,7 +252,9 @@ function SeparatorAction({
         variant="outline-default"
         icon={icon}
         aria-label="separator-action"
-        onClick={(e) => onClick?.(e)}
+        subMenu={finalSubMenu}
+        showSubMenuOn="self"
+        onMouseDown={(e) => onClick?.(e)}
         disabled={disabled}
         styles={{
           containerStyle: css`
