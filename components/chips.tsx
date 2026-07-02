@@ -59,9 +59,9 @@ interface BaseChipsProps {
 
 export interface BaseChipsStyles {
   chipsContainerStyle?: CSSProp;
-  chipContainerStyle?: CSSProp;
   chipSelectedStyle?: CSSProp;
-  chipStyle?: CSSProp;
+  chipOptionWrapperStyle?: CSSProp;
+  chipOptionStyle?: CSSProp;
   chipsDrawerStyle?: CSSProp;
 }
 
@@ -124,36 +124,6 @@ function BaseChips({
     placement: "bottom-start",
   });
 
-  // Keep the highlighted option visible while navigating the list.
-  useEffect(() => {
-    if (
-      listRef.current[highlightedIndex] &&
-      !mobile &&
-      mode === "idle" &&
-      interactionMode === "keyboard"
-    ) {
-      const element = listRef.current[highlightedIndex];
-      const container = refs.floating.current;
-
-      if (element && container) {
-        const searchboxHeight = 34;
-        const elementTop = element.offsetTop;
-        const containerScrollTop = container.scrollTop;
-        const containerHeight = container.clientHeight;
-
-        if (elementTop < containerScrollTop + searchboxHeight) {
-          container.scrollTop = elementTop - searchboxHeight;
-        } else if (
-          elementTop + element.clientHeight >
-          containerScrollTop + containerHeight
-        ) {
-          container.scrollTop =
-            elementTop + element.clientHeight - containerHeight;
-        }
-      }
-    }
-  }, [highlightedIndex, mobile, mode, interactionMode, refs.floating]);
-
   const click = useClick(context);
   const dismiss = useDismiss(context);
   const role = useRole(context);
@@ -206,18 +176,20 @@ function BaseChips({
 
             <Badge
               {...badge}
+              aria-label="chips-option"
               onMouseDown={(e) => e.preventDefault()}
               styles={{
                 self: css`
                   cursor: pointer;
                   width: 100%;
                   background-color: transparent;
+                  border-color: transparent;
                   ${mobile &&
                   css`
                     font-size: 18px;
                   `};
 
-                  ${styles?.chipStyle}
+                  ${styles?.chipOptionStyle}
                 `,
               }}
               withCircle
@@ -226,7 +198,7 @@ function BaseChips({
         ),
       };
     });
-  }, [sortedOptions, selectedOptions, styles?.chipStyle, chipsTheme]);
+  }, [sortedOptions, selectedOptions, styles?.chipOptionStyle, chipsTheme]);
 
   const FILTERED_OPTIONS: ComboboxOption[] = useMemo(() => {
     if (!hasInteracted || !inputValue) return FINAL_OPTIONS;
@@ -303,7 +275,7 @@ function BaseChips({
     <>
       <InputGroup
         id={id}
-        aria-label="chip-input"
+        aria-label="chips-container-input"
         $disabled={disabled}
         $containerStyle={styles?.chipsContainerStyle}
       >
@@ -320,6 +292,7 @@ function BaseChips({
               onClick={(e) => {
                 e.stopPropagation();
               }}
+              aria-label="chip-selected"
               variant={badge.variant}
               backgroundColor={badge.backgroundColor}
               circleColor={badge.circleColor}
@@ -342,7 +315,11 @@ function BaseChips({
           ref={refs.setReference}
           role="button"
           $isOpen={isOpen}
-          {...getReferenceProps()}
+          {...getReferenceProps({
+            onClick: (e) => {
+              e.preventDefault();
+            },
+          })}
         />
       </InputGroup>
 
@@ -379,13 +356,21 @@ function BaseChips({
             rowStyle: css`
               justify-content: center;
               align-items: center;
+              ${mobile
+                ? css`
+                    padding: 6px 15px;
+                    gap: 14px;
+                  `
+                : css`
+                    padding: 0px 12px;
+                    min-height: 32px;
+                    gap: 4px;
+                  `};
+              ${styles?.chipOptionWrapperStyle}
             `,
             rowContainerStyle: css`
-              ${!mobile &&
-              css`
-                padding: 0px 12px;
-                min-height: 32px;
-              `}
+              min-height: 0px;
+              padding: 0px;
             `,
             drawerStyle: css`
               ${!mobile &&
