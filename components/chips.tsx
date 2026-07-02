@@ -68,9 +68,7 @@ export interface BaseChipsStyles {
   chipContainerStyle?: CSSProp;
   chipSelectedStyle?: CSSProp;
   chipStyle?: CSSProp;
-  labelStyle?: CSSProp;
   chipsDrawerStyle?: CSSProp;
-  containerStyle?: CSSProp;
 }
 
 export interface ChipRendererProps {
@@ -105,6 +103,7 @@ function BaseChips({
 }: BaseChipsProps) {
   const { currentTheme } = useTheme();
   const chipsTheme = currentTheme.chips;
+  const textboxTheme = currentTheme.textbox;
 
   const inputRef = useRef<HTMLInputElement>(null);
   const inputMissingRef = useRef<HTMLInputElement>(null);
@@ -175,7 +174,10 @@ function BaseChips({
                   selectedOption === sortedOptions[index - 1].id
               ) &&
               !isSelected && (
-                <Divider $theme={chipsTheme} aria-label="divider" />
+                <Divider
+                  $theme={chipsTheme}
+                  aria-label="chips-option-divider"
+                />
               )}
 
             <Badge
@@ -333,6 +335,8 @@ function BaseChips({
               css`
                 min-width: 240px;
               `}
+
+              ${styles?.chipsDrawerStyle};
             `,
           }}
           fadeEffect={hasNoFilter ? [] : ["bottom"]}
@@ -371,7 +375,7 @@ function BaseChips({
                     styles={{
                       containerStyle: css`
                         position: sticky;
-                        top: 1px;
+                        top: 0px;
                         z-index: 99993999;
                       `,
                       self: css`
@@ -379,6 +383,10 @@ function BaseChips({
                         min-height: 34px;
                         border-radius: 0;
                         border-width: 2px;
+                        &:focus {
+                          border-color: ${textboxTheme?.borderColor};
+                          box-shadow: 0 0 0 0.5px ${textboxTheme?.borderColor};
+                        }
                       `,
                     }}
                     autoComplete="off"
@@ -389,7 +397,6 @@ function BaseChips({
                       setInteractionMode("keyboard");
                     }}
                   />
-                  <Divider $theme={chipsTheme} aria-label="divider" />
                 </>
               )}
 
@@ -571,8 +578,9 @@ const Divider = styled.div<{
   position: absolute;
   top: 0;
   width: calc(100%);
-  transform: translateX(-8%);
   height: 1px;
+  left: 50%;
+  transform: translateX(-50%);
 
   border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor};
 `;
