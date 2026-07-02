@@ -156,6 +156,17 @@ function BaseChips({
         (selectedOption) => selectedOption === badge.id
       );
 
+      const badgeActions = badge?.actions?.map((action) => ({
+        ...action,
+        onClick: ({ badge, event }) => {
+          event?.preventDefault();
+          action?.onClick?.({
+            badge,
+            event,
+          });
+        },
+      }));
+
       return {
         text: badge.caption,
         value: badge.id,
@@ -177,6 +188,7 @@ function BaseChips({
             <Badge
               {...badge}
               aria-label="chips-option"
+              actions={badgeActions}
               onMouseDown={(e) => e.preventDefault()}
               styles={{
                 self: css`
