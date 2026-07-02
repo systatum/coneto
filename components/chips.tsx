@@ -386,7 +386,6 @@ function BaseChips({
               css`
                 width: fit-content;
                 max-width: 240px;
-                background-color: ${chipsTheme.backgroundColor};
               `};
 
               ${finalDrawerHeight &&
