@@ -33,8 +33,8 @@ import {
   TreeListItem,
   TreeListItemAction,
 } from "./treelist";
-import { Searchbox } from "./searchbox";
-import { Checkbox } from "./checkbox";
+import { Searchbox, SearchboxProps } from "./searchbox";
+import { Checkbox, CheckboxProps } from "./checkbox";
 import { createPortal } from "react-dom";
 
 interface BaseComboboxProps {
@@ -117,8 +117,9 @@ export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     };
     children?: ReactNode;
     navigableOptions?: SelectboxOption[];
-    withSearchbox?: boolean;
     fadeEffect?: ComboboxDrawerFadeEffect[];
+    searchbox?: SearchboxProps | boolean;
+    checkbox?: CheckboxProps | boolean;
   };
 
 export const ComboboxDrawerFadeEffect = {
@@ -360,7 +361,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               inputRef={props.ref}
               name={name}
               disabled={disabled}
-              withSearchbox={multiple}
               selectedOptions={selectedOptions}
               onChange={onChange}
               highlightOnMatch={highlightOnMatch}
@@ -370,6 +370,8 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               options={filteredForDrawer}
               drawerHeight={drawerHeight}
               maxSelectableItems={maxSelectableItems}
+              searchbox={multiple}
+              checkbox={multiple}
               multiple={multiple}
               openedCategoryGroup={openedCategoryGroup}
               setOpenedCategoryGroup={setOpenedCategoryGroup}
@@ -417,8 +419,9 @@ function ComboboxDrawer({
   navigableOptions,
   mobile,
   drawerHeight,
-  withSearchbox,
+  searchbox,
   children,
+  checkbox,
   fadeEffect,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
@@ -505,7 +508,7 @@ function ComboboxDrawer({
     if (
       highlightedIndex !== null &&
       listRef.current[highlightedIndex] &&
-      withSearchbox &&
+      searchbox &&
       interactionMode === "keyboard"
     ) {
       const element = listRef.current[highlightedIndex];
@@ -528,7 +531,7 @@ function ComboboxDrawer({
         }
       }
     }
-  }, [highlightedIndex, withSearchbox, interactionMode]);
+  }, [highlightedIndex, searchbox, interactionMode]);
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
@@ -555,7 +558,7 @@ function ComboboxDrawer({
               self: css`
                 ${rowStyle({
                   interactionMode,
-                  multiple: withSearchbox,
+                  multiple: !!searchbox,
                   theme: comboboxTheme,
                   mobile: !!mobile,
                   hasNestedOptions,
@@ -581,6 +584,8 @@ function ComboboxDrawer({
     return map;
   }, [navigableOptions, filteredActions.length]);
 
+  const checkboxProps = typeof checkbox === "object" && checkbox;
+
   const generateContent = (): TreeListContent[] => {
     optionByTreeId.current = {};
 
@@ -605,15 +610,20 @@ function ComboboxDrawer({
 
       return (
         <>
-          {multiple && (
+          {checkbox && (
             <Checkbox
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => {}}
+              {...checkboxProps}
               styles={{
+                ...checkboxProps?.styles,
                 containerStyle: css`
                   margin-top: 2px;
                   ${mobile &&
                   css`
                     margin-top: 7px;
-                  `}
+                  `};
 
                   ${mobile && opt?.render
                     ? css`
@@ -622,7 +632,9 @@ function ComboboxDrawer({
                     : opt?.render &&
                       css`
                         margin-top: 7px;
-                      `}
+                      `};
+
+                  ${checkboxProps?.styles?.containerStyle}
                 `,
                 iconStyle: css`
                   ${mobile
@@ -633,7 +645,9 @@ function ComboboxDrawer({
                     : css`
                         width: 8px;
                         height: 8px;
-                      `}
+                      `};
+
+                  ${checkboxProps?.styles?.iconStyle};
                 `,
                 self: css`
                   ${mobile
@@ -644,12 +658,11 @@ function ComboboxDrawer({
                     : css`
                         width: 14px;
                         height: 14px;
-                      `}
+                      `};
+
+                  ${checkboxProps?.styles?.self};
                 `,
               }}
-              type="checkbox"
-              checked={isSelected}
-              onChange={() => {}}
             />
           )}
           {label}
@@ -862,6 +875,8 @@ function ComboboxDrawer({
     return () => container.removeEventListener("scroll", updateFade);
   }, [selectedIndex, finalOptions.length]);
 
+  const searchboxProps = typeof searchbox === "object" && searchbox;
+
   const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps()}
@@ -881,9 +896,9 @@ function ComboboxDrawer({
       $width={refs?.reference?.current?.getBoundingClientRect().width}
       $mobile={mobile}
       $style={styles?.drawerStyle}
-      $withSearchbox={withSearchbox}
+      $searchbox={!!searchbox}
     >
-      {withSearchbox && (
+      {searchbox && (
         <Searchbox
           onKeyDown={handleKeyDown}
           onChange={(e) => {
@@ -898,7 +913,9 @@ function ComboboxDrawer({
           autoComplete="off"
           ref={inputRef}
           value={selectedOptionsLocal.text}
+          {...searchboxProps}
           styles={{
+            ...searchboxProps?.styles,
             containerStyle: css`
               position: sticky;
               background-color: ${mobile
@@ -908,7 +925,7 @@ function ComboboxDrawer({
               height: 38px;
               top: 0;
               ${mobile &&
-              !withSearchbox &&
+              !searchbox &&
               css`
                 transform: translateY(-90px);
               `};
@@ -916,10 +933,12 @@ function ComboboxDrawer({
               css`
                 max-height: 46px;
                 height: 46px;
-              `}
+              `};
+              ${searchboxProps?.styles?.containerStyle};
             `,
             iconStyle: css`
               left: 16px;
+              ${searchboxProps?.styles?.iconStyle};
             `,
             self: css`
               max-height: 35px;
@@ -937,6 +956,8 @@ function ComboboxDrawer({
                   ? comboboxTheme?.mobileBackgroundColor
                   : comboboxTheme?.backgroundColor};
               }
+
+              ${searchboxProps?.styles?.self};
             `,
           }}
         />
@@ -1125,7 +1146,7 @@ function ComboboxDrawer({
 
   if (mobile) {
     const finalFadeEffect =
-      fadeEffect ?? (withSearchbox ? ["bottom"] : ["top", "bottom"]);
+      fadeEffect ?? (searchbox ? ["bottom"] : ["top", "bottom"]);
 
     return createPortal(
       <DrawerContainer
@@ -1182,7 +1203,7 @@ const DrawerWrapper = styled.ul<{
   $theme: ComboboxThemeConfig;
   $style?: CSSProp;
   $mobile?: boolean;
-  $withSearchbox?: boolean;
+  $searchbox?: boolean;
   $hasNestedOptions?: boolean;
   $drawerHeight?: string;
 }>`
@@ -1223,7 +1244,7 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $withSearchbox, $hasNestedOptions, $drawerHeight }) => {
+  ${({ $mobile, $theme, $searchbox, $hasNestedOptions, $drawerHeight }) => {
     const $height = $drawerHeight ?? "220px";
 
     return css`
@@ -1238,7 +1259,7 @@ const DrawerWrapper = styled.ul<{
         min-height: ${$height};
         max-height: ${$height};
         border-width: 0.5;
-        ${!$withSearchbox &&
+        ${!$searchbox &&
         css`
           padding: calc(${$height} * 0.4545) 0;
         `}
