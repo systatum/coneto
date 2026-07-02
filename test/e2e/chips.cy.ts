@@ -16,9 +16,8 @@ describe("Chips", () => {
     context("when double select", () => {
       it("should deselect a chip", () => {
         cy.findByRole("button").click();
-        cy.findByRole("textbox").type("Anime");
+        cy.findByRole("textbox").type("Anim");
         cy.findByText("Anime").dblclick();
-        cy.findByRole("button").click();
       });
     });
   });
