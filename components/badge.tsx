@@ -190,11 +190,11 @@ function Badge({
 
   return (
     <BadgeWrapper
+      aria-label="badge"
       {...props}
+      onClick={onClick}
       id={String(id)}
       className={applyClassName("badge", className)}
-      onClick={onClick}
-      aria-label="badge"
       $theme={badgeTheme}
       $backgroundColor={badgeBackgroundColor}
       $textColor={badgeTextColor}
