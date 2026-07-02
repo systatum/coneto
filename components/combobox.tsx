@@ -118,7 +118,16 @@ export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
     children?: ReactNode;
     navigableOptions?: SelectboxOption[];
     withSearchbox?: boolean;
+    fadeEffect?: ComboboxDrawerFadeEffect[];
   };
+
+export const ComboboxDrawerFadeEffect = {
+  Top: "top",
+  Bottom: "bottom",
+} as const;
+
+export type ComboboxDrawerFadeEffect =
+  (typeof ComboboxDrawerFadeEffect)[keyof typeof ComboboxDrawerFadeEffect];
 
 export interface ComboboxProps
   extends BaseComboboxProps,
@@ -410,6 +419,7 @@ function ComboboxDrawer({
   drawerHeight,
   withSearchbox,
   children,
+  fadeEffect,
 }: ComboboxDrawerProps) {
   const { mode, currentTheme } = useTheme();
   const comboboxTheme = currentTheme?.combobox;
@@ -1114,24 +1124,29 @@ function ComboboxDrawer({
   );
 
   if (mobile) {
+    const finalFadeEffect =
+      fadeEffect ?? (withSearchbox ? ["bottom"] : ["top", "bottom"]);
+
     return createPortal(
       <DrawerContainer
         aria-label="combobox-drawer-mobile"
         $theme={comboboxTheme}
         $mobile={mobile}
       >
-        {!withSearchbox && (
+        {finalFadeEffect?.includes("top") && (
           <FadeTop
             aria-label="combobox-fade-top"
             $theme={comboboxTheme}
             $visible={showFadeTop}
           />
         )}
-        <FadeBottom
-          aria-label="combobox-fade-bottom"
-          $theme={comboboxTheme}
-          $visible={showFadeBottom}
-        />
+        {finalFadeEffect?.includes("bottom") && (
+          <FadeBottom
+            aria-label="combobox-fade-bottom"
+            $theme={comboboxTheme}
+            $visible={showFadeBottom}
+          />
+        )}
         {mainCombobox}
       </DrawerContainer>,
       document.body
