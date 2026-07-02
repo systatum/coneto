@@ -377,7 +377,7 @@ const BasePhonebox = forwardRef<HTMLInputElement, BasePhoneboxProps>(
             navigableOptions={FILTERED_COUNTRY_OPTIONS}
             inputRef={searchInputRef}
             mobile={mobile}
-            withSearchbox
+            searchbox
             floatingStyles={floatingStyles}
             getFloatingProps={getFloatingProps}
             listRef={listRef}
