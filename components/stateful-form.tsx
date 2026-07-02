@@ -2269,6 +2269,14 @@ function FormFields<T extends FieldValues>({
 
                                 ${field.chips?.styles?.controlStyle}
                               `,
+                              chipsContainerStyle: css`
+                                ${mobile &&
+                                css`
+                                  width: fit-content;
+                                  justify-content: end;
+                                `};
+                                ${field.chips?.styles?.chipsContainerStyle}
+                              `,
                             }}
                           />
                         )}
