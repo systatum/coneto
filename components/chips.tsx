@@ -130,6 +130,36 @@ function BaseChips({
     placement: "bottom-start",
   });
 
+  // Keep the highlighted option visible while navigating the list.
+  useEffect(() => {
+    if (
+      listRef.current[highlightedIndex] &&
+      !mobile &&
+      mode === "idle" &&
+      interactionMode === "keyboard"
+    ) {
+      const element = listRef.current[highlightedIndex];
+      const container = refs.floating.current;
+
+      if (element && container) {
+        const searchboxHeight = 34;
+        const elementTop = element.offsetTop;
+        const containerScrollTop = container.scrollTop;
+        const containerHeight = container.clientHeight;
+
+        if (elementTop < containerScrollTop + searchboxHeight) {
+          container.scrollTop = elementTop - searchboxHeight;
+        } else if (
+          elementTop + element.clientHeight >
+          containerScrollTop + containerHeight
+        ) {
+          container.scrollTop =
+            elementTop + element.clientHeight - containerHeight;
+        }
+      }
+    }
+  }, [highlightedIndex, mobile, mode, interactionMode, refs.floating]);
+
   const click = useClick(context);
   const dismiss = useDismiss(context);
   const role = useRole(context);
@@ -232,6 +262,42 @@ function BaseChips({
     }
   }, [isOpen]);
 
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+
+    setInteractionMode("keyboard");
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen) await setIsOpen(true);
+      await setHighlightedIndex((prev) =>
+        Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!isOpen) await setIsOpen(true);
+      await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selectedOption = FILTERED_OPTIONS[highlightedIndex];
+      if (!selectedOption) return;
+
+      const optionId = String(selectedOption.value);
+      const isSelected = selectedOptions?.some((id) => id === optionId);
+
+      const finalSelectedOptions = isSelected
+        ? selectedOptions?.filter((id) => id !== optionId)
+        : [...(selectedOptions ?? []), optionId];
+
+      if (onChange) {
+        onChange(finalSelectedOptions);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      await setIsOpen(false);
+    }
+  };
+
   const finalDrawerHeight = mobile
     ? (drawerHeight ?? "320px")
     : (drawerHeight ?? "220px");
@@ -285,6 +351,7 @@ function BaseChips({
 
       {isOpen && (
         <Combobox.Drawer
+          handleKeyDown={handleKeyDown}
           emptySlate={emptySlate}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
@@ -366,6 +433,7 @@ function BaseChips({
               {!mobile && (
                 <>
                   <Textbox
+                    onKeyDown={handleKeyDown}
                     ref={inputRef}
                     name={name}
                     type="text"
