@@ -91,10 +91,10 @@ export type ComboboxDropdownOption = FieldLaneDropdownOption;
 export interface ComboboxLabelsProps extends SelectboxLabels {}
 
 export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
-  containerStyle?: CSSProp;
   selectboxStyle?: CSSProp;
-  labelStyle?: CSSProp;
   drawerStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  rowContainerStyle?: CSSProp;
 }
 
 export type ComboboxAction = TreeListAction;
@@ -563,7 +563,7 @@ function ComboboxDrawer({
                   mobile: !!mobile,
                   hasNestedOptions,
                   level: 0,
-                })}
+                })};
                 ${action?.styles?.self}
               `,
             },
@@ -1066,6 +1066,8 @@ function ComboboxDrawer({
                 })}
 
                 gap: 20px;
+
+                ${styles?.rowContainerStyle};
               `,
               hierarchyLineStyle: css`
                 border-left-width: 2px;
@@ -1104,6 +1106,8 @@ function ComboboxDrawer({
                 &[data-has-options="false"] {
                   font-weight: 400;
                 }
+
+                ${styles?.rowStyle};
               `,
               arrowGroupStyle: css`
                 [data-has-options="true"] & {
@@ -1134,6 +1138,8 @@ function ComboboxDrawer({
                   level,
                 })}
                 gap: 6px;
+
+                ${styles?.rowStyle}
               `,
             }}
             showHierarchyLine
