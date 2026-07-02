@@ -2190,6 +2190,9 @@ function FormFields<T extends FieldValues>({
                         control={control}
                         render={({ field: controllerField }) => (
                           <Chips
+                            id={id}
+                            name={field.name}
+                            mobile={mobile}
                             label={field.title}
                             helper={field.helper}
                             labelGap={field.labelGap}
@@ -2204,8 +2207,30 @@ function FormFields<T extends FieldValues>({
                               controllerField?.onChange(e);
                               controllerField?.onBlur();
                               field.onChange?.(e);
+
+                              if (onChange) {
+                                onChange(
+                                  (field?.name as keyof T) ?? "chips",
+                                  e.target.value
+                                );
+                              }
                             }}
                             {...field.chips}
+                            onChange={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              const inputValueEvent = {
+                                target: { name: field.name, value: e },
+                              };
+                              field.onChange?.(inputValueEvent);
+
+                              if (onChange) {
+                                onChange(
+                                  (field?.name as keyof T) ?? "chips",
+                                  e
+                                );
+                              }
+                            }}
                             styles={{
                               ...field.chips?.styles,
                               labelStyle: css`
