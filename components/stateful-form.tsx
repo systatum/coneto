@@ -1915,6 +1915,7 @@ function FormFields<T extends FieldValues>({
                         render={({ field: rhf, fieldState }) => (
                           <Moneybox
                             key={index}
+                            mobile={mobile}
                             id={field.id}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
