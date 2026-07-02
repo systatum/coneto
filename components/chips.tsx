@@ -380,8 +380,11 @@ function BaseChips({
               align-items: center;
             `,
             rowContainerStyle: css`
-              padding: 0px 12px;
-              min-height: 32px;
+              ${!mobile &&
+              css`
+                padding: 0px 12px;
+                min-height: 32px;
+              `}
             `,
             drawerStyle: css`
               ${!mobile &&
