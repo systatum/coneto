@@ -258,7 +258,7 @@ const CalendarWrapper = styled.ul<{
     ${$mobile &&
     css`
       position: fixed;
-      bottom: 20px;
+      bottom: 10px;
       min-width: 96dvw;
       left: 50%;
       transform: translateX(-50%);

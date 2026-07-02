@@ -16,12 +16,7 @@ import { MoneyboxCurrencyOption } from "./moneybox";
 import { PhoneboxCountryCode } from "./phonebox";
 import { PinboxParts } from "./pinbox";
 import { SelectboxOption } from "./selectbox";
-import {
-  FormFieldGroup,
-  FormValueType,
-  StatefulForm,
-  StatefulOnChangeType,
-} from "./stateful-form";
+import { FormFieldGroup, StatefulForm } from "./stateful-form";
 import { BodyThemeConfig, ThemeMode } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { darkenColor, lightenColor } from "./../lib/color";
@@ -888,6 +883,570 @@ const ScrollBox = styled.div`
   scrollbar-color: #ccc transparent;
 `;
 
+export const Mobile: Story = {
+  render: () => {
+    const [isFormValid, setIsFormValid] = useState(false);
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+      (data) => data.id === "US" || COUNTRY_CODES[206]
+    );
+
+    if (!DEFAULT_COUNTRY_CODES) {
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+    }
+
+    const FRUIT_OPTIONS: SelectboxOption[] = [
+      { text: "Apple", value: "1" },
+      { text: "Banana", value: "2" },
+      { text: "Orange", value: "3" },
+      { text: "Grape", value: "4" },
+      { text: "Pineapple", value: "5" },
+      { text: "Strawberry", value: "6" },
+      { text: "Watermelon", value: "7" },
+    ];
+
+    const BADGE_OPTIONS: BadgeProps[] = [
+      {
+        id: "1",
+        caption: "Anime",
+      },
+      {
+        id: "2",
+        caption: "Manga",
+      },
+      {
+        id: "3",
+        caption: "Comics",
+      },
+      {
+        id: "4",
+        caption: "Movies",
+      },
+      {
+        id: "5",
+        caption: "Podcasts",
+      },
+      {
+        id: "6",
+        caption: "TV Shows",
+      },
+      {
+        id: "7",
+        caption: "Novels",
+      },
+      {
+        id: "8",
+        caption: "Music",
+      },
+      {
+        id: "9",
+        caption: "Games",
+      },
+      {
+        id: "10",
+        caption: "Webtoons",
+      },
+    ];
+
+    const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
+      { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
+      { id: "USD", name: "US Dollar", symbol: "$" },
+      { id: "EUR", name: "Euro", symbol: "€" },
+      { id: "JPY", name: "Japanese Yen", symbol: "¥" },
+      { id: "GBP", name: "British Pound", symbol: "£" },
+      { id: "SGD", name: "Singapore Dollar", symbol: "$" },
+      { id: "AUD", name: "Australian Dollar", symbol: "$" },
+      { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
+      { id: "KRW", name: "South Korean Won", symbol: "₩" },
+      { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
+    ];
+
+    interface AllCaseValueProps {
+      text: string;
+      time: string;
+      email: string;
+      number: string;
+      password: string;
+      textarea: string;
+      rating: string;
+      check: boolean;
+      chips?: {
+        searchText: string;
+        selectedOptions: string[];
+      };
+      color: string;
+      combo: string[];
+      date: string[];
+      file_drop_box?: File[];
+      file: File[] | undefined;
+      image: File | undefined;
+      money: string;
+      phone: string;
+      thumb_field: boolean;
+      toggle: boolean;
+      signature: string;
+      capsule: string;
+      country_code?: PhoneboxCountryCode;
+      currency: string;
+      pin: string;
+    }
+
+    const [value, setValue] = useState<AllCaseValueProps>({
+      text: "",
+      time: "",
+      email: "",
+      number: "",
+      password: "",
+      textarea: "",
+      rating: "",
+      check: false,
+      chips: {
+        searchText: "",
+        selectedOptions: [],
+      },
+      color: "",
+      combo: [],
+      date: [""],
+      file_drop_box: [] as File[],
+      file: undefined,
+      image: undefined,
+      money: "",
+      phone: "",
+      thumb_field: false,
+      toggle: false,
+      signature: "",
+      capsule: "",
+      country_code: DEFAULT_COUNTRY_CODES,
+      currency: "USD",
+      pin: "",
+    });
+
+    const CAPSULE_TABS: CapsuleTab[] = [
+      {
+        id: "paid",
+        title: "Paid",
+      },
+      {
+        id: "unpaid",
+        title: "Unpaid",
+      },
+    ];
+
+    const PARTS_INPUT: PinboxParts[] = [
+      {
+        type: "static",
+        text: "S",
+      },
+      {
+        type: "alphanumeric",
+      },
+      {
+        type: "digit",
+      },
+      {
+        type: "alphabet",
+      },
+      {
+        type: "static",
+        text: "-",
+      },
+      {
+        type: "alphabet",
+      },
+    ];
+
+    const schema = z.object({
+      text: z.string().min(3, "Text must be at least 3 characters"),
+      email: z.string().email("Please enter a valid email address"),
+      time: z.string().optional(),
+      number: z.string().refine((val) => val === "" || !isNaN(Number(val)), {
+        message: "Number must be numeric",
+      }),
+      password: z.string().min(6, "Password must be at least 6 characters"),
+      textarea: z.string().min(10, "Text must be at least 10 characters"),
+      check: z.boolean(),
+      chips: z.object({
+        searchText: z.string().optional(),
+        selectedOptions: z.array(z.string()).optional(),
+      }),
+      color: z.string().min(4, "Color is required"),
+      combo: z
+        .array(z.string().min(1, "Choose one"))
+        .min(1, "Combo must have at least one item")
+        .refine(
+          (arr) =>
+            arr.every((val) =>
+              FRUIT_OPTIONS.some((opt) => {
+                return opt.value === val;
+              })
+            ),
+          "Invalid value in combo"
+        ),
+      date: z.array(
+        z
+          .string()
+          .nonempty("Choose your date")
+          .refine(
+            (val) =>
+              /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
+            {
+              message: "Invalid date",
+            }
+          )
+      ),
+      file_drop_box: z.any().optional(),
+      file: z
+        .preprocess((value) => {
+          if (value instanceof FileList) return Array.from(value);
+          if (Array.isArray(value)) return value;
+          return [];
+        }, z.array(z.any()))
+        .refine((files) => files.length > 0, {
+          message: "At least one file is required",
+        })
+        .refine((files) => files.every((file) => file.type === "image/jpeg"), {
+          message: "Only JPEG files are allowed",
+        })
+        .refine(
+          (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
+          {
+            message: "Each file must be 5MB or less",
+          }
+        ),
+      image: z
+        .any()
+        .refine(
+          (file) => {
+            return file?.type === "image/jpeg";
+          },
+          {
+            message: "Only JPEG file are allowed",
+          }
+        )
+        .refine((file) => file?.size <= 5 * 1024 * 1024, {
+          message: "File size must be 5MB or less",
+        }),
+      money: z.string().optional(),
+      signature: z.string().min(1, "Signature is required"),
+      phone: z.string().min(8, "Phone number must be 8 digits").optional(),
+      rating: z.string().optional(),
+      thumb_field: z.boolean(),
+      toggle: z.boolean(),
+      capsule: z.string().max(4, "Paid is required"),
+      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
+      country_code: z
+        .object({
+          id: z.string(),
+          name: z.string(),
+          flag: z.string(),
+          code: z.string(),
+        })
+        .optional(),
+    });
+
+    const onFileDropped = async ({
+      error,
+      files,
+      setProgressLabel,
+      succeed,
+    }: OnFileDroppedFunctionArgs) => {
+      const file = files[0];
+      setProgressLabel(`Uploading ${file.name}`);
+
+      return new Promise<void>((resolve) => {
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 20;
+
+          if (progress >= 100) {
+            clearInterval(interval);
+            if (file === null) {
+              error(file, `file ${files[0].name} is not uploaded`);
+            } else {
+              succeed(file);
+            }
+            setProgressLabel(`Uploaded ${files[0].name}`);
+            resolve();
+          }
+        }, 300);
+      });
+    };
+
+    const onComplete = ({
+      failedFiles,
+      setProgressLabel,
+      succeedFiles,
+    }: OnCompleteFunctionArgs) => {
+      setValue((prev) => ({
+        ...prev,
+        file_drop_box: succeedFiles,
+      }));
+      console.log(succeedFiles, "This is succeedFiles");
+      console.log(failedFiles, "This is failedFiles");
+      setProgressLabel(
+        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
+      );
+    };
+
+    const MONTH_NAMES = [
+      { text: "JAN", value: "1" },
+      { text: "FEB", value: "2" },
+      { text: "MAR", value: "3" },
+      { text: "APR", value: "4" },
+      { text: "MAY", value: "5" },
+      { text: "JUN", value: "6" },
+      { text: "JUL", value: "7" },
+      { text: "AUG", value: "8" },
+      { text: "SEP", value: "9" },
+      { text: "OCT", value: "10" },
+      { text: "NOV", value: "11" },
+      { text: "DEC", value: "12" },
+    ];
+
+    const FIELDS: FormFieldGroup[] = [
+      [
+        {
+          name: "text",
+          title: "Text",
+          type: "text",
+          required: true,
+          placeholder: "Enter text",
+        },
+        {
+          name: "email",
+          title: "Email",
+          type: "email",
+          required: true,
+          placeholder: "Enter email address",
+        },
+        {
+          name: "number",
+          title: "Number",
+          type: "number",
+          required: true,
+          placeholder: "Enter number",
+        },
+        {
+          name: "password",
+          title: "Password",
+          type: "password",
+          required: true,
+          placeholder: "Enter password",
+        },
+      ],
+      {
+        name: "time",
+        title: "Time",
+        type: "time",
+        required: true,
+      },
+      {
+        name: "textarea",
+        title: "Textarea",
+        type: "textarea",
+        rows: 3,
+        required: true,
+        placeholder: "Enter text here",
+      },
+      {
+        name: "pin",
+        title: "Pin",
+        type: "pin",
+        required: true,
+        pinbox: {
+          parts: PARTS_INPUT,
+        },
+      },
+      {
+        name: "check",
+        title: "Checkbox",
+        placeholder: "Check",
+        type: "checkbox",
+      },
+      {
+        name: "radio",
+        title: "Radio",
+        placeholder: "Radio",
+        type: "radio",
+      },
+      {
+        name: "color",
+        title: "Color",
+        type: "color",
+        required: true,
+        placeholder: "000000",
+      },
+      {
+        name: "combo",
+        title: "Combo",
+        type: "combo",
+        required: true,
+        placeholder: "Select a fruit...",
+        combobox: {
+          options: FRUIT_OPTIONS,
+        },
+      },
+      {
+        name: "date",
+        title: "Date",
+        type: "date",
+        required: true,
+        placeholder: "Select a date",
+        date: {
+          monthNames: MONTH_NAMES,
+        },
+      },
+      {
+        name: "file_drop_box",
+        title: "File Drop Box",
+        type: "file_drop_box",
+        required: true,
+        fileDropBox: {
+          onComplete,
+          onFileDropped,
+        },
+      },
+      {
+        name: "file",
+        title: "File",
+        type: "file",
+        required: true,
+        fileInputBox: {
+          accept: "image/jpeg",
+        },
+      },
+      {
+        name: "image",
+        title: "Image",
+        type: "image",
+        required: true,
+      },
+      {
+        name: "money",
+        title: "Money",
+        type: "money",
+        required: true,
+        placeholder: "Enter amount",
+        money: {
+          separator: "dot",
+          editableCurrency: true,
+          currencyOptions: CURRENCY_OPTIONS,
+          currency: value.currency,
+        },
+      },
+      {
+        name: "phone",
+        title: "Phone",
+        type: "phone",
+        required: true,
+        placeholder: "Enter phone number",
+      },
+      {
+        name: "signature",
+        title: "Signature",
+        type: "signbox",
+        required: true,
+      },
+      {
+        name: "rating",
+        title: "Rating",
+        type: "rating",
+        required: true,
+      },
+      {
+        name: "thumb_field",
+        title: "Thumb Field",
+        type: "thumbfield",
+        required: true,
+      },
+      {
+        name: "toggle",
+        title: "Toggle",
+        type: "toggle",
+        required: true,
+      },
+      {
+        name: "chips",
+        title: "Chips",
+        type: "chips",
+        required: false,
+        chips: {
+          options: BADGE_OPTIONS,
+          selectedOptions: value.chips.selectedOptions,
+          inputValue: value.chips.searchText,
+        },
+      },
+      {
+        name: "capsule",
+        title: "Monetary Value",
+        type: "capsule",
+        required: true,
+        capsule: {
+          tabs: CAPSULE_TABS,
+        },
+      },
+      [
+        {
+          name: "back",
+          title: "Back",
+          type: "button",
+          required: true,
+          rowJustifyPosition: "end",
+        },
+        {
+          name: "save",
+          title: "Save",
+          type: "button",
+          required: true,
+          disabled: !isFormValid,
+          rowJustifyPosition: "end",
+          button: {
+            variant: "primary",
+          },
+        },
+      ],
+    ];
+
+    return (
+      <StatefulForm
+        mobile
+        styles={{
+          containerStyle: css`
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            width: 100%;
+            padding: 1rem;
+            max-width: 500px;
+          `,
+        }}
+        onChange={({ currentState }) => {
+          const [[key, value]] = Object.entries(currentState);
+
+          setValue((prev) => ({
+            ...prev,
+            ...(key === "chips"
+              ? {
+                  chips: {
+                    ...prev.chips,
+                    [Array.isArray(value) ? "selectedOptions" : "searchText"]:
+                      value,
+                  },
+                }
+              : currentState),
+          }));
+        }}
+        onValidityChange={setIsFormValid}
+        labelSize="14px"
+        fieldSize="14px"
+        fields={FIELDS}
+        formValues={value}
+        validationSchema={schema}
+        mode="onChange"
+      />
+    );
+  },
+};
+
 export const AllCase: Story = {
   render: () => {
     const [isFormValid, setIsFormValid] = useState(false);
@@ -1059,16 +1618,6 @@ export const AllCase: Story = {
       },
     ];
 
-    const handleOptionClicked = (selectedOptions: string[]) => {
-      setValue((prev) => ({
-        ...prev,
-        chips: {
-          ...prev.chips,
-          selectedOptions,
-        },
-      }));
-    };
-
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
       email: z.string().email("Please enter a valid email address"),
@@ -1158,28 +1707,6 @@ export const AllCase: Story = {
         .optional(),
     });
 
-    const onChangeForm = (e?: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const target = e.target;
-        const { name, value } = target;
-
-        let updatedValue: FormValueType = value;
-
-        if (target instanceof HTMLInputElement && target.type === "checkbox") {
-          updatedValue = target.checked;
-        }
-
-        if (target.name === "chips") {
-          setValue((prev) => ({
-            ...prev,
-            chips: { ...prev.chips, ["searchText"]: String(updatedValue) },
-          }));
-        } else {
-          setValue((prev) => ({ ...prev, [name]: updatedValue }));
-        }
-      }
-    };
-
     const onFileDropped = async ({
       error,
       files,
@@ -1261,7 +1788,6 @@ export const AllCase: Story = {
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
         helper: "This field allows you to select a time",
       },
       {
@@ -1430,24 +1956,9 @@ export const AllCase: Story = {
         helper: "This field allows you to select multiple items",
         chips: {
           options: BADGE_OPTIONS,
-          styles: {
-            chipStyle: css`
-              width: 100%;
-              gap: 0.5rem;
-              border-color: transparent;
-            `,
-            chipContainerStyle: css`
-              gap: 4px;
-            `,
-            chipsDrawerStyle: css`
-              min-width: 250px;
-            `,
-          },
-          onOptionClicked: handleOptionClicked,
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,
         },
-        onChange: onChangeForm,
       },
       {
         name: "capsule",
@@ -1469,6 +1980,8 @@ export const AllCase: Story = {
       },
     ];
 
+    console.log(value.chips.searchText);
+
     return (
       <StatefulForm
         styles={{
@@ -1482,12 +1995,19 @@ export const AllCase: Story = {
           `,
         }}
         onChange={({ currentState }) => {
-          const { chips, ...rest } = currentState;
-          void chips;
+          const [[key, value]] = Object.entries(currentState);
 
           setValue((prev) => ({
             ...prev,
-            ...rest,
+            ...(key === "chips"
+              ? {
+                  chips: {
+                    ...prev.chips,
+                    [Array.isArray(value) ? "selectedOptions" : "searchText"]:
+                      value,
+                  },
+                }
+              : currentState),
           }));
         }}
         onValidityChange={setIsFormValid}
@@ -1620,7 +2140,6 @@ export const AllCaseDisabled: Story = {
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
         helper: "This field allows you to select a time",
       },
       {
