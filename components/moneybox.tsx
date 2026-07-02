@@ -393,7 +393,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
             navigableOptions={FILTERED_CURRENCY_OPTIONS}
             inputRef={currencyInputRef}
             mobile={mobile}
-            withSearchbox
+            searchbox
             floatingStyles={floatingStyles}
             getFloatingProps={getFloatingProps}
             listRef={listRef}
