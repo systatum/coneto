@@ -211,6 +211,7 @@ function BaseChips({
                 self: css`
                   cursor: pointer;
                   width: 100%;
+                  background-color: transparent;
                   ${mobile &&
                   css`
                     font-size: 18px;
