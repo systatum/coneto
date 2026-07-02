@@ -192,11 +192,27 @@ function SeparatorAction({
   id,
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
+  const bodyTheme = currentTheme?.body;
   const separatorTheme = currentTheme?.separator;
 
   if (hidden) {
     return;
   }
+
+  const finalSubMenu = (props: SeparatorActionSubMenu) =>
+    subMenu?.({
+      ...props,
+      show: (content, options) =>
+        props?.show(content, {
+          ...options,
+          drawerStyle: css`
+            color: ${bodyTheme?.textColor};
+            background-color: ${separatorTheme?.tooltipBackgroundColor};
+
+            ${options?.drawerStyle}
+          `,
+        }),
+    });
 
   return (
     <Tooltip
@@ -236,7 +252,7 @@ function SeparatorAction({
         variant="outline-default"
         icon={icon}
         aria-label="separator-action"
-        subMenu={subMenu}
+        subMenu={finalSubMenu}
         showSubMenuOn="self"
         onMouseDown={(e) => onClick?.(e)}
         disabled={disabled}
