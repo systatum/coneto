@@ -54,7 +54,7 @@ describe("Chips", () => {
       background_color: string;
       text_color: string;
       circle_color: string;
-      selectedOptions: BadgeProps[];
+      selectedOptions: string[];
     }
 
     const [inputValue, setInputValue] = useState<InputValueProps>({
@@ -80,19 +80,6 @@ describe("Chips", () => {
       }
     };
 
-    const handleOptionClicked = (badge: BadgeProps) => {
-      const isAlreadySelected = inputValue.selectedOptions.some(
-        (data) => data.id === badge.id
-      );
-
-      setInputValue((prev) => ({
-        ...prev,
-        selectedOptions: isAlreadySelected
-          ? prev.selectedOptions.filter((data) => data.id !== badge.id)
-          : [...prev.selectedOptions, badge],
-      }));
-    };
-
     return (
       <Chips
         inputValue={inputValue.search}
@@ -110,7 +97,12 @@ describe("Chips", () => {
             max-width: 300px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={(selectedOptions: string[]) =>
+          setInputValue((prev) => ({
+            ...prev,
+            selectedOptions,
+          }))
+        }
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         creatable

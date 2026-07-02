@@ -66,7 +66,7 @@ const meta: Meta<typeof Chips> = {
       control: "boolean",
       description: "If true, allows creating new chips not present in options.",
     },
-    onOptionClicked: {
+    onChange: {
       action: "clicked",
       description: "Callback fired when a chip option is clicked.",
     },
@@ -390,7 +390,7 @@ export const Default: Story = {
             max-width: 300px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
@@ -626,7 +626,7 @@ export const Mobile: Story = {
             max-width: 300px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
@@ -745,7 +745,7 @@ export const DarkBackground: Story = {
             justify-content: start;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
       />
@@ -973,7 +973,7 @@ export const Deletable: Story = {
             max-width: 250px;
           `,
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS}
         missingOptionForm={MissingOptionForm}
@@ -1363,7 +1363,7 @@ export const CustomRenderer: Story = {
             </Tooltip>
           );
         }}
-        onOptionClicked={handleOptionClicked}
+        onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
         missingOptionForm={MissingOptionForm}
