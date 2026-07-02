@@ -664,6 +664,7 @@ const darkSeparator = createSeparatorTheme(darkBody, {
     "rgb(43, 43, 43) 0px 2px 2px inset, rgb(130, 130, 130) 0px -1px 1px inset",
   titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
+  tooltipBackgroundColor: "rgb(62, 69, 89)",
 });
 
 const darkSignbox = createSignboxTheme(darkBody, darkFieldLane);
