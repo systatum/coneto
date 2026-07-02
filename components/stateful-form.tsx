@@ -540,7 +540,9 @@ function FormFields<T extends FieldValues>({
             width: 100%;
           `;
 
-        const isButton = visibleFields.find((f) => f.type === "button");
+        const isButtonRow =
+          visibleFields.length > 0 &&
+          visibleFields.every((field) => field.type === "button");
 
         const mobileRowFormFieldStyle =
           mobile &&
@@ -552,7 +554,7 @@ function FormFields<T extends FieldValues>({
             flex-direction: column;
             justify-content: center;
 
-            ${isButton &&
+            ${isButtonRow &&
             css`
               min-height: 48px;
               padding: 0px;
@@ -595,7 +597,7 @@ function FormFields<T extends FieldValues>({
                 : field?.labelPosition;
               const isLast = index === visibleFields.length - 1;
               const showSeparator =
-                mobile && !isLast && Array.isArray(group) && !isButton;
+                mobile && !isLast && Array.isArray(group) && !isButtonRow;
               const label = mobile ? null : field?.title;
               const placeholder = mobile
                 ? (field.placeholder ?? field.title)
