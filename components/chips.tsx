@@ -181,9 +181,12 @@ function BaseChips({
               styles={{
                 self: css`
                   cursor: pointer;
-                  width: 100%;
-                  background-color: transparent;
                   border-color: transparent;
+                  width: 100%;
+                  background-color: ${badge?.backgroundColor
+                    ? badge?.backgroundColor
+                    : "transparent"};
+
                   ${mobile &&
                   css`
                     font-size: 18px;
@@ -400,11 +403,6 @@ function BaseChips({
               css`
                 padding: 0px;
               `};
-
-              ${mode === "create" &&
-              css`
-                min-width: 240px;
-              `}
 
               ${styles?.chipsDrawerStyle};
             `,
