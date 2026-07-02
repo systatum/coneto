@@ -49,7 +49,7 @@ interface BaseChipsProps {
   missingOptionLabel?: string;
   creatable?: boolean;
   selectedOptions?: string[];
-  onOptionClicked?: (badgeIds: string[]) => void;
+  onChange?: (selectedOptions: string[]) => void;
   missingOptionForm?:
     | ReactNode
     | ((props?: MissingOptionFormProps) => ReactNode);
@@ -94,7 +94,7 @@ function BaseChips({
   id,
   missingOptionForm,
   name = "search",
-  onOptionClicked,
+  onChange,
   options = [],
   renderer,
   selectedOptions = [],
@@ -337,7 +337,7 @@ function BaseChips({
           }}
           onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
             if (!Array.isArray(selectedOptions)) return;
-            onOptionClicked?.(selectedOptions as string[]);
+            onChange?.(selectedOptions as string[]);
           }}
           setSelectedOptionsLocal={(selectedOptionsLocal?: SelectboxOption) => {
             setInputValue?.({
