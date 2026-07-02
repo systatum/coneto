@@ -8,14 +8,12 @@ import {
   RiCalendar2Fill,
   RiDeleteBinLine,
   RiFileCopyLine,
-  RiFileList3Line,
   RiGitBranchLine,
   RiInboxArchiveLine,
   RiUserAddLine,
 } from "@remixicon/react";
 import { Calendar } from "./calendar";
 import { css } from "styled-components";
-import { useTheme } from "./../theme";
 
 const meta: Meta<typeof Separator> = {
   title: "Stage/Separator",
@@ -151,30 +149,14 @@ export const WithActions: Story = {
   },
   render: (args) => {
     const ACTIONS: SeparatorAction[] = [
-      { icon: { image: RiUserAddLine }, caption: "Invite" },
-      { icon: { image: RiGitBranchLine }, caption: "Branch" },
-      { icon: { image: RiFileList3Line }, caption: "Specs", alwaysShow: false },
-    ];
-
-    return <Separator {...args} actions={ACTIONS} />;
-  },
-};
-
-export const WithSubMenu: Story = {
-  args: {
-    title: "Introduces the Antrikan Mobile",
-  },
-  render: (args) => {
-    const { currentTheme } = useTheme();
-    const bodyTheme = currentTheme.body;
-
-    const ACTIONS: SeparatorAction[] = [
       {
         icon: { image: RiUserAddLine },
+        caption: "Invite",
         subMenu: ({ list }) => list(TIP_MENU_PROJECT),
       },
       {
         icon: { image: RiGitBranchLine },
+        caption: "Branch",
         subMenu: ({ show }) =>
           show(
             <>
@@ -187,8 +169,6 @@ export const WithSubMenu: Story = {
             {
               drawerStyle: css`
                 padding: 10px;
-                color: ${bodyTheme.textColor};
-                background-color: ${bodyTheme.backgroundColor};
                 display: flex;
                 flex-direction: column;
               `,
@@ -197,6 +177,7 @@ export const WithSubMenu: Story = {
       },
       {
         icon: { image: RiCalendar2Fill },
+        alwaysShow: false,
         subMenu: ({ render }) => render(<Calendar />),
       },
     ];
