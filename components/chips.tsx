@@ -335,6 +335,7 @@ function BaseChips({
               `}
             `,
           }}
+          fadeEffect={hasNoFilter ? [] : ["bottom"]}
           onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
             if (!Array.isArray(selectedOptions)) return;
             onChange?.(selectedOptions as string[]);
