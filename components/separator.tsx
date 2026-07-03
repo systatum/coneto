@@ -204,7 +204,8 @@ function SeparatorAction({
   const buttonTheme = currentTheme?.button;
   const separatorTheme = currentTheme?.separator;
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCaptionOpen, setIsCaptionOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   if (hidden) {
     return;
@@ -238,7 +239,7 @@ function SeparatorAction({
       id={id}
       className={applyClassName("separator-action", className)}
       dialog={caption}
-      open={isOpen}
+      open={isCaptionOpen}
       safeAreaAriaLabels={safeAreaArialabels}
       dialogPlacement={dialogPlacement}
       styles={{
@@ -254,7 +255,7 @@ function SeparatorAction({
             transform 0.2s ease;
 
           ${!alwaysShow &&
-          !isOpen &&
+          !isDrawerOpen &&
           css`
             opacity: 0;
             pointer-events: none;
@@ -274,8 +275,10 @@ function SeparatorAction({
         id={id}
         variant="default"
         icon={icon}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
+        onMouseEnter={() => setIsCaptionOpen(true)}
+        onMouseLeave={() => setIsCaptionOpen(false)}
+        open={isDrawerOpen}
+        onOpen={(isDrawerOpen) => setIsDrawerOpen(isDrawerOpen)}
         aria-label="separator-action"
         subMenu={finalSubMenu}
         dialogPlacement={dialogPlacement}
@@ -296,7 +299,7 @@ function SeparatorAction({
             &:hover {
               color: inherit;
             }
-            ${isOpen &&
+            ${isDrawerOpen &&
             css`
               background-color: ${buttonTheme?.["default"]
                 ?.activeBackgroundColor};
