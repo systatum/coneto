@@ -37,7 +37,7 @@ export interface BadgeStyles {
 }
 
 export interface BadgeAction extends Omit<BaseAction, "onClick" | "caption"> {
-  onClick?: (badge?: BadgeProps) => void;
+  onClick?: (props: { badge?: BadgeProps; event?: React.MouseEvent }) => void;
   size?: number;
   styles?: ButtonStyles;
   title?: string;
@@ -219,18 +219,21 @@ function Badge({
               icon={action.icon}
               styles={action?.styles}
               title={action.title}
-              onClick={(e) => {
-                e.stopPropagation();
+              onMouseDown={(event) => {
+                event.stopPropagation();
                 if (action.onClick) {
                   action.onClick({
-                    id,
-                    caption,
-                    metadata,
-                    variant,
-                    backgroundColor,
-                    textColor,
-                    circleColor,
-                    withCircle,
+                    badge: {
+                      id,
+                      caption,
+                      metadata,
+                      variant,
+                      backgroundColor,
+                      textColor,
+                      circleColor,
+                      withCircle,
+                    },
+                    event,
                   });
                 }
               }}
