@@ -29,6 +29,7 @@ interface BaseCapsuleProps {
   fontSize?: number;
   disabled?: boolean;
   showError?: boolean;
+  mobile?: boolean;
 }
 
 interface BaseCapsuleStyles {
@@ -48,6 +49,7 @@ function BaseCapsule({
   fontSize = 12,
   disabled,
   showError,
+  mobile,
 }: BaseCapsuleProps) {
   const { currentTheme } = useTheme();
   const capsuleTheme = currentTheme.capsule;
@@ -62,6 +64,27 @@ function BaseCapsule({
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
     []
   );
+
+  const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
+
+  useEffect(() => {
+    if (!mobile || !tabRefs.current.length) return;
+
+    const calculateMaxWidth = () => {
+      if (!mobile || !tabRefs.current.length) return;
+
+      const widths: number[] = tabRefs.current.map(
+        (el) => el?.getBoundingClientRect().width ?? 0
+      );
+
+      const largest: number = widths.length ? Math.max(...widths) : 0;
+
+      setMaxTabWidth((prev) => (prev !== largest ? largest : prev));
+    };
+
+    calculateMaxWidth();
+  }, [tabs, mobile]);
+
   const [isInitialized, setIsInitialized] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -191,25 +214,27 @@ function BaseCapsule({
         }}
       />
 
-      <HoverBorder
-        aria-label="hover-capsule-box"
-        $style={styles?.tabStyle}
-        $theme={capsuleTheme}
-        $activeBackgroundColor={activeBackgroundColor}
-        initial={{
-          left: hoverPosition.left,
-          width: hoverPosition.width,
-        }}
-        animate={{
-          left: hoverPosition.left,
-          width: hoverPosition.width,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 250,
-          damping: 30,
-        }}
-      />
+      {!mobile && (
+        <HoverBorder
+          aria-label="hover-capsule-box"
+          $style={styles?.tabStyle}
+          $theme={capsuleTheme}
+          $activeBackgroundColor={activeBackgroundColor}
+          initial={{
+            left: hoverPosition.left,
+            width: hoverPosition.width,
+          }}
+          animate={{
+            left: hoverPosition.left,
+            width: hoverPosition.width,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 250,
+            damping: 30,
+          }}
+        />
+      )}
 
       {tabs.map((tab, index) => {
         const isActive = activeTab === tab.id;
@@ -220,8 +245,11 @@ function BaseCapsule({
             $isActive={isActive}
             $activeColor={activeColor}
             $disabled={disabled}
+            $tabsLength={tabs?.length}
             role="tab"
             key={index}
+            $mobile={mobile}
+            $width={mobile ? maxTabWidth : undefined}
             className={applyClassName("capsule-pill", tab?.className)}
             id={tab?.id}
             ref={setTabRef(index)}
@@ -407,6 +435,9 @@ const Tab = styled.div<{
   $disabled?: boolean;
   $activeColor?: string;
   $theme?: CapsuleThemeConfig;
+  $mobile?: boolean;
+  $width?: number;
+  $tabsLength?: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -428,6 +459,17 @@ const Tab = styled.div<{
 
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
 
+  ${({ $mobile, $width, $tabsLength }) =>
+    $mobile && $tabsLength >= 4
+      ? css`
+          width: 100%;
+        `
+      : $mobile &&
+        !!$width &&
+        css`
+          width: ${$width}px;
+        `};
+
   ${({ $disabled }) =>
     $disabled &&
     css`
@@ -435,9 +477,7 @@ const Tab = styled.div<{
       user-select: none;
     `};
 
-  ${({ $activeTabStyle }) => css`
-    ${$activeTabStyle}
-  `}
+  ${({ $activeTabStyle }) => $activeTabStyle}
 `;
 
 export { Capsule };

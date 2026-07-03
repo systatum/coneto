@@ -574,6 +574,7 @@ export interface SeparatorThemeConfig {
   lineShadow?: string;
   titleColor?: string;
   backgroundTitleColor?: string;
+  tooltipBackgroundColor?: string;
 }
 
 // signbox.tsx

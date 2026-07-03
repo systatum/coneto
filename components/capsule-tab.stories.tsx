@@ -22,6 +22,7 @@ It supports both **controlled** and **uncontrolled** modes, allowing flexible st
 ### ✨ Features
 - 🧭 **Tab navigation** using capsule-style UI
 - 🔁 Supports **controlled & uncontrolled state**
+- 📱 Optional \`mobile\` appearance with larger touch targets
 - 🎨 Customizable **active tab background**
 - 🧩 Flexible **content rendering per tab**
 - 🎯 Fully customizable **styles per section**
@@ -38,12 +39,18 @@ It supports both **controlled** and **uncontrolled** modes, allowing flexible st
 - Controlled via \`activeTab\` + \`onTabChange\`
 - Parent manages selected tab state
 
+#### Mobile Mode
+- Enable the \`mobile\` prop to render larger tabs optimized for touch interactions
+- Uses a \`40px\` height and \`16px\` font size
+- Tabs are centered within the available width for a consistent mobile layout
+
 ---
 
 ### 📌 Usage Guidelines
 - Use for **section switching** inside a single page
 - Keep tab titles **short and clear**
 - Use controlled mode when syncing with URL / global state
+- Use the \`mobile\` prop for mobile layouts or interfaces that benefit from larger touch targets
         `,
       },
     },
@@ -232,31 +239,90 @@ export const Default: Story = {
       },
     ];
 
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          width: "100%",
-        }}
-      >
-        <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"} />
+    return <CapsuleTab tabs={TABS_ITEMS} activeTab={"2"} />;
+  },
+};
+
+export const Mobile: Story = {
+  render: () => {
+    const WriteTabContent = () => {
+      const [value, setValue] = useState({
+        write: "",
+      });
+
+      const onChangeValue = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setValue((prev) => ({ ...prev, [name]: value }));
+      };
+      return (
         <div
           style={{
+            padding: "0.8rem",
+            fontSize: "0.875rem",
             display: "flex",
-            flexDirection: "row",
-            gap: "4px",
-            width: "100%",
-            justifyContent: "end",
+            flexDirection: "column",
+            gap: "0.5rem",
           }}
         >
-          <Button>Close</Button>
-          <Button disabled variant="primary">
-            Comment
-          </Button>
+          <h3
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            Write Tab
+          </h3>
+          <p>{generateSentence()}</p>
+
+          <Textbox name="write" value={value.write} onChange={onChangeValue} />
         </div>
-      </div>
-    );
+      );
+    };
+
+    const ReviewTabContent = () => {
+      return (
+        <div
+          style={{
+            padding: "0.8rem",
+            fontSize: "0.875rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+          }}
+        >
+          <h3
+            style={{
+              fontWeight: 500,
+            }}
+          >
+            Review Tab
+          </h3>
+          <p>
+            This tab is meant to review the content that has been submitted. It
+            includes multiple paragraphs to simulate a longer layout.
+          </p>
+          <p>
+            Vestibulum feugiat, libero a viverra consequat, lacus mi laoreet
+            enim, at tristique velit quam a urna. Suspendisse potenti. In hac
+            habitasse platea dictumst. Proin vel justo ac mauris laoreet
+            sagittis.
+          </p>
+        </div>
+      );
+    };
+
+    const TABS_ITEMS: CapsuleTabTab[] = [
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent key={"write-tab"} />,
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent key={"review-tab"} />,
+      },
+    ];
+
+    return <CapsuleTab mobile tabs={TABS_ITEMS} activeTab={"2"} />;
   },
 };

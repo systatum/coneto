@@ -1,9 +1,12 @@
 import styled, { css, CSSProp } from "styled-components";
 import { useTheme } from "./../theme/provider";
-import { Button } from "./button";
+import { Button, ButtonSubMenu } from "./button";
 import { Tooltip } from "./tooltip";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
+import { ReactNode, useState } from "react";
+import { TipMenuItemProps } from "./tip-menu";
+import { DialogPlacement } from "@/lib/floating-placement";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -75,17 +78,20 @@ function Separator({
             key={index}
             {...action}
             alwaysShow={action?.alwaysShow ?? true}
+            dialogPlacement={
+              action?.dialogPlacement ??
+              (textFloat === "right" ? "bottom-left" : "bottom-right")
+            }
             styles={{
               ...action?.styles,
               arrowStyle: css`
                 ${textFloat === "right"
                   ? css`
-                      right: 9px;
+                      left: 8px;
                     `
                   : css`
-                      left: 9px;
-                    `}
-
+                      right: 8px;
+                    `};
                 ${action?.styles?.arrowStyle}
               `,
               containerStyle: css`
@@ -163,13 +169,19 @@ export interface SeparatorAction extends BaseAction {
   alwaysShow?: boolean;
   styles?: SeparatorActionStyles;
   id?: string;
+  safeAreaAriaLabels?: string[];
   className?: string;
+  subMenu?: (props: SeparatorActionSubMenu) => ReactNode;
+  dialogPlacement?: DialogPlacement;
 }
+
+export type SeparatorActionSubMenu = ButtonSubMenu;
+export type SeparatorActionSubMenuList = TipMenuItemProps;
 
 export interface SeparatorActionStyles {
   self?: CSSProp;
   containerStyle?: CSSProp;
-  drawerStyle?: CSSProp;
+  captionDrawerStyle?: CSSProp;
   arrowStyle?: CSSProp;
 }
 
@@ -181,21 +193,55 @@ function SeparatorAction({
   onClick,
   styles,
   disabled,
+  subMenu,
   className,
+  dialogPlacement,
   id,
+  safeAreaAriaLabels: _safeAreaAriaLabels = [],
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
+  const bodyTheme = currentTheme?.body;
+  const buttonTheme = currentTheme?.button;
   const separatorTheme = currentTheme?.separator;
+
+  const [isCaptionOpen, setIsCaptionOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   if (hidden) {
     return;
   }
+
+  const finalSubMenu = (props: SeparatorActionSubMenu) =>
+    subMenu?.({
+      ...props,
+      show: (content, options) =>
+        props?.show(content, {
+          ...options,
+          drawerStyle: css`
+            color: ${bodyTheme?.textColor};
+            background-color: ${separatorTheme?.tooltipBackgroundColor};
+
+            ${options?.drawerStyle}
+          `,
+        }),
+    });
+
+  const safeAreaArialabels = [
+    "tip-menu",
+    "tip-menu-spacer",
+    "calendar",
+    "render-spacer",
+    ..._safeAreaAriaLabels,
+  ];
 
   return (
     <Tooltip
       id={id}
       className={applyClassName("separator-action", className)}
       dialog={caption}
+      open={isCaptionOpen}
+      safeAreaAriaLabels={safeAreaArialabels}
+      dialogPlacement={dialogPlacement}
       styles={{
         arrowStyle: styles?.arrowStyle,
         containerStyle: css`
@@ -209,6 +255,7 @@ function SeparatorAction({
             transform 0.2s ease;
 
           ${!alwaysShow &&
+          !isDrawerOpen &&
           css`
             opacity: 0;
             pointer-events: none;
@@ -221,15 +268,22 @@ function SeparatorAction({
 
           ${styles?.containerStyle}
         `,
-        drawerStyle: styles?.drawerStyle,
+        drawerStyle: styles?.captionDrawerStyle,
       }}
     >
       <Button
         id={id}
-        variant="outline-default"
+        variant="default"
         icon={icon}
+        onMouseEnter={() => setIsCaptionOpen(true)}
+        onMouseLeave={() => setIsCaptionOpen(false)}
+        open={isDrawerOpen}
+        onOpen={(isDrawerOpen) => setIsDrawerOpen(isDrawerOpen)}
         aria-label="separator-action"
-        onClick={(e) => onClick?.(e)}
+        subMenu={finalSubMenu}
+        dialogPlacement={dialogPlacement}
+        showSubMenuOn="self"
+        onMouseDown={(e) => onClick?.(e)}
         disabled={disabled}
         styles={{
           containerStyle: css`
@@ -240,10 +294,16 @@ function SeparatorAction({
             height: 24px;
             width: 24px;
             padding: 2px;
+            border: 1px solid ${bodyTheme?.borderColor};
             background-color: ${separatorTheme?.backgroundTitleColor};
             &:hover {
               color: inherit;
             }
+            ${isDrawerOpen &&
+            css`
+              background-color: ${buttonTheme?.["default"]
+                ?.activeBackgroundColor};
+            `}
             ${styles?.self}
           `,
         }}

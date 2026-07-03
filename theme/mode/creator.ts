@@ -1445,6 +1445,7 @@ export function createSeparatorTheme(
       lineShadow: "inset 0 2px 2px #ffffff, inset 0 -1px 1px #7a7a7a",
       titleColor: "#6b7280",
       backgroundTitleColor: body.backgroundColor,
+      tooltipBackgroundColor: "rgb(236, 236, 236)",
     },
     ...themeConfigurations
   );
