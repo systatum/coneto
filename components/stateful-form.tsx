@@ -1168,8 +1168,9 @@ function FormFields<T extends FieldValues>({
                         control={control}
                         name={field.name as Path<T>}
                         render={({ field: controllerField }) => {
-                          const titleCheckbox =
-                            field.title ?? field.placeholder;
+                          const titleCheckbox = mobile
+                            ? (field.title ?? field.placeholder)
+                            : field.title;
                           const placeholderCheckbox = mobile
                             ? undefined
                             : field.placeholder;
@@ -1270,6 +1271,7 @@ function FormFields<T extends FieldValues>({
                                     justify-content: end;
                                   `};
                                   min-height: 34px;
+                                  justify-content: center;
                                   ${mobileBodyStyle};
 
                                   ${field.checkbox?.styles?.bodyStyle}
@@ -1294,7 +1296,9 @@ function FormFields<T extends FieldValues>({
                         control={control}
                         name={field.name as Path<T>}
                         render={({ field: controllerField }) => {
-                          const titleRadio = field.title ?? field.placeholder;
+                          const titleRadio = mobile
+                            ? (field.title ?? field.placeholder)
+                            : field.title;
                           const placeholderRadio = mobile
                             ? undefined
                             : field.placeholder;
@@ -1366,12 +1370,15 @@ function FormFields<T extends FieldValues>({
                                   ${field.radio?.styles?.containerStyle}
                                 `,
                                 bodyStyle: css`
+                                  min-height: 34px;
+                                  justify-content: center;
                                   ${!field.title &&
                                   hasFieldTitle &&
                                   css`
                                     min-height: 60px;
                                     justify-content: end;
                                   `};
+
                                   ${mobileBodyStyle};
 
                                   ${field.radio?.styles?.bodyStyle}
@@ -1460,8 +1467,10 @@ function FormFields<T extends FieldValues>({
                               `,
                               inputWrapperStyle: css`
                                 ${mobileInputStyle};
-
-                                justify-content: space-between;
+                                ${mobile &&
+                                css`
+                                  justify-content: space-between;
+                                `}
                                 ${field.phonebox?.styles?.inputWrapperStyle}
                               `,
                               self: css`
@@ -1470,9 +1479,11 @@ function FormFields<T extends FieldValues>({
                                   font-size: ${fieldSize};
                                 `}
                                 ${mobileInputStyle};
-                                text-align: end;
-
-                                width: fit-content;
+                                ${mobile &&
+                                css`
+                                  text-align: end;
+                                  width: fit-content;
+                                `}
                                 ${field.phonebox?.styles?.inputWrapperStyle};
                               `,
                               containerStyle: css`
