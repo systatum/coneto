@@ -1421,8 +1421,6 @@ export const AllCase: Story = {
       },
     ];
 
-    console.log(value.chips.searchText);
-
     return (
       <StatefulForm
         styles={{
