@@ -6,6 +6,7 @@ import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
 import { ReactNode, useState } from "react";
 import { TipMenuItemProps } from "./tip-menu";
+import { DialogPlacement } from "@/lib/floating-placement";
 
 export const SeparatorTextFloat = {
   Left: "left",
@@ -77,17 +78,20 @@ function Separator({
             key={index}
             {...action}
             alwaysShow={action?.alwaysShow ?? true}
+            dialogPlacement={
+              action?.dialogPlacement ??
+              (textFloat === "right" ? "bottom-left" : "bottom-right")
+            }
             styles={{
               ...action?.styles,
               arrowStyle: css`
                 ${textFloat === "right"
                   ? css`
-                      right: 9px;
+                      left: 8px;
                     `
                   : css`
-                      left: 9px;
-                    `}
-
+                      right: 8px;
+                    `};
                 ${action?.styles?.arrowStyle}
               `,
               containerStyle: css`
@@ -168,6 +172,7 @@ export interface SeparatorAction extends BaseAction {
   safeAreaAriaLabels?: string[];
   className?: string;
   subMenu?: (props: SeparatorActionSubMenu) => ReactNode;
+  dialogPlacement?: DialogPlacement;
 }
 
 export type SeparatorActionSubMenu = ButtonSubMenu;
@@ -190,6 +195,7 @@ function SeparatorAction({
   disabled,
   subMenu,
   className,
+  dialogPlacement,
   id,
   safeAreaAriaLabels: _safeAreaAriaLabels = [],
 }: SeparatorAction) {
@@ -231,9 +237,10 @@ function SeparatorAction({
     <Tooltip
       id={id}
       className={applyClassName("separator-action", className)}
-      dialog={subMenu ? null : caption}
-      onVisibilityChange={(isOpen) => setIsOpen(isOpen)}
+      dialog={caption}
+      open={isOpen}
       safeAreaAriaLabels={safeAreaArialabels}
+      dialogPlacement={dialogPlacement}
       styles={{
         arrowStyle: styles?.arrowStyle,
         containerStyle: css`
@@ -267,9 +274,11 @@ function SeparatorAction({
         id={id}
         variant="default"
         icon={icon}
-        open={isOpen}
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
         aria-label="separator-action"
         subMenu={finalSubMenu}
+        dialogPlacement={dialogPlacement}
         showSubMenuOn="self"
         onMouseDown={(e) => onClick?.(e)}
         disabled={disabled}
