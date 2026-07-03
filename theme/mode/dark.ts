@@ -699,6 +699,7 @@ const darkStatusbar = createStatusbarTheme({
 
 const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
+  mobileRowFrameBackgroundColor: "rgb(4, 4, 4)",
 });
 
 const darkTimeline = createTimelineTheme(darkBody, darkButton, {
