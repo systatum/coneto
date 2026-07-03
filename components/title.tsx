@@ -275,13 +275,15 @@ function BaseTitleSection({
 
           const resolvedIconSize = ICON_SIZE[size] * 0.8;
 
-          const filteredActionsWithSize = filteredActions?.map((action) => ({
-            ...action,
-            icon: {
-              ...action.icon,
-              size: action?.icon?.size ?? resolvedIconSize,
-            },
-          }));
+          const filteredActionsWithSize = filteredActions
+            ?.filter((action) => !action?.hidden)
+            ?.map((action) => ({
+              ...action,
+              icon: {
+                ...action.icon,
+                size: action?.icon?.size ?? resolvedIconSize,
+              },
+            }));
 
           return filteredActionsWithSize.map((action, actionIndex) => {
             const variant = action?.variant ?? "ghost";
