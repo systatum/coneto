@@ -810,6 +810,75 @@ describe("StatefulForm", () => {
     });
   });
 
+  context("chips", () => {
+    function StatefulChips() {
+      const [value, setValue] = useState({
+        chips: {
+          selectedOptions: [],
+          searchText: "",
+        },
+      });
+      return (
+        <StatefulForm
+          fields={[
+            {
+              name: "chips",
+              title: "Chips",
+              type: "chips",
+              required: false,
+              chips: {
+                options: BADGE_OPTIONS_SHORT,
+                selectedOptions: value.chips.selectedOptions,
+                inputValue: value.chips.searchText,
+              },
+            },
+          ]}
+          onChange={({ currentState }) => {
+            const [[key, value]] = Object.entries(currentState);
+
+            setValue((prev) => ({
+              ...prev,
+              ...(key === "chips"
+                ? {
+                    chips: {
+                      ...prev.chips,
+                      [Array.isArray(value) ? "selectedOptions" : "searchText"]:
+                        value,
+                    },
+                  }
+                : currentState),
+            }));
+          }}
+          formValues={value}
+          mode="onChange"
+        />
+      );
+    }
+
+    context("when select one option", () => {
+      it("renders option selected", () => {
+        cy.mount(<StatefulChips />);
+        cy.findByRole("button").click();
+
+        cy.findAllByLabelText("chips-selected").should("not.exist");
+
+        cy.findByText("Anime").click();
+        cy.findByText("Manga").click();
+
+        cy.wait(400);
+
+        cy.findAllByLabelText("chips-selected")
+          .eq(0)
+          .should("exist")
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+        cy.findAllByLabelText("chips-selected")
+          .eq(1)
+          .should("exist")
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+      });
+    });
+  });
+
   context("height", () => {
     it("mostly renders with 34px", () => {
       cy.mount(

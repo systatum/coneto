@@ -377,15 +377,6 @@ export const Default: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        styles={{
-          chipOptionStyle: css`
-            width: 100%;
-            gap: 8px;
-          `,
-          chipsDrawerStyle: css`
-            max-width: 300px;
-          `,
-        }}
         onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -609,12 +600,6 @@ export const Mobile: Story = {
         mobile
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        styles={{
-          chipOptionStyle: css`
-            width: 100%;
-            gap: 8px;
-          `,
-        }}
         onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -723,12 +708,6 @@ export const DarkBackground: Story = {
         setInputValue={(e) =>
           setInputValue((prev) => ({ ...prev, search: e.target.value }))
         }
-        styles={{
-          chipOptionStyle: css`
-            width: 100%;
-            gap: 8px;
-          `,
-        }}
         onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS as BadgeProps[]}
@@ -944,15 +923,6 @@ export const Deletable: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        styles={{
-          chipOptionStyle: css`
-            width: 100%;
-            gap: 8px;
-          `,
-          chipsDrawerStyle: css`
-            max-width: 250px;
-          `,
-        }}
         onChange={handleOptionClicked}
         selectedOptions={inputValue.selectedOptions}
         options={BADGE_OPTIONS}
@@ -1067,7 +1037,7 @@ export const CustomRenderer: Story = {
         style={{
           display: "flex",
           flexDirection: "column",
-          minWidth: "240px",
+          minWidth: "238px",
         }}
       >
         <div
@@ -1199,15 +1169,6 @@ export const CustomRenderer: Story = {
         combobox: {
           placeholder: "Search your role...",
           options: EMPLOYEE_OPTIONS,
-          styles: {
-            selectboxStyle: css`
-              border: 1px solid #d1d5db;
-              &:focus {
-                border-color: #61a9f9;
-                box-shadow: 0 0 0 1px #61a9f9;
-              }
-            `,
-          },
         },
       },
     ];
@@ -1273,16 +1234,6 @@ export const CustomRenderer: Story = {
       <Chips
         inputValue={inputValue.search}
         setInputValue={onChangeValue}
-        styles={{
-          chipOptionStyle: css`
-            width: 100%;
-            gap: 8px;
-          `,
-
-          chipsDrawerStyle: css`
-            max-width: 250px;
-          `,
-        }}
         renderer={({ id, caption }) => {
           const isOpen = openMap[id] || false;
           return (
@@ -1301,22 +1252,6 @@ export const CustomRenderer: Story = {
                 setOpenMap((prev) => ({ ...prev, [id]: isOpen }));
               }}
               dialog={contentDialog}
-              styles={{
-                containerStyle: css`
-                  width: fit-content;
-                `,
-                arrowStyle: css`
-                  background-color: #e5e7eb;
-                  border: 1px solid #e5e7eb;
-                `,
-                drawerStyle: css`
-                  width: fit-content;
-                  left: 1rem;
-                  background-color: white;
-                  color: black;
-                  border: 1px solid #e5e7eb;
-                `,
-              }}
             >
               <Badge
                 id={id}
