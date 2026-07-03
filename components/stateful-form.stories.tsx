@@ -1059,16 +1059,6 @@ export const AllCase: Story = {
       },
     ];
 
-    const handleOptionClicked = (selectedOptions: string[]) => {
-      setValue((prev) => ({
-        ...prev,
-        chips: {
-          ...prev.chips,
-          selectedOptions,
-        },
-      }));
-    };
-
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
       email: z.string().email("Please enter a valid email address"),
@@ -1158,28 +1148,6 @@ export const AllCase: Story = {
         .optional(),
     });
 
-    const onChangeForm = (e?: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const target = e.target;
-        const { name, value } = target;
-
-        let updatedValue: FormValueType = value;
-
-        if (target instanceof HTMLInputElement && target.type === "checkbox") {
-          updatedValue = target.checked;
-        }
-
-        if (target.name === "chips") {
-          setValue((prev) => ({
-            ...prev,
-            chips: { ...prev.chips, ["searchText"]: String(updatedValue) },
-          }));
-        } else {
-          setValue((prev) => ({ ...prev, [name]: updatedValue }));
-        }
-      }
-    };
-
     const onFileDropped = async ({
       error,
       files,
@@ -1261,7 +1229,6 @@ export const AllCase: Story = {
         title: "Time",
         type: "time",
         required: true,
-        placeholder: "Enter time",
         helper: "This field allows you to select a time",
       },
       {
@@ -1430,24 +1397,9 @@ export const AllCase: Story = {
         helper: "This field allows you to select multiple items",
         chips: {
           options: BADGE_OPTIONS,
-          styles: {
-            chipStyle: css`
-              width: 100%;
-              gap: 0.5rem;
-              border-color: transparent;
-            `,
-            chipContainerStyle: css`
-              gap: 4px;
-            `,
-            chipsDrawerStyle: css`
-              min-width: 250px;
-            `,
-          },
-          onOptionClicked: handleOptionClicked,
           selectedOptions: value.chips.selectedOptions,
           inputValue: value.chips.searchText,
         },
-        onChange: onChangeForm,
       },
       {
         name: "capsule",
@@ -1469,6 +1421,8 @@ export const AllCase: Story = {
       },
     ];
 
+    console.log(value.chips.searchText);
+
     return (
       <StatefulForm
         styles={{
@@ -1482,12 +1436,19 @@ export const AllCase: Story = {
           `,
         }}
         onChange={({ currentState }) => {
-          const { chips, ...rest } = currentState;
-          void chips;
+          const [[key, value]] = Object.entries(currentState);
 
           setValue((prev) => ({
             ...prev,
-            ...rest,
+            ...(key === "chips"
+              ? {
+                  chips: {
+                    ...prev.chips,
+                    [Array.isArray(value) ? "selectedOptions" : "searchText"]:
+                      value,
+                  },
+                }
+              : currentState),
           }));
         }}
         onValidityChange={setIsFormValid}
