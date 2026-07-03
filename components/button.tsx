@@ -367,16 +367,19 @@ function Button({
           >
             {subMenu({
               list: (subMenuList, { withFilter } = {}) => (
-                <TipMenu
-                  setIsOpen={() => {
-                    setIsOpen(false);
+                <>
+                  <Spacer aria-label="tip-menu-spacer" $placement={placement} />
+                  <TipMenu
+                    setIsOpen={() => {
+                      setIsOpen(false);
 
-                    setHovered("original");
-                  }}
-                  withFilter={withFilter ?? false}
-                  subMenuList={subMenuList}
-                  size={tipMenuSize}
-                />
+                      setHovered("original");
+                    }}
+                    withFilter={withFilter ?? false}
+                    subMenuList={subMenuList}
+                    size={tipMenuSize}
+                  />
+                </>
               ),
               show: (children, { withArrow, arrowStyle, drawerStyle } = {}) => (
                 <Tooltip.Container
@@ -401,7 +404,12 @@ function Button({
                   dialog={children}
                 />
               ),
-              render: (children) => children,
+              render: (children) => (
+                <>
+                  <Spacer aria-label="render-spacer" $placement={placement} />
+                  {children}
+                </>
+              ),
             })}
           </DropdownWrapper>,
           document.body
@@ -420,6 +428,25 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
   z-index: 9992999;
 
   ${({ $style }) => $style};
+`;
+
+const Spacer = styled.div<{ $placement?: Placement; $spacerStyle?: CSSProp }>`
+  position: absolute;
+  background-color: transparent;
+  width: 100%;
+  height: 30px;
+  left: 0;
+
+  ${({ $placement }) =>
+    $placement?.startsWith("top")
+      ? css`
+          bottom: -18px;
+        `
+      : css`
+          top: -8px;
+        `}
+
+  ${({ $spacerStyle }) => $spacerStyle}
 `;
 
 const ButtonLabel = styled.span<{
