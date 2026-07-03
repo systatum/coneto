@@ -60,14 +60,14 @@ describe("Datebox", () => {
   });
 
   context("styles", () => {
-    context("containerStyle", () => {
+    context("calendarDrawerStyle", () => {
       context("when given padding 40px", () => {
         it("should render padding with 40px", () => {
           cy.mount(
             <Datebox
               mobile
               styles={{
-                containerStyle: css`
+                calendarDrawerStyle: css`
                   padding: 40px;
                 `,
               }}
