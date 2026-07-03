@@ -622,6 +622,7 @@ export interface StatusbarThemeConfig extends BodyThemeConfig {
 
 export interface StatefulFormThemeConfig extends BodyThemeConfig {
   rowFrameBackgroundColor: string;
+  mobileRowFrameBackgroundColor: string;
 }
 
 // table.tsx
