@@ -1549,6 +1549,7 @@ function FormFields<T extends FieldValues>({
                               textInputGroupStyle: css`
                                 ${mobileInputStyle};
                                 ${mobile &&
+                                field.title &&
                                 css`
                                   width: fit-content;
                                 `};
@@ -2067,6 +2068,7 @@ function FormFields<T extends FieldValues>({
 
                                   ${mobileInputStyle};
                                   ${mobile &&
+                                  field.title &&
                                   css`
                                     text-align: right;
                                     padding-right: 40px;
@@ -2171,8 +2173,11 @@ function FormFields<T extends FieldValues>({
                                 ${field.combobox?.styles?.bodyStyle}
                               `,
                               controlStyle: css`
-                                ${mobileControlStyle}
-                                min-width: 140px;
+                                ${field.title &&
+                                css`
+                                  ${mobileControlStyle}
+                                  min-width: 140px;
+                                `}
 
                                 ${field.combobox?.styles?.controlStyle}
                               `,
@@ -2184,8 +2189,9 @@ function FormFields<T extends FieldValues>({
 
                                 ${mobileInputStyle};
                                 ${mobile &&
+                                field.title &&
                                 css`
-                                  text-align: right;
+                                  text-align: end;
                                   padding-right: 40px;
                                 `};
 
