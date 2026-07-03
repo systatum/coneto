@@ -22,6 +22,7 @@ It supports both **controlled** and **uncontrolled** modes, allowing flexible st
 ### ✨ Features
 - 🧭 **Tab navigation** using capsule-style UI
 - 🔁 Supports **controlled & uncontrolled state**
+- 📱 Optional \`mobile\` appearance with larger touch targets
 - 🎨 Customizable **active tab background**
 - 🧩 Flexible **content rendering per tab**
 - 🎯 Fully customizable **styles per section**
@@ -38,12 +39,18 @@ It supports both **controlled** and **uncontrolled** modes, allowing flexible st
 - Controlled via \`activeTab\` + \`onTabChange\`
 - Parent manages selected tab state
 
+#### Mobile Mode
+- Enable the \`mobile\` prop to render larger tabs optimized for touch interactions
+- Uses a \`40px\` height and \`16px\` font size
+- Tabs are centered within the available width for a consistent mobile layout
+
 ---
 
 ### 📌 Usage Guidelines
 - Use for **section switching** inside a single page
 - Keep tab titles **short and clear**
 - Use controlled mode when syncing with URL / global state
+- Use the \`mobile\` prop for mobile layouts or interfaces that benefit from larger touch targets
         `,
       },
     },
