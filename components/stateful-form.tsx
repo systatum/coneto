@@ -2330,6 +2330,8 @@ function FormFields<T extends FieldValues>({
                                 ${mobile &&
                                 css`
                                   width: fit-content;
+                                  justify-content: end;
+                                  flex-direction: row-reverse;
                                 `};
                                 ${field.chips?.styles?.chipsContainerStyle}
                               `,
