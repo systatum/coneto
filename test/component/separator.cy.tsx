@@ -107,13 +107,13 @@ describe("Separator", () => {
 
     context("when given list()", () => {
       it("shows the tip menu", () => {
-        cy.findAllByLabelText("separator-action").eq(0).click();
+        cy.findAllByLabelText("separator-action").eq(0).realHover();
         cy.findByLabelText("tip-menu").should("exist");
       });
 
       context("when clicking the tip menu item", () => {
         it("should render the console", () => {
-          cy.findAllByLabelText("separator-action").eq(0).click();
+          cy.findAllByLabelText("separator-action").eq(0).realHover();
           cy.findByLabelText("tip-menu").should("exist");
           cy.findByText("Duplicate Project").click();
           cy.get("@onDuplicate").should("have.been.calledOnce");
@@ -124,7 +124,7 @@ describe("Separator", () => {
     context("with given show()", () => {
       context("with clicking the button", () => {
         it("should renders the show with tooltip container", () => {
-          cy.findAllByLabelText("separator-action").eq(1).click();
+          cy.findAllByLabelText("separator-action").eq(1).realHover();
           cy.findByLabelText("tooltip-drawer").should("exist");
           cy.findByText("Branch:").should("exist");
           cy.findByText(
@@ -137,7 +137,7 @@ describe("Separator", () => {
     context("with given render()", () => {
       context("with given Calendar component", () => {
         it("should the customize rendering", () => {
-          cy.findAllByLabelText("separator-action").eq(2).click();
+          cy.findAllByLabelText("separator-action").eq(2).realHover();
           cy.get(".coneto-calendar").should("exist");
         });
       });
