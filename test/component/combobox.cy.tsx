@@ -164,6 +164,40 @@ describe("Combobox", () => {
           );
         });
       });
+
+      context("when typing and less than 5 option", () => {
+        it("should render drawer with fit content (less than 420px)", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductCombobox options={FRUIT_OPTIONS} drawerHeight={"60dvh"} />
+          );
+
+          cy.findByRole("textbox").click();
+
+          cy.window().then((win) => {
+            const expectedHeight = `${win.innerHeight * 0.6}px`;
+
+            cy.findByLabelText("combobox-drawer").should(
+              "have.css",
+              "height",
+              expectedHeight
+            );
+          });
+
+          cy.findByRole("textbox").click();
+
+          cy.window().then((win) => {
+            const expectedHeight = `${win.innerHeight * 0.6}px`;
+
+            cy.findByLabelText("combobox-drawer").should(
+              "have.css",
+              "height",
+              expectedHeight
+            );
+          });
+        });
+      });
     });
 
     context("when given mobile", () => {

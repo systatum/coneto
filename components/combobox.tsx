@@ -877,6 +877,8 @@ function ComboboxDrawer({
 
   const searchboxProps = typeof searchbox === "object" && searchbox;
 
+  const hasFewOptions = finalOptions?.length < 5;
+
   const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps()}
@@ -886,6 +888,7 @@ function ComboboxDrawer({
         }
         floatingRef.current = node;
       }}
+      $hasFewOptions={hasFewOptions}
       $hasNestedOptions={hasNestedOptions}
       style={mobile ? {} : { ...floatingStyles }}
       $theme={comboboxTheme}
@@ -1011,8 +1014,14 @@ function ComboboxDrawer({
               emptySlateStyle: css`
                 margin-left: 0px;
                 min-height: 36px;
-                margin-top: 0px;
+                margin-top: 4px;
+                margin-bottom: 4px;
                 border: none;
+                text-align: center;
+              `,
+              emptyItemSlateStyle: css`
+                margin-top: 4px;
+                margin-bottom: 4px;
               `,
               actionStyle: css`
                 padding-left: 12px;
@@ -1211,6 +1220,7 @@ const DrawerWrapper = styled.ul<{
   $mobile?: boolean;
   $searchbox?: boolean;
   $hasNestedOptions?: boolean;
+  $hasFewOptions?: boolean;
   $drawerHeight?: string;
 }>`
   *,
@@ -1250,11 +1260,18 @@ const DrawerWrapper = styled.ul<{
     border-radius: 4px;
   }
 
-  ${({ $mobile, $theme, $searchbox, $hasNestedOptions, $drawerHeight }) => {
+  ${({
+    $mobile,
+    $theme,
+    $searchbox,
+    $hasNestedOptions,
+    $drawerHeight,
+    $hasFewOptions,
+  }) => {
     const $height = $drawerHeight ?? "220px";
 
     return css`
-      min-height: fit-content;
+      height: ${$hasFewOptions ? "fit-content" : $height};
       max-height: ${$height};
 
       ${$mobile &&

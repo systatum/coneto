@@ -495,7 +495,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         aria-expanded={isOpen}
         $disabled={disabled}
         onClick={() => {
-          if (multiple) inputRef.current?.focus();
+          inputRef.current?.focus();
         }}
       >
         {isLoading && (
