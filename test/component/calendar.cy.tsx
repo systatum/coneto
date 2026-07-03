@@ -73,6 +73,30 @@ describe("Calendar ", () => {
           "300px"
         );
       });
+
+      context("when clicking the combobox", () => {
+        it("would be focused on the combo input", () => {
+          cy.mount(
+            <Calendar
+              selectedDates={valueWeekend}
+              monthNames={MONTH_NAMES}
+              disableWeekend
+            />
+          );
+          cy.findByLabelText("calendar-wrapper").should(
+            "have.css",
+            "width",
+            "300px"
+          );
+          cy.findByLabelText("combobox-month").should("not.exist");
+
+          cy.findAllByLabelText("calendar-select-date").eq(0).click();
+          cy.findByLabelText("combobox-month")
+            .should("exist")
+            .and("not.be.focused");
+          cy.findByLabelText("combobox-month").click().and("be.focused");
+        });
+      });
     });
   });
 
