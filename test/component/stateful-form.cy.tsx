@@ -661,28 +661,75 @@ describe("StatefulForm", () => {
     });
 
     context("chips", () => {
+      function ProductStatefulChips() {
+        const [value, setValue] = useState({
+          chips: {
+            selectedOptions: [],
+            searchText: "",
+          },
+        });
+
+        return (
+          <StatefulForm
+            mobile
+            fields={[
+              {
+                name: "chips",
+                title: "Chips",
+                type: "chips",
+                required: false,
+                chips: {
+                  options: BADGE_OPTIONS_SHORT,
+                  selectedOptions: value.chips.selectedOptions,
+                  inputValue: value.chips.searchText,
+                },
+              },
+            ]}
+            onChange={({ currentState }) => {
+              const [[key, value]] = Object.entries(currentState);
+
+              setValue((prev) => ({
+                ...prev,
+                ...(key === "chips"
+                  ? {
+                      chips: {
+                        ...prev.chips,
+                        [Array.isArray(value)
+                          ? "selectedOptions"
+                          : "searchText"]: value,
+                      },
+                    }
+                  : currentState),
+              }));
+            }}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+      }
+
+      it("renders with row reverse", () => {
+        cy.mount(<ProductStatefulChips />);
+
+        cy.findByLabelText("chips-container-input").click();
+
+        cy.findByLabelText("combobox-drawer-mobile")
+          .should("exist")
+          .and("have.css", "bottom", "10px")
+          .and("have.css", "position", "fixed");
+
+        cy.findByText("Anime").click();
+        cy.findByText("Manga").click();
+
+        cy.findByLabelText("chips-container-input").should(
+          "have.css",
+          "flex-direction",
+          "row-reverse"
+        );
+      });
       context("when clicking the button", () => {
         it("renders in the bottom of screen", () => {
-          cy.mount(
-            <StatefulForm
-              fields={[
-                {
-                  name: "chips",
-                  title: "Chips",
-                  type: "chips",
-                  required: false,
-                  chips: {
-                    options: BADGE_OPTIONS_SHORT,
-                    selectedOptions: allValue.chips.selectedOptions,
-                    inputValue: allValue.chips.searchText,
-                  },
-                },
-              ]}
-              formValues={{}}
-              mode="onChange"
-              mobile
-            />
-          );
+          cy.mount(<ProductStatefulChips />);
 
           cy.findByLabelText("chips-container-input").click();
 
