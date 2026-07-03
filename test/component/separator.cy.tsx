@@ -230,6 +230,7 @@ describe("Separator", () => {
                   caption: "Invite",
                   onClick: () => console.log("this is invite"),
                   alwaysShow: false,
+                  subMenu: ({ list }) => list(TIP_MENU_PROJECT),
                 },
               ]}
             />
@@ -242,8 +243,8 @@ describe("Separator", () => {
             .and("have.length", 1);
         });
 
-        context("when hovering the separator", () => {
-          it("should shows the actions", () => {
+        context("when opening the drawer", () => {
+          it("the button not hide", () => {
             cy.findAllByLabelText("separator-action")
               .should("not.be.visible")
               .and("have.length", 1);
@@ -252,6 +253,25 @@ describe("Separator", () => {
             cy.findAllByLabelText("separator-action")
               .should("be.visible")
               .and("have.length", 1);
+          });
+        });
+
+        context("when hovering the separator", () => {
+          it("should shows the actions", () => {
+            cy.findAllByLabelText("separator-action")
+              .should("not.be.visible")
+              .and("have.length", 1);
+
+            cy.findByLabelText("separator-container").realClick().wait(100);
+            cy.findByLabelText("tip-menu").should("not.exist");
+
+            cy.findAllByLabelText("separator-action")
+              .should("be.visible")
+              .and("have.length", 1)
+              .click();
+
+            cy.findByLabelText("tip-menu").should("exist");
+            cy.findAllByLabelText("separator-action").should("be.visible");
           });
         });
       });
