@@ -245,6 +245,7 @@ function BaseCapsule({
             $isActive={isActive}
             $activeColor={activeColor}
             $disabled={disabled}
+            $tabsLength={tabs?.length}
             role="tab"
             key={index}
             $mobile={mobile}
@@ -436,6 +437,7 @@ const Tab = styled.div<{
   $theme?: CapsuleThemeConfig;
   $mobile?: boolean;
   $width?: number;
+  $tabsLength?: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -457,12 +459,16 @@ const Tab = styled.div<{
 
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
 
-  ${({ $mobile, $width }) =>
-    $mobile &&
-    !!$width &&
-    css`
-      width: ${$width}px;
-    `};
+  ${({ $mobile, $width, $tabsLength }) =>
+    $mobile && $tabsLength >= 4
+      ? css`
+          width: 100%;
+        `
+      : $mobile &&
+        !!$width &&
+        css`
+          width: ${$width}px;
+        `};
 
   ${({ $disabled }) =>
     $disabled &&
