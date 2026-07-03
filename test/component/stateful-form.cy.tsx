@@ -325,7 +325,7 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
 
 describe("StatefulForm", () => {
   context("mobile", () => {
-    it("renders with background #f3f4f6", () => {
+    it("renders with background rgb(236, 236, 236)", () => {
       cy.mount(
         <StatefulForm
           fields={ALL_INPUT}
@@ -338,7 +338,7 @@ describe("StatefulForm", () => {
       cy.findAllByLabelText("stateful-form-row").should(
         "have.css",
         "background-color",
-        "rgb(243, 244, 246)"
+        "rgb(236, 236, 236)"
       );
     });
 
