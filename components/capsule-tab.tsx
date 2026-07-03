@@ -10,6 +10,7 @@ export interface CapsuleTabProps {
   activeTab?: string;
   activeBackgroundColor?: string;
   styles?: CapsuleTabStyles;
+  mobile?: boolean;
   onTabChange?: (id: string) => void;
   children?: ReactNode;
   id?: string;
@@ -39,6 +40,7 @@ function CapsuleTab({
   onTabChange,
   children,
   className,
+  mobile,
   id,
 }: CapsuleTabProps) {
   const { currentTheme } = useTheme();
@@ -64,6 +66,21 @@ function CapsuleTab({
 
   const activeContent = tabs.filter((tab) => tab.id === selected);
 
+  const mobileCapsuleWrapperStyle =
+    mobile &&
+    css`
+      justify-content: center;
+    `;
+
+  const mobileTabStyle =
+    mobile &&
+    css`
+      text-align: center;
+      justify-content: center;
+      font-size: 16px;
+      height: 40px;
+    `;
+
   return (
     <CapsuleTabWrapper
       $theme={capsuleTabTheme}
@@ -73,11 +90,14 @@ function CapsuleTab({
       id={id}
     >
       <Capsule
+        mobile={mobile}
         styles={{
           capsuleWrapperStyle: css`
             padding-left: 5px;
             padding-right: 5px;
             background-color: ${capsuleTabTheme?.backgroundColor};
+
+            ${mobileCapsuleWrapperStyle}
 
             ${styles?.capsuleWrapperStyle};
           `,
@@ -87,6 +107,8 @@ function CapsuleTab({
           `,
           tabStyle: css`
             border-radius: 12px;
+            ${mobileTabStyle};
+
             ${styles?.tabStyle};
           `,
         }}

@@ -3,6 +3,7 @@ import {
   CapsuleTab,
   CapsuleTabTab,
   CapsuleTabStyles,
+  CapsuleTabProps,
 } from "./../../components/capsule-tab";
 import { useState } from "react";
 
@@ -14,18 +15,15 @@ describe("Capsule Tab", () => {
 
   function ProductCapsuleTab({
     withCallback,
-    styles,
-    tabs,
+    ...props
   }: {
-    styles?: CapsuleTabStyles;
     withCallback?: boolean;
-    tabs?: CapsuleTabTab[];
-  }) {
+  } & Partial<CapsuleTabProps>) {
     const [activeTab, setActiveTab] = useState("2");
 
     return (
       <CapsuleTab
-        tabs={tabs ? tabs : TABS_ITEMS}
+        tabs={TABS_ITEMS}
         activeTab={activeTab}
         onTabChange={
           withCallback
@@ -35,10 +33,91 @@ describe("Capsule Tab", () => {
               }
             : undefined
         }
-        styles={styles}
+        {...props}
       />
     );
   }
+
+  context("mobile", () => {
+    it("render with justify-center for the whole screen", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findAllByLabelText("capsule")
+        .eq(0)
+        .should("have.css", "justify-content", "center");
+    });
+
+    it("render with pill capsule with height 40px and font-size 16px", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findAllByRole("tab")
+        .eq(0)
+        .should("have.css", "height", "40px")
+        .and("have.css", "font-size", "16px");
+      cy.findAllByRole("tab")
+        .eq(1)
+        .should("have.css", "height", "40px")
+        .and("have.css", "font-size", "16px");
+    });
+
+    it("render the pill capsule with same width get from the biggest", () => {
+      const TABS_ITEMS: CapsuleTabTab[] = [
+        { id: "1", title: "Write", content: "Write Tab" },
+        { id: "2", title: "Reviewing this tab", content: "Review Tab" },
+      ];
+      cy.mount(<ProductCapsuleTab mobile tabs={TABS_ITEMS} />);
+      cy.findAllByRole("tab").then(($tabs) => {
+        const firstWidth = $tabs.eq(0).outerWidth();
+        const secondWidth = $tabs.eq(1).outerWidth();
+
+        expect(firstWidth).to.equal(secondWidth);
+      });
+    });
+
+    context("when given 3 capsule", () => {
+      it("render the pill capsule with same width get from the biggest", () => {
+        const TABS_ITEMS: CapsuleTabTab[] = [
+          { id: "1", title: "Write", content: "Write Tab" },
+          { id: "2", title: "Reviewing this tab", content: "Review Tab" },
+          { id: "3", title: "Nothing", content: "Review Tab" },
+        ];
+        cy.mount(<ProductCapsuleTab mobile tabs={TABS_ITEMS} />);
+        cy.findAllByRole("tab").then(($tabs) => {
+          const firstWidth = $tabs.eq(0).outerWidth();
+          const secondWidth = $tabs.eq(1).outerWidth();
+          const thirdWidth = $tabs.eq(2).outerWidth();
+
+          expect(firstWidth).to.equal(secondWidth);
+          expect(firstWidth).to.equal(thirdWidth);
+        });
+      });
+    });
+
+    context("when given 4 capsule", () => {
+      it("render the pill capsule with 100% width", () => {
+        const TABS_ITEMS: CapsuleTabTab[] = [
+          { id: "1", title: "Write", content: "Write Tab" },
+          { id: "2", title: "Reviewing this tab", content: "Review Tab" },
+          { id: "3", title: "Nothing", content: "Review Tab" },
+          { id: "4", title: "Test", content: "Review Tab" },
+        ];
+        cy.mount(<ProductCapsuleTab mobile tabs={TABS_ITEMS} />);
+        cy.findAllByRole("tab").then(($tabs) => {
+          const firstWidth = $tabs.eq(0).outerWidth();
+          const secondWidth = $tabs.eq(1).outerWidth();
+          const thirdWidth = $tabs.eq(2).outerWidth();
+          const fourthWidth = $tabs.eq(3).outerWidth();
+
+          expect(firstWidth).to.equal(secondWidth);
+          expect(firstWidth).to.equal(thirdWidth);
+          expect(firstWidth).to.equal(fourthWidth);
+        });
+      });
+    });
+
+    it("render without hover capsule", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findByLabelText("hover-capsule-box").should("not.exist");
+    });
+  });
 
   context("styles", () => {
     context("capsuleWrapperStyle", () => {
