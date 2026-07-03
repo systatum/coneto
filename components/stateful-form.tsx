@@ -2637,6 +2637,10 @@ function FormFields<T extends FieldValues>({
                               `,
                               capsuleWrapperStyle: css`
                                 height: 34px;
+                                ${mobile &&
+                                css`
+                                  transform: translateX(10px);
+                                `}
                                 ${field.capsule?.styles?.capsuleWrapperStyle}
                               `,
                               containerStyle: css`
