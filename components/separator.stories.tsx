@@ -178,6 +178,7 @@ export const WithActions: Story = {
       {
         icon: { image: RiCalendar2Fill },
         alwaysShow: false,
+        caption: "Calendar",
         subMenu: ({ render }) => render(<Calendar />),
       },
     ];
