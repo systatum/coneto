@@ -560,6 +560,7 @@ function BaseCalendar({
               padding: 0.5rem;
               font-size: 0.875rem;
               min-width: 300px;
+              max-width: 300px;
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
