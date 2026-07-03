@@ -29,6 +29,7 @@ interface BaseCapsuleProps {
   fontSize?: number;
   disabled?: boolean;
   showError?: boolean;
+  mobile?: boolean;
 }
 
 interface BaseCapsuleStyles {
@@ -48,6 +49,7 @@ function BaseCapsule({
   fontSize = 12,
   disabled,
   showError,
+  mobile,
 }: BaseCapsuleProps) {
   const { currentTheme } = useTheme();
   const capsuleTheme = currentTheme.capsule;
@@ -191,25 +193,27 @@ function BaseCapsule({
         }}
       />
 
-      <HoverBorder
-        aria-label="hover-capsule-box"
-        $style={styles?.tabStyle}
-        $theme={capsuleTheme}
-        $activeBackgroundColor={activeBackgroundColor}
-        initial={{
-          left: hoverPosition.left,
-          width: hoverPosition.width,
-        }}
-        animate={{
-          left: hoverPosition.left,
-          width: hoverPosition.width,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 250,
-          damping: 30,
-        }}
-      />
+      {!mobile && (
+        <HoverBorder
+          aria-label="hover-capsule-box"
+          $style={styles?.tabStyle}
+          $theme={capsuleTheme}
+          $activeBackgroundColor={activeBackgroundColor}
+          initial={{
+            left: hoverPosition.left,
+            width: hoverPosition.width,
+          }}
+          animate={{
+            left: hoverPosition.left,
+            width: hoverPosition.width,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 250,
+            damping: 30,
+          }}
+        />
+      )}
 
       {tabs.map((tab, index) => {
         const isActive = activeTab === tab.id;
