@@ -2625,6 +2625,7 @@ function FormFields<T extends FieldValues>({
                         render={({ field: controllerField }) => (
                           <Capsule
                             id={field.id}
+                            mobile={mobile}
                             name={field.name}
                             label={field.title}
                             labelGap={field.labelGap}
