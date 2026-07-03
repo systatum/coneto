@@ -851,6 +851,8 @@ function FormFields<T extends FieldValues>({
                   }
 
                   case "button": {
+                    const defaultVariant = field?.button?.variant ?? "default";
+
                     const mobileButtonStyle =
                       mobile &&
                       css`
@@ -860,7 +862,13 @@ function FormFields<T extends FieldValues>({
                         `};
                         border-radius: 0px;
                         width: 100%;
+
+                        ${defaultVariant === "default" &&
+                        css`
+                          background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
+                        `}
                       `;
+
                     return (
                       <Button
                         key={index}
@@ -873,6 +881,8 @@ function FormFields<T extends FieldValues>({
                             ? field.button?.title
                             : field.placeholder
                         }
+                        activeBackgroundColor={"red"}
+                        variant={defaultVariant}
                         styles={{
                           ...field.button?.styles,
                           self: css`
@@ -884,6 +894,7 @@ function FormFields<T extends FieldValues>({
                             height: 34px;
                             font-size: ${labelSize ?? "12px"};
                             ${mobileButtonStyle};
+
                             ${field.button?.styles?.self};
                           `,
                           containerStyle: css`
@@ -907,9 +918,9 @@ function FormFields<T extends FieldValues>({
                         }}
                         onClick={(e) => {
                           if (field?.button?.onClick) {
-                            field?.button?.onClick(e);
+                            field?.button?.onClick?.(e);
                           } else {
-                            field.onClick(e);
+                            field?.onClick?.(e);
                           }
                         }}
                         disabled={field.disabled || disabled}
@@ -2646,7 +2657,9 @@ function FormFields<T extends FieldValues>({
                                 ${mobile &&
                                 css`
                                   transform: translateX(10px);
+                                  background-color: transparent;
                                 `}
+
                                 ${field.capsule?.styles?.capsuleWrapperStyle}
                               `,
                               containerStyle: css`
