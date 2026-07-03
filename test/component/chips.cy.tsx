@@ -365,7 +365,31 @@ describe("Chips", () => {
       });
     });
 
-    context("chipContainerStyle", () => {});
+    context("chipsContainerStyle", () => {
+      context("when given gap 20px", () => {
+        it("should render gap with 20px between selected and button trigger", () => {
+          cy.mount(
+            <ProductChips
+              styles={{
+                chipsContainerStyle: css`
+                  gap: 20px;
+                `,
+              }}
+            />
+          );
+          cy.findByRole("button").click();
+
+          cy.findByText("Anime").click();
+          cy.findByText("Manga").click();
+
+          cy.findByLabelText("chips-container-input").should(
+            "have.css",
+            "gap",
+            "20px"
+          );
+        });
+      });
+    });
 
     context("chipsSelectedStyle", () => {
       context("when given radius 20px", () => {
