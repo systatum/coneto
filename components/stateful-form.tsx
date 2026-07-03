@@ -1777,6 +1777,20 @@ function FormFields<T extends FieldValues>({
                         controllerField?.onChange(e);
                         controllerField?.onBlur();
                         field.onChange?.(e);
+                        if (onChange) {
+                          onChange(field.name as keyof T, e.target.value);
+                        }
+                      }}
+                      onChange={(value) => {
+                        controllerField?.onChange(value);
+                        controllerField?.onBlur();
+                        const inputValueEvent = {
+                          target: { name: field.name ?? "chips", value },
+                        };
+                        field.onChange?.(inputValueEvent);
+                        if (onChange) {
+                          onChange(field.name as keyof T, value);
+                        }
                       }}
                       {...field.chips}
                       styles={{
@@ -2083,10 +2097,8 @@ function FormFields<T extends FieldValues>({
   );
 }
 
-export interface StatefulFormLabelProps extends Omit<
-  LabelHTMLAttributes<HTMLLabelElement>,
-  "label" | "style"
-> {
+export interface StatefulFormLabelProps
+  extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
   helper?: string;
   styles: { self?: CSSProp };
