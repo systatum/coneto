@@ -547,7 +547,7 @@ function FormFields<T extends FieldValues>({
         const mobileRowFormFieldStyle =
           mobile &&
           css`
-            background-color: ${statefulFormTheme?.rowFrameBackgroundColor};
+            background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
             min-height: 40px;
             padding: 10px 20px;
             border-radius: 24px;
@@ -858,6 +858,7 @@ function FormFields<T extends FieldValues>({
                         css`
                           height: 48px;
                         `};
+                        border-radius: 0px;
                         width: 100%;
                       `;
                     return (
@@ -1967,8 +1968,8 @@ function FormFields<T extends FieldValues>({
                                 css`
                                   font-size: ${fieldSize};
                                 `};
-
-                                ${field.money?.styles?.self}
+                                padding: 0px;
+                                ${field.money?.styles?.self};
                               `,
                               labelStyle: css`
                                 ${labelSize &&
@@ -2010,88 +2011,104 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         name={field.name as Path<T>}
                         control={control}
-                        render={({ field: controllerField }) => (
-                          <Datebox
-                            key={index}
-                            id={field.id}
-                            name={field.name}
-                            label={label}
-                            helper={field.helper}
-                            required={required}
-                            className={field?.className}
-                            showError={shouldShowError(field.name)}
-                            labelGap={field.labelGap}
-                            labelWidth={field.labelWidth}
-                            labelPosition={labelPosition}
-                            mobile={mobile}
-                            ref={(el) => {
-                              if (el) refs.current[field.name] = el;
-                              const { ref } = register(field.name as Path<T>);
-                              if (ref) ref(el);
-                            }}
-                            errorMessage={
-                              errors[field.name as keyof T]?.[0]?.message as
-                                | string
-                                | undefined
-                            }
-                            onChange={(e) => {
-                              const inputValueEvent = {
-                                target: { name: field.name, value: e },
-                              };
-                              controllerField.onChange(inputValueEvent);
-                              controllerField?.onBlur();
-                              field.onChange?.(inputValueEvent);
-                              if (onChange) {
-                                onChange(field.name as keyof T, e);
+                        render={({ field: controllerField }) => {
+                          const value = controllerField.value;
+
+                          const hasValue = Array.isArray(value)
+                            ? value.some((v) => v !== "" && v != null)
+                            : value !== "" && value != null;
+
+                          return (
+                            <Datebox
+                              key={index}
+                              id={field.id}
+                              name={field.name}
+                              label={field.title}
+                              placeholder={field.placeholder}
+                              helper={field.helper}
+                              required={required}
+                              className={field?.className}
+                              showError={shouldShowError(field.name)}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              mobile={mobile}
+                              ref={(el) => {
+                                if (el) refs.current[field.name] = el;
+                                const { ref } = register(field.name as Path<T>);
+                                if (ref) ref(el);
+                              }}
+                              errorMessage={
+                                errors[field.name as keyof T]?.[0]?.message as
+                                  | string
+                                  | undefined
                               }
-                            }}
-                            placeholder={placeholder}
-                            selectedDates={controllerField.value}
-                            disabled={field.disabled || disabled}
-                            {...field.date}
-                            styles={{
-                              ...field?.date?.styles,
-                              selectboxStyle: css`
-                                ${fieldSize &&
-                                css`
-                                  font-size: ${fieldSize};
-                                `};
+                              onChange={(e) => {
+                                const inputValueEvent = {
+                                  target: { name: field.name, value: e },
+                                };
+                                controllerField.onChange(inputValueEvent);
+                                controllerField?.onBlur();
+                                field.onChange?.(inputValueEvent);
+                                if (onChange) {
+                                  onChange(field.name as keyof T, e);
+                                }
+                              }}
+                              selectedDates={controllerField.value}
+                              disabled={field.disabled || disabled}
+                              {...field.date}
+                              styles={{
+                                ...field?.date?.styles,
+                                selectboxStyle: css`
+                                  ${fieldSize &&
+                                  css`
+                                    font-size: ${fieldSize};
+                                  `};
 
-                                ${mobileInputStyle};
+                                  ${mobileInputStyle};
+                                  ${mobile &&
+                                  css`
+                                    text-align: right;
+                                    padding-right: 40px;
+                                    ${hasValue &&
+                                    css`
+                                      padding-right: 55px;
+                                    `}
+                                  `};
 
-                                ${field?.date?.styles?.selectboxStyle}
-                              `,
-                              labelStyle: css`
-                                ${labelSize &&
-                                css`
-                                  font-size: ${labelSize};
-                                `};
-                                ${mobileLabelStyle};
+                                  ${field?.date?.styles?.selectboxStyle}
+                                `,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
 
-                                ${field.date?.styles?.labelStyle}
-                              `,
-                              containerStyle: css`
-                                ${field.width &&
-                                css`
-                                  width: ${field.width};
-                                `};
+                                  ${field.date?.styles?.labelStyle}
+                                `,
+                                containerStyle: css`
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
 
-                                ${field.date?.styles?.containerStyle}
-                              `,
-                              self: field?.date?.styles?.self,
-                              bodyStyle: css`
-                                ${!field.title &&
-                                hasFieldTitle &&
-                                css`
-                                  min-height: 60px;
-                                  justify-content: end;
-                                `};
+                                  ${field.date?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
 
-                                ${field.date?.styles?.bodyStyle}
-                              `,
-                            }}
-                          />
-                        )}
+                                  ${field.date?.styles?.bodyStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
                       />
                     );
                   }
@@ -2110,9 +2127,9 @@ function FormFields<T extends FieldValues>({
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
-                            placeholder={placeholder}
+                            label={field.title}
+                            placeholder={field.placeholder}
                             className={field?.className}
-                            label={label}
                             required={required}
                             showError={shouldShowError(field.name)}
                             ref={(el) => {
@@ -2153,6 +2170,12 @@ function FormFields<T extends FieldValues>({
 
                                 ${field.combobox?.styles?.bodyStyle}
                               `,
+                              controlStyle: css`
+                                ${mobileControlStyle}
+                                min-width: 140px;
+
+                                ${field.combobox?.styles?.controlStyle}
+                              `,
                               selectboxStyle: css`
                                 ${fieldSize &&
                                 css`
@@ -2160,6 +2183,11 @@ function FormFields<T extends FieldValues>({
                                 `};
 
                                 ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  text-align: right;
+                                  padding-right: 40px;
+                                `};
 
                                 ${field?.combobox?.styles?.selectboxStyle}
                               `,
@@ -2220,7 +2248,6 @@ function FormFields<T extends FieldValues>({
                                 );
                               }
                             }}
-                            {...field.chips}
                             onChange={(e) => {
                               controllerField?.onChange(e);
                               controllerField?.onBlur();
@@ -2236,6 +2263,7 @@ function FormFields<T extends FieldValues>({
                                 );
                               }
                             }}
+                            {...field.chips}
                             styles={{
                               ...field.chips?.styles,
                               labelStyle: css`
@@ -2274,7 +2302,6 @@ function FormFields<T extends FieldValues>({
                                 ${mobile &&
                                 css`
                                   width: fit-content;
-                                  justify-content: end;
                                 `};
                                 ${field.chips?.styles?.chipsContainerStyle}
                               `,
