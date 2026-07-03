@@ -40,7 +40,7 @@ type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
 };
 
 export type DateboxStyles = SelectboxStyles & {
-  calendarContainerStyle?: CSSProp;
+  calendarDrawerStyle?: CSSProp;
 };
 
 type CalendarDrawerProps = BaseCalendarProps &
@@ -100,7 +100,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelStyle,
     containerStyle,
     self,
-    calendarContainerStyle,
+    calendarDrawerStyle,
   } = styles ?? {};
 
   return (
@@ -154,7 +154,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             calendarSelectabilityMode={calendarSelectabilityMode}
             styles={{
               self,
-              containerStyle: calendarContainerStyle,
+              containerStyle: calendarDrawerStyle,
             }}
             onChange={onChange}
             selectedDates={selectedDates}
