@@ -40,6 +40,7 @@ export type TooltipProps = {
   hideDialogOn?: TooltipDialogPosition;
   dialogPlacement?: TooltipDialogPlacement;
   onVisibilityChange?: (open?: boolean) => void;
+  open?: boolean;
   safeAreaAriaLabels?: string[];
   showDelayPeriod?: number;
   styles?: TooltipStyles;
@@ -74,23 +75,27 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       showDelayPeriod = 0,
       styles,
       onClick,
+      open,
       id,
       className,
     },
     ref
   ) => {
-    const [isOpen, setIsOpen] = useState(false);
     const delayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const [isOpenLocal, setIsOpenLocal] = useState(false);
+    const isControlled = open !== undefined;
+    const isOpen = isControlled ? open : isOpenLocal;
 
     useImperativeHandle(ref, () => ({
       open: () => {
-        setIsOpen(true);
+        setIsOpenLocal(true);
         if (onVisibilityChange) {
           onVisibilityChange(true);
         }
       },
       close: () => {
-        setIsOpen(false);
+        setIsOpenLocal(false);
         if (onVisibilityChange) {
           onVisibilityChange(false);
         }
@@ -99,8 +104,8 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
 
     const { floatingStyles, refs, placement } = useFloating({
       placement: getFloatingPlacement(dialogPlacement),
-      open: isOpen,
-      onOpenChange: setIsOpen,
+      open: open,
+      onOpenChange: setIsOpenLocal,
       middleware: [offset(8), flip()],
       whileElementsMounted: autoUpdate,
     });
@@ -133,7 +138,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           referenceEl instanceof HTMLElement &&
           !referenceEl.contains(event.target as Node)
         ) {
-          setIsOpen(false);
+          setIsOpenLocal(false);
           onVisibilityChange(false);
         }
       }
@@ -160,7 +165,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
         onMouseEnter={() => {
           if (showDialogOn === "hover") {
             delayTimeoutRef.current = setTimeout(() => {
-              setIsOpen(true);
+              setIsOpenLocal(true);
               if (onVisibilityChange) {
                 onVisibilityChange(true);
               }
@@ -171,7 +176,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           if (hideDialogOn === "hover") {
             clearTimeout(delayTimeoutRef.current);
 
-            setIsOpen(false);
+            setIsOpenLocal(false);
             if (onVisibilityChange) {
               onVisibilityChange(false);
             }
@@ -188,7 +193,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
               onClick(e);
             }
             if (showDialogOn === "click") {
-              setIsOpen((prev) => {
+              setIsOpenLocal((prev) => {
                 const next = !prev;
                 if (onVisibilityChange) {
                   onVisibilityChange(next);
@@ -359,8 +364,8 @@ const TooltipArrow = styled.div<{
   z-index: -1;
   pointer-events: none;
 
-  ${({ $placement }) =>
-    $placement === "bottom-start"
+  ${({ $placement }) => {
+    return $placement === "bottom-start"
       ? css`
           top: -4px;
           left: 10%;
@@ -369,6 +374,7 @@ const TooltipArrow = styled.div<{
         ? css`
             top: -4px;
             right: 10%;
+            left: auto;
           `
         : $placement === "bottom"
           ? css`
@@ -424,7 +430,8 @@ const TooltipArrow = styled.div<{
                                 top: 50%;
                                 transform: translateY(-50%) rotate(45deg);
                               `
-                            : null}
+                            : null;
+  }};
 
   ${({ $arrowStyle }) => $arrowStyle}
 `;
