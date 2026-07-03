@@ -4,7 +4,7 @@ import { Button, ButtonSubMenu } from "./button";
 import { Tooltip } from "./tooltip";
 import { BaseAction } from "../constants/action";
 import { applyClassName } from "./../constants/classname";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { TipMenuItemProps } from "./tip-menu";
 
 export const SeparatorTextFloat = {
@@ -165,6 +165,7 @@ export interface SeparatorAction extends BaseAction {
   alwaysShow?: boolean;
   styles?: SeparatorActionStyles;
   id?: string;
+  safeAreaAriaLabels?: string[];
   className?: string;
   subMenu?: (props: SeparatorActionSubMenu) => ReactNode;
 }
@@ -190,10 +191,14 @@ function SeparatorAction({
   subMenu,
   className,
   id,
+  safeAreaAriaLabels: _safeAreaAriaLabels = [],
 }: SeparatorAction) {
   const { currentTheme } = useTheme();
   const bodyTheme = currentTheme?.body;
+  const buttonTheme = currentTheme?.button;
   const separatorTheme = currentTheme?.separator;
+
+  const [isOpen, setIsOpen] = useState(false);
 
   if (hidden) {
     return;
@@ -214,11 +219,21 @@ function SeparatorAction({
         }),
     });
 
+  const safeAreaArialabels = [
+    "tip-menu",
+    "tip-menu-spacer",
+    "calendar",
+    "render-spacer",
+    ..._safeAreaAriaLabels,
+  ];
+
   return (
     <Tooltip
       id={id}
       className={applyClassName("separator-action", className)}
-      dialog={caption}
+      dialog={subMenu ? null : caption}
+      onVisibilityChange={(isOpen) => setIsOpen(isOpen)}
+      safeAreaAriaLabels={safeAreaArialabels}
       styles={{
         arrowStyle: styles?.arrowStyle,
         containerStyle: css`
@@ -232,6 +247,7 @@ function SeparatorAction({
             transform 0.2s ease;
 
           ${!alwaysShow &&
+          !isOpen &&
           css`
             opacity: 0;
             pointer-events: none;
@@ -249,8 +265,9 @@ function SeparatorAction({
     >
       <Button
         id={id}
-        variant="outline-default"
+        variant="default"
         icon={icon}
+        open={isOpen}
         aria-label="separator-action"
         subMenu={finalSubMenu}
         showSubMenuOn="self"
@@ -265,10 +282,16 @@ function SeparatorAction({
             height: 24px;
             width: 24px;
             padding: 2px;
+            border: 1px solid ${bodyTheme?.borderColor};
             background-color: ${separatorTheme?.backgroundTitleColor};
             &:hover {
               color: inherit;
             }
+            ${isOpen &&
+            css`
+              background-color: ${buttonTheme?.["default"]
+                ?.activeBackgroundColor};
+            `}
             ${styles?.self}
           `,
         }}
