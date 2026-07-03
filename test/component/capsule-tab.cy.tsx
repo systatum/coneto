@@ -3,6 +3,7 @@ import {
   CapsuleTab,
   CapsuleTabTab,
   CapsuleTabStyles,
+  CapsuleTabProps,
 } from "./../../components/capsule-tab";
 import { useState } from "react";
 
@@ -14,18 +15,15 @@ describe("Capsule Tab", () => {
 
   function ProductCapsuleTab({
     withCallback,
-    styles,
-    tabs,
+    ...props
   }: {
-    styles?: CapsuleTabStyles;
     withCallback?: boolean;
-    tabs?: CapsuleTabTab[];
-  }) {
+  } & Partial<CapsuleTabProps>) {
     const [activeTab, setActiveTab] = useState("2");
 
     return (
       <CapsuleTab
-        tabs={tabs ? tabs : TABS_ITEMS}
+        tabs={TABS_ITEMS}
         activeTab={activeTab}
         onTabChange={
           withCallback
@@ -35,10 +33,36 @@ describe("Capsule Tab", () => {
               }
             : undefined
         }
-        styles={styles}
+        {...props}
       />
     );
   }
+
+  context("mobile", () => {
+    it("render with justify-center for the whole screen", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findAllByLabelText("capsule")
+        .eq(0)
+        .should("have.css", "justify-content", "center");
+    });
+
+    it("render with pill capsule with height 40px and font-size 16px", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findAllByRole("tab")
+        .eq(0)
+        .should("have.css", "height", "40px")
+        .and("have.css", "font-size", "16px");
+      cy.findAllByRole("tab")
+        .eq(1)
+        .should("have.css", "height", "40px")
+        .and("have.css", "font-size", "16px");
+    });
+
+    it("render without hover capsule", () => {
+      cy.mount(<ProductCapsuleTab mobile />);
+      cy.findByLabelText("hover-capsule-box").should("not.exist");
+    });
+  });
 
   context("styles", () => {
     context("capsuleWrapperStyle", () => {
