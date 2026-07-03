@@ -64,6 +64,27 @@ function BaseCapsule({
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
     []
   );
+
+  const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
+
+  useEffect(() => {
+    if (!mobile || !tabRefs.current.length) return;
+
+    const calculateMaxWidth = () => {
+      if (!mobile || !tabRefs.current.length) return;
+
+      const widths: number[] = tabRefs.current.map(
+        (el) => el?.getBoundingClientRect().width ?? 0
+      );
+
+      const largest: number = widths.length ? Math.max(...widths) : 0;
+
+      setMaxTabWidth((prev) => (prev !== largest ? largest : prev));
+    };
+
+    calculateMaxWidth();
+  }, [tabs, mobile]);
+
   const [isInitialized, setIsInitialized] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -226,6 +247,8 @@ function BaseCapsule({
             $disabled={disabled}
             role="tab"
             key={index}
+            $mobile={mobile}
+            $width={mobile ? maxTabWidth : undefined}
             className={applyClassName("capsule-pill", tab?.className)}
             id={tab?.id}
             ref={setTabRef(index)}
@@ -411,6 +434,8 @@ const Tab = styled.div<{
   $disabled?: boolean;
   $activeColor?: string;
   $theme?: CapsuleThemeConfig;
+  $mobile?: boolean;
+  $width?: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -432,6 +457,13 @@ const Tab = styled.div<{
 
   font-size: ${({ $fontSize }) => `${$fontSize}px`};
 
+  ${({ $mobile, $width }) =>
+    $mobile &&
+    !!$width &&
+    css`
+      width: ${$width}px;
+    `};
+
   ${({ $disabled }) =>
     $disabled &&
     css`
@@ -439,9 +471,7 @@ const Tab = styled.div<{
       user-select: none;
     `};
 
-  ${({ $activeTabStyle }) => css`
-    ${$activeTabStyle}
-  `}
+  ${({ $activeTabStyle }) => $activeTabStyle}
 `;
 
 export { Capsule };
