@@ -381,8 +381,14 @@ describe("StatefulForm", () => {
 
         cy.wait(400);
 
-        cy.findAllByLabelText("chips-selected").eq(0).should("exist");
-        cy.findAllByLabelText("chips-selected").eq(1).should("exist");
+        cy.findAllByLabelText("chips-selected")
+          .eq(0)
+          .should("exist")
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+        cy.findAllByLabelText("chips-selected")
+          .eq(1)
+          .should("exist")
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
       });
     });
   });
