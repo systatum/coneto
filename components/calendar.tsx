@@ -548,6 +548,7 @@ function BaseCalendar({
 
   return (
     <CalendarContainer
+      aria-label="calendar-wrapper"
       onMouseDown={(e) => e.preventDefault()}
       $style={
         floatingStyles
