@@ -45,6 +45,59 @@ describe("Calendar ", () => {
         .parent()
         .should("have.css", "border-color", borderColor);
     });
+
+    context("when opening the picker mode", () => {
+      it("should still consistently rendered with 300px", () => {
+        cy.mount(
+          <Calendar
+            selectedDates={valueWeekend}
+            monthNames={MONTH_NAMES}
+            disableWeekend
+          />
+        );
+        cy.findByLabelText("calendar-wrapper").should(
+          "have.css",
+          "width",
+          "300px"
+        );
+        cy.findByLabelText("combobox-month").should("not.exist");
+        cy.findByLabelText("combobox-year").should("not.exist");
+
+        cy.findAllByLabelText("calendar-select-date").eq(0).click();
+        cy.findByLabelText("combobox-month").should("exist");
+        cy.findByLabelText("combobox-year").should("exist");
+
+        cy.findByLabelText("calendar-wrapper").should(
+          "have.css",
+          "width",
+          "300px"
+        );
+      });
+
+      context("when clicking the combobox", () => {
+        it("would be focused on the combo input", () => {
+          cy.mount(
+            <Calendar
+              selectedDates={valueWeekend}
+              monthNames={MONTH_NAMES}
+              disableWeekend
+            />
+          );
+          cy.findByLabelText("calendar-wrapper").should(
+            "have.css",
+            "width",
+            "300px"
+          );
+          cy.findByLabelText("combobox-month").should("not.exist");
+
+          cy.findAllByLabelText("calendar-select-date").eq(0).click();
+          cy.findByLabelText("combobox-month")
+            .should("exist")
+            .and("not.be.focused");
+          cy.findByLabelText("combobox-month").click().and("be.focused");
+        });
+      });
+    });
   });
 
   context("disable weekend", () => {
