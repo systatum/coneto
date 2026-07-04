@@ -39,7 +39,9 @@ type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
   labels?: SelectboxLabels;
 };
 
-export type DateboxStyles = SelectboxStyles;
+export type DateboxStyles = SelectboxStyles & {
+  calendarDrawerStyle?: CSSProp;
+};
 
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
@@ -98,6 +100,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labelStyle,
     containerStyle,
     self,
+    calendarDrawerStyle,
   } = styles ?? {};
 
   return (
@@ -122,6 +125,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
         controlStyle,
         bodyStyle,
         labelStyle,
+        containerStyle,
         self: css`
           ${dropdowns &&
           css`
@@ -150,7 +154,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             calendarSelectabilityMode={calendarSelectabilityMode}
             styles={{
               self,
-              containerStyle,
+              containerStyle: calendarDrawerStyle,
             }}
             onChange={onChange}
             selectedDates={selectedDates}
@@ -258,7 +262,7 @@ const CalendarWrapper = styled.ul<{
     ${$mobile &&
     css`
       position: fixed;
-      bottom: 20px;
+      bottom: 10px;
       min-width: 96dvw;
       left: 50%;
       transform: translateX(-50%);

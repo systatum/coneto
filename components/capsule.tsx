@@ -463,11 +463,13 @@ const Tab = styled.div<{
     $mobile && $tabsLength >= 4
       ? css`
           width: 100%;
+          justify-content: center;
         `
       : $mobile &&
         !!$width &&
         css`
           width: ${$width}px;
+          justify-content: center;
         `};
 
   ${({ $disabled }) =>

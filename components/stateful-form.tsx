@@ -43,8 +43,8 @@ import { FigureProps } from "./figure";
 import { Pinbox, PinboxProps } from "./pinbox";
 import { FieldLaneProps } from "./field-lane";
 import { Frame, FrameProps } from "./frame";
-import { useTheme } from "./../theme/provider";
 import { applyClassName } from "./../constants/classname";
+import { useTheme, StatefulFormThemeConfig } from "./../theme";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -121,6 +121,7 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   autoFocusField?: string;
   styles?: StatefulFormStyles;
   disabled?: boolean;
+  mobile?: boolean;
   className?: string;
   id?: string;
 }
@@ -214,6 +215,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   styles,
   autoFocusField,
   disabled,
+  mobile,
   className,
   id,
 }: StatefulFormProps<Z>) {
@@ -336,25 +338,24 @@ function StatefulForm<Z extends ZodTypeAny>({
   }
 
   return (
-    <>
-      <FormFields
-        id={id}
-        className={className}
-        labelSize={labelSize}
-        fieldSize={fieldSize}
-        control={control}
-        fields={fields}
-        disabled={disabled}
-        formValues={formValues}
-        register={register}
-        errors={errors}
-        setValue={setValue}
-        onChange={handleFieldChange}
-        autoFocusField={autoFocusField}
-        styles={styles}
-        shouldShowError={shouldShowError}
-      />
-    </>
+    <FormFields
+      id={id}
+      mobile={mobile}
+      className={className}
+      labelSize={labelSize}
+      fieldSize={fieldSize}
+      control={control}
+      fields={fields}
+      disabled={disabled}
+      formValues={formValues}
+      register={register}
+      errors={errors}
+      setValue={setValue}
+      onChange={handleFieldChange}
+      autoFocusField={autoFocusField}
+      styles={styles}
+      shouldShowError={shouldShowError}
+    />
   );
 }
 
@@ -426,6 +427,7 @@ interface FormFieldsProps<T extends FieldValues> {
   styles?: StatefulFormStyles;
   rowWithFrame?: boolean;
   disabled?: boolean;
+  mobile?: boolean;
   className?: string;
   id?: string;
 }
@@ -445,11 +447,14 @@ function FormFields<T extends FieldValues>({
   autoFocusField,
   rowWithFrame,
   disabled,
+  mobile,
   className,
   id,
 }: FormFieldsProps<T>) {
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
+  const pinboxTheme = currentTheme?.pinbox;
+  const phoneboxTheme = currentTheme?.phonebox;
 
   const refs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -492,6 +497,73 @@ function FormFields<T extends FieldValues>({
         );
         const hasFieldTitle = nonButtonFields.some((f) => f.title);
 
+        const mobileInputStyle =
+          mobile &&
+          css`
+            background-color: transparent;
+            border: transparent;
+            padding: 0px;
+            &:focus {
+              border: transparent;
+              box-shadow: none;
+            }
+
+            &:-webkit-autofill,
+            &:-webkit-autofill:hover,
+            &:-webkit-autofill:focus,
+            &:-webkit-autofill:active {
+              -webkit-box-shadow: 0 0 0 1000px transparent inset;
+              box-shadow: 0 0 0 1000px transparent inset;
+
+              background-color: transparent !important;
+              transition: background-color 9999s ease-in-out 0s;
+            }
+          `;
+
+        const mobileBodyStyle =
+          mobile &&
+          css`
+            gap: 0px;
+            justify-content: space-between;
+            align-items: center;
+          `;
+
+        const mobileControlStyle =
+          mobile &&
+          css`
+            width: fit-content;
+          `;
+
+        const mobileLabelStyle =
+          mobile &&
+          css`
+            width: 100%;
+          `;
+
+        const isButtonRow =
+          visibleFields.length > 0 &&
+          visibleFields.every((field) => field.type === "button");
+
+        const mobileRowFormFieldStyle =
+          mobile &&
+          css`
+            background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
+            min-height: 40px;
+            padding: 10px 20px;
+            border-radius: 24px;
+            flex-direction: column;
+            justify-content: center;
+
+            ${isButtonRow &&
+            css`
+              min-height: 48px;
+              padding: 0px;
+              flex-direction: row;
+              gap: 0px;
+              overflow: hidden;
+            `}
+          `;
+
         return (
           <RowFormField
             aria-label="stateful-form-row"
@@ -508,6 +580,8 @@ function FormFields<T extends FieldValues>({
                 padding: 10px;
               `}
 
+              ${mobileRowFormFieldStyle}
+
               ${rowAlignedItem &&
               css`
                 align-items: ${rowAlignedItem};
@@ -518,6 +592,18 @@ function FormFields<T extends FieldValues>({
             key={indexGroup}
           >
             {visibleFields.map((field: FormFieldProps, index: number) => {
+              const labelPosition = mobile
+                ? (field?.labelPosition ?? "left")
+                : field?.labelPosition;
+              const isLast = index === visibleFields.length - 1;
+              const showSeparator =
+                mobile && !isLast && Array.isArray(group) && !isButtonRow;
+              const label = mobile ? null : field?.title;
+              const placeholder = mobile
+                ? (field.placeholder ?? field.title)
+                : field.placeholder;
+              const required = mobile ? false : field.required;
+
               if (field.type === "frame") {
                 return (
                   <Frame
@@ -529,14 +615,16 @@ function FormFields<T extends FieldValues>({
                       containerStyle: css`
                         margin-top: 10px;
                         min-width: 0;
-                        ${styles?.frameContainerStyle}
-                        ${field?.frame?.styles?.containerStyle}
+
+                        ${styles?.frameContainerStyle};
+                        ${field?.frame?.styles?.containerStyle};
                       `,
                       titleStyle: css`
                         font-size: 12px;
                         color: black;
                         margin-top: 2px;
-                        ${styles?.frameTitleStyle}
+
+                        ${styles?.frameTitleStyle};
                         ${field?.frame?.styles?.titleStyle}
                       `,
                     }}
@@ -545,6 +633,7 @@ function FormFields<T extends FieldValues>({
                       <FormFields
                         labelSize={labelSize}
                         fieldSize={fieldSize}
+                        mobile={mobile}
                         control={control}
                         fields={field?.fields}
                         formValues={formValues}
@@ -563,1532 +652,2073 @@ function FormFields<T extends FieldValues>({
                 );
               }
 
-              return field.type === "custom" ? (
-                <Fragment key={index}>{field.render}</Fragment>
-              ) : field.type === "text" ||
-                field.type === "message" ||
-                field.type === "number" ||
-                field.type === "email" ||
-                field.type === "password" ? (
-                <Textbox
-                  key={index}
-                  id={field.id}
-                  label={field.title}
-                  className={field?.className}
-                  type={field.type}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  placeholder={field.placeholder}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  required={field.required}
-                  helper={field.helper}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  ref={(el) => {
-                    if (el) refs.current[field.name] = el;
-                    const { ref } = register(field.name as Path<T>);
-                    if (ref) ref(el);
-                  }}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
+              const fieldNode = (() => {
+                switch (field.type) {
+                  case "custom": {
+                    return <Fragment key={index}>{field.render}</Fragment>;
                   }
-                  disabled={field.disabled || disabled}
-                  {...field.textbox}
-                  styles={{
-                    ...field.textbox?.styles,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.textbox?.styles?.labelStyle}
-                    `,
-                    self: css`
-                      ${fieldSize &&
-                      css`
-                        font-size: ${fieldSize};
-                      `}
-                      height: 34px;
-                      ${field.textbox?.styles?.self}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.textbox?.styles?.containerStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        min-height: 60px;
-                        justify-content: end;
-                      `}
 
-                      ${field.textbox?.styles?.bodyStyle}
-                    `,
-                  }}
-                />
-              ) : field.type === "pin" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Pinbox
-                      key={index}
-                      id={field.id}
-                      name={field.name}
-                      className={field?.className}
-                      labelPosition={field.labelPosition}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      required={field.required}
-                      label={field.title}
-                      value={controllerField.value ?? ""}
-                      helper={field.helper}
-                      onBlur={controllerField.onBlur}
-                      onChange={(e) => {
-                        controllerField.onChange(e);
-
-                        if (field.onChange) {
-                          field.onChange(e);
-                        }
-
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
-                        }
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      disabled={field.disabled || disabled}
-                      {...field.pinbox}
-                      styles={{
-                        ...field.pinbox?.styles,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.pinbox?.styles?.containerStyle}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.pinbox?.styles?.labelStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            margin-top: 30px;
-                            justify-content: end;
-                          `}
-                          ${field.pinbox?.styles?.bodyStyle}
-                        `,
-                      }}
-                      ref={controllerField.ref}
-                    />
-                  )}
-                />
-              ) : field.type === "button" ? (
-                <Button
-                  key={index}
-                  {...field.button}
-                  className={field?.className}
-                  id={field.id}
-                  title={
-                    field.button?.title
-                      ? field.button?.title
-                      : field.placeholder
-                  }
-                  styles={{
-                    ...field.button?.styles,
-                    self: css`
-                      ${field.icon &&
-                      css`
-                        gap: 2px;
-                      `}
-                      width:100%;
-                      height: 34px;
-                      font-size: ${labelSize ?? "12px"};
-                      ${field.button?.styles?.self};
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-
-                      ${hasFieldTitle &&
-                      css`
-                        margin-top: 26px;
-                        justify-content: end;
-                        align-items: end;
-                      `}
-
-                      ${field.button?.styles?.containerStyle};
-                    `,
-                  }}
-                  onClick={(e) => {
-                    if (field?.button?.onClick) {
-                      field?.button?.onClick(e);
-                    } else {
-                      field.onClick(e);
-                    }
-                  }}
-                  disabled={field.disabled || disabled}
-                >
-                  {field.icon && (
-                    <field.icon size={fieldSize ? parseInt(fieldSize) : 16} />
-                  )}
-
-                  {field.title}
-                </Button>
-              ) : field.type === "time" ? (
-                <Timebox
-                  key={index}
-                  id={field.id}
-                  label={field.title}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  required={field.required}
-                  helper={field.helper}
-                  className={field?.className}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  disabled={field.disabled || disabled}
-                  {...field.timebox}
-                  styles={{
-                    ...field.timebox?.styles,
-                    self: css`
-                      ${fieldSize &&
-                      css`
-                        font-size: ${fieldSize};
-                      `};
-                      max-width: none;
-                      min-width: 0;
-                      width: 40px;
-                      max-width: 40px;
-                      height: 32px;
-                      max-height: 32px;
-
-                      ${field.timebox?.styles?.self};
-                    `,
-                    inputWrapperStyle: css`
-                      width: 100%;
-                      ${field.timebox?.styles?.inputWrapperStyle};
-                    `,
-
-                    containerStyle: css`
-                      width: 100%;
-
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.timebox?.styles?.containerStyle}
-                    `,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.timebox?.styles?.labelStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        min-height: 60px;
-                        justify-content: end;
-                      `}
-
-                      ${field.timebox?.styles?.bodyStyle}
-                    `,
-                  }}
-                  ref={(el) => {
-                    if (el) refs.current[field.name] = el;
-                    const { ref } = register(field.name as Path<T>);
-                    if (ref) ref(el);
-                  }}
-                />
-              ) : field.type === "textarea" ? (
-                <Textarea
-                  key={index}
-                  id={field.id}
-                  label={field.title}
-                  rows={field.rows}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  placeholder={field.placeholder}
-                  className={field?.className}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  required={field.required}
-                  helper={field.helper}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  ref={(el) => {
-                    if (el) refs.current[field.name] = el;
-                    const { ref } = register(field.name as Path<T>);
-                    if (ref) ref(el);
-                  }}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  disabled={field.disabled || disabled}
-                  {...field.textarea}
-                  styles={{
-                    ...field.textarea?.styles,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.textarea?.styles?.labelStyle}
-                    `,
-                    self: css`
-                      ${fieldSize &&
-                      css`
-                        font-size: ${fieldSize};
-                      `}
-                      ${field.textarea?.styles?.self}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.textarea?.styles?.containerStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        min-height: 60px;
-                        justify-content: end;
-
-                        ${field.textarea?.styles?.bodyStyle}
-                      `}
-                    `,
-                  }}
-                />
-              ) : field.type === "checkbox" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Checkbox
-                      id={field.id}
-                      title={field.title}
-                      label={field.placeholder}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      name={field.name}
-                      value={field.name}
-                      placeholder={field.placeholder}
-                      checked={controllerField.value ?? false}
-                      helper={field.helper}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        const { ref } = register(field.name as Path<T>);
-                        if (ref) ref(el);
-                      }}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      required={field.required}
-                      showError={shouldShowError(field.name)}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.checked);
-                        }
-                        field.onChange?.(e);
-                      }}
-                      disabled={field.disabled || disabled}
-                      {...field.checkbox}
-                      styles={{
-                        ...field.checkbox?.styles,
-                        titleStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.checkbox?.styles?.titleStyle}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.checkbox?.styles?.labelStyle}
-                        `,
-                        self: css`
-                          ${labelSize &&
-                          css`
-                            width: calc(${labelSize} + 2px);
-                            height: calc(${labelSize} + 2px);
-                          `}
-                          ${field.checkbox?.styles?.self}
-                        `,
-                        iconStyle: css`
-                          ${labelSize &&
-                          css`
-                            width: calc(${labelSize} - 4px);
-                            height: calc(${labelSize} - 4px);
-                          `}
-                          ${field.checkbox?.styles?.iconStyle}
-                        `,
-                        containerStyle: css`
-                          width: 100%;
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.checkbox?.styles?.containerStyle}
-                        `,
-                        boxStyle: css`
-                          ${labelSize &&
-                          css`
-                            width: calc(${labelSize} + 2px);
-                            height: calc(${labelSize} + 2px);
-                          `}
-                          ${field.checkbox?.styles?.boxStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
-
-                          ${field.checkbox?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "radio" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Radio
-                      id={field.id}
-                      label={field.placeholder}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      name={field.name}
-                      title={field.title}
-                      placeholder={field.placeholder}
-                      checked={controllerField.value ?? false}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      helper={field.helper}
-                      required={field.required}
-                      showError={shouldShowError(field.name)}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.checked);
-                        }
-                        field.onChange?.(e);
-                      }}
-                      disabled={field.disabled || disabled}
-                      {...field.radio}
-                      styles={{
-                        ...field.radio?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.radio?.styles?.labelStyle}
-                        `,
-                        titleStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.radio?.styles?.titleStyle}
-                        `,
-                        self: css`
-                          ${fieldSize &&
-                          css`
-                            width: ${fieldSize};
-                            height: ${fieldSize};
-                          `}
-                          ${field.radio?.styles?.self}
-                        `,
-                        containerStyle: css`
-                          width: 100%;
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.radio?.styles?.containerStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
-
-                          ${field.radio?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "phone" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={"phone" as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Phonebox
-                      id={field.id}
-                      name={field.name}
-                      label={field.title}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      required={field.required}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        controllerField.ref(el);
-                      }}
-                      onBlur={controllerField.onBlur}
-                      value={controllerField.value}
-                      helper={field.helper}
-                      placeholder={field.placeholder}
-                      onChange={(
-                        e:
-                          | {
-                              target: {
-                                name: string;
-                                value: PhoneboxCountryCode;
-                              };
+                  case "text":
+                  case "message":
+                  case "number":
+                  case "email":
+                  case "password": {
+                    return (
+                      <Textbox
+                        key={index}
+                        id={field.id}
+                        label={label}
+                        className={field?.className}
+                        type={field.type}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={labelPosition}
+                        placeholder={placeholder}
+                        value={formValues[field.name as keyof T] ?? ""}
+                        required={required}
+                        helper={field.helper}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
                             }
-                          | ChangeEvent<HTMLInputElement>
-                      ) => {
-                        if (e.target.name === "phone") {
-                          controllerField.onChange(e);
-                          onChange?.("phone", e.target.value);
-                        } else if (e.target.name === "country_code") {
-                          onChange?.("country_code", e.target.value);
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
                         }
-                        field.onChange?.(e);
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      disabled={field.disabled || disabled}
-                      {...field.phonebox}
-                      styles={{
-                        ...field.phonebox?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.phonebox?.styles?.labelStyle}
-                        `,
-                        self: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.phonebox?.styles?.inputWrapperStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.phonebox?.styles?.containerStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
+                        disabled={field.disabled || disabled}
+                        {...field.textbox}
+                        styles={{
+                          ...field.textbox?.styles,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
 
-                          ${field.phonebox?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "color" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: controllerField, fieldState }) => (
-                    <Colorbox
-                      id={field.id}
-                      name={field.name}
-                      label={field.title}
-                      required={field.required}
-                      placeholder={field.placeholder}
-                      className={field?.className}
-                      helper={field.helper}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        const { ref } = register(field.name as Path<T>);
-                        if (ref) ref(el);
-                      }}
-                      value={controllerField.value}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
+                            ${mobileLabelStyle};
+
+                            ${field.textbox?.styles?.labelStyle};
+                          `,
+                          self: css`
+                            ${fieldSize &&
+                            css`
+                              font-size: ${fieldSize};
+                            `};
+                            height: 34px;
+
+                            ${mobileInputStyle};
+                            ${field.textbox?.styles?.self}
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `}
+                            ${field.textbox?.styles?.containerStyle}
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              min-height: 60px;
+                              justify-content: end;
+                            `};
+
+                            ${field.textbox?.styles?.bodyStyle}
+                          `,
+                        }}
+                      />
+                    );
+                  }
+
+                  case "pin": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => (
+                          <Pinbox
+                            key={index}
+                            id={field.id}
+                            name={field.name}
+                            className={field?.className}
+                            labelPosition={labelPosition}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            required={required}
+                            label={field.title}
+                            showIconError={mobile ? false : true}
+                            value={controllerField.value ?? ""}
+                            helper={field.helper}
+                            onBlur={controllerField.onBlur}
+                            onChange={(e) => {
+                              controllerField.onChange(e);
+
+                              if (field.onChange) {
+                                field.onChange(e);
+                              }
+
+                              if (onChange) {
+                                onChange(field.name as keyof T, e.target.value);
+                              }
+                            }}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            disabled={field.disabled || disabled}
+                            {...field.pinbox}
+                            styles={{
+                              ...field.pinbox?.styles,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `}
+                                ${field.pinbox?.styles?.containerStyle}
+                              `,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `}
+                                ${mobileLabelStyle};
+
+                                ${field.pinbox?.styles?.labelStyle}
+                              `,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  margin-top: 30px;
+                                  justify-content: end;
+                                `};
+                                ${mobileBodyStyle};
+
+                                ${field.pinbox?.styles?.bodyStyle}
+                              `,
+                              self: css`
+                                ${mobile &&
+                                css`
+                                  background-color: transparent;
+                                  border: none;
+                                  box-shadow: none;
+                                  border-bottom: 1px solid
+                                    ${shouldShowError(field.name)
+                                      ? pinboxTheme.errorBorderColor ||
+                                        "#f87171"
+                                      : pinboxTheme.borderColor || "#d1d5db"};
+
+                                  &:focus {
+                                    border: none;
+                                    box-shadow: none;
+                                    border-bottom: 1px solid
+                                      ${pinboxTheme.focusedBorderColor ||
+                                      "#61A9F9"};
+                                    z-index: 9999;
+                                  }
+                                `};
+
+                                ${field.pinbox?.styles?.self}
+                              `,
+                              controlStyle: css`
+                                ${mobileControlStyle};
+
+                                ${field.pinbox?.styles?.controlStyle}
+                              `,
+                            }}
+                            ref={controllerField.ref}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "button": {
+                    const defaultVariant = field?.button?.variant ?? "default";
+
+                    const mobileButtonStyle =
+                      mobile &&
+                      css`
+                        ${isButtonRow &&
+                        css`
+                          height: 48px;
+                        `};
+                        border-radius: 0px;
+                        width: 100%;
+
+                        ${defaultVariant === "default" &&
+                        css`
+                          background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
+                        `}
+                      `;
+
+                    return (
+                      <Button
+                        key={index}
+                        mobile={mobile}
+                        {...field.button}
+                        className={field?.className}
+                        id={field.id}
+                        title={
+                          field.button?.title
+                            ? field.button?.title
+                            : field.placeholder
                         }
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={fieldState.error?.message}
-                      disabled={field.disabled || disabled}
-                      {...field.colorbox}
-                      styles={{
-                        ...field.colorbox?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.colorbox?.styles?.labelStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.colorbox?.styles?.containerStyle}
-                        `,
-                        self: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.colorbox?.styles?.self}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
+                        activeBackgroundColor={"red"}
+                        variant={defaultVariant}
+                        styles={{
+                          ...field.button?.styles,
+                          self: css`
+                            ${field.icon &&
+                            css`
+                              gap: 2px;
+                            `}
+                            width:100%;
+                            height: 34px;
+                            font-size: ${labelSize ?? "12px"};
+                            ${mobileButtonStyle};
 
-                          ${field.colorbox?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "file_drop_box" ? (
-                <FileDropBox
-                  key={index}
-                  id={field.id}
-                  label={field.title}
-                  placeholder={field.placeholder}
-                  className={field?.className}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  helper={field.helper}
-                  name={field.name}
-                  required={field.required}
-                  disabled={field.disabled || disabled}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  {...field.fileDropBox}
-                  styles={{
-                    ...field.fileDropBox?.styles,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.fileDropBox?.styles?.labelStyle}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.fileDropBox?.styles?.containerStyle}
-                    `,
-                  }}
-                />
-              ) : field.type === "file" ? (
-                <FileInputBox
-                  key={index}
-                  id={field.id}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  className={field?.className}
-                  label={field.title}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                  showError={shouldShowError(field.name)}
-                  helper={field.helper}
-                  name={field.name}
-                  disabled={field.disabled || disabled}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
+                            ${field.button?.styles?.self};
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+
+                            ${!mobile &&
+                            hasFieldTitle &&
+                            css`
+                              margin-top: 26px;
+                              justify-content: end;
+                              align-items: end;
+                            `};
+
+                            ${mobileButtonStyle};
+
+                            ${field.button?.styles?.containerStyle};
+                          `,
+                        }}
+                        onClick={(e) => {
+                          if (field?.button?.onClick) {
+                            field?.button?.onClick?.(e);
+                          } else {
+                            field?.onClick?.(e);
+                          }
+                        }}
+                        disabled={field.disabled || disabled}
+                      >
+                        {field.icon && (
+                          <field.icon
+                            size={fieldSize ? parseInt(fieldSize) : 16}
+                          />
+                        )}
+
+                        {field.title}
+                      </Button>
+                    );
                   }
-                  {...field.fileInputBox}
-                  onFilesSelected={(files: File[]) => {
-                    if (files && files.length > 0) {
-                      setValue(field.name as Path<T>, files as any, {
-                        shouldValidate: true,
-                        shouldTouch: true,
-                      });
 
-                      onChange?.(field.name, files);
+                  case "time": {
+                    return (
+                      <Timebox
+                        key={index}
+                        id={field.id}
+                        label={field.title}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={labelPosition}
+                        value={formValues[field.name as keyof T] ?? ""}
+                        required={required}
+                        placeholder={
+                          typeof field.placeholder === "string"
+                            ? (() => {
+                                const [hour = "", minute = "", second = ""] =
+                                  field.placeholder.split(/[:/]/);
 
-                      field.onChange?.({
-                        target: { name: field.name, value: files },
-                      });
-                    } else {
-                      setValue(field.name as Path<T>, undefined, {
-                        shouldValidate: true,
-                        shouldTouch: true,
-                      });
-
-                      onChange?.(field.name, undefined);
-
-                      field.onChange?.({
-                        target: { name: field.name, value: undefined },
-                      });
-                    }
-                  }}
-                  styles={{
-                    ...field.fileInputBox?.styles,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.fileInputBox?.styles?.labelStyle}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.fileInputBox?.styles?.containerStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        margin-top: 26px;
-                        justify-content: end;
-                      `}
-
-                      ${field.fileInputBox?.styles?.bodyStyle}
-                    `,
-                  }}
-                />
-              ) : field.type === "image" ? (
-                <Imagebox
-                  key={index}
-                  id={field.id}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  className={field?.className}
-                  name={field.name}
-                  helper={field.helper}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  onFileSelected={(e: File | undefined) => {
-                    const file = e;
-                    if (file instanceof File) {
-                      setValue(field.name as Path<T>, file as any, {
-                        shouldValidate: true,
-                        shouldTouch: true,
-                      });
-                    } else {
-                      setValue(field.name as Path<T>, undefined, {
-                        shouldValidate: true,
-                        shouldTouch: true,
-                      });
-                    }
-                    field.onChange?.({
-                      target: { name: field.name, value: file ?? undefined },
-                    });
-                    if (onChange) {
-                      onChange(field.name as keyof T, file ?? undefined);
-                    }
-                  }}
-                  label={field.title}
-                  disabled={field.disabled || disabled}
-                  required={field.required}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  {...field.imagebox}
-                  styles={{
-                    ...field.imagebox?.styles,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.imagebox?.styles?.containerStyle}
-                    `,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.imagebox?.styles?.labelStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        margin-top: 26px;
-                        justify-content: end;
-                      `}
-
-                      ${field.imagebox?.styles?.bodyStyle}
-                    `,
-                  }}
-                />
-              ) : field.type === "signbox" ? (
-                <Signbox
-                  key={index}
-                  id={field.id}
-                  clearable
-                  name={field.name}
-                  label={field.title}
-                  labelGap={field.labelGap}
-                  labelWidth={field.labelWidth}
-                  labelPosition={field.labelPosition}
-                  className={field?.className}
-                  helper={field.helper}
-                  required={field.required}
-                  value={formValues[field.name as keyof T] ?? ""}
-                  {...register(field.name as Path<T>, {
-                    onChange: (e) => {
-                      if (field.onChange) {
-                        field.onChange(e);
-                      }
-                      if (onChange) {
-                        onChange(field.name as keyof T, e.target.value);
-                      }
-                    },
-                  })}
-                  showError={shouldShowError(field.name)}
-                  errorMessage={
-                    errors[field.name as keyof T]?.message as string | undefined
-                  }
-                  disabled={field.disabled || disabled}
-                  {...field.signbox}
-                  styles={{
-                    ...field.signbox?.styles,
-                    labelStyle: css`
-                      ${labelSize &&
-                      css`
-                        font-size: ${labelSize};
-                      `}
-                      ${field.signbox?.styles?.labelStyle}
-                    `,
-                    containerStyle: css`
-                      ${field.width &&
-                      css`
-                        width: ${field.width};
-                      `}
-                      ${field.signbox?.styles?.containerStyle}
-                    `,
-                    bodyStyle: css`
-                      ${!field.title &&
-                      hasFieldTitle &&
-                      css`
-                        margin-top: 26px;
-                        justify-content: end;
-                      `}
-
-                      ${field.signbox?.styles?.bodyStyle}
-                    `,
-                  }}
-                />
-              ) : field.type === "money" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: rhf, fieldState }) => (
-                    <Moneybox
-                      key={index}
-                      id={field.id}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        rhf.ref(el);
-                      }}
-                      name={field.name}
-                      label={field.title}
-                      helper={field.helper}
-                      placeholder={field.placeholder}
-                      value={rhf.value ?? ""}
-                      required={field.required}
-                      disabled={field.disabled || disabled}
-                      onChange={(e) => {
-                        const { name, value } = e.target;
-
-                        if (field.onChange) {
-                          field.onChange(e);
+                                return { hour, minute, second };
+                              })()
+                            : field.placeholder
                         }
+                        helper={field.helper}
+                        className={field?.className}
+                        mobile={mobile}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        disabled={field.disabled || disabled}
+                        {...field.timebox}
+                        styles={{
+                          ...field.timebox?.styles,
+                          self: css`
+                            ${fieldSize &&
+                            css`
+                              font-size: ${fieldSize};
+                            `};
 
-                        if (onChange && name === "currency") {
-                          onChange("currency", value);
-                        } else {
-                          onChange(field.name as keyof T, value);
-                          setValue(field.name as Path<T>, value as any, {
-                            shouldValidate: true,
-                            shouldTouch: true,
-                            shouldDirty: true,
+                            max-width: none;
+                            min-width: 0;
+                            width: 40px;
+                            max-width: 40px;
+                            height: 32px;
+                            max-height: 32px;
+
+                            ${mobileInputStyle};
+                            ${mobile &&
+                            css`
+                              background-color: transparent;
+                              border: none;
+                              box-shadow: none;
+                              border-bottom: 1px solid
+                                ${shouldShowError(field.name)
+                                  ? pinboxTheme.errorBorderColor || "#f87171"
+                                  : pinboxTheme.borderColor || "#d1d5db"};
+
+                              &:focus {
+                                border: none;
+                                box-shadow: none;
+                                border-bottom: 1px solid
+                                  ${shouldShowError(field.name)
+                                    ? pinboxTheme.errorBorderColor || "#f87171"
+                                    : pinboxTheme.borderColor || "#d1d5db"};
+                                z-index: 9999;
+                              }
+                            `};
+
+                            ${field?.timebox?.styles?.self};
+                          `,
+                          inputWrapperStyle: css`
+                            width: 100%;
+
+                            ${mobile &&
+                            css`
+                              width: fit-content;
+                            `};
+
+                            ${mobileInputStyle};
+
+                            ${field.timebox?.styles?.inputWrapperStyle};
+                          `,
+                          containerStyle: css`
+                            width: 100%;
+
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+
+                            ${field.timebox?.styles?.containerStyle}
+                          `,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
+                            ${mobileLabelStyle};
+
+                            ${field.timebox?.styles?.labelStyle}
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              min-height: 60px;
+                              justify-content: end;
+                            `};
+
+                            ${mobile &&
+                            css`
+                              justify-content: space-between;
+                            `};
+
+                            ${field.timebox?.styles?.bodyStyle}
+                          `,
+                          controlStyle: css`
+                            ${mobile &&
+                            css`
+                              width: fit-content;
+                            `};
+
+                            ${field.timebox?.styles?.controlStyle}
+                          `,
+                        }}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
+                      />
+                    );
+                  }
+
+                  case "textarea": {
+                    return (
+                      <Textarea
+                        key={index}
+                        id={field.id}
+                        label={label}
+                        rows={field.rows}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={labelPosition}
+                        placeholder={placeholder}
+                        className={field?.className}
+                        value={formValues[field.name as keyof T] ?? ""}
+                        required={required}
+                        helper={field.helper}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        ref={(el) => {
+                          if (el) refs.current[field.name] = el;
+                          const { ref } = register(field.name as Path<T>);
+                          if (ref) ref(el);
+                        }}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        disabled={field.disabled || disabled}
+                        {...field.textarea}
+                        styles={{
+                          ...field.textarea?.styles,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `}
+                            ${mobileLabelStyle};
+
+                            ${field.textarea?.styles?.labelStyle}
+                          `,
+                          self: css`
+                            ${mobileInputStyle};
+
+                            ${fieldSize &&
+                            css`
+                              font-size: ${fieldSize};
+                            `};
+                            ${field.textarea?.styles?.self}
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+
+                            ${field.textarea?.styles?.containerStyle};
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              min-height: 60px;
+                              justify-content: end;
+                            `};
+                            ${field.textarea?.styles?.bodyStyle};
+                          `,
+                        }}
+                      />
+                    );
+                  }
+
+                  case "checkbox": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => {
+                          const titleCheckbox = mobile
+                            ? (field.title ?? field.placeholder)
+                            : field.title;
+                          const placeholderCheckbox = mobile
+                            ? undefined
+                            : field.placeholder;
+                          return (
+                            <Checkbox
+                              id={field.id}
+                              title={titleCheckbox}
+                              label={placeholderCheckbox}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              name={field.name}
+                              value={field.name}
+                              placeholder={placeholderCheckbox}
+                              checked={controllerField.value ?? false}
+                              helper={field.helper}
+                              ref={(el) => {
+                                if (el) refs.current[field.name] = el;
+                                const { ref } = register(field.name as Path<T>);
+                                if (ref) ref(el);
+                              }}
+                              errorMessage={
+                                errors[field.name as keyof T]?.message as
+                                  | string
+                                  | undefined
+                              }
+                              required={required}
+                              showError={shouldShowError(field.name)}
+                              onChange={(e) => {
+                                controllerField?.onChange(e);
+                                controllerField?.onBlur();
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.checked
+                                  );
+                                }
+                                field.onChange?.(e);
+                              }}
+                              disabled={field.disabled || disabled}
+                              {...field.checkbox}
+                              styles={{
+                                ...field.checkbox?.styles,
+                                titleStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
+                                  ${field.checkbox?.styles?.titleStyle}
+                                `,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+
+                                  ${field.checkbox?.styles?.labelStyle}
+                                `,
+                                self: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} + 2px);
+                                    height: calc(${labelSize} + 2px);
+                                  `};
+                                  ${field.checkbox?.styles?.self}
+                                `,
+                                iconStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} - 4px);
+                                    height: calc(${labelSize} - 4px);
+                                  `};
+                                  ${field.checkbox?.styles?.iconStyle}
+                                `,
+                                containerStyle: css`
+                                  width: 100%;
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+                                  ${field.checkbox?.styles?.containerStyle}
+                                `,
+                                boxStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    width: calc(${labelSize} + 2px);
+                                    height: calc(${labelSize} + 2px);
+                                  `};
+                                  ${field.checkbox?.styles?.boxStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
+                                  min-height: 34px;
+                                  justify-content: center;
+                                  ${mobileBodyStyle};
+
+                                  ${field.checkbox?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
+
+                                  ${field.checkbox?.styles?.controlStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    );
+                  }
+
+                  case "radio": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => {
+                          const titleRadio = mobile
+                            ? (field.title ?? field.placeholder)
+                            : field.title;
+                          const placeholderRadio = mobile
+                            ? undefined
+                            : field.placeholder;
+                          return (
+                            <Radio
+                              {...field.radio}
+                              id={field.id}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              name={field.name}
+                              title={titleRadio}
+                              label={placeholderRadio}
+                              placeholder={placeholderRadio}
+                              checked={controllerField.value ?? false}
+                              errorMessage={
+                                errors[field.name as keyof T]?.message as
+                                  | string
+                                  | undefined
+                              }
+                              helper={field.helper}
+                              required={required}
+                              showError={shouldShowError(field.name)}
+                              onChange={(e) => {
+                                controllerField?.onChange(e);
+                                controllerField?.onBlur();
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.checked
+                                  );
+                                }
+                                field.onChange?.(e);
+                              }}
+                              disabled={field.disabled || disabled}
+                              styles={{
+                                ...field.radio?.styles,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+
+                                  ${field.radio?.styles?.labelStyle}
+                                `,
+                                titleStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
+                                  ${field.radio?.styles?.titleStyle}
+                                `,
+                                self: css`
+                                  ${fieldSize &&
+                                  css`
+                                    width: ${fieldSize};
+                                    height: ${fieldSize};
+                                  `}
+                                  ${field.radio?.styles?.self}
+                                `,
+                                containerStyle: css`
+                                  width: 100%;
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+                                  ${field.radio?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  min-height: 34px;
+                                  justify-content: center;
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
+
+                                  ${mobileBodyStyle};
+
+                                  ${field.radio?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
+
+                                  ${field.radio?.styles?.controlStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    );
+                  }
+
+                  case "phone": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={"phone" as Path<T>}
+                        render={({ field: controllerField }) => (
+                          <Phonebox
+                            id={field.id}
+                            name={field.name}
+                            label={label}
+                            mobile={mobile}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            required={required}
+                            ref={(el) => {
+                              if (el) refs.current[field.name] = el;
+                              controllerField.ref(el);
+                            }}
+                            onBlur={controllerField.onBlur}
+                            value={controllerField.value}
+                            helper={field.helper}
+                            placeholder={placeholder}
+                            errorIconPosition={mobile ? "none" : "absolute"}
+                            onChange={(
+                              e:
+                                | {
+                                    target: {
+                                      name: string;
+                                      value: PhoneboxCountryCode;
+                                    };
+                                  }
+                                | ChangeEvent<HTMLInputElement>
+                            ) => {
+                              if (e.target.name === "phone") {
+                                controllerField.onChange(e);
+                                onChange?.("phone", e.target.value);
+                              } else if (e.target.name === "country_code") {
+                                onChange?.("country_code", e.target.value);
+                              }
+                              field.onChange?.(e);
+                            }}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            disabled={field.disabled || disabled}
+                            {...field.phonebox}
+                            styles={{
+                              ...field.phonebox?.styles,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+                                ${field.phonebox?.styles?.labelStyle}
+                              `,
+                              toggleStyle: css`
+                                background-color: transparent;
+                                &:hover {
+                                  background-color: transparent;
+                                }
+                                ${field.phonebox?.styles?.toggleStyle}
+                              `,
+                              inputWrapperStyle: css`
+                                ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  justify-content: space-between;
+                                `}
+                                ${field.phonebox?.styles?.inputWrapperStyle}
+                              `,
+                              self: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `}
+                                ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  text-align: end;
+                                  width: fit-content;
+                                `}
+                                ${field.phonebox?.styles?.inputWrapperStyle};
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+                                ${field.phonebox?.styles?.containerStyle}
+                              `,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  min-height: 60px;
+                                  justify-content: end;
+                                `};
+
+                                ${field.phonebox?.styles?.bodyStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "color": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: controllerField, fieldState }) => (
+                          <Colorbox
+                            id={field.id}
+                            name={field.name}
+                            label={field.title}
+                            placeholder={field.placeholder}
+                            required={required}
+                            className={field?.className}
+                            helper={field.helper}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            ref={(el) => {
+                              if (el) refs.current[field.name] = el;
+                              const { ref } = register(field.name as Path<T>);
+                              if (ref) ref(el);
+                            }}
+                            value={controllerField.value}
+                            onChange={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              field.onChange?.(e);
+                              if (onChange) {
+                                onChange(field.name as keyof T, e.target.value);
+                              }
+                            }}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={fieldState.error?.message}
+                            disabled={field.disabled || disabled}
+                            {...field.colorbox}
+                            styles={{
+                              ...field.colorbox?.styles,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+                                ${mobile &&
+                                css`
+                                  width: 100%;
+                                `}
+
+                                ${field.colorbox?.styles?.labelStyle}
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+                                ${field.colorbox?.styles?.containerStyle}
+                              `,
+                              textInputGroupStyle: css`
+                                ${mobileInputStyle};
+                                ${mobile &&
+                                field.title &&
+                                css`
+                                  width: fit-content;
+                                `};
+
+                                ${field.colorbox?.styles?.textInputGroupStyle};
+                              `,
+                              textInputStyle: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `};
+                                ${mobile &&
+                                css`
+                                  &:-webkit-autofill,
+                                  &:-webkit-autofill:hover,
+                                  &:-webkit-autofill:focus,
+                                  &:-webkit-autofill:active {
+                                    -webkit-box-shadow: 0 0 0 1000px transparent
+                                      inset;
+                                    box-shadow: 0 0 0 1000px transparent inset;
+
+                                    background-color: transparent !important;
+                                    transition: background-color 9999s
+                                      ease-in-out 0s;
+                                    color: ${statefulFormTheme.textColor};
+                                    -webkit-text-fill-color: ${statefulFormTheme.textColor};
+                                  }
+                                  width: 60px;
+                                `};
+
+                                ${field.colorbox?.styles?.textInputStyle}
+                              `,
+                              self: css`
+                                ${mobileInputStyle};
+                                ${mobile &&
+                                css`
+                                  flex-direction: row-reverse;
+                                `}
+
+                                ${field.colorbox?.styles?.self}
+                              `,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  min-height: 60px;
+                                  justify-content: end;
+                                `};
+
+                                ${field.colorbox?.styles?.bodyStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "file_drop_box": {
+                    return (
+                      <FileDropBox
+                        key={index}
+                        id={field.id}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        className={field?.className}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={field.labelPosition}
+                        helper={field.helper}
+                        name={field.name}
+                        required={required}
+                        disabled={field.disabled || disabled}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        {...field.fileDropBox}
+                        styles={{
+                          ...field.fileDropBox?.styles,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
+                            ${mobileLabelStyle};
+
+                            ${field.fileDropBox?.styles?.labelStyle}
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+                            ${field.fileDropBox?.styles?.containerStyle}
+                          `,
+                          dragOverStyle: css`
+                            ${mobile &&
+                            css`
+                              background-color: transparent;
+                            `};
+                            ${field.fileDropBox?.styles?.dragOverStyle}
+                          `,
+                        }}
+                      />
+                    );
+                  }
+
+                  case "file": {
+                    return (
+                      <FileInputBox
+                        key={index}
+                        id={field.id}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={field.labelPosition}
+                        className={field?.className}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        required={required}
+                        showError={shouldShowError(field.name)}
+                        helper={field.helper}
+                        name={field.name}
+                        disabled={field.disabled || disabled}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
+                        }
+                        {...field.fileInputBox}
+                        onFilesSelected={(files: File[]) => {
+                          if (files && files.length > 0) {
+                            setValue(field.name as Path<T>, files as any, {
+                              shouldValidate: true,
+                              shouldTouch: true,
+                            });
+
+                            onChange?.(field.name, files);
+
+                            field.onChange?.({
+                              target: { name: field.name, value: files },
+                            });
+                          } else {
+                            setValue(field.name as Path<T>, undefined, {
+                              shouldValidate: true,
+                              shouldTouch: true,
+                            });
+
+                            onChange?.(field.name, undefined);
+
+                            field.onChange?.({
+                              target: { name: field.name, value: undefined },
+                            });
+                          }
+                        }}
+                        styles={{
+                          ...field.fileInputBox?.styles,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
+                            ${mobileLabelStyle};
+
+                            ${field.fileInputBox?.styles?.labelStyle}
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+                            ${field.fileInputBox?.styles?.containerStyle}
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              margin-top: 26px;
+                              justify-content: end;
+                            `};
+
+                            ${field.fileInputBox?.styles?.bodyStyle}
+                          `,
+                          self: css`
+                            background-color: transparent;
+                            ${field.fileInputBox?.styles?.self}
+                          `,
+                        }}
+                      />
+                    );
+                  }
+
+                  case "image": {
+                    return (
+                      <Imagebox
+                        key={index}
+                        id={field.id}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={labelPosition}
+                        className={field?.className}
+                        name={field.name}
+                        helper={field.helper}
+                        value={formValues[field.name as keyof T] ?? ""}
+                        onFileSelected={(e: File | undefined) => {
+                          const file = e;
+                          if (file instanceof File) {
+                            setValue(field.name as Path<T>, file as any, {
+                              shouldValidate: true,
+                              shouldTouch: true,
+                            });
+                          } else {
+                            setValue(field.name as Path<T>, undefined, {
+                              shouldValidate: true,
+                              shouldTouch: true,
+                            });
+                          }
+                          field.onChange?.({
+                            target: {
+                              name: field.name,
+                              value: file ?? undefined,
+                            },
                           });
-                        }
-                      }}
-                      onBlur={rhf.onBlur}
-                      showError={!!fieldState.error}
-                      errorMessage={fieldState.error?.message}
-                      {...field.money}
-                      styles={{
-                        ...field.money?.styles,
-                        inputWrapperStyle: css`
-                          height: 34px;
-                          ${field.money?.styles?.inputWrapperStyle}
-                        `,
-                        self: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.money?.styles?.self}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.money?.styles?.labelStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.money?.styles?.containerStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
-
-                          ${field.money?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "date" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: controllerField }) => (
-                    <Datebox
-                      key={index}
-                      id={field.id}
-                      name={field.name}
-                      label={field.title}
-                      helper={field.helper}
-                      required={field.required}
-                      className={field?.className}
-                      showError={shouldShowError(field.name)}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        const { ref } = register(field.name as Path<T>);
-                        if (ref) ref(el);
-                      }}
-                      errorMessage={
-                        errors[field.name as keyof T]?.[0]?.message as
-                          | string
-                          | undefined
-                      }
-                      onChange={(e) => {
-                        const inputValueEvent = {
-                          target: { name: field.name, value: e },
-                        };
-                        controllerField.onChange(inputValueEvent);
-                        controllerField?.onBlur();
-                        field.onChange?.(inputValueEvent);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e);
-                        }
-                      }}
-                      placeholder={field.placeholder}
-                      selectedDates={controllerField.value}
-                      disabled={field.disabled || disabled}
-                      {...field.date}
-                      styles={{
-                        ...field?.date?.styles,
-                        selectboxStyle: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-
-                          ${field?.date?.styles?.selectboxStyle}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.date?.styles?.labelStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.date?.styles?.containerStyle}
-                        `,
-                        self: field?.date?.styles?.self,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
-
-                          ${field.date?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "combo" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: controllerField }) => (
-                    <Combobox
-                      id={field.id}
-                      name={field.name}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      placeholder={field.placeholder}
-                      className={field?.className}
-                      label={field.title}
-                      required={field.required}
-                      showError={shouldShowError(field.name)}
-                      ref={(el) => {
-                        if (el) refs.current[field.name] = el;
-                        const { ref } = register(field.name as Path<T>);
-                        if (ref) ref(el);
-                      }}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      helper={field.helper}
-                      onChange={(e) => {
-                        const inputValueEvent = {
-                          target: { name: field.name, value: e },
-                        };
-                        controllerField.onChange(inputValueEvent);
-                        controllerField?.onBlur();
-                        field.onChange?.(inputValueEvent);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e);
-                        }
-                      }}
-                      selectedOptions={controllerField.value}
-                      disabled={field.disabled || disabled}
-                      {...field.combobox}
-                      strict={field?.combobox?.strict ?? true}
-                      styles={{
-                        ...field?.combobox?.styles,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
-
-                          ${field.combobox?.styles?.bodyStyle}
-                        `,
-                        selectboxStyle: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-
-                          ${field?.combobox?.styles?.selectboxStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.combobox?.styles?.containerStyle}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.combobox?.styles?.labelStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "chips" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: controllerField }) => (
-                    <Chips
-                      label={field.title}
-                      helper={field.helper}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      required={field.required}
-                      filterPlaceholder={field.placeholder}
-                      disabled={field.disabled || disabled}
-                      inputValue={controllerField.value}
-                      setInputValue={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
-                        }
-                      }}
-                      onChange={(value) => {
-                        controllerField?.onChange(value);
-                        controllerField?.onBlur();
-                        const inputValueEvent = {
-                          target: { name: field.name ?? "chips", value },
-                        };
-                        field.onChange?.(inputValueEvent);
-                        if (onChange) {
-                          onChange(field.name as keyof T, value);
-                        }
-                      }}
-                      {...field.chips}
-                      styles={{
-                        ...field.chips?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.chips?.styles?.labelStyle}
-                        `,
-                        chipSelectedStyle: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.chips?.styles?.chipSelectedStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.chips?.styles?.containerStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "rating" ? (
-                <Controller
-                  key={index}
-                  name={field.name as Path<T>}
-                  control={control}
-                  render={({ field: controllerField, fieldState }) => (
-                    <Rating
-                      editable
-                      id={field.id}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      label={field.title}
-                      helper={field.helper}
-                      required={field.required}
-                      name={field.name}
-                      rating={controllerField.value}
-                      onChange={(e) => {
-                        controllerField.onChange(e.target.value);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
-                        }
-                      }}
-                      showError={!!fieldState.error}
-                      errorMessage={fieldState.error?.message}
-                      disabled={field.disabled || disabled}
-                      {...field.rating}
-                      styles={{
-                        ...field.rating?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.rating?.styles?.labelStyle}
-                        `,
-                        containerStyle: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.rating?.styles?.containerStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "thumbfield" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <ThumbField
-                      id={field.id}
-                      label={field.title}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      value={controllerField.value ?? false}
-                      required={field.required}
-                      helper={field.helper}
-                      {...register(field.name as Path<T>, {
-                        onChange: (e) => {
-                          if (field.onChange) {
-                            field.onChange(e);
-                          }
                           if (onChange) {
-                            onChange(field.name as keyof T, e.target.checked);
+                            onChange(field.name as keyof T, file ?? undefined);
                           }
-                        },
-                      })}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.value);
+                        }}
+                        label={field.title}
+                        disabled={field.disabled || disabled}
+                        required={required}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
                         }
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      disabled={field.disabled || disabled}
-                      {...field.thumbField}
-                      styles={{
-                        ...field.thumbField?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.thumbField?.styles?.labelStyle}
-                        `,
-                        triggerWrapperStyle: css`
-                          ${fieldSize &&
-                          css`
-                            font-size: ${fieldSize};
-                          `}
-                          ${field.thumbField?.styles?.triggerWrapperStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.thumbField?.styles?.containerStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "toggle" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Toggle
-                      id={field.id}
-                      name={controllerField.name}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      placeholder={field.placeholder}
-                      checked={controllerField.value ?? false}
-                      required={field.required}
-                      helper={field.helper}
-                      onChange={(e) => {
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(e);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e.target.checked);
+                        {...field.imagebox}
+                        styles={{
+                          ...field.imagebox?.styles,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+                            ${field.imagebox?.styles?.containerStyle}
+                          `,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
+                            ${mobileLabelStyle};
+
+                            ${field.imagebox?.styles?.labelStyle}
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              margin-top: 26px;
+                              justify-content: end;
+                            `};
+
+                            ${mobileBodyStyle};
+
+                            ${field.imagebox?.styles?.bodyStyle}
+                          `,
+                          controlStyle: css`
+                            ${mobileControlStyle};
+                            ${field.imagebox?.styles?.controlStyle}
+                          `,
+                        }}
+                      />
+                    );
+                  }
+
+                  case "signbox": {
+                    return (
+                      <Signbox
+                        key={index}
+                        id={field.id}
+                        clearable
+                        name={field.name}
+                        label={field.title}
+                        labelGap={field.labelGap}
+                        labelWidth={field.labelWidth}
+                        labelPosition={labelPosition}
+                        className={field?.className}
+                        helper={field.helper}
+                        required={required}
+                        value={formValues[field.name as keyof T] ?? ""}
+                        {...register(field.name as Path<T>, {
+                          onChange: (e) => {
+                            if (field.onChange) {
+                              field.onChange(e);
+                            }
+                            if (onChange) {
+                              onChange(field.name as keyof T, e.target.value);
+                            }
+                          },
+                        })}
+                        showError={shouldShowError(field.name)}
+                        errorMessage={
+                          errors[field.name as keyof T]?.message as
+                            | string
+                            | undefined
                         }
-                      }}
-                      onBlur={controllerField.onBlur}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      disabled={field.disabled || disabled}
-                      {...field.toggle}
-                      title={field.title}
-                      label={field.placeholder}
-                      styles={{
-                        ...field.toggle?.styles,
-                        titleStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.toggle?.styles?.titleStyle}
-                        `,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.toggle?.styles?.labelStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `}
-                          ${field.toggle?.styles?.containerStyle}
-                        `,
-                        controlStyle: css`
-                          min-height: 34px;
-                          ${field.toggle?.styles?.controlStyle}
-                        `,
-                        bodyStyle: css`
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            margin-top: 26px;
-                            justify-content: end;
-                          `}
+                        disabled={field.disabled || disabled}
+                        {...field.signbox}
+                        styles={{
+                          ...field.signbox?.styles,
+                          labelStyle: css`
+                            ${labelSize &&
+                            css`
+                              font-size: ${labelSize};
+                            `};
+                            ${mobileLabelStyle};
 
-                          ${field.toggle?.styles?.bodyStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : field.type === "capsule" ? (
-                <Controller
-                  key={index}
-                  control={control}
-                  name={field.name as Path<T>}
-                  render={({ field: controllerField }) => (
-                    <Capsule
-                      id={field.id}
-                      name={field.name}
-                      label={field.title}
-                      labelGap={field.labelGap}
-                      labelWidth={field.labelWidth}
-                      labelPosition={field.labelPosition}
-                      className={field?.className}
-                      required={field.required}
-                      activeTab={controllerField.value}
-                      helper={field.helper}
-                      disabled={field.disabled || disabled}
-                      onTabChange={(e) => {
-                        const inputValueEvent = {
-                          target: { name: field.name, value: e },
-                        };
-                        controllerField?.onChange(e);
-                        controllerField?.onBlur();
-                        field.onChange?.(inputValueEvent);
-                        if (onChange) {
-                          onChange(field.name as keyof T, e);
-                        }
-                      }}
-                      showError={shouldShowError(field.name)}
-                      errorMessage={
-                        errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
-                      }
-                      {...field.capsule}
-                      styles={{
-                        ...field.capsule?.styles,
-                        labelStyle: css`
-                          ${labelSize &&
-                          css`
-                            font-size: ${labelSize};
-                          `}
-                          ${field.capsule?.styles?.labelStyle}
-                        `,
-                        capsuleWrapperStyle: css`
-                          height: 34px;
-                          ${field.capsule?.styles?.capsuleWrapperStyle}
-                        `,
-                        containerStyle: css`
-                          ${field.width &&
-                          css`
-                            width: ${field.width};
-                          `};
+                            ${field.signbox?.styles?.labelStyle}
+                          `,
+                          containerStyle: css`
+                            ${field.width &&
+                            css`
+                              width: ${field.width};
+                            `};
+                            ${field.signbox?.styles?.containerStyle}
+                          `,
+                          bodyStyle: css`
+                            ${!field.title &&
+                            hasFieldTitle &&
+                            css`
+                              margin-top: 26px;
+                              justify-content: end;
+                            `};
 
-                          ${!field.title &&
-                          hasFieldTitle &&
-                          css`
-                            min-height: 60px;
-                            justify-content: end;
-                          `}
+                            ${field.signbox?.styles?.bodyStyle}
+                          `,
+                        }}
+                      />
+                    );
+                  }
 
-                          ${field.capsule?.styles?.containerStyle}
-                        `,
-                      }}
-                    />
-                  )}
-                />
-              ) : null;
+                  case "money": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: rhf, fieldState }) => (
+                          <Moneybox
+                            key={index}
+                            mobile={mobile}
+                            id={field.id}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            ref={(el) => {
+                              if (el) refs.current[field.name] = el;
+                              rhf.ref(el);
+                            }}
+                            name={field.name}
+                            label={label}
+                            helper={field.helper}
+                            placeholder={placeholder}
+                            value={rhf.value ?? ""}
+                            required={required}
+                            disabled={field.disabled || disabled}
+                            onChange={(e) => {
+                              const { name, value } = e.target;
+
+                              if (field.onChange) {
+                                field.onChange(e);
+                              }
+
+                              if (onChange && name === "currency") {
+                                onChange("currency", value);
+                              } else {
+                                onChange(field.name as keyof T, value);
+                                setValue(field.name as Path<T>, value as any, {
+                                  shouldValidate: true,
+                                  shouldTouch: true,
+                                  shouldDirty: true,
+                                });
+                              }
+                            }}
+                            onBlur={rhf.onBlur}
+                            showError={!!fieldState.error}
+                            errorMessage={fieldState.error?.message}
+                            {...field.money}
+                            styles={{
+                              ...field.money?.styles,
+                              inputWrapperStyle: css`
+                                height: 34px;
+                                ${mobileInputStyle};
+
+                                ${field.money?.styles?.inputWrapperStyle}
+                              `,
+                              self: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `};
+                                padding: 0px;
+                                ${field.money?.styles?.self};
+                              `,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+
+                                ${field.money?.styles?.labelStyle}
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+
+                                ${field.money?.styles?.containerStyle}
+                              `,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  min-height: 60px;
+                                  justify-content: end;
+                                `};
+
+                                ${field.money?.styles?.bodyStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "date": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: controllerField }) => {
+                          const value = controllerField.value;
+
+                          const hasValue = Array.isArray(value)
+                            ? value.some((v) => v !== "" && v != null)
+                            : value !== "" && value != null;
+
+                          return (
+                            <Datebox
+                              key={index}
+                              id={field.id}
+                              name={field.name}
+                              label={field.title}
+                              placeholder={field.placeholder}
+                              helper={field.helper}
+                              required={required}
+                              className={field?.className}
+                              showError={shouldShowError(field.name)}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              labelPosition={labelPosition}
+                              mobile={mobile}
+                              ref={(el) => {
+                                if (el) refs.current[field.name] = el;
+                                const { ref } = register(field.name as Path<T>);
+                                if (ref) ref(el);
+                              }}
+                              errorMessage={
+                                errors[field.name as keyof T]?.[0]?.message as
+                                  | string
+                                  | undefined
+                              }
+                              onChange={(e) => {
+                                const inputValueEvent = {
+                                  target: { name: field.name, value: e },
+                                };
+                                controllerField.onChange(inputValueEvent);
+                                controllerField?.onBlur();
+                                field.onChange?.(inputValueEvent);
+                                if (onChange) {
+                                  onChange(field.name as keyof T, e);
+                                }
+                              }}
+                              selectedDates={controllerField.value}
+                              disabled={field.disabled || disabled}
+                              {...field.date}
+                              styles={{
+                                ...field?.date?.styles,
+                                selectboxStyle: css`
+                                  ${fieldSize &&
+                                  css`
+                                    font-size: ${fieldSize};
+                                  `};
+
+                                  ${mobileInputStyle};
+                                  ${mobile &&
+                                  field.title &&
+                                  css`
+                                    text-align: right;
+                                    padding-right: 40px;
+                                    ${hasValue &&
+                                    css`
+                                      padding-right: 55px;
+                                    `}
+                                  `};
+
+                                  ${field?.date?.styles?.selectboxStyle}
+                                `,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
+
+                                  ${field.date?.styles?.labelStyle}
+                                `,
+                                containerStyle: css`
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+
+                                  ${field.date?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${!field.title &&
+                                  hasFieldTitle &&
+                                  css`
+                                    min-height: 60px;
+                                    justify-content: end;
+                                  `};
+
+                                  ${field.date?.styles?.bodyStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    );
+                  }
+
+                  case "combo": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: controllerField }) => (
+                          <Combobox
+                            id={field.id}
+                            name={field.name}
+                            mobile={mobile}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            label={field.title}
+                            placeholder={field.placeholder}
+                            className={field?.className}
+                            required={required}
+                            showError={shouldShowError(field.name)}
+                            ref={(el) => {
+                              if (el) refs.current[field.name] = el;
+                              const { ref } = register(field.name as Path<T>);
+                              if (ref) ref(el);
+                            }}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            helper={field.helper}
+                            onChange={(e) => {
+                              const inputValueEvent = {
+                                target: { name: field.name, value: e },
+                              };
+                              controllerField.onChange(inputValueEvent);
+                              controllerField?.onBlur();
+                              field.onChange?.(inputValueEvent);
+                              if (onChange) {
+                                onChange(field.name as keyof T, e);
+                              }
+                            }}
+                            selectedOptions={controllerField.value}
+                            disabled={field.disabled || disabled}
+                            {...field.combobox}
+                            strict={field?.combobox?.strict ?? true}
+                            styles={{
+                              ...field?.combobox?.styles,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  min-height: 60px;
+                                  justify-content: end;
+                                `};
+
+                                ${field.combobox?.styles?.bodyStyle}
+                              `,
+                              controlStyle: css`
+                                ${field.title &&
+                                css`
+                                  ${mobileControlStyle}
+                                  min-width: 140px;
+                                `}
+
+                                ${field.combobox?.styles?.controlStyle}
+                              `,
+                              selectboxStyle: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `};
+
+                                ${mobileInputStyle};
+                                ${mobile &&
+                                field.title &&
+                                css`
+                                  text-align: end;
+                                  padding-right: 40px;
+                                `};
+
+                                ${field?.combobox?.styles?.selectboxStyle}
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+
+                                ${field.combobox?.styles?.containerStyle}
+                              `,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+
+                                ${field.combobox?.styles?.labelStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "chips": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: controllerField }) => (
+                          <Chips
+                            id={id}
+                            name={field.name}
+                            mobile={mobile}
+                            label={field.title}
+                            helper={field.helper}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            required={required}
+                            filterPlaceholder={field.placeholder}
+                            disabled={field.disabled || disabled}
+                            inputValue={controllerField.value}
+                            setInputValue={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              field.onChange?.(e);
+
+                              if (onChange) {
+                                onChange(
+                                  (field?.name as keyof T) ?? "chips",
+                                  e.target.value
+                                );
+                              }
+                            }}
+                            onChange={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              const inputValueEvent = {
+                                target: { name: field.name, value: e },
+                              };
+                              field.onChange?.(inputValueEvent);
+
+                              if (onChange) {
+                                onChange(
+                                  (field?.name as keyof T) ?? "chips",
+                                  e
+                                );
+                              }
+                            }}
+                            {...field.chips}
+                            styles={{
+                              ...field.chips?.styles,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+
+                                ${field.chips?.styles?.labelStyle}
+                              `,
+                              chipSelectedStyle: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `};
+                                ${field.chips?.styles?.chipSelectedStyle}
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+                                ${field.chips?.styles?.containerStyle}
+                              `,
+                              bodyStyle: css`
+                                ${mobileBodyStyle};
+
+                                ${field.chips?.styles?.bodyStyle}
+                              `,
+                              controlStyle: css`
+                                ${mobileControlStyle};
+
+                                ${field.chips?.styles?.controlStyle}
+                              `,
+                              chipsContainerStyle: css`
+                                ${mobile &&
+                                css`
+                                  width: fit-content;
+                                  justify-content: end;
+                                  flex-direction: row-reverse;
+                                `};
+                                ${field.chips?.styles?.chipsContainerStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "rating": {
+                    return (
+                      <Controller
+                        key={index}
+                        name={field.name as Path<T>}
+                        control={control}
+                        render={({ field: controllerField, fieldState }) => {
+                          const size = mobile
+                            ? (field?.rating?.size ?? "lg")
+                            : field?.rating?.size;
+
+                          return (
+                            <Rating
+                              editable
+                              id={field.id}
+                              labelGap={field.labelGap}
+                              labelWidth={field.labelWidth}
+                              size={size}
+                              labelPosition={labelPosition}
+                              className={field?.className}
+                              label={field.title}
+                              helper={field.helper}
+                              required={required}
+                              name={field.name}
+                              rating={controllerField.value}
+                              onChange={(e) => {
+                                controllerField.onChange(e.target.value);
+                                controllerField?.onBlur();
+                                field.onChange?.(e);
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.value
+                                  );
+                                }
+                              }}
+                              showError={!!fieldState.error}
+                              errorMessage={fieldState.error?.message}
+                              disabled={field.disabled || disabled}
+                              {...field.rating}
+                              styles={{
+                                ...field.rating?.styles,
+                                labelStyle: css`
+                                  ${labelSize &&
+                                  css`
+                                    font-size: ${labelSize};
+                                  `};
+                                  ${mobileLabelStyle};
+
+                                  ${field.rating?.styles?.labelStyle}
+                                `,
+                                containerStyle: css`
+                                  ${fieldSize &&
+                                  css`
+                                    font-size: ${fieldSize};
+                                  `};
+                                  ${field.width &&
+                                  css`
+                                    width: ${field.width};
+                                  `};
+
+                                  ${field.rating?.styles?.containerStyle}
+                                `,
+                                bodyStyle: css`
+                                  ${mobileBodyStyle};
+                                  ${field.rating?.styles?.bodyStyle}
+                                `,
+                                controlStyle: css`
+                                  ${mobileControlStyle};
+                                  ${field.rating?.styles?.controlStyle}
+                                `,
+                                starsWrapperStyle: css`
+                                  ${mobile &&
+                                  css`
+                                    gap: 4px;
+                                  `};
+                                  ${field.rating?.styles?.starsWrapperStyle}
+                                `,
+                              }}
+                            />
+                          );
+                        }}
+                      />
+                    );
+                  }
+
+                  case "thumbfield": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => (
+                          <ThumbField
+                            id={field.id}
+                            label={field.title}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            value={controllerField.value ?? false}
+                            required={required}
+                            helper={field.helper}
+                            {...register(field.name as Path<T>, {
+                              onChange: (e) => {
+                                if (field.onChange) {
+                                  field.onChange(e);
+                                }
+                                if (onChange) {
+                                  onChange(
+                                    field.name as keyof T,
+                                    e.target.checked
+                                  );
+                                }
+                              },
+                            })}
+                            onChange={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              field.onChange?.(e);
+                              if (onChange) {
+                                onChange(field.name as keyof T, e.target.value);
+                              }
+                            }}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            disabled={field.disabled || disabled}
+                            {...field.thumbField}
+                            styles={{
+                              ...field.thumbField?.styles,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+
+                                ${field.thumbField?.styles?.labelStyle}
+                              `,
+                              triggerWrapperStyle: css`
+                                ${fieldSize &&
+                                css`
+                                  font-size: ${fieldSize};
+                                `};
+
+                                ${field.thumbField?.styles?.triggerWrapperStyle}
+                              `,
+                              triggerStyle: css`
+                                ${mobile &&
+                                css`
+                                  svg {
+                                    width: 32px;
+                                    height: 32px;
+                                  }
+                                `};
+
+                                ${field.thumbField?.styles?.triggerStyle};
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `}
+                                ${field.thumbField?.styles?.containerStyle}
+                              `,
+                              bodyStyle: css`
+                                ${mobileBodyStyle};
+                                ${field.thumbField?.styles?.bodyStyle}
+                              `,
+                              controlStyle: css`
+                                ${mobileControlStyle};
+                                ${field.thumbField?.styles?.controlStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "toggle": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => (
+                          <Toggle
+                            id={field.id}
+                            name={controllerField.name}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            placeholder={field.placeholder}
+                            checked={controllerField.value ?? false}
+                            required={required}
+                            helper={field.helper}
+                            onChange={(e) => {
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              field.onChange?.(e);
+                              if (onChange) {
+                                onChange(
+                                  field.name as keyof T,
+                                  e.target.checked
+                                );
+                              }
+                            }}
+                            onBlur={controllerField.onBlur}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            disabled={field.disabled || disabled}
+                            {...field.toggle}
+                            title={field.title}
+                            label={field.placeholder}
+                            styles={{
+                              ...field.toggle?.styles,
+                              titleStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+
+                                ${field.toggle?.styles?.titleStyle}
+                              `,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+
+                                ${field.toggle?.styles?.labelStyle};
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+                                ${field.toggle?.styles?.containerStyle}
+                              `,
+                              controlStyle: css`
+                                min-height: 34px;
+
+                                ${mobileControlStyle};
+                                ${field.toggle?.styles?.controlStyle}
+                              `,
+                              bodyStyle: css`
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  margin-top: 26px;
+                                  justify-content: end;
+                                `};
+
+                                ${mobileBodyStyle};
+                                ${field.toggle?.styles?.bodyStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  case "capsule": {
+                    return (
+                      <Controller
+                        key={index}
+                        control={control}
+                        name={field.name as Path<T>}
+                        render={({ field: controllerField }) => (
+                          <Capsule
+                            id={field.id}
+                            mobile={mobile}
+                            name={field.name}
+                            label={field.title}
+                            labelGap={field.labelGap}
+                            labelWidth={field.labelWidth}
+                            labelPosition={labelPosition}
+                            className={field?.className}
+                            required={required}
+                            activeTab={controllerField.value}
+                            helper={field.helper}
+                            errorIconPosition={mobile ? "none" : "absolute"}
+                            disabled={field.disabled || disabled}
+                            onTabChange={(e) => {
+                              const inputValueEvent = {
+                                target: { name: field.name, value: e },
+                              };
+                              controllerField?.onChange(e);
+                              controllerField?.onBlur();
+                              field.onChange?.(inputValueEvent);
+                              if (onChange) {
+                                onChange(field.name as keyof T, e);
+                              }
+                            }}
+                            showError={shouldShowError(field.name)}
+                            errorMessage={
+                              errors[field.name as keyof T]?.message as
+                                | string
+                                | undefined
+                            }
+                            {...field.capsule}
+                            styles={{
+                              ...field.capsule?.styles,
+                              labelStyle: css`
+                                ${labelSize &&
+                                css`
+                                  font-size: ${labelSize};
+                                `};
+                                ${mobileLabelStyle};
+
+                                ${field.capsule?.styles?.labelStyle}
+                              `,
+                              capsuleWrapperStyle: css`
+                                height: 34px;
+                                ${mobile &&
+                                css`
+                                  transform: translateX(10px);
+                                  background-color: transparent;
+                                `}
+
+                                ${field.capsule?.styles?.capsuleWrapperStyle}
+                              `,
+                              containerStyle: css`
+                                ${field.width &&
+                                css`
+                                  width: ${field.width};
+                                `};
+
+                                ${!field.title &&
+                                hasFieldTitle &&
+                                css`
+                                  min-height: 60px;
+                                  justify-content: end;
+                                `};
+
+                                ${field.capsule?.styles?.containerStyle}
+                              `,
+                              bodyStyle: css`
+                                ${mobileBodyStyle};
+
+                                ${field.capsule?.styles?.bodyStyle}
+                              `,
+                              controlStyle: css`
+                                ${mobileControlStyle};
+
+                                ${field.capsule?.styles?.controlStyle}
+                              `,
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }
+
+                  default:
+                    return null;
+                }
+              })();
+
+              return (
+                <Fragment key={index}>
+                  {fieldNode}
+                  {showSeparator && <Separator $theme={statefulFormTheme} />}
+                </Fragment>
+              );
             })}
           </RowFormField>
         );
@@ -2096,6 +2726,13 @@ function FormFields<T extends FieldValues>({
     </ContainerFormField>
   );
 }
+
+const Separator = styled.div<{ $theme?: StatefulFormThemeConfig }>`
+  width: 100%;
+  height: 1px;
+  background-color: ${({ $theme }) =>
+    $theme?.borderColor ?? "rgba(0,0,0,0.08)"};
+`;
 
 export interface StatefulFormLabelProps
   extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {

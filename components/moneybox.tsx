@@ -356,6 +356,7 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           $style={styles?.self}
           inputMode="decimal"
           $disabled={disabled}
+          disabled={disabled}
           {...props}
         />
 

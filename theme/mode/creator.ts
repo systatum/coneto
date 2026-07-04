@@ -1544,6 +1544,7 @@ export function createStatefulFormTheme(
       backgroundColor: body.backgroundColor,
       textColor: body.textColor,
       rowFrameBackgroundColor: "#f3f4f6",
+      mobileRowFrameBackgroundColor: "rgb(236, 236, 236)",
     },
     ...themeConfigurations
   );

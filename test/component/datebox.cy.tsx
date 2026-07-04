@@ -17,7 +17,7 @@ describe("Datebox", () => {
 
       cy.findByLabelText("calendar")
         .should("have.css", "position", "fixed")
-        .and("have.css", "bottom", "20px");
+        .and("have.css", "bottom", "10px");
     });
 
     it("renders in with 96dvh (480px from 500px)", () => {
@@ -60,14 +60,14 @@ describe("Datebox", () => {
   });
 
   context("styles", () => {
-    context("containerStyle", () => {
+    context("calendarDrawerStyle", () => {
       context("when given padding 40px", () => {
         it("should render padding with 40px", () => {
           cy.mount(
             <Datebox
               mobile
               styles={{
-                containerStyle: css`
+                calendarDrawerStyle: css`
                   padding: 40px;
                 `,
               }}

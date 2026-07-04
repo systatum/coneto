@@ -324,6 +324,539 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("mobile", () => {
+    it("renders with background rgb(236, 236, 236)", () => {
+      cy.mount(
+        <StatefulForm
+          fields={ALL_INPUT}
+          formValues={allValue}
+          mode="onChange"
+          mobile
+        />
+      );
+
+      cy.findAllByLabelText("stateful-form-row").should(
+        "have.css",
+        "background-color",
+        "rgb(236, 236, 236)"
+      );
+    });
+
+    it("renders row with radius 24px and padding 10px 20px", () => {
+      cy.mount(
+        <StatefulForm
+          fields={ALL_INPUT}
+          formValues={allValue}
+          mode="onChange"
+          mobile
+        />
+      );
+
+      cy.findAllByLabelText("stateful-form-row")
+        .should("have.css", "border-radius", "24px")
+        .and("have.css", "padding", "10px 20px");
+    });
+
+    context("radio", () => {
+      context("clicking in center row element", () => {
+        it("should give callback in onChanges", () => {
+          const onChangeValue = cy.stub().as("onChangeValue");
+
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "radio",
+                  title: "Radio",
+                  type: "radio",
+                  required: false,
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              onChange={() => onChangeValue()}
+              mobile
+            />
+          );
+          cy.get("@onChangeValue").should("not.have.been.calledOnce");
+
+          cy.findAllByLabelText("stateful-form-row").click("center");
+
+          cy.get("@onChangeValue").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("checkbox", () => {
+      context("clicking in center row element", () => {
+        it("should give callback in onChanges", () => {
+          const onChangeValue = cy.stub().as("onChangeValue");
+
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "check",
+                  title: "Checkbox",
+                  type: "checkbox",
+                  required: false,
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              onChange={() => onChangeValue()}
+              mobile
+            />
+          );
+          cy.get("@onChangeValue").should("not.have.been.calledOnce");
+
+          cy.findAllByLabelText("stateful-form-row").click("center");
+
+          cy.get("@onChangeValue").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("button", () => {
+      context("when given 2 or more button", () => {
+        it("should separate with percentage in flex row", () => {
+          cy.viewport(500, 500);
+          cy.mount(
+            <StatefulForm
+              fields={[
+                [
+                  {
+                    name: "back",
+                    title: "Back",
+                    type: "button",
+                    required: true,
+                    rowJustifyPosition: "end",
+                  },
+                  {
+                    name: "save",
+                    title: "Save",
+                    type: "button",
+                    required: true,
+                    rowJustifyPosition: "end",
+                    button: {
+                      variant: "primary",
+                    },
+                  },
+                ],
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-row")
+            .should("have.css", "flex-direction", "row")
+            .and("have.css", "width", "460px");
+
+          cy.findAllByRole("button").should("have.length", 2);
+          cy.findAllByRole("button").eq(0).should("have.css", "width", "230px");
+          cy.findAllByRole("button").eq(1).should("have.css", "width", "230px");
+        });
+      });
+
+      context("when given 2 or more button and 1 input", () => {
+        it("should renders as usual with flex column", () => {
+          cy.viewport(500, 500);
+          cy.mount(
+            <StatefulForm
+              fields={[
+                [
+                  {
+                    name: "text",
+                    title: "Text",
+                    type: "text",
+                    required: true,
+                    placeholder: "Enter text",
+                  },
+                  {
+                    name: "back",
+                    title: "Back",
+                    type: "button",
+                    required: true,
+                    rowJustifyPosition: "end",
+                  },
+                  {
+                    name: "save",
+                    title: "Save",
+                    type: "button",
+                    required: true,
+                    rowJustifyPosition: "end",
+                    button: {
+                      variant: "primary",
+                    },
+                  },
+                ],
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-row")
+            .should("have.css", "flex-direction", "column")
+            .and("have.css", "width", "460px");
+
+          cy.findAllByRole("button").should("have.length", 2);
+          cy.findAllByRole("button")
+            .eq(0)
+            .should("not.have.css", "width", "230px");
+          cy.findAllByRole("button")
+            .eq(1)
+            .should("not.have.css", "width", "230px");
+        });
+      });
+    });
+
+    context("Capsule", () => {
+      context("when error", () => {
+        it("should not render the error icon", () => {
+          const capsuleSchema = z.object({
+            capsule: z.string().max(4, "Paid is required"),
+          });
+
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "capsule",
+                  title: "Monetary Value",
+                  type: "capsule",
+                  required: true,
+                  capsule: {
+                    tabs: CAPSULE_TABS,
+                  },
+                },
+              ]}
+              validationSchema={capsuleSchema}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByText("Paid is required").should("not.exist");
+          cy.get("body").find("svg").should("not.exist");
+
+          cy.findByText("Unpaid").click();
+
+          cy.findByText("Paid is required").should("exist");
+          cy.get("body")
+            .find("svg")
+            .parent()
+            .should("have.css", "display", "none");
+        });
+      });
+    });
+
+    context("textbox", () => {
+      context("when given title", () => {
+        it("renders in the placeholder text", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "text",
+                  title: "Text Placeholder",
+                  type: "text",
+                  required: true,
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByPlaceholderText("Text Placeholder").should("exist");
+        });
+
+        context("when given placeholder", () => {
+          it("should replace the placeholder input text", () => {
+            cy.mount(
+              <StatefulForm
+                fields={[
+                  {
+                    name: "text",
+                    title: "Text Placeholder",
+
+                    type: "text",
+                    required: true,
+                    placeholder: "Enter text",
+                  },
+                ]}
+                formValues={{}}
+                mode="onChange"
+                mobile
+              />
+            );
+
+            cy.findByPlaceholderText("Text Placeholder").should("not.exist");
+            cy.findByPlaceholderText("Enter text").should("not.exist");
+          });
+        });
+      });
+    });
+
+    context("colorbox", () => {
+      it("renders with flex row-reverse", () => {
+        cy.mount(
+          <StatefulForm
+            fields={[
+              {
+                name: "color",
+                title: "Color",
+                type: "color",
+                required: true,
+                placeholder: "Enter the color here",
+              },
+            ]}
+            formValues={{}}
+            mode="onChange"
+            mobile
+          />
+        );
+
+        cy.findByLabelText("colorbox")
+          .should("exist")
+          .and("have.css", "flex-direction", "row-reverse");
+      });
+    });
+
+    context("moneybox", () => {
+      context("when clicking the currency button", () => {
+        it("renders in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "money",
+                  title: "Money",
+                  type: "money",
+                  required: false,
+                  money: {
+                    editableCurrency: true,
+                  },
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByLabelText("moneybox-currency-toggle").click();
+
+          cy.findByLabelText("combobox-drawer-mobile")
+            .should("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+
+    context("chips", () => {
+      function ProductStatefulChips() {
+        const [value, setValue] = useState({
+          chips: {
+            selectedOptions: [],
+            searchText: "",
+          },
+        });
+
+        return (
+          <StatefulForm
+            mobile
+            fields={[
+              {
+                name: "chips",
+                title: "Chips",
+                type: "chips",
+                required: false,
+                chips: {
+                  options: BADGE_OPTIONS_SHORT,
+                  selectedOptions: value.chips.selectedOptions,
+                  inputValue: value.chips.searchText,
+                },
+              },
+            ]}
+            onChange={({ currentState }) => {
+              const [[key, value]] = Object.entries(currentState);
+
+              setValue((prev) => ({
+                ...prev,
+                ...(key === "chips"
+                  ? {
+                      chips: {
+                        ...prev.chips,
+                        [Array.isArray(value)
+                          ? "selectedOptions"
+                          : "searchText"]: value,
+                      },
+                    }
+                  : currentState),
+              }));
+            }}
+            formValues={value}
+            mode="onChange"
+          />
+        );
+      }
+
+      it("renders with row reverse", () => {
+        cy.mount(<ProductStatefulChips />);
+
+        cy.findByLabelText("chips-container-input").click();
+
+        cy.findByLabelText("combobox-drawer-mobile")
+          .should("exist")
+          .and("have.css", "bottom", "10px")
+          .and("have.css", "position", "fixed");
+
+        cy.findByText("Anime").click();
+        cy.findByText("Manga").click();
+
+        cy.findByLabelText("chips-container-input").should(
+          "have.css",
+          "flex-direction",
+          "row-reverse"
+        );
+      });
+      context("when clicking the button", () => {
+        it("renders in the bottom of screen", () => {
+          cy.mount(<ProductStatefulChips />);
+
+          cy.findByLabelText("chips-container-input").click();
+
+          cy.findByLabelText("combobox-drawer-mobile")
+            .should("exist")
+            .and("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+
+    context("datebox", () => {
+      context("when clicking the selectbox", () => {
+        it("renders drawer in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "date",
+                  title: "Date",
+                  type: "date",
+                  required: true,
+                  placeholder: "Select a date",
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findAllByPlaceholderText("Select a date").click();
+
+          cy.findByLabelText("calendar")
+            .should("exist")
+            .and("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+
+    context("phonebox", () => {
+      context("renders in the text align to right side", () => {
+        it("renders drawer in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "phone",
+                  title: "Phone",
+                  type: "phone",
+                  required: true,
+                  placeholder: "Enter phone number",
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByLabelText("phonebox-input-number")
+            .should("exist")
+            .and("have.css", "text-align", "end");
+        });
+      });
+
+      context("when clicking the countrybox", () => {
+        it("renders drawer in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "phone",
+                  title: "Phone",
+                  type: "phone",
+                  required: true,
+                  placeholder: "Enter phone number",
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByLabelText("phonebox-country-toggle").click();
+
+          cy.findByLabelText("combobox-drawer-mobile")
+            .should("exist")
+            .and("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+
+    context("timebox", () => {
+      context("when clicking the input", () => {
+        it("shows drawer in the bottom of screen", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "time",
+                  title: "Time",
+                  type: "time",
+                  required: true,
+                  placeholder: "Enter time",
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findByLabelText("timebox-hour").click();
+
+          cy.findByLabelText("wheel-container")
+            .should("exist")
+            .and("have.css", "bottom", "10px")
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+  });
+
   context("chips", () => {
     function StatefulChips() {
       const [value, setValue] = useState({
