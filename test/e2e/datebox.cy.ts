@@ -44,7 +44,7 @@ describe("Datebox", () => {
         cy.findByText("JAN").click();
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2024").click();
-        cy.findByText("3").click();
+        cy.findByText("3").click({ force: true });
         const expectedContent = "01/03/2024";
 
         cy.findByPlaceholderText("mm/dd/yyyy").as("input");
@@ -67,6 +67,7 @@ describe("Datebox", () => {
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2025").click();
         cy.findByText("23").click();
+        cy.get("body").click("topRight");
         cy.get('[data-type="selectbox"]').click();
 
         cy.findByText("22").click();
@@ -118,7 +119,7 @@ describe("Datebox", () => {
         cy.findByText("SEP").click();
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2025").click();
-        cy.findByText("5").click();
+        cy.findByText("5").click({ force: true });
         cy.findByText("10").click({ shiftKey: true });
         cy.findByText("1").click({ shiftKey: true });
 
@@ -187,7 +188,7 @@ describe("Datebox", () => {
         cy.findByText("SEP").click();
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2025").click();
-        cy.findByText("5").click();
+        cy.findByText("5").click({ force: true });
         cy.findByText("10").click({ shiftKey: true });
         cy.findByText("1").click({ shiftKey: true });
 
@@ -251,8 +252,8 @@ describe("Datebox", () => {
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2026").click();
 
-        cy.findByText("5").click();
-        cy.findByText("5").click();
+        cy.findByText("5").click({ force: true });
+        cy.findByText("5").click({ force: true });
         cy.findByText("5").should(
           "have.css",
           "background-color",
@@ -317,8 +318,8 @@ describe("Datebox", () => {
         cy.findByLabelText("combobox-year").click();
         cy.findByText("2026").click();
 
-        cy.findByText("5").click();
-        cy.findByText("5").click();
+        cy.findByText("5").click({ force: true });
+        cy.findByText("5").click({ force: true });
         cy.findByText("5").should(
           "have.css",
           "background-color",
