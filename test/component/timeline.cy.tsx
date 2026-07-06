@@ -13,6 +13,7 @@ describe("Timeline", () => {
       },
       sidenote: [<span style={{ fontSize: "14px" }}>Oct 2025</span>],
       variant: "todo",
+      line: "dot",
     },
     {
       title: "Started Daily Meditation Habit",
@@ -22,6 +23,7 @@ describe("Timeline", () => {
       },
       sidenote: [<span style={{ fontSize: "14px" }}>Jan 2023</span>],
       variant: "error",
+      line: "dash",
     },
     {
       title: "Ran First Half Marathon",
@@ -108,7 +110,7 @@ describe("Timeline", () => {
 
   context("line", () => {
     context("when given", () => {
-      it("should render the line dash | solid | dotted", () => {
+      it("should render the line dash | solid (only background) | dotted", () => {
         cy.mount(
           <Timeline isClickable>
             {TIMELINE_ITEMS.map((props, index) => (
@@ -118,17 +120,23 @@ describe("Timeline", () => {
         );
         TIMELINE_ITEMS.map((props, index) => {
           if (index < TIMELINE_ITEMS.length - 1) {
-            cy.findAllByLabelText("timeline-connector")
-              .eq(index)
-              .should(
-                "have.css",
-                "border-bottom-style",
-                props.line === "dash"
-                  ? "dashed"
-                  : props.line === "dot"
-                    ? "dotted"
-                    : "solid"
-              );
+            if (props.line) {
+              cy.findAllByLabelText("timeline-connector")
+                .eq(index)
+                .should(
+                  "have.css",
+                  "border-left-style",
+                  props.line === "dash"
+                    ? "dashed"
+                    : props.line === "dot"
+                      ? "dotted"
+                      : "none"
+                );
+            } else {
+              cy.findAllByLabelText("timeline-connector")
+                .eq(index)
+                .should("have.css", "background-color", "rgb(0, 182, 46)");
+            }
           }
         });
       });
