@@ -487,11 +487,11 @@ function Table({
                       containerStyle: css`
                         ${actions &&
                         css`
-                          margin-left: 40px;
+                          margin-left: 34px;
                         `};
                         ${(showPagination || selectable) &&
                         css`
-                          margin-right: 40px;
+                          margin-right: 34px;
                         `};
                         max-height: 33px;
                         ${searchbox?.styles?.containerStyle}
