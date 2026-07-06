@@ -591,8 +591,8 @@ function FormFields<T extends FieldValues>({
                 align-items: ${rowAlignedItem};
               `};
 
-              ${rowStyleItem};
               ${styles?.mobileFieldGroupStyle};
+              ${rowStyleItem};
             `}
             key={indexGroup}
           >
