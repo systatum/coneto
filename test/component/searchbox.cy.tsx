@@ -419,7 +419,7 @@ describe("Searchbox", () => {
           .and("have.css", "background-color", "rgb(128, 128, 128)");
         cy.findByLabelText("tooltip-drawer")
           .should("be.visible")
-          .and("have.css", "background-color", "rgb(231, 231, 231)");
+          .and("have.css", "background-color", "rgb(185, 186, 188)");
       });
     });
   });

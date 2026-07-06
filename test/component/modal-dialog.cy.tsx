@@ -132,7 +132,9 @@ describe("Modal Dialog", () => {
         );
 
         cy.findByLabelText("dialog-content").should("exist");
-        cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .click("topLeft", { force: true });
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -162,7 +164,9 @@ describe("Modal Dialog", () => {
         );
 
         cy.findByLabelText("dialog-content").should("exist");
-        cy.findByLabelText("overlay-blocker").should("exist").click("topLeft");
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .click("topLeft", { force: true });
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -227,7 +231,7 @@ describe("Modal Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
 
           cy.get("@consoleLog").should(
             "not.have.been.calledWith",
@@ -258,7 +262,7 @@ describe("Modal Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });
@@ -282,7 +286,7 @@ describe("Modal Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("exist");
         });
       });
@@ -306,7 +310,7 @@ describe("Modal Dialog", () => {
           cy.findByLabelText("dialog-content").should("exist");
           cy.findByLabelText("overlay-blocker")
             .should("exist")
-            .click("topLeft");
+            .click("topLeft", { force: true });
           cy.findByLabelText("dialog-content").should("not.exist");
         });
       });

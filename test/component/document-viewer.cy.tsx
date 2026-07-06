@@ -10,7 +10,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             selectable
-            source={({ pdf }) => pdf("sample.pdf")}
+            source={({ pdf }) => pdf("./sample.pdf")}
             title="Team Collaboration Notes"
             styles={{
               boxStyle: css`

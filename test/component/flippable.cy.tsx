@@ -262,7 +262,7 @@ describe("Flippable", () => {
         it("renders content on the bottom", () => {
           cy.mount(<FlippableWithTable tableOnFrontFace />);
           cy.findByText("Cindy Hartono").should("not.be.visible");
-          cy.findByLabelText("table-body").scrollTo(0, 1000);
+          cy.findByLabelText("table-body").parent().scrollTo(0, 1000);
           cy.findByText("Cindy Hartono").should("be.visible");
         });
       });
@@ -274,7 +274,7 @@ describe("Flippable", () => {
           cy.mount(<FlippableWithTable />);
           cy.contains("Show table").click();
           cy.findByText("Cindy Hartono").should("not.be.visible");
-          cy.findByLabelText("table-body").scrollTo(0, 1000);
+          cy.findByLabelText("table-body").parent().scrollTo(0, 1000);
           cy.findByText("Cindy Hartono").should("be.visible");
         });
       });
