@@ -128,9 +128,10 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
 
 export interface StatefulFormStyles {
   containerStyle?: CSSProp;
-  rowStyle?: CSSProp;
   frameContainerStyle?: CSSProp;
   frameTitleStyle?: CSSProp;
+  mobileFieldGroupStyle?: CSSProp;
+  mobileFieldGroupRowDividerStyle?: CSSProp;
 }
 
 export type FormFieldGroup = FormFieldProps | FormFieldProps[];
@@ -483,14 +484,16 @@ function FormFields<T extends FieldValues>({
         }
 
         const rowJustifiedContent = visibleFields.find(
-          (f) => f.rowJustifyPosition
+          (field) => field.rowJustifyPosition
         )?.rowJustifyPosition;
 
         const rowAlignedItem = visibleFields.find(
-          (f) => f.rowItemsAlignment
+          (field) => field.rowItemsAlignment
         )?.rowItemsAlignment;
 
-        const rowStyleItem = visibleFields.find((f) => f.rowStyle)?.rowStyle;
+        const rowStyleItem = visibleFields.find(
+          (field) => field.rowStyle
+        )?.rowStyle;
 
         const nonButtonFields = visibleFields.filter(
           (f) => f.type !== "button"
@@ -566,9 +569,10 @@ function FormFields<T extends FieldValues>({
 
         return (
           <RowFormField
-            aria-label="stateful-form-row"
+            aria-label={
+              mobile ? "stateful-form-field-group" : "stateful-form-row"
+            }
             $style={css`
-              ${styles?.rowStyle}
               ${rowJustifiedContent &&
               css`
                 justify-content: ${rowJustifiedContent};
@@ -587,7 +591,8 @@ function FormFields<T extends FieldValues>({
                 align-items: ${rowAlignedItem};
               `};
 
-              ${rowStyleItem}
+              ${styles?.mobileFieldGroupStyle};
+              ${rowStyleItem};
             `}
             key={indexGroup}
           >
@@ -596,7 +601,7 @@ function FormFields<T extends FieldValues>({
                 ? (field?.labelPosition ?? "left")
                 : field?.labelPosition;
               const isLast = index === visibleFields.length - 1;
-              const showSeparator =
+              const showDivider =
                 mobile && !isLast && Array.isArray(group) && !isButtonRow;
               const label = mobile ? null : field?.title;
               const placeholder = mobile
@@ -2716,7 +2721,13 @@ function FormFields<T extends FieldValues>({
               return (
                 <Fragment key={index}>
                   {fieldNode}
-                  {showSeparator && <Separator $theme={statefulFormTheme} />}
+                  {showDivider && (
+                    <Divider
+                      aria-label="stateful-form-field-group-divider"
+                      $style={styles?.mobileFieldGroupRowDividerStyle}
+                      $theme={statefulFormTheme}
+                    />
+                  )}
                 </Fragment>
               );
             })}
@@ -2727,11 +2738,16 @@ function FormFields<T extends FieldValues>({
   );
 }
 
-const Separator = styled.div<{ $theme?: StatefulFormThemeConfig }>`
+const Divider = styled.div<{
+  $theme?: StatefulFormThemeConfig;
+  $style?: CSSProp;
+}>`
   width: 100%;
   height: 1px;
   background-color: ${({ $theme }) =>
     $theme?.borderColor ?? "rgba(0,0,0,0.08)"};
+
+  ${({ $style }) => $style}
 `;
 
 export interface StatefulFormLabelProps

@@ -325,6 +325,59 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
 
 describe("StatefulForm", () => {
   context("mobile", () => {
+    context("styles", () => {
+      context("mobileFieldGroupStyle", () => {
+        context("when given padding 30px", () => {
+          it("should render the padding in all side with 30px", () => {
+            cy.mount(
+              <StatefulForm
+                fields={ALL_INPUT}
+                formValues={allValue}
+                mode="onChange"
+                mobile
+                styles={{
+                  mobileFieldGroupStyle: css`
+                    padding: 30px;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("stateful-form-field-group").should(
+              "have.css",
+              "padding",
+              "30px"
+            );
+          });
+        });
+      });
+
+      context("mobileFieldGroupRowDividerStyle", () => {
+        context("when given color red", () => {
+          it("should render the color with rgb(255, 0, 0)", () => {
+            cy.mount(
+              <StatefulForm
+                fields={ALL_INPUT}
+                formValues={allValue}
+                mode="onChange"
+                mobile
+                styles={{
+                  mobileFieldGroupRowDividerStyle: css`
+                    background-color: red;
+                  `,
+                }}
+              />
+            );
+
+            cy.findAllByLabelText("stateful-form-field-group-divider").should(
+              "have.css",
+              "background-color",
+              "rgb(255, 0, 0)"
+            );
+          });
+        });
+      });
+    });
     it("renders with background rgb(236, 236, 236)", () => {
       cy.mount(
         <StatefulForm
@@ -335,7 +388,7 @@ describe("StatefulForm", () => {
         />
       );
 
-      cy.findAllByLabelText("stateful-form-row").should(
+      cy.findAllByLabelText("stateful-form-field-group").should(
         "have.css",
         "background-color",
         "rgb(236, 236, 236)"
@@ -352,7 +405,7 @@ describe("StatefulForm", () => {
         />
       );
 
-      cy.findAllByLabelText("stateful-form-row")
+      cy.findAllByLabelText("stateful-form-field-group")
         .should("have.css", "border-radius", "24px")
         .and("have.css", "padding", "10px 20px");
     });
@@ -380,7 +433,7 @@ describe("StatefulForm", () => {
           );
           cy.get("@onChangeValue").should("not.have.been.calledOnce");
 
-          cy.findAllByLabelText("stateful-form-row").click("center");
+          cy.findAllByLabelText("stateful-form-field-group").click("center");
 
           cy.get("@onChangeValue").should("have.been.calledOnce");
         });
@@ -410,7 +463,7 @@ describe("StatefulForm", () => {
           );
           cy.get("@onChangeValue").should("not.have.been.calledOnce");
 
-          cy.findAllByLabelText("stateful-form-row").click("center");
+          cy.findAllByLabelText("stateful-form-field-group").click("center");
 
           cy.get("@onChangeValue").should("have.been.calledOnce");
         });
@@ -450,7 +503,7 @@ describe("StatefulForm", () => {
             />
           );
 
-          cy.findAllByLabelText("stateful-form-row")
+          cy.findAllByLabelText("stateful-form-field-group")
             .should("have.css", "flex-direction", "row")
             .and("have.css", "width", "460px");
 
@@ -499,7 +552,7 @@ describe("StatefulForm", () => {
             />
           );
 
-          cy.findAllByLabelText("stateful-form-row")
+          cy.findAllByLabelText("stateful-form-field-group")
             .should("have.css", "flex-direction", "column")
             .and("have.css", "width", "460px");
 
