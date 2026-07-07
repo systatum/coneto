@@ -10,7 +10,7 @@ describe("Document Viewer", () => {
         cy.mount(
           <DocumentViewer
             selectable
-            source={({ pdf }) => pdf("./sample.pdf")}
+            source={({ pdf }) => pdf("sample.pdf")}
             title="Team Collaboration Notes"
             styles={{
               boxStyle: css`
@@ -30,6 +30,8 @@ describe("Document Viewer", () => {
             ]}
           />
         );
+
+        cy.wait(300);
 
         cy.findByLabelText("selection-box")
           .should("exist")
@@ -68,6 +70,8 @@ describe("Document Viewer", () => {
               ]}
             />
           );
+
+          cy.wait(300);
 
           cy.findByLabelText("selection-box")
             .should("exist")
