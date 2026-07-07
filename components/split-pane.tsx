@@ -404,6 +404,7 @@ const CellWrapper = styled.div<{
 
 const Divider = styled.div<{ $isVertical: boolean; $style?: CSSProp }>`
   position: relative;
+  touch-action: none;
   background-color: transparent;
   transition: background-color 0.3s;
   z-index: 100;

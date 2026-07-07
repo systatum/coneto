@@ -102,6 +102,28 @@ describe("PaperDialog", () => {
   });
 
   context("resizable", () => {
+    it("renders the resizeable with touch-action none", () => {
+      cy.viewport(500, 700);
+
+      cy.mount(
+        <ProductPaperDialog
+          width="50dvw"
+          resizable={{
+            minWidth: "200px",
+          }}
+        />
+      );
+
+      cy.findAllByRole("button").eq(0).click();
+      cy.wait(500);
+
+      cy.findByLabelText("paper-dialog-resize-handle").should(
+        "have.css",
+        "touch-action",
+        "none"
+      );
+    });
+
     context("object", () => {
       context("minWidth", () => {
         it("does not resize below the minimum width", () => {
@@ -303,6 +325,29 @@ describe("PaperDialog", () => {
     });
 
     context("resizable", () => {
+      it("renders the resizeable with touch-action none", () => {
+        cy.viewport(500, 700);
+
+        cy.mount(
+          <ProductPaperDialog
+            mobile
+            width="50dvw"
+            resizable={{
+              minWidth: "200px",
+            }}
+          />
+        );
+
+        cy.findAllByRole("button").eq(0).click();
+        cy.wait(500);
+
+        cy.findByLabelText("paper-dialog-drag-indicator").should(
+          "have.css",
+          "touch-action",
+          "none"
+        );
+      });
+
       context("object", () => {
         context("minHeight", () => {
           it("does not resize below the minimum height", () => {

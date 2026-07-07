@@ -223,6 +223,31 @@ describe("SplitPane", () => {
   });
 
   context("onResize", () => {
+    it("renders the drag indicator using touch-action none", () => {
+      const onResize = cy.stub().as("onResize");
+
+      cy.mount(
+        <SplitPane
+          orientation="horizontal"
+          styles={{
+            self: css`
+              height: 500px;
+            `,
+          }}
+          onResize={onResize}
+        >
+          <SplitPane.Cell>Top</SplitPane.Cell>
+          <SplitPane.Cell>Bottom</SplitPane.Cell>
+        </SplitPane>
+      );
+
+      cy.findByLabelText("split-pane-divider").should(
+        "have.css",
+        "touch-action",
+        "none"
+      );
+    });
+
     it("should call onResize rapid while dragging", () => {
       const onResize = cy.stub().as("onResize");
 
