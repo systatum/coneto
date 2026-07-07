@@ -2,6 +2,12 @@
 
 Coneto is a complete React UI library created by Systatum, designed with modernity, simplicity, and usability at its core. It helps you build applications faster with a consistent and polished design system.
 
+<p align="left">
+   <a href="https://deepwiki.com/Tencent/tdesign-react">
+      <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
+   </a>
+</p>
+
 ## Installation
 
 ```tsx
@@ -12,13 +18,11 @@ pnpm add @systatum/coneto
 
 - 💸 Free and open to use
 - ⚡ Speeds up development with ready-to-use components
-- 🎨 Clean and polished UI by default
+- 🛠️ Battle-tested in real-world web/desktop/mobile projects
+- 🎨 Clean and polished, yet also highly customizable UI
 - 🌗 Supports light and dark themes
-- 🛠️ Battle-tested in real-world projects
-- 🔧 Highly customizable
-- 💻 Works with React and Electron
-- 📐 Consistent API design
-- 📚 Includes practical examples
+- 💻 React, Electron, TypeScript, Webpack, Vite, RSpack, you name it
+- 📚 Examples included in this [Storybook](https://coneto.systatum.com).
 
 ## Documentation
 
