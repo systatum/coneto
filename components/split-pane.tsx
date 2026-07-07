@@ -45,10 +45,8 @@ export interface SplitPaneStyles {
   dividerStyle?: CSSProp;
 }
 
-export interface SplitPaneCellProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+export interface SplitPaneCellProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   styles?: SplitPaneCellStyles;
   actions?: SplitPaneAction[];
@@ -89,10 +87,11 @@ function SplitPane({
   const draggingIndex = useRef<number | null>(null);
   const startPosition = useRef<number>(0);
   const startSizes = useRef<number[]>([]);
+  const activePointerId = useRef<number | null>(null);
   const runOnResize = useRafThrottle(onResize);
 
-  const onMouseMove = useCallback(
-    (e: globalThis.MouseEvent) => {
+  const onPointerMove = useCallback(
+    (e: globalThis.PointerEvent) => {
       if (draggingIndex.current === null || !containerRef.current) return;
 
       const container = containerRef.current;
@@ -139,19 +138,33 @@ function SplitPane({
     [isVertical]
   );
 
-  const stopDrag = useCallback(() => {
-    draggingIndex.current = null;
-    startSizes.current = [];
-    setIsDragging(false);
-    if (onResizeComplete) {
-      onResizeComplete();
-    }
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", stopDrag);
-  }, [onMouseMove]);
+  const onPointerUp = useCallback(
+    (e?: globalThis.PointerEvent) => {
+      if (
+        e &&
+        activePointerId.current !== null &&
+        e.pointerId !== activePointerId.current
+      ) {
+        return;
+      }
 
-  const startDrag = useCallback(
-    (index: number) => (e: MouseEvent) => {
+      draggingIndex.current = null;
+      startSizes.current = [];
+      activePointerId.current = null;
+      setIsDragging(false);
+      if (onResizeComplete) {
+        onResizeComplete();
+      }
+
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointercancel", onPointerUp);
+    },
+    [onPointerMove]
+  );
+
+  const onPointerDown = useCallback(
+    (index: number) => (e: React.PointerEvent) => {
       e.preventDefault();
 
       draggingIndex.current = index;
@@ -165,10 +178,20 @@ function SplitPane({
         ? e.clientX - rect.left
         : e.clientY - rect.top;
 
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", stopDrag);
+      // Ensure this divider keeps receiving pointer events even if the
+      // finger/pointer moves off it (important for touch dragging).
+
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+        // setPointerCapture can throw in some environments; safe to ignore.
+      }
+
+      document.addEventListener("pointermove", onPointerMove);
+      document.addEventListener("pointerup", onPointerUp);
+      document.addEventListener("pointercancel", onPointerUp);
     },
-    [isVertical, sizes, onMouseMove, stopDrag]
+    [isVertical, sizes, onPointerMove, onPointerUp]
   );
 
   useEffect(() => {
@@ -207,7 +230,7 @@ function SplitPane({
               $style={styles?.dividerStyle}
               className="divider"
               aria-label={`split-pane-divider`}
-              onMouseDown={startDrag(index)}
+              onPointerDown={onPointerDown(index)}
               $isVertical={isVertical}
             />
           )}
