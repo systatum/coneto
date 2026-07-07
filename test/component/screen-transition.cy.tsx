@@ -187,7 +187,7 @@ describe("Screen Transition", () => {
             .eq(1)
             .should("have.text", "Page A");
 
-          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.findAllByLabelText("title-action").eq(0).click();
         });
       });
     });
@@ -213,14 +213,14 @@ describe("Screen Transition", () => {
             .eq(1)
             .should("have.text", "Page B");
 
-          cy.findAllByLabelText("action-button").eq(2).click();
+          cy.findAllByLabelText("title-action").eq(2).click();
 
           cy.findAllByLabelText("title-title").eq(3).should("not.exist");
 
-          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.findAllByLabelText("title-action").eq(1).click();
           cy.findAllByLabelText("title-title").eq(2).should("not.exist");
 
-          cy.findAllByLabelText("action-button").eq(0).click();
+          cy.findAllByLabelText("title-action").eq(0).click();
           cy.findAllByLabelText("title-title").eq(1).should("not.exist");
         });
       });
@@ -259,7 +259,7 @@ describe("Screen Transition", () => {
 
           cy.get("@onScreenChange").should("have.been.calledWith", ["a", "b"]);
 
-          cy.findAllByLabelText("action-button").eq(1).click();
+          cy.findAllByLabelText("title-action").eq(1).click();
           cy.wait(400);
 
           cy.get("@onScreenChange").should("have.been.calledWith", ["a"]);

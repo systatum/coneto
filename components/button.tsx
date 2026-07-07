@@ -436,6 +436,7 @@ const Spacer = styled.div<{ $placement?: Placement; $spacerStyle?: CSSProp }>`
   width: 100%;
   height: 30px;
   left: 0;
+  z-index: -1;
 
   ${({ $placement }) =>
     $placement?.startsWith("top")

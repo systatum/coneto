@@ -1,9 +1,9 @@
 import { getIdContent } from "test/support/commands";
 
-context("Phonebox Component", () => {
-  describe("Default Phonebox", () => {
+context("Phonebox", () => {
+  describe("Default", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-phonebox--default-phonebox"));
+      cy.visit(getIdContent("input-elements-phonebox--default"));
     });
 
     it("Should type phone number and select Indonesia", () => {

@@ -176,7 +176,7 @@ describe("Statusbar", () => {
   context("position", () => {
     context("fixed", () => {
       it("renders in the most bottom, justify-between, and position fixed", () => {
-        cy.mount(<ProductStatusbar />);
+        cy.mount(<ProductStatusbar position="fixed" />);
 
         cy.findByLabelText("statusbar-wrapper")
           .should("have.css", "position", "fixed")

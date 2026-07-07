@@ -1,4 +1,5 @@
 import "./../../shared.css";
+import "./../../documentation.css";
 import { mount, MountOptions } from "cypress/react";
 import "./commands";
 import "@testing-library/cypress/add-commands";

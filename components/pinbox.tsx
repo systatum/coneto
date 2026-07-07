@@ -214,12 +214,12 @@ const BasePinbox = forwardRef<HTMLInputElement, BasePinboxProps>(
           }
 
           pastePos++;
+          index++;
         } else {
-          // Invalid char for this editable slot — stop.
-          break;
+          // Invalid char for this editable slot — drop it and retry with the
+          // next pasted char, staying on the same slot.
+          pastePos++;
         }
-
-        index++;
       }
 
       setValueLocal(finalValue);
@@ -581,10 +581,9 @@ const PinboxIndicator = styled.div<{
   transform: translateX(-50%);
   position: absolute;
   display: none;
-  border-bottom-width: 0.5px;
-
-  border-color: ${({ $theme, $error }) =>
-    $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
+  border-bottom: 0.5px solid
+    ${({ $theme, $error }) =>
+      $error ? $theme.errorBorderColor : $theme.focusedBorderColor};
 
   color: ${({ $theme, $error }) =>
     $error ? $theme.errorTextColor : $theme.textColor};

@@ -21,10 +21,10 @@ describe("Wheel", () => {
           });
         }}
         parts={[
-          { id: "hour", values: Wheel.hourOptions, width: "64px" },
-          { id: "minute", values: Wheel.minuteOptions, width: "72px" },
-          { id: "second", values: Wheel.secondOptions, width: "72px" },
-          { id: "ampm", values: Wheel.ampmOptions, width: "64px" },
+          { id: "hour", values: hours, width: "64px" },
+          { id: "minute", values: minutes, width: "72px" },
+          { id: "second", values: seconds, width: "72px" },
+          { id: "ampm", values: ampm, width: "64px" },
         ]}
         values={values}
         {...props}
@@ -104,8 +104,8 @@ describe("Wheel", () => {
           cy.mount(
             <ProductWheel
               parts={[
-                { id: "hour", values: Wheel.hourOptions, width: "200px" },
-                { id: "minute", values: Wheel.minuteOptions, width: "200px" },
+                { id: "hour", values: hours, width: "200px" },
+                { id: "minute", values: minutes, width: "200px" },
               ]}
             />
           );
@@ -122,8 +122,8 @@ describe("Wheel", () => {
           cy.mount(
             <ProductWheel
               parts={[
-                { id: "hour", values: Wheel.hourOptions },
-                { id: "minute", values: Wheel.minuteOptions },
+                { id: "hour", values: hours },
+                { id: "minute", values: minutes },
               ]}
             />
           );
@@ -141,8 +141,8 @@ describe("Wheel", () => {
         cy.mount(
           <ProductWheel
             parts={[
-              { id: "hour", values: Wheel.hourOptions, width: "64px" },
-              { id: "minute", values: Wheel.minuteOptions, width: "72px" },
+              { id: "hour", values: hours, width: "64px" },
+              { id: "minute", values: minutes, width: "72px" },
             ]}
           />
         );
@@ -155,9 +155,9 @@ describe("Wheel", () => {
         cy.mount(
           <ProductWheel
             parts={[
-              { id: "hour", values: Wheel.hourOptions, width: "64px" },
-              { id: "minute", values: Wheel.minuteOptions, width: "72px" },
-              { id: "ampm", values: Wheel.ampmOptions, width: "64px" },
+              { id: "hour", values: hours, width: "64px" },
+              { id: "minute", values: minutes, width: "72px" },
+              { id: "ampm", values: ampm, width: "64px" },
             ]}
           />
         );
@@ -170,10 +170,10 @@ describe("Wheel", () => {
         cy.mount(
           <ProductWheel
             parts={[
-              { id: "hour", values: Wheel.hourOptions, width: "64px" },
-              { id: "minute", values: Wheel.minuteOptions, width: "72px" },
-              { id: "second", values: Wheel.secondOptions, width: "72px" },
-              { id: "ampm", values: Wheel.ampmOptions, width: "64px" },
+              { id: "hour", values: hours, width: "64px" },
+              { id: "minute", values: minutes, width: "72px" },
+              { id: "second", values: seconds, width: "72px" },
+              { id: "ampm", values: ampm, width: "64px" },
             ]}
           />
         );
@@ -239,8 +239,25 @@ describe("Wheel", () => {
         cy.findAllByLabelText("wheel-column-item")
           .filter('[aria-selected="true"]')
           .first()
-          .should("contain", "12");
+          .should("contain", "11");
       });
     });
   });
 });
+
+const hours = Array.from({ length: 12 }, (_, i) => {
+  const h = i;
+  return { value: h.toString(), text: h.toString() };
+});
+
+const minutes = Array.from({ length: 60 }, (_, i) => ({
+  value: i.toString(),
+  text: i.toString().padStart(2, "0"),
+}));
+
+const seconds = minutes;
+
+const ampm = [
+  { value: "am", text: "AM" },
+  { value: "pm", text: "PM" },
+];

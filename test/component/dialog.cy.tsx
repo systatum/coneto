@@ -158,9 +158,9 @@ describe("Dialog", () => {
             .then(($el) => {
               cy.wait(200);
               cy.wrap($el).should(
-                "not.have.css",
+                "have.css",
                 "background-color",
-                "rgb(243, 243, 243)"
+                "rgba(0, 0, 0, 0)"
               );
             });
         });
@@ -215,7 +215,11 @@ describe("Dialog", () => {
           cy.wait(100);
           cy.get("button")
             .eq(0)
-            .should("have.css", "background-color", "rgb(243, 243, 243)");
+            .should(
+              "have.css",
+              "background-color",
+              "rgba(255, 255, 255, 0.45)"
+            );
         });
       });
 

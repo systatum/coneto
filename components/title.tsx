@@ -440,10 +440,9 @@ function BaseAllText({
               self: css`
                 min-width: ${resolvedIconSize * 1.5}px;
                 min-height: ${resolvedIconSize * 1.5}px;
-                background-color: ${titleTheme?.icon?.backgroundColor ??
-                (mode === "light"
+                background-color: ${mode === "light"
                   ? lightenColor(icon?.color, 0.9)
-                  : darkenColor(icon?.color, 0.8))};
+                  : darkenColor(icon?.color, 0.8)};
                 border-radius: 99999px;
                 justify-content: center;
                 align-items: center;

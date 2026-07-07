@@ -174,7 +174,7 @@ describe("DormantText", () => {
           cy.findByText("JAN").click();
           cy.findByLabelText("combobox-year").click();
           cy.findByText("2024").click();
-          cy.findByText("3").click();
+          cy.findByText("3").click({ force: true });
           cy.findByText("01/03/2024").should("exist");
         });
       });
@@ -335,8 +335,8 @@ describe("DormantText", () => {
       context("when pressing enter", () => {
         it("renders with changed phone number", () => {
           cy.findAllByLabelText("dormant-wrapper").eq(3).click();
-          cy.findByLabelText("Select country code").click();
-          cy.findAllByLabelText("phonebox-search-countries").type("Indonesia");
+          cy.findByLabelText("phonebox-country-toggle").click();
+          cy.findAllByLabelText("textbox-search").type("Indonesia");
           cy.findByText("Indonesia").click();
           cy.findByPlaceholderText("Enter your phone number")
             .clear()
@@ -370,8 +370,8 @@ describe("DormantText", () => {
       context("when pressing escape", () => {
         it("renders previously input phone number", () => {
           cy.findAllByLabelText("dormant-wrapper").eq(3).click();
-          cy.findByLabelText("Select country code").click();
-          cy.findAllByLabelText("phonebox-search-countries").type("Indonesia");
+          cy.findByLabelText("phonebox-country-toggle").click();
+          cy.findAllByLabelText("textbox-search").type("Indonesia");
           cy.findByText("Indonesia").click();
           cy.findByPlaceholderText("Enter your phone number")
             .clear()

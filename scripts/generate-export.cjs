@@ -5,6 +5,7 @@ const IGNORED_COMPONENT_FILES = [
   "context-menu",
   "action-button",
   "code-editor",
+  "scrollbar",
 ];
 
 function getFlatExportsFrom(dirPath, baseDistPath) {

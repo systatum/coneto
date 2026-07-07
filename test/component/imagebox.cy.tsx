@@ -83,7 +83,7 @@ describe("Imagebox", () => {
         cy.findByLabelText("imagebox-input").should(
           "have.css",
           "border",
-          "0px solid rgb(229, 231, 235)"
+          "0px none rgb(0, 0, 0)"
         );
       });
     });

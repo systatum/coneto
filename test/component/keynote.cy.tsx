@@ -141,7 +141,7 @@ describe("Keynote", () => {
       it("should convert to '-' text", () => {
         Object.values(data).map((value) => {
           if (value === undefined) {
-            cy.findByText("-").should("exist");
+            cy.findAllByText("-").eq(0).should("exist");
           }
         });
       });
@@ -151,7 +151,7 @@ describe("Keynote", () => {
       it("should convert to '-' text", () => {
         Object.values(data).map((value) => {
           if (value === null) {
-            cy.findByText("-").should("exist");
+            cy.findAllByText("-").eq(1).should("exist");
           }
         });
       });

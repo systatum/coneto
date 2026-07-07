@@ -31,6 +31,8 @@ describe("Document Viewer", () => {
           />
         );
 
+        cy.wait(300);
+
         cy.findByLabelText("selection-box")
           .should("exist")
           .should("have.css", "border-color", "rgb(0, 0, 255)")
@@ -68,6 +70,8 @@ describe("Document Viewer", () => {
               ]}
             />
           );
+
+          cy.wait(300);
 
           cy.findByLabelText("selection-box")
             .should("exist")
