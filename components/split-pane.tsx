@@ -138,7 +138,7 @@ function SplitPane({
     [isVertical]
   );
 
-  const stopDrag = useCallback(
+  const onPointerUp = useCallback(
     (e?: globalThis.PointerEvent) => {
       if (
         e &&
@@ -157,13 +157,13 @@ function SplitPane({
       }
 
       document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerup", stopDrag);
-      document.removeEventListener("pointercancel", stopDrag);
+      document.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointercancel", onPointerUp);
     },
     [onPointerMove]
   );
 
-  const startDrag = useCallback(
+  const onPointerDown = useCallback(
     (index: number) => (e: React.PointerEvent) => {
       e.preventDefault();
 
@@ -188,10 +188,10 @@ function SplitPane({
       }
 
       document.addEventListener("pointermove", onPointerMove);
-      document.addEventListener("pointerup", stopDrag);
-      document.addEventListener("pointercancel", stopDrag);
+      document.addEventListener("pointerup", onPointerUp);
+      document.addEventListener("pointercancel", onPointerUp);
     },
-    [isVertical, sizes, onPointerMove, stopDrag]
+    [isVertical, sizes, onPointerMove, onPointerUp]
   );
 
   useEffect(() => {
@@ -230,7 +230,7 @@ function SplitPane({
               $style={styles?.dividerStyle}
               className="divider"
               aria-label={`split-pane-divider`}
-              onPointerDown={startDrag(index)}
+              onPointerDown={onPointerDown(index)}
               $isVertical={isVertical}
             />
           )}
