@@ -810,6 +810,7 @@ const MotionDialog = styled(motion.div)<{
 `;
 
 const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
+  touch-action: none;
   position: absolute;
   top: 0;
   bottom: 0;
@@ -955,6 +956,8 @@ const DragIndicatorWrapper = styled(motion.div)<{
   display: flex;
   top: 0;
   justify-content: center;
+
+  touch-action: none;
 
   cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
   width: 100dvw;
