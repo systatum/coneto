@@ -163,7 +163,7 @@ describe("SplitPane", () => {
 
     context("onMouseEnter", () => {
       context("when hovering", () => {
-        it("should give callback", () => {
+        it("should give the callback", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
           });
