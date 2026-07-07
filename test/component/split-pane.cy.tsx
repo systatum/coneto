@@ -241,15 +241,15 @@ describe("SplitPane", () => {
         </SplitPane>
       );
 
-      cy.findByLabelText("split-pane-divider").trigger("mousedown", {
+      cy.findByLabelText("split-pane-divider").trigger("pointerdown", {
         clientY: 250,
       });
 
       for (let i = 0; i < 100; i++) {
-        cy.get("body").trigger("mousemove", { clientY: 250 + i });
+        cy.get("body").trigger("pointermove", { clientY: 250 + i });
       }
 
-      cy.get("body").trigger("mouseup");
+      cy.get("body").trigger("pointerup");
       cy.get("@onResize").its("callCount").should("eq", 100);
     });
   });
@@ -309,11 +309,11 @@ describe("SplitPane", () => {
         cy.mount(<SplitPaneWithTextbox />);
 
         cy.findAllByLabelText("split-pane-divider")
-          .trigger("mousedown", {
+          .trigger("pointerdown", {
             clientY: 250,
           })
-          .trigger("mousemove", { clientY: 150 })
-          .trigger("mouseup");
+          .trigger("pointermove", { clientY: 150 })
+          .trigger("pointerup");
 
         cy.findAllByLabelText("split-pane-cell")
           .eq(1)

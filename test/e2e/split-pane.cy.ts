@@ -27,13 +27,13 @@ describe("SplitPane", () => {
         .eq(1)
         .should("contain.text", "Down");
 
-      cy.findAllByLabelText("split-pane-divider").eq(0).trigger("mousedown", {
+      cy.findAllByLabelText("split-pane-divider").eq(0).trigger("pointerdown", {
         which: 1,
       });
       cy.wait(500);
-      cy.document().trigger("mousemove", { clientY: 300 });
+      cy.document().trigger("pointermove", { clientY: 300 });
       cy.wait(500);
-      cy.document().trigger("mouseup");
+      cy.document().trigger("pointerup");
     });
   });
 
