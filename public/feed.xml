@@ -7,9 +7,9 @@
   <channel>
     <title>Systatum Coneto React UI Library</title>
     <link>https://coneto.systatum.com</link>
-    <description><![CDATA[Coneto: A React UI Library for Every Use Case, Done Right Deliver apps in half the time with Coneto, free of charge! Coneto is the extremely complete React UI library created by Systatum. It is designed with modernity, simplicity, and usability at its core. Here you’ll find everything from stateful forms you can build in just a few lines of code to a versatile data grid and a solid set of tabs and view management tools.]]></description>
+    <description><![CDATA[Coneto: A React UI Library for Web/Mobile/Desktop Learn once, write any app. Coneto provides components to help you build stunning web, mobile or even desktop apps. With Coneto, you can deliver apps in half the time.]]></description>
     <language>en</language>
-    <generator>storybook-rss v3.0.0</generator>
+    <generator>storybook-rss v3.1.0</generator>
     <atom:link href="https://coneto.systatum.com/feed.xml" rel="self" type="application/rss+xml" />
     <lastBuildDate>Mon, 06 Jul 2026 07:42:14 GMT</lastBuildDate>
     
