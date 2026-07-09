@@ -165,7 +165,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Time",
     type: "time",
     required: true,
-    placeholder: "Enter time",
   },
   {
     name: "number",
@@ -890,7 +889,6 @@ describe("StatefulForm", () => {
                   title: "Time",
                   type: "time",
                   required: true,
-                  placeholder: "Enter time",
                 },
               ]}
               formValues={{}}
@@ -1072,6 +1070,40 @@ describe("StatefulForm", () => {
 
     it("should shows value from formValues", () => {
       cy.get("#combobox-combo").should("have.value", "Grape");
+    });
+
+    context("when given four comboboxes in a row", () => {
+      it("renders each with a width smaller than 140px (min-width)", () => {
+        cy.viewport(500, 750);
+        const fields = Array.from({ length: 4 }, (_, i) => ({
+          id: `combo-${i + 1}`,
+          name: `combo${i + 1}`,
+          title: `Combo ${i + 1}`,
+          type: "combo" as const,
+          required: true,
+          placeholder: "Select a fruit...",
+          combobox: {
+            options: FRUIT_OPTIONS,
+          },
+        }));
+        cy.mount(<StatefulForm fields={[fields]} formValues={{}} />);
+
+        cy.then(() => {
+          const widths: number[] = [];
+
+          cy.wrap(fields).each((field: (typeof fields)[number]) => {
+            cy.get(`#${field.id}`).then(($el) => {
+              widths.push($el[0].getBoundingClientRect().width);
+            });
+          });
+
+          cy.then(() => {
+            widths.forEach((width) => {
+              expect(width).to.be.closeTo(110.5, 1);
+            });
+          });
+        });
+      });
     });
 
     context("when given value from selectedOptions", () => {
@@ -1779,8 +1811,111 @@ describe("StatefulForm", () => {
   });
 
   context("button", () => {
+    const VARIANTS = [
+      {
+        variant: "default",
+        hover: "rgb(226, 226, 226)",
+        active: "rgb(207, 207, 207)",
+      },
+      {
+        variant: "primary",
+        hover: "rgb(62, 125, 211)",
+        active: "rgb(42, 115, 195)",
+      },
+      {
+        variant: "danger",
+        hover: "rgb(161, 47, 75)",
+        active: "rgb(128, 32, 54)",
+      },
+      {
+        variant: "success",
+        hover: "rgb(43, 140, 41)",
+        active: "rgb(20, 101, 18)",
+      },
+      {
+        variant: "secondary",
+        hover: "rgb(204, 204, 204)",
+        active: "rgb(179, 179, 179)",
+      },
+      {
+        variant: "ghost",
+        hover: "rgb(243, 243, 243)",
+        active: "rgb(234, 234, 234)",
+      },
+      {
+        variant: "link",
+        hover: "rgb(42, 115, 195)",
+        active: "rgb(30, 91, 168)",
+      },
+    ] as const;
+
+    context("when hover", () => {
+      it("renders the the hover color", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <StatefulForm
+            fields={VARIANTS.map(({ variant }) => ({
+              name: `button-${variant}`,
+              title: variant,
+              type: "button",
+              button: {
+                variant,
+              },
+              onClick: () => console.log("this is callback from the top level"),
+            }))}
+            formValues={{}}
+            mode="onChange"
+          />
+        );
+
+        VARIANTS.forEach(({ hover }, index) => {
+          cy.findAllByRole("button")
+            .eq(index)
+            .realHover()
+            .wait(200)
+            .should("have.css", "background-color", hover);
+        });
+      });
+    });
+
     context("when given an onClick", () => {
       context("when clicking", () => {
+        it("renders the the active with usual color", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(
+            <StatefulForm
+              fields={VARIANTS.map(({ variant }) => ({
+                name: `button-${variant}`,
+                title: variant,
+                type: "button",
+                button: {
+                  variant,
+                },
+                onClick: () =>
+                  console.log("this is callback from the top level"),
+              }))}
+              formValues={{}}
+              mode="onChange"
+            />
+          );
+
+          VARIANTS.forEach(({ active }, index) => {
+            cy.findAllByRole("button").eq(index).realMouseDown();
+
+            cy.findAllByRole("button")
+              .eq(index)
+              .should("have.css", "background-color", active);
+
+            cy.findAllByRole("button").eq(index).realMouseUp();
+          });
+        });
+
         it("renders the callback from top-level", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
@@ -2089,7 +2224,6 @@ describe("StatefulForm", () => {
           title: "Time",
           type: "time",
           required: false,
-          placeholder: "Enter time",
           id: "field-time-⏰ something",
         },
         {
@@ -3227,6 +3361,44 @@ describe("StatefulForm", () => {
                 expect(elWidth).to.be.closeTo(222.5, 10);
               });
           }
+        });
+      });
+
+      context("when using small screen", () => {
+        it("still render input elements with sizing", () => {
+          const INPUT_WITH_WIDTH = ALL_INPUT.map((group) =>
+            Array.isArray(group)
+              ? group.map((item) => ({ ...item, width: "50%" }))
+              : { ...group, width: "50%" }
+          );
+
+          cy.viewport(440, 750);
+          // assume this in phone
+
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_WIDTH}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
+            if (prop.name === "country_code") return;
+            if (prop.name === "toggle") {
+              cy.findByLabelText("toggle-row-wrapper").then(($el) => {
+                const width = $el.width();
+                expect(width).to.be.closeTo(197.5, 10);
+              });
+            } else {
+              cy.findByText(prop.title)
+                .parent()
+                .then(($el) => {
+                  const elWidth = $el.width();
+                  expect(elWidth).to.be.closeTo(197.5, 10);
+                });
+            }
+          });
         });
       });
     });

@@ -886,7 +886,6 @@ function FormFields<T extends FieldValues>({
                             ? field.button?.title
                             : field.placeholder
                         }
-                        activeBackgroundColor={"red"}
                         variant={defaultVariant}
                         styles={{
                           ...field.button?.styles,
@@ -2200,7 +2199,8 @@ function FormFields<T extends FieldValues>({
                                 ${field.combobox?.styles?.bodyStyle}
                               `,
                               controlStyle: css`
-                                ${field.title &&
+                                ${mobile &&
+                                field.title &&
                                 css`
                                   ${mobileControlStyle}
                                   min-width: 140px;
