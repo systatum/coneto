@@ -625,13 +625,9 @@ function Table({
                                 width: ${col.width};
                                 flex-direction: row;
                               `
-                            : loose
-                              ? css`
-                                  flex: unset;
-                                `
-                              : css`
-                                  flex: 1;
-                                `}
+                            : css`
+                                flex: 1;
+                              `}
 
                           ${finalColumnAction &&
                           css`
@@ -749,24 +745,24 @@ function Table({
                                     `
                                   : css`
                                       flex: 1;
-                                    `}
+                                    `};
+
                                 ${isLast &&
                                 css`
                                   padding-right: 36px;
-                                `}
+                                `};
 
                                 ${loose &&
                                 css`
-                                  flex: unset;
-
                                   ${isFirst &&
                                   css`
                                     z-index: 40;
                                     background: ${tableTheme?.summaryBackgroundColor ??
                                     "#e4e4e4"};
                                   `}
-                                `}
-                            ${col.styles?.self}
+                                `};
+
+                                ${col.styles?.self}
                               `}
                             >
                               {s === 0 ? col.content : ""}
@@ -2036,17 +2032,16 @@ const CellContent = styled.div<{
   white-space: pre-wrap;
   justify-content: space-between;
   position: relative;
+  flex: 1;
 
   ${({ $width, $loose }) =>
     $loose
       ? css`
           min-width: 160px;
-          flex: unset;
           width: 160px;
         `
       : !$width
         ? css`
-            flex: 1;
             height: fit-content;
             width: 100%;
           `
