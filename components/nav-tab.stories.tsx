@@ -633,6 +633,104 @@ export const WithSubItems: Story = {
   },
 };
 
+export const Mobile: Story = {
+  render: () => {
+    const [activeTab, setActiveTab] = useState("2");
+
+    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
+
+    const sampleRows = Array.from({ length: 20 }, (_, i) => {
+      const type = TYPES_DATA[i % TYPES_DATA.length];
+      return (
+        <Table.Row
+          rowId={`${type}`}
+          key={i}
+          content={[`Load Balancer ${i + 1}`, type]}
+        />
+      );
+    });
+
+    const columns: TableColumn[] = [
+      {
+        id: "name",
+        caption: "Name",
+      },
+      {
+        id: "type",
+        caption: "Type",
+      },
+    ];
+
+    const TABS_ITEMS: NavTabTab[] = [
+      {
+        id: "1",
+        title: "Write",
+        content: <WriteTabContent />,
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "2",
+        title: "Review",
+        content: <ReviewTabContent />,
+        onClick: () => {
+          console.log("test tab 2");
+        },
+        subItems: [
+          {
+            id: "2-1",
+            icon: { image: RiTable2 },
+            caption: "Table View",
+            content: (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "4px",
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "18px",
+                  }}
+                >
+                  Table Content
+                </h2>
+                <Table
+                  styles={{
+                    tableBodyStyle: css`
+                      max-height: 400px;
+                    `,
+                  }}
+                  columns={columns}
+                >
+                  {sampleRows}
+                </Table>
+              </div>
+            ),
+          },
+          {
+            id: "2-2",
+            icon: { image: RiCharacterRecognitionLine },
+            caption: "Chart",
+            content: "This is chart content",
+          },
+        ],
+      },
+    ];
+
+    return (
+      <NavTab
+        mobile
+        tabs={TABS_ITEMS}
+        activeTab={activeTab}
+        onChange={(activeTab) => setActiveTab(activeTab)}
+      />
+    );
+  },
+};
+
 export const WriteTabContent = () => {
   const [value, setValue] = useState({
     write: "",
