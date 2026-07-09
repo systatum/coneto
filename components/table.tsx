@@ -1482,9 +1482,12 @@ function TableRow({
 
   const { loose, setWithRowActions, isScrolledRight } = useTableLoose();
 
+  const rowActions = actions?.(rowId ?? "");
+  const hasRowActions = (rowActions?.length ?? 0) > 0;
+
   useEffect(() => {
-    setWithRowActions(!!actions);
-  }, [actions]);
+    setWithRowActions(hasRowActions);
+  }, [hasRowActions]);
 
   const [isOver, setIsOver] = useState(false);
   const [dropPosition, setDropPosition] = useState<"top" | "bottom" | null>(
