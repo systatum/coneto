@@ -886,7 +886,6 @@ function FormFields<T extends FieldValues>({
                             ? field.button?.title
                             : field.placeholder
                         }
-                        activeBackgroundColor={"red"}
                         variant={defaultVariant}
                         styles={{
                           ...field.button?.styles,

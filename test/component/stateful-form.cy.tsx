@@ -1811,8 +1811,111 @@ describe("StatefulForm", () => {
   });
 
   context("button", () => {
+    const VARIANTS = [
+      {
+        variant: "default",
+        hover: "rgb(226, 226, 226)",
+        active: "rgb(207, 207, 207)",
+      },
+      {
+        variant: "primary",
+        hover: "rgb(62, 125, 211)",
+        active: "rgb(42, 115, 195)",
+      },
+      {
+        variant: "danger",
+        hover: "rgb(161, 47, 75)",
+        active: "rgb(128, 32, 54)",
+      },
+      {
+        variant: "success",
+        hover: "rgb(43, 140, 41)",
+        active: "rgb(20, 101, 18)",
+      },
+      {
+        variant: "secondary",
+        hover: "rgb(204, 204, 204)",
+        active: "rgb(179, 179, 179)",
+      },
+      {
+        variant: "ghost",
+        hover: "rgb(243, 243, 243)",
+        active: "rgb(234, 234, 234)",
+      },
+      {
+        variant: "link",
+        hover: "rgb(42, 115, 195)",
+        active: "rgb(30, 91, 168)",
+      },
+    ] as const;
+
+    context("when hover", () => {
+      it("renders the the hover color", () => {
+        cy.window().then((win) => {
+          cy.spy(win.console, "log").as("consoleLog");
+        });
+
+        cy.mount(
+          <StatefulForm
+            fields={VARIANTS.map(({ variant }) => ({
+              name: `button-${variant}`,
+              title: variant,
+              type: "button",
+              button: {
+                variant,
+              },
+              onClick: () => console.log("this is callback from the top level"),
+            }))}
+            formValues={{}}
+            mode="onChange"
+          />
+        );
+
+        VARIANTS.forEach(({ hover }, index) => {
+          cy.findAllByRole("button")
+            .eq(index)
+            .realHover()
+            .wait(200)
+            .should("have.css", "background-color", hover);
+        });
+      });
+    });
+
     context("when given an onClick", () => {
       context("when clicking", () => {
+        it("renders the the active with usual color", () => {
+          cy.window().then((win) => {
+            cy.spy(win.console, "log").as("consoleLog");
+          });
+
+          cy.mount(
+            <StatefulForm
+              fields={VARIANTS.map(({ variant }) => ({
+                name: `button-${variant}`,
+                title: variant,
+                type: "button",
+                button: {
+                  variant,
+                },
+                onClick: () =>
+                  console.log("this is callback from the top level"),
+              }))}
+              formValues={{}}
+              mode="onChange"
+            />
+          );
+
+          VARIANTS.forEach(({ active }, index) => {
+            cy.findAllByRole("button").eq(index).realMouseDown();
+
+            cy.findAllByRole("button")
+              .eq(index)
+              .should("have.css", "background-color", active);
+
+            cy.findAllByRole("button").eq(index).realMouseUp();
+          });
+        });
+
         it("renders the callback from top-level", () => {
           cy.window().then((win) => {
             cy.spy(win.console, "log").as("consoleLog");
