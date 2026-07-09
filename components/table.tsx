@@ -1483,11 +1483,7 @@ function TableRow({
   const { loose, setWithRowActions, isScrolledRight } = useTableLoose();
 
   useEffect(() => {
-    if (actions) {
-      setWithRowActions(true);
-    } else {
-      setWithRowActions(false);
-    }
+    setWithRowActions(!!actions);
   }, [actions]);
 
   const [isOver, setIsOver] = useState(false);
