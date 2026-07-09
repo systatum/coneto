@@ -165,7 +165,6 @@ const ALL_INPUT: FormFieldGroup[] = [
     title: "Time",
     type: "time",
     required: true,
-    placeholder: "Enter time",
   },
   {
     name: "number",
@@ -890,7 +889,6 @@ describe("StatefulForm", () => {
                   title: "Time",
                   type: "time",
                   required: true,
-                  placeholder: "Enter time",
                 },
               ]}
               formValues={{}}
@@ -1072,6 +1070,40 @@ describe("StatefulForm", () => {
 
     it("should shows value from formValues", () => {
       cy.get("#combobox-combo").should("have.value", "Grape");
+    });
+
+    context("when given four comboboxes in a row", () => {
+      it("renders each with a width smaller than 140px (min-width)", () => {
+        cy.viewport(500, 750);
+        const fields = Array.from({ length: 4 }, (_, i) => ({
+          id: `combo-${i + 1}`,
+          name: `combo${i + 1}`,
+          title: `Combo ${i + 1}`,
+          type: "combo" as const,
+          required: true,
+          placeholder: "Select a fruit...",
+          combobox: {
+            options: FRUIT_OPTIONS,
+          },
+        }));
+        cy.mount(<StatefulForm fields={[fields]} formValues={{}} />);
+
+        cy.then(() => {
+          const widths: number[] = [];
+
+          cy.wrap(fields).each((field: (typeof fields)[number]) => {
+            cy.get(`#${field.id}`).then(($el) => {
+              widths.push($el[0].getBoundingClientRect().width);
+            });
+          });
+
+          cy.then(() => {
+            widths.forEach((width) => {
+              expect(width).to.be.closeTo(110.5, 1);
+            });
+          });
+        });
+      });
     });
 
     context("when given value from selectedOptions", () => {
@@ -2089,7 +2121,6 @@ describe("StatefulForm", () => {
           title: "Time",
           type: "time",
           required: false,
-          placeholder: "Enter time",
           id: "field-time-⏰ something",
         },
         {
@@ -3227,6 +3258,44 @@ describe("StatefulForm", () => {
                 expect(elWidth).to.be.closeTo(222.5, 10);
               });
           }
+        });
+      });
+
+      context("when using small screen", () => {
+        it("still render input elements with sizing", () => {
+          const INPUT_WITH_WIDTH = ALL_INPUT.map((group) =>
+            Array.isArray(group)
+              ? group.map((item) => ({ ...item, width: "50%" }))
+              : { ...group, width: "50%" }
+          );
+
+          cy.viewport(440, 750);
+          // assume this in phone
+
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_WIDTH}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
+            if (prop.name === "country_code") return;
+            if (prop.name === "toggle") {
+              cy.findByLabelText("toggle-row-wrapper").then(($el) => {
+                const width = $el.width();
+                expect(width).to.be.closeTo(197.5, 10);
+              });
+            } else {
+              cy.findByText(prop.title)
+                .parent()
+                .then(($el) => {
+                  const elWidth = $el.width();
+                  expect(elWidth).to.be.closeTo(197.5, 10);
+                });
+            }
+          });
         });
       });
     });
