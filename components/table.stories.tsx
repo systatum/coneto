@@ -651,7 +651,7 @@ export const Loose: Story = {
 
     const initialRows = useMemo<LoadBalancerRow[]>(
       () =>
-        Array.from({ length: 15 }, (_, i) => {
+        Array.from({ length: 400 }, (_, i) => {
           const type = TYPES_DATA[i % TYPES_DATA.length].name;
           const region = REGIONS[i % REGIONS.length];
           const status = STATUS[i % STATUS.length];
@@ -942,24 +942,81 @@ export const Loose: Story = {
       { content: "" },
     ];
 
+    const simpleColumn: TableColumn[] = [{ id: "text", caption: "Text" }];
+
+    const simpleSampleRows = Array.from({ length: 20 }).map((_, index) => (
+      <Table.Row
+        key={index}
+        rowId={String(index)}
+        content={[
+          generateSentence({
+            minLen: 40,
+            maxLen: 50,
+            seed: 1 + index,
+          }),
+        ]}
+      />
+    ));
+
     return (
-      <Table
-        styles={{
-          tableBodyStyle: css`
-            max-height: 250px;
-          `,
-        }}
-        loose
-        actions={TOP_ACTIONS}
-        columns={columns}
-        selectable={activeTab.withCheckbox}
-        sumRow={activeTab.withSummary && sumRow}
-      >
-        {sampleRows}
-      </Table>
+      <Wrapper>
+        <Section>
+          <Title>With Excessive Columns</Title>
+
+          <Table
+            styles={{
+              tableBodyStyle: css`
+                max-height: 250px;
+              `,
+            }}
+            loose
+            actions={TOP_ACTIONS}
+            columns={columns}
+            selectable={activeTab.withCheckbox}
+            sumRow={activeTab.withSummary && sumRow}
+          >
+            {sampleRows}
+          </Table>
+        </Section>
+
+        <Section>
+          <Title>Few Columns</Title>
+
+          <Table
+            styles={{
+              tableBodyStyle: css`
+                max-height: 250px;
+              `,
+            }}
+            loose
+            columns={simpleColumn}
+          >
+            {simpleSampleRows}
+          </Table>
+        </Section>
+      </Wrapper>
     );
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const Title = styled.h2`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+`;
 
 const ProtocolItem = styled.div<{ $theme?: TableThemeConfig }>`
   padding: 10px 12px;

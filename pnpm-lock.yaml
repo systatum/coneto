@@ -17,6 +17,9 @@ importers:
       '@remixicon/react':
         specifier: ^4.6.0
         version: 4.6.0(react@19.1.1)
+      '@tanstack/react-virtual':
+        specifier: ^3.14.5
+        version: 3.14.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       framer-motion:
         specifier: ^12.12.1
         version: 12.23.12(@emotion/is-prop-valid@1.2.2)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -925,6 +928,15 @@ packages:
     resolution: {integrity: sha512-r4y+LsiB37V5hzpQo+BM10PaCsp7YlZ0YcZzQP1OCkPlYXmUAFy2VvDKaFRpD8IeNPKug2u4iFm/laDEbs03dg==}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+
+  '@tanstack/react-virtual@3.14.5':
+    resolution: {integrity: sha512-4EKRXh7zBLkbKbFmG3AUVkircuHd+7OdT1pocJSepxtfBd3qnrJgJ5rtPkRYyo9fmyVb2+pI2xPy5oYvMLQy6A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@tanstack/virtual-core@3.17.3':
+    resolution: {integrity: sha512-8Np/TFELpI0ySuJoVmjvOrQYXH/8sTX0Biv9szhFhY39xOdAAY+smrMxjxOum/ux3eM8MUJQsEJ0/R0UpvC8dw==}
 
   '@testing-library/cypress@10.0.3':
     resolution: {integrity: sha512-TeZJMCNtiS59cPWalra7LgADuufO5FtbqQBYxuAgdX6ZFAR2D9CtQwAG8VbgvFcchW3K414va/+7P4OkQ80UVg==}
@@ -3910,6 +3922,14 @@ snapshots:
   '@storybook/theming@8.6.14(storybook@8.6.14(prettier@3.6.2))':
     dependencies:
       storybook: 8.6.14(prettier@3.6.2)
+
+  '@tanstack/react-virtual@3.14.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+    dependencies:
+      '@tanstack/virtual-core': 3.17.3
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+
+  '@tanstack/virtual-core@3.17.3': {}
 
   '@testing-library/cypress@10.0.3(cypress@14.5.3)':
     dependencies:

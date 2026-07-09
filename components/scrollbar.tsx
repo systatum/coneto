@@ -17,6 +17,8 @@ interface ScrollbarProps {
   autoHideDelay?: number;
   onScroll?: () => void;
   style?: CSSProperties;
+  totalSize?: number;
+  scrollOffset?: number;
 }
 
 export interface ScrollbarRef {
@@ -32,6 +34,8 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       autoHideDelay = 1500,
       onScroll,
       style,
+      totalSize,
+      scrollOffset,
     },
     ref
   ) => {
@@ -44,8 +48,6 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
 
     const [showY, setShowY] = useState(false);
     const [showX, setShowX] = useState(false);
-    const [thumbY, setThumbY] = useState({ height: 0, top: 0 });
-    const [thumbX, setThumbX] = useState({ width: 0, left: 0 });
 
     const [isDraggingXState, setIsDraggingXState] = useState(false);
     const [isDraggingYState, setIsDraggingYState] = useState(false);
@@ -58,9 +60,26 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
     const dragStartScrollTop = useRef(0);
     const dragStartScrollLeft = useRef(0);
 
+    const isControlledY = totalSize != null && scrollOffset != null;
+
     useImperativeHandle(ref, () => ({
       getViewport: () => viewportRef.current,
     }));
+
+    // Imperative thumb writes, avoid re-render by using React state for thumb scroll
+    const applyThumbY = useCallback((height: number, top: number) => {
+      const el = thumbYRef.current;
+      if (!el) return;
+      el.style.height = `${height}px`;
+      el.style.transform = `translateY(${top}px)`;
+    }, []);
+
+    const applyThumbX = useCallback((width: number, left: number) => {
+      const el = thumbXRef.current;
+      if (!el) return;
+      el.style.width = `${width}px`;
+      el.style.transform = `translateX(${left}px)`;
+    }, []);
 
     const updateThumbs = useCallback(() => {
       const el = viewportRef.current;
@@ -75,13 +94,17 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
         clientWidth,
       } = el;
 
-      if (overflowY === "scroll" && scrollHeight > clientHeight) {
+      if (
+        !isControlledY &&
+        overflowY === "scroll" &&
+        scrollHeight > clientHeight
+      ) {
         const heightRatio = clientHeight / scrollHeight;
         const thumbHeight = Math.max(heightRatio * clientHeight, 30);
         const maxScrollTop = scrollHeight - clientHeight;
         const maxThumbTop = clientHeight - thumbHeight;
         const thumbTop = (scrollTop / maxScrollTop) * maxThumbTop;
-        setThumbY({ height: thumbHeight - 4, top: thumbTop });
+        applyThumbY(thumbHeight - 4, thumbTop);
       }
 
       if (overflowX === "scroll" && scrollWidth > clientWidth) {
@@ -90,16 +113,41 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
         const maxScrollLeft = scrollWidth - clientWidth;
         const maxThumbLeft = clientWidth - thumbWidth;
         const thumbLeft = (scrollLeft / maxScrollLeft) * maxThumbLeft;
-        setThumbX({ width: thumbWidth - 4, left: thumbLeft });
+        applyThumbX(thumbWidth - 4, thumbLeft);
       }
-    }, [overflowX, overflowY]);
+    }, [overflowX, overflowY, isControlledY, applyThumbY, applyThumbX]);
+
+    // Virtualizer-derived thumbY (authoritative when provided)
+    useEffect(() => {
+      if (!isControlledY) return;
+      const el = viewportRef.current;
+      if (!el) return;
+
+      const clientHeight = el.clientHeight;
+      if (!clientHeight || totalSize <= clientHeight) {
+        applyThumbY(0, 0);
+        return;
+      }
+
+      const heightRatio = clientHeight / totalSize;
+      const thumbHeight = Math.max(heightRatio * clientHeight, 30);
+      const maxScrollTop = totalSize - clientHeight;
+      const maxThumbTop = clientHeight - thumbHeight;
+      const thumbTop =
+        maxScrollTop > 0 ? (scrollOffset / maxScrollTop) * maxThumbTop : 0;
+
+      applyThumbY(thumbHeight - 4, thumbTop);
+    }, [isControlledY, totalSize, scrollOffset, applyThumbY]);
 
     const showScrollbars = useCallback(() => {
       const el = viewportRef.current;
       if (!el) return;
 
-      if (overflowY === "scroll" && el.scrollHeight > el.clientHeight)
-        setShowY(true);
+      const scrollHeightCheck = isControlledY
+        ? (totalSize ?? 0) > el.clientHeight
+        : el.scrollHeight > el.clientHeight;
+
+      if (overflowY === "scroll" && scrollHeightCheck) setShowY(true);
       if (overflowX === "scroll" && el.scrollWidth > el.clientWidth)
         setShowX(true);
 
@@ -110,7 +158,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
           setShowX(false);
         }
       }, autoHideDelay);
-    }, [autoHideDelay, overflowX, overflowY]);
+    }, [autoHideDelay, overflowX, overflowY, isControlledY, totalSize]);
 
     const handleScroll = useCallback(() => {
       updateThumbs();
@@ -126,43 +174,50 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       return () => ro.disconnect();
     }, [updateThumbs]);
 
-    const onMouseDownY = useCallback((e: React.MouseEvent) => {
-      e.preventDefault();
-      isDraggingY.current = true;
-      setIsDraggingYState(true);
-      dragStartY.current = e.clientY;
-      dragStartScrollTop.current = viewportRef.current?.scrollTop ?? 0;
+    const onMouseDownY = useCallback(
+      (e: React.MouseEvent) => {
+        e.preventDefault();
+        isDraggingY.current = true;
+        setIsDraggingYState(true);
+        dragStartY.current = e.clientY;
+        dragStartScrollTop.current = viewportRef.current?.scrollTop ?? 0;
 
-      const onMouseMove = (e: MouseEvent) => {
-        const el = viewportRef.current;
-        if (!el) return;
-        const delta = e.clientY - dragStartY.current;
-        const { scrollHeight, clientHeight } = el;
-        const thumbHeight = Math.max(
-          (clientHeight / scrollHeight) * clientHeight,
-          30
-        );
-        const scrollRatio =
-          (scrollHeight - clientHeight) / (clientHeight - thumbHeight);
-        el.scrollTop = dragStartScrollTop.current + delta * scrollRatio;
-      };
+        const onMouseMove = (e: MouseEvent) => {
+          const el = viewportRef.current;
+          if (!el) return;
+          const delta = e.clientY - dragStartY.current;
+          const { clientHeight } = el;
+          const effectiveScrollHeight = isControlledY
+            ? (totalSize ?? el.scrollHeight)
+            : el.scrollHeight;
+          const thumbHeight = Math.max(
+            (clientHeight / effectiveScrollHeight) * clientHeight,
+            30
+          );
+          const scrollRatio =
+            (effectiveScrollHeight - clientHeight) /
+            (clientHeight - thumbHeight);
+          el.scrollTop = dragStartScrollTop.current + delta * scrollRatio;
+        };
 
-      const onMouseUp = () => {
-        isDraggingY.current = false;
-        setIsDraggingYState(false);
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
+        const onMouseUp = () => {
+          isDraggingY.current = false;
+          setIsDraggingYState(false);
+          window.removeEventListener("mousemove", onMouseMove);
+          window.removeEventListener("mouseup", onMouseUp);
 
-        if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-        hideTimerRef.current = setTimeout(() => {
-          setShowY(false);
-          setShowX(false);
-        }, 800);
-      };
+          if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+          hideTimerRef.current = setTimeout(() => {
+            setShowY(false);
+            setShowX(false);
+          }, 800);
+        };
 
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
-    }, []);
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+      },
+      [isControlledY, totalSize]
+    );
 
     const onMouseDownX = useCallback((e: React.MouseEvent) => {
       e.preventDefault();
@@ -222,7 +277,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
               $theme={scrollbarTheme}
               $isDragging={isDraggingYState}
               ref={thumbYRef}
-              style={{ height: thumbY.height, top: thumbY.top }}
+              style={{ height: 0, top: 0 }}
               onMouseDown={onMouseDownY}
             />
           </TrackY>
@@ -238,7 +293,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
               $theme={scrollbarTheme}
               $isDragging={isDraggingXState}
               ref={thumbXRef}
-              style={{ width: thumbX.width, left: thumbX.left }}
+              style={{ width: 0, left: 0 }}
               onMouseDown={onMouseDownX}
             />
           </TrackX>
@@ -318,6 +373,8 @@ const Thumb = styled.div<{
   $isDragging?: boolean;
 }>`
   position: absolute;
+  top: 0;
+  left: 0;
   background-color: ${({ $theme, $isDragging }) =>
     $isDragging
       ? $theme?.scrollbarThumbActiveColor
@@ -326,6 +383,7 @@ const Thumb = styled.div<{
   cursor: pointer;
   width: 100%;
   height: 100%;
+  will-change: transform;
 
   &:hover {
     background-color: ${({ $theme }) => $theme?.scrollbarThumbActiveColor};

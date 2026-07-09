@@ -197,7 +197,10 @@ describe("Table", () => {
   }
 
   context("loose", () => {
-    function ProductTableLoose({ loose = true }: { loose?: boolean }) {
+    function ProductTableLoose({
+      loose = true,
+      ...props
+    }: { loose?: boolean } & TableRowProps) {
       const { currentTheme } = useTheme();
       const tableTheme = currentTheme?.table;
 
@@ -554,6 +557,7 @@ describe("Table", () => {
             row.zone,
             row.provider,
           ]}
+          {...props}
         />
       ));
 
@@ -612,6 +616,93 @@ describe("Table", () => {
           .parent()
           .should("have.css", "overflow-x", "scroll")
           .and("have.css", "overflow-y", "scroll");
+      });
+
+      context("when given few column", () => {
+        const simpleColumn: TableColumn[] = [
+          { id: "name", caption: "Name" },
+          { id: "type", caption: "Protocol" },
+        ];
+
+        const simpleSampleRows = Array.from({ length: 20 }).map((_, index) => (
+          <Table.Row
+            key={index}
+            rowId={String(index)}
+            content={[
+              generateSentence({
+                minLen: 40,
+                maxLen: 50,
+                seed: 1 + index,
+              }),
+              generateSentence({
+                minLen: 40,
+                maxLen: 50,
+                seed: 11 + index,
+              }),
+            ]}
+          />
+        ));
+
+        it("not broke the width between table (still with full width)", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableBodyStyle: css`
+                  max-height: 250px;
+                `,
+              }}
+              loose
+              columns={simpleColumn}
+            >
+              {simpleSampleRows}
+            </Table>
+          );
+
+          cy.findAllByLabelText("table-row-cell")
+            .eq(0)
+            .invoke("css", "width")
+            .then((width) => {
+              cy.findAllByLabelText("table-row-cell")
+                .eq(1)
+                .should("have.css", "width", width);
+            });
+
+          // have flex: 1
+          cy.findAllByLabelText("table-row-cell")
+            .eq(0)
+            .invoke("css", "flex")
+            .then((width) => {
+              cy.findAllByLabelText("table-row-cell")
+                .eq(1)
+                .should("have.css", "flex", width);
+            });
+        });
+
+        context("when hover", () => {
+          it("renders the normal hover row color", () => {
+            cy.mount(
+              <Table
+                styles={{
+                  tableBodyStyle: css`
+                    max-height: 250px;
+                  `,
+                }}
+                loose
+                columns={simpleColumn}
+              >
+                {simpleSampleRows}
+              </Table>
+            );
+
+            cy.findAllByLabelText("table-row")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(249, 250, 251)");
+            cy.findAllByLabelText("table-row")
+              .eq(0)
+              .realHover()
+              .should("have.css", "background-color", "rgb(231, 242, 252)");
+          });
+        });
       });
 
       context("height in table header", () => {
@@ -721,42 +812,70 @@ describe("Table", () => {
                 });
             });
 
-            it("renders header loose actions with width 48px", () => {
-              cy.mount(<ProductTableLoose loose />);
+            context("header loose actions", () => {
+              it("renders header loose actions with width 48px", () => {
+                cy.mount(<ProductTableLoose loose />);
 
-              cy.findAllByLabelText("action-button").eq(1).click();
-              cy.findAllByLabelText("action-button").eq(2).click();
+                cy.findAllByLabelText("action-button").eq(1).click();
+                cy.findAllByLabelText("action-button").eq(2).click();
 
-              cy.wait(300);
+                cy.wait(300);
 
-              cy.findByLabelText("header-row-loose-action")
-                .should("have.css", "width", "48px")
-                .then(($el) => {
-                  const after = window.getComputedStyle($el[0], "::before");
+                cy.findByLabelText("header-row-loose-action")
+                  .should("have.css", "width", "48px")
+                  .then(($el) => {
+                    const after = window.getComputedStyle($el[0], "::before");
 
-                  expect(after.backgroundImage).to.equal(
-                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    expect(after.backgroundImage).to.equal(
+                      "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    );
+                  });
+              });
+
+              context("when given empty action", () => {
+                it("not renders header loose", () => {
+                  cy.mount(<ProductTableLoose loose actions={() => []} />);
+
+                  cy.wait(300);
+
+                  cy.findByLabelText("header-row-loose-action").should(
+                    "not.exist"
                   );
                 });
+              });
             });
 
-            it("renders summary row loose actions with width 48px", () => {
-              cy.mount(<ProductTableLoose loose />);
+            context("summary loose actions", () => {
+              it("renders summary row loose actions with width 48px", () => {
+                cy.mount(<ProductTableLoose loose />);
 
-              cy.findAllByLabelText("action-button").eq(1).click();
-              cy.findAllByLabelText("action-button").eq(2).click();
+                cy.findAllByLabelText("action-button").eq(1).click();
+                cy.findAllByLabelText("action-button").eq(2).click();
 
-              cy.wait(300);
+                cy.wait(300);
 
-              cy.findByLabelText("summary-row-loose-action")
-                .should("have.css", "width", "48px")
-                .then(($el) => {
-                  const after = window.getComputedStyle($el[0], "::before");
+                cy.findByLabelText("summary-row-loose-action")
+                  .should("have.css", "width", "48px")
+                  .then(($el) => {
+                    const after = window.getComputedStyle($el[0], "::before");
 
-                  expect(after.backgroundImage).to.equal(
-                    "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    expect(after.backgroundImage).to.equal(
+                      "linear-gradient(to left, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
+                    );
+                  });
+              });
+
+              context("when given empty action", () => {
+                it("not renders header loose", () => {
+                  cy.mount(<ProductTableLoose loose actions={() => []} />);
+
+                  cy.wait(300);
+
+                  cy.findByLabelText("summary-row-loose-action").should(
+                    "not.exist"
                   );
                 });
+              });
             });
 
             context("when scrolling to the right", () => {

@@ -400,6 +400,7 @@
     "@floating-ui/react": "^0.27.8",
     "@hookform/resolvers": "^5.0.1",
     "@remixicon/react": "^4.6.0",
+    "@tanstack/react-virtual": "^3.14.5",
     "framer-motion": "^12.12.1",
     "monaco-editor": "^0.55.1",
     "pdfjs-dist": "5.4.54",
