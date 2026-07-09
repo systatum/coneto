@@ -27,6 +27,8 @@ export interface NavTabProps {
   styles?: NavTabStyles;
   size?: NavTabSize;
   onChange?: (activeTab: string) => void;
+  underlineable?: boolean;
+  mobile?: boolean;
   className?: string;
   id?: string;
 }
@@ -91,6 +93,8 @@ function NavTab({
   size = "md",
   onChange,
   className,
+  underlineable = true,
+  mobile,
   id,
 }: NavTabProps) {
   const { currentTheme } = useTheme();
@@ -101,6 +105,17 @@ function NavTab({
   const [selectedLocal, setSelectedLocal] = useState<string>(activeTab);
   const [isHovered, setIsHovered] = useState<string | null>(null);
   const [isTipMenuOpen, setIsTipMenuOpen] = useState<string | null>(null);
+
+  const [openSubMenuId, setOpenSubMenuId] = useState<string | null>(null);
+  const subMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const longPressTriggeredRef = useRef<boolean>(null);
+
+  const clearSubMenuTimer = () => {
+    if (subMenuTimeoutRef.current) {
+      clearTimeout(subMenuTimeoutRef.current);
+      subMenuTimeoutRef.current = null;
+    }
+  };
 
   const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
@@ -194,46 +209,60 @@ function NavTab({
       className={applyClassName("nav-tab", className)}
       $style={styles?.containerStyle}
       $theme={navTheme}
+      $mobile={mobile}
     >
-      <NavTabBar $theme={navTheme} $style={styles?.barStyle}>
+      <NavTabBar $mobile={mobile} $theme={navTheme} $style={styles?.barStyle}>
         <NavTabTabsSection
           aria-label="nav-tab-tabs-sections"
           $style={styles?.containerBoxStyle}
+          $mobile={mobile}
           ref={containerRef}
           $theme={navTheme}
         >
-          <NavTabUnderscore
-            aria-label="nav-tab-underscore"
-            $activeColor={activeColor}
-            $theme={navTheme}
-            $style={styles?.underscoreStyle}
-            initial={{
-              left: 0,
-              width: 0,
-              opacity: 0,
-            }}
-            animate={{
-              left: hoverPosition.left,
-              width: hoverPosition.width,
-              opacity: hoverPosition.opacity,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 30,
-              opacity: { duration: 0.2 },
-            }}
-          />
+          {underlineable && (
+            <NavTabUnderscore
+              aria-label="nav-tab-underscore"
+              $mobile={mobile}
+              $activeColor={activeColor}
+              $theme={navTheme}
+              $style={styles?.underscoreStyle}
+              initial={{
+                left: 0,
+                width: 0,
+                opacity: 0,
+              }}
+              animate={{
+                left: hoverPosition.left,
+                width: hoverPosition.width,
+                opacity: hoverPosition.opacity,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                opacity: { duration: 0.2 },
+              }}
+            />
+          )}
 
           {visibleTabs.map((tab, index) => {
             return (
               <Tooltip
+                open={mobile ? openSubMenuId === tab.id : undefined}
                 ref={(el) => {
                   tooltipRefs.current[index] = el;
                 }}
+                onVisibilityChange={(next) => {
+                  if (!next) {
+                    setOpenSubMenuId((prev) => (prev === tab.id ? null : prev));
+                  }
+                }}
+                anchorRef={containerRef}
                 id={tab.id}
                 className={applyClassName("nav-tab-tab", tab?.className)}
                 key={index}
+                hideDialogOn={mobile ? "click" : "hover"}
+                showDialogOn={mobile ? "click" : "hover"}
                 styles={{
                   arrowStyle: css`
                     opacity: 0;
@@ -263,9 +292,16 @@ function NavTab({
                     css`
                       opacity: 1;
                     `}
+
+                    ${mobile &&
+                    css`
+                      width: 96dvw;
+                      left: 50%;
+                      transform: translateX(-50%);
+                    `};
                   `,
                 }}
-                dialogPlacement="bottom-left"
+                dialogPlacement={mobile ? "top-center" : "bottom-left"}
                 dialog={
                   <>
                     {tab.subItems &&
@@ -281,7 +317,15 @@ function NavTab({
                                 item?.className
                               )}
                               $theme={navTheme}
-                              $style={item?.styles?.self}
+                              $style={css`
+                                ${mobile &&
+                                css`
+                                  height: 80px;
+                                  font-size: 16px;
+                                `}
+
+                                ${item?.styles?.self}
+                              `}
                               onClick={() => {
                                 if (item.content) {
                                   setSelectedLocal(item.id);
@@ -292,6 +336,10 @@ function NavTab({
                                 tooltipRefs.current.forEach((ref) => {
                                   ref?.close();
                                 });
+
+                                if (mobile) {
+                                  setOpenSubMenuId(null);
+                                }
                                 if (item.onClick) {
                                   item.onClick();
                                 }
@@ -314,8 +362,24 @@ function NavTab({
                   $style={styles?.tabStyle}
                   ref={setTabRef(index)}
                   role="tab"
+                  onPointerDown={(e) => {
+                    longPressTriggeredRef.current = false;
+                    subMenuTimeoutRef.current = setTimeout(() => {
+                      longPressTriggeredRef.current = true;
+                      setOpenSubMenuId(tab.id);
+                    }, 400);
+                  }}
+                  onPointerUp={clearSubMenuTimer}
+                  onPointerLeave={clearSubMenuTimer}
+                  onPointerCancel={clearSubMenuTimer}
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (longPressTriggeredRef.current) {
+                      longPressTriggeredRef.current = false;
+                      return;
+                    }
+
+                    setOpenSubMenuId(null);
                     setSelectedLocal(tab.id);
                     if (tab.onClick) {
                       tab.onClick();
@@ -456,6 +520,7 @@ function NavTab({
         })}
         {children}
       </NavContent>
+      {mobile && <NavTabSpacer />}
     </NavTabContainer>
   );
 }
@@ -463,6 +528,7 @@ function NavTab({
 const NavTabContainer = styled.div<{
   $style?: CSSProp;
   $theme: NavTabThemeConfig;
+  $mobile?: boolean;
 }>`
   *,
   ::before,
@@ -486,6 +552,7 @@ const NavTabTabsSection = styled.div<{
   $style?: CSSProp;
   $actions?: boolean;
   $theme: NavTabThemeConfig;
+  $mobile?: boolean;
 }>`
   width: 100%;
   height: auto;
@@ -499,14 +566,34 @@ const NavTabTabsSection = styled.div<{
     css`
       justify-content: end;
       margin-right: 10px;
-    `}
+    `};
+
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      justify-content: center;
+    `};
 
   ${({ $style }) => $style}
+`;
+
+const NavTabSpacer = styled.div<{
+  $height?: string;
+}>`
+  display: flex;
+  background-color: transparent;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    display: block;
+    min-width: ${({ $height }) => ($height ? `${$height}` : "48px")};
+  }
 `;
 
 const NavTabBar = styled.div<{
   $style?: CSSProp;
   $theme?: NavTabThemeConfig;
+  $mobile?: boolean;
 }>`
   width: 100%;
   height: auto;
@@ -520,6 +607,14 @@ const NavTabBar = styled.div<{
   border-bottom: 1px solid ${({ $theme }) => $theme.borderColor};
   box-shadow: ${({ $theme }) => $theme.boxShadow};
 
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      position: fixed;
+      bottom: 0;
+      z-index: 20;
+    `}
+
   ${({ $style }) => $style}
 `;
 
@@ -527,15 +622,23 @@ const NavTabUnderscore = styled(motion.div)<{
   $activeColor?: string;
   $theme?: NavTabThemeConfig;
   $style?: CSSProp;
+  $mobile?: boolean;
 }>`
   position: absolute;
-  bottom: 0;
   z-index: 1;
   height: 2px;
   border-radius: 1px;
   pointer-events: none;
   background-color: ${({ $activeColor, $theme }) =>
     $activeColor ?? $theme?.indicatorColor};
+  ${({ $mobile }) =>
+    $mobile
+      ? css`
+          top: 0;
+        `
+      : css`
+          bottom: 0;
+        `}
 
   ${({ $style }) => $style}
 `;
