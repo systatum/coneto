@@ -7,6 +7,7 @@ import React, {
   ReactNode,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -33,6 +34,7 @@ import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
 import { Scrollbar, ScrollbarRef } from "./scrollbar";
 import { Button, ButtonProps } from "./button";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export interface TableColumn {
   caption: string;
@@ -224,6 +226,7 @@ function Table({
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>("");
+  const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null);
 
   const [withRowActions, setWithRowActions] = useState(false);
 
@@ -281,72 +284,91 @@ function Table({
   };
   const flatChildren = resolveChildren(children);
 
-  const rowChildren = flatChildren.map((child, index) => {
-    const hasRowGroup = child.type === TableRowGroup;
-    const hasRow = child.type === TableRow;
+  const rowChildren = useMemo(
+    () =>
+      flatChildren.map((child, index) => {
+        const hasRowGroup = child.type === TableRowGroup;
+        const hasRow = child.type === TableRow;
 
-    if (hasRowGroup) {
-      return cloneElement(child, {
-        selectable,
-        selectedData,
-        handleSelect,
-        draggable,
-        openRowId,
-        setOpenRowId,
-        alwaysShowDragIcon,
-      } as TableRowGroupProps &
-        TableAlwaysShowDragIcon & {
-          selectedData?: string[];
-          handleSelect?: (data: string) => void;
-          draggable?: boolean;
-          isSelected?: boolean;
-        });
-    }
-
-    if (hasRow) {
-      const props = child.props as TableRowProps;
-
-      const isSelected = selectedData.some(
-        (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
-      );
-
-      const isLast = index === Children.count(children) - 1;
-
-      return cloneElement(child, {
-        selectable,
-        isSelected,
-        handleSelect,
-        isLast,
-        onLastRowReached,
-        draggable,
-        openRowId,
-        setOpenRowId,
-        groupLength: Children?.count(children),
-        index: index,
-        alwaysShowDragIcon,
-        onDropItem: (newPosition: number) => {
-          if (dragItem) {
-            const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
-            onDragged?.({
-              oldGroupId: oldGroupId || "",
-              newGroupId: newGroupId || "",
-              oldPosition,
-              newPosition,
-              id: id,
+        if (hasRowGroup) {
+          return cloneElement(child, {
+            selectable,
+            selectedData,
+            handleSelect,
+            draggable,
+            openRowId,
+            setOpenRowId,
+            alwaysShowDragIcon,
+          } as TableRowGroupProps &
+            TableAlwaysShowDragIcon & {
+              selectedData?: string[];
+              handleSelect?: (data: string) => void;
+              draggable?: boolean;
+              isSelected?: boolean;
             });
+        }
 
-            setDragItem(null);
-          }
-        },
-      } as TableRowProps & TableAlwaysShowDragIcon);
-    }
+        if (hasRow) {
+          const props = child.props as TableRowProps;
 
-    return null;
-  });
+          const isSelected = selectedData.some(
+            (d) => JSON.stringify(d) === JSON.stringify(props.rowId)
+          );
+
+          const isLast = index === Children.count(children) - 1;
+
+          return cloneElement(child, {
+            selectable,
+            isSelected,
+            handleSelect,
+            isLast,
+            onLastRowReached,
+            draggable,
+            openRowId,
+            setOpenRowId,
+            groupLength: Children?.count(children),
+            index: index,
+            alwaysShowDragIcon,
+            onDropItem: (newPosition: number) => {
+              if (dragItem) {
+                const { oldGroupId, newGroupId, oldPosition, id } = dragItem;
+                onDragged?.({
+                  oldGroupId: oldGroupId || "",
+                  newGroupId: newGroupId || "",
+                  oldPosition,
+                  newPosition,
+                  id: id,
+                });
+
+                setDragItem(null);
+              }
+            },
+          } as TableRowProps & TableAlwaysShowDragIcon);
+        }
+
+        return null;
+      }),
+    [
+      flatChildren,
+      selectable,
+      selectedData,
+      handleSelect,
+      draggable,
+      openRowId,
+      alwaysShowDragIcon,
+      dragItem,
+      onDragged,
+    ]
+  );
 
   const tableBodyRef = useRef<ScrollbarRef>(null);
 
   const getViewport = () => tableBodyRef.current?.getViewport();
+
+  // get scroll element for react-virtualizer
+  useEffect(() => {
+    setScrollElement(getViewport() ?? null);
+  }, []);
 
   useEffect(() => {
     const viewport = getViewport();
@@ -415,6 +437,13 @@ function Table({
     if (summaryScrollRef.current)
       summaryScrollRef.current.scrollLeft = scrollLeft;
   };
+
+  const rowVirtualizer = useVirtualizer({
+    count: rowChildren?.length,
+    getScrollElement: () => scrollElement,
+    estimateSize: () => 48,
+    overscan: 20,
+  });
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
@@ -667,14 +696,39 @@ function Table({
                   autoHideDelay={800}
                   onScroll={loose ? handleWrapperScroll : undefined}
                   ref={tableBodyRef}
+                  totalSize={rowVirtualizer.getTotalSize()}
+                  scrollOffset={rowVirtualizer.scrollOffset ?? 0}
                 >
                   <TableBody
                     $theme={tableTheme}
                     aria-label="table-body"
                     $loose={loose}
-                    $style={styles?.tableBodyStyle}
+                    $style={css`
+                      position: relative;
+                      height: ${rowVirtualizer.getTotalSize()}px;
+                      ${styles?.tableBodyStyle}
+                    `}
                   >
-                    {rowChildren}
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                      return (
+                        <div
+                          key={virtualRow.key}
+                          data-index={virtualRow.index}
+                          ref={rowVirtualizer.measureElement}
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            transform: `translateY(${virtualRow.start}px)`,
+                          }}
+                        >
+                          {rowChildren[virtualRow.index]}
+                        </div>
+                      );
+                    })}
                   </TableBody>
                 </Scrollbar>
               ) : (
