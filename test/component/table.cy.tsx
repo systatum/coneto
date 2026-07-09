@@ -614,6 +614,93 @@ describe("Table", () => {
           .and("have.css", "overflow-y", "scroll");
       });
 
+      context("when given few column", () => {
+        const simpleColumn: TableColumn[] = [
+          { id: "name", caption: "Name" },
+          { id: "type", caption: "Protocol" },
+        ];
+
+        const simpleSampleRows = Array.from({ length: 20 }).map((_, index) => (
+          <Table.Row
+            key={index}
+            rowId={String(index)}
+            content={[
+              generateSentence({
+                minLen: 40,
+                maxLen: 50,
+                seed: 1 + index,
+              }),
+              generateSentence({
+                minLen: 40,
+                maxLen: 50,
+                seed: 11 + index,
+              }),
+            ]}
+          />
+        ));
+
+        it("not broke the width between table (still with full width)", () => {
+          cy.mount(
+            <Table
+              styles={{
+                tableBodyStyle: css`
+                  max-height: 250px;
+                `,
+              }}
+              loose
+              columns={simpleColumn}
+            >
+              {simpleSampleRows}
+            </Table>
+          );
+
+          cy.findAllByLabelText("table-row-cell")
+            .eq(0)
+            .invoke("css", "width")
+            .then((width) => {
+              cy.findAllByLabelText("table-row-cell")
+                .eq(1)
+                .should("have.css", "width", width);
+            });
+
+          // have flex: 1
+          cy.findAllByLabelText("table-row-cell")
+            .eq(0)
+            .invoke("css", "flex")
+            .then((width) => {
+              cy.findAllByLabelText("table-row-cell")
+                .eq(1)
+                .should("have.css", "flex", width);
+            });
+        });
+
+        context("when hover", () => {
+          it("renders the normal hover row color", () => {
+            cy.mount(
+              <Table
+                styles={{
+                  tableBodyStyle: css`
+                    max-height: 250px;
+                  `,
+                }}
+                loose
+                columns={simpleColumn}
+              >
+                {simpleSampleRows}
+              </Table>
+            );
+
+            cy.findAllByLabelText("table-row")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(249, 250, 251)");
+            cy.findAllByLabelText("table-row")
+              .eq(0)
+              .realHover()
+              .should("have.css", "background-color", "rgb(231, 242, 252)");
+          });
+        });
+      });
+
       context("height in table header", () => {
         it("renders height with 49px", () => {
           cy.mount(<ProductTableLoose loose />);
