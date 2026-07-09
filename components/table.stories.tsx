@@ -1002,14 +1002,13 @@ export const Loose: Story = {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 `;
 
 const Section = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-radius: 12px;
+  gap: 10px;
 `;
 
 const Title = styled.h2`
