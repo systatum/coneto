@@ -1010,7 +1010,6 @@ const Section = styled.section`
   flex-direction: column;
   gap: 12px;
   border-radius: 12px;
-  background: #fff;
 `;
 
 const Title = styled.h2`
