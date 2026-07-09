@@ -7,6 +7,7 @@ import {
   flip,
   offset,
   Placement,
+  size,
   useFloating,
 } from "@floating-ui/react";
 import React, {
@@ -45,6 +46,7 @@ export type TooltipProps = {
   showDelayPeriod?: number;
   styles?: TooltipStyles;
   onClick?: (e: React.MouseEvent) => void;
+  anchorRef?: React.RefObject<HTMLElement>;
   id?: string;
   className?: string;
 };
@@ -77,6 +79,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       onClick,
       open,
       id,
+      anchorRef,
       className,
     },
     ref
@@ -106,9 +109,29 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       placement: getFloatingPlacement(dialogPlacement),
       open: open,
       onOpenChange: setIsOpenLocal,
-      middleware: [offset(8), flip()],
+      middleware: [
+        offset(8),
+        flip(),
+        ...(anchorRef
+          ? [
+              size({
+                apply({ rects, elements }) {
+                  Object.assign(elements.floating.style, {
+                    width: `${rects.reference.width}px`,
+                  });
+                },
+              }),
+            ]
+          : []),
+      ],
       whileElementsMounted: autoUpdate,
     });
+
+    useEffect(() => {
+      if (anchorRef) {
+        refs.setReference(anchorRef.current);
+      }
+    }, []);
 
     const safeAreaAriaLabelsLocal: string[] = [
       "combobox-drawer-month",
@@ -182,7 +205,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
             }
           }
         }}
-        ref={refs.setReference}
+        ref={anchorRef ? undefined : refs.setReference}
       >
         <ContentTrigger
           id={id}
