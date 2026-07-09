@@ -942,24 +942,91 @@ export const Loose: Story = {
       { content: "" },
     ];
 
+    const simpleColumn: TableColumn[] = [
+      { id: "name", caption: "Name" },
+      { id: "type", caption: "Protocol" },
+    ];
+
+    const simpleSampleRows = Array.from({ length: 20 }).map((_, index) => (
+      <Table.Row
+        key={index}
+        rowId={String(index)}
+        content={[
+          generateSentence({
+            minLen: 40,
+            maxLen: 50,
+            seed: 1 + index,
+          }),
+          generateSentence({
+            minLen: 40,
+            maxLen: 50,
+            seed: 11 + index,
+          }),
+        ]}
+      />
+    ));
+
     return (
-      <Table
-        styles={{
-          tableBodyStyle: css`
-            max-height: 250px;
-          `,
-        }}
-        loose
-        actions={TOP_ACTIONS}
-        columns={columns}
-        selectable={activeTab.withCheckbox}
-        sumRow={activeTab.withSummary && sumRow}
-      >
-        {sampleRows}
-      </Table>
+      <Wrapper>
+        <Section>
+          <Title>With Excessive Columns</Title>
+
+          <Table
+            styles={{
+              tableBodyStyle: css`
+                max-height: 250px;
+              `,
+            }}
+            loose
+            actions={TOP_ACTIONS}
+            columns={columns}
+            selectable={activeTab.withCheckbox}
+            sumRow={activeTab.withSummary && sumRow}
+          >
+            {sampleRows}
+          </Table>
+        </Section>
+
+        <Section>
+          <Title>Few Columns</Title>
+
+          <Table
+            styles={{
+              tableBodyStyle: css`
+                max-height: 250px;
+              `,
+            }}
+            loose
+            columns={simpleColumn}
+          >
+            {simpleSampleRows}
+          </Table>
+        </Section>
+      </Wrapper>
     );
   },
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 12px;
+  background: #fff;
+`;
+
+const Title = styled.h2`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+`;
 
 const ProtocolItem = styled.div<{ $theme?: TableThemeConfig }>`
   padding: 10px 12px;
