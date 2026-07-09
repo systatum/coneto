@@ -942,10 +942,7 @@ export const Loose: Story = {
       { content: "" },
     ];
 
-    const simpleColumn: TableColumn[] = [
-      { id: "name", caption: "Name" },
-      { id: "type", caption: "Protocol" },
-    ];
+    const simpleColumn: TableColumn[] = [{ id: "text", caption: "Text" }];
 
     const simpleSampleRows = Array.from({ length: 20 }).map((_, index) => (
       <Table.Row
@@ -956,11 +953,6 @@ export const Loose: Story = {
             minLen: 40,
             maxLen: 50,
             seed: 1 + index,
-          }),
-          generateSentence({
-            minLen: 40,
-            maxLen: 50,
-            seed: 11 + index,
           }),
         ]}
       />
