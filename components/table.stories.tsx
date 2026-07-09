@@ -651,7 +651,7 @@ export const Loose: Story = {
 
     const initialRows = useMemo<LoadBalancerRow[]>(
       () =>
-        Array.from({ length: 15 }, (_, i) => {
+        Array.from({ length: 400 }, (_, i) => {
           const type = TYPES_DATA[i % TYPES_DATA.length].name;
           const region = REGIONS[i % REGIONS.length];
           const status = STATUS[i % STATUS.length];
