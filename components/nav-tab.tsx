@@ -41,6 +41,9 @@ export interface NavTabStyles {
   tabStyle?: CSSProp;
   barStyle?: CSSProp;
   underscoreStyle?: CSSProp;
+  iconStyle?: CSSProp;
+  badgeStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 export interface NavTabAction extends ActionButtonProps {
@@ -61,7 +64,7 @@ export interface NavTabTab {
   onClick?: () => void;
   actions?: NavTabTabAction[];
   subItems?: NavTabSubItem[];
-  badge?: NavTabTabBadge;
+  icon?: NavTabTabBadge;
   hidden?: boolean;
   className?: string;
   withCircle?: boolean;
@@ -478,11 +481,22 @@ function NavTab({
                   $tabsLength={visibleTabs?.length}
                   $withCircle={tab?.withCircle}
                 >
-                  {tab.badge &&
+                  {tab.icon &&
                     (() => {
-                      const finalBadge: FigureProps = {
-                        ...tab.badge,
-                        size: mobile ? (tab.badge.size ?? 24) : tab.badge.size,
+                      const finalIcon: FigureProps = {
+                        ...tab?.icon,
+                        size: mobile ? (tab.icon.size ?? 24) : tab.icon.size,
+                        styles: {
+                          ...tab?.icon?.styles,
+                          notificationBadgeStyle: css`
+                            ${styles?.badgeStyle};
+                            ${tab?.icon?.styles?.notificationBadgeStyle};
+                          `,
+                          self: css`
+                            ${styles?.iconStyle};
+                            ${tab?.icon?.styles?.self};
+                          `,
+                        },
                       };
 
                       if (mobile && tab.withCircle) {
@@ -493,15 +507,23 @@ function NavTab({
                             $activeColor={activeColor}
                             $theme={navTheme}
                           >
-                            <Figure {...finalBadge} />
-                            {tab.title}
+                            <Figure {...finalIcon} />
+                            <NavTabLabel $style={styles?.labelStyle}>
+                              {tab.title}
+                            </NavTabLabel>
                           </CircleBadge>
                         );
                       }
 
-                      return <Figure {...finalBadge} />;
+                      return <Figure {...finalIcon} />;
                     })()}
-                  {!(mobile && tab.withCircle) && tab.title}
+
+                  {!(mobile && tab.withCircle) && (
+                    <NavTabLabel $style={styles?.labelStyle}>
+                      {tab.title}
+                    </NavTabLabel>
+                  )}
+
                   {!mobile &&
                     tab.actions &&
                     (() => {
@@ -648,6 +670,10 @@ const NavTabContainer = styled.div<{
   font-size: 14px;
   top: 0;
 
+  ${({ $style }) => $style}
+`;
+
+const NavTabLabel = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
