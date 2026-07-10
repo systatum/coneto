@@ -8,7 +8,7 @@ export interface FigureProps
   size?: number;
   color?: string;
   styles?: FigureStyles;
-  notification?: FigureNotification;
+  notificationBadge?: FigureNotification;
 }
 
 export interface FigureNotification {
@@ -20,7 +20,7 @@ export interface FigureNotification {
 
 export interface FigureStyles {
   self?: CSSProp;
-  notificationStyle?: CSSProp;
+  notificationBadgeStyle?: CSSProp;
 }
 
 function Figure({
@@ -30,7 +30,7 @@ function Figure({
   styles,
   "aria-label": ariaLabel,
   className,
-  notification,
+  notificationBadge,
   ...rest
 }: FigureProps) {
   if (!Icon) return null;
@@ -41,16 +41,16 @@ function Figure({
       className={applyClassName("figure", className)}
       $style={styles?.self}
     >
-      {notification && (
+      {notificationBadge && (
         <Notification
           $size={size}
-          $fontSize={notification?.fontSize}
-          $backgroundColor={notification?.backgroundColor}
-          $frameSize={notification?.frameSize}
-          $style={styles?.notificationStyle}
-          $contentLength={notification?.content?.length}
+          $fontSize={notificationBadge?.fontSize}
+          $backgroundColor={notificationBadge?.backgroundColor}
+          $frameSize={notificationBadge?.frameSize}
+          $style={styles?.notificationBadgeStyle}
+          $contentLength={notificationBadge?.content?.length}
         >
-          {notification.content}
+          {notificationBadge.content}
         </Notification>
       )}
 
