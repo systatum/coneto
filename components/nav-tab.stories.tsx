@@ -11,6 +11,7 @@ import { Button } from "./button";
 import {
   RiAddBoxLine,
   RiAtLine,
+  RiCarouselView,
   RiCharacterRecognitionLine,
   RiCropLine,
   RiFlashlightLine,
@@ -666,6 +667,10 @@ export const Mobile: Story = {
         id: "1",
         title: "Write",
         content: <WriteTabContent />,
+        badge: {
+          image: RiAddBoxLine,
+          notification: "20",
+        },
         onClick: () => {
           console.log("test tab 1");
         },
@@ -673,6 +678,9 @@ export const Mobile: Story = {
       {
         id: "2",
         title: "Review",
+        badge: {
+          image: RiCarouselView,
+        },
         content: <ReviewTabContent />,
         onClick: () => {
           console.log("test tab 2");
@@ -724,6 +732,15 @@ export const Mobile: Story = {
       <NavTab
         mobile
         tabs={TABS_ITEMS}
+        actions={[
+          {
+            caption: "Add",
+            icon: { image: RiAddBoxLine },
+            onClick: () => {
+              console.log(`Add button was clicked`);
+            },
+          },
+        ]}
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
       />
