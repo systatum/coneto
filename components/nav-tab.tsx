@@ -165,7 +165,7 @@ function NavTab({
 
   const visibleTabs = useMemo(
     () =>
-      (mobile ? [...mobileActions, ...tabs] : tabs)?.filter(
+      (mobile ? [...tabs, ...mobileActions] : tabs)?.filter(
         (tab) => !tab.hidden
       ),
     [tabs, mobileActions]
