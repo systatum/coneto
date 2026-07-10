@@ -483,6 +483,7 @@ function NavTab({
                       if (mobile && tab.withCircle) {
                         return (
                           <CircleBadge
+                            $pressed={selected === tab.id}
                             $activeColor={activeColor}
                             $theme={navTheme}
                           >
@@ -862,13 +863,14 @@ const NavTabTab = styled.div<{
 const CircleBadge = styled.span<{
   $theme?: NavTabThemeConfig;
   $activeColor?: string;
+  $pressed?: boolean;
 }>`
   position: absolute;
-  bottom: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
+  bottom: 8px;
   border-radius: 9999px;
   display: flex;
   flex-direction: column;
@@ -877,13 +879,24 @@ const CircleBadge = styled.span<{
   gap: 7px;
   background-color: ${({ $theme, $activeColor }) =>
     $activeColor ?? $theme?.indicatorColor};
+
+  &:active {
+    background-color: ${({ $theme }) => $theme?.indicatorActiveColor};
+  }
+
+  ${({ $pressed, $theme }) =>
+    $pressed &&
+    css`
+      background-color: ${$theme?.indicatorActiveColor};
+    `};
+
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   color: white;
 
-  @media (max-width: 450px) {
-    width: 75px;
-    height: 75px;
-    bottom: 8px;
+  @media (min-width: 450px) {
+    width: 80px;
+    height: 80px;
+    bottom: 4px;
   }
 `;
 

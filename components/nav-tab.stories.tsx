@@ -733,7 +733,6 @@ export const Mobile: Story = {
       <NavTab
         mobile
         tabs={TABS_ITEMS}
-        activeColor="red"
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
       />
