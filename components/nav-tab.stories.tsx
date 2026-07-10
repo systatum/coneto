@@ -669,7 +669,7 @@ export const Mobile: Story = {
         content: <WriteTabContent />,
         badge: {
           image: RiAddBoxLine,
-          notification: "20",
+          notification: { content: "99+" },
         },
         onClick: () => {
           console.log("test tab 1");

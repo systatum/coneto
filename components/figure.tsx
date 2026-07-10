@@ -1,6 +1,6 @@
 import { applyClassName } from "./../constants/classname";
 import { ComponentType, HTMLAttributes } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface FigureProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, "style"> {
@@ -48,6 +48,7 @@ function Figure({
           $backgroundColor={notification?.backgroundColor}
           $frameSize={notification?.frameSize}
           $style={styles?.notificationStyle}
+          $contentLength={notification?.content?.length}
         >
           {notification.content}
         </Notification>
@@ -90,6 +91,7 @@ const Notification = styled.span<{
   $frameSize?: string;
   $fontSize?: string;
   $backgroundColor?: string;
+  $contentLength?: number;
 }>`
   position: absolute;
   top: 5%;
@@ -104,11 +106,16 @@ const Notification = styled.span<{
   justify-content: center;
 
   color: white;
-  width: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
+  width: ${({ $size, $frameSize, $contentLength }) =>
+    $contentLength >= 3 ? "fit-content" : ($frameSize ?? `${$size * 0.8}px`)};
   height: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
   font-size: ${({ $size, $fontSize }) => $fontSize ?? `${$size * 0.4}px`};
-  line-height: 1;
+  ${({ $contentLength }) =>
+    $contentLength >= 3 &&
+    css`
+      padding: 0px 3px;
+    `};
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 export { Figure };
