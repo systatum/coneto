@@ -488,6 +488,7 @@ function NavTab({
                       if (mobile && tab.withCircle) {
                         return (
                           <CircleBadge
+                            aria-label="nav-tab-circle"
                             $pressed={selected === tab.id}
                             $activeColor={activeColor}
                             $theme={navTheme}
