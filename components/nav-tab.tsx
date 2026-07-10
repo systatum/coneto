@@ -61,9 +61,12 @@ export interface NavTabTab {
   onClick?: () => void;
   actions?: NavTabTabAction[];
   subItems?: NavTabSubItem[];
+  badge?: NavTabTabBadge;
   hidden?: boolean;
   className?: string;
 }
+
+interface NavTabTabBadge extends FigureProps {}
 
 export interface NavTabSubItem {
   id: string;
@@ -128,7 +131,7 @@ function NavTab({
   const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
-  const visibleTabs = useMemo(() => tabs.filter((tab) => !tab.hidden), [tabs]);
+  const visibleTabs = useMemo(() => tabs?.filter((tab) => !tab.hidden), [tabs]);
 
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
@@ -195,13 +198,39 @@ function NavTab({
   };
 
   const hoverPosition = getHoverPosition();
-  const filteredTabs = tabs.filter(
+  const filteredTabs = tabs?.filter(
     (tab) =>
       tab.id === selected ||
       tab.subItems
         ?.filter((item) => !item?.hidden)
         .some((item) => item.id === selected)
   );
+
+  const contentActions =
+    actions &&
+    actions
+      .filter((action) => !action?.hidden)
+      .map((action, index) => {
+        return (
+          <ActionButton
+            key={index}
+            {...action}
+            styles={{
+              ...action?.styles,
+              self: css`
+                height: ${size === "sm" && "27px"};
+                border-bottom-width: 2px;
+
+                ${action.active &&
+                css`
+                  border-bottom: 2px solid ${navTheme?.indicatorColor};
+                `}
+                ${action?.styles?.self}
+              `,
+            }}
+          />
+        );
+      });
 
   return (
     <NavTabContainer
@@ -306,15 +335,15 @@ function NavTab({
                   <>
                     {tab.subItems &&
                       tab.subItems
-                        ?.filter((item) => !item?.hidden)
-                        ?.map((item, idx) => {
+                        ?.filter((subItem) => !subItem?.hidden)
+                        ?.map((subItem, idx) => {
                           return (
                             <NavTabTab
                               key={idx}
-                              id={item?.id}
+                              id={subItem?.id}
                               className={applyClassName(
                                 "nav-tab-sub-item",
-                                item?.className
+                                subItem?.className
                               )}
                               $theme={navTheme}
                               $style={css`
@@ -324,14 +353,14 @@ function NavTab({
                                   font-size: 16px;
                                 `}
 
-                                ${item?.styles?.self}
+                                ${subItem?.styles?.self}
                               `}
                               onClick={() => {
-                                if (item.content) {
-                                  setSelectedLocal(item.id);
+                                if (subItem.content) {
+                                  setSelectedLocal(subItem.id);
                                 }
                                 if (onChange) {
-                                  onChange(item.id);
+                                  onChange(subItem.id);
                                 }
                                 tooltipRefs.current.forEach((ref) => {
                                   ref?.close();
@@ -340,14 +369,14 @@ function NavTab({
                                 if (mobile) {
                                   setOpenSubMenuId(null);
                                 }
-                                if (item.onClick) {
-                                  item.onClick();
+                                if (subItem.onClick) {
+                                  subItem.onClick();
                                 }
                               }}
                               $subMenu={true}
                             >
-                              {item.icon && <Figure {...item.icon} />}
-                              {item.caption}
+                              {subItem.icon && <Figure {...subItem.icon} />}
+                              {subItem.caption}
                             </NavTabTab>
                           );
                         })}
@@ -398,7 +427,18 @@ function NavTab({
                   $isHovered={isHovered === tab.id || isTipMenuOpen === tab.id}
                   $selected={selected === tab.id}
                   $isAction={!!tab.actions}
+                  $mobile={mobile}
                 >
+                  {tab.badge &&
+                    (() => {
+                      const finalBadge: FigureProps = {
+                        ...tab.badge,
+                        size: mobile ? (tab.badge.size ?? 24) : tab.badge.size,
+                      };
+
+                      return <Figure {...finalBadge} />;
+                    })()}
+
                   {tab.title}
                   {tab.actions &&
                     (() => {
@@ -467,9 +507,11 @@ function NavTab({
               </Tooltip>
             );
           })}
+
+          {actions && mobile && contentActions}
         </NavTabTabsSection>
 
-        {actions && (
+        {actions && !mobile && (
           <NavTabTabsSection
             aria-label="nav-tab-actions-wrapper"
             $actions={!!actions}
@@ -480,29 +522,7 @@ function NavTab({
               ${styles?.containerActionsStyle}
             `}
           >
-            {actions
-              .filter((action) => !action?.hidden)
-              .map((action, index) => {
-                return (
-                  <ActionButton
-                    key={index}
-                    {...action}
-                    styles={{
-                      ...action?.styles,
-                      self: css`
-                        height: ${size === "sm" && "27px"};
-                        border-bottom-width: 2px;
-
-                        ${action.active &&
-                        css`
-                          border-bottom: 2px solid ${navTheme?.indicatorColor};
-                        `}
-                        ${action?.styles?.self}
-                      `,
-                    }}
-                  />
-                );
-              })}
+            {contentActions}
           </NavTabTabsSection>
         )}
       </NavTabBar>
@@ -510,7 +530,7 @@ function NavTab({
       <NavContent $contentStyle={styles?.contentStyle}>
         {filteredTabs.map((tab, index) => {
           const selectedSubItem = tab.subItems
-            ?.filter((item) => !item?.hidden)
+            ?.filter((subItem) => !subItem?.hidden)
             ?.find((subItem) => subItem.id === selected);
           if (selectedSubItem) {
             return <Fragment key={index}>{selectedSubItem.content}</Fragment>;
@@ -651,6 +671,7 @@ const NavTabTab = styled.div<{
   $subMenu?: boolean;
   $size?: NavTabSize;
   $theme?: NavTabThemeConfig;
+  $mobile?: boolean;
 }>`
   color: ${({ $theme }) => $theme.textColor};
   display: flex;
@@ -724,6 +745,13 @@ const NavTabTab = styled.div<{
     background-color: ${({ $theme }) => $theme.activeBackgroundColor};
     box-shadow: ${({ $theme }) => $theme.activeInsetShadow};
   }
+
+  ${({ $mobile }) =>
+    $mobile &&
+    css`
+      display: flex;
+      flex-direction: column;
+    `};
 
   ${({ $style }) => $style};
 `;
