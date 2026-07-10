@@ -1,4 +1,3 @@
-import { c } from "framer-motion/dist/types.d-Cjd591yU";
 import { applyClassName } from "./../constants/classname";
 import { ComponentType, HTMLAttributes } from "react";
 import styled, { CSSProp } from "styled-components";
@@ -9,7 +8,14 @@ export interface FigureProps
   size?: number;
   color?: string;
   styles?: FigureStyles;
-  notification?: string;
+  notification?: FigureNotification;
+}
+
+export interface FigureNotification {
+  content?: string;
+  backgroundColor?: string;
+  frameSize?: string;
+  fontSize?: string;
 }
 
 export interface FigureStyles {
@@ -36,8 +42,14 @@ function Figure({
       $style={styles?.self}
     >
       {notification && (
-        <Notification $size={size} $style={styles?.notificationStyle}>
-          {notification}
+        <Notification
+          $size={size}
+          $fontSize={notification?.fontSize}
+          $backgroundColor={notification?.backgroundColor}
+          $frameSize={notification?.frameSize}
+          $style={styles?.notificationStyle}
+        >
+          {notification.content}
         </Notification>
       )}
 
@@ -72,23 +84,29 @@ const Wrapper = styled.span<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const Notification = styled.span<{ $style?: CSSProp; $size?: number }>`
+const Notification = styled.span<{
+  $style?: CSSProp;
+  $size?: number;
+  $frameSize?: string;
+  $fontSize?: string;
+  $backgroundColor?: string;
+}>`
   position: absolute;
   top: 5%;
   right: 5%;
   transform: translate(50%, -50%);
 
   border-radius: 9999px;
-  background-color: red;
+  background-color: ${({ $backgroundColor }) => $backgroundColor ?? "red"};
 
   display: flex;
   align-items: center;
   justify-content: center;
 
   color: white;
-  width: ${({ $size = 16 }) => `${$size * 0.8}px`};
-  height: ${({ $size = 16 }) => `${$size * 0.8}px`};
-  font-size: ${({ $size = 16 }) => `${$size * 0.4}px`};
+  width: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
+  height: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
+  font-size: ${({ $size, $fontSize }) => $fontSize ?? `${$size * 0.4}px`};
   line-height: 1;
 
   ${({ $style }) => $style}
