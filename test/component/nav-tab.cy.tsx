@@ -2,16 +2,24 @@ import {
   ReviewTabContent,
   WriteTabContent,
 } from "./../../components/nav-tab.stories";
-import { NavTab, NavTabTab } from "./../../components/nav-tab";
+import { NavTab, NavTabProps, NavTabTab } from "./../../components/nav-tab";
 import { Button } from "./../../components/button";
 import { css } from "styled-components";
 import {
   RiAddBoxLine,
   RiAtLine,
   RiCharacterRecognitionLine,
+  RiExchangeDollarLine,
+  RiHome3Line,
+  RiLogoutBoxFill,
+  RiMenuLine,
+  RiPieChartLine,
   RiProfileFill,
   RiSearchLine,
   RiSettings5Line,
+  RiTranslate2,
+  RiUserLine,
+  RiWallet2Line,
 } from "@remixicon/react";
 import { useState } from "react";
 
@@ -25,6 +33,198 @@ describe("NavTab", () => {
       },
     },
   ];
+
+  context("mobile", () => {
+    function MobileNavTabProduct(props: NavTabProps) {
+      const [activeTab, setActiveTab] = useState("2");
+
+      const TABS_ITEMS: NavTabTab[] = [
+        {
+          id: "1",
+          title: "Home",
+          content: "This is home content",
+          badge: {
+            image: RiHome3Line,
+            notification: { content: "99+", fontSize: "8px" },
+          },
+          onClick: () => {
+            console.log("test tab 1");
+          },
+        },
+        {
+          id: "2",
+          title: "Account",
+          badge: {
+            image: RiWallet2Line,
+          },
+          content: "This is account content",
+          onClick: () => {
+            console.log("test tab 2");
+          },
+        },
+        {
+          id: "3",
+          title: "Transfer",
+          content: "This is transfer content",
+          badge: {
+            image: RiExchangeDollarLine,
+          },
+          onClick: () => {
+            console.log("test tab 1");
+          },
+          withCircle: true,
+        },
+        {
+          id: "4",
+          title: "Household",
+          content: "This is household content",
+          badge: {
+            image: RiPieChartLine,
+            notification: { content: "99+", fontSize: "8px" },
+          },
+          onClick: () => {
+            console.log("test tab 1");
+          },
+        },
+        {
+          id: "5",
+          title: "Menu",
+          content: "This is setting content",
+          badge: {
+            image: RiMenuLine,
+          },
+          onClick: () => {
+            console.log("test tab 1");
+          },
+          subItems: [
+            {
+              id: "5-1",
+              icon: { image: RiUserLine },
+              caption: "Privacy & security settings",
+              content: "This is privacy and security settings content",
+            },
+            {
+              id: "5-2",
+              icon: { image: RiTranslate2 },
+              caption: "Language",
+              content: "This is language content",
+            },
+            {
+              id: "5-3",
+              icon: { image: RiLogoutBoxFill },
+              caption: "Logout",
+              onClick: () => {
+                console.log("logout");
+              },
+            },
+          ],
+        },
+      ];
+
+      return (
+        <NavTab
+          mobile
+          tabs={TABS_ITEMS}
+          activeTab={activeTab}
+          onChange={(activeTab) => setActiveTab(activeTab)}
+          {...props}
+        />
+      );
+    }
+
+    it("render in the bottom of content", () => {
+      cy.mount(<MobileNavTabProduct />);
+
+      cy.findByLabelText("nav-tab-bar")
+        .should("have.css", "position", "fixed")
+        .and("have.css", "bottom", "0px");
+    });
+
+    context("when given actions", () => {
+      it("should render as a Tab", () => {
+        cy.mount(
+          <MobileNavTabProduct
+            actions={[
+              {
+                icon: { image: RiSettings5Line },
+                onClick: () => {},
+                caption: "Test",
+              },
+            ]}
+          />
+        );
+
+        cy.findAllByLabelText("nav-tab-tab").should("have.length", 6);
+      });
+    });
+
+    context("when given subItems", () => {
+      context("when when clicking", () => {
+        it("renders all submenu", () => {
+          cy.mount(<MobileNavTabProduct />);
+
+          const TEXTS = ["Logout", "Language", "Privacy & security settings"];
+
+          TEXTS.map((text) => {
+            cy.findByText(text).should("not.exist");
+          });
+
+          cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
+
+          cy.wait(500);
+
+          cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerup");
+
+          TEXTS.map((text) => {
+            cy.findByText(text).should("exist");
+          });
+        });
+
+        it("renders in the bottom of screen", () => {
+          cy.mount(<MobileNavTabProduct />);
+
+          cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
+
+          cy.wait(500);
+
+          cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerup");
+          cy.findByLabelText("tooltip-drawer").should(
+            "have.css",
+            "bottom",
+            "-4px"
+          );
+        });
+      });
+    });
+
+    context("when given withCircle", () => {
+      it("should with circle in a Tab", () => {
+        cy.mount(<MobileNavTabProduct />);
+
+        cy.findAllByLabelText("nav-tab-circle").should("have.length", 1);
+      });
+
+      context("when selected the tab withCircle", () => {
+        it("underline would be transparent", () => {
+          cy.mount(<MobileNavTabProduct />);
+
+          cy.findByLabelText("nav-tab-underscore").should(
+            "have.css",
+            "opacity",
+            "1"
+          );
+
+          cy.findAllByLabelText("nav-tab-circle").eq(0).click();
+
+          cy.findByLabelText("nav-tab-underscore").should(
+            "have.css",
+            "opacity",
+            "0"
+          );
+        });
+      });
+    });
+  });
 
   context("tabs", () => {
     context("when given hidden", () => {
