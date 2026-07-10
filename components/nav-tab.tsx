@@ -329,7 +329,7 @@ function NavTab({
 
                     ${mobile &&
                     css`
-                      width: 96dvw;
+                      width: 99dvw;
                       left: 50%;
                       transform: translateX(-50%);
                     `};
@@ -342,6 +342,8 @@ function NavTab({
                       tab.subItems
                         ?.filter((subItem) => !subItem?.hidden)
                         ?.map((subItem, idx) => {
+                          console.log(subItem);
+
                           return (
                             <NavTabTab
                               key={idx}
@@ -364,7 +366,7 @@ function NavTab({
                                 if (subItem.content) {
                                   setSelectedLocal(subItem.id);
                                 }
-                                if (onChange) {
+                                if (onChange && subItem.content) {
                                   onChange(subItem.id);
                                 }
                                 tooltipRefs.current.forEach((ref) => {
