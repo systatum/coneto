@@ -1101,7 +1101,7 @@ const TableHeader = styled.div<{
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
-  background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
+  background: ${({ $theme }) => $theme?.headerBackgroundColor};
 
   ${({ $loose }) =>
     $loose &&
@@ -1157,7 +1157,7 @@ const TableSummary = styled.div<{
       z-index: 40;
 
       --row-bg: ${$theme?.summaryBackgroundColor ?? "#e4e4e4"};
-    `}
+    `};
 `;
 
 const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
@@ -2123,7 +2123,13 @@ const CellContent = styled.div<{
       }
     `}
 
-  width: ${({ $width }) => $width};
+  ${({ $width }) =>
+    $width &&
+    css`
+      flex: 0 1 ${$width};
+      width: ${$width};
+    `}
+
   min-height: inherit;
   ${({ $bold }) =>
     $bold &&
