@@ -11,7 +11,6 @@ import { Button } from "./button";
 import {
   RiAddBoxLine,
   RiAtLine,
-  RiCarouselView,
   RiCharacterRecognitionLine,
   RiCropLine,
   RiExchangeDollarLine,

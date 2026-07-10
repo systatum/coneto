@@ -265,7 +265,12 @@ function NavTab({
       $theme={navTheme}
       $mobile={mobile}
     >
-      <NavTabBar $mobile={mobile} $theme={navTheme} $style={styles?.barStyle}>
+      <NavTabBar
+        aria-label="nav-tab-bar"
+        $mobile={mobile}
+        $theme={navTheme}
+        $style={styles?.barStyle}
+      >
         <NavTabTabsSection
           aria-label="nav-tab-tabs-sections"
           $style={styles?.containerBoxStyle}
