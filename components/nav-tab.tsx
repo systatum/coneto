@@ -890,6 +890,12 @@ const NavTabTab = styled.div<{
           width: ${$width}px;
         `};
 
+  ${({ $withCircle }) =>
+    $withCircle &&
+    css`
+      min-width: 85px;
+    `}
+
   ${({ $style }) => $style};
 `;
 
@@ -901,8 +907,8 @@ const CircleBadge = styled.span<{
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   bottom: 8px;
   border-radius: 9999px;
   display: flex;
@@ -927,8 +933,8 @@ const CircleBadge = styled.span<{
   color: white;
 
   @media (min-width: 450px) {
-    width: 80px;
-    height: 80px;
+    width: 85px;
+    height: 85px;
     bottom: 4px;
   }
 `;
