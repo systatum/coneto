@@ -652,7 +652,6 @@ export const Mobile: Story = {
         content: "This is home content",
         icon: {
           image: RiHome3Line,
-          notificationBadge: { content: "99+", fontSize: "8px" },
         },
         onClick: () => {
           console.log("test tab 1");
@@ -663,6 +662,7 @@ export const Mobile: Story = {
         title: "Account",
         icon: {
           image: RiWallet2Line,
+          notificationBadge: { content: "" },
         },
         content: "This is account content",
         onClick: () => {
@@ -675,6 +675,7 @@ export const Mobile: Story = {
         content: "This is transfer content",
         icon: {
           image: RiExchangeDollarLine,
+          notificationBadge: { content: "5" },
         },
         onClick: () => {
           console.log("test tab 1");
@@ -687,7 +688,6 @@ export const Mobile: Story = {
         content: "This is household content",
         icon: {
           image: RiPieChartLine,
-          notificationBadge: { content: "99+", fontSize: "8px" },
         },
         onClick: () => {
           console.log("test tab 1");
