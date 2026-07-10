@@ -430,7 +430,7 @@ function NavTab({
                   onMouseEnter={() => setIsHovered(tab.id)}
                   onMouseLeave={() => setIsHovered(null)}
                   $isHovered={isHovered === tab.id || isTipMenuOpen === tab.id}
-                  $selected={selected === tab.id}
+                  $selected={selected === tab.id || openSubMenuId === tab.id}
                   $isAction={!!tab.actions}
                   $mobile={mobile}
                   $width={mobile ? maxTabWidth : undefined}
