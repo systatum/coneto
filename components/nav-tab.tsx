@@ -502,7 +502,8 @@ function NavTab({
                       return <Figure {...finalBadge} />;
                     })()}
                   {!(mobile && tab.withCircle) && tab.title}
-                  {tab.actions &&
+                  {!mobile &&
+                    tab.actions &&
                     (() => {
                       const listActions = tab.actions;
                       const actionsWithIcons = listActions
