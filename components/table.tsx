@@ -703,11 +703,11 @@ function Table({
                     $theme={tableTheme}
                     aria-label="table-body"
                     $loose={loose}
-                    $style={css`
-                      position: relative;
-                      height: ${rowVirtualizer.getTotalSize()}px;
-                      ${styles?.tableBodyStyle}
-                    `}
+                    $style={styles?.tableBodyStyle}
+                    style={{
+                      position: "relative",
+                      height: `${rowVirtualizer.getTotalSize()}px`,
+                    }}
                   >
                     {rowVirtualizer.getVirtualItems().map((virtualRow) => {
                       return (
@@ -1730,6 +1730,7 @@ function TableRow({
               return cloneElement(child, {
                 ...(isTableRowCell
                   ? {
+                      _index: i,
                       width: child.props.width ?? widthColumn,
                       contentStyle: isLast
                         ? css`
