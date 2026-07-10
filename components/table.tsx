@@ -34,6 +34,7 @@ import { applyClassName } from "./../constants/classname";
 import { Figure } from "./figure";
 import { Scrollbar, ScrollbarRef } from "./scrollbar";
 import { Button, ButtonProps } from "./button";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export interface TableColumn {
   caption: string;
@@ -225,6 +226,7 @@ function Table({
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
   const [rowActions, setRowActions] = useState<TipMenuItemProps[]>([]);
   const [openRowId, setOpenRowId] = useState<string | null>("");
+  const [scrollElement, setScrollElement] = useState<HTMLElement | null>(null);
 
   const [withRowActions, setWithRowActions] = useState(false);
 
@@ -363,6 +365,11 @@ function Table({
 
   const getViewport = () => tableBodyRef.current?.getViewport();
 
+  // get scroll element for react-virtualizer
+  useEffect(() => {
+    setScrollElement(getViewport() ?? null);
+  }, [rowChildren.length > 0]);
+
   useEffect(() => {
     const viewport = getViewport();
     if (!viewport || openRowId === null) return;
@@ -430,6 +437,13 @@ function Table({
     if (summaryScrollRef.current)
       summaryScrollRef.current.scrollLeft = scrollLeft;
   };
+
+  const rowVirtualizer = useVirtualizer({
+    count: rowChildren?.length,
+    getScrollElement: () => scrollElement,
+    estimateSize: () => 48,
+    overscan: 20,
+  });
 
   return (
     <DnDContext.Provider value={{ dragItem, setDragItem, onDragged }}>
@@ -682,14 +696,39 @@ function Table({
                   autoHideDelay={800}
                   onScroll={loose ? handleWrapperScroll : undefined}
                   ref={tableBodyRef}
+                  totalSize={rowVirtualizer.getTotalSize()}
+                  scrollOffset={rowVirtualizer.scrollOffset ?? 0}
                 >
                   <TableBody
                     $theme={tableTheme}
                     aria-label="table-body"
                     $loose={loose}
                     $style={styles?.tableBodyStyle}
+                    style={{
+                      position: "relative",
+                      height: `${rowVirtualizer.getTotalSize()}px`,
+                    }}
                   >
-                    {rowChildren}
+                    {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                      return (
+                        <div
+                          key={virtualRow.key}
+                          data-index={virtualRow.index}
+                          ref={rowVirtualizer.measureElement}
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            transform: `translateY(${virtualRow.start}px)`,
+                          }}
+                        >
+                          {rowChildren[virtualRow.index]}
+                        </div>
+                      );
+                    })}
                   </TableBody>
                 </Scrollbar>
               ) : (
