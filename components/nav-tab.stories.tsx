@@ -14,10 +14,15 @@ import {
   RiCarouselView,
   RiCharacterRecognitionLine,
   RiCropLine,
+  RiExchangeDollarLine,
   RiFlashlightLine,
+  RiHome3Line,
+  RiMenuLine,
+  RiPieChartLine,
   RiSearchLine,
   RiSettings5Line,
   RiTable2,
+  RiWallet2Line,
 } from "@remixicon/react";
 import { TableColumn, Table, TableSubMenuList } from "./table";
 import { css } from "styled-components";
@@ -665,11 +670,11 @@ export const Mobile: Story = {
     const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
-        title: "Write",
-        content: <WriteTabContent />,
+        title: "Home",
+        content: "This is home content",
         badge: {
-          image: RiAddBoxLine,
-          notification: { content: "99+" },
+          image: RiHome3Line,
+          notification: { content: "99+", fontSize: "8px" },
         },
         onClick: () => {
           console.log("test tab 1");
@@ -677,13 +682,47 @@ export const Mobile: Story = {
       },
       {
         id: "2",
-        title: "Review",
+        title: "Account",
         badge: {
-          image: RiCarouselView,
+          image: RiWallet2Line,
         },
-        content: <ReviewTabContent />,
+        content: "This is account content",
         onClick: () => {
           console.log("test tab 2");
+        },
+      },
+      {
+        id: "3",
+        title: "Transfer",
+        content: "This is transfer content",
+        badge: {
+          image: RiExchangeDollarLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "4",
+        title: "Household",
+        content: "This is household content",
+        badge: {
+          image: RiPieChartLine,
+          notification: { content: "99+", fontSize: "8px" },
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "5",
+        title: "Menu",
+        content: "This is setting content",
+        badge: {
+          image: RiMenuLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
         },
         subItems: [
           {
@@ -732,15 +771,6 @@ export const Mobile: Story = {
       <NavTab
         mobile
         tabs={TABS_ITEMS}
-        actions={[
-          {
-            caption: "Add",
-            icon: { image: RiAddBoxLine },
-            onClick: () => {
-              console.log(`Add button was clicked`);
-            },
-          },
-        ]}
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
       />
