@@ -125,6 +125,27 @@ function NavTab({
     []
   );
 
+  // mobile appearance
+  const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
+
+  useEffect(() => {
+    if (!mobile || !tabRefs.current.length) return;
+
+    const calculateMaxWidth = () => {
+      if (!mobile || !tabRefs.current.length) return;
+
+      const widths: number[] = tabRefs.current.map(
+        (el) => el?.getBoundingClientRect().width ?? 0
+      );
+
+      const largest: number = widths.length ? Math.max(...widths) : 0;
+
+      setMaxTabWidth((prev) => (prev !== largest ? largest : prev));
+    };
+
+    calculateMaxWidth();
+  }, [tabs, mobile]);
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -206,32 +227,6 @@ function NavTab({
         .some((item) => item.id === selected)
   );
 
-  const contentActions =
-    actions &&
-    actions
-      .filter((action) => !action?.hidden)
-      .map((action, index) => {
-        return (
-          <ActionButton
-            key={index}
-            {...action}
-            styles={{
-              ...action?.styles,
-              self: css`
-                height: ${size === "sm" && "27px"};
-                border-bottom-width: 2px;
-
-                ${action.active &&
-                css`
-                  border-bottom: 2px solid ${navTheme?.indicatorColor};
-                `}
-                ${action?.styles?.self}
-              `,
-            }}
-          />
-        );
-      });
-
   return (
     <NavTabContainer
       id={id}
@@ -299,6 +294,16 @@ function NavTab({
                   `,
                   containerStyle: css`
                     width: fit-content;
+                    ${mobile &&
+                    css`
+                      width: 100%;
+                    `};
+                  `,
+                  triggerStyle: css`
+                    ${mobile &&
+                    css`
+                      width: 100%;
+                    `};
                   `,
                   drawerStyle: (placement) => css`
                     border-radius: 0px;
@@ -428,6 +433,8 @@ function NavTab({
                   $selected={selected === tab.id}
                   $isAction={!!tab.actions}
                   $mobile={mobile}
+                  $width={mobile ? maxTabWidth : undefined}
+                  $tabsLength={visibleTabs?.length}
                 >
                   {tab.badge &&
                     (() => {
@@ -507,8 +514,6 @@ function NavTab({
               </Tooltip>
             );
           })}
-
-          {actions && mobile && contentActions}
         </NavTabTabsSection>
 
         {actions && !mobile && (
@@ -522,7 +527,29 @@ function NavTab({
               ${styles?.containerActionsStyle}
             `}
           >
-            {contentActions}
+            {actions
+              .filter((action) => !action?.hidden)
+              .map((action, index) => {
+                return (
+                  <ActionButton
+                    key={index}
+                    {...action}
+                    styles={{
+                      ...action?.styles,
+                      self: css`
+                        height: ${size === "sm" && "27px"};
+                        border-bottom-width: 2px;
+
+                        ${action.active &&
+                        css`
+                          border-bottom: 2px solid ${navTheme?.indicatorColor};
+                        `}
+                        ${action?.styles?.self}
+                      `,
+                    }}
+                  />
+                );
+              })}
           </NavTabTabsSection>
         )}
       </NavTabBar>
@@ -672,6 +699,8 @@ const NavTabTab = styled.div<{
   $size?: NavTabSize;
   $theme?: NavTabThemeConfig;
   $mobile?: boolean;
+  $width?: number;
+  $tabsLength?: number;
 }>`
   color: ${({ $theme }) => $theme.textColor};
   display: flex;
@@ -752,6 +781,19 @@ const NavTabTab = styled.div<{
       display: flex;
       flex-direction: column;
     `};
+
+  ${({ $mobile, $width, $tabsLength }) =>
+    $mobile && $tabsLength >= 4
+      ? css`
+          width: 100%;
+          justify-content: center;
+        `
+      : $mobile &&
+        !!$width &&
+        css`
+          width: ${$width}px;
+          justify-content: center;
+        `};
 
   ${({ $style }) => $style};
 `;
