@@ -426,6 +426,7 @@ export interface NavTabThemeConfig extends BodyThemeConfig {
   selectedBackgroundColor?: string;
 
   indicatorColor?: string;
+  indicatorActiveColor?: string;
   boxShadow?: string;
 
   activeInsetShadow?: string;
