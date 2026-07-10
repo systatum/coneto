@@ -19,7 +19,6 @@ import { Calendar } from "./../../components/calendar";
 import { TipMenuItemProps } from "./../../components/tip-menu";
 import { useState } from "react";
 import { FigureProps } from "./../../components/figure";
-import { m } from "framer-motion";
 
 interface ButtonWithIconOptions {
   icon?: FigureProps;
