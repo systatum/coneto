@@ -110,11 +110,16 @@ const Notification = styled.span<{
     $contentLength >= 3 ? "fit-content" : ($frameSize ?? `${$size * 0.8}px`)};
   height: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
   font-size: ${({ $size, $fontSize }) => $fontSize ?? `${$size * 0.4}px`};
-  ${({ $contentLength }) =>
-    $contentLength >= 3 &&
-    css`
-      padding: 0px 3px;
-    `};
+  ${({ $contentLength, $size }) =>
+    $contentLength === 0
+      ? css`
+          height: ${$size * 0.6}px;
+          width: ${$size * 0.6}px;
+        `
+      : $contentLength >= 3 &&
+        css`
+          padding: 0px 3px;
+        `};
 
   ${({ $style }) => $style};
 `;
