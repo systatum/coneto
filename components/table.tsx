@@ -2091,7 +2091,6 @@ const CellContent = styled.div<{
   ${({ $width, $loose }) =>
     $loose
       ? css`
-          min-width: 160px;
           width: 160px;
         `
       : !$width
