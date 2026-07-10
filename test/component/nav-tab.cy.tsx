@@ -43,9 +43,9 @@ describe("NavTab", () => {
           id: "1",
           title: "Home",
           content: "This is home content",
-          badge: {
+          icon: {
             image: RiHome3Line,
-            notification: { content: "99+", fontSize: "8px" },
+            notificationBadge: { content: "99+", fontSize: "8px" },
           },
           onClick: () => {
             console.log("test tab 1");
@@ -54,7 +54,7 @@ describe("NavTab", () => {
         {
           id: "2",
           title: "Account",
-          badge: {
+          icon: {
             image: RiWallet2Line,
           },
           content: "This is account content",
@@ -66,7 +66,7 @@ describe("NavTab", () => {
           id: "3",
           title: "Transfer",
           content: "This is transfer content",
-          badge: {
+          icon: {
             image: RiExchangeDollarLine,
           },
           onClick: () => {
@@ -78,9 +78,9 @@ describe("NavTab", () => {
           id: "4",
           title: "Household",
           content: "This is household content",
-          badge: {
+          icon: {
             image: RiPieChartLine,
-            notification: { content: "99+", fontSize: "8px" },
+            notificationBadge: { content: "99+", fontSize: "8px" },
           },
           onClick: () => {
             console.log("test tab 1");
@@ -90,7 +90,7 @@ describe("NavTab", () => {
           id: "5",
           title: "Menu",
           content: "This is setting content",
-          badge: {
+          icon: {
             image: RiMenuLine,
           },
           onClick: () => {

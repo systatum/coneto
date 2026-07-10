@@ -31,7 +31,7 @@ import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
 import { Card } from "./card";
 import { Badge } from "./badge";
-import { Combobox, ComboboxOption } from "./combobox";
+import { ComboboxOption } from "./combobox";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -650,9 +650,9 @@ export const Mobile: Story = {
         id: "1",
         title: "Home",
         content: "This is home content",
-        badge: {
+        icon: {
           image: RiHome3Line,
-          notification: { content: "99+", fontSize: "8px" },
+          notificationBadge: { content: "99+", fontSize: "8px" },
         },
         onClick: () => {
           console.log("test tab 1");
@@ -661,7 +661,7 @@ export const Mobile: Story = {
       {
         id: "2",
         title: "Account",
-        badge: {
+        icon: {
           image: RiWallet2Line,
         },
         content: "This is account content",
@@ -673,7 +673,7 @@ export const Mobile: Story = {
         id: "3",
         title: "Transfer",
         content: "This is transfer content",
-        badge: {
+        icon: {
           image: RiExchangeDollarLine,
         },
         onClick: () => {
@@ -685,9 +685,9 @@ export const Mobile: Story = {
         id: "4",
         title: "Household",
         content: "This is household content",
-        badge: {
+        icon: {
           image: RiPieChartLine,
-          notification: { content: "99+", fontSize: "8px" },
+          notificationBadge: { content: "99+", fontSize: "8px" },
         },
         onClick: () => {
           console.log("test tab 1");
@@ -697,7 +697,7 @@ export const Mobile: Story = {
         id: "5",
         title: "Menu",
         content: "This is setting content",
-        badge: {
+        icon: {
           image: RiMenuLine,
         },
         onClick: () => {
