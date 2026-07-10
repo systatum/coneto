@@ -17,11 +17,14 @@ import {
   RiExchangeDollarLine,
   RiFlashlightLine,
   RiHome3Line,
+  RiLogoutBoxFill,
   RiMenuLine,
   RiPieChartLine,
   RiSearchLine,
   RiSettings5Line,
   RiTable2,
+  RiTranslate2,
+  RiUserLine,
   RiWallet2Line,
 } from "@remixicon/react";
 import { TableColumn, Table, TableSubMenuList } from "./table";
@@ -643,30 +646,6 @@ export const Mobile: Story = {
   render: () => {
     const [activeTab, setActiveTab] = useState("2");
 
-    const TYPES_DATA = ["HTTP", "HTTPS", "TCP", "UDP", "QUIC"];
-
-    const sampleRows = Array.from({ length: 20 }, (_, i) => {
-      const type = TYPES_DATA[i % TYPES_DATA.length];
-      return (
-        <Table.Row
-          rowId={`${type}`}
-          key={i}
-          content={[`Load Balancer ${i + 1}`, type]}
-        />
-      );
-    });
-
-    const columns: TableColumn[] = [
-      {
-        id: "name",
-        caption: "Name",
-      },
-      {
-        id: "type",
-        caption: "Type",
-      },
-    ];
-
     const TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
@@ -701,6 +680,7 @@ export const Mobile: Story = {
         onClick: () => {
           console.log("test tab 1");
         },
+        withCircle: true,
       },
       {
         id: "4",
@@ -726,42 +706,24 @@ export const Mobile: Story = {
         },
         subItems: [
           {
-            id: "2-1",
-            icon: { image: RiTable2 },
-            caption: "Table View",
-            content: (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "4px",
-                }}
-              >
-                <h2
-                  style={{
-                    fontSize: "18px",
-                  }}
-                >
-                  Table Content
-                </h2>
-                <Table
-                  styles={{
-                    tableBodyStyle: css`
-                      max-height: 400px;
-                    `,
-                  }}
-                  columns={columns}
-                >
-                  {sampleRows}
-                </Table>
-              </div>
-            ),
+            id: "5-1",
+            icon: { image: RiUserLine },
+            caption: "Privacy & security settings",
+            content: "This is privacy and security settings content",
           },
           {
-            id: "2-2",
-            icon: { image: RiCharacterRecognitionLine },
-            caption: "Chart",
-            content: "This is chart content",
+            id: "5-2",
+            icon: { image: RiTranslate2 },
+            caption: "Language",
+            content: "This is language content",
+          },
+          {
+            id: "5-3",
+            icon: { image: RiLogoutBoxFill },
+            caption: "Logout",
+            onClick: () => {
+              console.log("logout");
+            },
           },
         ],
       },
@@ -771,6 +733,7 @@ export const Mobile: Story = {
       <NavTab
         mobile
         tabs={TABS_ITEMS}
+        activeColor="red"
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}
       />
