@@ -64,6 +64,7 @@ export interface NavTabTab {
   badge?: NavTabTabBadge;
   hidden?: boolean;
   className?: string;
+  withCircle?: boolean;
 }
 
 interface NavTabTabBadge extends FigureProps {}
@@ -152,7 +153,23 @@ function NavTab({
   const isControlled = activeTab !== undefined && onChange;
   const selected = isControlled ? activeTab : selectedLocal;
 
-  const visibleTabs = useMemo(() => tabs?.filter((tab) => !tab.hidden), [tabs]);
+  const mobileActions: NavTabTab[] =
+    actions?.map((action) => ({
+      id: action?.id,
+      title: action?.caption,
+      badge: action?.icon,
+      className: action?.className,
+      onClick: action?.onClick,
+      hidden: action?.hidden,
+    })) ?? [];
+
+  const visibleTabs = useMemo(
+    () =>
+      (mobile ? [...mobileActions, ...tabs] : tabs)?.filter(
+        (tab) => !tab.hidden
+      ),
+    [tabs, mobileActions]
+  );
 
   const getHoverPosition = () => {
     if (!isInitialized || tabSizes.length === 0) {
@@ -169,6 +186,19 @@ function NavTab({
 
     if (targetIndex === -1 || !tabSizes[targetIndex]) {
       return { left: 0, width: 0, opacity: 0 };
+    }
+
+    const targetTab = visibleTabs[targetIndex];
+
+    // Hide the underline instead of
+    // moving it there — keep the position so it fades out in place rather
+    // than sliding to (0,0) first.
+    if (mobile && targetTab.withCircle) {
+      return {
+        left: tabSizes[targetIndex].left,
+        width: tabSizes[targetIndex].width,
+        opacity: 0,
+      };
     }
 
     return {
@@ -281,7 +311,7 @@ function NavTab({
                     setOpenSubMenuId((prev) => (prev === tab.id ? null : prev));
                   }
                 }}
-                anchorRef={containerRef}
+                anchorRef={mobile ? containerRef : null}
                 id={tab.id}
                 className={applyClassName("nav-tab-tab", tab?.className)}
                 key={index}
@@ -332,6 +362,10 @@ function NavTab({
                       width: 99dvw;
                       left: 50%;
                       transform: translateX(-50%);
+                      ${tab.withCircle &&
+                      css`
+                        bottom: 10px;
+                      `};
                     `};
                   `,
                 }}
@@ -342,8 +376,6 @@ function NavTab({
                       tab.subItems
                         ?.filter((subItem) => !subItem?.hidden)
                         ?.map((subItem, idx) => {
-                          console.log(subItem);
-
                           return (
                             <NavTabTab
                               key={idx}
@@ -352,6 +384,7 @@ function NavTab({
                                 "nav-tab-sub-item",
                                 subItem?.className
                               )}
+                              $mobile={mobile}
                               $theme={navTheme}
                               $style={css`
                                 ${mobile &&
@@ -398,7 +431,8 @@ function NavTab({
                   $style={styles?.tabStyle}
                   ref={setTabRef(index)}
                   role="tab"
-                  onPointerDown={(e) => {
+                  onPointerDown={() => {
+                    if (!tab.subItems) return;
                     longPressTriggeredRef.current = false;
                     subMenuTimeoutRef.current = setTimeout(() => {
                       longPressTriggeredRef.current = true;
@@ -437,6 +471,7 @@ function NavTab({
                   $mobile={mobile}
                   $width={mobile ? maxTabWidth : undefined}
                   $tabsLength={visibleTabs?.length}
+                  $withCircle={tab?.withCircle}
                 >
                   {tab.badge &&
                     (() => {
@@ -445,10 +480,21 @@ function NavTab({
                         size: mobile ? (tab.badge.size ?? 24) : tab.badge.size,
                       };
 
+                      if (mobile && tab.withCircle) {
+                        return (
+                          <CircleBadge
+                            $activeColor={activeColor}
+                            $theme={navTheme}
+                          >
+                            <Figure {...finalBadge} />
+                            {tab.title}
+                          </CircleBadge>
+                        );
+                      }
+
                       return <Figure {...finalBadge} />;
                     })()}
-
-                  {tab.title}
+                  {!(mobile && tab.withCircle) && tab.title}
                   {tab.actions &&
                     (() => {
                       const listActions = tab.actions;
@@ -621,6 +667,7 @@ const NavTabTabsSection = styled.div<{
     $mobile &&
     css`
       justify-content: center;
+      align-items: end;
     `};
 
   ${({ $style }) => $style}
@@ -703,6 +750,7 @@ const NavTabTab = styled.div<{
   $mobile?: boolean;
   $width?: number;
   $tabsLength?: number;
+  $withCircle?: boolean;
 }>`
   color: ${({ $theme }) => $theme.textColor};
   display: flex;
@@ -719,8 +767,9 @@ const NavTabTab = styled.div<{
   user-select: none;
   padding: ${({ $size }) => ($size === "md" ? "12px 12px" : "7px 12px")};
 
-  ${({ $selected, $theme }) =>
+  ${({ $selected, $theme, $withCircle }) =>
     $selected &&
+    !$withCircle &&
     css`
       background-color: ${$theme?.selectedBackgroundColor};
     `}
@@ -766,38 +815,76 @@ const NavTabTab = styled.div<{
               width: 8px;
             }
           `}
+    `};
+
+  ${({ $theme, $withCircle, $mobile }) => css`
+    ${!$mobile &&
+    css`
+      &:hover {
+        background-color: ${$theme.hoverBackgroundColor};
+      }
     `}
 
-  &:hover {
-    background-color: ${({ $theme }) => $theme.hoverBackgroundColor};
-  }
+    ${!$withCircle &&
+    css`
+      &:active:not(:has([aria-label="action-button"]:active)) {
+        background-color: ${$theme.activeBackgroundColor};
+        box-shadow: ${$theme.activeInsetShadow};
+      }
+    `}
+  `}
 
-  &:active:not(:has([aria-label="action-button"]:active)) {
-    background-color: ${({ $theme }) => $theme.activeBackgroundColor};
-    box-shadow: ${({ $theme }) => $theme.activeInsetShadow};
-  }
-
-  ${({ $mobile }) =>
+  ${({ $mobile, $subMenu }) =>
     $mobile &&
+    !$subMenu &&
     css`
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      padding-top: 20px;
+      font-size: 12px;
     `};
 
   ${({ $mobile, $width, $tabsLength }) =>
     $mobile && $tabsLength >= 4
       ? css`
           width: 100%;
-          justify-content: center;
         `
       : $mobile &&
         !!$width &&
         css`
           width: ${$width}px;
-          justify-content: center;
         `};
 
   ${({ $style }) => $style};
+`;
+
+const CircleBadge = styled.span<{
+  $theme?: NavTabThemeConfig;
+  $activeColor?: string;
+}>`
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 9999px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  background-color: ${({ $theme, $activeColor }) =>
+    $activeColor ?? $theme?.indicatorColor};
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  color: white;
+
+  @media (max-width: 450px) {
+    width: 75px;
+    height: 75px;
+    bottom: 8px;
+  }
 `;
 
 const NavContent = styled.div<{ $contentStyle?: CSSProp }>`
