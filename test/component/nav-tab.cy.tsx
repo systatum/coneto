@@ -50,6 +50,15 @@ describe("NavTab", () => {
           onClick: () => {
             console.log("test tab 1");
           },
+          actions: [
+            {
+              caption: "Discover",
+              onClick: () => {
+                console.log("Discover clicked");
+              },
+              icon: { image: RiSearchLine },
+            },
+          ],
         },
         {
           id: "2",
@@ -141,20 +150,57 @@ describe("NavTab", () => {
     });
 
     context("when given actions", () => {
-      it("should render as a Tab", () => {
-        cy.mount(
-          <MobileNavTabProduct
-            actions={[
-              {
-                icon: { image: RiSettings5Line },
-                onClick: () => {},
-                caption: "Test",
-              },
-            ]}
-          />
-        );
+      context("when given in parent level", () => {
+        it("should render as a Tab", () => {
+          cy.mount(
+            <MobileNavTabProduct
+              actions={[
+                {
+                  icon: { image: RiSettings5Line },
+                  onClick: () => {},
+                  caption: "Test",
+                },
+              ]}
+            />
+          );
 
-        cy.findAllByLabelText("nav-tab-tab").should("have.length", 6);
+          cy.findAllByLabelText("nav-tab-tab").should("have.length", 6);
+        });
+      });
+
+      context("when given inside of the tab", () => {
+        it("should not render the action item", () => {
+          cy.mount(
+            <MobileNavTabProduct
+              tabs={[
+                {
+                  id: "1",
+                  title: "Home",
+                  content: "This is home content",
+                  icon: {
+                    image: RiHome3Line,
+                    notificationBadge: { content: "99+", fontSize: "8px" },
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                  actions: [
+                    {
+                      caption: "Discover",
+                      onClick: () => {
+                        console.log("Discover clicked");
+                      },
+                      icon: { image: RiSearchLine },
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.findByText("Home").realHover();
+          cy.findByLabelText("action-button").should("not.exist");
+        });
       });
     });
 
@@ -198,10 +244,28 @@ describe("NavTab", () => {
     });
 
     context("when given withCircle", () => {
+      it("should renders a bit striking upwards from bottom", () => {
+        cy.mount(<MobileNavTabProduct />);
+
+        cy.findAllByLabelText("nav-tab-circle").should(
+          "have.css",
+          "bottom",
+          "4px"
+        );
+      });
+
       it("should with circle in a Tab", () => {
         cy.mount(<MobileNavTabProduct />);
 
         cy.findAllByLabelText("nav-tab-circle").should("have.length", 1);
+      });
+
+      it("should renders the circle with darker color (rgb(60, 73, 95))", () => {
+        cy.mount(<MobileNavTabProduct />);
+
+        cy.findAllByLabelText("nav-tab-circle")
+          .eq(0)
+          .should("have.css", "background-color", "rgb(60, 73, 95)");
       });
 
       context("when selected the tab withCircle", () => {
@@ -221,6 +285,15 @@ describe("NavTab", () => {
             "opacity",
             "0"
           );
+        });
+
+        it("should renders the circle with the lighter color (rgb(59, 130, 246))", () => {
+          cy.mount(<MobileNavTabProduct />);
+
+          cy.findAllByLabelText("nav-tab-circle")
+            .eq(0)
+            .click()
+            .should("have.css", "background-color", "rgb(59, 130, 246)");
         });
       });
     });
