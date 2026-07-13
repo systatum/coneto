@@ -493,6 +493,10 @@ function NavTab({
                             ${tab?.icon?.styles?.notificationBadgeStyle};
                           `,
                           self: css`
+                            ${tab?.withCircle &&
+                            css`
+                              transform: translateY(10%);
+                            `};
                             ${styles?.iconStyle};
                             ${tab?.icon?.styles?.self};
                           `,
@@ -508,7 +512,15 @@ function NavTab({
                             $theme={navTheme}
                           >
                             <Figure {...finalIcon} />
-                            <NavTabLabel $style={styles?.labelStyle}>
+                            <NavTabLabel
+                              $style={css`
+                                ${tab?.withCircle &&
+                                css`
+                                  transform: translateY(10%);
+                                `};
+                                ${styles?.labelStyle}
+                              `}
+                            >
                               {tab.title}
                             </NavTabLabel>
                           </CircleBadge>
@@ -875,7 +887,8 @@ const NavTabTab = styled.div<{
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-top: 20px;
+      padding-top: 10px;
+      padding-bottom: 16px;
       font-size: 12px;
     `};
 
@@ -909,7 +922,7 @@ const CircleBadge = styled.span<{
   transform: translateX(-50%);
   width: 80px;
   height: 80px;
-  bottom: 8px;
+  bottom: 4px;
   border-radius: 9999px;
   display: flex;
   flex-direction: column;
@@ -917,16 +930,16 @@ const CircleBadge = styled.span<{
   justify-content: center;
   gap: 7px;
   background-color: ${({ $theme, $activeColor }) =>
-    $activeColor ?? $theme?.indicatorColor};
+    $activeColor ?? $theme?.circleInactiveColor};
 
   &:active {
-    background-color: ${({ $theme }) => $theme?.indicatorActiveColor};
+    background-color: ${({ $theme }) => $theme?.indicatorColor};
   }
 
   ${({ $pressed, $theme }) =>
     $pressed &&
     css`
-      background-color: ${$theme?.indicatorActiveColor};
+      background-color: ${$theme?.indicatorColor};
     `};
 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
