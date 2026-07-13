@@ -113,6 +113,43 @@ describe("Button", () => {
     );
   }
 
+  context("when only given icons", () => {
+    it("still renders always in center with flex: 0 1 auto", () => {
+      cy.mount(
+        <Button>
+          <RiAddLine />
+        </Button>
+      );
+
+      cy.findAllByLabelText("button-label")
+        .eq(0)
+        .should("have.css", "flex", "0 1 auto");
+    });
+
+    it("renders the SVG with equal left and right spacing", () => {
+      cy.mount(
+        <Button>
+          <RiAddLine />
+        </Button>
+      );
+
+      cy.get(".coneto-button").then(($button) => {
+        const buttonRect = $button[0].getBoundingClientRect();
+
+        cy.wrap($button)
+          .find("svg")
+          .then(($svg) => {
+            const svgRect = $svg[0].getBoundingClientRect();
+
+            const leftGap = svgRect.left - buttonRect.left;
+            const rightGap = buttonRect.right - svgRect.right;
+
+            expect(leftGap).to.equal(rightGap);
+          });
+      });
+    });
+  });
+
   context("mobile", () => {
     it("renders taller than the default button", () => {
       cy.mount(
