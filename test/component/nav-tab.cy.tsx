@@ -35,100 +35,100 @@ describe("NavTab", () => {
   ];
 
   context("mobile", () => {
+    const TABS_ITEMS: NavTabTab[] = [
+      {
+        id: "1",
+        title: "Home",
+        content: "This is home content",
+        icon: {
+          image: RiHome3Line,
+          notificationBadge: { content: "99+", fontSize: "8px" },
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        actions: [
+          {
+            caption: "Discover",
+            onClick: () => {
+              console.log("Discover clicked");
+            },
+            icon: { image: RiSearchLine },
+          },
+        ],
+      },
+      {
+        id: "2",
+        title: "Account",
+        icon: {
+          image: RiWallet2Line,
+        },
+        content: "This is account content",
+        onClick: () => {
+          console.log("test tab 2");
+        },
+      },
+      {
+        id: "3",
+        title: "Transfer",
+        content: "This is transfer content",
+        icon: {
+          image: RiExchangeDollarLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        withCircle: true,
+      },
+      {
+        id: "4",
+        title: "Household",
+        content: "This is household content",
+        icon: {
+          image: RiPieChartLine,
+          notificationBadge: { content: "99+", fontSize: "8px" },
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "5",
+        title: "Menu",
+        content: "This is setting content",
+        icon: {
+          image: RiMenuLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        subItems: [
+          {
+            id: "5-1",
+            icon: { image: RiUserLine },
+            caption: "Privacy & security settings",
+            content: "This is privacy and security settings content",
+          },
+          {
+            id: "5-2",
+            icon: { image: RiTranslate2 },
+            caption: "Language",
+            content: "This is language content",
+          },
+          {
+            id: "5-3",
+            icon: { image: RiLogoutBoxFill },
+            caption: "Logout",
+            onClick: () => {
+              console.log("logout");
+            },
+          },
+        ],
+      },
+    ];
+
     function MobileNavTabProduct(props: NavTabProps) {
       const [activeTab, setActiveTab] = useState("2");
-
-      const TABS_ITEMS: NavTabTab[] = [
-        {
-          id: "1",
-          title: "Home",
-          content: "This is home content",
-          icon: {
-            image: RiHome3Line,
-            notificationBadge: { content: "99+", fontSize: "8px" },
-          },
-          onClick: () => {
-            console.log("test tab 1");
-          },
-          actions: [
-            {
-              caption: "Discover",
-              onClick: () => {
-                console.log("Discover clicked");
-              },
-              icon: { image: RiSearchLine },
-            },
-          ],
-        },
-        {
-          id: "2",
-          title: "Account",
-          icon: {
-            image: RiWallet2Line,
-          },
-          content: "This is account content",
-          onClick: () => {
-            console.log("test tab 2");
-          },
-        },
-        {
-          id: "3",
-          title: "Transfer",
-          content: "This is transfer content",
-          icon: {
-            image: RiExchangeDollarLine,
-          },
-          onClick: () => {
-            console.log("test tab 1");
-          },
-          withCircle: true,
-        },
-        {
-          id: "4",
-          title: "Household",
-          content: "This is household content",
-          icon: {
-            image: RiPieChartLine,
-            notificationBadge: { content: "99+", fontSize: "8px" },
-          },
-          onClick: () => {
-            console.log("test tab 1");
-          },
-        },
-        {
-          id: "5",
-          title: "Menu",
-          content: "This is setting content",
-          icon: {
-            image: RiMenuLine,
-          },
-          onClick: () => {
-            console.log("test tab 1");
-          },
-          subItems: [
-            {
-              id: "5-1",
-              icon: { image: RiUserLine },
-              caption: "Privacy & security settings",
-              content: "This is privacy and security settings content",
-            },
-            {
-              id: "5-2",
-              icon: { image: RiTranslate2 },
-              caption: "Language",
-              content: "This is language content",
-            },
-            {
-              id: "5-3",
-              icon: { image: RiLogoutBoxFill },
-              caption: "Logout",
-              onClick: () => {
-                console.log("logout");
-              },
-            },
-          ],
-        },
-      ];
 
       return (
         <NavTab
@@ -226,8 +226,13 @@ describe("NavTab", () => {
           });
         });
 
-        it("renders in the bottom of screen", () => {
-          cy.mount(<MobileNavTabProduct />);
+        it("renders in the bottom of screen with -4px", () => {
+          const TABS_ITEMS_WITHOUT_CIRCLE = TABS_ITEMS.map((tabs) => ({
+            ...tabs,
+            withCircle: false,
+          }));
+
+          cy.mount(<MobileNavTabProduct tabs={TABS_ITEMS_WITHOUT_CIRCLE} />);
 
           cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
 
@@ -239,6 +244,23 @@ describe("NavTab", () => {
             "bottom",
             "-4px"
           );
+        });
+
+        context("when one tabs using circle", () => {
+          it("renders in the bottom of screen with 12px", () => {
+            cy.mount(<MobileNavTabProduct />);
+
+            cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
+
+            cy.wait(500);
+
+            cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerup");
+            cy.findByLabelText("tooltip-drawer").should(
+              "have.css",
+              "bottom",
+              "12px"
+            );
+          });
         });
       });
     });
