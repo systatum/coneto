@@ -531,7 +531,7 @@ const darkNavTab = createNavTabTheme(darkBody, {
   selectedBackgroundColor: "rgba(52, 52, 52, 0.5)",
 
   indicatorColor: "rgb(85, 65, 160)",
-  indicatorActiveColor: "rgb(76, 58, 141)",
+  circleInactiveColor: "rgb(58, 59, 61)",
   boxShadow: "0 1px 4px -3px rgba(0,0,0,0.8)",
 
   activeInsetShadow: `
