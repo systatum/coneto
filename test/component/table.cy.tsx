@@ -12,7 +12,6 @@ import {
   RiForbid2Line,
   RiInformationLine,
   RiReactjsLine,
-  RiRefreshLine,
   RiSettings3Line,
   RiSpam2Line,
 } from "@remixicon/react";
@@ -32,7 +31,7 @@ import styled, { css } from "styled-components";
 import { CapsuleTab } from "./../../components/capsule";
 import { Button } from "./../../components/button";
 import { Card } from "./../../components/card";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { generateSentence } from "./../../lib/text";
 import { TableThemeConfig, useTheme } from "./../../theme";
 
@@ -195,6 +194,40 @@ describe("Table", () => {
       </Table>
     );
   }
+
+  context("when the content is delayed", () => {
+    it("still shows the table-body after delayed", () => {
+      function DelayedTable() {
+        const [rows, setRows] = useState([]);
+
+        useEffect(() => {
+          setTimeout(() => {
+            setRows(rawRows);
+          }, 500);
+        }, []);
+
+        return (
+          <Table columns={columnsBasic}>
+            {rows.map((row, index) => (
+              <Table.Row key={index} rowId={`${row.name}-${row.type}`}>
+                {[row.name, row.type].map((rowCell) => (
+                  <Table.Row.Cell key={`${row.name}-${row.type}-${rowCell}`}>
+                    {rowCell}
+                  </Table.Row.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table>
+        );
+      }
+
+      cy.mount(<DelayedTable />);
+
+      cy.findByLabelText("table-body").should("not.exist");
+      cy.wait(600);
+      cy.findByLabelText("table-body").should("exist");
+    });
+  });
 
   context("loose", () => {
     function ProductTableLoose({

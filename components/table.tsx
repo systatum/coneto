@@ -366,9 +366,11 @@ function Table({
   const getViewport = () => tableBodyRef.current?.getViewport();
 
   // get scroll element for react-virtualizer
+  // re-check the viewport whenever rows are rendered, since the scroll
+  // element may not be available on the initial mount.
   useEffect(() => {
     setScrollElement(getViewport() ?? null);
-  }, []);
+  }, [rowChildren.length > 0]);
 
   useEffect(() => {
     const viewport = getViewport();
@@ -703,11 +705,12 @@ function Table({
                     $theme={tableTheme}
                     aria-label="table-body"
                     $loose={loose}
-                    $style={css`
-                      position: relative;
-                      height: ${rowVirtualizer.getTotalSize()}px;
-                      ${styles?.tableBodyStyle}
-                    `}
+                    $style={styles?.tableBodyStyle}
+                    // Reserve the full virtualized height so rows can be positioned correctly.
+                    style={{
+                      position: "relative",
+                      height: `${rowVirtualizer.getTotalSize()}px`,
+                    }}
                   >
                     {rowVirtualizer.getVirtualItems().map((virtualRow) => {
                       return (
@@ -1101,7 +1104,7 @@ const TableHeader = styled.div<{
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
-  background-color: ${({ $theme }) => $theme?.headerBackgroundColor};
+  background: ${({ $theme }) => $theme?.headerBackgroundColor};
 
   ${({ $loose }) =>
     $loose &&
@@ -1157,7 +1160,7 @@ const TableSummary = styled.div<{
       z-index: 40;
 
       --row-bg: ${$theme?.summaryBackgroundColor ?? "#e4e4e4"};
-    `}
+    `};
 `;
 
 const EmptyState = styled.div<{ $theme?: TableThemeConfig }>`
@@ -1730,6 +1733,7 @@ function TableRow({
               return cloneElement(child, {
                 ...(isTableRowCell
                   ? {
+                      _index: i,
                       width: child.props.width ?? widthColumn,
                       contentStyle: isLast
                         ? css`
@@ -2059,6 +2063,10 @@ function TableRowCell({
   );
 }
 
+/*
+ * use the provided `width` as the flex-basis while allowing the column to shrink.
+ * avoid flex: 1, which would force all columns to grow and ignore the intended width.
+ */
 const CellContent = styled.div<{
   $width?: string;
   $contentStyle?: CSSProp;
@@ -2090,7 +2098,6 @@ const CellContent = styled.div<{
   ${({ $width, $loose }) =>
     $loose
       ? css`
-          min-width: 160px;
           width: 160px;
         `
       : !$width
@@ -2121,9 +2128,15 @@ const CellContent = styled.div<{
           : "transparent"};
         pointer-events: none;
       }
-    `}
+    `};
 
-  width: ${({ $width }) => $width};
+  ${({ $width }) =>
+    $width &&
+    css`
+      flex: 0 1 ${$width};
+      width: ${$width};
+    `};
+
   min-height: inherit;
   ${({ $bold }) =>
     $bold &&

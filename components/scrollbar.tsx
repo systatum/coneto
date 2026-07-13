@@ -62,6 +62,12 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
 
     const isControlledY = totalSize != null && scrollOffset != null;
 
+    // Always-fresh mirror of the controlled props, read synchronously inside
+    // the scroll handler so the thumb never waits on a React re-render /
+    // effect round-trip to catch up with the virtualizer.
+    const controlledRef = useRef({ totalSize, scrollOffset });
+    controlledRef.current = { totalSize, scrollOffset };
+
     useImperativeHandle(ref, () => ({
       getViewport: () => viewportRef.current,
     }));
@@ -117,34 +123,48 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       }
     }, [overflowX, overflowY, isControlledY, applyThumbY, applyThumbX]);
 
-    // Virtualizer-derived thumbY (authoritative when provided)
-    useEffect(() => {
-      if (!isControlledY) return;
+    // Synchronous controlled-Y thumb update, driven by the native scroll
+    // event itself (via controlledRef) rather than by waiting for
+    // totalSize/scrollOffset props to propagate through a re-render.
+    const updateControlledThumbY = useCallback(() => {
       const el = viewportRef.current;
-      if (!el) return;
+      if (!el || !isControlledY) return;
 
+      const { totalSize, scrollOffset } = controlledRef.current;
       const clientHeight = el.clientHeight;
-      if (!clientHeight || totalSize <= clientHeight) {
+
+      if (!clientHeight || (totalSize ?? 0) <= clientHeight) {
         applyThumbY(0, 0);
         return;
       }
 
-      const heightRatio = clientHeight / totalSize;
+      const heightRatio = clientHeight / (totalSize as number);
       const thumbHeight = Math.max(heightRatio * clientHeight, 30);
-      const maxScrollTop = totalSize - clientHeight;
+      const maxScrollTop = (totalSize as number) - clientHeight;
       const maxThumbTop = clientHeight - thumbHeight;
       const thumbTop =
-        maxScrollTop > 0 ? (scrollOffset / maxScrollTop) * maxThumbTop : 0;
+        maxScrollTop > 0
+          ? ((scrollOffset ?? 0) / maxScrollTop) * maxThumbTop
+          : 0;
 
       applyThumbY(thumbHeight - 4, thumbTop);
-    }, [isControlledY, totalSize, scrollOffset, applyThumbY]);
+    }, [isControlledY, applyThumbY]);
+
+    // Virtualizer-derived thumbY (authoritative when provided).
+    // Kept as a fallback for cases where totalSize/scrollOffset change
+    // WITHOUT a native scroll event (e.g. rows loading in, resize, filtering),
+    // since handleScroll won't fire in those cases.
+    useEffect(() => {
+      if (!isControlledY) return;
+      updateControlledThumbY();
+    }, [isControlledY, totalSize, scrollOffset, updateControlledThumbY]);
 
     const showScrollbars = useCallback(() => {
       const el = viewportRef.current;
       if (!el) return;
 
       const scrollHeightCheck = isControlledY
-        ? (totalSize ?? 0) > el.clientHeight
+        ? (controlledRef.current.totalSize ?? 0) > el.clientHeight
         : el.scrollHeight > el.clientHeight;
 
       if (overflowY === "scroll" && scrollHeightCheck) setShowY(true);
@@ -158,21 +178,59 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
           setShowX(false);
         }
       }, autoHideDelay);
-    }, [autoHideDelay, overflowX, overflowY, isControlledY, totalSize]);
+    }, [autoHideDelay, overflowX, overflowY, isControlledY]);
 
     const handleScroll = useCallback(() => {
-      updateThumbs();
+      // Controlled-Y thumb position is driven by the virtualizer's
+      // scrollOffset, not the DOM's own scrollTop, so update it
+      // synchronously here rather than through updateThumbs().
+      if (isControlledY) {
+        updateControlledThumbY();
+        if (overflowX === "scroll") {
+          // X axis still tracks the DOM directly since totalSize/scrollOffset
+          // only ever describe the virtualized (vertical) axis.
+          const el = viewportRef.current;
+          if (el) {
+            const { scrollLeft, scrollWidth, clientWidth } = el;
+            if (scrollWidth > clientWidth) {
+              const widthRatio = clientWidth / scrollWidth;
+              const thumbWidth = Math.max(widthRatio * clientWidth, 30);
+              const maxScrollLeft = scrollWidth - clientWidth;
+              const maxThumbLeft = clientWidth - thumbWidth;
+              const thumbLeft = (scrollLeft / maxScrollLeft) * maxThumbLeft;
+              applyThumbX(thumbWidth - 4, thumbLeft);
+            }
+          }
+        }
+      } else {
+        updateThumbs();
+      }
+
       showScrollbars();
       onScroll?.();
-    }, [updateThumbs, showScrollbars, onScroll]);
+    }, [
+      isControlledY,
+      updateControlledThumbY,
+      updateThumbs,
+      showScrollbars,
+      onScroll,
+      overflowX,
+      applyThumbX,
+    ]);
 
     useEffect(() => {
       const el = viewportRef.current;
       if (!el) return;
-      const ro = new ResizeObserver(() => updateThumbs());
+      const ro = new ResizeObserver(() => {
+        if (isControlledY) {
+          updateControlledThumbY();
+        } else {
+          updateThumbs();
+        }
+      });
       ro.observe(el);
       return () => ro.disconnect();
-    }, [updateThumbs]);
+    }, [updateThumbs, updateControlledThumbY, isControlledY]);
 
     const onMouseDownY = useCallback(
       (e: React.MouseEvent) => {
@@ -188,7 +246,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
           const delta = e.clientY - dragStartY.current;
           const { clientHeight } = el;
           const effectiveScrollHeight = isControlledY
-            ? (totalSize ?? el.scrollHeight)
+            ? (controlledRef.current.totalSize ?? el.scrollHeight)
             : el.scrollHeight;
           const thumbHeight = Math.max(
             (clientHeight / effectiveScrollHeight) * clientHeight,
@@ -216,7 +274,7 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
         window.addEventListener("mousemove", onMouseMove);
         window.addEventListener("mouseup", onMouseUp);
       },
-      [isControlledY, totalSize]
+      [isControlledY]
     );
 
     const onMouseDownX = useCallback((e: React.MouseEvent) => {
