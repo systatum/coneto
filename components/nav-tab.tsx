@@ -260,6 +260,9 @@ function NavTab({
         .some((item) => item.id === selected)
   );
 
+  // apply the hasCircleTab spacing to all tab drawers when any tab uses withCircle.
+  const hasCircleTab = visibleTabs.some((tab) => tab.withCircle);
+
   return (
     <NavTabContainer
       id={id}
@@ -370,9 +373,9 @@ function NavTab({
                       width: 99dvw;
                       left: 50%;
                       transform: translateX(-50%);
-                      ${tab.withCircle &&
+                      ${hasCircleTab &&
                       css`
-                        bottom: 10px;
+                        bottom: 12px;
                       `};
                     `};
                   `,
