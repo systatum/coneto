@@ -832,7 +832,8 @@ const NavTabTab = styled.div<{
       padding-right: 40px;
     `}
 
-  ${({ $isAction, $isHovered }) =>
+  ${({ $isAction, $isHovered, $mobile }) =>
+    !$mobile &&
     $isAction &&
     css`
       &::before,
