@@ -335,26 +335,30 @@ function NavTab({
                   `,
                   containerStyle: css`
                     width: fit-content;
-                    height: auto;
 
                     ${mobile &&
-                    getTabWidth({
-                      mobile,
-                      tabsLength: visibleTabs?.length,
-                      width: maxTabWidth,
-                    })};
+                    css`
+                      height: auto;
+
+                      ${getTabWidth({
+                        mobile,
+                        tabsLength: visibleTabs?.length,
+                        width: maxTabWidth,
+                      })}
+                    `};
 
                     ${styles?.tabStyle}
                   `,
                   triggerStyle: css`
-                    height: 100%;
-
                     ${mobile &&
-                    getTabWidth({
-                      mobile,
-                      tabsLength: visibleTabs?.length,
-                      width: maxTabWidth,
-                    })};
+                    css`
+                      height: 100%;
+                      ${getTabWidth({
+                        mobile,
+                        tabsLength: visibleTabs?.length,
+                        width: maxTabWidth,
+                      })};
+                    `}
 
                     ${styles?.tabStyle}
                   `,
