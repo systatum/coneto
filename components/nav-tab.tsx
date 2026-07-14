@@ -339,12 +339,15 @@ function NavTab({
                     css`
                       width: 100%;
                     `};
+                    ${styles?.tabStyle}
                   `,
                   triggerStyle: css`
                     ${mobile &&
                     css`
                       width: 100%;
                     `};
+
+                    ${styles?.tabStyle}
                   `,
                   drawerStyle: (placement) => css`
                     border-radius: 0px;
@@ -715,7 +718,7 @@ const NavTabTabsSection = styled.div<{
   ${({ $mobile }) =>
     $mobile &&
     css`
-      justify-content: center;
+      justify-content: space-between;
       align-items: end;
     `};
 
@@ -897,15 +900,11 @@ const NavTabTab = styled.div<{
     `};
 
   ${({ $mobile, $width, $tabsLength }) =>
-    $mobile && $tabsLength >= 4
-      ? css`
-          width: 100%;
-        `
-      : $mobile &&
-        !!$width &&
-        css`
-          width: ${$width}px;
-        `};
+    getTabWidth({
+      mobile: $mobile,
+      tabsLength: $tabsLength,
+      width: $width,
+    })};
 
   ${({ $withCircle }) =>
     $withCircle &&
@@ -915,6 +914,30 @@ const NavTabTab = styled.div<{
 
   ${({ $style }) => $style};
 `;
+
+const getTabWidth = ({
+  mobile,
+  tabsLength,
+  width,
+}: {
+  mobile: boolean;
+  tabsLength: number;
+  width?: number;
+}) => {
+  if (mobile && tabsLength >= 4) {
+    return css`
+      width: 100%;
+    `;
+  }
+
+  if (mobile && width) {
+    return css`
+      width: ${width}px;
+    `;
+  }
+
+  return "";
+};
 
 const CircleBadge = styled.span<{
   $theme?: NavTabThemeConfig;
