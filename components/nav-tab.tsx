@@ -336,16 +336,21 @@ function NavTab({
                   containerStyle: css`
                     width: fit-content;
                     ${mobile &&
-                    css`
-                      width: 100%;
-                    `};
+                    getTabWidth({
+                      mobile,
+                      tabsLength: visibleTabs?.length,
+                      width: maxTabWidth,
+                    })};
+
                     ${styles?.tabStyle}
                   `,
                   triggerStyle: css`
                     ${mobile &&
-                    css`
-                      width: 100%;
-                    `};
+                    getTabWidth({
+                      mobile,
+                      tabsLength: visibleTabs?.length,
+                      width: maxTabWidth,
+                    })};
 
                     ${styles?.tabStyle}
                   `,
