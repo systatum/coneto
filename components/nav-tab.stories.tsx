@@ -13,17 +13,25 @@ import {
   RiAtLine,
   RiCharacterRecognitionLine,
   RiCropLine,
+  RiExchangeDollarLine,
   RiFlashlightLine,
+  RiHome3Line,
+  RiLogoutBoxFill,
+  RiMenuLine,
+  RiPieChartLine,
   RiSearchLine,
   RiSettings5Line,
   RiTable2,
+  RiTranslate2,
+  RiUserLine,
+  RiWallet2Line,
 } from "@remixicon/react";
 import { TableColumn, Table, TableSubMenuList } from "./table";
 import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
 import { Card } from "./card";
 import { Badge } from "./badge";
-import { Combobox, ComboboxOption } from "./combobox";
+import { ComboboxOption } from "./combobox";
 
 const meta: Meta<typeof NavTab> = {
   title: "Stage/NavTab",
@@ -625,6 +633,104 @@ export const WithSubItems: Story = {
 
     return (
       <NavTab
+        tabs={TABS_ITEMS}
+        activeTab={activeTab}
+        onChange={(activeTab) => setActiveTab(activeTab)}
+      />
+    );
+  },
+};
+
+export const Mobile: Story = {
+  render: () => {
+    const [activeTab, setActiveTab] = useState("2");
+
+    const TABS_ITEMS: NavTabTab[] = [
+      {
+        id: "1",
+        title: "Home",
+        content: "This is home content",
+        icon: {
+          image: RiHome3Line,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "2",
+        title: "Account",
+        icon: {
+          image: RiWallet2Line,
+          notificationBadge: { content: "" },
+        },
+        content: "This is account content",
+        onClick: () => {
+          console.log("test tab 2");
+        },
+      },
+      {
+        id: "3",
+        title: "Transfer",
+        content: "This is transfer content",
+        icon: {
+          image: RiExchangeDollarLine,
+          notificationBadge: { content: "5" },
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        withCircle: true,
+      },
+      {
+        id: "4",
+        title: "Household",
+        content: "This is household content",
+        icon: {
+          image: RiPieChartLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+      },
+      {
+        id: "5",
+        title: "Menu",
+        content: "This is setting content",
+        icon: {
+          image: RiMenuLine,
+        },
+        onClick: () => {
+          console.log("test tab 1");
+        },
+        subItems: [
+          {
+            id: "5-1",
+            icon: { image: RiUserLine },
+            caption: "Privacy & security settings",
+            content: "This is privacy and security settings content",
+          },
+          {
+            id: "5-2",
+            icon: { image: RiTranslate2 },
+            caption: "Language",
+            content: "This is language content",
+          },
+          {
+            id: "5-3",
+            icon: { image: RiLogoutBoxFill },
+            caption: "Logout",
+            onClick: () => {
+              console.log("logout");
+            },
+          },
+        ],
+      },
+    ];
+
+    return (
+      <NavTab
+        mobile
         tabs={TABS_ITEMS}
         activeTab={activeTab}
         onChange={(activeTab) => setActiveTab(activeTab)}

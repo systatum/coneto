@@ -1,6 +1,6 @@
 import { applyClassName } from "./../constants/classname";
 import { ComponentType, HTMLAttributes } from "react";
-import styled, { CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface FigureProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, "style"> {
@@ -8,10 +8,19 @@ export interface FigureProps
   size?: number;
   color?: string;
   styles?: FigureStyles;
+  notificationBadge?: FigureNotification;
+}
+
+export interface FigureNotification {
+  content?: string;
+  backgroundColor?: string;
+  frameSize?: string;
+  fontSize?: string;
 }
 
 export interface FigureStyles {
   self?: CSSProp;
+  notificationBadgeStyle?: CSSProp;
 }
 
 function Figure({
@@ -21,6 +30,7 @@ function Figure({
   styles,
   "aria-label": ariaLabel,
   className,
+  notificationBadge,
   ...rest
 }: FigureProps) {
   if (!Icon) return null;
@@ -31,6 +41,19 @@ function Figure({
       className={applyClassName("figure", className)}
       $style={styles?.self}
     >
+      {notificationBadge && (
+        <Notification
+          $size={size}
+          $fontSize={notificationBadge?.fontSize}
+          $backgroundColor={notificationBadge?.backgroundColor}
+          $frameSize={notificationBadge?.frameSize}
+          $style={styles?.notificationBadgeStyle}
+          $contentLength={notificationBadge?.content?.length}
+        >
+          {notificationBadge.content}
+        </Notification>
+      )}
+
       {typeof Icon === "string" ? (
         <img
           alt="figure-icon"
@@ -57,8 +80,47 @@ function Figure({
 const Wrapper = styled.span<{ $style?: CSSProp }>`
   color: inherit;
   align-items: center;
+  position: relative;
 
   ${({ $style }) => $style}
 `;
 
+const Notification = styled.span<{
+  $style?: CSSProp;
+  $size?: number;
+  $frameSize?: string;
+  $fontSize?: string;
+  $backgroundColor?: string;
+  $contentLength?: number;
+}>`
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  transform: translate(50%, -50%);
+
+  border-radius: 9999px;
+  background-color: ${({ $backgroundColor }) => $backgroundColor ?? "red"};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+  width: ${({ $size, $frameSize, $contentLength }) =>
+    $contentLength >= 3 ? "fit-content" : ($frameSize ?? `${$size * 0.8}px`)};
+  height: ${({ $size, $frameSize }) => $frameSize ?? `${$size * 0.8}px`};
+  font-size: ${({ $size, $fontSize }) => $fontSize ?? `${$size * 0.4}px`};
+  ${({ $contentLength, $size }) =>
+    $contentLength === 0
+      ? css`
+          height: ${$size * 0.6}px;
+          width: ${$size * 0.6}px;
+        `
+      : $contentLength >= 3 &&
+        css`
+          padding: 0px 3px;
+        `};
+
+  ${({ $style }) => $style};
+`;
 export { Figure };

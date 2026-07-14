@@ -428,6 +428,8 @@ export interface NavTabThemeConfig extends BodyThemeConfig {
   indicatorColor?: string;
   boxShadow?: string;
 
+  circleInactiveColor?: string;
+
   activeInsetShadow?: string;
 }
 

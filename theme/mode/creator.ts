@@ -1058,6 +1058,7 @@ export function createNavTabTheme(
       selectedBackgroundColor: "rgb(243 244 246 / 50%)",
 
       indicatorColor: "rgb(59, 130, 246)",
+      circleInactiveColor: "rgb(60, 73, 95)",
       boxShadow: "0 1px 4px -3px rgba(0,0,0,0.2)",
 
       activeInsetShadow:
