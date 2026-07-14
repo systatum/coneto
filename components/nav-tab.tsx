@@ -59,7 +59,7 @@ export type NavTabSize = (typeof NavTabSize)[keyof typeof NavTabSize];
 
 export interface NavTabTab {
   id: string;
-  title: string;
+  title?: string;
   content?: ReactNode;
   onClick?: () => void;
   actions?: NavTabTabAction[];
@@ -335,16 +335,32 @@ function NavTab({
                   `,
                   containerStyle: css`
                     width: fit-content;
+
                     ${mobile &&
                     css`
-                      width: 100%;
+                      height: auto;
+
+                      ${getTabWidth({
+                        mobile,
+                        tabsLength: visibleTabs?.length,
+                        width: maxTabWidth,
+                      })}
                     `};
+
+                    ${styles?.tabStyle}
                   `,
                   triggerStyle: css`
                     ${mobile &&
                     css`
-                      width: 100%;
-                    `};
+                      height: 100%;
+                      ${getTabWidth({
+                        mobile,
+                        tabsLength: visibleTabs?.length,
+                        width: maxTabWidth,
+                      })};
+                    `}
+
+                    ${styles?.tabStyle}
                   `,
                   drawerStyle: (placement) => css`
                     border-radius: 0px;
@@ -715,8 +731,8 @@ const NavTabTabsSection = styled.div<{
   ${({ $mobile }) =>
     $mobile &&
     css`
-      justify-content: center;
-      align-items: end;
+      justify-content: space-between;
+      align-items: stretch;
     `};
 
   ${({ $style }) => $style}
@@ -897,16 +913,16 @@ const NavTabTab = styled.div<{
     `};
 
   ${({ $mobile, $width, $tabsLength }) =>
-    $mobile && $tabsLength >= 4
-      ? css`
-          width: 100%;
-        `
-      : $mobile &&
-        !!$width &&
-        css`
-          width: ${$width}px;
-        `};
+    $mobile &&
+    css`
+      height: 100%;
 
+      ${getTabWidth({
+        mobile: $mobile,
+        tabsLength: $tabsLength,
+        width: $width,
+      })}
+    `}
   ${({ $withCircle }) =>
     $withCircle &&
     css`
@@ -915,6 +931,30 @@ const NavTabTab = styled.div<{
 
   ${({ $style }) => $style};
 `;
+
+const getTabWidth = ({
+  mobile,
+  tabsLength,
+  width,
+}: {
+  mobile: boolean;
+  tabsLength: number;
+  width?: number;
+}) => {
+  if (mobile && tabsLength >= 4) {
+    return css`
+      width: 100%;
+    `;
+  }
+
+  if (mobile && width) {
+    return css`
+      width: ${width}px;
+    `;
+  }
+
+  return "";
+};
 
 const CircleBadge = styled.span<{
   $theme?: NavTabThemeConfig;
