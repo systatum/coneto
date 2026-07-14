@@ -335,6 +335,8 @@ function NavTab({
                   `,
                   containerStyle: css`
                     width: fit-content;
+                    height: auto;
+
                     ${mobile &&
                     getTabWidth({
                       mobile,
@@ -345,6 +347,8 @@ function NavTab({
                     ${styles?.tabStyle}
                   `,
                   triggerStyle: css`
+                    height: 100%;
+
                     ${mobile &&
                     getTabWidth({
                       mobile,
@@ -724,7 +728,7 @@ const NavTabTabsSection = styled.div<{
     $mobile &&
     css`
       justify-content: space-between;
-      align-items: end;
+      align-items: stretch;
     `};
 
   ${({ $style }) => $style}
@@ -905,12 +909,16 @@ const NavTabTab = styled.div<{
     `};
 
   ${({ $mobile, $width, $tabsLength }) =>
-    getTabWidth({
-      mobile: $mobile,
-      tabsLength: $tabsLength,
-      width: $width,
-    })};
+    $mobile &&
+    css`
+      height: 100%;
 
+      ${getTabWidth({
+        mobile: $mobile,
+        tabsLength: $tabsLength,
+        width: $width,
+      })}
+    `}
   ${({ $withCircle }) =>
     $withCircle &&
     css`
