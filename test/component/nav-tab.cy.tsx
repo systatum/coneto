@@ -141,12 +141,143 @@ describe("NavTab", () => {
       );
     }
 
-    it("render in the bottom of content", () => {
-      cy.mount(<MobileNavTabProduct />);
+    context("general style", () => {
+      it("render in the bottom of content", () => {
+        cy.mount(<MobileNavTabProduct />);
 
-      cy.findByLabelText("nav-tab-bar")
-        .should("have.css", "position", "fixed")
-        .and("have.css", "bottom", "0px");
+        cy.findByLabelText("nav-tab-bar")
+          .should("have.css", "position", "fixed")
+          .and("have.css", "bottom", "0px");
+      });
+
+      it("render with justify-between and align-stretch", () => {
+        cy.mount(<MobileNavTabProduct />);
+
+        cy.findByLabelText("nav-tab-tabs-sections")
+          .should("have.css", "justify-content", "space-between")
+          .and("have.css", "align-items", "stretch");
+      });
+
+      context("when given untitle tab", () => {
+        it("should render all tabs with equal height", () => {
+          cy.mount(
+            <MobileNavTabProduct
+              tabs={[
+                {
+                  id: "1",
+                  content: "This is home content",
+                  icon: {
+                    image: RiHome3Line,
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                },
+                {
+                  id: "2",
+                  title: "Menu",
+                  content: "This is setting content",
+                  icon: {
+                    image: RiMenuLine,
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("nav-tab-tab")
+            .should("have.length", 2)
+            .then(($tabs) => {
+              const heights = [...$tabs].map(
+                (el) => el.getBoundingClientRect().width
+              );
+
+              expect(heights[0]).to.equal(heights[1]);
+            });
+        });
+      });
+
+      context("when given content less than four", () => {
+        it("should render all tabs with equal width", () => {
+          cy.mount(
+            <MobileNavTabProduct
+              tabs={[
+                {
+                  id: "1",
+                  title: "Home",
+                  content: "This is home content",
+                  icon: {
+                    image: RiHome3Line,
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                },
+                {
+                  id: "2",
+                  title: "Transfer",
+                  content: "This is transfer content",
+                  icon: {
+                    image: RiExchangeDollarLine,
+                    notificationBadge: { content: "5" },
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                  withCircle: true,
+                },
+                {
+                  id: "3",
+                  title: "Menu",
+                  content: "This is setting content",
+                  icon: {
+                    image: RiMenuLine,
+                  },
+                  onClick: () => {
+                    console.log("test tab 1");
+                  },
+                  subItems: [
+                    {
+                      id: "5-1",
+                      icon: { image: RiUserLine },
+                      caption: "Privacy & security settings",
+                      content: "This is privacy and security settings content",
+                    },
+                    {
+                      id: "5-2",
+                      icon: { image: RiTranslate2 },
+                      caption: "Language",
+                      content: "This is language content",
+                    },
+                    {
+                      id: "5-3",
+                      icon: { image: RiLogoutBoxFill },
+                      caption: "Logout",
+                      onClick: () => {
+                        console.log("logout");
+                      },
+                    },
+                  ],
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("nav-tab-tab")
+            .should("have.length", 3)
+            .then(($tabs) => {
+              const widths = [...$tabs].map(
+                (el) => el.getBoundingClientRect().width
+              );
+
+              expect(widths[0]).to.equal(widths[1]);
+              expect(widths[1]).to.equal(widths[2]);
+            });
+        });
+      });
     });
 
     context("when given actions", () => {
@@ -266,7 +397,7 @@ describe("NavTab", () => {
     });
 
     context("when given withCircle", () => {
-      it("should renders a bit striking upwards from bottom", () => {
+      it("should render a bit striking upwards from bottom", () => {
         cy.mount(<MobileNavTabProduct />);
 
         cy.findAllByLabelText("nav-tab-circle").should(
@@ -282,7 +413,7 @@ describe("NavTab", () => {
         cy.findAllByLabelText("nav-tab-circle").should("have.length", 1);
       });
 
-      it("should renders the circle with darker color (rgb(60, 73, 95))", () => {
+      it("should render the circle with darker color (rgb(60, 73, 95))", () => {
         cy.mount(<MobileNavTabProduct />);
 
         cy.findAllByLabelText("nav-tab-circle")
@@ -309,7 +440,7 @@ describe("NavTab", () => {
           );
         });
 
-        it("should renders the circle with the lighter color (rgb(59, 130, 246))", () => {
+        it("should render the circle with the lighter color (rgb(59, 130, 246))", () => {
           cy.mount(<MobileNavTabProduct />);
 
           cy.findAllByLabelText("nav-tab-circle")
