@@ -59,7 +59,7 @@ export type NavTabSize = (typeof NavTabSize)[keyof typeof NavTabSize];
 
 export interface NavTabTab {
   id: string;
-  title: string;
+  title?: string;
   content?: ReactNode;
   onClick?: () => void;
   actions?: NavTabTabAction[];
