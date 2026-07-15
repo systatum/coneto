@@ -34,6 +34,7 @@ export interface TrackbarStyles {
   containerStyle?: CSSProp;
   valueBarStyle?: CSSProp;
   labelStyle?: CSSProp;
+  thumbStyle?: CSSProp;
 }
 
 export const TrackbarVariant = {
@@ -185,6 +186,7 @@ function Trackbar({
         {editable && (
           <Thumb
             aria-label="trackbar-thumb"
+            $style={styles?.thumbStyle}
             $value={clampedValue}
             $maxValue={normalizedMaxValue}
             $theme={trackbarTheme}
@@ -260,6 +262,7 @@ const Thumb = styled.div<{
   $containerColor: string;
   $directionTo: TrackbarDirectionTo;
   $isDragging: boolean;
+  $style: CSSProp;
 }>`
   touch-action: none;
   position: absolute;
@@ -294,6 +297,8 @@ const Thumb = styled.div<{
           right: auto;
         `;
   }}
+
+  ${({ $style }) => $style}
 `;
 
 const Fill = styled.div<{
