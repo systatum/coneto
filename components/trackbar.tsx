@@ -75,8 +75,8 @@ function Trackbar({
   const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
 
-  const clampedMaxValue = Math.min(100, Math.max(0, maxValue));
-  const clampedValue = Math.min(clampedMaxValue, Math.max(0, value));
+  const normalizedMaxValue = Math.max(1, maxValue);
+  const clampedValue = Math.min(normalizedMaxValue, Math.max(0, value));
   const showLabel = valueLabelPosition !== "none" && !indeterminate;
 
   // convert a pointer's clientX into between 0 and clampedMaxValue
@@ -95,9 +95,9 @@ function Trackbar({
 
       percent = Math.min(1, Math.max(0, percent));
 
-      return Math.round(percent * clampedMaxValue);
+      return Math.round(percent * normalizedMaxValue);
     },
-    [directionTo, clampedMaxValue, clampedValue]
+    [directionTo, normalizedMaxValue, clampedValue]
   );
 
   const handlePointerMove = useCallback(
@@ -131,6 +131,9 @@ function Trackbar({
     window.addEventListener("pointerup", handlePointerUp);
   }, [setIsDragging]);
 
+  const labelPercentage =
+    normalizedMaxValue > 0 ? (value / normalizedMaxValue) * 100 : 0;
+
   return (
     <Wrapper
       id={id}
@@ -138,7 +141,7 @@ function Trackbar({
       role="trackbar"
       aria-valuenow={indeterminate ? undefined : clampedValue}
       aria-valuemin={0}
-      aria-valuemax={100}
+      aria-valuemax={normalizedMaxValue}
       aria-label="trackbar"
       $valueLabelPosition={valueLabelPosition}
       $style={styles?.containerStyle}
@@ -153,7 +156,7 @@ function Trackbar({
           <Fill
             aria-label="trackbar-fill"
             $value={clampedValue}
-            $maxValue={clampedMaxValue}
+            $maxValue={normalizedMaxValue}
             $theme={trackbarTheme}
             $variant={variant}
             $editable={editable}
@@ -169,10 +172,11 @@ function Trackbar({
           <Thumb
             aria-label="trackbar-thumb"
             $value={clampedValue}
-            $maxValue={clampedMaxValue}
+            $maxValue={normalizedMaxValue}
             $theme={trackbarTheme}
             $variant={variant}
             $fillColor={fillColor}
+            $containerColor={containerColor}
             $directionTo={directionTo}
             $isDragging={isDragging}
             onPointerDown={handlePointerDown}
@@ -187,7 +191,7 @@ function Trackbar({
           $variant={variant}
           $style={styles?.labelStyle}
         >
-          {clampedValue}%
+          {labelPercentage}%
         </Label>
       )}
     </Wrapper>
@@ -231,7 +235,8 @@ const Thumb = styled.div<{
   $maxValue: number;
   $theme?: TrackbarThemeConfig;
   $variant?: TrackbarVariant;
-  $fillColor?: string;
+  $fillColor: string;
+  $containerColor: string;
   $directionTo: TrackbarDirectionTo;
   $isDragging: boolean;
 }>`
@@ -242,9 +247,9 @@ const Thumb = styled.div<{
   border-radius: 50%;
   background-color: ${({ $theme, $variant, $fillColor }) =>
     $fillColor ?? $theme?.[$variant]?.barColor};
-  box-shadow:
-    0 0 0 2px white,
-    0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: ${({ $containerColor, $theme, $variant }) =>
+    `0 0 0 2px ${$containerColor ?? $theme?.[$variant]?.trackColor},0 1px 3px rgba(0, 0, 0, 0.3)`};
+
   cursor: grab;
   touch-action: none;
   transform: translate(-50%, -50%);
@@ -340,7 +345,7 @@ const Label = styled.span<{
   font-weight: 500;
   color: ${({ $theme, $variant }) => $theme?.[$variant]?.textColor};
   line-height: 1;
-  min-width: 2rem;
+  min-width: 2.8rem;
   text-align: center;
 
   ${({ $style }) => $style}
