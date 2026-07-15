@@ -190,19 +190,27 @@ export const Labelling: Story = {
       <Container>
         <Section>
           <Title>Labeling in right</Title>
-          <Trackbar value={value} labeling="right" directionTo="right" />
+          <Trackbar
+            value={value}
+            valueLabelPosition="right"
+            directionTo="right"
+          />
         </Section>
 
         <Section>
           <Title>Labeling in left</Title>
-          <Trackbar value={value} labeling="left" directionTo="left" />
+          <Trackbar
+            value={value}
+            valueLabelPosition="left"
+            directionTo="left"
+          />
         </Section>
       </Container>
     );
   },
 };
 
-export const Indeterminate: Story = {
+export const Progressbar: Story = {
   render: () => {
     return (
       <Container>
@@ -215,15 +223,7 @@ export const Indeterminate: Story = {
           <Title>Indeterminate direction to left</Title>
           <Trackbar indeterminate directionTo="left" />
         </Section>
-      </Container>
-    );
-  },
-};
 
-export const Variants: Story = {
-  render: () => {
-    return (
-      <Container>
         {Object.values(TrackbarVariant).map((variant, index) => (
           <Section key={index}>
             <Title>Variant {variant}</Title>
@@ -235,6 +235,27 @@ export const Variants: Story = {
           </Section>
         ))}
       </Container>
+    );
+  },
+};
+
+export const Editable: Story = {
+  render: () => {
+    const [value, setValue] = useState(0);
+
+    return (
+      <Section>
+        <Title>Editable</Title>
+        <Trackbar
+          variant="warning"
+          valueLabelPosition="right"
+          value={value}
+          maxValue={90}
+          onChange={(value) => setValue(value)}
+          editable
+          directionTo="right"
+        />
+      </Section>
     );
   },
 };
