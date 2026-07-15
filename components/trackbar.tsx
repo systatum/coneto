@@ -15,8 +15,19 @@ export interface TrackbarProps {
   fillColor?: string;
   containerColor?: string;
   onChange?: (value?: number) => void;
+  labels?: TrackbarLabels;
   className?: string;
   id?: string;
+}
+
+export interface TrackbarLabels {
+  renderLabel?:
+    | ((props: {
+        percentage?: number;
+        value?: number;
+        maxValue?: number;
+      }) => string)
+    | null;
 }
 
 export interface TrackbarStyles {
@@ -65,11 +76,14 @@ function Trackbar({
   fillColor,
   containerColor,
   onChange,
+  labels,
   className,
   id,
 }: TrackbarProps) {
   const { currentTheme } = useTheme();
   const trackbarTheme = currentTheme?.trackbar;
+
+  const { renderLabel } = labels ?? {};
 
   const trackRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
@@ -192,7 +206,13 @@ function Trackbar({
           $variant={variant}
           $style={styles?.labelStyle}
         >
-          {labelPercentage}%
+          {renderLabel
+            ? renderLabel({
+                percentage: labelPercentage,
+                value: clampedValue,
+                maxValue: normalizedMaxValue,
+              })
+            : `${labelPercentage}%`}
         </Label>
       )}
     </Wrapper>
