@@ -21,10 +21,12 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 
 * 📊 Determinate progress with configurable values
 * 🔄 Indeterminate loading animation
+* ✋ Editable mode with draggable thumb
 * 🎨 Multiple predefined variants (primary, success, danger, warning)
 * ↔️ Support for left-to-right and right-to-left progress
-* 🏷️ Optional percentage labeling
+* 🏷️ Optional percentage valueLabelPosition
 * 🎛️ Custom styling through style overrides
+* 🖌️ Custom fill and container colors
 * ♿ Accessible with ARIA trackbar attributes
 
 ---
@@ -34,8 +36,9 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 \`\`\`tsx
 <Trackbar
   value={60}
+  maxValue={100}
   variant="primary"
-  labeling="right"
+  valueLabelPosition="right"
 />
 \`\`\`
 
@@ -52,6 +55,7 @@ Use the \`value\` prop to display a specific completion percentage.
 \`\`\`
 
 * Values are automatically clamped between \`0\` and \`100\`
+* \`maxValue\` defaults to \`100\`
 * Smooth width transitions are applied when the value changes
 
 ---
@@ -106,14 +110,14 @@ Works for both determinate and indeterminate modes.
 
 ---
 
-#### Labeling
+#### valueLabelPosition
 
 Display the progress percentage beside the progress bar.
 
 \`\`\`tsx
 <Trackbar
   value={60}
-  labeling="right"
+  valueLabelPosition="right"
 />
 \`\`\`
 
@@ -126,6 +130,42 @@ Available options:
 Labels are automatically hidden when \`indeterminate\` is enabled.
 
 ---
+
+#### Fill Color
+
+Use \`fillColor\` to override the progress bar color.
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  fillColor="#8B5CF6"
+/>
+\`\`\`
+
+- Overrides the selected variant's fill color
+- Accepts any valid CSS color value (HEX, RGB, HSL, named colors, etc.)
+- Does not affect the track background color
+
+---
+
+#### Container Color
+
+Use \`containerColor\` to override the track background color.
+
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  containerColor="#E5E7EB"
+/>
+\`\`\`
+
+- Overrides the selected variant's track color
+- Accepts any valid CSS color value (HEX, RGB, HSL, named colors, etc.)
+- Does not affect the progress fill color
+
+---
+
 
 #### Custom Styles
 
@@ -189,7 +229,7 @@ export const Labelling: Story = {
     return (
       <Container>
         <Section>
-          <Title>Labeling in right</Title>
+          <Title>Labelling in right</Title>
           <Trackbar
             value={value}
             valueLabelPosition="right"
@@ -198,7 +238,7 @@ export const Labelling: Story = {
         </Section>
 
         <Section>
-          <Title>Labeling in left</Title>
+          <Title>Labelling in left</Title>
           <Trackbar
             value={value}
             valueLabelPosition="left"
@@ -241,21 +281,36 @@ export const Progressbar: Story = {
 
 export const Editable: Story = {
   render: () => {
-    const [value, setValue] = useState(0);
+    const [values, setValues] = useState<Record<TrackbarVariant, number>>({
+      neutral: 40,
+      primary: 80,
+      success: 120,
+      danger: 160,
+      warning: 200,
+    });
 
     return (
-      <Section>
-        <Title>Editable</Title>
-        <Trackbar
-          variant="warning"
-          valueLabelPosition="right"
-          value={value}
-          maxValue={90}
-          onChange={(value) => setValue(value)}
-          editable
-          directionTo="right"
-        />
-      </Section>
+      <>
+        {Object.values(TrackbarVariant).map((variant) => (
+          <Section key={variant}>
+            <Title>Editable {variant}</Title>
+
+            <Trackbar
+              variant={variant}
+              editable
+              valueLabelPosition="right"
+              value={values[variant]}
+              maxValue={200}
+              onChange={(value) =>
+                setValues((prev) => ({
+                  ...prev,
+                  [variant]: value ?? 0,
+                }))
+              }
+            />
+          </Section>
+        ))}
+      </>
     );
   },
 };
