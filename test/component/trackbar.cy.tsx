@@ -4,11 +4,187 @@ import {
   TrackbarProps,
   TrackbarVariant,
 } from "../../components/trackbar";
+import { useState } from "react";
 
 describe("Trackbar", () => {
   function ProductTrackbar(props: Partial<TrackbarProps>) {
-    return <Trackbar {...props} />;
+    const [value, setValue] = useState(0);
+    const onChange = cy.stub().as("onChange");
+
+    return (
+      <Trackbar
+        value={value}
+        onChange={(value) => {
+          setValue(value);
+          onChange(value);
+        }}
+        {...props}
+      />
+    );
   }
+
+  context("labels", () => {
+    context("renderLabel()", () => {
+      context("when given percentage, value, and maxValue", () => {
+        it("renders the label with ", () => {
+          cy.mount(
+            <ProductTrackbar
+              value={40}
+              maxValue={80}
+              valueLabelPosition="right"
+              labels={{
+                renderLabel: ({ percentage, value, maxValue }) =>
+                  `${value}/${maxValue} = ${percentage}%`,
+              }}
+            />
+          );
+
+          cy.findByLabelText("trackbar-label").should(
+            "have.text",
+            "40/80 = 50%"
+          );
+        });
+      });
+    });
+  });
+
+  context("containerColor", () => {
+    context("when given red color", () => {
+      it("renders the track with rgb(255, 0, 0)", () => {
+        cy.mount(<ProductTrackbar containerColor="red" />);
+        cy.findByLabelText("trackbar-track").should(
+          "have.css",
+          "background-color",
+          "rgb(255, 0, 0)"
+        );
+      });
+
+      context("when given editable", () => {
+        it("renders the thumb with box-shadow rgb(255, 0, 0)", () => {
+          cy.mount(<ProductTrackbar containerColor="red" editable />);
+          cy.findByLabelText("trackbar-thumb").should(
+            "have.css",
+            "box-shadow",
+            "rgb(255, 0, 0) 0px 0px 0px 2px, rgba(0, 0, 0, 0.3) 0px 1px 3px 0px"
+          );
+        });
+      });
+    });
+  });
+
+  context("fillColor", () => {
+    context("when given red color", () => {
+      it("renders the fill with rgb(255, 0, 0)", () => {
+        cy.mount(<ProductTrackbar fillColor="red" />);
+        cy.findByLabelText("trackbar-fill").should(
+          "have.css",
+          "background-color",
+          "rgb(255, 0, 0)"
+        );
+      });
+
+      context("when given editable", () => {
+        it("renders the thumb with rgb(255, 0, 0)", () => {
+          cy.mount(<ProductTrackbar fillColor="red" editable />);
+          cy.findByLabelText("trackbar-thumb").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+  });
+
+  context("maxValue", () => {
+    context("when given 200", () => {
+      it("should render aria-valuemax with 200", () => {
+        cy.mount(
+          <ProductTrackbar valueLabelPosition="right" maxValue={200} editable />
+        );
+        cy.findByLabelText("trackbar-thumb").should("exist");
+
+        cy.findByRole("trackbar").should("have.attr", "aria-valuemax", "200");
+      });
+
+      context("when given value 100", () => {
+        it("should render with 50% if label is provided", () => {
+          cy.mount(
+            <ProductTrackbar
+              valueLabelPosition="right"
+              value={100}
+              maxValue={200}
+              editable
+            />
+          );
+          cy.findByLabelText("trackbar-thumb").should("exist");
+
+          cy.findByRole("trackbar")
+            .should("have.attr", "aria-valuemax", "200")
+            .and("have.attr", "aria-valuenow", "100");
+
+          cy.findByText("50%");
+        });
+      });
+    });
+
+    context("when given minus value", () => {
+      it("should render with 1 for maximize", () => {
+        cy.mount(
+          <ProductTrackbar valueLabelPosition="right" maxValue={-1} editable />
+        );
+        cy.findByLabelText("trackbar-thumb").should("exist");
+
+        cy.findByRole("trackbar").should("have.attr", "aria-valuemax", "1");
+      });
+    });
+  });
+
+  context("editable", () => {
+    context("when given true", () => {
+      it("shows the drag indicator (thumb)", () => {
+        cy.mount(<ProductTrackbar editable />);
+        cy.findByLabelText("trackbar-thumb").should("exist");
+      });
+
+      it("renders the thumb with touch-action: none", () => {
+        cy.mount(<ProductTrackbar editable />);
+        cy.findByLabelText("trackbar-thumb").should(
+          "have.css",
+          "touch-action",
+          "none"
+        );
+      });
+
+      context("when given indeterminate", () => {
+        it("still not broke the editable", () => {
+          cy.mount(<ProductTrackbar editable indeterminate />);
+          cy.findByLabelText("trackbar-thumb").should("exist");
+        });
+      });
+
+      context("when drag the indicator", () => {
+        it("give the callback for onChanges", () => {
+          cy.mount(<ProductTrackbar editable />);
+          cy.findByLabelText("trackbar-thumb").trigger("pointerdown", {
+            clientX: 50,
+            clientY: 10,
+          });
+
+          cy.window().trigger("pointermove", {
+            clientX: 120,
+            clientY: 10,
+          });
+
+          cy.window().trigger("pointerup");
+
+          cy.get("@onChange").should((stub: any) => {
+            expect(stub.callCount).to.be.greaterThan(0);
+          });
+        });
+      });
+    });
+  });
 
   context("id", () => {
     context("when given id", () => {
@@ -99,9 +275,13 @@ describe("Trackbar", () => {
         cy.findByRole("trackbar").should("not.have.attr", "aria-valuenow");
       });
 
-      it("should not render the label even when labeling is right", () => {
+      it("should not render the label even when valueLabelPosition is right", () => {
         cy.mount(
-          <ProductTrackbar indeterminate={true} labeling="right" value={50} />
+          <ProductTrackbar
+            indeterminate={true}
+            valueLabelPosition="right"
+            value={50}
+          />
         );
         cy.findByRole("trackbar").should("not.contain.text", "%");
       });
@@ -115,17 +295,17 @@ describe("Trackbar", () => {
     });
   });
 
-  context("labelling", () => {
+  context("valueLabelPosition", () => {
     context("when given none (by default)", () => {
       it("should not render the label", () => {
-        cy.mount(<ProductTrackbar labeling="none" value={40} />);
+        cy.mount(<ProductTrackbar valueLabelPosition="none" value={40} />);
         cy.findByRole("trackbar").should("not.contain.text", "%");
       });
     });
 
     context("when given right", () => {
       it("should render the label in the right side", () => {
-        cy.mount(<ProductTrackbar labeling="right" value={40} />);
+        cy.mount(<ProductTrackbar valueLabelPosition="right" value={40} />);
         cy.findByRole("trackbar").should("have.css", "flex-direction", "row");
         cy.findByRole("trackbar").should("contain.text", "40%");
       });
@@ -133,7 +313,7 @@ describe("Trackbar", () => {
 
     context("when given left", () => {
       it("should render the label", () => {
-        cy.mount(<ProductTrackbar labeling="left" value={75} />);
+        cy.mount(<ProductTrackbar valueLabelPosition="left" value={75} />);
         cy.findByRole("trackbar").should(
           "have.css",
           "flex-direction",
@@ -246,7 +426,7 @@ describe("Trackbar", () => {
           cy.mount(
             <ProductTrackbar
               value={50}
-              labeling="right"
+              valueLabelPosition="right"
               styles={{
                 labelStyle: css`
                   color: green;
