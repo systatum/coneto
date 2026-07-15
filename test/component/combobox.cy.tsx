@@ -143,6 +143,33 @@ describe("Combobox", () => {
     );
   }
 
+  context("when content is less than or equal 5", () => {
+    it("should render drawer with fit content", () => {
+      cy.viewport(500, 700);
+
+      const FEWER_OPTIONS = FRUIT_OPTIONS.slice(0, 4);
+
+      cy.mount(<ProductCombobox options={FEWER_OPTIONS} />);
+
+      cy.findByRole("textbox").click();
+
+      cy.findByLabelText("combobox-drawer").then(($drawer) => {
+        const drawerHeight = $drawer.innerHeight();
+
+        cy.findAllByLabelText("tree-list-group-title").then(($items) => {
+          const contentHeight = [...$items].reduce(
+            (sum, el) => sum + Cypress.$(el).outerHeight(true),
+            0
+          );
+
+          expect(drawerHeight).to.be.closeTo(contentHeight, 1);
+        });
+      });
+
+      cy.findByRole("textbox").click();
+    });
+  });
+
   context("drawerHeight", () => {
     context("when given 60dvh", () => {
       it("should render with 420px", () => {
