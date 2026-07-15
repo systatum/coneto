@@ -66,22 +66,22 @@ function Trackbar({
   return (
     <Wrapper
       id={id}
-      className={applyClassName("progressbar", className)}
-      role="progressbar"
+      className={applyClassName("trackbar", className)}
+      role="trackbar"
       aria-valuenow={indeterminate ? undefined : clampedValue}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label="progressbar"
+      aria-label="trackbar"
       $labeling={labeling}
       $style={styles?.containerStyle}
     >
       <Track
-        aria-label="progressbar-track"
+        aria-label="trackbar-track"
         $theme={trackbarTheme}
         $variant={variant}
       >
         <Fill
-          aria-label="progressbar-fill"
+          aria-label="trackbar-fill"
           $value={clampedValue}
           $theme={trackbarTheme}
           $variant={variant}
@@ -93,7 +93,7 @@ function Trackbar({
 
       {showLabel && (
         <Label
-          aria-label="progressbar-label"
+          aria-label="trackbar-label"
           $theme={trackbarTheme}
           $variant={variant}
           $style={styles?.labelStyle}
