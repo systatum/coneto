@@ -193,10 +193,6 @@
       "import": "./dist/components/pinbox.js",
       "types": "./dist/components/pinbox.d.ts"
     },
-    "./progressbar": {
-      "import": "./dist/components/progressbar.js",
-      "types": "./dist/components/progressbar.d.ts"
-    },
     "./pull-refresher": {
       "import": "./dist/components/pull-refresher.js",
       "types": "./dist/components/pull-refresher.d.ts"
@@ -300,6 +296,10 @@
     "./tooltip": {
       "import": "./dist/components/tooltip.js",
       "types": "./dist/components/tooltip.d.ts"
+    },
+    "./trackbar": {
+      "import": "./dist/components/trackbar.js",
+      "types": "./dist/components/trackbar.d.ts"
     },
     "./treelist": {
       "import": "./dist/components/treelist.js",
