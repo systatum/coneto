@@ -264,9 +264,8 @@ const Thumb = styled.div<{
   touch-action: none;
   position: absolute;
   top: 50%;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+  width: 12px;
+  height: 12px;
   background-color: ${({ $theme, $variant, $fillColor }) =>
     $fillColor ?? $theme?.[$variant]?.barColor};
   box-shadow: ${({ $containerColor, $theme, $variant }) =>
