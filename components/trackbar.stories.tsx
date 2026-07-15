@@ -290,7 +290,7 @@ export const Editable: Story = {
     });
 
     return (
-      <>
+      <Container>
         {Object.values(TrackbarVariant).map((variant) => (
           <Section key={variant}>
             <Title>Editable {variant}</Title>
@@ -310,7 +310,7 @@ export const Editable: Story = {
             />
           </Section>
         ))}
-      </>
+      </Container>
     );
   },
 };
