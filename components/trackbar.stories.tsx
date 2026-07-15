@@ -139,8 +139,8 @@ Use \`labels.renderLabel\` to customize the displayed value label.
 <Trackbar
   value={60}
   labels={{
-    renderLabel: ({ percentage, value }) =>
-      \`The total is \${value\}, from \${percentage\}% of 100%\`,
+    renderLabel: ({ percentage, value, maxValue }) =>
+      \`$\{value}/$\{maxValue} = $\{percentage}%\`,
   }}
 />
 \`\`\`
