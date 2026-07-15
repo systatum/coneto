@@ -1,36 +1,34 @@
 import { css } from "styled-components";
 import {
-  Progressbar,
-  ProgressbarProps,
-  ProgressbarVariant,
-} from "./../../components/progressbar";
+  Trackbar,
+  TrackbarProps,
+  TrackbarVariant,
+} from "../../components/trackbar";
 
-describe("Progressbar", () => {
-  function ProductProgressbar(props: Partial<ProgressbarProps>) {
-    return <Progressbar {...props} />;
+describe("Trackbar", () => {
+  function ProductTrackbar(props: Partial<TrackbarProps>) {
+    return <Trackbar {...props} />;
   }
 
   context("id", () => {
     context("when given id", () => {
-      it("renders id in the progressbar", () => {
-        cy.mount(
-          <ProductProgressbar id="progressbar-coneto" indeterminate={true} />
-        );
-        cy.get("#progressbar-coneto").should("exist");
+      it("renders id in the trackbar", () => {
+        cy.mount(<ProductTrackbar id="trackbar-coneto" indeterminate={true} />);
+        cy.get("#trackbar-coneto").should("exist");
       });
     });
   });
 
   context("className", () => {
     it("renders the default className", () => {
-      cy.mount(<ProductProgressbar indeterminate={true} />);
-      cy.get(".coneto-progressbar").should("exist");
+      cy.mount(<ProductTrackbar indeterminate={true} />);
+      cy.get(".coneto-trackbar").should("exist");
     });
 
     context("when given class test", () => {
       it("renders another class in the element", () => {
-        cy.mount(<ProductProgressbar className="test" indeterminate={true} />);
-        cy.get(".coneto-progressbar").should("exist");
+        cy.mount(<ProductTrackbar className="test" indeterminate={true} />);
+        cy.get(".coneto-trackbar").should("exist");
         cy.get(".test").should("exist");
       });
     });
@@ -38,7 +36,7 @@ describe("Progressbar", () => {
 
   context("variant", () => {
     const variantCases: Array<{
-      variant: ProgressbarVariant;
+      variant: TrackbarVariant;
       barColor: string;
       trackColor: string;
     }> = [
@@ -72,11 +70,11 @@ describe("Progressbar", () => {
     variantCases.forEach(({ variant, barColor, trackColor }) => {
       context(`when given variant ${variant}`, () => {
         beforeEach(() => {
-          cy.mount(<ProductProgressbar variant={variant} value={50} />);
+          cy.mount(<ProductTrackbar variant={variant} value={50} />);
         });
 
         it(`should render the fill with the correct bar color`, () => {
-          cy.findByLabelText("progressbar-fill").should(
+          cy.findByLabelText("trackbar-fill").should(
             "have.css",
             "background-color",
             barColor
@@ -84,7 +82,7 @@ describe("Progressbar", () => {
         });
 
         it(`should render the track with the correct track color`, () => {
-          cy.findByLabelText("progressbar-track").should(
+          cy.findByLabelText("trackbar-track").should(
             "have.css",
             "background-color",
             trackColor
@@ -97,26 +95,22 @@ describe("Progressbar", () => {
   context("indeterminate", () => {
     context("when given true", () => {
       it("should not expose aria-valuenow", () => {
-        cy.mount(<ProductProgressbar indeterminate={true} />);
-        cy.findByRole("progressbar").should("not.have.attr", "aria-valuenow");
+        cy.mount(<ProductTrackbar indeterminate={true} />);
+        cy.findByRole("trackbar").should("not.have.attr", "aria-valuenow");
       });
 
       it("should not render the label even when labeling is right", () => {
         cy.mount(
-          <ProductProgressbar
-            indeterminate={true}
-            labeling="right"
-            value={50}
-          />
+          <ProductTrackbar indeterminate={true} labeling="right" value={50} />
         );
-        cy.findByRole("progressbar").should("not.contain.text", "%");
+        cy.findByRole("trackbar").should("not.contain.text", "%");
       });
     });
 
     context("when given false", () => {
       it("should expose aria-valuenow", () => {
-        cy.mount(<ProductProgressbar indeterminate={false} value={60} />);
-        cy.findByRole("progressbar").should("have.attr", "aria-valuenow", "60");
+        cy.mount(<ProductTrackbar indeterminate={false} value={60} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "60");
       });
     });
   });
@@ -124,48 +118,44 @@ describe("Progressbar", () => {
   context("labelling", () => {
     context("when given none (by default)", () => {
       it("should not render the label", () => {
-        cy.mount(<ProductProgressbar labeling="none" value={40} />);
-        cy.findByRole("progressbar").should("not.contain.text", "%");
+        cy.mount(<ProductTrackbar labeling="none" value={40} />);
+        cy.findByRole("trackbar").should("not.contain.text", "%");
       });
     });
 
     context("when given right", () => {
       it("should render the label in the right side", () => {
-        cy.mount(<ProductProgressbar labeling="right" value={40} />);
-        cy.findByRole("progressbar").should(
-          "have.css",
-          "flex-direction",
-          "row"
-        );
-        cy.findByRole("progressbar").should("contain.text", "40%");
+        cy.mount(<ProductTrackbar labeling="right" value={40} />);
+        cy.findByRole("trackbar").should("have.css", "flex-direction", "row");
+        cy.findByRole("trackbar").should("contain.text", "40%");
       });
     });
 
     context("when given left", () => {
       it("should render the label", () => {
-        cy.mount(<ProductProgressbar labeling="left" value={75} />);
-        cy.findByRole("progressbar").should(
+        cy.mount(<ProductTrackbar labeling="left" value={75} />);
+        cy.findByRole("trackbar").should(
           "have.css",
           "flex-direction",
           "row-reverse"
         );
-        cy.findByRole("progressbar").should("contain.text", "75%");
+        cy.findByRole("trackbar").should("contain.text", "75%");
       });
     });
   });
 
   context("directionTo", () => {
     context("when given right", () => {
-      it("should render the progressbar", () => {
-        cy.mount(<ProductProgressbar directionTo="right" value={50} />);
-        cy.findByRole("progressbar").should("exist");
+      it("should render the trackbar", () => {
+        cy.mount(<ProductTrackbar directionTo="right" value={50} />);
+        cy.findByRole("trackbar").should("exist");
       });
     });
 
     context("when given left", () => {
-      it("should render the progressbar", () => {
-        cy.mount(<ProductProgressbar directionTo="left" value={50} />);
-        cy.findByRole("progressbar").should("exist");
+      it("should render the trackbar", () => {
+        cy.mount(<ProductTrackbar directionTo="left" value={50} />);
+        cy.findByRole("trackbar").should("exist");
       });
     });
   });
@@ -173,44 +163,36 @@ describe("Progressbar", () => {
   context("value", () => {
     context("when given 50", () => {
       it("should set aria-valuenow to 50", () => {
-        cy.mount(<ProductProgressbar value={50} />);
-        cy.findByRole("progressbar").should("have.attr", "aria-valuenow", "50");
+        cy.mount(<ProductTrackbar value={50} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "50");
       });
     });
 
     context("when given 0", () => {
       it("should set aria-valuenow to 0", () => {
-        cy.mount(<ProductProgressbar value={0} />);
-        cy.findByRole("progressbar").should("have.attr", "aria-valuenow", "0");
+        cy.mount(<ProductTrackbar value={0} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "0");
       });
     });
 
     context("when given 100", () => {
       it("should set aria-valuenow to 100", () => {
-        cy.mount(<ProductProgressbar value={100} />);
-        cy.findByRole("progressbar").should(
-          "have.attr",
-          "aria-valuenow",
-          "100"
-        );
+        cy.mount(<ProductTrackbar value={100} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "100");
       });
     });
 
     context("when given value above 100", () => {
       it("should clamp aria-valuenow to 100", () => {
-        cy.mount(<ProductProgressbar value={150} />);
-        cy.findByRole("progressbar").should(
-          "have.attr",
-          "aria-valuenow",
-          "100"
-        );
+        cy.mount(<ProductTrackbar value={150} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "100");
       });
     });
 
     context("when given value below 0", () => {
       it("should clamp aria-valuenow to 0", () => {
-        cy.mount(<ProductProgressbar value={-20} />);
-        cy.findByRole("progressbar").should("have.attr", "aria-valuenow", "0");
+        cy.mount(<ProductTrackbar value={-20} />);
+        cy.findByRole("trackbar").should("have.attr", "aria-valuenow", "0");
       });
     });
   });
@@ -220,7 +202,7 @@ describe("Progressbar", () => {
       context("when given background-color red", () => {
         it("should render background color with rgb(255, 0, 0)", () => {
           cy.mount(
-            <ProductProgressbar
+            <ProductTrackbar
               value={50}
               styles={{
                 containerStyle: css`
@@ -229,7 +211,7 @@ describe("Progressbar", () => {
               }}
             />
           );
-          cy.findByRole("progressbar").should(
+          cy.findByRole("trackbar").should(
             "have.css",
             "background-color",
             "rgb(255, 0, 0)"
@@ -242,7 +224,7 @@ describe("Progressbar", () => {
       context("when given background-color blue", () => {
         it("should render the fill with rgb(0, 0, 255)", () => {
           cy.mount(
-            <ProductProgressbar
+            <ProductTrackbar
               value={50}
               styles={{
                 valueBarStyle: css`
@@ -251,7 +233,7 @@ describe("Progressbar", () => {
               }}
             />
           );
-          cy.findByLabelText("progressbar-fill")
+          cy.findByLabelText("trackbar-fill")
 
             .should("have.css", "background-color", "rgb(0, 0, 255)");
         });
@@ -262,7 +244,7 @@ describe("Progressbar", () => {
       context("when given color green", () => {
         it("should render the label with rgb(0, 128, 0)", () => {
           cy.mount(
-            <ProductProgressbar
+            <ProductTrackbar
               value={50}
               labeling="right"
               styles={{
@@ -272,7 +254,7 @@ describe("Progressbar", () => {
               }}
             />
           );
-          cy.findByLabelText("progressbar-label").should(
+          cy.findByLabelText("trackbar-label").should(
             "have.css",
             "color",
             "rgb(0, 128, 0)"
