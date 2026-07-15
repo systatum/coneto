@@ -132,7 +132,7 @@ function Trackbar({
   }, [setIsDragging]);
 
   const labelPercentage =
-    normalizedMaxValue > 0 ? (value / normalizedMaxValue) * 100 : 0;
+    normalizedMaxValue > 0 ? Math.floor((value / normalizedMaxValue) * 100) : 0;
 
   return (
     <Wrapper
