@@ -418,13 +418,12 @@ export const WithErrorMessage: Story = {
   render: (args: TextboxProps) => {
     const [value, setValue] = useState("");
 
-    const handleChange = (e: StatefulOnChangeType) => {
-      if (e && "currentTarget" in e) {
-        const newValue = e.target.value;
-        setValue(newValue);
-      }
-    };
-
-    return <Textbox {...args} value={value} onChange={handleChange} />;
+    return (
+      <Textbox
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
   },
 };
