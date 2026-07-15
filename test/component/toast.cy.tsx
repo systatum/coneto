@@ -160,7 +160,7 @@ describe("Toast", () => {
         disappearAfterMs: 3000,
         withLoadingBar: true,
       });
-      cy.findByLabelText("progressbar-fill").should(
+      cy.findByLabelText("trackbar-fill").should(
         "have.css",
         "background-color",
         THEME.success.progressColor
@@ -175,7 +175,7 @@ describe("Toast", () => {
           disappearAfterMs: 3000,
           withLoadingBar: true,
         });
-        cy.findByLabelText("progressbar-fill")
+        cy.findByLabelText("trackbar-fill")
           .should("have.css", "position", "absolute")
           .and("have.css", "bottom", "0px")
           .and("have.css", "height", "6px");
