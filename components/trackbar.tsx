@@ -240,6 +240,7 @@ const Thumb = styled.div<{
   $directionTo: TrackbarDirectionTo;
   $isDragging: boolean;
 }>`
+  touch-action: none;
   position: absolute;
   top: 50%;
   width: 14px;
