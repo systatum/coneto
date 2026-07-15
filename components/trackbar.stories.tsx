@@ -1,17 +1,17 @@
 import { Meta, StoryObj } from "@storybook/react/*";
-import { Progressbar, ProgressbarVariant } from "./progressbar";
+import { Trackbar, TrackbarVariant } from "./trackbar";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const meta: Meta<typeof Progressbar> = {
-  title: "Controls/Progressbar",
-  component: Progressbar,
+const meta: Meta<typeof Trackbar> = {
+  title: "Controls/Trackbar",
+  component: Trackbar,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-The **Progressbar** component visually represents the progress of a task or process.
+The **Trackbar** component visually represents the progress of a task or process.
 
 It supports determinate and indeterminate states, multiple color variants, bidirectional progress, optional percentage labels, and custom styling hooks.
 
@@ -25,14 +25,14 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 * ↔️ Support for left-to-right and right-to-left progress
 * 🏷️ Optional percentage labeling
 * 🎛️ Custom styling through style overrides
-* ♿ Accessible with ARIA progressbar attributes
+* ♿ Accessible with ARIA trackbar attributes
 
 ---
 
 ### 🧱 Component Structure
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   variant="primary"
   labeling="right"
@@ -48,7 +48,7 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 Use the \`value\` prop to display a specific completion percentage.
 
 \`\`\`tsx
-<Progressbar value={75} />
+<Trackbar value={75} />
 \`\`\`
 
 * Values are automatically clamped between \`0\` and \`100\`
@@ -61,7 +61,7 @@ Use the \`value\` prop to display a specific completion percentage.
 Use \`indeterminate\` when the progress amount is unknown.
 
 \`\`\`tsx
-<Progressbar indeterminate />
+<Trackbar indeterminate />
 \`\`\`
 
 * Displays a continuous loading animation
@@ -74,7 +74,7 @@ Use \`indeterminate\` when the progress amount is unknown.
 Use \`variant\` to apply predefined semantic styles.
 
 \`\`\`tsx
-<Progressbar variant="success" />
+<Trackbar variant="success" />
 \`\`\`
 
 Available variants:
@@ -91,7 +91,7 @@ Available variants:
 Use \`directionTo\` to control the progress direction.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   directionTo="left"
 />
@@ -111,7 +111,7 @@ Works for both determinate and indeterminate modes.
 Display the progress percentage beside the progress bar.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   labeling="right"
 />
@@ -132,7 +132,7 @@ Labels are automatically hidden when \`indeterminate\` is enabled.
 Customize individual parts of the component using the \`styles\` prop.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   styles={{
     containerStyle: css\`
@@ -172,7 +172,7 @@ Available style targets:
 
 export default meta;
 
-type Story = StoryObj<typeof Progressbar>;
+type Story = StoryObj<typeof Trackbar>;
 
 export const Labelling: Story = {
   render: () => {
@@ -190,12 +190,12 @@ export const Labelling: Story = {
       <Container>
         <Section>
           <Title>Labeling in right</Title>
-          <Progressbar value={value} labeling="right" directionTo="right" />
+          <Trackbar value={value} labeling="right" directionTo="right" />
         </Section>
 
         <Section>
           <Title>Labeling in left</Title>
-          <Progressbar value={value} labeling="left" directionTo="left" />
+          <Trackbar value={value} labeling="left" directionTo="left" />
         </Section>
       </Container>
     );
@@ -208,12 +208,12 @@ export const Indeterminate: Story = {
       <Container>
         <Section>
           <Title>Indeterminate direction to right</Title>
-          <Progressbar indeterminate directionTo="right" />
+          <Trackbar indeterminate directionTo="right" />
         </Section>
 
         <Section>
           <Title>Indeterminate direction to left</Title>
-          <Progressbar indeterminate directionTo="left" />
+          <Trackbar indeterminate directionTo="left" />
         </Section>
       </Container>
     );
@@ -224,10 +224,10 @@ export const Variants: Story = {
   render: () => {
     return (
       <Container>
-        {Object.values(ProgressbarVariant).map((variant, index) => (
+        {Object.values(TrackbarVariant).map((variant, index) => (
           <Section key={index}>
             <Title>Variant {variant}</Title>
-            <Progressbar
+            <Trackbar
               variant={variant}
               indeterminate
               directionTo={index % 2 === 0 ? "right" : "left"}

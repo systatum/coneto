@@ -1,25 +1,25 @@
 import styled, { css, CSSProp, keyframes } from "styled-components";
-import { ProgressbarThemeConfig, useTheme } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+import { TrackbarThemeConfig, useTheme } from "../theme";
+import { applyClassName } from "../constants/classname";
 
-export interface ProgressbarProps {
-  variant?: ProgressbarVariant;
+export interface TrackbarProps {
+  variant?: TrackbarVariant;
   indeterminate?: boolean;
-  labeling?: ProgressbarLabelling;
-  directionTo?: ProgressbarDirectionTo;
-  styles?: ProgressbarStyles;
+  labeling?: TrackbarLabelling;
+  directionTo?: TrackbarDirectionTo;
+  styles?: TrackbarStyles;
   value?: number;
   className?: string;
   id?: string;
 }
 
-export interface ProgressbarStyles {
+export interface TrackbarStyles {
   containerStyle?: CSSProp;
   valueBarStyle?: CSSProp;
   labelStyle?: CSSProp;
 }
 
-export const ProgressbarVariant = {
+export const TrackbarVariant = {
   Neutral: "neutral",
   Primary: "primary",
   Success: "success",
@@ -27,38 +27,38 @@ export const ProgressbarVariant = {
   Warning: "warning",
 } as const;
 
-export type ProgressbarVariant =
-  (typeof ProgressbarVariant)[keyof typeof ProgressbarVariant];
+export type TrackbarVariant =
+  (typeof TrackbarVariant)[keyof typeof TrackbarVariant];
 
-export const ProgressbarLabelling = {
+export const TrackbarLabelling = {
   None: "none",
   Right: "right",
   Left: "left",
 } as const;
 
-export type ProgressbarLabelling =
-  (typeof ProgressbarLabelling)[keyof typeof ProgressbarLabelling];
+export type TrackbarLabelling =
+  (typeof TrackbarLabelling)[keyof typeof TrackbarLabelling];
 
-export const ProgressbarDirectionTo = {
+export const TrackbarDirectionTo = {
   Right: "right",
   Left: "left",
 } as const;
 
-export type ProgressbarDirectionTo =
-  (typeof ProgressbarDirectionTo)[keyof typeof ProgressbarDirectionTo];
+export type TrackbarDirectionTo =
+  (typeof TrackbarDirectionTo)[keyof typeof TrackbarDirectionTo];
 
-function Progressbar({
+function Trackbar({
   value = 0,
   indeterminate = false,
-  labeling = ProgressbarLabelling.None,
-  directionTo = ProgressbarDirectionTo.Right,
-  variant = ProgressbarVariant.Neutral,
+  labeling = TrackbarLabelling.None,
+  directionTo = TrackbarDirectionTo.Right,
+  variant = TrackbarVariant.Neutral,
   styles,
   className,
   id,
-}: ProgressbarProps) {
+}: TrackbarProps) {
   const { currentTheme } = useTheme();
-  const progressBarTheme = currentTheme?.progressbar;
+  const trackbarTheme = currentTheme?.trackbar;
 
   const clampedValue = Math.min(100, Math.max(0, value));
   const showLabel = labeling !== "none" && !indeterminate;
@@ -77,13 +77,13 @@ function Progressbar({
     >
       <Track
         aria-label="progressbar-track"
-        $theme={progressBarTheme}
+        $theme={trackbarTheme}
         $variant={variant}
       >
         <Fill
           aria-label="progressbar-fill"
           $value={clampedValue}
-          $theme={progressBarTheme}
+          $theme={trackbarTheme}
           $variant={variant}
           $indeterminate={indeterminate}
           $directionTo={directionTo}
@@ -94,7 +94,7 @@ function Progressbar({
       {showLabel && (
         <Label
           aria-label="progressbar-label"
-          $theme={progressBarTheme}
+          $theme={trackbarTheme}
           $variant={variant}
           $style={styles?.labelStyle}
         >
@@ -106,8 +106,8 @@ function Progressbar({
 }
 
 const Wrapper = styled.div<{
-  $labeling: ProgressbarProps["labeling"];
-  $style?: ProgressbarStyles["containerStyle"];
+  $labeling: TrackbarProps["labeling"];
+  $style?: TrackbarStyles["containerStyle"];
 }>`
   display: flex;
   align-items: center;
@@ -120,8 +120,8 @@ const Wrapper = styled.div<{
 `;
 
 const Track = styled.div<{
-  $theme?: ProgressbarThemeConfig;
-  $variant?: ProgressbarVariant;
+  $theme?: TrackbarThemeConfig;
+  $variant?: TrackbarVariant;
 }>`
   position: relative;
   flex: 1;
@@ -132,10 +132,10 @@ const Track = styled.div<{
 
 const Fill = styled.div<{
   $value: number;
-  $theme?: ProgressbarThemeConfig;
-  $variant?: ProgressbarVariant;
+  $theme?: TrackbarThemeConfig;
+  $variant?: TrackbarVariant;
   $indeterminate: boolean;
-  $directionTo: ProgressbarDirectionTo;
+  $directionTo: TrackbarDirectionTo;
   $style?: CSSProp;
 }>`
   position: absolute;
@@ -148,7 +148,7 @@ const Fill = styled.div<{
 
   ${({ $indeterminate, $directionTo, $value }) => {
     if ($indeterminate) {
-      if ($directionTo === ProgressbarDirectionTo.Left) {
+      if ($directionTo === TrackbarDirectionTo.Left) {
         return css`
           right: 0;
           left: auto;
@@ -164,7 +164,7 @@ const Fill = styled.div<{
         `;
       }
     } else {
-      if ($directionTo === ProgressbarDirectionTo.Left) {
+      if ($directionTo === TrackbarDirectionTo.Left) {
         return css`
           right: 0;
           left: auto;
@@ -184,8 +184,8 @@ const Fill = styled.div<{
 `;
 
 const Label = styled.span<{
-  $theme?: ProgressbarThemeConfig;
-  $variant?: ProgressbarVariant;
+  $theme?: TrackbarThemeConfig;
+  $variant?: TrackbarVariant;
   $style?: CSSProp;
 }>`
   flex-shrink: 0;
@@ -210,4 +210,4 @@ const indeterminateSlideRTL = keyframes`
   100% { right: 100%; left: -90%; }
 `;
 
-export { Progressbar };
+export { Trackbar };
