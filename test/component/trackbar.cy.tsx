@@ -147,6 +147,22 @@ describe("Trackbar", () => {
         cy.findByLabelText("trackbar-thumb").should("exist");
       });
 
+      it("renders with size 12px", () => {
+        cy.mount(<ProductTrackbar editable />);
+        cy.findByLabelText("trackbar-thumb")
+          .should("have.css", "width", "12px")
+          .and("have.css", "height", "12px");
+      });
+
+      it("renders the thumb with rectangle", () => {
+        cy.mount(<ProductTrackbar editable />);
+        cy.findByLabelText("trackbar-thumb").should(
+          "have.css",
+          "border-radius",
+          "0px"
+        );
+      });
+
       it("renders the thumb with touch-action: none", () => {
         cy.mount(<ProductTrackbar editable />);
         cy.findByLabelText("trackbar-thumb").should(
@@ -378,6 +394,29 @@ describe("Trackbar", () => {
   });
 
   context("styles", () => {
+    context("thumbStyle", () => {
+      context("when given background-color red", () => {
+        it("should render background color with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <ProductTrackbar
+              editable
+              value={50}
+              styles={{
+                thumbStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+          cy.findByLabelText("trackbar-thumb").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
     context("containerStyle", () => {
       context("when given background-color red", () => {
         it("should render background color with rgb(255, 0, 0)", () => {
