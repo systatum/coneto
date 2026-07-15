@@ -131,6 +131,31 @@ Labels are automatically hidden when \`indeterminate\` is enabled.
 
 ---
 
+#### Custom Label
+
+Use \`labels.renderLabel\` to customize the displayed value label.
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  labels={{
+    renderLabel: ({ percentage, value }) =>
+      \`The total is \${value\}, from \${percentage\}% of 100%\`,
+  }}
+/>
+\`\`\`
+
+The \`renderLabel\` callback receives:
+
+- \`percentage\` — the calculated progress percentage
+- \`value\` — the current progress value
+
+If \`renderLabel\` is not provided, the default label is displayed.
+
+\`\`\`text
+60%
+\`\`\`
+
 #### Fill Color
 
 Use \`fillColor\` to override the progress bar color.
