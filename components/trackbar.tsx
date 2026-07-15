@@ -186,6 +186,7 @@ function Trackbar({
 
       {showLabel && (
         <Label
+          $isDragging={isDragging}
           aria-label="trackbar-label"
           $theme={trackbarTheme}
           $variant={variant}
@@ -340,6 +341,7 @@ const Label = styled.span<{
   $theme?: TrackbarThemeConfig;
   $variant?: TrackbarVariant;
   $style?: CSSProp;
+  $isDragging: boolean;
 }>`
   flex-shrink: 0;
   font-size: 0.75rem;
@@ -348,6 +350,12 @@ const Label = styled.span<{
   line-height: 1;
   min-width: 2.8rem;
   text-align: center;
+
+  ${({ $isDragging }) =>
+    $isDragging &&
+    css`
+      user-select: none;
+    `};
 
   ${({ $style }) => $style}
 `;
