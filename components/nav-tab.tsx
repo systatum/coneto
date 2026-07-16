@@ -926,6 +926,7 @@ const NavTabTab = styled.div<{
     $backgroundColor,
     $selectedBackgroundColor,
     $activeBackgroundColor,
+    $hoverTextColor,
     $selected,
   }) => css`
     ${!$mobile &&
@@ -935,6 +936,7 @@ const NavTabTab = styled.div<{
         background-color: ${$hoverBackgroundColor ??
         ($backgroundColor ? lightenColor($backgroundColor, 0.4) : undefined) ??
         $theme.hoverBackgroundColor};
+        color: ${$hoverTextColor};
       }
     `}
 
