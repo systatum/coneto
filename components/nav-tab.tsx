@@ -941,6 +941,7 @@ const NavTabTab = styled.div<{
     `}
 
     ${!$withCircle &&
+    !$selected &&
     css`
       &:active:not(:has([aria-label="action-button"]:active)) {
         background-color: ${$activeBackgroundColor ??
