@@ -17,6 +17,7 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "../theme/provider";
 import { NavTabThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { lightenColor } from "./../lib/color";
 
 export interface NavTabProps {
   tabs?: NavTabTab[];
@@ -68,6 +69,12 @@ export interface NavTabTab {
   hidden?: boolean;
   className?: string;
   withCircle?: boolean;
+  textColor?: string;
+  backgroundColor?: string;
+  hoverBackgroundColor?: string;
+  hoverTextColor?: string;
+  selectedBackgroundColor?: string;
+  activeBackgroundColor?: string;
 }
 
 interface NavTabTabBadge extends FigureProps {}
@@ -454,6 +461,12 @@ function NavTab({
                   $theme={navTheme}
                   key={index}
                   $size={size}
+                  $backgroundColor={tab?.backgroundColor}
+                  $textColor={tab?.textColor}
+                  $hoverBackgroundColor={tab?.hoverBackgroundColor}
+                  $hoverTextColor={tab?.hoverTextColor}
+                  $selectedBackgroundColor={tab?.selectedBackgroundColor}
+                  $activeBackgroundColor={tab?.activeBackgroundColor}
                   aria-label="nav-tab-tab"
                   $style={styles?.tabStyle}
                   ref={setTabRef(index)}
@@ -529,6 +542,12 @@ function NavTab({
                             $pressed={selected === tab.id}
                             $activeColor={activeColor}
                             $theme={navTheme}
+                            $activeBackgroundColor={tab?.activeBackgroundColor}
+                            $backgroundColor={tab?.backgroundColor}
+                            $selectedBackgroundColor={
+                              tab?.selectedBackgroundColor
+                            }
+                            $textColor={tab?.textColor}
                           >
                             <Figure {...finalIcon} />
                             <NavTabLabel
@@ -816,8 +835,13 @@ const NavTabTab = styled.div<{
   $width?: number;
   $tabsLength?: number;
   $withCircle?: boolean;
+  $backgroundColor?: string;
+  $hoverBackgroundColor?: string;
+  $textColor?: string;
+  $hoverTextColor?: string;
+  $selectedBackgroundColor?: string;
+  $activeBackgroundColor?: string;
 }>`
-  color: ${({ $theme }) => $theme.textColor};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -832,12 +856,24 @@ const NavTabTab = styled.div<{
   user-select: none;
   padding: ${({ $size }) => ($size === "md" ? "12px 12px" : "7px 12px")};
 
-  ${({ $selected, $theme, $withCircle }) =>
-    $selected &&
-    !$withCircle &&
-    css`
-      background-color: ${$theme?.selectedBackgroundColor};
-    `}
+  ${({
+    $selected,
+    $theme,
+    $withCircle,
+    $backgroundColor,
+    $textColor,
+    $selectedBackgroundColor,
+  }) =>
+    $selected && !$withCircle
+      ? css`
+          background-color: ${$selectedBackgroundColor ??
+          $theme?.selectedBackgroundColor};
+        `
+      : !$withCircle &&
+        css`
+          background-color: ${$backgroundColor ?? $theme.backgroundColor};
+          color: ${$textColor ?? $theme.textColor};
+        `}
 
   ${({ $subMenu, $theme }) =>
     $subMenu &&
@@ -846,8 +882,7 @@ const NavTabTab = styled.div<{
       width: 100%;
       min-width: 150px;
       border: 1px solid ${$theme?.borderColor};
-      background-color: 1px solid ${$theme?.hoverBackgroundColor};
-      color: 1px solid ${$theme?.textColor};
+      color: ${$theme?.textColor};
       padding-right: 40px;
     `}
 
@@ -883,18 +918,34 @@ const NavTabTab = styled.div<{
           `}
     `};
 
-  ${({ $theme, $withCircle, $mobile }) => css`
+  ${({
+    $theme,
+    $withCircle,
+    $mobile,
+    $hoverBackgroundColor,
+    $backgroundColor,
+    $selectedBackgroundColor,
+    $activeBackgroundColor,
+    $selected,
+  }) => css`
     ${!$mobile &&
+    !$selected &&
     css`
       &:hover {
-        background-color: ${$theme.hoverBackgroundColor};
+        background-color: ${$hoverBackgroundColor ??
+        ($backgroundColor ? lightenColor($backgroundColor, 0.4) : undefined) ??
+        $theme.hoverBackgroundColor};
       }
     `}
 
     ${!$withCircle &&
     css`
       &:active:not(:has([aria-label="action-button"]:active)) {
-        background-color: ${$theme.activeBackgroundColor};
+        background-color: ${$activeBackgroundColor ??
+        ($selectedBackgroundColor
+          ? lightenColor($selectedBackgroundColor, 0.4)
+          : undefined) ??
+        $theme.activeBackgroundColor};
         box-shadow: ${$theme.activeInsetShadow};
       }
     `}
@@ -956,10 +1007,16 @@ const getTabWidth = ({
   return "";
 };
 
+// Active color represents the indicator color of the currently selected screen/tab.
+// Active background color is used for the temporary pressed/click interaction state.
 const CircleBadge = styled.span<{
   $theme?: NavTabThemeConfig;
   $activeColor?: string;
   $pressed?: boolean;
+  $backgroundColor: string;
+  $textColor: string;
+  $selectedBackgroundColor: string;
+  $activeBackgroundColor: string;
 }>`
   position: absolute;
   left: 50%;
@@ -973,21 +1030,26 @@ const CircleBadge = styled.span<{
   align-items: center;
   justify-content: center;
   gap: 7px;
-  background-color: ${({ $theme, $activeColor }) =>
-    $activeColor ?? $theme?.circleInactiveColor};
+  background-color: ${({ $theme, $backgroundColor }) =>
+    $backgroundColor ?? $theme?.circleInactiveColor};
 
   &:active {
-    background-color: ${({ $theme }) => $theme?.indicatorColor};
+    background-color: ${({ $theme, $activeColor, $activeBackgroundColor }) =>
+      ($activeBackgroundColor && lightenColor($activeBackgroundColor, 0.05)) ??
+      ($activeColor && lightenColor($activeColor, 0.05)) ??
+      lightenColor($theme?.indicatorColor, 0.05)};
   }
 
-  ${({ $pressed, $theme }) =>
+  ${({ $pressed, $theme, $activeColor, $selectedBackgroundColor }) =>
     $pressed &&
     css`
-      background-color: ${$theme?.indicatorColor};
+      background-color: ${$selectedBackgroundColor ??
+      $activeColor ??
+      $theme?.indicatorColor};
     `};
 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  color: white;
+  color: ${({ $textColor }) => $textColor ?? "white"};
 
   @media (min-width: 450px) {
     width: 85px;
