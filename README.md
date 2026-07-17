@@ -3,7 +3,7 @@
 Coneto is a complete React UI library created by Systatum, designed with modernity, simplicity, and usability at its core. It helps you build applications faster with a consistent and polished design system.
 
 <p align="left">
-   <a href="https://deepwiki.com/Tencent/tdesign-react">
+   <a href="https://deepwiki.com/systatum/coneto">
       <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
    </a>
 </p>
