@@ -45,7 +45,7 @@ export interface PaperDialogProps {
   children?: ReactNode;
   closable?: boolean;
   styles?: PaperDialogStyles;
-  onClosed?: () => void;
+  onChange?: (state: PaperDialogState) => void;
   icons?: PaperDialogIcons;
   id?: string;
   className?: string;
@@ -114,7 +114,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       position = "right",
       children,
       styles,
-      onClosed,
+      onChange,
       icons,
       className,
       title,
@@ -320,7 +320,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           window.removeEventListener("pointerup", onUp);
 
           if (velocityRef.current > 0.5) {
-            setDialogState("minimized");
+            handleChangeDialog("minimized");
             setShowTitlebar(true);
             setTimeout(() => {
               // Clear inline styles so Framer Motion takes back control
@@ -394,15 +394,25 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resolvedWidth = resizeWidth != null ? `${resizeWidth}px` : width;
     const resolvedHeight = resizeHeight != null ? `${resizeHeight}px` : height;
 
+    const handleChangeDialog = useCallback(
+      (state: PaperDialogState) => {
+        setDialogState(state);
+        if (onChange) {
+          onChange(state);
+        }
+      },
+      [setDialogState, onChange]
+    );
+
     const closeDialog = useCallback(
       async (withTimeout: boolean = true) => {
-        const close = async () => await setDialogState("closed");
+        const close = async () => await handleChangeDialog("closed");
 
         await setResizeHeight(null);
         await setResizeWidth(null);
 
         if (mobile) {
-          await setDialogState("minimized");
+          await handleChangeDialog("minimized");
 
           if (withTimeout) {
             setTimeout(close, 400);
@@ -412,21 +422,17 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         } else {
           await close();
         }
-
-        if (onClosed) {
-          await onClosed();
-        }
       },
-      [mobile, onClosed]
+      [mobile, handleChangeDialog]
     );
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
-        await setDialogState("restored");
+        await handleChangeDialog("restored");
       },
       closeDialog: (withTimeout?: boolean) => closeDialog(withTimeout),
       minimizeDialog: async () => {
-        await setDialogState("minimized");
+        await handleChangeDialog("minimized");
       },
     }));
 
@@ -439,12 +445,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         ) {
           closeDialog();
           setShowTitlebar(false);
-          if (onClosed) {
-            onClosed();
-          }
         }
       },
-      [setDialogState, dialogState]
+      [dialogState]
     );
 
     useEffect(() => {
@@ -478,7 +481,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             <MiniTitleBar
               $theme={paperDialogTheme}
               onClick={() => {
-                setDialogState("restored");
+                handleChangeDialog("restored");
                 setShowTitlebar(false);
               }}
               initial={{ y: "100%" }}
@@ -520,7 +523,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                           size: icons?.closeIcon?.size ?? 18,
                         },
                         onClick: () => {
-                          setDialogState("closed");
+                          handleChangeDialog("closed");
                         },
                       },
                     ],
@@ -570,7 +573,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             dragElastic={{ top: 0, bottom: 0.6 }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
-                setDialogState("minimized");
+                handleChangeDialog("minimized");
                 setShowTitlebar(true);
               }
             }}
@@ -615,7 +618,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 aria-label="paper-dialog-toggle-restore"
                 $style={styles?.minimizeButtonStyle}
                 onClick={() => {
-                  setDialogState(
+                  handleChangeDialog(
                     dialogState === "minimized" ? "restored" : "minimized"
                   );
                   setShowTitlebar(true);
@@ -962,7 +965,6 @@ const DragIndicatorWrapper = styled(motion.div)<{
   cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
   width: 100dvw;
   height: 60px;
-  z-index: 9992999;
   align-items: center;
   border-radius: 1.2rem 1.2rem 0 0;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
