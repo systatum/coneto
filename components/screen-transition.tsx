@@ -29,7 +29,7 @@ type ScreenSheetConfig =
   | boolean
   | Omit<PaperDialogResizable, "minWidth" | "maxWidth">;
 
-type ScreenEntry = ScreensComponent | ScreenConfig;
+export type ScreenEntry = ScreensComponent | ScreenConfig;
 
 export type ScreensMap = Record<string, ScreenEntry>;
 
