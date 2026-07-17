@@ -161,6 +161,59 @@ Each dialog maintains its own animation while remaining synchronized with the na
 
 ---
 
+---
+
+#### Sheet Presentation
+
+By default, every screen is presented as a full-screen \`PaperDialog\`. Alternatively, a screen can be configured to appear as a sheet by providing a configuration object instead of a component.
+
+\`\`\`tsx
+const screens = {
+  home: HomeScreen,
+  profile: ProfileScreen,
+  filter: {
+    component: FilterScreen,
+    sheet: true,
+  },
+};
+\`\`\`
+
+The \`sheet\` option controls how the screen is presented.
+
+\`\`\`ts
+type ScreenConfig = {
+  component: ComponentType<Partial<ScreenProps>>;
+  sheet?: boolean | PaperDialogResizable;
+};
+\`\`\`
+
+Setting \`sheet: true\` displays the screen using the default sheet appearance.
+
+\`\`\`tsx
+const screens = {
+  filter: {
+    component: FilterScreen,
+    sheet: true,
+  },
+};
+\`\`\`
+
+A custom sheet configuration can also be provided by passing \`PaperDialogResizable\`.
+
+\`\`\`tsx
+const screens = {
+  filter: {
+    component: FilterScreen,
+    sheet: {
+      minHeight: "50dvh",
+      maxHeight: "90dvh",
+    },
+  },
+};
+\`\`\`
+
+This allows \`ScreenTransition\` to present a mixture of full-screen pages and sheets while using the same navigation API.
+
 #### Initial Screen Restoration
 
 If a screen already exists inside the initial \`activeScreens\` array, it opens immediately without replaying its opening animation.
