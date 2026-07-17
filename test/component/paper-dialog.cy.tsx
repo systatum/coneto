@@ -817,7 +817,7 @@ describe("PaperDialog", () => {
         it("should renders with arrow icon (default)", () => {
           cy.mount(
             <ProductPaperDialog
-              onClosed={() => {
+              onChange={() => {
                 console.log("the modal is closed");
               }}
             />
@@ -837,8 +837,8 @@ describe("PaperDialog", () => {
         it("should changes with customize icon", () => {
           cy.mount(
             <ProductPaperDialog
-              onClosed={() => {
-                console.log("the modal is closed");
+              onChange={(state) => {
+                console.log(`the modal is ${state}`);
               }}
               icons={{
                 restoreIcon: {
@@ -864,8 +864,8 @@ describe("PaperDialog", () => {
         it("should renders with close icon (default)", () => {
           cy.mount(
             <ProductPaperDialog
-              onClosed={() => {
-                console.log("the modal is closed");
+              onChange={(state) => {
+                console.log(`the modal is ${state}`);
               }}
             />
           );
@@ -883,8 +883,8 @@ describe("PaperDialog", () => {
         it("should changes with customize icon", () => {
           cy.mount(
             <ProductPaperDialog
-              onClosed={() => {
-                console.log("the modal is closed");
+              onChange={(state) => {
+                console.log(`the modal is ${state}`);
               }}
               icons={{
                 closeIcon: {
@@ -906,13 +906,13 @@ describe("PaperDialog", () => {
     });
   });
 
-  context("onClosed", () => {
+  context("onChange", () => {
     context("when pressing escape", () => {
       it("should give the callback", () => {
         cy.mount(
           <ProductPaperDialog
-            onClosed={() => {
-              console.log("the modal is closed");
+            onChange={(state) => {
+              console.log(`the modal is ${state}`);
             }}
           />
         );
@@ -943,8 +943,8 @@ describe("PaperDialog", () => {
       it("should give the callback", () => {
         cy.mount(
           <ProductPaperDialog
-            onClosed={() => {
-              console.log("the modal is closed");
+            onChange={(state) => {
+              console.log(`the modal is ${state}`);
             }}
           />
         );
@@ -975,8 +975,8 @@ describe("PaperDialog", () => {
       it("should give the callback", () => {
         cy.mount(
           <ProductPaperDialog
-            onClosed={() => {
-              console.log("the modal is closed");
+            onChange={(state) => {
+              console.log(`the modal is ${state}`);
             }}
           />
         );
@@ -1005,12 +1005,12 @@ describe("PaperDialog", () => {
 
     context("when given closable false", () => {
       context("when pressing escape", () => {
-        it("should not give the callback", () => {
+        it("should give the callback only for minimized", () => {
           cy.mount(
             <ProductPaperDialog
               closable={false}
-              onClosed={() => {
-                console.log("the modal is closed");
+              onChange={(state) => {
+                console.log(`the modal is ${state}`);
               }}
             />
           );
@@ -1042,8 +1042,8 @@ describe("PaperDialog", () => {
           cy.mount(
             <ProductPaperDialog
               closable={false}
-              onClosed={() => {
-                console.log("the modal is closed");
+              onChange={(state) => {
+                console.log(`the modal is ${state}`);
               }}
             />
           );
