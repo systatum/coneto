@@ -34,8 +34,72 @@ describe("NavTab", () => {
     },
   ];
 
+  const TABS_ITEMS: NavTabTab[] = [
+    {
+      id: "1",
+      title: "Write",
+      content: <WriteTabContent />,
+      onClick: () => {
+        console.log("test tab 1");
+      },
+      actions: [
+        {
+          caption: "Discover",
+          onClick: () => {
+            console.log("Discover clicked");
+          },
+          icon: { image: RiSearchLine },
+        },
+      ],
+    },
+    {
+      id: "2",
+      title: "Review",
+      content: <ReviewTabContent />,
+      onClick: () => {
+        console.log("test tab 2");
+      },
+      actions: [
+        {
+          caption: "Discover",
+          onClick: () => {
+            console.log("Discover clicked");
+          },
+          icon: { image: RiSearchLine },
+        },
+        {
+          caption: "Mention",
+          onClick: () => {
+            console.log("Mention clicked");
+          },
+          icon: { image: RiAtLine },
+        },
+      ],
+    },
+    {
+      hidden: true,
+      id: "3",
+      title: "Empty",
+      content: "Empty",
+      onClick: () => {},
+    },
+  ];
+
+  function ProductNavTab(props: NavTabProps) {
+    const [activeTab, setActiveTab] = useState("2");
+
+    return (
+      <NavTab
+        tabs={TABS_ITEMS}
+        activeTab={activeTab}
+        onChange={(activeTab) => setActiveTab(activeTab)}
+        {...props}
+      />
+    );
+  }
+
   context("mobile", () => {
-    const TABS_ITEMS: NavTabTab[] = [
+    const MOBILE_TABS_ITEMS: NavTabTab[] = [
       {
         id: "1",
         title: "Home",
@@ -127,23 +191,13 @@ describe("NavTab", () => {
       },
     ];
 
-    function MobileNavTabProduct(props: NavTabProps) {
-      const [activeTab, setActiveTab] = useState("2");
-
-      return (
-        <NavTab
-          mobile
-          tabs={TABS_ITEMS}
-          activeTab={activeTab}
-          onChange={(activeTab) => setActiveTab(activeTab)}
-          {...props}
-        />
-      );
+    function ProductMobileNavTab(props: NavTabProps) {
+      return <ProductNavTab mobile tabs={MOBILE_TABS_ITEMS} {...props} />;
     }
 
     context("general style", () => {
       it("render in the bottom of content", () => {
-        cy.mount(<MobileNavTabProduct />);
+        cy.mount(<ProductMobileNavTab />);
 
         cy.findByLabelText("nav-tab-bar")
           .should("have.css", "position", "fixed")
@@ -151,7 +205,7 @@ describe("NavTab", () => {
       });
 
       it("render with justify-between and align-stretch", () => {
-        cy.mount(<MobileNavTabProduct />);
+        cy.mount(<ProductMobileNavTab />);
 
         cy.findByLabelText("nav-tab-tabs-sections")
           .should("have.css", "justify-content", "space-between")
@@ -161,7 +215,7 @@ describe("NavTab", () => {
       context("when given untitle tab", () => {
         it("should render all tabs with equal height", () => {
           cy.mount(
-            <MobileNavTabProduct
+            <ProductMobileNavTab
               tabs={[
                 {
                   id: "1",
@@ -203,7 +257,7 @@ describe("NavTab", () => {
       context("when given content less than four", () => {
         it("should render all tabs with equal width", () => {
           cy.mount(
-            <MobileNavTabProduct
+            <ProductMobileNavTab
               tabs={[
                 {
                   id: "1",
@@ -284,7 +338,7 @@ describe("NavTab", () => {
       context("when given in parent level", () => {
         it("should render as a Tab", () => {
           cy.mount(
-            <MobileNavTabProduct
+            <ProductMobileNavTab
               actions={[
                 {
                   icon: { image: RiSettings5Line },
@@ -302,7 +356,7 @@ describe("NavTab", () => {
       context("when given inside of the tab", () => {
         it("should not render the action item", () => {
           cy.mount(
-            <MobileNavTabProduct
+            <ProductMobileNavTab
               tabs={[
                 {
                   id: "1",
@@ -338,7 +392,7 @@ describe("NavTab", () => {
     context("when given subItems", () => {
       context("when when clicking", () => {
         it("renders all submenu", () => {
-          cy.mount(<MobileNavTabProduct />);
+          cy.mount(<ProductMobileNavTab />);
 
           const TEXTS = ["Logout", "Language", "Privacy & security settings"];
 
@@ -358,12 +412,16 @@ describe("NavTab", () => {
         });
 
         it("renders in the bottom of screen with -4px", () => {
-          const TABS_ITEMS_WITHOUT_CIRCLE = TABS_ITEMS.map((tabs) => ({
-            ...tabs,
-            withCircle: false,
-          }));
+          const MOBILE_TABS_ITEMS_WITHOUT_CIRCLE = MOBILE_TABS_ITEMS.map(
+            (tabs) => ({
+              ...tabs,
+              withCircle: false,
+            })
+          );
 
-          cy.mount(<MobileNavTabProduct tabs={TABS_ITEMS_WITHOUT_CIRCLE} />);
+          cy.mount(
+            <ProductMobileNavTab tabs={MOBILE_TABS_ITEMS_WITHOUT_CIRCLE} />
+          );
 
           cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
 
@@ -379,7 +437,7 @@ describe("NavTab", () => {
 
         context("when one tabs using circle", () => {
           it("renders in the bottom of screen with 12px", () => {
-            cy.mount(<MobileNavTabProduct />);
+            cy.mount(<ProductMobileNavTab />);
 
             cy.findAllByLabelText("nav-tab-tab").eq(4).trigger("pointerdown");
 
@@ -398,7 +456,7 @@ describe("NavTab", () => {
 
     context("when given withCircle", () => {
       it("should render a bit striking upwards from bottom", () => {
-        cy.mount(<MobileNavTabProduct />);
+        cy.mount(<ProductMobileNavTab />);
 
         cy.findAllByLabelText("nav-tab-circle").should(
           "have.css",
@@ -408,13 +466,13 @@ describe("NavTab", () => {
       });
 
       it("should with circle in a Tab", () => {
-        cy.mount(<MobileNavTabProduct />);
+        cy.mount(<ProductMobileNavTab />);
 
         cy.findAllByLabelText("nav-tab-circle").should("have.length", 1);
       });
 
       it("should render the circle with darker color (rgb(60, 73, 95))", () => {
-        cy.mount(<MobileNavTabProduct />);
+        cy.mount(<ProductMobileNavTab />);
 
         cy.findAllByLabelText("nav-tab-circle")
           .eq(0)
@@ -423,7 +481,7 @@ describe("NavTab", () => {
 
       context("when selected the tab withCircle", () => {
         it("underline would be transparent", () => {
-          cy.mount(<MobileNavTabProduct />);
+          cy.mount(<ProductMobileNavTab />);
 
           cy.findByLabelText("nav-tab-underscore").should(
             "have.css",
@@ -441,7 +499,7 @@ describe("NavTab", () => {
         });
 
         it("should render the circle with the lighter color (rgb(59, 130, 246))", () => {
-          cy.mount(<MobileNavTabProduct />);
+          cy.mount(<ProductMobileNavTab />);
 
           cy.findAllByLabelText("nav-tab-circle")
             .eq(0)
@@ -460,6 +518,297 @@ describe("NavTab", () => {
         cy.findByText("Write").should("exist");
         cy.findByText("Review").should("exist");
         cy.findByText("Empty").should("not.exist");
+      });
+    });
+
+    context("coloring", () => {
+      context("textColor", () => {
+        context("when given red color", () => {
+          const TABS_WITH_TEXT_COLOR = TABS_ITEMS.map((tab, index) => ({
+            ...tab,
+            textColor: index === 0 && "red",
+          }));
+
+          it("render the color with rgb(255, 0, 0)", () => {
+            cy.mount(<ProductNavTab tabs={TABS_WITH_TEXT_COLOR} />);
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "color", "rgb(255, 0, 0)");
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(1)
+              .should("not.have.css", "color", "rgb(255, 0, 0)");
+          });
+
+          context("when hovering the tab", () => {
+            it("still render the color with rgb(255, 0, 0)", () => {
+              cy.mount(<ProductNavTab tabs={TABS_WITH_TEXT_COLOR} />);
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "color", "rgb(255, 0, 0)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "color", "rgb(255, 0, 0)");
+            });
+          });
+        });
+      });
+
+      context("hoverTextColor", () => {
+        context("when given blue color", () => {
+          const TABS_WITH_HOVER_TEXT_COLOR = TABS_ITEMS.map((tab, index) => ({
+            ...tab,
+            hoverTextColor: index === 0 && "blue",
+          }));
+
+          it("render the color with inherit color (black)", () => {
+            cy.mount(<ProductNavTab tabs={TABS_WITH_HOVER_TEXT_COLOR} />);
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "color", "rgb(0, 0, 0)");
+          });
+
+          context("when hovering the tab", () => {
+            it("still render the color with rgb(0, 0, 255)", () => {
+              cy.mount(<ProductNavTab tabs={TABS_WITH_HOVER_TEXT_COLOR} />);
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "color", "rgb(0, 0, 0)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "color", "rgb(0, 0, 255)");
+            });
+          });
+        });
+      });
+
+      context("backgroundColor", () => {
+        context("when given red color", () => {
+          const TABS_WITH_BACKGROUND_COLOR = TABS_ITEMS.map((tab, index) => ({
+            ...tab,
+            backgroundColor: index === 0 && "red",
+          }));
+
+          it("render the background color with rgb(255, 0, 0)", () => {
+            cy.mount(<ProductNavTab tabs={TABS_WITH_BACKGROUND_COLOR} />);
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 0, 0)");
+          });
+
+          context("when selecting the red background color", () => {
+            it("render the background color with selected color (rgba(243, 244, 246, 0.5))", () => {
+              cy.mount(<ProductNavTab tabs={TABS_WITH_BACKGROUND_COLOR} />);
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 0, 0)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).click();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should(
+                  "have.css",
+                  "background-color",
+                  "rgba(243, 244, 246, 0.5)"
+                );
+            });
+          });
+
+          context("when hovering the tab", () => {
+            it("render the background color lighter than rgb(255, 102, 102)", () => {
+              cy.mount(<ProductNavTab tabs={TABS_WITH_BACKGROUND_COLOR} />);
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 0, 0)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 102, 102)");
+            });
+          });
+        });
+      });
+
+      context("hoverBackgroundColor", () => {
+        context("when given red color", () => {
+          const TABS_WITH_TEXT_COLOR = TABS_ITEMS.map((tab, index) => ({
+            ...tab,
+            hoverBackgroundColor: index === 0 && "red",
+          }));
+
+          it("render the background with default color (rgb(255, 255, 255))", () => {
+            cy.mount(<ProductNavTab tabs={TABS_WITH_TEXT_COLOR} />);
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 255, 255)");
+          });
+
+          context("when hovering the tab", () => {
+            it("render the background color with rgb(255, 0, 0)", () => {
+              cy.mount(<ProductNavTab tabs={TABS_WITH_TEXT_COLOR} />);
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 0, 0)");
+            });
+          });
+
+          context("when selecting the hover color", () => {
+            context("when hover the selected tab with hover color", () => {
+              it("render the background color with inherit selected color (rgba(243, 244, 246, 0.5))", () => {
+                cy.mount(<ProductNavTab tabs={TABS_WITH_TEXT_COLOR} />);
+                cy.findAllByLabelText("nav-tab-tab")
+                  .eq(0)
+                  .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+                cy.findAllByLabelText("nav-tab-tab").eq(0).click();
+
+                cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+                cy.wait(200);
+
+                cy.findAllByLabelText("nav-tab-tab")
+                  .eq(0)
+                  .should(
+                    "have.css",
+                    "background-color",
+                    "rgba(243, 244, 246, 0.5)"
+                  );
+              });
+            });
+          });
+        });
+      });
+
+      context("selectedBackgroundColor", () => {
+        context("when given red color", () => {
+          const TABS_WITH_SELECTED_BACKGROUND_COLOR = TABS_ITEMS.map(
+            (tab, index) => ({
+              ...tab,
+              selectedBackgroundColor: index === 0 && "red",
+            })
+          );
+
+          it("render the background with default color (rgb(255, 255, 255))", () => {
+            cy.mount(
+              <ProductNavTab tabs={TABS_WITH_SELECTED_BACKGROUND_COLOR} />
+            );
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 255, 255)");
+          });
+
+          context("when hovering the tab", () => {
+            it("render the background color with default color (rgba(243, 244, 246, 0.5))", () => {
+              cy.mount(
+                <ProductNavTab tabs={TABS_WITH_SELECTED_BACKGROUND_COLOR} />
+              );
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should(
+                  "have.css",
+                  "background-color",
+                  "rgba(243, 244, 246, 0.5)"
+                );
+            });
+          });
+
+          context("when selecting the tab", () => {
+            it("render the background color with rgb(255, 0, 0)", () => {
+              cy.mount(
+                <ProductNavTab tabs={TABS_WITH_SELECTED_BACKGROUND_COLOR} />
+              );
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).click();
+
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 0, 0)");
+            });
+          });
+        });
+      });
+
+      context("activeBackgroundColor", () => {
+        context("when given blue color", () => {
+          const TABS_WITH_ACTIVE_BACKGROUND_COLOR = TABS_ITEMS.map(
+            (tab, index) => ({
+              ...tab,
+              activeBackgroundColor: index === 0 && "blue",
+            })
+          );
+
+          it("render the background with default color (rgb(255, 255, 255))", () => {
+            cy.mount(
+              <ProductNavTab tabs={TABS_WITH_ACTIVE_BACKGROUND_COLOR} />
+            );
+            cy.findAllByLabelText("nav-tab-tab")
+              .eq(0)
+              .should("have.css", "background-color", "rgb(255, 255, 255)");
+          });
+
+          context("when selecting the tab", () => {
+            it("render the active background color with rgb(0, 0, 255)", () => {
+              cy.mount(
+                <ProductNavTab tabs={TABS_WITH_ACTIVE_BACKGROUND_COLOR} />
+              );
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should("have.css", "background-color", "rgb(255, 255, 255)");
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .realMouseDown()
+                .should("have.css", "background-color", "rgb(0, 0, 255)");
+              cy.wait(200);
+
+              cy.findAllByLabelText("nav-tab-tab").eq(0).realClick();
+
+              cy.findAllByLabelText("nav-tab-tab")
+                .eq(0)
+                .should(
+                  "have.css",
+                  "background-color",
+                  "rgba(243, 244, 246, 0.5)"
+                );
+            });
+          });
+        });
       });
     });
   });
@@ -975,54 +1324,3 @@ describe("NavTab", () => {
     });
   });
 });
-
-const TABS_ITEMS: NavTabTab[] = [
-  {
-    id: "1",
-    title: "Write",
-    content: <WriteTabContent />,
-    onClick: () => {
-      console.log("test tab 1");
-    },
-    actions: [
-      {
-        caption: "Discover",
-        onClick: () => {
-          console.log("Discover clicked");
-        },
-        icon: { image: RiSearchLine },
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Review",
-    content: <ReviewTabContent />,
-    onClick: () => {
-      console.log("test tab 2");
-    },
-    actions: [
-      {
-        caption: "Discover",
-        onClick: () => {
-          console.log("Discover clicked");
-        },
-        icon: { image: RiSearchLine },
-      },
-      {
-        caption: "Mention",
-        onClick: () => {
-          console.log("Mention clicked");
-        },
-        icon: { image: RiAtLine },
-      },
-    ],
-  },
-  {
-    hidden: true,
-    id: "3",
-    title: "Empty",
-    content: "Empty",
-    onClick: () => {},
-  },
-];
