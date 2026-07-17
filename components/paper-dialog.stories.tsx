@@ -154,8 +154,9 @@ Each icon accepts:
       description: "Custom styles for the dialog, tabs, and close button",
       control: false,
     },
-    onClosed: {
-      description: "Callback fired after the dialog closes",
+    onChange: {
+      description:
+        "Callback fired after the dialog for closed, minimized, and restored condition",
       action: "closed",
     },
   },
