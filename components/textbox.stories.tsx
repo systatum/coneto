@@ -1,8 +1,7 @@
 import * as RemixIcons from "@remixicon/react";
-import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
-import { useEffect, useState, type ChangeEvent } from "react";
 import { css } from "styled-components";
+import { useState } from "react";
 import { Textbox, TextboxProps, TextboxDropdownOption } from "./textbox";
 
 const meta: Meta<typeof Textbox> = {
@@ -228,7 +227,6 @@ export const Input: Story = {
     name: "input",
     label: "Input",
     placeholder: "Type here...",
-    value: "",
     type: "text",
     styles: {
       self: css`
@@ -238,23 +236,15 @@ export const Input: Story = {
     },
   },
   render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
+    const [value, setValue] = useState("");
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-    };
-
-    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textbox
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
   },
 };
 
@@ -348,7 +338,6 @@ export const WithAction: Story = {
     name: "message",
     label: "With Action",
     placeholder: "Type a message...",
-    value: "",
     type: "text",
     styles: {
       self: css`
@@ -358,26 +347,12 @@ export const WithAction: Story = {
     },
   },
   render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-    };
+    const [value, setValue] = useState("");
 
     return (
       <Textbox
         {...args}
-        value={args.value}
+        value={value}
         actions={[
           {
             id: "send-message",
@@ -388,11 +363,11 @@ export const WithAction: Story = {
           {
             id: "delete-message",
             icon: { image: RemixIcons.RiCloseLine },
-            onClick: () => setUpdateArgs({ value: "" }),
+            onClick: () => setValue(""),
             title: "Delete message",
           },
         ].filter(Boolean)}
-        onChange={handleChange}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -403,7 +378,6 @@ export const Password: Story = {
     name: "password",
     label: "Password",
     placeholder: "Enter password...",
-    value: "",
     type: "password",
     styles: {
       self: css`
@@ -413,23 +387,15 @@ export const Password: Story = {
     },
   },
   render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
+    const [value, setValue] = useState("");
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-      setUpdateArgs({ value: newValue });
-    };
-
-    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textbox
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
   },
 };
 
@@ -450,28 +416,14 @@ export const WithErrorMessage: Story = {
     },
   },
   render: (args: TextboxProps) => {
-    const [, setUpdateArgs] = useArgs();
+    const [value, setValue] = useState("");
 
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setUpdateArgs({ value: "" });
-      }, 100);
-      return () => clearTimeout(timer);
-    }, [setUpdateArgs]);
-
-    const handleChange = (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      const newValue = e.target.value;
-
-      setUpdateArgs({
-        value: newValue,
-        showError: newValue.length < 10,
-        errorMessage:
-          newValue.length < 10 ? "This field is required" : undefined,
-      });
-    };
-
-    return <Textbox {...args} value={args.value} onChange={handleChange} />;
+    return (
+      <Textbox
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
   },
 };
