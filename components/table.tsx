@@ -2115,6 +2115,9 @@ const CellContent = styled.div<{
       left: ${$selectable ? "34px" : "-0.5px"};
       z-index: 40;
       background-color: var(--row-bg, #ffffff);
+      /* isolates this cell onto its own compositing layer to avoid intermittent paint */
+      transform: translateZ(0);
+      will-change: transform;
 
       &::after {
         content: "";
@@ -2125,7 +2128,7 @@ const CellContent = styled.div<{
         width: 6px;
         background: ${$isScrolledLeft
           ? $theme?.leftLooseEffectColor
-          : "transparent"};
+          : "var(--row-bg, transparent)"};
         pointer-events: none;
       }
     `};
