@@ -25,7 +25,9 @@ type ScreenConfig = {
   sheet?: ScreenSheetConfig;
 };
 
-type ScreenSheetConfig = boolean | PaperDialogResizable;
+type ScreenSheetConfig =
+  | boolean
+  | Omit<PaperDialogResizable, "minWidth" | "maxWidth">;
 
 type ScreenEntry = ScreensComponent | ScreenConfig;
 
