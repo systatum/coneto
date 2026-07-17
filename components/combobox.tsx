@@ -877,7 +877,7 @@ function ComboboxDrawer({
 
   const searchboxProps = typeof searchbox === "object" && searchbox;
 
-  const hasFewOptions = finalOptions?.length < 5;
+  const hasFewOptions = finalOptions?.length <= 5;
 
   const mainCombobox = (
     <DrawerWrapper
