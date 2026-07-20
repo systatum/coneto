@@ -607,6 +607,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             {resizable && !mobile && (
               <DesktopResizeHandle
                 $isLeft={isLeft}
+                $style={styles?.indicatorStyle}
                 onPointerDown={handleDesktopResizePointerDown}
                 aria-label="paper-dialog-resize-handle"
               />
@@ -681,6 +682,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               <DragIndicatorWrapper
                 aria-label="paper-dialog-drag-indicator"
                 $resizable={!!resizable}
+                $style={styles?.indicatorStyle}
                 onPointerDown={(e) => {
                   if (resizable) {
                     handleMobileResizePointerDown(e);
@@ -837,7 +839,7 @@ const MotionDialog = styled(motion.div)<{
   ${({ $style }) => $style};
 `;
 
-const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
+const DesktopResizeHandle = styled.div<{ $isLeft: boolean; $style?: CSSProp }>`
   touch-action: none;
   position: absolute;
   top: 0;
@@ -862,6 +864,8 @@ const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
   &:active {
     background-color: rgba(128, 128, 128, 0.18);
   }
+
+  ${({ $style }) => $style}
 `;
 
 const ActionButtonWrapper = styled.div<{
@@ -998,7 +1002,7 @@ const DragIndicatorWrapper = styled(motion.div)<{
     cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grabbing")};
   }
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const DragIndicator = styled(motion.div)<{
