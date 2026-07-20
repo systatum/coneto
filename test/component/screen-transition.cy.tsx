@@ -296,7 +296,7 @@ describe("Screen Transition", () => {
       });
 
       context("when given height 300px", () => {
-        it("renders the element with 300px", () => {
+        it("renders the element with height 300px", () => {
           cy.viewport(500, 700);
 
           const productWithSheetScreens: ScreensMap = {
@@ -405,7 +405,7 @@ describe("Screen Transition", () => {
       });
 
       context("when given width 300px", () => {
-        it("renders the element with 300px", () => {
+        it("renders the element with width 300px", () => {
           cy.viewport(500, 700);
 
           const productWithSheetScreens: ScreensMap = {
