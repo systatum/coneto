@@ -32,6 +32,18 @@ export const PaperDialogState = {
 export type PaperDialogState =
   (typeof PaperDialogState)[keyof typeof PaperDialogState];
 
+export const PaperDialogTrigger = {
+  Api: "api",
+  Overlay: "overlay",
+  Escape: "escape",
+  Drag: "drag",
+  Resize: "resize",
+  Control: "control",
+} as const;
+
+export type PaperDialogTrigger =
+  (typeof PaperDialogTrigger)[keyof typeof PaperDialogTrigger];
+
 export const PaperDialogPosition = {
   Left: "left",
   Right: "right",
@@ -45,7 +57,7 @@ export interface PaperDialogProps {
   children?: ReactNode;
   closable?: boolean | PaperDialogClosable;
   styles?: PaperDialogStyles;
-  onChange?: (state: PaperDialogState) => void;
+  onChange?: (state: PaperDialogState, trigger?: PaperDialogTrigger) => void;
   icons?: PaperDialogIcons;
   id?: string;
   className?: string;
@@ -345,7 +357,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           window.removeEventListener("pointerup", onUp);
 
           if (velocityRef.current > 0.5) {
-            handleChangeDialog("minimized");
+            handleChangeDialog(
+              PaperDialogState.Minimized,
+              PaperDialogTrigger.Resize
+            );
             setShowTitlebar(true);
             setTimeout(() => {
               // Clear inline styles so Framer Motion takes back control
@@ -420,24 +435,25 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resolvedHeight = resizeHeight != null ? `${resizeHeight}px` : height;
 
     const handleChangeDialog = useCallback(
-      (state: PaperDialogState) => {
+      (state: PaperDialogState, trigger: PaperDialogTrigger) => {
         setDialogState(state);
         if (onChange) {
-          onChange(state);
+          onChange(state, trigger);
         }
       },
       [setDialogState, onChange]
     );
 
     const closeDialog = useCallback(
-      async (withTimeout: boolean = true) => {
-        const close = async () => await handleChangeDialog("closed");
+      async (withTimeout: boolean = true, trigger: PaperDialogTrigger) => {
+        const close = async () =>
+          await handleChangeDialog(PaperDialogState.Closed, trigger);
 
         await setResizeHeight(null);
         await setResizeWidth(null);
 
         if (withTimeout) {
-          await handleChangeDialog("minimized");
+          await handleChangeDialog(PaperDialogState.Minimized, trigger);
 
           if (withTimeout) {
             setTimeout(close, 400);
@@ -453,11 +469,18 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     useImperativeHandle(ref, () => ({
       openDialog: async () => {
-        await handleChangeDialog("restored");
+        await handleChangeDialog(
+          PaperDialogState.Restored,
+          PaperDialogTrigger.Api
+        );
       },
-      closeDialog: (withTimeout?: boolean) => closeDialog(withTimeout),
+      closeDialog: (withTimeout?: boolean) =>
+        closeDialog(withTimeout, PaperDialogTrigger.Api),
       minimizeDialog: async () => {
-        await handleChangeDialog("minimized");
+        await handleChangeDialog(
+          PaperDialogState.Minimized,
+          PaperDialogTrigger.Api
+        );
       },
     }));
 
@@ -468,7 +491,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           canCloseWithEscape &&
           (dialogState === "restored" || dialogState === "minimized")
         ) {
-          closeDialog();
+          closeDialog(true, PaperDialogTrigger.Escape);
           setShowTitlebar(false);
         }
       },
@@ -493,12 +516,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 await preventDefault();
                 if (canCloseWithOverlay) {
                   await setShowTitlebar(false);
-                  await closeDialog();
+                  await closeDialog(true, PaperDialogTrigger.Overlay);
                   await close();
                 }
               }}
               styles={{ self: styles?.overlayStyle }}
-              show={dialogState === "restored"}
+              show={dialogState === PaperDialogState.Restored}
             />
           )}
 
@@ -506,7 +529,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             <MiniTitleBar
               $theme={paperDialogTheme}
               onClick={() => {
-                handleChangeDialog("restored");
+                handleChangeDialog(
+                  PaperDialogState.Restored,
+                  PaperDialogTrigger.Control
+                );
                 setShowTitlebar(false);
               }}
               initial={{ y: "100%" }}
@@ -548,7 +574,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                           size: icons?.closeIcon?.size ?? 18,
                         },
                         onClick: () => {
-                          handleChangeDialog("closed");
+                          closeDialog(false, PaperDialogTrigger.Control);
                         },
                       },
                     ],
@@ -598,7 +624,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             dragElastic={{ top: 0, bottom: 0.6 }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 120 || info.velocity.y > 500) {
-                handleChangeDialog("minimized");
+                handleChangeDialog(
+                  PaperDialogState.Minimized,
+                  PaperDialogTrigger.Drag
+                );
                 setShowTitlebar(true);
               }
             }}
@@ -621,7 +650,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $isLeft={isLeft}
                 $theme={paperDialogTheme}
                 onClick={() => {
-                  closeDialog();
+                  closeDialog(true, PaperDialogTrigger.Control);
                 }}
                 $style={styles?.closeButtonStyle}
                 aria-label="paper-dialog-toggle-close"
@@ -645,7 +674,8 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $style={styles?.minimizeButtonStyle}
                 onClick={() => {
                   handleChangeDialog(
-                    dialogState === "minimized" ? "restored" : "minimized"
+                    dialogState === "minimized" ? "restored" : "minimized",
+                    PaperDialogTrigger.Control
                   );
                   setShowTitlebar(true);
                 }}
