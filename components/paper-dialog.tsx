@@ -445,7 +445,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     );
 
     const closeDialog = useCallback(
-      async (withTimeout: boolean = true, trigger: PaperDialogTrigger) => {
+      async (withTimeout: boolean, trigger: PaperDialogTrigger) => {
         const close = async () =>
           await handleChangeDialog(PaperDialogState.Closed, trigger);
 
@@ -491,7 +491,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           canCloseWithEscape &&
           (dialogState === "restored" || dialogState === "minimized")
         ) {
-          closeDialog(true, PaperDialogTrigger.Escape);
+          closeDialog(false, PaperDialogTrigger.Escape);
           setShowTitlebar(false);
         }
       },
