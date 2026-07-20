@@ -159,11 +159,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
         styles={styles}
         dialogRef={getDialogRef(index)}
         skipInitialAnimation={skipInitialAnimation}
-        onClosed={
-          config?.sheet || config?.width
-            ? () => goBack?.(!!config?.sheet || !!config?.width)
-            : undefined
-        }
+        onClosed={() => goBack?.(true)}
         sheet={config?.sheet}
         width={config?.width}
         height={config?.height}
