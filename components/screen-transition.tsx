@@ -10,6 +10,7 @@ import {
   PaperDialogRef,
   PaperDialogResizable,
   PaperDialogState,
+  PaperDialogStyles,
 } from "./paper-dialog";
 import { css } from "styled-components";
 
@@ -23,6 +24,8 @@ type ScreensComponent = ComponentType<Partial<ScreenProps>>;
 type ScreenConfig = {
   component: ScreensComponent;
   sheet?: ScreenSheetConfig;
+  width?: string;
+  height?: string;
 };
 
 type ScreenSheetConfig =
@@ -40,12 +43,21 @@ export interface ScreenTransitionProps<TScreens extends ScreensMap> {
   activeScreens: (keyof TScreens)[] | string[];
   /** Called with the next stack whenever navigation happens */
   onScreenChange: (screens: (keyof TScreens)[]) => void;
+  /** styles for screen transition*/
+  styles?: ScreenTransitionStyles;
+  /** initial size when needed, for sheet and normal appearance */
 }
+
+export type ScreenTransitionStyles = Pick<
+  PaperDialogStyles,
+  "indicatorStyle" | "contentStyle"
+>;
 
 function ScreenTransition<TScreens extends ScreensMap>({
   screens,
   activeScreens = [],
   onScreenChange,
+  styles,
 }: ScreenTransitionProps<TScreens>) {
   const dialogRefsRef = useRef<
     Map<number, React.RefObject<PaperDialogRef | null>>
@@ -92,7 +104,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
   const closingIndicesRef = useRef<Set<number>>(new Set());
 
   const goBack = useCallback(
-    (mobile?: boolean) => {
+    (withTimeout?: boolean) => {
       if (activeScreens.length === 0) return;
 
       const topIndex = activeScreens.length - 1; // the dialog wrapping the top screen
@@ -103,7 +115,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
       // and if closed with drag indicator still enough not trigger ref
       // for minimizing
       closingIndicesRef.current.add(topIndex);
-      if (!mobile) {
+      if (!withTimeout) {
         ref?.current?.minimizeDialog();
       }
 
@@ -144,10 +156,17 @@ function ScreenTransition<TScreens extends ScreensMap>({
     return (
       <DialogLevel
         key={index}
+        styles={styles}
         dialogRef={getDialogRef(index)}
         skipInitialAnimation={skipInitialAnimation}
-        onClosed={config?.sheet ? () => goBack?.(!!config?.sheet) : undefined}
+        onClosed={
+          config?.sheet || config?.width
+            ? () => goBack?.(!!config?.sheet || !!config?.width)
+            : undefined
+        }
         sheet={config?.sheet}
+        width={config?.width}
+        height={config?.height}
       >
         <ScreenComponent {...screenProps} />
         {index < activeScreens.length - 1 && renderStack(index + 1)}
@@ -176,12 +195,18 @@ function DialogLevel({
   skipInitialAnimation,
   sheet,
   onClosed,
+  styles,
+  height,
+  width,
 }: {
   dialogRef: React.RefObject<PaperDialogRef | null>;
   children: ReactNode;
   skipInitialAnimation?: boolean;
   sheet?: ScreenSheetConfig;
   onClosed?: () => void;
+  styles?: ScreenTransitionStyles;
+  height?: string;
+  width?: string;
 }) {
   useEffect(() => {
     // Only animate-open if this dialog wasn't pre-existing/already mounted.
@@ -190,24 +215,33 @@ function DialogLevel({
     }
   }, [dialogRef, skipInitialAnimation]);
 
+  const finalWidth = width ? width : "100dvw";
+  const finalHeight = height ? height : sheet ? "80dvh" : "100dvh";
+
   return (
     <PaperDialog
       styles={{
+        indicatorStyle: styles?.indicatorStyle,
         contentStyle: css`
           gap: 0px;
+          ${styles?.contentStyle}
         `,
       }}
       ref={dialogRef}
-      closable={false}
+      closable={{
+        withButton: false,
+        withEscape: false,
+        withOverlay: true,
+      }}
       controls={[]}
-      width={"100dvw"}
-      height={sheet ? "80dvh" : "100dvh"}
+      width={finalWidth}
+      height={finalHeight}
       mobile={!!sheet}
       resizable={sheet}
       initialDialogState={skipInitialAnimation ? "restored" : "closed"}
       skipInitialAnimation={skipInitialAnimation}
       onChange={
-        sheet
+        sheet || width
           ? (state: PaperDialogState) => {
               if (state === "minimized") onClosed?.();
             }
