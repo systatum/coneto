@@ -650,7 +650,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $isLeft={isLeft}
                 $theme={paperDialogTheme}
                 onClick={() => {
-                  closeDialog(true, PaperDialogTrigger.Control);
+                  closeDialog(false, PaperDialogTrigger.Control);
                 }}
                 $style={styles?.closeButtonStyle}
                 aria-label="paper-dialog-toggle-close"
@@ -674,7 +674,9 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $style={styles?.minimizeButtonStyle}
                 onClick={() => {
                   handleChangeDialog(
-                    dialogState === "minimized" ? "restored" : "minimized",
+                    dialogState === PaperDialogState.Minimized
+                      ? PaperDialogState.Restored
+                      : PaperDialogState.Minimized,
                     PaperDialogTrigger.Control
                   );
                   setShowTitlebar(true);
