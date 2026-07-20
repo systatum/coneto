@@ -29,6 +29,8 @@ Each screen automatically receives \`goToScreen\` and \`goBack\` callbacks, allo
 - ⬅️ Built-in back navigation
 - 🎬 Smooth open and close dialog animations
 - 🔄 Restores previously mounted screens without replaying opening animations
+- 📐 Per-screen width and height customization
+- 🎨 Customizable dialog indicator and content styles
 - 🧩 Fully controlled navigation state
 - 🛡️ Warns when navigating to unregistered screens
 
@@ -60,11 +62,26 @@ Every screen that can be displayed must be registered through the \`screens\` pr
 
 Each key acts as the unique identifier used during navigation.
 
+A screen may be registered directly as a component or as a configuration object.
+
 \`\`\`tsx
 const screens = {
   home: HomeScreen,
   profile: ProfileScreen,
-  settings: SettingsScreen,
+  settings: {
+    component: SettingsScreen,
+  },
+};
+\`\`\`
+
+The configuration object supports additional presentation options.
+
+\`\`\`ts
+type ScreenConfig = {
+  component: ComponentType<Partial<ScreenProps>>;
+  sheet?: boolean | Omit<PaperDialogResizable, "minWidth" | "maxWidth">;
+  width?: string;
+  height?: string;
 };
 \`\`\`
 
@@ -161,8 +178,6 @@ Each dialog maintains its own animation while remaining synchronized with the na
 
 ---
 
----
-
 #### Sheet Presentation
 
 By default, every screen is presented as a full-screen \`PaperDialog\`. Alternatively, a screen can be configured to appear as a sheet by providing a configuration object instead of a component.
@@ -213,6 +228,63 @@ const screens = {
 \`\`\`
 
 This allows \`ScreenTransition\` to present a mixture of full-screen pages and sheets while using the same navigation API.
+
+---
+
+#### Screen Dimensions
+
+Individual screens can customize their dialog size using the \`width\` and \`height\` properties.
+
+\`\`\`tsx
+const screens = {
+  detail: {
+    component: DetailScreen,
+    width: "480px",
+    height: "600px",
+  },
+};
+\`\`\`
+
+If omitted:
+
+- \`width\` defaults to \`100dvw\`
+- Full-screen dialogs default to \`100dvh\`
+- Sheet dialogs default to \`80dvh\`
+
+These options allow desktop-style dialogs while keeping other screens full-screen or presented as sheets.
+
+---
+
+#### Custom Styles
+
+Additional styles can be applied to the underlying \`PaperDialog\` without introducing wrapper elements.
+
+\`\`\`tsx
+<ScreenTransition
+  screens={screens}
+  activeScreens={activeScreens}
+  onScreenChange={setActiveScreens}
+  styles={{
+    indicatorStyle: css\`
+      height: 40px;
+    \`,
+    contentStyle: css\`
+      padding: 0;
+      min-width: 350px;
+      max-width: 400px;
+    \`,
+  }}
+/>
+\`\`\`
+
+The \`styles\` prop supports:
+
+- \`indicatorStyle\` — styles applied to the dialog indicator.
+- \`contentStyle\` — styles applied to the dialog content container.
+
+This provides additional flexibility while preserving the default dialog structure.
+
+---
 
 #### Initial Screen Restoration
 
@@ -274,11 +346,13 @@ ScreenTransition: screen "profile" is not registered
 - Use for mobile-style navigation within a single page.
 - Keep the navigation stack in parent state.
 - Register every available screen inside the \`screens\` prop.
+- Use a configuration object when customizing presentation, dimensions, or sheet behavior.
 - Navigate using \`goToScreen\` instead of mutating \`activeScreens\` directly.
 - Use \`goBack\` so closing animations always play correctly.
 - Restore navigation state by initializing \`activeScreens\` with multiple screen keys.
+- Use the \`styles\` prop to customize the dialog appearance without additional wrapper elements.
 - Keep individual screen components focused on UI and navigation only, leaving state management to the parent component.
-        `,
+`,
       },
     },
   },
