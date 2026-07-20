@@ -50,7 +50,7 @@ export interface ScreenTransitionProps<TScreens extends ScreensMap> {
 
 export type ScreenTransitionStyles = Pick<
   PaperDialogStyles,
-  "indicatorStyle" | "contentStyle"
+  "indicatorStyle" | "contentStyle" | "containerStyle"
 >;
 
 function ScreenTransition<TScreens extends ScreensMap>({
@@ -221,6 +221,7 @@ function DialogLevel({
   return (
     <PaperDialog
       styles={{
+        containerStyle: styles?.containerStyle,
         indicatorStyle: styles?.indicatorStyle,
         contentStyle: css`
           gap: 0px;
