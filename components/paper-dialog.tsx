@@ -43,7 +43,7 @@ export type PaperDialogPosition =
 export interface PaperDialogProps {
   position?: PaperDialogPosition;
   children?: ReactNode;
-  closable?: boolean;
+  closable?: boolean | PaperDialogClosable;
   styles?: PaperDialogStyles;
   onChange?: (state: PaperDialogState) => void;
   icons?: PaperDialogIcons;
@@ -60,6 +60,12 @@ export interface PaperDialogProps {
   onResizeComplete?: (size: { width?: number; height?: number }) => void;
   initialDialogState?: PaperDialogState;
   skipInitialAnimation?: boolean;
+}
+
+export interface PaperDialogClosable {
+  withOverlay?: boolean;
+  withEscape?: boolean;
+  withButton?: boolean;
 }
 
 export interface PaperDialogResizable {
@@ -135,6 +141,25 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+
+    // `closable` supports:
+    // - `false`: disable all closing behaviors.
+    // - `true` or `undefined`: enable all closing behaviors.
+    // - `{ withEscape, withOverlay, withButton }`: configure each behavior individually.
+    // withTimeout meaning can close without animation, if true, it would
+    // use animation inside of close behavior
+    const {
+      withEscape = true,
+      withOverlay = true,
+      withButton = true,
+    } = typeof closable === "object" ? closable : {};
+
+    const canCloseWithEscape =
+      closable !== false && (typeof closable !== "object" || withEscape);
+    const canCloseWithOverlay =
+      closable !== false && (typeof closable !== "object" || withOverlay);
+    const canCloseWithButton =
+      closable !== false && (typeof closable !== "object" || withButton);
 
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -411,7 +436,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         await setResizeHeight(null);
         await setResizeWidth(null);
 
-        if (mobile) {
+        if (withTimeout) {
           await handleChangeDialog("minimized");
 
           if (withTimeout) {
@@ -440,7 +465,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       (e: KeyboardEvent) => {
         if (
           e.key === "Escape" &&
-          closable &&
+          canCloseWithEscape &&
           (dialogState === "restored" || dialogState === "minimized")
         ) {
           closeDialog();
@@ -466,7 +491,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             <OverlayBlocker
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
-                if (closable) {
+                if (canCloseWithOverlay) {
                   await setShowTitlebar(false);
                   await closeDialog();
                   await close();
@@ -587,7 +612,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               />
             )}
 
-            {closable && controls?.includes("close") && (
+            {canCloseWithButton && controls?.includes("close") && (
               <ActionButtonWrapper
                 $indexAction={0}
                 $mobile={mobile}
