@@ -1,17 +1,17 @@
 import { Meta, StoryObj } from "@storybook/react/*";
-import { Progressbar, ProgressbarVariant } from "./progressbar";
+import { Trackbar, TrackbarVariant } from "./trackbar";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-const meta: Meta<typeof Progressbar> = {
-  title: "Controls/Progressbar",
-  component: Progressbar,
+const meta: Meta<typeof Trackbar> = {
+  title: "Controls/Trackbar",
+  component: Trackbar,
   tags: ["autodocs"],
   parameters: {
     docs: {
       description: {
         component: `
-The **Progressbar** component visually represents the progress of a task or process.
+The **Trackbar** component visually represents the progress of a task or process.
 
 It supports determinate and indeterminate states, multiple color variants, bidirectional progress, optional percentage labels, and custom styling hooks.
 
@@ -21,21 +21,24 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 
 * 📊 Determinate progress with configurable values
 * 🔄 Indeterminate loading animation
+* ✋ Editable mode with draggable thumb
 * 🎨 Multiple predefined variants (primary, success, danger, warning)
 * ↔️ Support for left-to-right and right-to-left progress
-* 🏷️ Optional percentage labeling
+* 🏷️ Optional percentage valueLabelPosition
 * 🎛️ Custom styling through style overrides
-* ♿ Accessible with ARIA progressbar attributes
+* 🖌️ Custom fill and container colors
+* ♿ Accessible with ARIA trackbar attributes
 
 ---
 
 ### 🧱 Component Structure
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
+  maxValue={100}
   variant="primary"
-  labeling="right"
+  valueLabelPosition="right"
 />
 \`\`\`
 
@@ -48,10 +51,11 @@ It supports determinate and indeterminate states, multiple color variants, bidir
 Use the \`value\` prop to display a specific completion percentage.
 
 \`\`\`tsx
-<Progressbar value={75} />
+<Trackbar value={75} />
 \`\`\`
 
 * Values are automatically clamped between \`0\` and \`100\`
+* \`maxValue\` defaults to \`100\`
 * Smooth width transitions are applied when the value changes
 
 ---
@@ -61,7 +65,7 @@ Use the \`value\` prop to display a specific completion percentage.
 Use \`indeterminate\` when the progress amount is unknown.
 
 \`\`\`tsx
-<Progressbar indeterminate />
+<Trackbar indeterminate />
 \`\`\`
 
 * Displays a continuous loading animation
@@ -74,7 +78,7 @@ Use \`indeterminate\` when the progress amount is unknown.
 Use \`variant\` to apply predefined semantic styles.
 
 \`\`\`tsx
-<Progressbar variant="success" />
+<Trackbar variant="success" />
 \`\`\`
 
 Available variants:
@@ -91,7 +95,7 @@ Available variants:
 Use \`directionTo\` to control the progress direction.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   directionTo="left"
 />
@@ -106,14 +110,14 @@ Works for both determinate and indeterminate modes.
 
 ---
 
-#### Labeling
+#### valueLabelPosition
 
 Display the progress percentage beside the progress bar.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
-  labeling="right"
+  valueLabelPosition="right"
 />
 \`\`\`
 
@@ -127,12 +131,73 @@ Labels are automatically hidden when \`indeterminate\` is enabled.
 
 ---
 
+#### Custom Label
+
+Use \`labels.renderLabel\` to customize the displayed value label.
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  labels={{
+    renderLabel: ({ percentage, value, maxValue }) =>
+      \`$\{value}/$\{maxValue} = $\{percentage}%\`,
+  }}
+/>
+\`\`\`
+
+The \`renderLabel\` callback receives:
+
+- \`percentage\` — the calculated progress percentage
+- \`value\` — the current progress value
+
+If \`renderLabel\` is not provided, the default label is displayed.
+
+\`\`\`text
+60%
+\`\`\`
+
+#### Fill Color
+
+Use \`fillColor\` to override the progress bar color.
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  fillColor="#8B5CF6"
+/>
+\`\`\`
+
+- Overrides the selected variant's fill color
+- Accepts any valid CSS color value (HEX, RGB, HSL, named colors, etc.)
+- Does not affect the track background color
+
+---
+
+#### Container Color
+
+Use \`containerColor\` to override the track background color.
+
+
+\`\`\`tsx
+<Trackbar
+  value={60}
+  containerColor="#E5E7EB"
+/>
+\`\`\`
+
+- Overrides the selected variant's track color
+- Accepts any valid CSS color value (HEX, RGB, HSL, named colors, etc.)
+- Does not affect the progress fill color
+
+---
+
+
 #### Custom Styles
 
 Customize individual parts of the component using the \`styles\` prop.
 
 \`\`\`tsx
-<Progressbar
+<Trackbar
   value={60}
   styles={{
     containerStyle: css\`
@@ -172,7 +237,7 @@ Available style targets:
 
 export default meta;
 
-type Story = StoryObj<typeof Progressbar>;
+type Story = StoryObj<typeof Trackbar>;
 
 export const Labelling: Story = {
   render: () => {
@@ -189,48 +254,84 @@ export const Labelling: Story = {
     return (
       <Container>
         <Section>
-          <Title>Labeling in right</Title>
-          <Progressbar value={value} labeling="right" directionTo="right" />
+          <Title>Labelling in right</Title>
+          <Trackbar
+            value={value}
+            valueLabelPosition="right"
+            directionTo="right"
+          />
         </Section>
 
         <Section>
-          <Title>Labeling in left</Title>
-          <Progressbar value={value} labeling="left" directionTo="left" />
+          <Title>Labelling in left</Title>
+          <Trackbar
+            value={value}
+            valueLabelPosition="left"
+            directionTo="left"
+          />
         </Section>
       </Container>
     );
   },
 };
 
-export const Indeterminate: Story = {
+export const Progressbar: Story = {
   render: () => {
     return (
       <Container>
         <Section>
           <Title>Indeterminate direction to right</Title>
-          <Progressbar indeterminate directionTo="right" />
+          <Trackbar indeterminate directionTo="right" />
         </Section>
 
         <Section>
           <Title>Indeterminate direction to left</Title>
-          <Progressbar indeterminate directionTo="left" />
+          <Trackbar indeterminate directionTo="left" />
         </Section>
+
+        {Object.values(TrackbarVariant).map((variant, index) => (
+          <Section key={index}>
+            <Title>Variant {variant}</Title>
+            <Trackbar
+              variant={variant}
+              indeterminate
+              directionTo={index % 2 === 0 ? "right" : "left"}
+            />
+          </Section>
+        ))}
       </Container>
     );
   },
 };
 
-export const Variants: Story = {
+export const Editable: Story = {
   render: () => {
+    const [values, setValues] = useState<Record<TrackbarVariant, number>>({
+      neutral: 40,
+      primary: 80,
+      success: 120,
+      danger: 160,
+      warning: 200,
+    });
+
     return (
       <Container>
-        {Object.values(ProgressbarVariant).map((variant, index) => (
-          <Section key={index}>
-            <Title>Variant {variant}</Title>
-            <Progressbar
+        {Object.values(TrackbarVariant).map((variant) => (
+          <Section key={variant}>
+            <Title>Editable {variant}</Title>
+
+            <Trackbar
               variant={variant}
-              indeterminate
-              directionTo={index % 2 === 0 ? "right" : "left"}
+              editable
+              valueLabelPosition="right"
+              value={values[variant]}
+              maxValue={200}
+              onChange={(value) =>
+                setValues((prev) => ({
+                  ...prev,
+                  [variant]: value ?? 0,
+                }))
+              }
             />
           </Section>
         ))}

@@ -70,7 +70,7 @@ import {
   createLaunchpadTheme,
   createToastTheme,
   createFlippable,
-  createProgressbarTheme,
+  createTrackbarTheme,
   createScrollbar,
 } from "./creator";
 
@@ -569,7 +569,7 @@ const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
 
 const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
 
-const darkProgressbar = createProgressbarTheme({
+const darkTrackbar = createTrackbarTheme({
   primary: {
     backgroundColor: "#1e293b",
     textColor: "#93c5fd",
@@ -956,7 +956,6 @@ export const darkTheme: AppTheme = {
   pagination: darkPagination,
   pinbox: darkPinbox,
   phonebox: darkPhonebox,
-  progressbar: darkProgressbar,
   radio: darkRadio,
   rating: darkRating,
   richEditor: darkRichEditor,
@@ -982,6 +981,7 @@ export const darkTheme: AppTheme = {
   toggle: darkToggle,
   toolbar: darkToolbar,
   tooltip: darkTooltip,
+  trackbar: darkTrackbar,
   treelist: darkTreeList,
   wheel: darkWheel,
 };
@@ -1031,7 +1031,7 @@ export {
   darkPagination,
   darkPinbox,
   darkPhonebox,
-  darkProgressbar,
+  darkTrackbar,
   darkRadio,
   darkRating,
   darkRichEditor,

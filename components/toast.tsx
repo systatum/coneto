@@ -23,7 +23,7 @@ import { Button } from "./button";
 import { AnimatePresence, motion } from "framer-motion";
 import { applyClassName } from "./../constants/classname";
 import { BaseAction } from "./../constants/action";
-import { Progressbar } from "./progressbar";
+import { Trackbar } from "./trackbar";
 
 export const ToastVariant = {
   Primary: "primary",
@@ -272,7 +272,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         </AnimatePresence>
 
         {withLoadingBar && disappearAfterMs > 0 && (
-          <Progressbar
+          <Trackbar
             styles={{
               containerStyle: css`
                 height: 2px;
