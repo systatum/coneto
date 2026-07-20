@@ -11,6 +11,7 @@ import {
   PaperDialogResizable,
   PaperDialogState,
   PaperDialogStyles,
+  PaperDialogTrigger,
 } from "./paper-dialog";
 import { css } from "styled-components";
 
@@ -116,14 +117,11 @@ function ScreenTransition<TScreens extends ScreensMap>({
       // for minimizing
       closingIndicesRef.current.add(topIndex);
       if (!withTimeout) {
-        ref?.current?.minimizeDialog();
+        ref?.current?.closeDialog(true);
       }
 
-      setTimeout(async () => {
-        await ref?.current?.closeDialog();
-        if (closingIndicesRef.current.has(topIndex)) {
-          await onScreenChange(activeScreens.slice(0, -1));
-        }
+      setTimeout(() => {
+        onScreenChange(activeScreens.slice(0, -1));
         closingIndicesRef.current!.delete(topIndex);
         mountedIndicesRef.current!.delete(topIndex);
       }, 300);
@@ -159,11 +157,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
         styles={styles}
         dialogRef={getDialogRef(index)}
         skipInitialAnimation={skipInitialAnimation}
-        onClosed={
-          config?.sheet || config?.width
-            ? () => goBack?.(!!config?.sheet || !!config?.width)
-            : undefined
-        }
+        onClosed={() => goBack?.(true)}
         sheet={config?.sheet}
         width={config?.width}
         height={config?.height}
@@ -241,13 +235,15 @@ function DialogLevel({
       resizable={sheet}
       initialDialogState={skipInitialAnimation ? "restored" : "closed"}
       skipInitialAnimation={skipInitialAnimation}
-      onChange={
-        sheet || width
-          ? (state: PaperDialogState) => {
-              if (state === "minimized") onClosed?.();
-            }
-          : undefined
-      }
+      onChange={(state: PaperDialogState, trigger: PaperDialogTrigger) => {
+        if (
+          (state === PaperDialogState.Minimized &&
+            trigger === PaperDialogTrigger.Overlay) ||
+          (state === PaperDialogState.Minimized &&
+            trigger === PaperDialogTrigger.Resize)
+        )
+          onClosed?.();
+      }}
     >
       {children}
     </PaperDialog>
