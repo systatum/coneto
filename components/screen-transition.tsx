@@ -25,6 +25,7 @@ type ScreensComponent = ComponentType<Partial<ScreenProps>>;
 type ScreenConfig = {
   component: ScreensComponent;
   sheet?: ScreenSheetConfig;
+  closable?: boolean;
   width?: string;
   height?: string;
 };
@@ -161,6 +162,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
         sheet={config?.sheet}
         width={config?.width}
         height={config?.height}
+        closable={config?.closable}
       >
         <ScreenComponent {...screenProps} />
         {index < activeScreens.length - 1 && renderStack(index + 1)}
@@ -192,6 +194,7 @@ function DialogLevel({
   styles,
   height,
   width,
+  closable,
 }: {
   dialogRef: React.RefObject<PaperDialogRef | null>;
   children: ReactNode;
@@ -201,6 +204,7 @@ function DialogLevel({
   styles?: ScreenTransitionStyles;
   height?: string;
   width?: string;
+  closable?: boolean;
 }) {
   useEffect(() => {
     // Only animate-open if this dialog wasn't pre-existing/already mounted.
@@ -226,7 +230,7 @@ function DialogLevel({
       closable={{
         withButton: false,
         withEscape: false,
-        withOverlay: true,
+        withOverlay: (sheet ? true : closable) ?? false,
       }}
       controls={[]}
       width={finalWidth}
