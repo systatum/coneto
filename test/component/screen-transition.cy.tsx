@@ -211,6 +211,68 @@ describe("Screen Transition", () => {
 
   context("screen config", () => {
     context("with sheet", () => {
+      context("closable", () => {
+        context("when not given", () => {
+          context("when clicking the overlay", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+        });
+
+        context("when given false", () => {
+          context("when clicking the overlay", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: false },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            });
+          });
+        });
+      });
+
       it("renders with height 80dvh", () => {
         cy.viewport(500, 700);
 
@@ -232,6 +294,7 @@ describe("Screen Transition", () => {
           "560px"
         );
       });
+
       context("when given height 300px", () => {
         it("renders the element with 300px", () => {
           cy.viewport(500, 700);
@@ -258,6 +321,67 @@ describe("Screen Transition", () => {
     });
 
     context("without sheet", () => {
+      context("closable", () => {
+        context("when not given", () => {
+          context("when clicking the overlay", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, width: "300px" },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper")
+                .should("have.css", "height", "700px")
+                .and("have.css", "width", "300px");
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            });
+          });
+        });
+
+        context("when given true", () => {
+          context("when clicking the overlay", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+        });
+      });
+
       it("renders with full width (100dvw)", () => {
         cy.viewport(500, 700);
 
