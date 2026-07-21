@@ -229,7 +229,7 @@ function DialogLevel({
       width={finalWidth}
       height={finalHeight}
       mobile={!!sheet}
-      resizable={sheet}
+      resizable={!!sheet}
       initialDialogState={skipInitialAnimation ? "restored" : "closed"}
       skipInitialAnimation={skipInitialAnimation}
       onChange={(state: PaperDialogState, trigger: PaperDialogTrigger) => {
@@ -237,7 +237,7 @@ function DialogLevel({
           (state === PaperDialogState.Minimized &&
             trigger === PaperDialogTrigger.Overlay) ||
           (state === PaperDialogState.Minimized &&
-            trigger === PaperDialogTrigger.Resize)
+            trigger === PaperDialogTrigger.Drag)
         )
           onClosed?.();
       }}
