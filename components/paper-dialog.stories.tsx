@@ -109,6 +109,31 @@ Use \`onResize\` to react to size changes while dragging and \`onResizeComplete\
 />
 \`\`\`
 
+### 🔄 State Changes
+
+Use \`onChange\` to listen for dialog state changes. The callback receives both the current dialog state and the trigger that caused the change.
+
+\`\`\`tsx
+<PaperDialog
+  onChange={state: PaperDialogState, trigger: PaperDialogTrigger) => {
+    console.log(state);   // "restored" | "minimized" | "closed"
+    console.log(trigger); // "api" | "overlay" | "escape" | "drag" | "resize" | "control"
+  }}
+/>
+\`\`\`
+
+#### Triggers
+
+The \`trigger\` indicates what caused the state change:
+
+| Trigger | Description |
+| -------- | ----------- |
+| \`api\` | Changed programmatically via the dialog ref (\`openDialog\`, \`closeDialog\`, \`restoreDialog\`, etc.). |
+| \`overlay\` | User clicked the overlay to close the dialog. |
+| \`escape\` | User pressed the Escape key. |
+| \`drag\` | User swiped the mobile drag indicator to minimize the dialog. |
+| \`control\` | User clicked one of the dialog controls (close, minimize, or restore). |
+
 ### 📝 Notes
 - Use \`styles\` prop to override default styles.
 - Use the \`icons\` prop to override default icons.
@@ -462,7 +487,7 @@ export const Mobile: Story = {
             onClick={() => {
               PAPER_DIALOGS.forEach((item) => {
                 if (item.ref !== dialog.ref) {
-                  item.ref.current?.closeDialog(false);
+                  item.ref.current?.closeDialog();
                 }
               });
 

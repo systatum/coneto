@@ -32,6 +32,26 @@ export const PaperDialogState = {
 export type PaperDialogState =
   (typeof PaperDialogState)[keyof typeof PaperDialogState];
 
+/**
+ * PaperDialogTrigger — identifies what caused a dialog state change (passed to onChange).
+ *
+ * - API     — called programmatically via PaperDialogRef (openDialog/closeDialog/minimizeDialog)
+ * - Overlay — clicked the backdrop behind the dialog
+ * - Escape  — pressed the Escape key
+ * - Drag    — swiped the mobile drag-indicator to dismiss
+ * - Control — used an in-dialog control (close button, minimize/restore button, mini title bar tap)
+ */
+export const PaperDialogTrigger = {
+  API: "api",
+  Overlay: "overlay",
+  Escape: "escape",
+  Drag: "drag",
+  Control: "control",
+} as const;
+
+export type PaperDialogTrigger =
+  (typeof PaperDialogTrigger)[keyof typeof PaperDialogTrigger];
+
 export const PaperDialogPosition = {
   Left: "left",
   Right: "right",
@@ -43,9 +63,9 @@ export type PaperDialogPosition =
 export interface PaperDialogProps {
   position?: PaperDialogPosition;
   children?: ReactNode;
-  closable?: boolean;
+  closable?: boolean | PaperDialogClosable;
   styles?: PaperDialogStyles;
-  onChange?: (state: PaperDialogState) => void;
+  onChange?: (state: PaperDialogState, trigger?: PaperDialogTrigger) => void;
   icons?: PaperDialogIcons;
   id?: string;
   className?: string;
@@ -60,6 +80,13 @@ export interface PaperDialogProps {
   onResizeComplete?: (size: { width?: number; height?: number }) => void;
   initialDialogState?: PaperDialogState;
   skipInitialAnimation?: boolean;
+}
+
+export interface PaperDialogClosable {
+  withOverlay?: boolean;
+  withEscape?: boolean;
+  withButton?: boolean;
+  withIndicator?: boolean;
 }
 
 export interface PaperDialogResizable {
@@ -104,8 +131,12 @@ export interface PaperDialogContentStyles {
 
 export interface PaperDialogRef {
   openDialog: () => void;
-  closeDialog: (withTimeout?: boolean) => void;
+  closeDialog: (props?: PaperDialogCloseOption) => void;
   minimizeDialog: () => void;
+}
+export interface PaperDialogCloseOption {
+  withMinimize?: boolean;
+  withTimeout?: boolean;
 }
 
 const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
@@ -135,6 +166,28 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
   ) => {
     const { currentTheme } = useTheme();
     const paperDialogTheme = currentTheme.paperDialog;
+
+    // `closable` supports:
+    // - `false`: disable all closing behaviors.
+    // - `true` or `undefined`: enable all closing behaviors.
+    // - `{ withEscape, withOverlay, withButton }`: configure each behavior individually.
+    // withTimeout meaning can close without animation, if true, it would
+    // use animation inside of close behavior
+    const {
+      withEscape = true,
+      withOverlay = true,
+      withButton = true,
+      withIndicator = true,
+    } = typeof closable === "object" ? closable : {};
+
+    const canCloseWithEscape =
+      closable !== false && (typeof closable !== "object" || withEscape);
+    const canCloseWithOverlay =
+      closable !== false && (typeof closable !== "object" || withOverlay);
+    const canCloseWithButton =
+      closable !== false && (typeof closable !== "object" || withButton);
+    const canCloseWithIndicator =
+      closable !== false && (typeof closable !== "object" || withIndicator);
 
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -320,21 +373,26 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           window.removeEventListener("pointerup", onUp);
 
           if (velocityRef.current > 0.5) {
-            handleChangeDialog("minimized");
-            setShowTitlebar(true);
-            setTimeout(() => {
-              // Clear inline styles so Framer Motion takes back control
-              if (dialogRef.current) {
-                dialogRef.current.style.minHeight = "";
-                dialogRef.current.style.maxHeight = "";
-              }
+            if (canCloseWithIndicator) {
+              handleChangeDialog(
+                PaperDialogState.Minimized,
+                PaperDialogTrigger.Drag
+              );
+              setShowTitlebar(true);
+              setTimeout(() => {
+                // Clear inline styles so Framer Motion takes back control
+                if (dialogRef.current) {
+                  dialogRef.current.style.minHeight = "";
+                  dialogRef.current.style.maxHeight = "";
+                }
 
-              if (contentRef.current) {
-                contentRef.current.style.height = "";
-                contentRef.current.style.maxHeight = "";
-              }
-              setResizeHeight(null);
-            }, 300);
+                if (contentRef.current) {
+                  contentRef.current.style.height = "";
+                  contentRef.current.style.maxHeight = "";
+                }
+                setResizeHeight(null);
+              }, 300);
+            }
 
             // Fast flick upward → animate smoothly to max height
           } else if (velocityRef.current < -0.5) {
@@ -395,24 +453,28 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const resolvedHeight = resizeHeight != null ? `${resizeHeight}px` : height;
 
     const handleChangeDialog = useCallback(
-      (state: PaperDialogState) => {
+      (state: PaperDialogState, trigger: PaperDialogTrigger) => {
         setDialogState(state);
         if (onChange) {
-          onChange(state);
+          onChange(state, trigger);
         }
       },
       [setDialogState, onChange]
     );
 
     const closeDialog = useCallback(
-      async (withTimeout: boolean = true) => {
-        const close = async () => await handleChangeDialog("closed");
+      async (
+        { withMinimize, withTimeout }: PaperDialogCloseOption,
+        trigger: PaperDialogTrigger
+      ) => {
+        const close = async () =>
+          await handleChangeDialog(PaperDialogState.Closed, trigger);
 
         await setResizeHeight(null);
         await setResizeWidth(null);
 
-        if (mobile) {
-          await handleChangeDialog("minimized");
+        if (withMinimize) {
+          await handleChangeDialog(PaperDialogState.Minimized, trigger);
 
           if (withTimeout) {
             setTimeout(close, 400);
@@ -427,12 +489,19 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     );
 
     useImperativeHandle(ref, () => ({
-      openDialog: async () => {
-        await handleChangeDialog("restored");
+      openDialog: () => {
+        handleChangeDialog(PaperDialogState.Restored, PaperDialogTrigger.API);
       },
-      closeDialog: (withTimeout?: boolean) => closeDialog(withTimeout),
-      minimizeDialog: async () => {
-        await handleChangeDialog("minimized");
+      closeDialog: ({ withMinimize, withTimeout }: PaperDialogCloseOption) =>
+        closeDialog(
+          {
+            withMinimize,
+            withTimeout,
+          },
+          PaperDialogTrigger.API
+        ),
+      minimizeDialog: () => {
+        handleChangeDialog(PaperDialogState.Minimized, PaperDialogTrigger.API);
       },
     }));
 
@@ -440,10 +509,13 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       (e: KeyboardEvent) => {
         if (
           e.key === "Escape" &&
-          closable &&
+          canCloseWithEscape &&
           (dialogState === "restored" || dialogState === "minimized")
         ) {
-          closeDialog();
+          closeDialog(
+            { withMinimize: false, withTimeout: false },
+            PaperDialogTrigger.Escape
+          );
           setShowTitlebar(false);
         }
       },
@@ -466,14 +538,17 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             <OverlayBlocker
               onClick={async ({ preventDefault, close }) => {
                 await preventDefault();
-                if (closable) {
+                if (canCloseWithOverlay) {
                   await setShowTitlebar(false);
-                  await closeDialog();
+                  await closeDialog(
+                    { withMinimize: true, withTimeout: true },
+                    PaperDialogTrigger.Overlay
+                  );
                   await close();
                 }
               }}
               styles={{ self: styles?.overlayStyle }}
-              show={dialogState === "restored"}
+              show={dialogState === PaperDialogState.Restored}
             />
           )}
 
@@ -481,7 +556,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             <MiniTitleBar
               $theme={paperDialogTheme}
               onClick={() => {
-                handleChangeDialog("restored");
+                handleChangeDialog(
+                  PaperDialogState.Restored,
+                  PaperDialogTrigger.Control
+                );
                 setShowTitlebar(false);
               }}
               initial={{ y: "100%" }}
@@ -523,7 +601,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                           size: icons?.closeIcon?.size ?? 18,
                         },
                         onClick: () => {
-                          handleChangeDialog("closed");
+                          closeDialog(
+                            { withMinimize: false, withTimeout: false },
+                            PaperDialogTrigger.Control
+                          );
                         },
                       },
                     ],
@@ -571,23 +652,32 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             dragControls={dragControls}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.6 }}
+            whileDrag={{ cursor: "grabbing", userSelect: "none" }}
             onDragEnd={(_, info) => {
-              if (info.offset.y > 120 || info.velocity.y > 500) {
-                handleChangeDialog("minimized");
+              // For non-resizable dialogs, only allow swipe-to-minimize
+              // when the indicator is enabled.
+              if (
+                (info.offset.y > 120 || info.velocity.y > 500) &&
+                canCloseWithIndicator
+              ) {
+                handleChangeDialog(
+                  PaperDialogState.Minimized,
+                  PaperDialogTrigger.Drag
+                );
                 setShowTitlebar(true);
               }
             }}
-            whileDrag={{ cursor: "grabbing", userSelect: "none" }}
           >
             {resizable && !mobile && (
               <DesktopResizeHandle
                 $isLeft={isLeft}
+                $style={styles?.indicatorStyle}
                 onPointerDown={handleDesktopResizePointerDown}
                 aria-label="paper-dialog-resize-handle"
               />
             )}
 
-            {closable && controls?.includes("close") && (
+            {canCloseWithButton && controls?.includes("close") && (
               <ActionButtonWrapper
                 $indexAction={0}
                 $mobile={mobile}
@@ -595,7 +685,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $isLeft={isLeft}
                 $theme={paperDialogTheme}
                 onClick={() => {
-                  closeDialog();
+                  closeDialog(
+                    { withMinimize: false, withTimeout: false },
+                    PaperDialogTrigger.Control
+                  );
                 }}
                 $style={styles?.closeButtonStyle}
                 aria-label="paper-dialog-toggle-close"
@@ -619,7 +712,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 $style={styles?.minimizeButtonStyle}
                 onClick={() => {
                   handleChangeDialog(
-                    dialogState === "minimized" ? "restored" : "minimized"
+                    dialogState === PaperDialogState.Minimized
+                      ? PaperDialogState.Restored
+                      : PaperDialogState.Minimized,
+                    PaperDialogTrigger.Control
                   );
                   setShowTitlebar(true);
                 }}
@@ -656,10 +752,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
               <DragIndicatorWrapper
                 aria-label="paper-dialog-drag-indicator"
                 $resizable={!!resizable}
+                $style={styles?.indicatorStyle}
+                $width={resolvedWidth}
                 onPointerDown={(e) => {
                   if (resizable) {
                     handleMobileResizePointerDown(e);
-                  } else if (closable) {
+                  } else if (canCloseWithIndicator) {
                     dragControls.start(e);
                   }
                 }}
@@ -812,7 +910,7 @@ const MotionDialog = styled(motion.div)<{
   ${({ $style }) => $style};
 `;
 
-const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
+const DesktopResizeHandle = styled.div<{ $isLeft: boolean; $style?: CSSProp }>`
   touch-action: none;
   position: absolute;
   top: 0;
@@ -837,6 +935,8 @@ const DesktopResizeHandle = styled.div<{ $isLeft: boolean }>`
   &:active {
     background-color: rgba(128, 128, 128, 0.18);
   }
+
+  ${({ $style }) => $style}
 `;
 
 const ActionButtonWrapper = styled.div<{
@@ -947,6 +1047,7 @@ const DragIndicatorWrapper = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
   $resizable?: boolean;
+  $width?: string;
 }>`
   *,
   ::before,
@@ -963,17 +1064,23 @@ const DragIndicatorWrapper = styled(motion.div)<{
   touch-action: none;
 
   cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
-  width: 100dvw;
   height: 60px;
   align-items: center;
   border-radius: 1.2rem 1.2rem 0 0;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
 
+  ${({ $width }) =>
+    $width &&
+    css`
+      min-width: ${$width ?? "100dvw"};
+      max-width: ${$width ?? "100dvw"};
+    `}
+
   &:active {
     cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grabbing")};
   }
 
-  ${({ $style }) => $style}
+  ${({ $style }) => $style};
 `;
 
 const DragIndicator = styled(motion.div)<{
