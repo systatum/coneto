@@ -32,6 +32,16 @@ export const PaperDialogState = {
 export type PaperDialogState =
   (typeof PaperDialogState)[keyof typeof PaperDialogState];
 
+/**
+ * PaperDialogTrigger — identifies what caused a dialog state change (passed to onChange).
+ *
+ * - API     — called programmatically via PaperDialogRef (openDialog/closeDialog/minimizeDialog)
+ * - Overlay — clicked the backdrop behind the dialog
+ * - Escape  — pressed the Escape key
+ * - Drag    — swiped the mobile drag-indicator to dismiss (with resizable false)
+ * - Resize  — fast flick while resizing (mobile) that snapped to minimized instead of resizing
+ * - Control — used an in-dialog control (close button, minimize/restore button, mini title bar tap)
+ */
 export const PaperDialogTrigger = {
   API: "api",
   Overlay: "overlay",
