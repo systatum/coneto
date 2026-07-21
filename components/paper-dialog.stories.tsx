@@ -462,7 +462,7 @@ export const Mobile: Story = {
             onClick={() => {
               PAPER_DIALOGS.forEach((item) => {
                 if (item.ref !== dialog.ref) {
-                  item.ref.current?.closeDialog(false);
+                  item.ref.current?.closeDialog();
                 }
               });
 
