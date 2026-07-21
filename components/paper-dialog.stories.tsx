@@ -132,7 +132,6 @@ The \`trigger\` indicates what caused the state change:
 | \`overlay\` | User clicked the overlay to close the dialog. |
 | \`escape\` | User pressed the Escape key. |
 | \`drag\` | User swiped the mobile drag indicator to minimize the dialog. |
-| \`resize\` | Dialog state changed as part of a resize interaction (for example, resizing to the minimized state). |
 | \`control\` | User clicked one of the dialog controls (close, minimize, or restore). |
 
 ### 📝 Notes

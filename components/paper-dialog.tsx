@@ -38,8 +38,7 @@ export type PaperDialogState =
  * - API     — called programmatically via PaperDialogRef (openDialog/closeDialog/minimizeDialog)
  * - Overlay — clicked the backdrop behind the dialog
  * - Escape  — pressed the Escape key
- * - Drag    — swiped the mobile drag-indicator to dismiss (with resizable false)
- * - Resize  — fast flick while resizing (mobile) that snapped to minimized instead of resizing
+ * - Drag    — swiped the mobile drag-indicator to dismiss
  * - Control — used an in-dialog control (close button, minimize/restore button, mini title bar tap)
  */
 export const PaperDialogTrigger = {
@@ -47,7 +46,6 @@ export const PaperDialogTrigger = {
   Overlay: "overlay",
   Escape: "escape",
   Drag: "drag",
-  Resize: "resize",
   Control: "control",
 } as const;
 
@@ -378,7 +376,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             if (canCloseWithIndicator) {
               handleChangeDialog(
                 PaperDialogState.Minimized,
-                PaperDialogTrigger.Resize
+                PaperDialogTrigger.Drag
               );
               setShowTitlebar(true);
               setTimeout(() => {
@@ -759,7 +757,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 onPointerDown={(e) => {
                   if (resizable) {
                     handleMobileResizePointerDown(e);
-                  } else if (canCloseWithButton) {
+                  } else if (canCloseWithIndicator) {
                     dragControls.start(e);
                   }
                 }}
