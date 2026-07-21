@@ -82,6 +82,7 @@ type ScreenConfig = {
   sheet?: boolean | Omit<PaperDialogResizable, "minWidth" | "maxWidth">;
   width?: string;
   height?: string;
+  closable?: boolean
 };
 \`\`\`
 
