@@ -223,6 +223,7 @@ function DialogLevel({
         withButton: false,
         withEscape: false,
         withOverlay: closable ?? (sheet ? true : false),
+        withIndicator: closable,
       }}
       controls={[]}
       width={finalWidth}
