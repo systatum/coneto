@@ -645,6 +645,20 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.6 }}
             whileDrag={{ cursor: "grabbing", userSelect: "none" }}
+            onDragEnd={(_, info) => {
+              // For non-resizable dialogs, only allow swipe-to-minimize
+              // when the indicator is enabled.
+              if (
+                (info.offset.y > 120 || info.velocity.y > 500) &&
+                canCloseWithIndicator
+              ) {
+                handleChangeDialog(
+                  PaperDialogState.Minimized,
+                  PaperDialogTrigger.Drag
+                );
+                setShowTitlebar(true);
+              }
+            }}
           >
             {resizable && !mobile && (
               <DesktopResizeHandle
@@ -734,7 +748,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 onPointerDown={(e) => {
                   if (resizable) {
                     handleMobileResizePointerDown(e);
-                  } else if (!!closable) {
+                  } else if (canCloseWithButton) {
                     dragControls.start(e);
                   }
                 }}
