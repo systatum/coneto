@@ -99,31 +99,23 @@ function ScreenTransition<TScreens extends ScreensMap>({
     [screens, activeScreens, onScreenChange]
   );
 
-  // Tracks dialog indices currently being closed via goBack(), so that
-  // re-entrant onChange("minimized") events fired internally by
-  // minimizeDialog()/closeDialog() don't call onClosed -> goBack() again
-  // and cause an infinite/duplicate close loop.
-  const closingIndicesRef = useRef<Set<number>>(new Set());
-
   const goBack = useCallback(
-    (withTimeout?: boolean) => {
+    (skipCloseDialog?: boolean) => {
       if (activeScreens.length === 0) return;
 
       const topIndex = activeScreens.length - 1; // the dialog wrapping the top screen
       const ref = dialogRefsRef.current.get(topIndex);
 
-      // this preventing the condition mobile case for onChanges
-      // so we don't use this, because would be re-render minimize state
-      // and if closed with drag indicator still enough not trigger ref
-      // for minimizing
-      closingIndicesRef.current.add(topIndex);
-      if (!withTimeout) {
+      // Prevent triggering `closeDialog` on mobile.
+      // Calling it would fire `onChange`, causing an unnecessary re-render
+      // and resetting the minimized state. When the dialog is closed via the
+      // drag indicator, the required close behavior is already handled.
+      if (!skipCloseDialog) {
         ref?.current?.closeDialog(true);
       }
 
       setTimeout(() => {
         onScreenChange(activeScreens.slice(0, -1));
-        closingIndicesRef.current!.delete(topIndex);
         mountedIndicesRef.current!.delete(topIndex);
       }, 300);
     },
