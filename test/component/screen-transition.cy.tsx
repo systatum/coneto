@@ -212,7 +212,7 @@ describe("Screen Transition", () => {
   context("screen config", () => {
     context("with sheet", () => {
       context("closable", () => {
-        context("when not given", () => {
+        context("when not given (by default is true)", () => {
           context("when clicking the overlay", () => {
             it("should close the screen", () => {
               cy.viewport(500, 700);
@@ -236,6 +236,44 @@ describe("Screen Transition", () => {
               );
 
               cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+
+          context("when drag the indicator", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("paper-dialog-drag-indicator")
+                .realMouseDown({ position: "center" })
+                .realMouseMove(0, 50)
+                .wait(200)
+                .realMouseMove(0, 100)
+                .wait(200)
+                .realMouseMove(0, 150)
+                .wait(200)
+                .realMouseMove(0, 250)
+                .realMouseUp();
 
               cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
             });
@@ -268,6 +306,49 @@ describe("Screen Transition", () => {
               cy.findByLabelText("overlay-blocker").click({ force: true });
 
               cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            });
+          });
+
+          context("when drag the indicator", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: false },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("paper-dialog-drag-indicator")
+                .realMouseDown({ position: "center" })
+                .realMouseMove(0, 50)
+                .wait(200)
+                .realMouseMove(0, 100)
+                .wait(200)
+                .realMouseMove(0, 150)
+                .wait(200)
+                .realMouseMove(0, 250)
+                .realMouseUp();
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "not.have.css",
+                "height",
+                "560px"
+              );
             });
           });
         });
@@ -322,7 +403,7 @@ describe("Screen Transition", () => {
 
     context("without sheet", () => {
       context("closable", () => {
-        context("when not given", () => {
+        context("when not given (by default is false)", () => {
           context("when clicking the overlay", () => {
             it("should not close the screen", () => {
               cy.viewport(500, 700);
