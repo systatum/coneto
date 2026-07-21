@@ -865,15 +865,131 @@ describe("Table", () => {
                   });
               });
 
-              context("when given empty action", () => {
+              context("when given hidden action", () => {
                 it("not renders header loose", () => {
-                  cy.mount(<ProductTableLoose loose actions={() => []} />);
+                  cy.mount(
+                    <ProductTableLoose
+                      loose
+                      actions={() => [
+                        {
+                          caption: "Edit",
+                          icon: { image: RiArrowUpSLine },
+                          hidden: true,
+                        },
+                      ]}
+                    />
+                  );
+
+                  cy.findAllByLabelText("action-button").eq(1).click();
+                  cy.findAllByLabelText("action-button").eq(2).click();
 
                   cy.wait(300);
 
                   cy.findByLabelText("header-row-loose-action").should(
                     "not.exist"
                   );
+                });
+
+                context("when scrolling to the right side", () => {
+                  it("still not renders header loose", () => {
+                    cy.mount(
+                      <ProductTableLoose
+                        loose
+                        actions={() => [
+                          {
+                            caption: "Edit",
+                            icon: { image: RiArrowUpSLine },
+                            hidden: true,
+                          },
+                        ]}
+                      />
+                    );
+
+                    cy.wait(300);
+                    cy.findAllByLabelText("action-button").eq(1).click();
+                    cy.findAllByLabelText("action-button").eq(2).click();
+
+                    cy.findByLabelText("header-row-loose-action").should(
+                      "not.exist"
+                    );
+
+                    cy.findByLabelText("table-body")
+                      .parent()
+                      .then(($el) => {
+                        const el = $el[0];
+
+                        const scrollToEnd = () => {
+                          const maxScroll = el.scrollWidth - el.clientWidth;
+                          el.scrollLeft = maxScroll;
+                          el.dispatchEvent(
+                            new Event("scroll", { bubbles: true })
+                          );
+
+                          if (el.scrollLeft < maxScroll) {
+                            scrollToEnd();
+                          }
+                        };
+
+                        scrollToEnd();
+                      });
+
+                    cy.findByLabelText("header-row-loose-action").should(
+                      "not.exist"
+                    );
+                  });
+                });
+              });
+
+              context("when given empty action", () => {
+                it("not renders header loose", () => {
+                  cy.mount(<ProductTableLoose loose actions={() => []} />);
+
+                  cy.wait(300);
+
+                  cy.findAllByLabelText("action-button").eq(1).click();
+                  cy.findAllByLabelText("action-button").eq(2).click();
+
+                  cy.findByLabelText("header-row-loose-action").should(
+                    "not.exist"
+                  );
+                });
+
+                context("when scrolling to the right side", () => {
+                  it("still not renders header loose", () => {
+                    cy.mount(<ProductTableLoose loose actions={() => []} />);
+
+                    cy.wait(300);
+                    cy.findAllByLabelText("action-button").eq(1).click();
+                    cy.findAllByLabelText("action-button").eq(2).click();
+
+                    cy.findByLabelText("header-row-loose-action").should(
+                      "not.exist"
+                    );
+
+                    cy.findByLabelText("table-body")
+                      .parent()
+                      .then(($el) => {
+                        const el = $el[0];
+
+                        const scrollToEnd = () => {
+                          const maxScroll = el.scrollWidth - el.clientWidth;
+                          el.scrollLeft = maxScroll;
+                          el.dispatchEvent(
+                            new Event("scroll", { bubbles: true })
+                          );
+
+                          if (el.scrollLeft < maxScroll) {
+                            scrollToEnd();
+                          }
+                        };
+
+                        scrollToEnd();
+                      });
+
+                    cy.findByLabelText("header-row-loose-action").should(
+                      "not.exist"
+                    );
+                  });
                 });
               });
             });
