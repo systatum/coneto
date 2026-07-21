@@ -111,7 +111,7 @@ function ScreenTransition<TScreens extends ScreensMap>({
       // and resetting the minimized state. When the dialog is closed via the
       // drag indicator, the required close behavior is already handled.
       if (!skipCloseDialog) {
-        ref?.current?.closeDialog(true);
+        ref?.current?.closeDialog({ withMinimize: true, withTimeout: true });
       }
 
       setTimeout(() => {
