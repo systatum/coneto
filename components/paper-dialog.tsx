@@ -755,6 +755,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
                 aria-label="paper-dialog-drag-indicator"
                 $resizable={!!resizable}
                 $style={styles?.indicatorStyle}
+                $width={resolvedWidth}
                 onPointerDown={(e) => {
                   if (resizable) {
                     handleMobileResizePointerDown(e);
@@ -1048,6 +1049,7 @@ const DragIndicatorWrapper = styled(motion.div)<{
   $theme?: PaperDialogThemeConfig;
   $style?: CSSProp;
   $resizable?: boolean;
+  $width?: string;
 }>`
   *,
   ::before,
@@ -1064,11 +1066,17 @@ const DragIndicatorWrapper = styled(motion.div)<{
   touch-action: none;
 
   cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grab")};
-  width: 100dvw;
   height: 60px;
   align-items: center;
   border-radius: 1.2rem 1.2rem 0 0;
   background-color: ${({ $theme }) => $theme?.backgroundColor};
+
+  ${({ $width }) =>
+    $width &&
+    css`
+      min-width: ${$width ?? "100dvw"};
+      max-width: ${$width ?? "100dvw"};
+    `}
 
   &:active {
     cursor: ${({ $resizable }) => ($resizable ? "ns-resize" : "grabbing")};
