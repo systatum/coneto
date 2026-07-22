@@ -11,13 +11,33 @@ describe("Messagebox", () => {
     );
   }
 
+  context("title", () => {
+    context("when given string", () => {
+      it("renders the title with string", () => {
+        cy.mount(<ProductMessagebox />);
+        cy.findByText("This is title").should("exist");
+      });
+    });
+
+    context("when given react node", () => {
+      it("renders the title with element", () => {
+        cy.mount(
+          <ProductMessagebox
+            title={<div aria-label="label-with-react-node">Hi john doe</div>}
+          />
+        );
+        cy.findByLabelText("label-with-react-node").should("exist");
+      });
+    });
+  });
+
   context("height", () => {
     it("renders with fit-content (by default)", () => {
       cy.mount(<ProductMessagebox />);
       cy.findByLabelText("messagebox-container").should(
         "have.css",
         "height",
-        "78.59375px"
+        "80.59375px"
       );
     });
 
@@ -33,7 +53,7 @@ describe("Messagebox", () => {
         cy.findByLabelText("messagebox-container").should(
           "have.css",
           "height",
-          "294.125px"
+          "296.125px"
         );
       });
     });
@@ -69,7 +89,7 @@ describe("Messagebox", () => {
         cy.findByLabelText("messagebox-container").should(
           "have.css",
           "height",
-          "78.59375px"
+          "80.59375px"
         );
       });
     });
