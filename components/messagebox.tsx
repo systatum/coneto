@@ -19,9 +19,9 @@ export type MessageboxVariant =
 
 export interface MessageboxProps {
   variant?: MessageboxVariant;
-  title: string;
+  title?: ReactNode;
   icon?: FigureProps;
-  children: ReactNode;
+  children?: ReactNode;
   actionLinks?: MessageActionLinks[];
   closable?: boolean;
   onCloseRequest?: () => void;
@@ -76,7 +76,6 @@ function Messagebox({
       $variant={variant}
       $style={styles?.containerStyle}
     >
-      <BorderAccent $theme={messageboxTheme} $variant={variant} />
       <Figure
         {...icon}
         styles={{
@@ -191,6 +190,7 @@ const Wrapper = styled.div<{
     $theme[$variant].backgroundColor};
 
   color: ${({ $variant, $theme }) => $theme[$variant].textColor};
+  border-top: 2px solid ${({ $variant, $theme }) => $theme[$variant].textColor};
 
   ${({ $style }) => $style};
 `;
@@ -214,17 +214,6 @@ const Children = styled.span<{ $style?: CSSProp }>`
   line-height: 1.4;
   color: inherit;
   ${({ $style }) => $style};
-`;
-
-const BorderAccent = styled.div<{
-  $variant: MessageboxVariant;
-  $theme: MessageboxThemeConfig;
-}>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  border-top: 2px solid ${({ $variant, $theme }) => $theme[$variant].textColor};
 `;
 
 const ActionList = styled.div`
