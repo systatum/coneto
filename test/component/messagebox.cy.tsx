@@ -11,6 +11,24 @@ describe("Messagebox", () => {
     );
   }
 
+  context("content", () => {
+    context("when only given the title", () => {
+      it("renders only the title", () => {
+        cy.mount(<Messagebox title="This is title" />);
+        cy.findByLabelText("messagebox-title").should("exist");
+        cy.findByLabelText("messagebox-content").should("not.exist");
+      });
+    });
+
+    context("when only given the children", () => {
+      it("renders only the content", () => {
+        cy.mount(<Messagebox>Test</Messagebox>);
+        cy.findByLabelText("messagebox-title").should("not.exist");
+        cy.findByLabelText("messagebox-content").should("exist");
+      });
+    });
+  });
+
   context("title", () => {
     context("when given string", () => {
       it("renders the title with string", () => {
