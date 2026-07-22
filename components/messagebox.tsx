@@ -92,12 +92,19 @@ function Messagebox({
         aria-label="messagebox-content-wrapper"
         $style={styles?.contentWrapperStyle}
       >
-        <Title aria-label="messagebox-title" $style={styles?.titleStyle}>
-          {title}
-        </Title>
-        <Children aria-label="messagebox-content" $style={styles?.contentStyle}>
-          {children}
-        </Children>
+        {title && (
+          <Title aria-label="messagebox-title" $style={styles?.titleStyle}>
+            {title}
+          </Title>
+        )}
+        {children && (
+          <Children
+            aria-label="messagebox-content"
+            $style={styles?.contentStyle}
+          >
+            {children}
+          </Children>
+        )}
         {actionLinks && (
           <ActionList>
             {actionLinks.map((action, index) =>
