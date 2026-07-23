@@ -1539,7 +1539,7 @@ function TableRow({
 
   const { loose, setWithRowActions, isScrolledRight } = useTableLoose();
 
-  const rowActions = actions?.(rowId ?? "");
+  const rowActions = actions?.(rowId ?? "").filter((action) => !action.hidden);
   const hasRowActions = (rowActions?.length ?? 0) > 0;
 
   useEffect(() => {
@@ -1753,6 +1753,7 @@ function TableRow({
             const listActions = actions(`${rowId}`);
             const actionsWithIcons = listActions
               ?.filter((action): action is TableRowAction => Boolean(action))
+              ?.filter((action) => !action.hidden)
               .map((action) => ({
                 ...action,
                 icon: {
