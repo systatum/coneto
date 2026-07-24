@@ -397,7 +397,7 @@ function Table({
     const viewport = tableBodyRef.current?.getViewport();
     if (!viewport) return;
     setIsScrolledRight(viewport.scrollWidth - viewport.clientWidth > 5);
-  }, []);
+  }, [rowActions]);
 
   const rowVirtualizer = useVirtualizer({
     count: flatChildren?.length,
