@@ -2004,7 +2004,6 @@ const TableRowCell = React.memo(function TableRowCell({
     isLastCol,
     width: widthFromPosition,
   } = useTableRowCellPosition();
-  console.log(index);
 
   const { loose, selectable, isScrolledLeft } = useTableLoose();
   const isFirst = index === 0;
