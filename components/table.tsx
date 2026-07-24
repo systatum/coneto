@@ -146,25 +146,8 @@ export interface TableSummaryRowColumnStyles {
 export type TableResultMenuProps = SearchboxResultMenu;
 
 const DnDContext = createContext<{
-  dragItem: {
-    oldGroupId: string;
-    oldPosition: number;
-    newGroupId?: string;
-    newPosition?: number;
-    id: string;
-  } | null;
-  setDragItem: (props: {
-    oldGroupId: string;
-    oldPosition: number;
-    newGroupId?: string;
-    newPosition?: number;
-    id: string;
-  }) => void;
   onDragged?: TableProps["onDragged"];
-}>({
-  dragItem: null,
-  setDragItem: () => {},
-});
+}>(null);
 const useTableDND = () => useContext(DnDContext);
 
 const TableColumnContext = createContext<TableColumn[]>([]);
@@ -246,14 +229,6 @@ function Table({
 }: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
-
-  const [dragItem, setDragItem] = useState<{
-    oldGroupId: string;
-    oldPosition: number;
-    newGroupId?: string;
-    newPosition?: number;
-    id: string;
-  } | null>(null);
 
   const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -448,10 +423,7 @@ function Table({
     [rowIds, onLastRowReached, draggable, alwaysShowDragIcon]
   );
 
-  const dndContextValue = useMemo(
-    () => ({ dragItem, setDragItem, onDragged }),
-    [dragItem, onDragged]
-  );
+  const dndContextValue = useMemo(() => ({ onDragged }), [onDragged]);
 
   const looseContextValue = useMemo(
     () => ({
@@ -624,7 +596,7 @@ function Table({
                             />
                           </CheckboxWrapper>
                         )}
-                        <IndexedCells>
+                        <IndexedCells lastGetsPadding={!!withRowActions}>
                           {columns.map((col, i) => {
                             const columnAction =
                               typeof col.actions === "function" &&
@@ -752,12 +724,11 @@ function Table({
                                   ref={rowVirtualizer.measureElement}
                                   style={{
                                     position: "absolute",
-                                    top: 0,
+                                    top: virtualRow.start,
                                     left: 0,
                                     width: "100%",
                                     display: "flex",
                                     flexDirection: "column",
-                                    transform: `translateY(${virtualRow.start}px)`,
                                   }}
                                 >
                                   {flatChildren[virtualRow.index]}
@@ -797,82 +768,85 @@ function Table({
                               }
                             />
                           )}
-                          {(() => {
-                            const cells: ReactNode[] = [];
-                            let colPointer = 0;
+                          <IndexedCells lastGetsPadding={!!withRowActions}>
+                            {(() => {
+                              const cells: ReactNode[] = [];
+                              let colPointer = 0;
 
-                            const totalCells = sumRow.reduce(
-                              (acc, col) => acc + (col.span ?? 1),
-                              0
-                            );
+                              const totalCells = sumRow.reduce(
+                                (acc, col) => acc + (col.span ?? 1),
+                                0
+                              );
 
-                            sumRow.map((col, i) => {
-                              const span = col.span ?? 1;
+                              sumRow.map((col, i) => {
+                                const span = col.span ?? 1;
 
-                              for (let s = 0; s < span; s++) {
-                                const columnWidth = columns[colPointer]?.width;
+                                for (let s = 0; s < span; s++) {
+                                  const columnWidth =
+                                    columns[colPointer]?.width;
 
-                                const isLast =
-                                  rowActions && colPointer === totalCells - 1;
+                                  const isLast =
+                                    rowActions && colPointer === totalCells - 1;
 
-                                const isFirst = i === 0;
+                                  const isFirst = i === 0;
 
-                                cells.push(
-                                  <TableRowCell
-                                    key={`${colPointer}-${s}`}
-                                    width={columnWidth}
-                                    bold={col.bold}
-                                    contentStyle={css`
-                                      display: flex;
-                                      align-items: center;
+                                  cells.push(
+                                    <TableRowCell
+                                      key={`${colPointer}-${s}`}
+                                      width={columnWidth}
+                                      bold={col.bold}
+                                      contentStyle={css`
+                                        display: flex;
+                                        align-items: center;
 
-                                      ${columnWidth
-                                        ? css`
-                                            width: ${columnWidth};
-                                            flex-direction: row;
-                                          `
-                                        : css`
-                                            flex: 1;
-                                          `};
+                                        ${columnWidth
+                                          ? css`
+                                              width: ${columnWidth};
+                                              flex-direction: row;
+                                            `
+                                          : css`
+                                              flex: 1;
+                                            `};
 
-                                      ${isLast &&
-                                      css`
-                                        padding-right: 36px;
-                                      `};
-
-                                      ${loose &&
-                                      css`
-                                        ${isFirst &&
+                                        ${isLast &&
                                         css`
-                                          z-index: 40;
-                                          background: ${tableTheme?.summaryBackgroundColor ??
-                                          "#e4e4e4"};
-                                        `}
-                                      `};
+                                          padding-right: 36px;
+                                        `};
 
-                                      ${col.styles?.self}
-                                    `}
-                                  >
-                                    {s === 0 ? col.content : ""}
-                                  </TableRowCell>
-                                );
+                                        ${loose &&
+                                        css`
+                                          ${isFirst &&
+                                          css`
+                                            z-index: 40;
+                                            background: ${tableTheme?.summaryBackgroundColor ??
+                                            "#e4e4e4"};
+                                          `}
+                                        `};
 
-                                colPointer++;
-                              }
-                            });
+                                        ${col.styles?.self}
+                                      `}
+                                    >
+                                      {s === 0 ? col.content : ""}
+                                    </TableRowCell>
+                                  );
 
-                            return cells;
-                          })()}
+                                  colPointer++;
+                                }
+                              });
 
-                          {loose && withRowActions && (
-                            <StickyRowActions
-                              aria-label="summary-row-loose-action"
-                              $theme={tableTheme}
-                              $loose={loose}
-                              $position={"summary"}
-                              $isScrolledRight={isScrolledRight}
-                            />
-                          )}
+                              return cells;
+                            })()}
+
+                            {loose && withRowActions && (
+                              <StickyRowActions
+                                aria-label="summary-row-loose-action"
+                                $theme={tableTheme}
+                                $loose={loose}
+                                $position={"summary"}
+                                $isScrolledRight={isScrolledRight}
+                              />
+                            )}
+                          </IndexedCells>
                         </TableSummary>
                       </ScrollWrapper>
                     )}
@@ -1380,6 +1354,7 @@ const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   height: 100%;
   overflow-y: visible;
+
   ${({ $style }) => $style}
 `;
 
@@ -1454,7 +1429,11 @@ const TableRowCellPositionContext = createContext<{
   index?: number;
   width?: string;
   isLastCol?: boolean;
-} | null>(null);
+} | null>({
+  index: 0,
+  width: undefined,
+  isLastCol: false,
+});
 
 const useTableRowCellPosition = () => useContext(TableRowCellPositionContext);
 
@@ -1466,14 +1445,13 @@ function TableRow({
   actions,
   onClick,
   groupId = "default",
-  onDropItem,
   className,
   id,
-}: TableRowProps & Partial<{ onDropItem?: (position: number) => void }>) {
+}: TableRowProps) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
 
-  const { setDragItem, dragItem } = useTableDND();
+  const { onDragged } = useTableDND();
   const { openRowId, setOpenRowId } = useTableOpenRow();
   const { selectedData, handleSelect } = useTableSelection();
   const { rowIds, alwaysShowDragIcon, draggable, onLastRowReached } =
@@ -1565,12 +1543,15 @@ function TableRow({
           `}
         `}
         draggable={draggable}
-        onDragStart={() =>
-          setDragItem({
-            oldGroupId: groupId!,
-            oldPosition: index,
-            id: rowId ?? "",
-          })
+        onDragStart={(e) =>
+          e.dataTransfer.setData(
+            "application/json",
+            JSON.stringify({
+              id: rowId,
+              oldGroupId: groupId,
+              oldPosition: index,
+            })
+          )
         }
         onDragOver={(e) => {
           e.preventDefault();
@@ -1594,6 +1575,14 @@ function TableRow({
           e.preventDefault();
           setIsOver(false);
 
+          const dragItem = JSON.parse(
+            e.dataTransfer.getData("application/json")
+          ) as {
+            id: string;
+            oldGroupId: string;
+            oldPosition: number;
+          };
+
           let position = 0;
           const isSameGroup = dragItem?.oldGroupId === groupId;
 
@@ -1610,14 +1599,14 @@ function TableRow({
           const clampedPosition = Math.min(position, groupLength ?? 0);
 
           if (dragItem) {
-            setDragItem({
-              ...dragItem,
-              id: rowId,
-              newGroupId: groupId || "default",
+            onDragged?.({
+              id: dragItem.id,
+              oldGroupId: dragItem.oldGroupId || "",
+              oldPosition: dragItem.oldPosition,
+              newGroupId: groupId || "",
+              newPosition: clampedPosition,
             });
           }
-
-          onDropItem?.(clampedPosition);
         }}
       >
         {selectable && (
@@ -1648,48 +1637,46 @@ function TableRow({
           </CheckboxWrapper>
         )}
 
-        <IndexedCells>
-          {content
-            ? content.map((col, i) => {
-                const column = columns[i];
-                const isLastCol = actions && i === childArray.length - 1;
+        {content
+          ? content.map((col, i) => {
+              const column = columns[i];
+              const isLastCol = actions && i === childArray.length - 1;
 
-                return (
-                  <TableRowCell
-                    key={i}
-                    width={column?.width}
-                    contentStyle={
-                      isLastCol
-                        ? css`
-                            padding-right: 36px;
-                            ${styles?.rowCellStyle}
-                          `
-                        : styles?.rowCellStyle
-                    }
-                  >
-                    {col}
-                  </TableRowCell>
-                );
-              })
-            : childArray.map((child, i) => {
-                if (!isValidElement<TableRowCellProps>(child)) return child;
+              return (
+                <TableRowCell
+                  key={i}
+                  width={column?.width}
+                  contentStyle={
+                    isLastCol
+                      ? css`
+                          padding-right: 36px;
+                          ${styles?.rowCellStyle}
+                        `
+                      : styles?.rowCellStyle
+                  }
+                >
+                  {col}
+                </TableRowCell>
+              );
+            })
+          : childArray.map((child, i) => {
+              if (!isValidElement<TableRowCellProps>(child)) return child;
 
-                const isTableRowCell = child.type === Table.Row.Cell;
-                if (!isTableRowCell) return child;
+              const isTableRowCell = child.type === Table.Row.Cell;
+              if (!isTableRowCell) return child;
 
-                const widthColumn = columns[i]?.width;
-                const isLastCol = !!actions && i === childArray.length - 1;
+              const widthColumn = columns[i]?.width;
+              const isLastCol = !!actions && i === childArray.length - 1;
 
-                return (
-                  <TableRowCellPositionContext.Provider
-                    key={child.key ?? i}
-                    value={{ index: i, width: widthColumn, isLastCol }}
-                  >
-                    {child}
-                  </TableRowCellPositionContext.Provider>
-                );
-              })}
-        </IndexedCells>
+              return (
+                <TableRowCellPositionContext.Provider
+                  key={child.key ?? i}
+                  value={{ index: i, width: widthColumn, isLastCol }}
+                >
+                  {child}
+                </TableRowCellPositionContext.Provider>
+              );
+            })}
 
         {isOver && dropPosition && <DragLine position={dropPosition} />}
 
@@ -2017,6 +2004,8 @@ const TableRowCell = React.memo(function TableRowCell({
     isLastCol,
     width: widthFromPosition,
   } = useTableRowCellPosition();
+  console.log(index);
+
   const { loose, selectable, isScrolledLeft } = useTableLoose();
   const isFirst = index === 0;
   const { currentTheme } = useTheme();
