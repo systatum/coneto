@@ -149,14 +149,16 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       applyThumbY(thumbHeight - 4, thumbTop);
     }, [applyThumbY]);
 
-    // Virtualizer-derived thumbY (authoritative when provided).
-    // Kept as a fallback for cases where totalSize/scrollOffset change
-    // WITHOUT a native scroll event (e.g. rows loading in, resize, filtering),
-    // since handleScroll won't fire in those cases.
+    // Wait until after the initial layout so the scrollbar thumb is measured
+    // correctly and is immediately available on hover without requiring a scroll.
     useEffect(() => {
-      if (!isControlledY) return;
-      updateControlledThumbY();
-    }, [isControlledY, totalSize, scrollOffset, updateControlledThumbY]);
+      const id = requestAnimationFrame(() => {
+        updateControlledThumbY();
+        updateThumbs();
+      });
+
+      return () => cancelAnimationFrame(id);
+    }, []);
 
     const showScrollbars = useCallback(() => {
       const el = viewportRef.current;
@@ -216,20 +218,6 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       overflowX,
       applyThumbX,
     ]);
-
-    useEffect(() => {
-      const el = viewportRef.current;
-      if (!el) return;
-      const ro = new ResizeObserver(() => {
-        if (isControlledY) {
-          updateControlledThumbY();
-        } else {
-          updateThumbs();
-        }
-      });
-      ro.observe(el);
-      return () => ro.disconnect();
-    }, [updateThumbs, updateControlledThumbY, isControlledY]);
 
     const onMouseDownY = useCallback(
       (e: React.MouseEvent) => {
