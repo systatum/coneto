@@ -128,36 +128,37 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
     // totalSize/scrollOffset props to propagate through a re-render.
     const updateControlledThumbY = useCallback(() => {
       const el = viewportRef.current;
-      if (!el || !isControlledY) return;
+      if (!el) return;
 
-      const { totalSize, scrollOffset } = controlledRef.current;
-      const clientHeight = el.clientHeight;
+      const { scrollTop, clientHeight } = el; // <- read live, not from props
+      const effectiveScrollHeight =
+        controlledRef.current.totalSize ?? el.scrollHeight;
 
-      if (!clientHeight || (totalSize ?? 0) <= clientHeight) {
+      if (!clientHeight || effectiveScrollHeight <= clientHeight) {
         applyThumbY(0, 0);
         return;
       }
 
-      const heightRatio = clientHeight / (totalSize as number);
+      const heightRatio = clientHeight / effectiveScrollHeight;
       const thumbHeight = Math.max(heightRatio * clientHeight, 30);
-      const maxScrollTop = (totalSize as number) - clientHeight;
+      const maxScrollTop = effectiveScrollHeight - clientHeight;
       const maxThumbTop = clientHeight - thumbHeight;
       const thumbTop =
-        maxScrollTop > 0
-          ? ((scrollOffset ?? 0) / maxScrollTop) * maxThumbTop
-          : 0;
+        maxScrollTop > 0 ? (scrollTop / maxScrollTop) * maxThumbTop : 0;
 
       applyThumbY(thumbHeight - 4, thumbTop);
-    }, [isControlledY, applyThumbY]);
+    }, [applyThumbY]);
 
-    // Virtualizer-derived thumbY (authoritative when provided).
-    // Kept as a fallback for cases where totalSize/scrollOffset change
-    // WITHOUT a native scroll event (e.g. rows loading in, resize, filtering),
-    // since handleScroll won't fire in those cases.
+    // Wait until after the initial layout so the scrollbar thumb is measured
+    // correctly and is immediately available on hover without requiring a scroll.
     useEffect(() => {
-      if (!isControlledY) return;
-      updateControlledThumbY();
-    }, [isControlledY, totalSize, scrollOffset, updateControlledThumbY]);
+      const id = requestAnimationFrame(() => {
+        updateControlledThumbY();
+        updateThumbs();
+      });
+
+      return () => cancelAnimationFrame(id);
+    }, []);
 
     const showScrollbars = useCallback(() => {
       const el = viewportRef.current;
@@ -217,20 +218,6 @@ const Scrollbar = forwardRef<ScrollbarRef, ScrollbarProps>(
       overflowX,
       applyThumbX,
     ]);
-
-    useEffect(() => {
-      const el = viewportRef.current;
-      if (!el) return;
-      const ro = new ResizeObserver(() => {
-        if (isControlledY) {
-          updateControlledThumbY();
-        } else {
-          updateThumbs();
-        }
-      });
-      ro.observe(el);
-      return () => ro.disconnect();
-    }, [updateThumbs, updateControlledThumbY, isControlledY]);
 
     const onMouseDownY = useCallback(
       (e: React.MouseEvent) => {
