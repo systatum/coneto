@@ -1637,46 +1637,38 @@ function TableRow({
           </CheckboxWrapper>
         )}
 
-        {content
-          ? content.map((col, i) => {
-              const column = columns[i];
-              const isLastCol = actions && i === childArray.length - 1;
+        <IndexedCells lastGetsPadding={!!actions}>
+          {content
+            ? content.map((col, i) => {
+                const column = columns[i];
+                const isLastCol = actions && i === childArray.length - 1;
 
-              return (
-                <TableRowCell
-                  key={i}
-                  width={column?.width}
-                  contentStyle={
-                    isLastCol
-                      ? css`
-                          padding-right: 36px;
-                          ${styles?.rowCellStyle}
-                        `
-                      : styles?.rowCellStyle
-                  }
-                >
-                  {col}
-                </TableRowCell>
-              );
-            })
-          : childArray.map((child, i) => {
-              if (!isValidElement<TableRowCellProps>(child)) return child;
+                return (
+                  <TableRowCell
+                    key={i}
+                    width={column?.width}
+                    contentStyle={
+                      isLastCol
+                        ? css`
+                            padding-right: 36px;
+                            ${styles?.rowCellStyle}
+                          `
+                        : styles?.rowCellStyle
+                    }
+                  >
+                    {col}
+                  </TableRowCell>
+                );
+              })
+            : childArray.map((child, i) => {
+                if (!isValidElement<TableRowCellProps>(child)) return child;
 
-              const isTableRowCell = child.type === Table.Row.Cell;
-              if (!isTableRowCell) return child;
+                const isTableRowCell = child.type === Table.Row.Cell;
+                if (!isTableRowCell) return child;
 
-              const widthColumn = columns[i]?.width;
-              const isLastCol = !!actions && i === childArray.length - 1;
-
-              return (
-                <TableRowCellPositionContext.Provider
-                  key={child.key ?? i}
-                  value={{ index: i, width: widthColumn, isLastCol }}
-                >
-                  {child}
-                </TableRowCellPositionContext.Provider>
-              );
-            })}
+                return child;
+              })}
+        </IndexedCells>
 
         {isOver && dropPosition && <DragLine position={dropPosition} />}
 
@@ -1821,22 +1813,18 @@ function IndexedCells({
   const columns = useTableColumns();
   const items = Children.toArray(children).filter(isValidElement);
 
-  return (
-    <>
-      {items.map((child, index) => (
-        <TableRowCellPositionContext.Provider
-          key={child.key ?? index}
-          value={{
-            index,
-            isLastCol: lastGetsPadding && index === items.length - 1,
-            width: columns[index]?.width,
-          }}
-        >
-          {child}
-        </TableRowCellPositionContext.Provider>
-      ))}
-    </>
-  );
+  return items.map((child, index) => (
+    <TableRowCellPositionContext.Provider
+      key={child.key ?? index}
+      value={{
+        index,
+        isLastCol: lastGetsPadding && index === items.length - 1,
+        width: columns[index]?.width,
+      }}
+    >
+      {child}
+    </TableRowCellPositionContext.Provider>
+  ));
 }
 
 const EXPAND_COLLAPSE_VARIANTS = {
