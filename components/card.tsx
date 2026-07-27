@@ -13,6 +13,7 @@ import { useTheme } from "./../theme/provider";
 import { CardThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 import { Title, TitleSection } from "./title";
+import { FigureProps } from "./figure";
 
 export const CardShadow = {
   None: "none",
@@ -52,14 +53,12 @@ export const CardPadding = {
 
 export type CardPadding = (typeof CardPadding)[keyof typeof CardPadding];
 
-export interface CardProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "title" | "style"
-> {
+export interface CardProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "style"> {
   shadow?: CardShadow;
   radius?: CardBorderRadius;
   padding?: CardPadding;
-  children: ReactNode;
+  children?: ReactNode;
   title?: ReactNode;
   pretitle?: ReactNode;
   subtitle?: ReactNode;
@@ -71,6 +70,7 @@ export interface CardProps extends Omit<
   toggleable?: boolean;
   onToggleChange?: (isOpen?: boolean) => void;
   open?: boolean;
+  icon?: FigureProps;
 }
 
 export interface CardStyles {
@@ -103,6 +103,7 @@ function Card({
   id,
   className,
   pretitle,
+  icon,
   ...props
 }: CardProps) {
   const { currentTheme } = useTheme();
@@ -115,14 +116,16 @@ function Card({
   const hasActions = filteredHeaderActions.length > 0;
 
   const renderHeaderActions: TitleSection[] = [
-    {
-      type: "custom",
-      render: hasActions
-        ? filteredHeaderActions.map((action, index) => (
-            <ActionButton key={index} {...action} />
-          ))
-        : undefined,
-    },
+    ...(hasActions
+      ? [
+          {
+            type: "custom",
+            render: filteredHeaderActions.map((action, index) => (
+              <ActionButton key={index} {...action} />
+            )),
+          } satisfies TitleSection,
+        ]
+      : []),
     ...(toggleable
       ? [
           {
@@ -156,10 +159,11 @@ function Card({
       $containerStyle={styles?.containerStyle}
       $theme={cardTheme}
     >
-      {(title || subtitle || pretitle || headerActions) && (
+      {(title || subtitle || pretitle || headerActions || icon) && (
         <Title
           size="sm"
           text={title}
+          icon={icon}
           pretitle={pretitle}
           subtitle={subtitle}
           styles={{
