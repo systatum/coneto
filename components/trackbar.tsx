@@ -194,7 +194,6 @@ function Trackbar({
             $fillColor={fillColor}
             $containerColor={containerColor}
             $directionTo={directionTo}
-            $isDragging={isDragging}
             onPointerDown={handlePointerDown}
           />
         )}
@@ -261,7 +260,6 @@ const Thumb = styled.div<{
   $fillColor: string;
   $containerColor: string;
   $directionTo: TrackbarDirectionTo;
-  $isDragging: boolean;
   $style: CSSProp;
 }>`
   touch-action: none;
@@ -277,8 +275,6 @@ const Thumb = styled.div<{
   cursor: grab;
   touch-action: none;
   transform: translate(-50%, -50%);
-  transition: ${({ $isDragging }) =>
-    $isDragging ? "none" : "left 0.1s linear, right 0.1s linear"};
 
   &:active {
     cursor: grabbing;
