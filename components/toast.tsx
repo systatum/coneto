@@ -154,7 +154,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
     }, 16);
 
     return () => clearInterval(interval);
-  }, [disappearAfterMs]);
+  }, [setProgress, disappearAfterMs]);
 
   const {
     position: iconPosition = ToastIconPosition.LeftTop,
