@@ -60,6 +60,7 @@ export const OverlayBlocker = forwardRef<
       ".coneto-paper-dialog",
       ".coneto-dialog",
       ".coneto-sidebar",
+      "#combo-list",
       ...(_exemptRegions ?? []),
     ];
 

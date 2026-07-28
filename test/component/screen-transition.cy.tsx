@@ -1,7 +1,9 @@
 import { useTheme } from "./../../theme";
 import {
   ScreenProps,
+  ScreensMap,
   ScreenTransition,
+  ScreenTransitionProps,
 } from "./../../components/screen-transition";
 import styled, { css } from "styled-components";
 import { RiArrowLeftSLine } from "@remixicon/react";
@@ -10,114 +12,121 @@ import { Button } from "./../../components/button";
 import { useState } from "react";
 
 describe("Screen Transition", () => {
-  function ProductTransition({
-    initializeScreen = [],
-    onScreenChange,
-  }: {
-    initializeScreen?: ("a" | "b" | "c")[];
-    onScreenChange?: (screens: ("a" | "b" | "c")[]) => void;
-  }) {
-    const { currentTheme } = useTheme();
-    const screens = {
-      a: PageA,
-      b: PageB,
-      c: PageC,
-    };
+  const productScreen = {
+    a: PageA,
+    b: PageB,
+    c: PageC,
+  };
 
-    type ScreenKey = keyof typeof screens;
+  type ScreenKey = keyof typeof productScreen;
+
+  function PageTitle({
+    text,
+    goBack = null,
+  }: {
+    text?: string;
+  } & Partial<ScreenProps>) {
+    const { currentTheme } = useTheme();
+
     const bodyTheme = currentTheme?.body;
 
-    const [activeScreens, setActiveScreens] =
-      useState<ScreenKey[]>(initializeScreen);
-
-    function PageTitle({
-      text,
-      goBack = null,
-    }: {
-      text?: string;
-    } & Partial<ScreenProps>) {
-      return (
-        <Title
-          size="md"
-          leftSection={
-            goBack
-              ? [
-                  {
-                    styles: {
-                      toggleActionStyle: css`
-                        padding: 4px;
-                        height: 30px;
-                        width: 30px;
-                        border-radius: 4px;
-                      `,
-                    },
-                    type: "actions",
-                    actions: [
-                      {
-                        caption: "back",
-                        icon: { image: RiArrowLeftSLine },
-                        onClick: () => {
-                          goBack();
-                        },
-                      },
-                    ],
+    return (
+      <Title
+        size="md"
+        leftSection={
+          goBack
+            ? [
+                {
+                  styles: {
+                    toggleActionStyle: css`
+                      padding: 4px;
+                      height: 30px;
+                      width: 30px;
+                      border-radius: 4px;
+                    `,
                   },
-                ]
-              : []
-          }
-          text={text}
-          styles={{
-            containerStyle: css`
-              border-bottom: 1px solid ${bodyTheme?.borderColor || "#ececec"};
-              height: 53px;
-              justify-content: center;
-              align-items: center;
-              padding: 0 6px;
-            `,
-            textContainerStyle: css`
-              align-items: center;
-            `,
-            titleStyle: css`
-              justify-content: center;
-              font-size: 20px;
+                  type: "actions",
+                  actions: [
+                    {
+                      caption: "back",
+                      icon: { image: RiArrowLeftSLine },
+                      onClick: () => {
+                        goBack();
+                      },
+                    },
+                  ],
+                },
+              ]
+            : []
+        }
+        text={text}
+        styles={{
+          containerStyle: css`
+            border-bottom: 1px solid ${bodyTheme?.borderColor || "#ececec"};
+            height: 53px;
+            justify-content: center;
+            align-items: center;
+            padding: 0 6px;
+          `,
+          textContainerStyle: css`
+            align-items: center;
+          `,
+          titleStyle: css`
+            justify-content: center;
+            font-size: 20px;
 
-              ${goBack &&
-              css`
-                padding-right: 40px;
-              `}
-              align-items: center;
-            `,
-          }}
-        />
-      );
-    }
+            ${goBack &&
+            css`
+              padding-right: 40px;
+            `}
+            align-items: center;
+          `,
+        }}
+      />
+    );
+  }
 
-    function PageC({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
-      return (
-        <Wrapper>
-          <PageTitle text="Page C" goBack={goBack} />
-          <Button onClick={() => goToScreen("a")}>Go to Page A</Button>
-        </Wrapper>
-      );
-    }
+  function PageC({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
+    return (
+      <Wrapper>
+        <PageTitle text="Page C" goBack={goBack} />
+        <Button onClick={() => goToScreen("a")}>Go to Page A</Button>
+      </Wrapper>
+    );
+  }
 
-    function PageB({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
-      return (
-        <Wrapper>
-          <PageTitle text="Page B" goBack={goBack} />
-          <Button onClick={() => goToScreen("c")}>Go to Page C</Button>
-        </Wrapper>
-      );
-    }
+  function PageB({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
+    return (
+      <Wrapper>
+        <PageTitle text="Page B" goBack={goBack} />
+        <Button onClick={() => goToScreen("c")}>Go to Page C</Button>
+      </Wrapper>
+    );
+  }
 
-    function PageA({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
-      return (
-        <Wrapper>
-          <PageTitle text="Page A" goBack={goBack} />
-          <Button onClick={() => goToScreen("b")}>Go to Page B</Button>
-        </Wrapper>
-      );
-    }
+  function PageA({ goBack, goToScreen }: ScreenProps<ScreenKey>) {
+    return (
+      <Wrapper>
+        <PageTitle text="Page A" goBack={goBack} />
+        <Button onClick={() => goToScreen("b")}>Go to Page B</Button>
+      </Wrapper>
+    );
+  }
+
+  type ProductTransitionProps<TScreens extends ScreensMap> = {
+    screens: TScreens;
+    initializeScreen?: (keyof TScreens)[];
+    onScreenChange?: (screens: (keyof TScreens)[]) => void;
+  } & Partial<ScreenTransitionProps<TScreens>>;
+
+  function ProductTransition<TScreens extends ScreensMap>({
+    initializeScreen = [],
+    onScreenChange,
+    screens,
+    styles,
+  }: Partial<ProductTransitionProps<TScreens>>) {
+    const [activeScreens, setActiveScreens] =
+      useState<(keyof TScreens)[]>(initializeScreen);
 
     return (
       <>
@@ -135,15 +144,450 @@ describe("Screen Transition", () => {
             setActiveScreens(screens);
             onScreenChange?.(screens as ("a" | "b" | "c")[]);
           }}
+          styles={styles}
         />
       </>
     );
   }
 
+  context("styles", () => {
+    context("indicatorStyle", () => {
+      context("when given red color", () => {
+        it("renders the background with red color", () => {
+          cy.viewport(500, 700);
+
+          const productWithSheetScreens: ScreensMap = {
+            a: PageA,
+            b: PageB,
+            c: { component: PageC, sheet: true },
+          };
+
+          cy.mount(
+            <ProductTransition
+              screens={productWithSheetScreens}
+              initializeScreen={["c"]}
+              styles={{
+                indicatorStyle: css`
+                  background-color: red;
+                `,
+              }}
+            />
+          );
+
+          cy.findByLabelText("paper-dialog-drag-indicator").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+    });
+
+    context("contentStyle", () => {
+      context("when given padding 20px", () => {
+        it("renders the content with padding 20px", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductTransition
+              screens={productScreen}
+              initializeScreen={["c"]}
+              styles={{
+                contentStyle: css`
+                  padding: 20px;
+                `,
+              }}
+            />
+          );
+          cy.findByLabelText("paper-dialog-content").should(
+            "have.css",
+            "padding",
+            "20px"
+          );
+        });
+      });
+    });
+  });
+
+  context("screen config", () => {
+    context("with sheet", () => {
+      context("closable", () => {
+        context("when not given (by default is true)", () => {
+          context("when clicking the overlay", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+
+          context("when drag the indicator", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("paper-dialog-drag-indicator")
+                .realMouseDown({ position: "center" })
+                .realMouseMove(0, 50)
+                .wait(200)
+                .realMouseMove(0, 100)
+                .wait(200)
+                .realMouseMove(0, 150)
+                .wait(200)
+                .realMouseMove(0, 250)
+                .realMouseUp();
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+        });
+
+        context("when given false", () => {
+          context("when clicking the overlay", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: false },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            });
+          });
+
+          context("when drag the indicator", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: false },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("paper-dialog-drag-indicator")
+                .realMouseDown({ position: "center" })
+                .realMouseMove(0, 50)
+                .wait(200)
+                .realMouseMove(0, 100)
+                .wait(200)
+                .realMouseMove(0, 150)
+                .wait(200)
+                .realMouseMove(0, 250)
+                .realMouseUp();
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "not.have.css",
+                "height",
+                "560px"
+              );
+            });
+          });
+        });
+      });
+
+      it("renders with height 80dvh", () => {
+        cy.viewport(500, 700);
+
+        const productWithSheetScreens: ScreensMap = {
+          a: PageA,
+          b: PageB,
+          c: { component: PageC, sheet: true },
+        };
+
+        cy.mount(
+          <ProductTransition
+            screens={productWithSheetScreens}
+            initializeScreen={["c"]}
+          />
+        );
+        cy.findByLabelText("paper-dialog-wrapper").should(
+          "have.css",
+          "height",
+          "560px"
+        );
+      });
+
+      context("when given height 300px", () => {
+        it("renders the element with height 300px", () => {
+          cy.viewport(500, 700);
+
+          const productWithSheetScreens: ScreensMap = {
+            a: PageA,
+            b: PageB,
+            c: { component: PageC, sheet: true, height: "300px" },
+          };
+
+          cy.mount(
+            <ProductTransition
+              screens={productWithSheetScreens}
+              initializeScreen={["c"]}
+            />
+          );
+          cy.findByLabelText("paper-dialog-wrapper").should(
+            "have.css",
+            "height",
+            "300px"
+          );
+        });
+      });
+    });
+
+    context("without sheet", () => {
+      context("closable", () => {
+        context("when not given (by default is false)", () => {
+          context("when clicking the overlay", () => {
+            it("should not close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, width: "300px" },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+
+              cy.findByLabelText("paper-dialog-wrapper")
+                .should("have.css", "height", "700px")
+                .and("have.css", "width", "300px");
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("exist");
+            });
+          });
+        });
+
+        context("when given true", () => {
+          context("when clicking the overlay", () => {
+            it("should close the screen", () => {
+              cy.viewport(500, 700);
+
+              const productWithSheetScreens: ScreensMap = {
+                a: PageA,
+                b: PageB,
+                c: { component: PageC, sheet: true, closable: true },
+              };
+
+              cy.mount(
+                <ProductTransition
+                  screens={productWithSheetScreens}
+                  initializeScreen={["c"]}
+                />
+              );
+              cy.findByLabelText("paper-dialog-wrapper").should(
+                "have.css",
+                "height",
+                "560px"
+              );
+
+              cy.findByLabelText("overlay-blocker").click({ force: true });
+
+              cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+            });
+          });
+        });
+      });
+
+      it("renders with full width (100dvw)", () => {
+        cy.viewport(500, 700);
+
+        const productWithSheetScreens: ScreensMap = {
+          a: PageA,
+          b: PageB,
+          c: { component: PageC },
+        };
+
+        cy.mount(
+          <ProductTransition
+            screens={productWithSheetScreens}
+            initializeScreen={["c"]}
+          />
+        );
+        cy.findByLabelText("paper-dialog-wrapper").should(
+          "have.css",
+          "width",
+          "500px"
+        );
+      });
+
+      context("when given width 300px", () => {
+        it("renders the element with width 300px", () => {
+          cy.viewport(500, 700);
+
+          const productWithSheetScreens: ScreensMap = {
+            a: PageA,
+            b: PageB,
+            c: { component: PageC, width: "300px" },
+          };
+
+          cy.mount(
+            <ProductTransition
+              screens={productWithSheetScreens}
+              initializeScreen={["c"]}
+            />
+          );
+          cy.findByLabelText("paper-dialog-wrapper").should(
+            "have.css",
+            "width",
+            "300px"
+          );
+        });
+      });
+    });
+  });
+
   context("screens", () => {
+    context("when given sheet", () => {
+      const productWithSheetScreens: ScreensMap = {
+        a: PageA,
+        b: PageB,
+        c: { component: PageC, sheet: true },
+      };
+
+      context("when initialize with C in screen", () => {
+        it("renders the PaperDialog mobile", () => {
+          cy.viewport(500, 700);
+
+          cy.mount(
+            <ProductTransition
+              screens={productWithSheetScreens}
+              initializeScreen={["c"]}
+            />
+          );
+
+          cy.findByLabelText("paper-dialog-drag-indicator").should("exist");
+
+          cy.wait(500);
+        });
+
+        context("when drag to the bottom with indicator", () => {
+          it("should close the PaperDialog", () => {
+            cy.viewport(500, 700);
+
+            cy.mount(
+              <ProductTransition
+                screens={productWithSheetScreens}
+                initializeScreen={["c"]}
+              />
+            );
+            cy.findByLabelText("paper-dialog-drag-indicator")
+              .realMouseDown({ position: "center" })
+              .realMouseMove(0, 30)
+              .wait(100)
+              .realMouseMove(0, 60)
+              .wait(100)
+              .realMouseMove(0, 100)
+              .realMouseUp();
+
+            cy.findByLabelText("paper-dialog-drag-indicator").should(
+              "not.exist"
+            );
+          });
+
+          it("should given onScreenChange callback as usual", () => {
+            cy.viewport(500, 700);
+            const onScreenChangeSpy = cy.stub().as("onScreenChange");
+
+            cy.mount(
+              <ProductTransition
+                screens={productWithSheetScreens}
+                initializeScreen={["c"]}
+                onScreenChange={onScreenChangeSpy}
+              />
+            );
+            cy.findByLabelText("paper-dialog-drag-indicator")
+              .realMouseDown({ position: "center" })
+              .realMouseMove(0, 30)
+              .wait(100)
+              .realMouseMove(0, 60)
+              .wait(100)
+              .realMouseMove(0, 100)
+              .realMouseUp();
+
+            cy.get("@onScreenChange").should("have.been.calledWith", []);
+          });
+        });
+      });
+    });
+
     context("when clicking next button", () => {
       it("should move to the page A", () => {
-        cy.mount(<ProductTransition />);
+        cy.mount(<ProductTransition screens={productScreen} />);
         cy.findByLabelText("title-title").should("have.text", "Index Screen");
 
         cy.findByText("Go to Page A").should("be.visible").click();
@@ -156,7 +600,7 @@ describe("Screen Transition", () => {
 
       context("when clicking next button", () => {
         it("should move to the page C", () => {
-          cy.mount(<ProductTransition />);
+          cy.mount(<ProductTransition screens={productScreen} />);
           cy.findByLabelText("title-title").should("have.text", "Index Screen");
 
           cy.findByText("Go to Page A").should("be.visible").click();
@@ -177,7 +621,7 @@ describe("Screen Transition", () => {
 
       context("when clicking chevron icon", () => {
         it("should move to the initial screen", () => {
-          cy.mount(<ProductTransition />);
+          cy.mount(<ProductTransition screens={productScreen} />);
           cy.findByLabelText("title-title").should("have.text", "Index Screen");
 
           cy.findByText("Go to Page A").should("be.visible").click();
@@ -196,13 +640,23 @@ describe("Screen Transition", () => {
   context("activeScreens", () => {
     context("when initialize 3 screen", () => {
       it("should render 3 screen", () => {
-        cy.mount(<ProductTransition initializeScreen={["b", "c", "a"]} />);
+        cy.mount(
+          <ProductTransition
+            screens={productScreen}
+            initializeScreen={["b", "c", "a"]}
+          />
+        );
         cy.findAllByLabelText("paper-dialog-wrapper").should("have.length", 3);
       });
 
       context("when move to back", () => {
         it("closes screens in reverse order", () => {
-          cy.mount(<ProductTransition initializeScreen={["b", "c", "a"]} />);
+          cy.mount(
+            <ProductTransition
+              screens={productScreen}
+              initializeScreen={["b", "c", "a"]}
+            />
+          );
           cy.findAllByLabelText("title-title")
             .eq(3)
             .should("have.text", "Page A");
@@ -234,6 +688,7 @@ describe("Screen Transition", () => {
 
         cy.mount(
           <ProductTransition
+            screens={productScreen}
             initializeScreen={["a"]}
             onScreenChange={onScreenChangeSpy}
           />
@@ -250,6 +705,7 @@ describe("Screen Transition", () => {
 
           cy.mount(
             <ProductTransition
+              screens={productScreen}
               initializeScreen={["a"]}
               onScreenChange={onScreenChangeSpy}
             />

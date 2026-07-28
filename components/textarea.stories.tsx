@@ -1,5 +1,4 @@
 import * as RemixIcons from "@remixicon/react";
-import { useArgs } from "@storybook/preview-api";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 import { css } from "styled-components";
@@ -141,25 +140,17 @@ export const Default: Story = {
     name: "textarea",
     label: "Textarea",
     placeholder: "Type your message...",
-    value: "",
     rows: 3,
   },
   render: (args: TextareaProps) => {
-    const [, setUpdateArgs] = useArgs();
-
-    const handleChange = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const newValue = e.target.value;
-        setUpdateArgs({ value: newValue });
-      }
-    };
+    const [value, setValue] = useState("");
 
     return (
       <Textarea
         {...args}
         width={400}
-        value={args.value}
-        onChange={handleChange}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -171,25 +162,17 @@ export const Autogrow: Story = {
     label: "Textarea Autogrow",
     autogrow: true,
     placeholder: "Type your message...",
-    value: "",
     rows: 3,
   },
   render: (args: TextareaProps) => {
-    const [, setUpdateArgs] = useArgs();
-
-    const handleChange = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
-        const newValue = e.target.value;
-        setUpdateArgs({ value: newValue });
-      }
-    };
+    const [value, setValue] = useState("");
 
     return (
       <Textarea
         {...args}
         width={400}
-        value={args.value}
-        onChange={handleChange}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },
@@ -270,17 +253,16 @@ export const WithErrorMessage: Story = {
     label: "With Error",
     placeholder: "Type with error...",
     autogrow: true,
-    value: "",
     showError: true,
     errorMessage: "This field is required",
   },
   render: (args: TextareaProps) => {
-    const [, setUpdateArgs] = useArgs();
+    const [value, setValue] = useState("");
 
     const handleChange = (e: StatefulOnChangeType) => {
-      if (e && "target" in e) {
+      if (e && "currentTarget" in e) {
         const newValue = e.target.value;
-        setUpdateArgs({ value: newValue });
+        setValue(newValue);
       }
     };
 
@@ -288,8 +270,8 @@ export const WithErrorMessage: Story = {
       <Textarea
         {...args}
         width={400}
-        value={args.value}
-        onChange={handleChange}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
       />
     );
   },

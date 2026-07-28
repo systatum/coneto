@@ -5,7 +5,14 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { PaperDialog, PaperDialogRef } from "./paper-dialog";
+import {
+  PaperDialog,
+  PaperDialogRef,
+  PaperDialogResizable,
+  PaperDialogState,
+  PaperDialogStyles,
+  PaperDialogTrigger,
+} from "./paper-dialog";
 import { css } from "styled-components";
 
 export interface ScreenProps<TScreenKey extends string = string> {
@@ -13,7 +20,23 @@ export interface ScreenProps<TScreenKey extends string = string> {
   goBack: (() => void) | null;
 }
 
-type ScreensMap = Record<string, ComponentType<Partial<ScreenProps>>>;
+type ScreensComponent = ComponentType<Partial<ScreenProps>>;
+
+type ScreenConfig = {
+  component: ScreensComponent;
+  sheet?: ScreenSheetConfig;
+  closable?: boolean;
+  width?: string;
+  height?: string;
+};
+
+type ScreenSheetConfig =
+  | boolean
+  | Omit<PaperDialogResizable, "minWidth" | "maxWidth">;
+
+export type ScreenEntry = ScreensComponent | ScreenConfig;
+
+export type ScreensMap = Record<string, ScreenEntry>;
 
 export interface ScreenTransitionProps<TScreens extends ScreensMap> {
   /** Registry of every screen this transition can render, keyed by id */
@@ -22,12 +45,21 @@ export interface ScreenTransitionProps<TScreens extends ScreensMap> {
   activeScreens: (keyof TScreens)[] | string[];
   /** Called with the next stack whenever navigation happens */
   onScreenChange: (screens: (keyof TScreens)[]) => void;
+  /** styles for screen transition*/
+  styles?: ScreenTransitionStyles;
+  /** initial size when needed, for sheet and normal appearance */
 }
+
+export type ScreenTransitionStyles = Pick<
+  PaperDialogStyles,
+  "indicatorStyle" | "contentStyle" | "containerStyle"
+>;
 
 function ScreenTransition<TScreens extends ScreensMap>({
   screens,
   activeScreens = [],
   onScreenChange,
+  styles,
 }: ScreenTransitionProps<TScreens>) {
   const dialogRefsRef = useRef<
     Map<number, React.RefObject<PaperDialogRef | null>>
@@ -67,25 +99,37 @@ function ScreenTransition<TScreens extends ScreensMap>({
     [screens, activeScreens, onScreenChange]
   );
 
-  const goBack = useCallback(() => {
-    if (activeScreens.length === 0) return;
+  const goBack = useCallback(
+    (skipCloseDialog?: boolean) => {
+      if (activeScreens.length === 0) return;
 
-    const topIndex = activeScreens.length - 1; // the dialog wrapping the top screen
-    const ref = dialogRefsRef.current.get(topIndex);
+      const topIndex = activeScreens.length - 1; // the dialog wrapping the top screen
+      const ref = dialogRefsRef.current.get(topIndex);
 
-    ref?.current?.minimizeDialog();
-    setTimeout(() => {
-      ref?.current?.closeDialog();
-      onScreenChange(activeScreens.slice(0, -1));
-      mountedIndicesRef.current!.delete(topIndex);
-    }, 300);
-  }, [activeScreens, onScreenChange]);
+      // Prevent triggering `closeDialog` on mobile.
+      // Calling it would fire `onChange`, causing an unnecessary re-render
+      // and resetting the minimized state. When the dialog is closed via the
+      // drag indicator, the required close behavior is already handled.
+      if (!skipCloseDialog) {
+        ref?.current?.closeDialog({ withMinimize: true, withTimeout: true });
+      }
+
+      setTimeout(() => {
+        onScreenChange(activeScreens.slice(0, -1));
+        mountedIndicesRef.current!.delete(topIndex);
+      }, 300);
+    },
+    [activeScreens, onScreenChange]
+  );
 
   const renderStack = (index: number): ReactNode => {
     const key = activeScreens[index];
     if (!key) return null;
+    const screen = screens[key];
 
-    const ScreenComponent = screens[key] as ComponentType<Partial<ScreenProps>>;
+    const config = getScreenConfig(screen);
+
+    const ScreenComponent: ScreensComponent = config.component;
     if (!ScreenComponent) {
       console.warn(
         `ScreenTransition: screen "${String(key)}" is not registered`
@@ -102,8 +146,15 @@ function ScreenTransition<TScreens extends ScreensMap>({
 
     return (
       <DialogLevel
+        key={index}
+        styles={styles}
         dialogRef={getDialogRef(index)}
         skipInitialAnimation={skipInitialAnimation}
+        onClosed={() => goBack?.(true)}
+        sheet={config?.sheet}
+        width={config?.width}
+        height={config?.height}
+        closable={config?.closable}
       >
         <ScreenComponent {...screenProps} />
         {index < activeScreens.length - 1 && renderStack(index + 1)}
@@ -116,14 +167,36 @@ function ScreenTransition<TScreens extends ScreensMap>({
   return renderStack(0);
 }
 
+function getScreenConfig(screen: ScreenEntry): ScreenConfig {
+  if (typeof screen === "function") {
+    return {
+      component: screen,
+    };
+  }
+
+  return screen;
+}
+
 function DialogLevel({
   dialogRef,
   children,
   skipInitialAnimation,
+  sheet,
+  onClosed,
+  styles,
+  height,
+  width,
+  closable,
 }: {
   dialogRef: React.RefObject<PaperDialogRef | null>;
   children: ReactNode;
   skipInitialAnimation?: boolean;
+  sheet?: ScreenSheetConfig;
+  onClosed?: () => void;
+  styles?: ScreenTransitionStyles;
+  height?: string;
+  width?: string;
+  closable?: boolean;
 }) {
   useEffect(() => {
     // Only animate-open if this dialog wasn't pre-existing/already mounted.
@@ -132,20 +205,42 @@ function DialogLevel({
     }
   }, [dialogRef, skipInitialAnimation]);
 
+  const finalWidth = width ? width : "100dvw";
+  const finalHeight = height ? height : sheet ? "80dvh" : "100dvh";
+
   return (
     <PaperDialog
       styles={{
+        containerStyle: styles?.containerStyle,
+        indicatorStyle: styles?.indicatorStyle,
         contentStyle: css`
           gap: 0px;
+          ${styles?.contentStyle}
         `,
       }}
       ref={dialogRef}
-      closable={false}
+      closable={{
+        withButton: false,
+        withEscape: false,
+        withOverlay: closable ?? (sheet ? true : false),
+        withIndicator: closable,
+      }}
       controls={[]}
-      width={"100dvw"}
-      height={"100dvh"}
+      width={finalWidth}
+      height={finalHeight}
+      mobile={!!sheet}
+      resizable={!!sheet}
       initialDialogState={skipInitialAnimation ? "restored" : "closed"}
       skipInitialAnimation={skipInitialAnimation}
+      onChange={(state: PaperDialogState, trigger: PaperDialogTrigger) => {
+        if (
+          (state === PaperDialogState.Minimized &&
+            trigger === PaperDialogTrigger.Overlay) ||
+          (state === PaperDialogState.Minimized &&
+            trigger === PaperDialogTrigger.Drag)
+        )
+          onClosed?.();
+      }}
     >
       {children}
     </PaperDialog>
