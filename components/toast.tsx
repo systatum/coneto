@@ -145,23 +145,9 @@ function ToastItem({ item, onClose }: ToastItemProps) {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const start = performance.now();
-    let raf: number;
-
-    const tick = (now: number) => {
-      const elapsed = now - start;
-      const next = Math.max(0, 100 - (elapsed / disappearAfterMs) * 100);
-      setProgress(next);
-
-      if (next > 0) {
-        raf = requestAnimationFrame(tick);
-      }
-    };
-
-    raf = requestAnimationFrame(tick);
-
+    const raf = requestAnimationFrame(() => setProgress(0));
     return () => cancelAnimationFrame(raf);
-  }, [disappearAfterMs]);
+  }, []);
 
   const {
     position: iconPosition = ToastIconPosition.LeftTop,
@@ -286,6 +272,9 @@ function ToastItem({ item, onClose }: ToastItemProps) {
                 position: absolute;
                 bottom: 0;
                 left: 0;
+              `,
+              valueBarStyle: css`
+                transition: width ${disappearAfterMs}ms linear;
               `,
             }}
             variant={variant}
