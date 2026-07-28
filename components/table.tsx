@@ -1,6 +1,5 @@
 import React, {
   Children,
-  cloneElement,
   createContext,
   isValidElement,
   ReactElement,
@@ -158,18 +157,14 @@ const TableLooseContext = createContext<{
   selectable?: boolean;
   withRowActions?: boolean;
   setWithRowActions?: (value: boolean) => void;
-  isScrolledLeft?: boolean;
-  isScrolledRight?: boolean;
 }>({
   loose: false,
   selectable: false,
   withRowActions: false,
-  isScrolledLeft: false,
-  isScrolledRight: false,
 });
 const useTableLoose = () => useContext(TableLooseContext);
 
-// Selection state — changes often, isolated from static config
+// Selection state, often changes, isolated from static config
 const TableSelectionContext = createContext<{
   selectedData: string[];
   handleSelect: (id: string) => void;
@@ -179,7 +174,7 @@ const TableSelectionContext = createContext<{
 });
 const useTableSelection = () => useContext(TableSelectionContext);
 
-// Which row's context-menu/expanded-content is open — changes often
+// Which row's context-menu/expanded-content is open, changes often
 const TableOpenRowContext = createContext<{
   openRowId: string | null;
   setOpenRowId: (id: string | null) => void;
@@ -189,16 +184,37 @@ const TableOpenRowContext = createContext<{
 });
 const useTableOpenRow = () => useContext(TableOpenRowContext);
 
-// Static-ish per-row config that used to be cloned in
+interface RowPosition {
+  /** Index of this row among its siblings within the same group. */
+  localIndex: number;
+  /** Total row count in this row's group. */
+  groupLength: number;
+}
+
+/*
+ * Per-row metadata a row used to receive via cloneElement props;
+ * centralized here so a row looks itself up instead of being cloned into.
+ */
 const TableRowMetaContext = createContext<{
-  rowIds: string[]; // flat, in render order — used for isLast / intersection observer
+  /** Flat, document-order row ids. Used to detect the very last row. */
+  rowIds: string[];
+  /** Each row's position within its own group. Used for drag-and-drop reordering. */
+  rowPositions: Map<string, RowPosition>;
   onLastRowReached?: () => void;
   draggable?: boolean;
   alwaysShowDragIcon?: boolean;
 }>({
   rowIds: [],
+  rowPositions: new Map(),
 });
 const useTableRowMeta = () => useContext(TableRowMetaContext);
+
+/*
+ * Provided by a row's enclosing group so it can resolve its own groupId
+ * without prop cloning. A row outside any group has no provider above it,
+ * so it falls back to its own groupId prop.
+ */
+const TableRowGroupIdContext = createContext<string | undefined>(undefined);
 
 function Table({
   selectable = false,
@@ -238,11 +254,23 @@ function Table({
 
   const [withRowActions, setWithRowActions] = useState(false);
 
-  // Tracks whether the table body has been scrolled horizontally.
-  // isScrolledLeft: activates the shadow effect on sticky left columns (e.g. first cell).
-  // isScrolledRight: activates the shadow effect on sticky right actions — true when there's still content to scroll right.
-  const [isScrolledLeft, setIsScrolledLeft] = useState(false);
-  const [isScrolledRight, setIsScrolledRight] = useState(false);
+  /*
+   * Drives the shadow effect on sticky left columns / sticky row actions as
+   * the table scrolls horizontally. This used to be React state, but
+   * crossing the shadow threshold (leaving either edge) flipped it and
+   * re-rendered every TableRowCell across every visible + overscanned
+   * row/column through TableLooseContext, which is what showed up as
+   * jitter right at the scroll edges. Writing CSS custom properties
+   * directly on tableContainerRef instead costs a style recalc scoped to
+   * the handful of pseudo-elements that read the variable, not a re-render.
+   */
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const applyScrollShadow = useCallback((isLeft: boolean, isRight: boolean) => {
+    const el = tableContainerRef.current;
+    if (!el) return;
+    el.style.setProperty("--table-scrolled-left", isLeft ? "1" : "0");
+    el.style.setProperty("--table-scrolled-right", isRight ? "1" : "0");
+  }, []);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -290,16 +318,22 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
-  // no more cloning — just flatten wrapper components into real elements.
-  // identity of these elements is stable across selection/drag/openRow
-  // changes because `children` (the prop) doesn't change on those state updates.
+  /*
+   * No more cloning: flatten wrapper components into real elements. Their
+   * identity stays stable across selection/drag/openRow changes since
+   * `children` doesn't change on those state updates.
+   */
   const flatChildren = useMemo(() => resolveChildren(children), [children]);
 
-  // flat rowIds in render order — replaces the `index`/`isLast`/`groupLength`
-  // props that used to get baked in via cloneElement. TableRow/TableRowGroup
-  // will look their own rowId up in this array instead.
+  /** Flat, document-order row ids, replacing the `index`/`isLast` props a row used to receive via cloneElement. */
   const rowIds = useMemo(
     () => getAllRowContentsFromChildren(children),
+    [children]
+  );
+
+  /** Each row's index and size within its own group, replacing the `index`/`groupLength` props a row used to receive via cloneElement. */
+  const rowPositions = useMemo(
+    () => getRowPositionsFromChildren(children),
     [children]
   );
 
@@ -337,14 +371,12 @@ function Table({
 
   const hasActions = filteredActions.length > 0;
 
-  // Scroll sync for loose mode.
-  // Header and summary don't scroll on their own — their scrollLeft is driven
-  // by TableBody (the only real scroll container).
-
+  // Scroll sync for loose mode. Header and summary don't scroll on their own,
+  // their scrollLeft is driven by TableBody (the only real scroll container).
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const summaryScrollRef = useRef<HTMLDivElement>(null);
 
-  // Normalizes access across the three scroll containers — body is wrapped
+  // Normalizes access across the three scroll containers: body is wrapped
   // in Scrollbar (needs getViewport()), header/summary are plain divs.
   const scrollTargets = useRef([
     {
@@ -355,23 +387,35 @@ function Table({
     { key: "summary" as const, getEl: () => summaryScrollRef.current },
   ]).current;
 
+  /*
+   * Guards against the echo below: assigning `el.scrollLeft` on header/summary
+   * queues a native "scroll" event on them, which re-enters this function
+   * during the same frame. Without this flag every real scroll tick did 3x
+   * the work (3 separate scrollWidth/clientWidth reads, each forcing a sticky
+   * layout recalc on `loose` tables) even though the two echoed calls always
+   * find nothing left to do. That redundant thrash is what shows up as
+   * horizontal-scroll jitter on wide `loose` tables.
+   */
+  const isSyncingScrollRef = useRef(false);
+
   // Any of the three can be the source. Propagates to the other two, guarded
-  // by value-equality so the chain self-terminates instead of ping-ponging —
-  // see explanation above.
+  // by value-equality so the chain self-terminates instead of ping-ponging.
   const syncScroll = useCallback(
     (sourceKey: "body" | "header" | "summary") => {
+      if (isSyncingScrollRef.current) return;
+
       const source = scrollTargets.find((t) => t.key === sourceKey)?.getEl();
       if (!source) return;
 
       const scrollLeft = source.scrollLeft;
 
       // Shadow indicators depend on scroll position + total scrollWidth, which
-      // is the same across all three (same columns) — safe to compute from
-      // whichever container triggered the event.
+      // is the same across all three (same columns), so it's safe to compute
+      // from whichever container triggered the event.
       const scrollRight = source.scrollWidth - source.clientWidth - scrollLeft;
-      setIsScrolledLeft(scrollLeft > 5);
-      setIsScrolledRight(scrollRight > 5);
+      applyScrollShadow(scrollLeft > 5, scrollRight > 5);
 
+      isSyncingScrollRef.current = true;
       for (const target of scrollTargets) {
         if (target.key === sourceKey) continue;
         const el = target.getEl();
@@ -379,8 +423,15 @@ function Table({
           el.scrollLeft = scrollLeft;
         }
       }
+      // Native "scroll" events queued by the assignments above fire before
+      // the next paint, in the same batch as rAF callbacks. Releasing here
+      // still lets this frame's echoes hit the early-return, while leaving
+      // the guard clear in time for the next real user scroll tick.
+      requestAnimationFrame(() => {
+        isSyncingScrollRef.current = false;
+      });
     },
-    [scrollTargets]
+    [scrollTargets, applyScrollShadow]
   );
 
   const handleHeaderScroll = useCallback(
@@ -393,11 +444,18 @@ function Table({
     [syncScroll]
   );
 
+  // Re-derive the shadows whenever the body's overflow could have changed
+  // (initial mount, and whenever the sticky row-actions column appears or
+  // disappears and shifts how much content overflows), not just on scroll.
   useEffect(() => {
     const viewport = tableBodyRef.current?.getViewport();
     if (!viewport) return;
-    setIsScrolledRight(viewport.scrollWidth - viewport.clientWidth > 5);
-  }, [rowActions]);
+    const { scrollLeft, scrollWidth, clientWidth } = viewport;
+    applyScrollShadow(
+      scrollLeft > 5,
+      scrollWidth - clientWidth - scrollLeft > 5
+    );
+  }, [rowActions, applyScrollShadow]);
 
   const rowVirtualizer = useVirtualizer({
     count: flatChildren?.length,
@@ -406,8 +464,7 @@ function Table({
     overscan: 20,
   });
 
-  // context values — memoized so identity only changes when the actual
-  // underlying values change (prevents unnecessary consumer re-renders)
+  /* Memoized so identity only changes when the underlying values change, to prevent unnecessary consumer re-renders. */
   const selectionContextValue = useMemo(
     () => ({ selectedData, handleSelect }),
     [selectedData, handleSelect]
@@ -419,22 +476,21 @@ function Table({
   );
 
   const rowMetaContextValue = useMemo(
-    () => ({ rowIds, onLastRowReached, draggable, alwaysShowDragIcon }),
-    [rowIds, onLastRowReached, draggable, alwaysShowDragIcon]
+    () => ({
+      rowIds,
+      rowPositions,
+      onLastRowReached,
+      draggable,
+      alwaysShowDragIcon,
+    }),
+    [rowIds, rowPositions, onLastRowReached, draggable, alwaysShowDragIcon]
   );
 
   const dndContextValue = useMemo(() => ({ onDragged }), [onDragged]);
 
   const looseContextValue = useMemo(
-    () => ({
-      loose,
-      selectable,
-      withRowActions,
-      setWithRowActions,
-      isScrolledLeft,
-      isScrolledRight,
-    }),
-    [loose, selectable, withRowActions, isScrolledLeft, isScrolledRight]
+    () => ({ loose, selectable, withRowActions, setWithRowActions }),
+    [loose, selectable, withRowActions]
   );
 
   return (
@@ -560,6 +616,7 @@ function Table({
                   )}
 
                   <TableContainer
+                    ref={tableContainerRef}
                     $theme={tableTheme}
                     $loose={loose}
                     $hasSelected={selectedData.length > 0}
@@ -664,7 +721,7 @@ function Table({
                                     padding: 4px 19.2px;
                                   `}
 
-                          ${col?.styles?.containerStyle}
+                                  ${col?.styles?.containerStyle}
                                 `}
                               >
                                 <Label
@@ -686,7 +743,6 @@ function Table({
                             aria-label="header-row-loose-action"
                             $theme={tableTheme}
                             $loose={loose}
-                            $isScrolledRight={isScrolledRight}
                           />
                         )}
                       </TableHeader>
@@ -724,6 +780,11 @@ function Table({
                                   ref={rowVirtualizer.measureElement}
                                   style={{
                                     position: "absolute",
+                                    // Not transform: translateY() here. A
+                                    // transform on this ancestor would create
+                                    // a new containing block, which breaks
+                                    // TableRowGroupHeader's `position: sticky`
+                                    // for grouped rows.
                                     top: virtualRow.start,
                                     left: 0,
                                     width: "100%",
@@ -744,8 +805,8 @@ function Table({
                     {sumRow && (
                       <ScrollWrapper
                         ref={summaryScrollRef}
-                        onScroll={loose ? handleSummaryScroll : undefined}
                         $loose={loose}
+                        onScroll={loose ? handleSummaryScroll : undefined}
                       >
                         <TableSummary
                           $loose={loose}
@@ -843,7 +904,6 @@ function Table({
                                 $theme={tableTheme}
                                 $loose={loose}
                                 $position={"summary"}
-                                $isScrolledRight={isScrolledRight}
                               />
                             )}
                           </IndexedCells>
@@ -963,7 +1023,6 @@ const StickyRowActions = styled.div<{
   $loose?: boolean;
   $theme?: TableThemeConfig;
   $position?: "header" | "summary";
-  $isScrolledRight?: boolean;
   $isFirefox?: boolean;
 }>`
   position: sticky;
@@ -987,8 +1046,9 @@ const StickyRowActions = styled.div<{
     left: -6px;
     bottom: 0;
     width: 6px;
-    background: ${({ $isScrolledRight, $theme }) =>
-      $isScrolledRight ? $theme?.rightLooseEffectColor : "transparent"};
+    /* toggled via CSS var rather than a React prop, to minimize re-rendering. */
+    background: ${({ $theme }) => $theme?.rightLooseEffectColor};
+    opacity: var(--table-scrolled-right, 0);
     pointer-events: none;
   }
 `;
@@ -1320,7 +1380,9 @@ function TableRowGroup({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            {children}
+            <TableRowGroupIdContext.Provider value={id ?? "default"}>
+              {children}
+            </TableRowGroupIdContext.Provider>
           </TableRowGroupBody>
         )}
       </AnimatePresence>
@@ -1425,6 +1487,11 @@ export interface TableRowStyles {
   rowCellStyle?: CSSProp;
 }
 
+/*
+ * Set by IndexedCells, one level per cell, so a cell resolves its own
+ * position (for the sticky first column) and width without a parent
+ * cloning props onto it.
+ */
 const TableRowCellPositionContext = createContext<{
   index?: number;
   width?: string;
@@ -1434,7 +1501,6 @@ const TableRowCellPositionContext = createContext<{
   width: undefined,
   isLastCol: false,
 });
-
 const useTableRowCellPosition = () => useContext(TableRowCellPositionContext);
 
 function TableRow({
@@ -1444,7 +1510,7 @@ function TableRow({
   children,
   actions,
   onClick,
-  groupId = "default",
+  groupId: groupIdProp = "default",
   className,
   id,
 }: TableRowProps) {
@@ -1454,16 +1520,33 @@ function TableRow({
   const { onDragged } = useTableDND();
   const { openRowId, setOpenRowId } = useTableOpenRow();
   const { selectedData, handleSelect } = useTableSelection();
-  const { rowIds, alwaysShowDragIcon, draggable, onLastRowReached } =
-    useTableRowMeta();
-  const { loose, selectable, setWithRowActions, isScrolledRight } =
-    useTableLoose();
+  const {
+    rowIds,
+    rowPositions,
+    alwaysShowDragIcon,
+    draggable,
+    onLastRowReached,
+  } = useTableRowMeta();
+  const { loose, selectable, setWithRowActions } = useTableLoose();
 
-  // derived locally instead of injected via cloneElement
+  /*
+   * A row inside a Table.Row.Group always takes that group's id, the same
+   * way TableRowGroup used to unconditionally inject `groupId`. A row
+   * outside any group has no provider above it, so it falls back to its
+   * own prop.
+   */
+  const contextGroupId = useContext(TableRowGroupIdContext);
+  const groupId = contextGroupId ?? groupIdProp;
+
   const isSelected = !!rowId && selectedData.includes(rowId);
+  /** Position among all rows in the table, used only to detect the very last row (see the effect below). */
   const index = rowId ? rowIds.indexOf(rowId) : -1;
   const isLast = index === rowIds.length - 1;
-  const groupLength = rowIds.length;
+
+  const rowPosition = rowId ? rowPositions.get(rowId) : undefined;
+  /** Position within this row's own group, used for drag-and-drop reordering below. */
+  const localIndex = rowPosition?.localIndex ?? 0;
+  const groupLength = rowPosition?.groupLength ?? 0;
 
   const rowActions = actions?.(rowId ?? "").filter((action) => !action.hidden);
   const hasRowActions = (rowActions?.length ?? 0) > 0;
@@ -1549,7 +1632,7 @@ function TableRow({
             JSON.stringify({
               id: rowId,
               oldGroupId: groupId,
-              oldPosition: index,
+              oldPosition: localIndex,
             })
           )
         }
@@ -1587,9 +1670,9 @@ function TableRow({
           const isSameGroup = dragItem?.oldGroupId === groupId;
 
           if (dropPosition === "top") {
-            position = index;
+            position = localIndex;
           } else {
-            position = index + 1;
+            position = localIndex + 1;
           }
 
           if (isSameGroup && dragItem?.oldPosition < position) {
@@ -1636,7 +1719,6 @@ function TableRow({
             />
           </CheckboxWrapper>
         )}
-
         <IndexedCells lastGetsPadding={!!actions}>
           {content
             ? content.map((col, i) => {
@@ -1660,7 +1742,8 @@ function TableRow({
                   </TableRowCell>
                 );
               })
-            : childArray.map((child, i) => {
+            : /* width/padding for a caller-provided Table.Row.Cell now come from IndexedCells via position context, not a clone. */
+              childArray.map((child) => {
                 if (!isValidElement<TableRowCellProps>(child)) return child;
 
                 const isTableRowCell = child.type === Table.Row.Cell;
@@ -1746,9 +1829,9 @@ function TableRow({
                         left: -6px;
                         bottom: 0;
                         width: 6px;
-                        background: ${isScrolledRight
-                          ? tableTheme?.rightLooseEffectColor
-                          : "transparent"};
+                        /* CSS var toggled imperatively by syncScroll. */
+                        background: ${tableTheme?.rightLooseEffectColor};
+                        opacity: var(--table-scrolled-right, 0);
                         pointer-events: none;
                       }
                     `};
@@ -1800,7 +1883,7 @@ function TableRow({
 
 /**
  * Wraps a list of cells and assigns each one its position via context.
- * Callers never compute or pass an index themselves — just render
+ * Callers never compute or pass an index themselves: they just render
  * whatever children they have, in order, and this does the counting.
  */
 function IndexedCells({
@@ -1993,11 +2076,12 @@ const TableRowCell = React.memo(function TableRowCell({
     width: widthFromPosition,
   } = useTableRowCellPosition();
 
-  const { loose, selectable, isScrolledLeft } = useTableLoose();
+  const { loose, selectable } = useTableLoose();
   const isFirst = index === 0;
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme?.table;
 
+  // An explicit width prop always wins over the column width IndexedCells resolved.
   const resolvedWidth = width ? width : widthFromPosition;
 
   return (
@@ -2006,7 +2090,6 @@ const TableRowCell = React.memo(function TableRowCell({
       id={id}
       $loose={loose}
       $selectable={selectable}
-      $isScrolledLeft={isScrolledLeft}
       $sticky={isFirst}
       className={applyClassName("table-row-cell", className)}
       aria-label="table-row-cell"
@@ -2047,7 +2130,6 @@ const CellContent = styled.div<{
   $sticky: boolean;
   $selectable?: boolean;
   $theme: TableThemeConfig;
-  $isScrolledLeft?: boolean;
 }>`
   *,
   ::before,
@@ -2079,7 +2161,7 @@ const CellContent = styled.div<{
           `
         : ""};
 
-  ${({ $loose, $sticky, $selectable, $theme, $isScrolledLeft }) =>
+  ${({ $loose, $sticky, $selectable, $theme }) =>
     $sticky &&
     $loose &&
     css`
@@ -2098,9 +2180,9 @@ const CellContent = styled.div<{
         right: -6px;
         bottom: 0;
         width: 6px;
-        background: ${$isScrolledLeft
-          ? $theme?.leftLooseEffectColor
-          : "var(--row-bg, transparent)"};
+        /* toggled imperatively by syncScroll; previously every cell in every row re-rendered whenever this flipped. */
+        background: ${$theme?.leftLooseEffectColor};
+        opacity: var(--table-scrolled-left, 0);
         pointer-events: none;
       }
     `};
@@ -2196,23 +2278,51 @@ function resolveChildren(
   return result;
 }
 
-function resolveRowChildren(
+/**
+ * For each row, finds its index among its own group's rows and that
+ * group's total row count. Mirrors getAllRowContentsFromChildren's
+ * traversal, but a nested Table.Row.Group starts a new counting scope
+ * instead of contributing to its parent's.
+ */
+function getRowPositionsFromChildren(
   children: ReactNode
-): ReactElement<TableRowProps>[] {
-  const result: ReactElement<TableRowProps>[] = [];
+): Map<string, RowPosition> {
+  const result = new Map<string, RowPosition>();
 
-  Children.forEach(children, (child) => {
-    if (!isValidElement(child)) return;
+  // Returns the row ids found directly at this level (not inside a nested
+  // group), and records their positions into `result` once the full count
+  // for this level is known.
+  function walk(nodes: ReactNode): string[] {
+    const ownRowIds: string[] = [];
 
-    if (child.type === TableRow) {
-      result.push(child as ReactElement<TableRowProps>);
-    } else if (typeof child.type === "function") {
-      // Unwrap wrapper components recursively until we find TableRow elements
-      const rendered = (child.type as Function)(child.props);
-      result.push(...resolveRowChildren(rendered));
-    }
-  });
+    Children.forEach(nodes, (child) => {
+      if (!isValidElement(child)) return;
 
+      if (child.type === TableRowGroup) {
+        const groupChildren = (child.props as TableRowGroupProps).children;
+        walk(groupChildren);
+        return;
+      }
+
+      if (child.type === TableRow) {
+        const rowId = (child.props as TableRowProps).rowId;
+        if (rowId) ownRowIds.push(rowId);
+        return;
+      }
+
+      if (typeof child.type === "function") {
+        ownRowIds.push(...walk((child.type as Function)(child.props)));
+      }
+    });
+
+    ownRowIds.forEach((rowId, localIndex) => {
+      result.set(rowId, { localIndex, groupLength: ownRowIds.length });
+    });
+
+    return ownRowIds;
+  }
+
+  walk(children);
   return result;
 }
 
