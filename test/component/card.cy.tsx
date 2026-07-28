@@ -1,4 +1,4 @@
-import { RiDeleteBack2Fill, RiEdit2Line } from "@remixicon/react";
+import { RiAddBoxLine, RiDeleteBack2Fill, RiEdit2Line } from "@remixicon/react";
 import { Card, CardProps } from "./../../components/card";
 import { Button } from "./../../components/button";
 import { DormantText } from "./../../components/dormant-text";
@@ -35,6 +35,59 @@ describe("Card", () => {
       </Card>
     );
   }
+
+  context("content", () => {
+    context("title", () => {
+      context("when given only with title", () => {
+        it("still can renders the card with title", () => {
+          cy.mount(<Card title="Test" />);
+          cy.findByLabelText("title-title")
+            .should("have.text", "Test")
+            .and("exist");
+        });
+      });
+    });
+
+    context("subtitle", () => {
+      context("when given only with subtitle", () => {
+        it("still can renders the card with subtitle", () => {
+          cy.mount(<Card subtitle="Test Subtitle" />);
+          cy.findByLabelText("title-subtitle")
+            .should("have.text", "Test Subtitle")
+            .and("exist");
+        });
+      });
+    });
+
+    context("pretitle", () => {
+      context("when given only with pretitle", () => {
+        it("still can renders the card with pretitle", () => {
+          cy.mount(<Card pretitle="Test Pretitle" />);
+          cy.findByLabelText("title-pretitle")
+            .should("have.text", "Test Pretitle")
+            .and("exist");
+        });
+      });
+    });
+
+    context("icon", () => {
+      context("when given only with icon", () => {
+        it("still can renders the card with icon 30px", () => {
+          cy.mount(
+            <Card
+              pretitle="Test Pretitle"
+              icon={{
+                image: RiAddBoxLine,
+              }}
+            />
+          );
+          cy.get(".coneto-figure svg")
+            .should("have.attr", "width", "20")
+            .and("have.attr", "height", "20");
+        });
+      });
+    });
+  });
 
   context("styles", () => {
     context("containerStyle", () => {
@@ -523,6 +576,18 @@ describe("Card", () => {
       );
 
       cy.findByLabelText("action-button-icon").should("not.exist");
+    });
+
+    context("when not given action", () => {
+      it("not renders right section", () => {
+        cy.mount(<Card title="Test" />);
+
+        cy.findByLabelText("title-title")
+          .should("have.text", "Test")
+          .and("exist");
+
+        cy.findByLabelText("title-right-section").should("not.exist");
+      });
     });
 
     context("when given hidden action", () => {

@@ -1122,7 +1122,7 @@ export const Toggleable: Story = {
 
       const sortableColumns: TableColumn[] = columns.map((column) => ({
         ...column,
-        actions: {
+        actions: () => ({
           title: "Sort",
           icon: { image: RiArrowUpDownLine },
           subMenu: ({ list }) =>
@@ -1155,7 +1155,7 @@ export const Toggleable: Story = {
                   }),
               },
             ]),
-        },
+        }),
       }));
 
       return (
