@@ -147,6 +147,8 @@ function Card({
       : []),
   ];
 
+  const finalIcon = icon ? { ...icon, size: icon.size ?? 20 } : undefined;
+
   return (
     <CardContainer
       aria-label="card-container"
@@ -163,7 +165,7 @@ function Card({
         <Title
           size="sm"
           text={title}
-          icon={icon}
+          icon={finalIcon}
           pretitle={pretitle}
           subtitle={subtitle}
           styles={{
