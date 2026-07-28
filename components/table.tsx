@@ -157,14 +157,10 @@ const TableLooseContext = createContext<{
   selectable?: boolean;
   withRowActions?: boolean;
   setWithRowActions?: (value: boolean) => void;
-  isScrolledLeft?: boolean;
-  isScrolledRight?: boolean;
 }>({
   loose: false,
   selectable: false,
   withRowActions: false,
-  isScrolledLeft: false,
-  isScrolledRight: false,
 });
 const useTableLoose = () => useContext(TableLooseContext);
 
@@ -258,11 +254,23 @@ function Table({
 
   const [withRowActions, setWithRowActions] = useState(false);
 
-  // Tracks whether the table body has been scrolled horizontally.
-  // isScrolledLeft: activates the shadow effect on sticky left columns (e.g. first cell).
-  // isScrolledRight: activates the shadow effect on sticky right actions — true when there's still content to scroll right.
-  const [isScrolledLeft, setIsScrolledLeft] = useState(false);
-  const [isScrolledRight, setIsScrolledRight] = useState(false);
+  /*
+   * Drives the shadow effect on sticky left columns / sticky row actions as
+   * the table scrolls horizontally. This used to be React state, but
+   * crossing the shadow threshold (leaving either edge) flipped it and
+   * re-rendered every TableRowCell across every visible + overscanned
+   * row/column through TableLooseContext, which is what showed up as
+   * jitter right at the scroll edges. Writing CSS custom properties
+   * directly on tableContainerRef instead costs a style recalc scoped to
+   * the handful of pseudo-elements that read the variable, not a re-render.
+   */
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const applyScrollShadow = useCallback((isLeft: boolean, isRight: boolean) => {
+    const el = tableContainerRef.current;
+    if (!el) return;
+    el.style.setProperty("--table-scrolled-left", isLeft ? "1" : "0");
+    el.style.setProperty("--table-scrolled-right", isRight ? "1" : "0");
+  }, []);
 
   const handleSelectAll = () => {
     const currentPageIds = getAllRowContentsFromChildren(children);
@@ -399,8 +407,7 @@ function Table({
 
       // Shadow indicators depend on scroll position + total scrollWidth.
       const scrollRight = source.scrollWidth - source.clientWidth - scrollLeft;
-      setIsScrolledLeft(scrollLeft > 5);
-      setIsScrolledRight(scrollRight > 5);
+      applyScrollShadow(scrollLeft > 5, scrollRight > 5);
 
       isSyncingScrollRef.current = true;
       for (const target of scrollTargets) {
@@ -418,7 +425,7 @@ function Table({
         isSyncingScrollRef.current = false;
       });
     },
-    [scrollTargets]
+    [scrollTargets, applyScrollShadow]
   );
 
   const handleHeaderScroll = useCallback(
@@ -431,14 +438,18 @@ function Table({
     [syncScroll]
   );
 
-  // On mount, check if the table body already overflows horizontally.
-  // This ensures the right shadow appears immediately without needing to scroll first.
+  // Re-derive the shadows whenever the body's overflow could have changed
+  // (initial mount, and whenever the sticky row-actions column appears or
+  // disappears and shifts how much content overflows), not just on scroll.
   useEffect(() => {
-    const viewport = getViewport();
+    const viewport = tableBodyRef.current?.getViewport();
     if (!viewport) return;
-    const scrollRight = viewport.scrollWidth - viewport.clientWidth;
-    setIsScrolledRight(scrollRight > 5);
-  }, []);
+    const { scrollLeft, scrollWidth, clientWidth } = viewport;
+    applyScrollShadow(
+      scrollLeft > 5,
+      scrollWidth - clientWidth - scrollLeft > 5
+    );
+  }, [rowActions, applyScrollShadow]);
 
   const rowVirtualizer = useVirtualizer({
     count: flatChildren?.length,
@@ -471,21 +482,17 @@ function Table({
 
   const dndContextValue = useMemo(() => ({ onDragged }), [onDragged]);
 
+  const looseContextValue = useMemo(
+    () => ({ loose, selectable, withRowActions, setWithRowActions }),
+    [loose, selectable, withRowActions]
+  );
+
   return (
     <DnDContext.Provider value={dndContextValue}>
       <TableSelectionContext.Provider value={selectionContextValue}>
         <TableOpenRowContext.Provider value={openRowContextValue}>
           <TableRowMetaContext.Provider value={rowMetaContextValue}>
-            <TableLooseContext.Provider
-              value={{
-                loose,
-                selectable,
-                withRowActions,
-                setWithRowActions,
-                isScrolledLeft,
-                isScrolledRight,
-              }}
-            >
+            <TableLooseContext.Provider value={looseContextValue}>
               <TableColumnContext.Provider value={columns}>
                 <Wrapper
                   id={id}
@@ -603,6 +610,7 @@ function Table({
                   )}
 
                   <TableContainer
+                    ref={tableContainerRef}
                     $theme={tableTheme}
                     $loose={loose}
                     $hasSelected={selectedData.length > 0}
@@ -729,7 +737,6 @@ function Table({
                             aria-label="header-row-loose-action"
                             $theme={tableTheme}
                             $loose={loose}
-                            $isScrolledRight={isScrolledRight}
                           />
                         )}
                       </TableHeader>
@@ -887,7 +894,6 @@ function Table({
                                 $theme={tableTheme}
                                 $loose={loose}
                                 $position={"summary"}
-                                $isScrolledRight={isScrolledRight}
                               />
                             )}
                           </IndexedCells>
@@ -1007,7 +1013,6 @@ const StickyRowActions = styled.div<{
   $loose?: boolean;
   $theme?: TableThemeConfig;
   $position?: "header" | "summary";
-  $isScrolledRight?: boolean;
   $isFirefox?: boolean;
 }>`
   position: sticky;
@@ -1031,8 +1036,9 @@ const StickyRowActions = styled.div<{
     left: -6px;
     bottom: 0;
     width: 6px;
-    background: ${({ $isScrolledRight, $theme }) =>
-      $isScrolledRight ? $theme?.rightLooseEffectColor : "transparent"};
+    /* toggled via CSS var rather than a React prop, to minimize re-rendering. */
+    background: ${({ $theme }) => $theme?.rightLooseEffectColor};
+    opacity: var(--table-scrolled-right, 0);
     pointer-events: none;
   }
 `;
@@ -1519,8 +1525,7 @@ function TableRow({
     draggable,
     onLastRowReached,
   } = useTableRowMeta();
-  const { loose, selectable, setWithRowActions, isScrolledRight } =
-    useTableLoose();
+  const { loose, selectable, setWithRowActions } = useTableLoose();
 
   /*
    * A row inside a Table.Row.Group always takes that group's id, the same
@@ -1822,9 +1827,9 @@ function TableRow({
                         left: -6px;
                         bottom: 0;
                         width: 6px;
-                        background: ${isScrolledRight
-                          ? tableTheme?.rightLooseEffectColor
-                          : "transparent"};
+                        /* CSS var toggled imperatively by syncScroll. */
+                        background: ${tableTheme?.rightLooseEffectColor};
+                        opacity: var(--table-scrolled-right, 0);
                         pointer-events: none;
                       }
                     `};
@@ -2059,7 +2064,7 @@ const TableRowCell = React.memo(function TableRowCell({
     width: widthFromPosition,
   } = useTableRowCellPosition();
 
-  const { loose, selectable, isScrolledLeft } = useTableLoose();
+  const { loose, selectable } = useTableLoose();
   const isFirst = index === 0;
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme?.table;
@@ -2073,7 +2078,6 @@ const TableRowCell = React.memo(function TableRowCell({
       id={id}
       $loose={loose}
       $selectable={selectable}
-      $isScrolledLeft={isScrolledLeft}
       $sticky={isFirst}
       className={applyClassName("table-row-cell", className)}
       aria-label="table-row-cell"
@@ -2114,7 +2118,6 @@ const CellContent = styled.div<{
   $sticky: boolean;
   $selectable?: boolean;
   $theme: TableThemeConfig;
-  $isScrolledLeft?: boolean;
 }>`
   *,
   ::before,
@@ -2146,7 +2149,7 @@ const CellContent = styled.div<{
           `
         : ""};
 
-  ${({ $loose, $sticky, $selectable, $theme, $isScrolledLeft }) =>
+  ${({ $loose, $sticky, $selectable, $theme }) =>
     $sticky &&
     $loose &&
     css`
@@ -2165,9 +2168,9 @@ const CellContent = styled.div<{
         right: -6px;
         bottom: 0;
         width: 6px;
-        background: ${$isScrolledLeft
-          ? $theme?.leftLooseEffectColor
-          : "var(--row-bg, transparent)"};
+        /* toggled imperatively by syncScroll; previously every cell in every row re-rendered whenever this flipped. */
+        background: ${$theme?.leftLooseEffectColor};
+        opacity: var(--table-scrolled-left, 0);
         pointer-events: none;
       }
     `};
