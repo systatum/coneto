@@ -177,6 +177,7 @@ function Trackbar({
             $editable={editable}
             $fillColor={fillColor}
             $indeterminate={indeterminate}
+            $isDragging={isDragging}
             $directionTo={directionTo}
             $style={styles?.valueBarStyle}
           />
@@ -306,6 +307,7 @@ const Fill = styled.div<{
   $directionTo: TrackbarDirectionTo;
   $style?: CSSProp;
   $fillColor?: string;
+  $isDragging: boolean;
 }>`
   position: absolute;
   top: 0;
@@ -313,6 +315,9 @@ const Fill = styled.div<{
   height: 100%;
   background-color: ${({ $theme, $variant, $fillColor }) =>
     $fillColor ?? $theme?.[$variant]?.barColor};
+
+  transition: ${({ $isDragging }) =>
+    $isDragging ? "none" : "width 0.1s linear"};
 
   ${({ $indeterminate, $directionTo, $maxValue, $value, $editable }) => {
     const widthPercent = $maxValue > 0 ? ($value / $maxValue) * 100 : 0;
