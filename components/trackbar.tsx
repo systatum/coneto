@@ -16,6 +16,11 @@ export interface TrackbarProps {
   containerColor?: string;
   onChange?: (value?: number) => void;
   labels?: TrackbarLabels;
+  /**
+   * Controls the duration of the fill width transition animation in milliseconds.
+   * Useful for synchronizing the visual progress animation with external timing.
+   */
+  transitionDuration?: number;
   className?: string;
   id?: string;
 }
@@ -78,6 +83,7 @@ function Trackbar({
   containerColor,
   onChange,
   labels,
+  transitionDuration,
   className,
   id,
 }: TrackbarProps) {
@@ -177,6 +183,8 @@ function Trackbar({
             $editable={editable}
             $fillColor={fillColor}
             $indeterminate={indeterminate}
+            $isDragging={isDragging}
+            $transitionDuration={transitionDuration}
             $directionTo={directionTo}
             $style={styles?.valueBarStyle}
           />
@@ -306,6 +314,8 @@ const Fill = styled.div<{
   $directionTo: TrackbarDirectionTo;
   $style?: CSSProp;
   $fillColor?: string;
+  $isDragging: boolean;
+  $transitionDuration?: number;
 }>`
   position: absolute;
   top: 0;
@@ -313,6 +323,9 @@ const Fill = styled.div<{
   height: 100%;
   background-color: ${({ $theme, $variant, $fillColor }) =>
     $fillColor ?? $theme?.[$variant]?.barColor};
+
+  transition: ${({ $isDragging, $transitionDuration }) =>
+    $isDragging ? "none" : `width ${$transitionDuration ?? 100}ms linear`};
 
   ${({ $indeterminate, $directionTo, $maxValue, $value, $editable }) => {
     const widthPercent = $maxValue > 0 ? ($value / $maxValue) * 100 : 0;
