@@ -780,12 +780,16 @@ function Table({
                                   ref={rowVirtualizer.measureElement}
                                   style={{
                                     position: "absolute",
-                                    top: 0,
+                                    // Not transform: translateY() here. A
+                                    // transform on this ancestor would create
+                                    // a new containing block, which breaks
+                                    // TableRowGroupHeader's `position: sticky`
+                                    // for grouped rows.
+                                    top: virtualRow.start,
                                     left: 0,
                                     width: "100%",
                                     display: "flex",
                                     flexDirection: "column",
-                                    transform: `translateY(${virtualRow.start}px)`,
                                   }}
                                 >
                                   {flatChildren[virtualRow.index]}
