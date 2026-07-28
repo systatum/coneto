@@ -4,6 +4,7 @@ import React, {
   isValidElement,
   ReactElement,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -358,30 +359,77 @@ function Table({
 
   const hasActions = filteredActions.length > 0;
 
-  // Scroll sync for loose mode.
-  // Header and summary don't scroll on their own — their scrollLeft is driven
-  // by TableBody (the only real scroll container).
-
+  // Scroll sync for loose mode. Header and summary don't scroll on their own,
+  // their scrollLeft is driven by TableBody (the only real scroll container).
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const summaryScrollRef = useRef<HTMLDivElement>(null);
 
-  // Sync horizontal scroll: body → header & summary
-  const handleWrapperScroll = () => {
-    const viewport = getViewport();
-    if (!viewport) return;
+  // Normalizes access across the three scroll containers: body is wrapped
+  // in Scrollbar (needs getViewport()), header/summary are plain divs.
+  const scrollTargets = useRef([
+    {
+      key: "body" as const,
+      getEl: () => tableBodyRef.current?.getViewport() ?? null,
+    },
+    { key: "header" as const, getEl: () => headerScrollRef.current },
+    { key: "summary" as const, getEl: () => summaryScrollRef.current },
+  ]).current;
 
-    const scrollLeft = viewport.scrollLeft;
-    const scrollRight =
-      viewport.scrollWidth - viewport.clientWidth - scrollLeft;
+  /*
+   * Guards against the echo below: assigning `el.scrollLeft` on header/summary
+   * queues a native "scroll" event on them, which re-enters this function
+   * during the same frame. Without this flag every real scroll tick did 3x
+   * the work (3 separate scrollWidth/clientWidth reads, each forcing a sticky
+   * layout recalc on `loose` tables) even though the two echoed calls always
+   * find nothing left to do. That redundant thrash is what shows up as
+   * horizontal-scroll jitter on wide `loose` tables.
+   */
+  const isSyncingScrollRef = useRef(false);
 
-    setIsScrolledLeft(scrollLeft > 5);
-    setIsScrolledRight(scrollRight > 5);
+  // Any of the three can be the source. Propagates to the other two, guarded
+  // by value-equality so the chain self-terminates instead of ping-ponging.
+  const syncScroll = useCallback(
+    (sourceKey: "body" | "header" | "summary") => {
+      if (isSyncingScrollRef.current) return;
 
-    if (headerScrollRef.current)
-      headerScrollRef.current.scrollLeft = scrollLeft;
-    if (summaryScrollRef.current)
-      summaryScrollRef.current.scrollLeft = scrollLeft;
-  };
+      const source = scrollTargets.find((t) => t.key === sourceKey)?.getEl();
+      if (!source) return;
+
+      const scrollLeft = source.scrollLeft;
+
+      // Shadow indicators depend on scroll position + total scrollWidth.
+      const scrollRight = source.scrollWidth - source.clientWidth - scrollLeft;
+      setIsScrolledLeft(scrollLeft > 5);
+      setIsScrolledRight(scrollRight > 5);
+
+      isSyncingScrollRef.current = true;
+      for (const target of scrollTargets) {
+        if (target.key === sourceKey) continue;
+        const el = target.getEl();
+        if (el && el.scrollLeft !== scrollLeft) {
+          el.scrollLeft = scrollLeft;
+        }
+      }
+      // Native "scroll" events queued by the assignments above fire before
+      // the next paint, in the same batch as rAF callbacks. Releasing here
+      // still lets this frame's echoes hit the early-return, while leaving
+      // the guard clear in time for the next real user scroll tick.
+      requestAnimationFrame(() => {
+        isSyncingScrollRef.current = false;
+      });
+    },
+    [scrollTargets]
+  );
+
+  const handleHeaderScroll = useCallback(
+    () => syncScroll("header"),
+    [syncScroll]
+  );
+  const handleBodyScroll = useCallback(() => syncScroll("body"), [syncScroll]);
+  const handleSummaryScroll = useCallback(
+    () => syncScroll("summary"),
+    [syncScroll]
+  );
 
   // On mount, check if the table body already overflows horizontally.
   // This ensures the right shadow appears immediately without needing to scroll first.
@@ -391,17 +439,6 @@ function Table({
     const scrollRight = viewport.scrollWidth - viewport.clientWidth;
     setIsScrolledRight(scrollRight > 5);
   }, []);
-
-  // Sync horizontal scroll: summary → body & header
-  const handleSummaryScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollLeft = e.currentTarget.scrollLeft;
-    const viewport = getViewport();
-    if (viewport) viewport.scrollLeft = scrollLeft;
-    if (headerScrollRef.current)
-      headerScrollRef.current.scrollLeft = scrollLeft;
-    if (summaryScrollRef.current)
-      summaryScrollRef.current.scrollLeft = scrollLeft;
-  };
 
   const rowVirtualizer = useVirtualizer({
     count: flatChildren?.length,
@@ -572,7 +609,7 @@ function Table({
                   >
                     <ScrollWrapper
                       ref={headerScrollRef}
-                      onScroll={loose ? handleSummaryScroll : undefined}
+                      onScroll={loose ? handleHeaderScroll : undefined}
                       $loose={loose}
                     >
                       <TableHeader
@@ -704,7 +741,7 @@ function Table({
                         overflowX={loose ? "scroll" : "hidden"}
                         overflowY="scroll"
                         autoHideDelay={800}
-                        onScroll={loose ? handleWrapperScroll : undefined}
+                        onScroll={loose ? handleBodyScroll : undefined}
                         ref={tableBodyRef}
                         totalSize={rowVirtualizer.getTotalSize()}
                         scrollOffset={rowVirtualizer.scrollOffset ?? 0}
