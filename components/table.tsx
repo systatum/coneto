@@ -318,7 +318,11 @@ function Table({
     setSelectedData(newData);
     onItemsSelected?.(newData);
   };
-  /* No more cloning: flatten wrapper components into real elements. */
+  /*
+   * No more cloning: flatten wrapper components into real elements. Their
+   * identity stays stable across selection/drag/openRow changes since
+   * `children` doesn't change on those state updates.
+   */
   const flatChildren = useMemo(() => resolveChildren(children), [children]);
 
   /** Flat, document-order row ids, replacing the `index`/`isLast` props a row used to receive via cloneElement. */
@@ -405,7 +409,9 @@ function Table({
 
       const scrollLeft = source.scrollLeft;
 
-      // Shadow indicators depend on scroll position + total scrollWidth.
+      // Shadow indicators depend on scroll position + total scrollWidth, which
+      // is the same across all three (same columns), so it's safe to compute
+      // from whichever container triggered the event.
       const scrollRight = source.scrollWidth - source.clientWidth - scrollLeft;
       applyScrollShadow(scrollLeft > 5, scrollRight > 5);
 
@@ -1294,15 +1300,6 @@ export interface TableRowGroupStyles {
   titleStyle?: CSSProp;
 }
 
-export interface TableRowCellProps {
-  children: ReactNode;
-  contentStyle?: CSSProp;
-  width?: string;
-  onClick?: () => void;
-  className?: string;
-  id?: string;
-}
-
 function TableRowGroup({
   id,
   children,
@@ -1415,6 +1412,7 @@ const TableRowGroupContainer = styled.div<{ $style?: CSSProp }>`
   width: 100%;
   height: 100%;
   overflow-y: visible;
+
   ${({ $style }) => $style}
 `;
 
@@ -2049,6 +2047,16 @@ const DraggableRequest = styled.div<{
     `}
 `;
 
+export interface TableRowCellProps {
+  children: ReactNode;
+  contentStyle?: CSSProp;
+  onClick?: () => void;
+  bold?: boolean;
+  width?: string;
+  className?: string;
+  id?: string;
+}
+
 const TableRowCell = React.memo(function TableRowCell({
   children,
   contentStyle,
@@ -2057,7 +2065,7 @@ const TableRowCell = React.memo(function TableRowCell({
   width,
   className,
   bold,
-}: TableRowCellProps & Partial<{ bold?: boolean }>) {
+}: TableRowCellProps) {
   const {
     index,
     isLastCol,
