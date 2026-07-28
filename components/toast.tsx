@@ -273,10 +273,8 @@ function ToastItem({ item, onClose }: ToastItemProps) {
                 bottom: 0;
                 left: 0;
               `,
-              valueBarStyle: css`
-                transition: width ${disappearAfterMs}ms linear;
-              `,
             }}
+            transitionDuration={disappearAfterMs}
             variant={variant}
             value={progress}
           />
