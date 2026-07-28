@@ -1,6 +1,5 @@
 import React, {
   Children,
-  cloneElement,
   createContext,
   isValidElement,
   ReactElement,
@@ -603,87 +602,90 @@ function Table({
                             />
                           </CheckboxWrapper>
                         )}
-                        {columns.map((col, i) => {
-                          const columnAction =
-                            typeof col.actions === "function" &&
-                            col.actions(col.id);
+                        <IndexedCells lastGetsPadding={!!withRowActions}>
+                          {columns.map((col, i) => {
+                            const columnAction =
+                              typeof col.actions === "function" &&
+                              col.actions(col.id);
 
-                          const variant = columnAction?.variant ?? "ghost";
-                          const finalColumnAction: ButtonProps = columnAction &&
-                            !columnAction.hidden && {
-                              ...columnAction,
-                              icon: {
-                                ...columnAction?.icon,
-                                image:
-                                  columnAction?.icon?.image ??
-                                  RiArrowUpDownLine,
-                                size: columnAction?.icon?.size ?? 20,
-                              },
-                              showSubMenuOn: "self",
-                              tipMenuSize: columnAction?.tipMenuSize ?? "md",
-                              styles: {
-                                ...columnAction?.styles,
-                                self: css`
-                                  padding: 0px;
-                                  height: 34px;
-                                  width: 34px;
-                                  border-radius: 6px;
-                                  &:not(:focus-visible):not(:active):not(
-                                      :hover
-                                    ):not(:focus) {
-                                    background-color: transparent;
-                                  }
-                                  ${columnAction?.styles?.self};
-                                `,
-                              },
-                              hoverBackgroundColor:
-                                variant === "ghost" &&
-                                tableTheme?.headerActionHoverBackgroundColor,
-                              variant,
-                              "aria-label": "table-column-action",
-                            };
+                            const variant = columnAction?.variant ?? "ghost";
+                            const finalColumnAction: ButtonProps =
+                              columnAction &&
+                                !columnAction.hidden && {
+                                  ...columnAction,
+                                  icon: {
+                                    ...columnAction?.icon,
+                                    image:
+                                      columnAction?.icon?.image ??
+                                      RiArrowUpDownLine,
+                                    size: columnAction?.icon?.size ?? 20,
+                                  },
+                                  showSubMenuOn: "self",
+                                  tipMenuSize:
+                                    columnAction?.tipMenuSize ?? "md",
+                                  styles: {
+                                    ...columnAction?.styles,
+                                    self: css`
+                                      padding: 0px;
+                                      height: 34px;
+                                      width: 34px;
+                                      border-radius: 6px;
+                                      &:not(:focus-visible):not(:active):not(
+                                          :hover
+                                        ):not(:focus) {
+                                        background-color: transparent;
+                                      }
+                                      ${columnAction?.styles?.self};
+                                    `,
+                                  },
+                                  hoverBackgroundColor:
+                                    variant === "ghost" &&
+                                    tableTheme?.headerActionHoverBackgroundColor,
+                                  variant,
+                                  "aria-label": "table-column-action",
+                                };
 
-                          return (
-                            <TableRowCell
-                              key={i}
-                              _index={i}
-                              width={col.width}
-                              contentStyle={css`
-                                display: flex;
-                                align-items: center;
+                            return (
+                              <TableRowCell
+                                key={i}
+                                width={col.width}
+                                contentStyle={css`
+                                  display: flex;
+                                  align-items: center;
 
-                                background: ${tableTheme?.headerBackgroundColor ||
-                                "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
+                                  background: ${tableTheme?.headerBackgroundColor ||
+                                  "linear-gradient(to bottom, #f0f0f0, #e4e4e4)"};
 
-                                ${col.width
-                                  ? css`
-                                      width: ${col.width};
-                                      flex-direction: row;
-                                    `
-                                  : css`
-                                      flex: 1;
-                                    `}
+                                  ${col.width
+                                    ? css`
+                                        width: ${col.width};
+                                        flex-direction: row;
+                                      `
+                                    : css`
+                                        flex: 1;
+                                      `}
 
-                                ${finalColumnAction &&
-                                css`
-                                  padding: 4px 19.2px;
+                                  ${finalColumnAction &&
+                                  css`
+                                    padding: 4px 19.2px;
+                                  `}
+
+                                  ${col?.styles?.containerStyle}
                                 `}
-
-                          ${col?.styles?.containerStyle}
-                              `}
-                            >
-                              <Label
-                                aria-label="table-column-label"
-                                $style={col?.styles?.labelStyle}
                               >
-                                {col.caption}
-                              </Label>
-                              {finalColumnAction && (
-                                <Button {...finalColumnAction} />
-                              )}
-                            </TableRowCell>
-                          );
-                        })}
+                                <Label
+                                  aria-label="table-column-label"
+                                  $style={col?.styles?.labelStyle}
+                                >
+                                  {col.caption}
+                                </Label>
+                                {finalColumnAction && (
+                                  <Button {...finalColumnAction} />
+                                )}
+                              </TableRowCell>
+                            );
+                          })}
+                        </IndexedCells>
 
                         {loose && withRowActions && (
                           <StickyRowActions
@@ -773,83 +775,85 @@ function Table({
                               }
                             />
                           )}
-                          {(() => {
-                            const cells: ReactNode[] = [];
-                            let colPointer = 0;
+                          <IndexedCells lastGetsPadding={!!withRowActions}>
+                            {(() => {
+                              const cells: ReactNode[] = [];
+                              let colPointer = 0;
 
-                            const totalCells = sumRow.reduce(
-                              (acc, col) => acc + (col.span ?? 1),
-                              0
-                            );
+                              const totalCells = sumRow.reduce(
+                                (acc, col) => acc + (col.span ?? 1),
+                                0
+                              );
 
-                            sumRow.map((col, i) => {
-                              const span = col.span ?? 1;
+                              sumRow.map((col, i) => {
+                                const span = col.span ?? 1;
 
-                              for (let s = 0; s < span; s++) {
-                                const columnWidth = columns[colPointer]?.width;
+                                for (let s = 0; s < span; s++) {
+                                  const columnWidth =
+                                    columns[colPointer]?.width;
 
-                                const isLast =
-                                  rowActions && colPointer === totalCells - 1;
+                                  const isLast =
+                                    rowActions && colPointer === totalCells - 1;
 
-                                const isFirst = i === 0;
+                                  const isFirst = i === 0;
 
-                                cells.push(
-                                  <TableRowCell
-                                    _index={i}
-                                    key={`${colPointer}-${s}`}
-                                    width={columnWidth}
-                                    bold={col.bold}
-                                    contentStyle={css`
-                                      display: flex;
-                                      align-items: center;
+                                  cells.push(
+                                    <TableRowCell
+                                      key={`${colPointer}-${s}`}
+                                      width={columnWidth}
+                                      bold={col.bold}
+                                      contentStyle={css`
+                                        display: flex;
+                                        align-items: center;
 
-                                      ${columnWidth
-                                        ? css`
-                                            width: ${columnWidth};
-                                            flex-direction: row;
-                                          `
-                                        : css`
-                                            flex: 1;
-                                          `};
+                                        ${columnWidth
+                                          ? css`
+                                              width: ${columnWidth};
+                                              flex-direction: row;
+                                            `
+                                          : css`
+                                              flex: 1;
+                                            `};
 
-                                      ${isLast &&
-                                      css`
-                                        padding-right: 36px;
-                                      `};
-
-                                      ${loose &&
-                                      css`
-                                        ${isFirst &&
+                                        ${isLast &&
                                         css`
-                                          z-index: 40;
-                                          background: ${tableTheme?.summaryBackgroundColor ??
-                                          "#e4e4e4"};
-                                        `}
-                                      `};
+                                          padding-right: 36px;
+                                        `};
 
-                                      ${col.styles?.self}
-                                    `}
-                                  >
-                                    {s === 0 ? col.content : ""}
-                                  </TableRowCell>
-                                );
+                                        ${loose &&
+                                        css`
+                                          ${isFirst &&
+                                          css`
+                                            z-index: 40;
+                                            background: ${tableTheme?.summaryBackgroundColor ??
+                                            "#e4e4e4"};
+                                          `}
+                                        `};
 
-                                colPointer++;
-                              }
-                            });
+                                        ${col.styles?.self}
+                                      `}
+                                    >
+                                      {s === 0 ? col.content : ""}
+                                    </TableRowCell>
+                                  );
 
-                            return cells;
-                          })()}
+                                  colPointer++;
+                                }
+                              });
 
-                          {loose && withRowActions && (
-                            <StickyRowActions
-                              aria-label="summary-row-loose-action"
-                              $theme={tableTheme}
-                              $loose={loose}
-                              $position={"summary"}
-                              $isScrolledRight={isScrolledRight}
-                            />
-                          )}
+                              return cells;
+                            })()}
+
+                            {loose && withRowActions && (
+                              <StickyRowActions
+                                aria-label="summary-row-loose-action"
+                                $theme={tableTheme}
+                                $loose={loose}
+                                $position={"summary"}
+                                $isScrolledRight={isScrolledRight}
+                              />
+                            )}
+                          </IndexedCells>
                         </TableSummary>
                       </ScrollWrapper>
                     )}
@@ -1438,6 +1442,22 @@ export interface TableRowStyles {
   rowCellStyle?: CSSProp;
 }
 
+/*
+ * Set by IndexedCells, one level per cell, so a cell resolves its own
+ * position (for the sticky first column) and width without a parent
+ * cloning props onto it.
+ */
+const TableRowCellPositionContext = createContext<{
+  index?: number;
+  width?: string;
+  isLastCol?: boolean;
+} | null>({
+  index: 0,
+  width: undefined,
+  isLastCol: false,
+});
+const useTableRowCellPosition = () => useContext(TableRowCellPositionContext);
+
 function TableRow({
   content,
   styles,
@@ -1655,52 +1675,39 @@ function TableRow({
             />
           </CheckboxWrapper>
         )}
-        {content
-          ? content.map((col, i) => {
-              const column = columns[i];
-              const isLast = actions && i === childArray.length - 1;
+        <IndexedCells lastGetsPadding={!!actions}>
+          {content
+            ? content.map((col, i) => {
+                const column = columns[i];
+                const isLastCol = actions && i === childArray.length - 1;
 
-              return (
-                <TableRowCell
-                  key={i}
-                  _index={i}
-                  width={column?.width}
-                  contentStyle={
-                    isLast
-                      ? css`
-                          padding-right: 36px;
-                          ${styles?.rowCellStyle}
-                        `
-                      : styles?.rowCellStyle
-                  }
-                >
-                  {col}
-                </TableRowCell>
-              );
-            })
-          : childArray.map((child, i) => {
-              if (!isValidElement<TableRowCellProps>(child)) return child;
-
-              const widthColumn = columns[i].width;
-              const isLast = actions && i === childArray.length - 1;
-
-              const isTableRowCell = child.type === Table.Row.Cell;
-
-              return cloneElement(child, {
-                ...(isTableRowCell
-                  ? {
-                      _index: i,
-                      width: child.props.width ?? widthColumn,
-                      contentStyle: isLast
+                return (
+                  <TableRowCell
+                    key={i}
+                    width={column?.width}
+                    contentStyle={
+                      isLastCol
                         ? css`
                             padding-right: 36px;
-                            ${child.props.contentStyle};
+                            ${styles?.rowCellStyle}
                           `
-                        : child.props.contentStyle,
+                        : styles?.rowCellStyle
                     }
-                  : {}),
-              });
-            })}
+                  >
+                    {col}
+                  </TableRowCell>
+                );
+              })
+            : /* width/padding for a caller-provided Table.Row.Cell now come from IndexedCells via position context, not a clone. */
+              childArray.map((child) => {
+                if (!isValidElement<TableRowCellProps>(child)) return child;
+
+                const isTableRowCell = child.type === Table.Row.Cell;
+                if (!isTableRowCell) return child;
+
+                return child;
+              })}
+        </IndexedCells>
 
         {isOver && dropPosition && <DragLine position={dropPosition} />}
 
@@ -1828,6 +1835,35 @@ function TableRow({
       </AnimatePresence>
     </RowWrapper>
   );
+}
+
+/**
+ * Wraps a list of cells and assigns each one its position via context.
+ * Callers never compute or pass an index themselves: they just render
+ * whatever children they have, in order, and this does the counting.
+ */
+function IndexedCells({
+  children,
+  lastGetsPadding = false,
+}: {
+  children: ReactNode;
+  lastGetsPadding?: boolean;
+}) {
+  const columns = useTableColumns();
+  const items = Children.toArray(children).filter(isValidElement);
+
+  return items.map((child, index) => (
+    <TableRowCellPositionContext.Provider
+      key={child.key ?? index}
+      value={{
+        index,
+        isLastCol: lastGetsPadding && index === items.length - 1,
+        width: columns[index]?.width,
+      }}
+    >
+      {child}
+    </TableRowCellPositionContext.Provider>
+  ));
 }
 
 const EXPAND_COLLAPSE_VARIANTS = {
@@ -1971,24 +2007,28 @@ const DraggableRequest = styled.div<{
     `}
 `;
 
-function TableRowCell({
+const TableRowCell = React.memo(function TableRowCell({
   children,
   contentStyle,
-  width,
   onClick,
-  bold,
   id,
+  width,
   className,
-  _index,
-}: TableRowCellProps &
-  Partial<{
-    bold?: boolean;
-    _index?: number;
-  }>) {
+  bold,
+}: TableRowCellProps & Partial<{ bold?: boolean }>) {
+  const {
+    index,
+    isLastCol,
+    width: widthFromPosition,
+  } = useTableRowCellPosition();
+
   const { loose, selectable, isScrolledLeft } = useTableLoose();
-  const isFirst = _index === 0;
+  const isFirst = index === 0;
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme?.table;
+
+  // An explicit width prop always wins over the column width IndexedCells resolved.
+  const resolvedWidth = width ? width : widthFromPosition;
 
   return (
     <CellContent
@@ -2005,9 +2045,14 @@ function TableRowCell({
           onClick();
         }
       }}
-      $width={width}
+      $width={resolvedWidth}
       $bold={bold}
       $contentStyle={css`
+        ${isLastCol &&
+        css`
+          padding-right: 36px;
+          ${contentStyle}
+        `};
         ${contentStyle};
         ${onClick &&
         css`
@@ -2018,7 +2063,7 @@ function TableRowCell({
       {children}
     </CellContent>
   );
-}
+});
 
 /*
  * use the provided `width` as the flex-basis while allowing the column to shrink.
