@@ -127,6 +127,7 @@ Each variant automatically provides its own icon and theme styling.
 - Enabled by default
 - Visualizes remaining display duration
 - Can be disabled using \`withLoadingBar={false}\`
+- The fill animation transition duration can be customized using \`transitionDuration\` (in milliseconds)
 
 #### Action Buttons
 - Rendered below the content area
