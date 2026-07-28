@@ -145,16 +145,23 @@ function ToastItem({ item, onClose }: ToastItemProps) {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const start = Date.now();
+    const start = performance.now();
+    let raf: number;
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - start;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const next = Math.max(0, 100 - (elapsed / disappearAfterMs) * 100);
+      setProgress(next);
 
-      setProgress(Math.max(0, 100 - (elapsed / disappearAfterMs) * 100));
-    }, 16);
+      if (next > 0) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [setProgress, disappearAfterMs]);
+    raf = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(raf);
+  }, [disappearAfterMs]);
 
   const {
     position: iconPosition = ToastIconPosition.LeftTop,
