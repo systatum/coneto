@@ -23,7 +23,7 @@ import { Button } from "./button";
 import { AnimatePresence, motion } from "framer-motion";
 import { applyClassName } from "./../constants/classname";
 import { BaseAction } from "./../constants/action";
-import { Progressbar } from "./progressbar";
+import { Trackbar } from "./trackbar";
 
 export const ToastVariant = {
   Primary: "primary",
@@ -145,15 +145,22 @@ function ToastItem({ item, onClose }: ToastItemProps) {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const start = Date.now();
+    const start = performance.now();
+    let raf: number;
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - start;
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const next = Math.max(0, 100 - (elapsed / disappearAfterMs) * 100);
+      setProgress(next);
 
-      setProgress(Math.max(0, 100 - (elapsed / disappearAfterMs) * 100));
-    }, 16);
+      if (next > 0) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
 
-    return () => clearInterval(interval);
+    raf = requestAnimationFrame(tick);
+
+    return () => cancelAnimationFrame(raf);
   }, [disappearAfterMs]);
 
   const {
@@ -272,7 +279,7 @@ function ToastItem({ item, onClose }: ToastItemProps) {
         </AnimatePresence>
 
         {withLoadingBar && disappearAfterMs > 0 && (
-          <Progressbar
+          <Trackbar
             styles={{
               containerStyle: css`
                 height: 2px;

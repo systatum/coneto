@@ -69,7 +69,7 @@ import {
   createTitleTheme,
   createToastTheme,
   createFlippable,
-  createProgressbarTheme,
+  createTrackbarTheme,
   createScrollbar,
 } from "./creator";
 
@@ -179,7 +179,7 @@ const lightPinbox = createPinboxTheme(lightBody, lightFieldLane);
 
 const lightPhonebox = createPhoneboxTheme(lightBody, lightFieldLane);
 
-const lightProgressbar = createProgressbarTheme();
+const lightTrackbar = createTrackbarTheme();
 
 const lightRadio = createRadioTheme(lightBody);
 
@@ -297,7 +297,6 @@ export const lightTheme: AppTheme = {
   pagination: lightPagination,
   pinbox: lightPinbox,
   phonebox: lightPhonebox,
-  progressbar: lightProgressbar,
   radio: lightRadio,
   rating: lightRating,
   richEditor: lightRichEditor,
@@ -323,6 +322,7 @@ export const lightTheme: AppTheme = {
   toggle: lightToggle,
   toolbar: lightToolbar,
   tooltip: lightTooltip,
+  trackbar: lightTrackbar,
   treelist: lightTreeList,
   wheel: lightWheel,
 };
@@ -372,7 +372,7 @@ export {
   lightPagination,
   lightPinbox,
   lightPhonebox,
-  lightProgressbar,
+  lightTrackbar,
   lightRadio,
   lightRating,
   lightRichEditor,

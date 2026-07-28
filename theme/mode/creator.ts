@@ -44,7 +44,7 @@ import {
   PaperDialogThemeConfig,
   PhoneboxThemeConfig,
   PinboxThemeConfig,
-  ProgressbarThemeConfig,
+  TrackbarThemeConfig,
   RadioThemeConfig,
   RatingThemeConfig,
   RichEditorThemeConfig,
@@ -1178,10 +1178,10 @@ export function createPhoneboxTheme(
   );
 }
 
-export function createProgressbarTheme(
-  ...themeConfigurations: Array<Partial<ProgressbarThemeConfig>>
-): ProgressbarThemeConfig {
-  const defaultTheme: ProgressbarThemeConfig = {
+export function createTrackbarTheme(
+  ...themeConfigurations: Array<Partial<TrackbarThemeConfig>>
+): TrackbarThemeConfig {
+  const defaultTheme: TrackbarThemeConfig = {
     primary: {
       backgroundColor: "#e7f2fc",
       textColor: "#5B63F6",
