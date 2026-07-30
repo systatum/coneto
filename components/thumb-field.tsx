@@ -5,7 +5,7 @@ import {
   RiThumbUpFill,
   RiThumbUpLine,
 } from "@remixicon/react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
@@ -23,11 +23,19 @@ interface BaseThumbFieldProps {
   styles?: BaseThumbFieldStyles;
   id?: string;
   showError?: boolean;
+  thumbText?: ThumbFieldThumbText;
+}
+
+export interface ThumbFieldThumbText {
+  up?: ReactNode;
+  down?: ReactNode;
 }
 
 interface BaseThumbFieldStyles {
   triggerWrapperStyle?: CSSProp;
   triggerStyle?: CSSProp;
+  textUpStyle?: CSSProp;
+  textDownStyle?: CSSProp;
 }
 
 const ThumbFieldValue = {
@@ -46,6 +54,7 @@ function BaseThumbField({
   name,
   disabled,
   showError,
+  thumbText,
   styles,
   id,
 }: BaseThumbFieldProps) {
@@ -112,6 +121,9 @@ function BaseThumbField({
         ) : (
           <RiThumbUpLine size={24} />
         )}
+        {thumbText?.up && (
+          <ThumbText $style={styles?.textUpStyle}>{thumbText?.up}</ThumbText>
+        )}
       </TriggerWrapper>
 
       <TriggerWrapper
@@ -130,6 +142,11 @@ function BaseThumbField({
           <RiThumbDownFill size={24} />
         ) : (
           <RiThumbDownLine size={24} />
+        )}
+        {thumbText?.down && (
+          <ThumbText $style={styles?.textDownStyle}>
+            {thumbText?.down}
+          </ThumbText>
         )}
       </TriggerWrapper>
 
@@ -211,6 +228,12 @@ function ThumbField({
   );
 }
 
+const ThumbText = styled.span<{ $style?: CSSProp }>`
+  font-size: 14px;
+
+  ${({ $style }) => $style}
+`;
+
 const InputGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
@@ -229,6 +252,8 @@ const TriggerWrapper = styled.div<{
 }>`
   display: flex;
   align-items: center;
+  flex-direction: row;
+  gap: 4px;
 
   svg {
     transition: opacity 0.2s ease;
