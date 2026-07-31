@@ -5,7 +5,7 @@ import {
   RiThumbUpFill,
   RiThumbUpLine,
 } from "@remixicon/react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useRef, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
@@ -15,7 +15,7 @@ import { applyClassName } from "./../constants/classname";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
-  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   thumbsUpBackgroundColor?: string;
   thumbsDownBackgroundColor?: string;
   disabled?: boolean;
@@ -23,11 +23,20 @@ interface BaseThumbFieldProps {
   styles?: BaseThumbFieldStyles;
   id?: string;
   showError?: boolean;
+  thumbText?: ThumbFieldThumbText;
+}
+
+export interface ThumbFieldThumbText {
+  up?: ReactNode;
+  down?: ReactNode;
 }
 
 interface BaseThumbFieldStyles {
   triggerWrapperStyle?: CSSProp;
-  triggerStyle?: CSSProp;
+  triggerUpStyle?: CSSProp;
+  triggerDownStyle?: CSSProp;
+  thumbUpTextStyle?: CSSProp;
+  thumbDownTextStyle?: CSSProp;
 }
 
 const ThumbFieldValue = {
@@ -46,6 +55,7 @@ function BaseThumbField({
   name,
   disabled,
   showError,
+  thumbText,
   styles,
   id,
 }: BaseThumbFieldProps) {
@@ -58,24 +68,28 @@ function BaseThumbField({
     id,
   });
 
-  const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
-  const [thumbValue, setThumbValue] =
-    useState<ThumbFieldValue>(thumbStateValue);
+  const thumbValue =
+    value === true
+      ? ThumbFieldValue.Up
+      : value === false
+        ? ThumbFieldValue.Down
+        : ThumbFieldValue.Blank;
 
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
-  const handleChangeValue = (data: ThumbFieldValue) => {
+  const handleChangeValue = (value: ThumbFieldValue) => {
     if (disabled) return;
-
-    if (thumbValue !== data) {
-      setThumbValue(data);
-    }
 
     if (onChange) {
       const syntheticEvent = {
         target: {
           name,
-          value: data === "up" ? true : data === "down" ? false : "",
+          value:
+            value === ThumbFieldValue.Up
+              ? true
+              : value === ThumbFieldValue.Down
+                ? false
+                : "",
         },
       } as ChangeEvent<HTMLInputElement>;
 
@@ -84,7 +98,7 @@ function BaseThumbField({
   };
 
   return (
-    <InputGroup $style={styles?.triggerWrapperStyle}>
+    <InputGroup aria-label="thumb-field" $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -93,32 +107,44 @@ function BaseThumbField({
         id={inputId}
         disabled={disabled}
         value={
-          thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
+          thumbValue === ThumbFieldValue.Up
+            ? "true"
+            : thumbValue === ThumbFieldValue.Down
+              ? "false"
+              : ""
         }
       />
 
       <TriggerWrapper
         aria-label="thumb-up"
-        onClick={() => handleChangeValue("up")}
-        $triggerStyle={styles?.triggerStyle}
-        $active={thumbValue === "up"}
+        onClick={() => handleChangeValue(ThumbFieldValue.Up)}
+        $triggerStyle={styles?.triggerUpStyle}
+        $active={thumbValue === ThumbFieldValue.Up}
         $activeColor={thumbsUpBackgroundColor ?? thumbFieldTheme?.thumbsUpColor}
         $showError={showError}
         $disabled={disabled}
         $theme={thumbFieldTheme}
       >
-        {thumbValue === "up" ? (
+        {thumbValue === ThumbFieldValue.Up ? (
           <RiThumbUpFill size={24} />
         ) : (
           <RiThumbUpLine size={24} />
+        )}
+        {thumbText?.up && (
+          <ThumbText
+            aria-label="thumb-up-text"
+            $style={styles?.thumbUpTextStyle}
+          >
+            {thumbText?.up}
+          </ThumbText>
         )}
       </TriggerWrapper>
 
       <TriggerWrapper
         aria-label="thumb-down"
-        onClick={() => handleChangeValue("down")}
-        $triggerStyle={styles?.triggerStyle}
-        $active={thumbValue === "down"}
+        onClick={() => handleChangeValue(ThumbFieldValue.Down)}
+        $triggerStyle={styles?.triggerDownStyle}
+        $active={thumbValue === ThumbFieldValue.Down}
         $activeColor={
           thumbsDownBackgroundColor ?? thumbFieldTheme?.thumbsDownColor
         }
@@ -126,10 +152,18 @@ function BaseThumbField({
         $disabled={disabled}
         $theme={thumbFieldTheme}
       >
-        {thumbValue === "down" ? (
+        {thumbValue === ThumbFieldValue.Down ? (
           <RiThumbDownFill size={24} />
         ) : (
           <RiThumbDownLine size={24} />
+        )}
+        {thumbText?.down && (
+          <ThumbText
+            aria-label="thumb-down-text"
+            $style={styles?.thumbDownTextStyle}
+          >
+            {thumbText?.down}
+          </ThumbText>
         )}
       </TriggerWrapper>
 
@@ -145,7 +179,8 @@ function BaseThumbField({
 export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
 
 export interface ThumbFieldProps
-  extends Omit<BaseThumbFieldProps, "styles">,
+  extends
+    Omit<BaseThumbFieldProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ThumbFieldStyles;
 }
@@ -203,6 +238,7 @@ function ThumbField({
       <BaseThumbField
         {...rest}
         disabled={disabled}
+        name={name}
         id={inputId}
         styles={thumbFieldStyles}
         showError={showError}
@@ -210,6 +246,12 @@ function ThumbField({
     </FieldLane>
   );
 }
+
+const ThumbText = styled.span<{ $style?: CSSProp }>`
+  font-size: 14px;
+
+  ${({ $style }) => $style}
+`;
 
 const InputGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -229,6 +271,8 @@ const TriggerWrapper = styled.div<{
 }>`
   display: flex;
   align-items: center;
+  flex-direction: row;
+  gap: 4px;
 
   svg {
     transition: opacity 0.2s ease;
