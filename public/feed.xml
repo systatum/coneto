@@ -11,7 +11,7 @@
     <language>en</language>
     <generator>storybook-rss v3.1.0</generator>
     <atom:link href="https://coneto.systatum.com/feed.xml" rel="self" type="application/rss+xml" />
-    <lastBuildDate>Fri, 31 Jul 2026 02:59:53 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 31 Jul 2026 07:28:47 GMT</lastBuildDate>
     
   <item>
     <title>Dark mode</title>
@@ -641,11 +641,12 @@
     <title>Rating - Coneto React UI</title>
     <link>https://coneto.systatum.com/?path=/docs/input-elements-rating</link>
     <guid isPermaLink="true">https://coneto.systatum.com/?path=/docs/input-elements-rating</guid>
-    <description><![CDATA[Rating is a star-based input component for capturing user ratings with optional half-star support. --- ✨ Features ⭐ Editable or read-only: Can be interactive or display-only. 🌓 Half-star support: Accurately capture half-star ratings on mouse hover.]]></description>
-    <content:encoded><![CDATA[<br/><strong>Rating</strong> is a star-based input component for capturing user ratings with optional half-star support.<br/><br/>---<br/>✨ Features
-<ul><li>⭐ <strong>Editable or read-only</strong>: Can be interactive or display-only.</li><li>🌓 <strong>Half-star support</strong>: Accurately capture half-star ratings on mouse hover.</li><li>🔢 <strong>Optional label</strong>: Display numeric rating (e.g., 3.5 / 5) next to stars.</li><li>🖌 <strong>Sizes</strong>: Small (sm), Medium (md), Large (lg).</li><li>🔧 <strong>Custom styles</strong>: Can style container, label, or star wrapper.</li><li>🧩 First-class <strong>stateful form integration</strong></li></ul><br/>]]></content:encoded>
-    <pubDate>Tue, 31 Mar 2026 12:05:23 GMT</pubDate>
-    <coneto:item-digest>5812590716b3e4c5ad36a4c62f99f150</coneto:item-digest>
+    <description><![CDATA[Rating is a star-based input component for displaying or collecting ratings with optional half-star precision. --- ✨ Features ⭐ Controlled value: Control the rating through the `rating` prop and handle updates with `onChange`. ✍️ Editable or read-only: The component becomes editable when `onChange` is provided; otherwise it is displayed in read-only mode.]]></description>
+    <content:encoded><![CDATA[<br/><strong>Rating</strong> is a star-based input component for displaying or collecting ratings with optional half-star precision.<br/><br/>---<br/>✨ Features<br/>
+<ul><li>⭐ <strong>Controlled value</strong>: Control the rating through the `rating` prop and handle updates with `onChange`.</li><li>✍️ <strong>Editable or read-only</strong>: The component becomes editable when `onChange` is provided; otherwise it is displayed in read-only mode.</li><li>🌓 <strong>Half-star precision</strong>: Supports half-star selection while hovering and clicking.</li><li>🏷 <strong>Custom score label</strong>: Display a static or dynamic label with `scoreLabel.text`.</li><li>📍 <strong>Flexible label position</strong>: Position the score label on the top, right, bottom, or left of the rating with `scoreLabel.position`.</li><li>📏 <strong>Multiple sizes</strong>: Supports Small (`sm`), Medium (`md`), and Large (`lg`) star sizes.</li><li>🛠 <strong>Custom styling</strong>: Customize the wrapper, stars, and label through the `styles` prop.</li><li>🔒 <strong>Disabled support</strong>: Prevent interactions with `disabled`.</li><li>🧩 First-class <strong>stateful form integration</strong></li></ul><br/>---<br/>📌 Usage<br/><br/><pre><code>const [rating, setRating] = useState("3.5");<br/><br/><Rating<br/>  rating={rating}<br/>  scoreLabel={{<br/>    text: ({ value, maxValue }) => `${value} / ${maxValue}`,<br/>  }}<br/>  onChange={(e) => setRating(e.target.value)}<br/>/><br/></code></pre><br/>🎨 Custom score label<br/><br/><pre><code><Rating<br/>  rating="4.5"<br/>  scoreLabel={{<br/>    text: ({ value, maxValue }) =><br/>      `${value?.toFixed(1)} out of ${maxValue}`,<br/>    position: RatingScoreLabelPosition.Bottom,<br/>  }}<br/>/><br/></code></pre><br/>
+<ul><li>Use `rating` together with `onChange` to control the component.</li><li>Provide `onChange` to make the rating editable.</li><li>Use `scoreLabel.text` to render a static string, React node, or render function.</li><li>Use `scoreLabel.position` to place the label on the `top`, `right`, `bottom`, or `left` of the rating. The default position is `right`.</li><li>Wrap the component in `FieldLane` to display labels, helper text, and validation messages.</li></ul>]]></content:encoded>
+    <pubDate>Fri, 31 Jul 2026 07:28:47 GMT</pubDate>
+    <coneto:item-digest>2c647326259b1cd548f8023b2c143aa3</coneto:item-digest>
   </item>
 
   <item>

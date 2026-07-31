@@ -1,6 +1,8 @@
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
-import { Rating } from "./rating";
+import { Rating, RatingSize } from "./rating";
+import { useState } from "react";
+import styled from "styled-components";
 
 const meta: Meta<typeof Rating> = {
   title: "Input Elements/Rating",
@@ -10,18 +12,56 @@ const meta: Meta<typeof Rating> = {
     docs: {
       description: {
         component: `
-**Rating** is a star-based input component for capturing user ratings with optional half-star support.
+**Rating** is a star-based input component for displaying or collecting ratings with optional half-star precision.
 
 ---
 
 ### ✨ Features
-- ⭐ **Editable or read-only**: Can be interactive or display-only.
-- 🌓 **Half-star support**: Accurately capture half-star ratings on mouse hover.
-- 🔢 **Optional label**: Display numeric rating (e.g., 3.5 / 5) next to stars.
-- 🖌 **Sizes**: Small (sm), Medium (md), Large (lg).
-- 🔧 **Custom styles**: Can style container, label, or star wrapper.
+
+- ⭐ **Controlled value**: Control the rating through the \`rating\` prop and handle updates with \`onChange\`.
+- ✍️ **Editable or read-only**: The component becomes editable when \`onChange\` is provided; otherwise it is displayed in read-only mode.
+- 🌓 **Half-star precision**: Supports half-star selection while hovering and clicking.
+- 🏷 **Custom score label**: Display a static or dynamic label with \`scoreLabel.text\`.
+- 📍 **Flexible label position**: Position the score label on the top, right, bottom, or left of the rating with \`scoreLabel.position\`.
+- 📏 **Multiple sizes**: Supports Small (\`sm\`), Medium (\`md\`), and Large (\`lg\`) star sizes.
+- 🛠 **Custom styling**: Customize the wrapper, stars, and label through the \`styles\` prop.
+- 🔒 **Disabled support**: Prevent interactions with \`disabled\`.
 - 🧩 First-class **stateful form integration**
 
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+const [rating, setRating] = useState("3.5");
+
+<Rating
+  rating={rating}
+  scoreLabel={{
+    text: ({ value, maxValue }) => \`\${value} / \${maxValue}\`,
+  }}
+  onChange={(e) => setRating(e.target.value)}
+/>
+\`\`\`
+
+### 🎨 Custom score label
+
+\`\`\`tsx
+<Rating
+  rating="4.5"
+  scoreLabel={{
+    text: ({ value, maxValue }) =>
+      \`\${value?.toFixed(1)} out of \${maxValue}\`,
+    position: RatingScoreLabelPosition.Bottom,
+  }}
+/>
+\`\`\`
+
+- Use \`rating\` together with \`onChange\` to control the component.
+- Provide \`onChange\` to make the rating editable.
+- Use \`scoreLabel.text\` to render a static string, React node, or render function.
+- Use \`scoreLabel.position\` to place the label on the \`top\`, \`right\`, \`bottom\`, or \`left\` of the rating. The default position is \`right\`.
+- Wrap the component in \`FieldLane\` to display labels, helper text, and validation messages.
         `,
       },
     },
@@ -31,13 +71,10 @@ const meta: Meta<typeof Rating> = {
       control: "number",
       description: "Current rating value (0–5).",
     },
-    editable: {
+    scoreLabel: {
       control: "boolean",
-      description: "Whether the stars can be interacted with to set rating.",
-    },
-    withLabel: {
-      control: "boolean",
-      description: "Display numeric label alongside stars.",
+      description:
+        "Set to `true` to display the default rating label (`3.5 / 5`), or provide a render function to customize the label content.",
     },
     size: {
       control: "radio",
@@ -71,16 +108,15 @@ type Story = StoryObj<typeof Rating>;
 export const Default: Story = {
   args: {
     rating: "0",
-    withLabel: false,
   },
 
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
+
     return (
       <Rating
         {...args}
-        editable
-        onChange={(e) => setUpdateArgs({ rating: e })}
+        onChange={(e) => setUpdateArgs({ rating: e.target.value })}
       />
     );
   },
@@ -93,34 +129,80 @@ export const NotEditable: Story = {
   render: (args) => <Rating {...args} />,
 };
 
+const StyledRatingLabel = styled.span`
+  color: #2563eb;
+  font-weight: 700;
+  font-style: italic;
+`;
+
 export const WithLabel: Story = {
-  args: {
-    rating: "4.5",
-    withLabel: true,
+  render: () => {
+    const [rating, setRating] = useState({ default: "4.5", render: "4.5" });
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        <div>
+          <div>Default</div>
+          <Rating
+            rating={rating.default}
+            scoreLabel={{
+              text: rating.default,
+            }}
+            onChange={(e) =>
+              setRating((prev) => ({ ...prev, default: e.target.value }))
+            }
+          />
+        </div>
+
+        <div>
+          <div>Custom render</div>
+          <Rating
+            rating={rating.render}
+            scoreLabel={{
+              text: ({ value, maxValue }) => (
+                <StyledRatingLabel>
+                  {value.toFixed(1)} / {maxValue} Excellent
+                </StyledRatingLabel>
+              ),
+            }}
+            onChange={(e) =>
+              setRating((prev) => ({ ...prev, render: e.target.value }))
+            }
+          />
+        </div>
+      </div>
+    );
   },
-  render: (args) => <Rating {...args} />,
 };
 
-export const Small: Story = {
-  args: {
-    rating: "4.5",
-    size: "sm",
-  },
-  render: (args) => <Rating {...args} />,
-};
+export const Size: Story = {
+  render: () => {
+    const RATING_SIZES = Object.entries(RatingSize).map(([label, size]) => ({
+      label: label.charAt(0).toUpperCase() + label.slice(1),
+      size,
+    }));
 
-export const Medium: Story = {
-  args: {
-    rating: "4.5",
-    size: "md",
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+        }}
+      >
+        {RATING_SIZES.map(({ label, size }) => (
+          <div key={size}>
+            <div>{label}</div>
+            <Rating rating="4.5" size={size} />
+          </div>
+        ))}
+      </div>
+    );
   },
-  render: (args) => <Rating {...args} />,
-};
-
-export const Large: Story = {
-  args: {
-    rating: "4.5",
-    size: "lg",
-  },
-  render: (args) => <Rating {...args} />,
 };

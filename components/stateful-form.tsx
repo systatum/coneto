@@ -2360,7 +2360,6 @@ function FormFields<T extends FieldValues>({
 
                           return (
                             <Rating
-                              editable
                               id={field.id}
                               labelGap={field.labelGap}
                               labelWidth={field.labelWidth}
