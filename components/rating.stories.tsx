@@ -1,6 +1,7 @@
 import { useArgs } from "@storybook/preview-api";
 import { Meta, StoryObj } from "@storybook/react";
 import { Rating } from "./rating";
+import { useState } from "react";
 
 const meta: Meta<typeof Rating> = {
   title: "Input Elements/Rating",
@@ -10,18 +11,51 @@ const meta: Meta<typeof Rating> = {
     docs: {
       description: {
         component: `
-**Rating** is a star-based input component for capturing user ratings with optional half-star support.
+**Rating** is a star-based input component for displaying or collecting ratings with optional half-star precision.
 
 ---
 
 ### ✨ Features
-- ⭐ **Editable or read-only**: Can be interactive or display-only.
-- 🌓 **Half-star support**: Accurately capture half-star ratings on mouse hover.
-- 🔢 **Optional label**: Display numeric rating (e.g., 3.5 / 5) next to stars.
-- 🖌 **Sizes**: Small (sm), Medium (md), Large (lg).
-- 🔧 **Custom styles**: Can style container, label, or star wrapper.
+- ⭐ **Controlled value**: Control the rating through the \`rating\` prop and handle updates with \`onChange\`.
+- ✍️ **Editable or read-only**: Enable user interaction with \`editable\`, or display ratings in read-only mode.
+- 🌓 **Half-star precision**: Supports half-star selection while hovering and clicking.
+- 🏷 **Custom label rendering**: Display the default rating label or customize it with \`renderLabel\`.
+- 📏 **Multiple sizes**: Supports Small (\`sm\`), Medium (\`md\`), and Large (\`lg\`) star sizes.
+- 🛠 **Custom styling**: Customize the wrapper, stars, and label through the \`styles\` prop.
+- 🔒 **Disabled support**: Prevent interactions with \`disabled\`.
 - 🧩 First-class **stateful form integration**
 
+---
+
+### 📌 Usage
+
+\`\`\`tsx
+const [rating, setRating] = useState("3.5");
+
+<Rating
+  rating={rating}
+  editable
+  renderLabel
+  onChange={(e) => setRating(e.target.value)}
+/>
+\`\`\`
+
+### 🎨 Custom label
+
+\`\`\`tsx
+<Rating
+  rating="4.5"
+  renderLabel={({ value, maxValue }) =>
+    \`\${value.toFixed(1)} out of \${maxValue}\`
+  }
+/>
+\`\`\`
+
+- Use \`rating\` together with \`onChange\` to control the component.
+- Set \`editable\` to allow users to change the rating.
+- Set \`renderLabel\` to \`true\` to display the default label (\`3.5 / 5\`).
+- Pass a function to \`renderLabel\` to render a custom label.
+- Wrap the component in \`FieldLane\` to display labels, helper text, and validation messages.
         `,
       },
     },
@@ -35,7 +69,7 @@ const meta: Meta<typeof Rating> = {
       control: "boolean",
       description: "Whether the stars can be interacted with to set rating.",
     },
-    withLabel: {
+    renderLabel: {
       control: "boolean",
       description: "Display numeric label alongside stars.",
     },
@@ -71,16 +105,17 @@ type Story = StoryObj<typeof Rating>;
 export const Default: Story = {
   args: {
     rating: "0",
-    withLabel: false,
+    renderLabel: false,
   },
 
   render: (args) => {
     const [, setUpdateArgs] = useArgs();
+
     return (
       <Rating
         {...args}
         editable
-        onChange={(e) => setUpdateArgs({ rating: e })}
+        onChange={(e) => setUpdateArgs({ rating: e.target.value })}
       />
     );
   },
@@ -96,9 +131,18 @@ export const NotEditable: Story = {
 export const WithLabel: Story = {
   args: {
     rating: "4.5",
-    withLabel: true,
+    renderLabel: true,
   },
-  render: (args) => <Rating {...args} />,
+  render: (args) => {
+    const [rating, setRating] = useState(args.rating);
+    return (
+      <Rating
+        {...args}
+        rating={rating}
+        onChange={(e) => setRating(e.target.value)}
+      />
+    );
+  },
 };
 
 export const Small: Story = {
@@ -106,7 +150,16 @@ export const Small: Story = {
     rating: "4.5",
     size: "sm",
   },
-  render: (args) => <Rating {...args} />,
+  render: (args) => {
+    const [rating, setRating] = useState(args.rating);
+    return (
+      <Rating
+        {...args}
+        rating={rating}
+        onChange={(e) => setRating(e.target.value)}
+      />
+    );
+  },
 };
 
 export const Medium: Story = {
@@ -114,7 +167,16 @@ export const Medium: Story = {
     rating: "4.5",
     size: "md",
   },
-  render: (args) => <Rating {...args} />,
+  render: (args) => {
+    const [rating, setRating] = useState(args.rating);
+    return (
+      <Rating
+        {...args}
+        rating={rating}
+        onChange={(e) => setRating(e.target.value)}
+      />
+    );
+  },
 };
 
 export const Large: Story = {
@@ -122,5 +184,14 @@ export const Large: Story = {
     rating: "4.5",
     size: "lg",
   },
-  render: (args) => <Rating {...args} />,
+  render: (args) => {
+    const [rating, setRating] = useState(args.rating);
+    return (
+      <Rating
+        {...args}
+        rating={rating}
+        onChange={(e) => setRating(e.target.value)}
+      />
+    );
+  },
 };
