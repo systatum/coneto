@@ -121,7 +121,7 @@ function NavTab({
   const [isTipMenuOpen, setIsTipMenuOpen] = useState<string | null>(null);
 
   const [openSubMenuId, setOpenSubMenuId] = useState<string | null>(null);
-  const subMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const subMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressTriggeredRef = useRef<boolean>(null);
 
   const clearSubMenuTimer = () => {
