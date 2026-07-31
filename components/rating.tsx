@@ -19,7 +19,6 @@ export type RatingRenderLabel =
 interface BaseRatingProps {
   rating?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  editable?: boolean;
   renderLabel?: RatingRenderLabel;
   size?: RatingSize;
   disabled?: boolean;
@@ -37,7 +36,6 @@ function BaseRating({
   id,
   rating,
   onChange,
-  editable,
   renderLabel = false,
   size = "md",
   name,
@@ -140,6 +138,8 @@ function BaseRating({
     return emptyStar;
   };
 
+  const editable = !disabled && !!onChange;
+
   return (
     <RatingWrapper
       aria-label="rating-wrapper"
@@ -153,10 +153,10 @@ function BaseRating({
           <StarSpan
             role="img"
             key={i}
-            onMouseMove={(e) => !disabled && editable && handleMouseMove(e, i)}
-            onMouseLeave={() => !disabled && editable && setHoverRating(0)}
-            onClick={(e) => !disabled && editable && handleClick(e, i)}
-            $editable={editable}
+            onMouseMove={(e) => editable && handleMouseMove(e, i)}
+            onMouseLeave={() => editable && setHoverRating(0)}
+            onClick={(e) => editable && handleClick(e, i)}
+            $editable={!!onChange}
             $disabled={disabled}
           >
             {renderStar(getStarType(i))}
