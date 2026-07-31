@@ -1154,6 +1154,31 @@ describe("PaperDialog", () => {
     });
   });
 
+  context("ref", () => {
+    context("closeDialog", () => {
+      context("when called without arguments", () => {
+        it("should close the dialog without throwing", () => {
+          cy.viewport(500, 700);
+          cy.mount(<ProductPaperDialog closable />);
+
+          cy.findAllByRole("button").eq(0).should("exist").click();
+          cy.wait(300);
+          cy.findByLabelText("paper-dialog-wrapper").should("exist");
+
+          // The "Close" button in the test harness calls
+          // dialogRef.current?.closeDialog() with no arguments, which used to
+          // throw "Cannot destructure property 'withMinimize' of 'undefined'".
+          cy.findAllByRole("button")
+            .eq(1)
+            .should("have.text", "Close")
+            .click({ force: true });
+
+          cy.findByLabelText("paper-dialog-wrapper").should("not.exist");
+        });
+      });
+    });
+  });
+
   context("style", () => {
     context("height", () => {
       it("should be 100% from the screen", () => {
