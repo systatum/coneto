@@ -104,7 +104,7 @@ function BaseThumbField({
   };
 
   return (
-    <InputGroup $style={styles?.triggerWrapperStyle}>
+    <InputGroup aria-label="thumb-field" $style={styles?.triggerWrapperStyle}>
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -137,7 +137,10 @@ function BaseThumbField({
           <RiThumbUpLine size={24} />
         )}
         {thumbText?.up && (
-          <ThumbText $style={styles?.thumbUpTextStyle}>
+          <ThumbText
+            aria-label="thumb-up-text"
+            $style={styles?.thumbUpTextStyle}
+          >
             {thumbText?.up}
           </ThumbText>
         )}
@@ -161,7 +164,10 @@ function BaseThumbField({
           <RiThumbDownLine size={24} />
         )}
         {thumbText?.down && (
-          <ThumbText $style={styles?.thumbDownTextStyle}>
+          <ThumbText
+            aria-label="thumb-down-text"
+            $style={styles?.thumbDownTextStyle}
+          >
             {thumbText?.down}
           </ThumbText>
         )}
