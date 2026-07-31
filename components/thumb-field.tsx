@@ -15,7 +15,7 @@ import { applyClassName } from "./../constants/classname";
 
 interface BaseThumbFieldProps {
   value?: boolean | null;
-  onChange?: (data: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   thumbsUpBackgroundColor?: string;
   thumbsDownBackgroundColor?: string;
   disabled?: boolean;
@@ -33,9 +33,10 @@ export interface ThumbFieldThumbText {
 
 interface BaseThumbFieldStyles {
   triggerWrapperStyle?: CSSProp;
-  triggerStyle?: CSSProp;
-  textUpStyle?: CSSProp;
-  textDownStyle?: CSSProp;
+  triggerUpStyle?: CSSProp;
+  triggerDownStyle?: CSSProp;
+  thumbUpTextStyle?: CSSProp;
+  thumbDownTextStyle?: CSSProp;
 }
 
 const ThumbFieldValue = {
@@ -67,24 +68,34 @@ function BaseThumbField({
     id,
   });
 
-  const thumbStateValue = value === true ? "up" : value ? "down" : "blank";
+  const thumbStateValue =
+    value === true
+      ? ThumbFieldValue.Up
+      : value
+        ? ThumbFieldValue.Down
+        : ThumbFieldValue.Blank;
   const [thumbValue, setThumbValue] =
     useState<ThumbFieldValue>(thumbStateValue);
 
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
-  const handleChangeValue = (data: ThumbFieldValue) => {
+  const handleChangeValue = (value: ThumbFieldValue) => {
     if (disabled) return;
 
-    if (thumbValue !== data) {
-      setThumbValue(data);
+    if (thumbValue !== value) {
+      setThumbValue(value);
     }
 
     if (onChange) {
       const syntheticEvent = {
         target: {
           name,
-          value: data === "up" ? true : data === "down" ? false : "",
+          value:
+            value === ThumbFieldValue.Up
+              ? true
+              : value === ThumbFieldValue.Down
+                ? false
+                : "",
         },
       } as ChangeEvent<HTMLInputElement>;
 
@@ -102,35 +113,41 @@ function BaseThumbField({
         id={inputId}
         disabled={disabled}
         value={
-          thumbValue === "up" ? "true" : thumbValue === "down" ? "false" : ""
+          thumbValue === ThumbFieldValue.Up
+            ? "true"
+            : thumbValue === ThumbFieldValue.Down
+              ? "false"
+              : ""
         }
       />
 
       <TriggerWrapper
         aria-label="thumb-up"
-        onClick={() => handleChangeValue("up")}
-        $triggerStyle={styles?.triggerStyle}
-        $active={thumbValue === "up"}
+        onClick={() => handleChangeValue(ThumbFieldValue.Up)}
+        $triggerStyle={styles?.triggerUpStyle}
+        $active={thumbValue === ThumbFieldValue.Up}
         $activeColor={thumbsUpBackgroundColor ?? thumbFieldTheme?.thumbsUpColor}
         $showError={showError}
         $disabled={disabled}
         $theme={thumbFieldTheme}
       >
-        {thumbValue === "up" ? (
+        {thumbValue === ThumbFieldValue.Up ? (
           <RiThumbUpFill size={24} />
         ) : (
           <RiThumbUpLine size={24} />
         )}
         {thumbText?.up && (
-          <ThumbText $style={styles?.textUpStyle}>{thumbText?.up}</ThumbText>
+          <ThumbText $style={styles?.thumbUpTextStyle}>
+            {thumbText?.up}
+          </ThumbText>
         )}
       </TriggerWrapper>
 
       <TriggerWrapper
         aria-label="thumb-down"
-        onClick={() => handleChangeValue("down")}
-        $triggerStyle={styles?.triggerStyle}
-        $active={thumbValue === "down"}
+        onClick={() => handleChangeValue(ThumbFieldValue.Down)}
+        $triggerStyle={styles?.triggerDownStyle}
+        $active={thumbValue === ThumbFieldValue.Down}
         $activeColor={
           thumbsDownBackgroundColor ?? thumbFieldTheme?.thumbsDownColor
         }
@@ -138,13 +155,13 @@ function BaseThumbField({
         $disabled={disabled}
         $theme={thumbFieldTheme}
       >
-        {thumbValue === "down" ? (
+        {thumbValue === ThumbFieldValue.Down ? (
           <RiThumbDownFill size={24} />
         ) : (
           <RiThumbDownLine size={24} />
         )}
         {thumbText?.down && (
-          <ThumbText $style={styles?.textDownStyle}>
+          <ThumbText $style={styles?.thumbDownTextStyle}>
             {thumbText?.down}
           </ThumbText>
         )}
@@ -162,7 +179,8 @@ function BaseThumbField({
 export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
 
 export interface ThumbFieldProps
-  extends Omit<BaseThumbFieldProps, "styles">,
+  extends
+    Omit<BaseThumbFieldProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ThumbFieldStyles;
 }
