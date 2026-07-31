@@ -8,19 +8,18 @@ describe("Rating", () => {
 
     return (
       <Rating
-        editable
         rating={value}
         onChange={(e) => setValue(e.target.value)}
-        renderLabel
+        iconSideLabel
         {...props}
       />
     );
   }
 
-  context("renderLabel", () => {
+  context("iconSideLabel", () => {
     context("when given true", () => {
       it("render the label", () => {
-        cy.mount(<ProductRating renderLabel />);
+        cy.mount(<ProductRating iconSideLabel />);
 
         cy.findByLabelText("rating-label").should("have.text", "4.5 / 5");
       });
@@ -28,7 +27,7 @@ describe("Rating", () => {
 
     context("when given false", () => {
       it("not render the label", () => {
-        cy.mount(<ProductRating renderLabel={false} />);
+        cy.mount(<ProductRating iconSideLabel={false} />);
 
         cy.findByLabelText("rating-label").should("not.exist");
       });
@@ -38,7 +37,9 @@ describe("Rating", () => {
       it("render the label", () => {
         cy.mount(
           <ProductRating
-            renderLabel={({ value, maxValue }) => `${value} out of ${maxValue}`}
+            iconSideLabel={({ value, maxValue }) =>
+              `${value} out of ${maxValue}`
+            }
           />
         );
 
@@ -50,7 +51,7 @@ describe("Rating", () => {
       it("render the react element", () => {
         cy.mount(
           <ProductRating
-            renderLabel={({ value, maxValue }) => (
+            iconSideLabel={({ value, maxValue }) => (
               <span aria-label="test-label">
                 {value} out of {maxValue}
               </span>

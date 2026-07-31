@@ -20,7 +20,7 @@ const meta: Meta<typeof Rating> = {
 - ⭐ **Controlled value**: Control the rating through the \`rating\` prop and handle updates with \`onChange\`.
 - ✍️ **Editable or read-only**: Enable user interaction with \`onChange\`, or display ratings in read-only mode.
 - 🌓 **Half-star precision**: Supports half-star selection while hovering and clicking.
-- 🏷 **Custom label rendering**: Display the default rating label or customize it with \`renderLabel\`.
+- 🏷 **Custom label rendering**: Display the default rating label or customize it with \`iconSideLabel\`.
 - 📏 **Multiple sizes**: Supports Small (\`sm\`), Medium (\`md\`), and Large (\`lg\`) star sizes.
 - 🛠 **Custom styling**: Customize the wrapper, stars, and label through the \`styles\` prop.
 - 🔒 **Disabled support**: Prevent interactions with \`disabled\`.
@@ -36,7 +36,7 @@ const [rating, setRating] = useState("3.5");
 <Rating
   rating={rating}
   editable
-  renderLabel
+  iconSideLabel
   onChange={(e) => setRating(e.target.value)}
 />
 \`\`\`
@@ -46,7 +46,7 @@ const [rating, setRating] = useState("3.5");
 \`\`\`tsx
 <Rating
   rating="4.5"
-  renderLabel={({ value, maxValue }) =>
+  iconSideLabel={({ value, maxValue }) =>
     \`\${value.toFixed(1)} out of \${maxValue}\`
   }
 />
@@ -54,8 +54,8 @@ const [rating, setRating] = useState("3.5");
 
 - Use \`rating\` together with \`onChange\` to control the component.
 - Set \`onChange\` to allow users to change the rating.
-- Set \`renderLabel\` to \`true\` to display the default label (\`3.5 / 5\`).
-- Pass a function to \`renderLabel\` to render a custom label.
+- Set \`iconSideLabel\` to \`true\` to display the default label (\`3.5 / 5\`).
+- Pass a function to \`iconSideLabel\` to render a custom label.
 - Wrap the component in \`FieldLane\` to display labels, helper text, and validation messages.
         `,
       },
@@ -66,7 +66,7 @@ const [rating, setRating] = useState("3.5");
       control: "number",
       description: "Current rating value (0–5).",
     },
-    renderLabel: {
+    iconSideLabel: {
       control: "boolean",
       description:
         "Set to `true` to display the default rating label (`3.5 / 5`), or provide a render function to customize the label content.",
@@ -103,7 +103,7 @@ type Story = StoryObj<typeof Rating>;
 export const Default: Story = {
   args: {
     rating: "0",
-    renderLabel: false,
+    iconSideLabel: false,
   },
 
   render: (args) => {
@@ -147,7 +147,7 @@ export const WithLabel: Story = {
           <div>Default</div>
           <Rating
             rating={rating.default}
-            renderLabel
+            iconSideLabel
             onChange={(e) =>
               setRating((prev) => ({ ...prev, default: e.target.value }))
             }
@@ -158,7 +158,7 @@ export const WithLabel: Story = {
           <div>Custom render</div>
           <Rating
             rating={rating.render}
-            renderLabel={({ value, maxValue }) => (
+            iconSideLabel={({ value, maxValue }) => (
               <StyledRatingLabel>
                 {value.toFixed(1)} / {maxValue} Excellent
               </StyledRatingLabel>
