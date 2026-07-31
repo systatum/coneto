@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, ReactNode, useState } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
@@ -13,12 +13,14 @@ export const RatingSize = {
 } as const;
 
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
+export type RatingRenderLabel =
+  boolean | ((props?: { value?: number; maxValue?: number }) => ReactNode);
 
 interface BaseRatingProps {
   rating?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   editable?: boolean;
-  withLabel?: boolean;
+  renderLabel?: RatingRenderLabel;
   size?: RatingSize;
   disabled?: boolean;
   name?: string;
@@ -36,7 +38,7 @@ function BaseRating({
   rating,
   onChange,
   editable,
-  withLabel = false,
+  renderLabel = false,
   size = "md",
   name,
   disabled,
@@ -45,9 +47,10 @@ function BaseRating({
   const { currentTheme } = useTheme();
   const ratingTheme = currentTheme?.rating;
 
-  const ratingState = Number(rating || 0);
-  const [ratingLocal, setRatingLocal] = useState(ratingState);
   const [hoverRating, setHoverRating] = useState(0);
+
+  const value = Number(rating || 0);
+  const maxValue = 5;
 
   const handleMouseMove = (e: MouseEvent<HTMLSpanElement>, index: number) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
@@ -61,18 +64,17 @@ function BaseRating({
     const x = e.clientX - left;
     const isHalf = x < width / 2;
     const newRating = isHalf ? index + 0.5 : index + 1;
-    setRatingLocal(newRating);
     const inputRatingEvent = {
       target: {
         name: name ?? "rating",
         value: String(newRating),
       },
     } as ChangeEvent<HTMLInputElement>;
-    onChange(inputRatingEvent);
+    onChange?.(inputRatingEvent);
   };
 
   const getStarType = (index: number) => {
-    const current = Number(hoverRating) || Number(ratingLocal);
+    const current = hoverRating || value;
     if (current >= index + 1) return "full";
     if (current >= index + 0.5) return "half";
     return "empty";
@@ -165,11 +167,11 @@ function BaseRating({
         disabled={disabled}
         type="hidden"
         name={name}
-        value={ratingLocal}
+        value={value}
         id={id}
       />
 
-      {withLabel && (
+      {renderLabel && (
         <RatingLabel
           aria-label="rating-label"
           $disabled={disabled}
@@ -177,7 +179,12 @@ function BaseRating({
           $size={size}
           $style={styles?.ratingLabelStyle}
         >
-          {ratingLocal.toFixed(1)} / 5
+          {typeof renderLabel === "function"
+            ? renderLabel({
+                value,
+                maxValue,
+              })
+            : renderLabel && `${value.toFixed(1)} / ${maxValue}`}
         </RatingLabel>
       )}
     </RatingWrapper>
@@ -187,7 +194,8 @@ function BaseRating({
 export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
-  extends Omit<BaseRatingProps, "styles">,
+  extends
+    Omit<BaseRatingProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RatingStyles;
 }
