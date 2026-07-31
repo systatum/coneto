@@ -37,11 +37,16 @@ const meta: Meta<typeof ThumbField> = {
   thumbsDownBackgroundColor="#F44336"
   onChange={(e) => console.log("Selected value:", e.target.value)}
   showError={false}
+  thumbText={{
+    up: "10k",
+    down: "300",
+  }}
 />
 \`\`\`
 
 - Use \`value\` and \`onChange\` to control the field programmatically.
 - Customize active thumb colors via \`thumbsUpBackgroundColor\` and \`thumbsDownBackgroundColor\`.
+- Use \`thumbText\` to display optional text above and/or below the thumbs-up and thumbs-down buttons.
 - Set \`disabled\` to prevent interactions.
 - Wrap in \`FieldLane\` for label, helper, and error message support.
         `,
@@ -140,7 +145,16 @@ export const WithLabel: Story = {
       setUpdateArgs({ ...args, [name]: value });
     };
 
-    return <ThumbField {...args} onChange={onChangeValue} />;
+    return (
+      <ThumbField
+        {...args}
+        thumbText={{
+          up: "10k",
+          down: "300",
+        }}
+        onChange={onChangeValue}
+      />
+    );
   },
 };
 
