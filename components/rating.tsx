@@ -47,8 +47,10 @@ function BaseRating({
 
   const [hoverRating, setHoverRating] = useState(0);
 
-  const value = Number(rating || 0);
   const maxValue = 5;
+  const rawValue = Number(rating || 0);
+
+  const value = rawValue > maxValue ? (rawValue / 10) * maxValue : rawValue;
 
   const handleMouseMove = (e: MouseEvent<HTMLSpanElement>, index: number) => {
     const { left, width } = e.currentTarget.getBoundingClientRect();
