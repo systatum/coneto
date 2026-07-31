@@ -13,13 +13,29 @@ export const RatingSize = {
 } as const;
 
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
-export type RatingIconSideLabel =
-  boolean | ((props?: { value?: number; maxValue?: number }) => ReactNode);
+
+export type RatingScoreLabelRender =
+  ReactNode | ((props?: { value?: number; maxValue?: number }) => ReactNode);
+
+export interface RatingScoreLabel {
+  text?: RatingScoreLabelRender;
+  position?: RatingScoreLabelPosition;
+}
+
+export const RatingScoreLabelPosition = {
+  Top: "top",
+  Right: "right",
+  Bottom: "bottom",
+  Left: "left",
+} as const;
+
+export type RatingScoreLabelPosition =
+  (typeof RatingScoreLabelPosition)[keyof typeof RatingScoreLabelPosition];
 
 interface BaseRatingProps {
   rating?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  iconSideLabel?: RatingIconSideLabel;
+  scoreLabel?: RatingScoreLabel;
   size?: RatingSize;
   disabled?: boolean;
   name?: string;
@@ -36,7 +52,7 @@ function BaseRating({
   id,
   rating,
   onChange,
-  iconSideLabel = false,
+  scoreLabel,
   size = "md",
   name,
   disabled,
@@ -44,6 +60,9 @@ function BaseRating({
 }: BaseRatingProps) {
   const { currentTheme } = useTheme();
   const ratingTheme = currentTheme?.rating;
+
+  const { position = RatingScoreLabelPosition.Right, text: scoreText } =
+    scoreLabel ?? {};
 
   const [hoverRating, setHoverRating] = useState(0);
 
@@ -142,10 +161,19 @@ function BaseRating({
 
   const editable = !disabled && !!onChange;
 
+  const scoreTextNode =
+    typeof scoreText === "function"
+      ? scoreText({ value, maxValue })
+      : scoreText;
+
   return (
     <RatingWrapper
       aria-label="rating-wrapper"
-      $style={styles?.ratingWrapperStyle}
+      $style={css`
+        ${getPositionStyle(position)}
+
+        ${styles?.ratingWrapperStyle}
+      `}
     >
       <StarsWrapper
         aria-label="rating-stars-wrapper"
@@ -173,7 +201,7 @@ function BaseRating({
         id={id}
       />
 
-      {iconSideLabel && (
+      {scoreTextNode && (
         <RatingLabel
           aria-label="rating-label"
           $disabled={disabled}
@@ -181,16 +209,31 @@ function BaseRating({
           $size={size}
           $style={styles?.ratingLabelStyle}
         >
-          {typeof iconSideLabel === "function"
-            ? iconSideLabel({
-                value,
-                maxValue,
-              })
-            : iconSideLabel && `${value.toFixed(1)} / ${maxValue}`}
+          {scoreTextNode}
         </RatingLabel>
       )}
     </RatingWrapper>
   );
+}
+
+function getPositionStyle(position: RatingScoreLabelPosition) {
+  if (position === RatingScoreLabelPosition.Right) {
+    return css`
+      flex-direction: row;
+    `;
+  } else if (position === RatingScoreLabelPosition.Left) {
+    return css`
+      flex-direction: row-reverse;
+    `;
+  } else if (position === RatingScoreLabelPosition.Bottom) {
+    return css`
+      flex-direction: column;
+    `;
+  } else {
+    return css`
+      flex-direction: column-reverse;
+    `;
+  }
 }
 
 export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
