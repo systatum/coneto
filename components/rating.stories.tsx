@@ -17,10 +17,12 @@ const meta: Meta<typeof Rating> = {
 ---
 
 ### ✨ Features
+
 - ⭐ **Controlled value**: Control the rating through the \`rating\` prop and handle updates with \`onChange\`.
-- ✍️ **Editable or read-only**: Enable user interaction with \`onChange\`, or display ratings in read-only mode.
+- ✍️ **Editable or read-only**: The component becomes editable when \`onChange\` is provided; otherwise it is displayed in read-only mode.
 - 🌓 **Half-star precision**: Supports half-star selection while hovering and clicking.
-- 🏷 **Custom label rendering**: Display the default rating label or customize it with \`iconSideLabel\`.
+- 🏷 **Custom score label**: Display a static or dynamic label with \`scoreLabel.text\`.
+- 📍 **Flexible label position**: Position the score label on the top, right, bottom, or left of the rating with \`scoreLabel.position\`.
 - 📏 **Multiple sizes**: Supports Small (\`sm\`), Medium (\`md\`), and Large (\`lg\`) star sizes.
 - 🛠 **Custom styling**: Customize the wrapper, stars, and label through the \`styles\` prop.
 - 🔒 **Disabled support**: Prevent interactions with \`disabled\`.
@@ -35,27 +37,30 @@ const [rating, setRating] = useState("3.5");
 
 <Rating
   rating={rating}
-  editable
-  iconSideLabel
+  scoreLabel={{
+    text: ({ value, maxValue }) => \`\${value} / \${maxValue}\`,
+  }}
   onChange={(e) => setRating(e.target.value)}
 />
 \`\`\`
 
-### 🎨 Custom label
+### 🎨 Custom score label
 
 \`\`\`tsx
 <Rating
   rating="4.5"
-  iconSideLabel={({ value, maxValue }) =>
-    \`\${value.toFixed(1)} out of \${maxValue}\`
-  }
+  scoreLabel={{
+    text: ({ value, maxValue }) =>
+      \`\${value?.toFixed(1)} out of \${maxValue}\`,
+    position: RatingScoreLabelPosition.Bottom,
+  }}
 />
 \`\`\`
 
 - Use \`rating\` together with \`onChange\` to control the component.
-- Set \`onChange\` to allow users to change the rating.
-- Set \`iconSideLabel\` to \`true\` to display the default label (\`3.5 / 5\`).
-- Pass a function to \`iconSideLabel\` to render a custom label.
+- Provide \`onChange\` to make the rating editable.
+- Use \`scoreLabel.text\` to render a static string, React node, or render function.
+- Use \`scoreLabel.position\` to place the label on the \`top\`, \`right\`, \`bottom\`, or \`left\` of the rating. The default position is \`right\`.
 - Wrap the component in \`FieldLane\` to display labels, helper text, and validation messages.
         `,
       },
@@ -66,7 +71,7 @@ const [rating, setRating] = useState("3.5");
       control: "number",
       description: "Current rating value (0–5).",
     },
-    iconSideLabel: {
+    scoreLabel: {
       control: "boolean",
       description:
         "Set to `true` to display the default rating label (`3.5 / 5`), or provide a render function to customize the label content.",
@@ -103,7 +108,6 @@ type Story = StoryObj<typeof Rating>;
 export const Default: Story = {
   args: {
     rating: "0",
-    iconSideLabel: false,
   },
 
   render: (args) => {
@@ -147,7 +151,9 @@ export const WithLabel: Story = {
           <div>Default</div>
           <Rating
             rating={rating.default}
-            iconSideLabel
+            scoreLabel={{
+              text: rating.default,
+            }}
             onChange={(e) =>
               setRating((prev) => ({ ...prev, default: e.target.value }))
             }
@@ -158,11 +164,13 @@ export const WithLabel: Story = {
           <div>Custom render</div>
           <Rating
             rating={rating.render}
-            iconSideLabel={({ value, maxValue }) => (
-              <StyledRatingLabel>
-                {value.toFixed(1)} / {maxValue} Excellent
-              </StyledRatingLabel>
-            )}
+            scoreLabel={{
+              text: ({ value, maxValue }) => (
+                <StyledRatingLabel>
+                  {value.toFixed(1)} / {maxValue} Excellent
+                </StyledRatingLabel>
+              ),
+            }}
             onChange={(e) =>
               setRating((prev) => ({ ...prev, render: e.target.value }))
             }
