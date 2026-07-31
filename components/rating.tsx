@@ -13,13 +13,13 @@ export const RatingSize = {
 } as const;
 
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
-export type RatingRenderLabel =
+export type RatingIconSideLabel =
   boolean | ((props?: { value?: number; maxValue?: number }) => ReactNode);
 
 interface BaseRatingProps {
   rating?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  renderLabel?: RatingRenderLabel;
+  iconSideLabel?: RatingIconSideLabel;
   size?: RatingSize;
   disabled?: boolean;
   name?: string;
@@ -36,7 +36,7 @@ function BaseRating({
   id,
   rating,
   onChange,
-  renderLabel = false,
+  iconSideLabel = false,
   size = "md",
   name,
   disabled,
@@ -173,7 +173,7 @@ function BaseRating({
         id={id}
       />
 
-      {renderLabel && (
+      {iconSideLabel && (
         <RatingLabel
           aria-label="rating-label"
           $disabled={disabled}
@@ -181,12 +181,12 @@ function BaseRating({
           $size={size}
           $style={styles?.ratingLabelStyle}
         >
-          {typeof renderLabel === "function"
-            ? renderLabel({
+          {typeof iconSideLabel === "function"
+            ? iconSideLabel({
                 value,
                 maxValue,
               })
-            : renderLabel && `${value.toFixed(1)} / ${maxValue}`}
+            : iconSideLabel && `${value.toFixed(1)} / ${maxValue}`}
         </RatingLabel>
       )}
     </RatingWrapper>
