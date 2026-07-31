@@ -464,7 +464,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
 
     const closeDialog = useCallback(
       async (
-        { withMinimize, withTimeout }: PaperDialogCloseOption,
+        { withMinimize, withTimeout }: PaperDialogCloseOption = {},
         trigger: PaperDialogTrigger
       ) => {
         const close = async () =>
@@ -492,7 +492,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       openDialog: () => {
         handleChangeDialog(PaperDialogState.Restored, PaperDialogTrigger.API);
       },
-      closeDialog: ({ withMinimize, withTimeout }: PaperDialogCloseOption) =>
+      closeDialog: ({
+        withMinimize,
+        withTimeout,
+      }: PaperDialogCloseOption = {}) =>
         closeDialog(
           {
             withMinimize,
