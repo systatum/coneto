@@ -68,23 +68,17 @@ function BaseThumbField({
     id,
   });
 
-  const thumbStateValue =
+  const thumbValue =
     value === true
       ? ThumbFieldValue.Up
-      : value
+      : value === false
         ? ThumbFieldValue.Down
         : ThumbFieldValue.Blank;
-  const [thumbValue, setThumbValue] =
-    useState<ThumbFieldValue>(thumbStateValue);
 
   const thumbInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangeValue = (value: ThumbFieldValue) => {
     if (disabled) return;
-
-    if (thumbValue !== value) {
-      setThumbValue(value);
-    }
 
     if (onChange) {
       const syntheticEvent = {
@@ -244,6 +238,7 @@ function ThumbField({
       <BaseThumbField
         {...rest}
         disabled={disabled}
+        name={name}
         id={inputId}
         styles={thumbFieldStyles}
         showError={showError}
