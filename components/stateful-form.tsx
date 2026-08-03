@@ -553,7 +553,7 @@ function FormFields<T extends FieldValues>({
             background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
             min-height: 40px;
             padding: 10px 20px;
-            border-radius: 12px;
+            border-radius: 15px;
             flex-direction: column;
             justify-content: center;
 
@@ -2722,13 +2722,14 @@ function FormFields<T extends FieldValues>({
               return (
                 <Fragment key={index}>
                   {fieldNode}
-                  {showDivider && (
-                    <Divider
-                      aria-label="stateful-form-field-group-divider"
-                      $style={styles?.mobileFieldGroupRowDividerStyle}
-                      $theme={statefulFormTheme}
-                    />
-                  )}
+                  <Divider
+                    aria-label="stateful-form-field-group-divider"
+                    $style={css`
+                      display: ${showDivider ? "block" : "none"};
+                      ${styles?.mobileFieldGroupRowDividerStyle}
+                    `}
+                    $theme={statefulFormTheme}
+                  />
                 </Fragment>
               );
             })}
