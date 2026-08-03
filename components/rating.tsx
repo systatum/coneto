@@ -15,7 +15,8 @@ export const RatingSize = {
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
 
 export type RatingScoreLabelRender =
-  ReactNode | ((props?: { value?: number; maxValue?: number }) => ReactNode);
+  | ReactNode
+  | ((props?: { value?: number; maxValue?: number }) => ReactNode);
 
 export interface RatingScoreLabel {
   text?: RatingScoreLabelRender;
@@ -239,8 +240,7 @@ function getPositionStyle(position: RatingScoreLabelPosition) {
 export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
-  extends
-    Omit<BaseRatingProps, "styles">,
+  extends Omit<BaseRatingProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RatingStyles;
 }
@@ -258,6 +258,8 @@ function Rating({
   labelWidth,
   labelPosition,
   className,
+  icon,
+  mobile,
   ...rest
 }: RatingProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -277,6 +279,8 @@ function Rating({
   return (
     <FieldLane
       id={inputId}
+      icon={icon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

@@ -335,6 +335,8 @@ function Signbox({
   labelPosition,
   required,
   className,
+  icon,
+  mobile,
 }: SignboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
@@ -345,6 +347,8 @@ function Signbox({
   return (
     <FieldLane
       id={inputId}
+      icon={icon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

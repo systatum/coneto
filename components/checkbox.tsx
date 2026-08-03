@@ -177,6 +177,8 @@ function Checkbox({
   labelWidth,
   labelPosition,
   className,
+  mobile,
+  icon,
   ...rest
 }: CheckboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -196,6 +198,8 @@ function Checkbox({
   return (
     <FieldLane
       id={inputId}
+      icon={icon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
