@@ -453,4 +453,101 @@ describe("Overlay Blocker", () => {
       });
     });
   });
+
+  context("relative", () => {
+    context("when not given (default)", () => {
+      it("renders as position fixed with zIndex 9991999", () => {
+        cy.mount(<ProductOverlayBlockerWithClose show />);
+
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .and("have.css", "position", "fixed")
+          .and("have.css", "z-index", "9991999");
+      });
+
+      it("locks page scroll while shown", () => {
+        cy.mount(<ProductOverlayBlockerWithClose show />);
+
+        cy.document().its("body.style.position").should("eq", "fixed");
+        cy.document().its("body.style.overflow").should("eq", "hidden");
+      });
+    });
+
+    context("when true", () => {
+      it("renders as position absolute with zIndex 10", () => {
+        cy.mount(<ProductOverlayBlockerWithClose show relative />);
+
+        cy.findByLabelText("overlay-blocker")
+          .should("exist")
+          .and("have.css", "position", "absolute")
+          .and("have.css", "z-index", "10");
+      });
+
+      context("when zIndex is also given", () => {
+        it("uses the given zIndex instead of the relative default", () => {
+          cy.mount(
+            <ProductOverlayBlockerWithClose show relative zIndex={42} />
+          );
+
+          cy.findByLabelText("overlay-blocker").should(
+            "have.css",
+            "z-index",
+            "42"
+          );
+        });
+      });
+
+      it("does not lock page scroll (unlike the default fixed overlay)", () => {
+        cy.mount(<ProductOverlayBlockerWithClose show relative />);
+
+        cy.document().its("body.style.position").should("not.eq", "fixed");
+        cy.document().its("body.style.overflow").should("not.eq", "hidden");
+      });
+
+      context("scoped wheel blocking", () => {
+        function RelativeScrollContainer() {
+          return (
+            <div aria-label="page">
+              <div
+                aria-label="scoped-container"
+                style={{
+                  position: "relative",
+                  height: "200px",
+                  marginTop: "200px",
+                }}
+              >
+                <OverlayBlocker relative show />
+              </div>
+              <div aria-label="outside-content" style={{ height: "2000px" }}>
+                Outside Content
+              </div>
+            </div>
+          );
+        }
+
+        it("blocks wheel scroll landing on its own footprint", () => {
+          cy.mount(<RelativeScrollContainer />);
+
+          cy.findByLabelText("overlay-blocker").realMouseWheel({
+            deltaY: 1000,
+            scrollBehavior: false,
+          });
+
+          cy.window().its("scrollY").should("eq", 0);
+        });
+
+        it("still lets wheel scroll pass through outside its footprint", () => {
+          cy.mount(<RelativeScrollContainer />);
+
+          cy.findByLabelText("outside-content").realMouseWheel({
+            deltaY: 1000,
+            scrollBehavior: false,
+            position: "top",
+          });
+
+          cy.window().its("scrollY").should("be.greaterThan", 0);
+        });
+      });
+    });
+  });
 });
