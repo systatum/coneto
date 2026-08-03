@@ -112,6 +112,7 @@ export interface ButtonStyles {
   toggleStyle?: CSSProp;
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
+  buttonLabelStyle?: CSSProp;
 }
 
 function Button({
@@ -290,6 +291,7 @@ function Button({
         )}
         {children && (
           <ButtonLabel
+            $style={styles?.buttonLabelStyle}
             $withFlex={labelMode === "flex"}
             aria-label="button-label"
           >
@@ -452,6 +454,7 @@ const Spacer = styled.div<{ $placement?: Placement; $spacerStyle?: CSSProp }>`
 
 const ButtonLabel = styled.span<{
   $withFlex?: boolean;
+  $style?: CSSProp;
 }>`
   ${({ $withFlex }) =>
     $withFlex &&
@@ -464,6 +467,8 @@ const ButtonLabel = styled.span<{
   text-overflow: ellipsis;
   min-width: 0;
   flex: 0 1 auto;
+
+  ${({ $style }) => $style}
 `;
 
 export interface ButtonTipMenuContainerStyles {
