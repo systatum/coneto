@@ -118,7 +118,7 @@ function FieldLane({
 
   const hasActions = filteredActions.length > 0;
 
-  const Icon = (
+  const fieldLaneIcon = (
     <Figure
       styles={{
         ...icon?.styles,
@@ -420,7 +420,7 @@ function FieldLane({
         $labelGap={labelGap}
         $theme={fieldLaneTheme}
       >
-        {icon && mobile && Icon}
+        {icon && mobile && fieldLaneIcon}
         {label && (
           <StatefulForm.Label
             labelWidth={labelWidth}
