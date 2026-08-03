@@ -149,6 +149,40 @@ const DnDContext = createContext<{
 }>(null);
 const useTableDND = () => useContext(DnDContext);
 
+/**
+ * Keeps `active` true for at least `minDurationMs` after it first turns
+ * true, so a loading indicator driven by a fast-resolving fetch doesn't
+ * flash on and immediately off.
+ */
+function useMinVisibleDuration(active: boolean, minDurationMs: number) {
+  const [visible, setVisible] = useState(active);
+  const shownAtRef = useRef<number | null>(active ? Date.now() : null);
+
+  useEffect(() => {
+    if (active) {
+      shownAtRef.current = Date.now();
+      setVisible(true);
+      return;
+    }
+
+    if (shownAtRef.current == null) {
+      setVisible(false);
+      return;
+    }
+
+    const remaining = minDurationMs - (Date.now() - shownAtRef.current);
+    if (remaining <= 0) {
+      setVisible(false);
+      return;
+    }
+
+    const timer = setTimeout(() => setVisible(false), remaining);
+    return () => clearTimeout(timer);
+  }, [active, minDurationMs]);
+
+  return visible;
+}
+
 const TableColumnContext = createContext<TableColumn[]>([]);
 const useTableColumns = () => useContext(TableColumnContext);
 
@@ -245,6 +279,8 @@ function Table({
 }: TableProps & TableAlwaysShowDragIcon) {
   const { currentTheme } = useTheme();
   const tableTheme = currentTheme.table;
+
+  const showLoadingOverlay = useMinVisibleDuration(!!isLoading, 100);
 
   const [selectedData, setSelectedData] = useState<string[]>(selectedItems);
   const [allRowsLocal, setAllRowsLocal] = useState<string[]>([]);
@@ -912,7 +948,7 @@ function Table({
                     )}
                   </TableContainer>
 
-                  {isLoading && (
+                  {showLoadingOverlay && (
                     <OverlayBlocker
                       styles={{
                         self: css`
@@ -922,7 +958,7 @@ function Table({
                           padding-top: 10px;
                         `,
                       }}
-                      show={isLoading}
+                      show={showLoadingOverlay}
                       onClick="preventDefault"
                     >
                       <LoadingSpinner
