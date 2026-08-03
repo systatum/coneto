@@ -112,7 +112,7 @@ export interface ButtonStyles {
   toggleStyle?: CSSProp;
   containerStyle?: CSSProp;
   dividerStyle?: CSSProp;
-  buttonLabelStyle?: CSSProp;
+  labelStyle?: CSSProp;
 }
 
 function Button({
@@ -291,7 +291,7 @@ function Button({
         )}
         {children && (
           <ButtonLabel
-            $style={styles?.buttonLabelStyle}
+            $style={styles?.labelStyle}
             $withFlex={labelMode === "flex"}
             aria-label="button-label"
           >
