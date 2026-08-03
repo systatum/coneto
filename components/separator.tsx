@@ -52,21 +52,40 @@ function Separator({
       $style={styles?.containerStyle}
       $color={separatorTheme.containerColor}
     >
-      <Line
-        aria-label="separator-line"
-        $style={styles?.lineStyle}
-        $color={separatorTheme.lineColor}
-        $lineShadow={separatorTheme.lineShadow}
-      />
-      <Title
-        $style={styles?.titleStyle}
-        $textFloat={textFloat}
-        $depth={depth}
-        $color={separatorTheme.titleColor}
-        $backgroundColor={separatorTheme.backgroundTitleColor}
-      >
-        {title}
-      </Title>
+      {title ? (
+        <>
+          <Line
+            aria-label="separator-line"
+            $style={styles?.lineStyle}
+            $color={separatorTheme.lineColor}
+            $lineShadow={separatorTheme.lineShadow}
+            $grow={textFloat === "right"}
+            $basis={textFloat === "left" ? depth : undefined}
+          />
+          <Title
+            $style={styles?.titleStyle}
+            $color={separatorTheme.titleColor}
+          >
+            {title}
+          </Title>
+          <Line
+            aria-label="separator-line"
+            $style={styles?.lineStyle}
+            $color={separatorTheme.lineColor}
+            $lineShadow={separatorTheme.lineShadow}
+            $grow={textFloat === "left"}
+            $basis={textFloat === "right" ? depth : undefined}
+          />
+        </>
+      ) : (
+        <Line
+          aria-label="separator-line"
+          $style={styles?.lineStyle}
+          $color={separatorTheme.lineColor}
+          $lineShadow={separatorTheme.lineShadow}
+          $grow
+        />
+      )}
 
       {actions?.map((action, index) => {
         const base = 20;
@@ -133,34 +152,28 @@ const Line = styled.span<{
   $style?: CSSProp;
   $color?: string;
   $lineShadow?: string;
+  $grow?: boolean;
+  $basis?: string;
 }>`
-  position: absolute;
-  width: 100%;
+  display: block;
   height: 2px;
   border-radius: 0.125rem;
   background-color: ${({ $color }) => $color};
   box-shadow: ${({ $lineShadow }) => $lineShadow};
+  flex: ${({ $grow, $basis }) => ($grow ? "1 1 auto" : `0 0 ${$basis ?? "0px"}`)};
 
   ${({ $style }) => $style}
 `;
 
 const Title = styled.span<{
-  $textFloat: "left" | "right";
-  $depth: string;
   $style?: CSSProp;
   $color?: string;
-  $backgroundColor?: string;
 }>`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  flex: 0 0 auto;
   padding: 0 0.5rem;
   font-weight: 500;
+  white-space: nowrap;
   color: ${({ $color }) => $color};
-
-  ${({ $textFloat, $depth }) =>
-    $textFloat === "left" ? `left: ${$depth};` : `right: ${$depth};`}
 
   ${({ $style }) => $style}
 `;

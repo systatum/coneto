@@ -7,9 +7,13 @@ context("Separator Component", () => {
       cy.findByText("systatum.com")
         .should("exist")
         .then(($label) => {
-          const label = $label[0];
-          const computedStyle = getComputedStyle(label);
-          expect(computedStyle.left).not.to.equal("auto");
+          const label = $label[0].getBoundingClientRect();
+          const container = $label[0]
+            .closest('[aria-label="separator-container"]')!
+            .getBoundingClientRect();
+          expect(label.left - container.left).to.be.lessThan(
+            container.width / 2
+          );
         });
     });
   });
@@ -20,9 +24,13 @@ context("Separator Component", () => {
       cy.findByText("systatum.com")
         .should("exist")
         .then(($label) => {
-          const label = $label[0];
-          const computedStyle = getComputedStyle(label);
-          expect(computedStyle.left).not.to.equal("auto");
+          const label = $label[0].getBoundingClientRect();
+          const container = $label[0]
+            .closest('[aria-label="separator-container"]')!
+            .getBoundingClientRect();
+          expect(container.right - label.right).to.be.lessThan(
+            container.width / 2
+          );
         });
     });
   });
