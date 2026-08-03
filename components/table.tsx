@@ -950,6 +950,7 @@ function Table({
 
                   {showLoadingOverlay && (
                     <OverlayBlocker
+                      relative
                       styles={{
                         self: css`
                           display: flex;
