@@ -44,6 +44,7 @@ export interface FieldLaneProps {
   labelGap?: number;
   required?: boolean;
   className?: string;
+  icon?: FigureProps;
   id?: string;
   mobile?: boolean;
 }
@@ -105,6 +106,7 @@ function FieldLane({
   required,
   className,
   mobile,
+  icon,
 }: FieldLaneProps) {
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
@@ -115,6 +117,22 @@ function FieldLane({
     : [];
 
   const hasActions = filteredActions.length > 0;
+
+  const fieldLaneIcon = (
+    <Figure
+      styles={{
+        ...icon?.styles,
+        self: css`
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          align-self: center;
+          ${icon?.styles?.self};
+        `,
+      }}
+      {...icon}
+    />
+  );
 
   const inputElement: ReactElement = (
     <InputWrapper
@@ -230,7 +248,7 @@ function FieldLane({
 
       {hasActions &&
         filteredActions.map((action, index) => {
-          const { icon, titleShowDelay = 1250 } = action;
+          const { icon, titleShowDelay = 1250 } = action ?? {};
           const offsetBase = 8;
           const offsetEach = 22;
           const reverseIndex = filteredActions.length - 1 - index;
@@ -402,6 +420,7 @@ function FieldLane({
         $labelGap={labelGap}
         $theme={fieldLaneTheme}
       >
+        {icon && mobile && fieldLaneIcon}
         {label && (
           <StatefulForm.Label
             labelWidth={labelWidth}

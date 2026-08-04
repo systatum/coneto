@@ -484,6 +484,8 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       labelWidth,
       labelPosition,
       className,
+      icon,
+      mobile,
       ...rest
     },
     ref
@@ -505,6 +507,8 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
     return (
       <FieldLane
         id={inputId}
+        icon={icon}
+        mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}

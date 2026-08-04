@@ -49,11 +49,11 @@ import { useTheme, StatefulFormThemeConfig } from "./../theme";
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   | {
-    target: {
-      name: string;
-      value: FormValueType;
+      target: {
+        name: string;
+        value: FormValueType;
+      };
     };
-  };
 
 export type FormValueType =
   | string
@@ -171,7 +171,7 @@ export interface FormFieldProps {
   width?: string;
   rowStyle?: CSSProp;
   fields?: FormFieldGroup[];
-  icon?: FigureProps["image"];
+  icon?: FigureProps;
   labelPosition?: FieldLaneProps["labelPosition"];
   labelGap?: FieldLaneProps["labelGap"];
   labelWidth?: FieldLaneProps["labelWidth"];
@@ -553,7 +553,7 @@ function FormFields<T extends FieldValues>({
             background-color: ${statefulFormTheme?.mobileRowFrameBackgroundColor};
             min-height: 40px;
             padding: 10px 20px;
-            border-radius: 24px;
+            border-radius: 15px;
             flex-direction: column;
             justify-content: center;
 
@@ -675,6 +675,8 @@ function FormFields<T extends FieldValues>({
                         label={label}
                         className={field?.className}
                         type={field.type}
+                        mobile={mobile}
+                        icon={field?.icon}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
                         labelPosition={labelPosition}
@@ -700,8 +702,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.textbox}
@@ -766,6 +768,7 @@ function FormFields<T extends FieldValues>({
                             labelWidth={field.labelWidth}
                             required={required}
                             label={field.title}
+                            icon={field?.icon}
                             showIconError={mobile ? false : true}
                             value={controllerField.value ?? ""}
                             helper={field.helper}
@@ -784,8 +787,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.pinbox}
@@ -826,16 +829,16 @@ function FormFields<T extends FieldValues>({
                                   box-shadow: none;
                                   border-bottom: 1px solid
                                     ${shouldShowError(field.name)
-                                    ? pinboxTheme.errorBorderColor ||
-                                    "#f87171"
-                                    : pinboxTheme.borderColor || "#d1d5db"};
+                                      ? pinboxTheme.errorBorderColor ||
+                                        "#f87171"
+                                      : pinboxTheme.borderColor || "#d1d5db"};
 
                                   &:focus {
                                     border: none;
                                     box-shadow: none;
                                     border-bottom: 1px solid
                                       ${pinboxTheme.focusedBorderColor ||
-                                  "#61A9F9"};
+                                      "#61A9F9"};
                                     z-index: 9999;
                                   }
                                 `};
@@ -879,6 +882,7 @@ function FormFields<T extends FieldValues>({
                         key={index}
                         mobile={mobile}
                         {...field.button}
+                        icon={field?.button?.icon ?? field?.icon}
                         className={field?.className}
                         id={field.id}
                         title={
@@ -890,11 +894,7 @@ function FormFields<T extends FieldValues>({
                         styles={{
                           ...field.button?.styles,
                           self: css`
-                            ${field.icon &&
-                            css`
-                              gap: 2px;
-                            `}
-                            width:100%;
+                            width: 100%;
                             height: 34px;
                             font-size: ${labelSize ?? "12px"};
                             ${mobileButtonStyle};
@@ -929,13 +929,7 @@ function FormFields<T extends FieldValues>({
                         }}
                         disabled={field.disabled || disabled}
                       >
-                        {field.icon && (
-                          <field.icon
-                            size={fieldSize ? parseInt(fieldSize) : 16}
-                          />
-                        )}
-
-                        {field.title}
+                        {field?.button?.children ?? field.title}
                       </Button>
                     );
                   }
@@ -948,17 +942,18 @@ function FormFields<T extends FieldValues>({
                         label={field.title}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
+                        icon={field?.icon}
                         labelPosition={labelPosition}
                         value={formValues[field.name as keyof T] ?? ""}
                         required={required}
                         placeholder={
                           typeof field.placeholder === "string"
                             ? (() => {
-                              const [hour = "", minute = "", second = ""] =
-                                field.placeholder.split(/[:/]/);
+                                const [hour = "", minute = "", second = ""] =
+                                  field.placeholder.split(/[:/]/);
 
-                              return { hour, minute, second };
-                            })()
+                                return { hour, minute, second };
+                              })()
                             : field.placeholder
                         }
                         helper={field.helper}
@@ -977,8 +972,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.timebox}
@@ -1005,16 +1000,16 @@ function FormFields<T extends FieldValues>({
                               box-shadow: none;
                               border-bottom: 1px solid
                                 ${shouldShowError(field.name)
-                                ? pinboxTheme.errorBorderColor || "#f87171"
-                                : pinboxTheme.borderColor || "#d1d5db"};
+                                  ? pinboxTheme.errorBorderColor || "#f87171"
+                                  : pinboxTheme.borderColor || "#d1d5db"};
 
                               &:focus {
                                 border: none;
                                 box-shadow: none;
                                 border-bottom: 1px solid
                                   ${shouldShowError(field.name)
-                                ? pinboxTheme.errorBorderColor || "#f87171"
-                                : pinboxTheme.borderColor || "#d1d5db"};
+                                    ? pinboxTheme.errorBorderColor || "#f87171"
+                                    : pinboxTheme.borderColor || "#d1d5db"};
                                 z-index: 9999;
                               }
                             `};
@@ -1092,6 +1087,8 @@ function FormFields<T extends FieldValues>({
                         id={field.id}
                         label={label}
                         rows={field.rows}
+                        icon={field?.icon}
+                        mobile={mobile}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
                         labelPosition={labelPosition}
@@ -1118,8 +1115,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.textarea}
@@ -1182,6 +1179,8 @@ function FormFields<T extends FieldValues>({
                             <Checkbox
                               id={field.id}
                               title={titleCheckbox}
+                              icon={field?.icon}
+                              mobile={mobile}
                               label={placeholderCheckbox}
                               labelGap={field.labelGap}
                               labelWidth={field.labelWidth}
@@ -1199,8 +1198,8 @@ function FormFields<T extends FieldValues>({
                               }}
                               errorMessage={
                                 errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               required={required}
                               showError={shouldShowError(field.name)}
@@ -1315,14 +1314,16 @@ function FormFields<T extends FieldValues>({
                               labelPosition={labelPosition}
                               className={field?.className}
                               name={field.name}
+                              icon={field?.icon}
+                              mobile={mobile}
                               title={titleRadio}
                               label={placeholderRadio}
                               placeholder={placeholderRadio}
                               checked={controllerField.value ?? false}
                               errorMessage={
                                 errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               helper={field.helper}
                               required={required}
@@ -1412,6 +1413,7 @@ function FormFields<T extends FieldValues>({
                             name={field.name}
                             label={label}
                             mobile={mobile}
+                            icon={field?.icon}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
@@ -1429,11 +1431,11 @@ function FormFields<T extends FieldValues>({
                             onChange={(
                               e:
                                 | {
-                                  target: {
-                                    name: string;
-                                    value: PhoneboxCountryCode;
-                                  };
-                                }
+                                    target: {
+                                      name: string;
+                                      value: PhoneboxCountryCode;
+                                    };
+                                  }
                                 | ChangeEvent<HTMLInputElement>
                             ) => {
                               if (e.target.name === "phone") {
@@ -1447,8 +1449,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.phonebox}
@@ -1527,6 +1529,8 @@ function FormFields<T extends FieldValues>({
                             label={field.title}
                             placeholder={field.placeholder}
                             required={required}
+                            icon={field?.icon}
+                            mobile={mobile}
                             className={field?.className}
                             helper={field.helper}
                             labelGap={field.labelGap}
@@ -1695,6 +1699,8 @@ function FormFields<T extends FieldValues>({
                       <FileInputBox
                         key={index}
                         id={field.id}
+                        icon={field?.icon}
+                        mobile={mobile}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
                         labelPosition={field.labelPosition}
@@ -1708,8 +1714,8 @@ function FormFields<T extends FieldValues>({
                         disabled={field.disabled || disabled}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         {...field.fileInputBox}
                         onFilesSelected={(files: File[]) => {
@@ -1784,6 +1790,7 @@ function FormFields<T extends FieldValues>({
                         labelPosition={labelPosition}
                         className={field?.className}
                         name={field.name}
+                        icon={field?.icon}
                         helper={field.helper}
                         value={formValues[field.name as keyof T] ?? ""}
                         onFileSelected={(e: File | undefined) => {
@@ -1825,8 +1832,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         {...field.imagebox}
                         styles={{
@@ -1878,6 +1885,8 @@ function FormFields<T extends FieldValues>({
                         label={field.title}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
+                        icon={field?.icon}
+                        mobile={mobile}
                         labelPosition={labelPosition}
                         className={field?.className}
                         helper={field.helper}
@@ -1896,8 +1905,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.signbox}
@@ -1948,6 +1957,7 @@ function FormFields<T extends FieldValues>({
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
+                            icon={field?.icon}
                             className={field?.className}
                             ref={(el) => {
                               if (el) refs.current[field.name] = el;
@@ -2051,6 +2061,7 @@ function FormFields<T extends FieldValues>({
                               id={field.id}
                               name={field.name}
                               label={field.title}
+                              icon={field?.icon}
                               placeholder={field.placeholder}
                               helper={field.helper}
                               required={required}
@@ -2067,8 +2078,8 @@ function FormFields<T extends FieldValues>({
                               }}
                               errorMessage={
                                 errors[field.name as keyof T]?.[0]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               onChange={(e) => {
                                 const inputValueEvent = {
@@ -2152,6 +2163,7 @@ function FormFields<T extends FieldValues>({
                             id={field.id}
                             name={field.name}
                             mobile={mobile}
+                            icon={field?.icon}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
@@ -2167,8 +2179,8 @@ function FormFields<T extends FieldValues>({
                             }}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             helper={field.helper}
                             onChange={(e) => {
@@ -2263,6 +2275,7 @@ function FormFields<T extends FieldValues>({
                             helper={field.helper}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
+                            icon={field?.icon}
                             labelPosition={labelPosition}
                             className={field?.className}
                             required={required}
@@ -2364,6 +2377,8 @@ function FormFields<T extends FieldValues>({
                               labelGap={field.labelGap}
                               labelWidth={field.labelWidth}
                               size={size}
+                              icon={field?.icon}
+                              mobile={mobile}
                               labelPosition={labelPosition}
                               className={field?.className}
                               label={field.title}
@@ -2442,6 +2457,8 @@ function FormFields<T extends FieldValues>({
                           <ThumbField
                             id={field.id}
                             label={field.title}
+                            icon={field?.icon}
+                            mobile={mobile}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
@@ -2473,8 +2490,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.thumbField}
@@ -2550,6 +2567,7 @@ function FormFields<T extends FieldValues>({
                         render={({ field: controllerField }) => (
                           <Toggle
                             id={field.id}
+                            icon={field?.icon}
                             name={controllerField.name}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
@@ -2574,8 +2592,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.toggle}
@@ -2644,6 +2662,7 @@ function FormFields<T extends FieldValues>({
                             name={field.name}
                             label={field.title}
                             labelGap={field.labelGap}
+                            icon={field?.icon}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
                             className={field?.className}
@@ -2666,8 +2685,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             {...field.capsule}
                             styles={{
@@ -2731,13 +2750,14 @@ function FormFields<T extends FieldValues>({
               return (
                 <Fragment key={index}>
                   {fieldNode}
-                  {showDivider && (
-                    <Divider
-                      aria-label="stateful-form-field-group-divider"
-                      $style={styles?.mobileFieldGroupRowDividerStyle}
-                      $theme={statefulFormTheme}
-                    />
-                  )}
+                  <Divider
+                    aria-label="stateful-form-field-group-divider"
+                    $style={css`
+                      display: ${showDivider ? "block" : "none"};
+                      ${styles?.mobileFieldGroupRowDividerStyle}
+                    `}
+                    $theme={statefulFormTheme}
+                  />
                 </Fragment>
               );
             })}

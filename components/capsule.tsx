@@ -296,6 +296,8 @@ function Capsule({
   labelWidth,
   className,
   errorIconPosition,
+  mobile,
+  icon,
   ...rest
 }: CapsuleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -307,6 +309,8 @@ function Capsule({
   return (
     <FieldLane
       id={inputId}
+      icon={icon}
+      mobile={mobile}
       className={applyClassName("capsule", className)}
       showError={showError}
       errorMessage={errorMessage}

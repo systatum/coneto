@@ -405,7 +405,7 @@ describe("StatefulForm", () => {
       );
 
       cy.findAllByLabelText("stateful-form-field-group")
-        .should("have.css", "border-radius", "24px")
+        .should("have.css", "border-radius", "12px")
         .and("have.css", "padding", "10px 20px");
     });
 
@@ -470,6 +470,35 @@ describe("StatefulForm", () => {
     });
 
     context("button", () => {
+      context("when given children", () => {
+        it("renders with children", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "save",
+                  title: "Save",
+                  type: "button",
+                  required: true,
+                  rowJustifyPosition: "end",
+                  button: {
+                    variant: "primary",
+                    children: <span aria-label="save">Save The Element</span>,
+                  },
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-field-group").should("exist");
+
+          cy.findByLabelText("save").should("have.text", "Save The Element");
+        });
+      });
+
       context("when given 2 or more button", () => {
         it("should separate with percentage in flex row", () => {
           cy.viewport(500, 500);

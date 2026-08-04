@@ -172,6 +172,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       className,
       mobile,
       drawerHeight,
+      icon,
     },
     ref
   ) => {
@@ -246,6 +247,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         className={applyClassName("combobox", className)}
         isLoading={isLoading}
         mobile={!!mobile}
+        icon={icon}
         helper={helper}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
