@@ -2,7 +2,89 @@ import { css } from "styled-components";
 import { ThumbField } from "./../../components/thumb-field";
 
 describe("ThumbField", () => {
-  describe("thumbText", () => {
+  context("events", () => {
+    context("onClick", () => {
+      context("when clicking the thumb field", () => {
+        it("should call the click handler", () => {
+          const onClick = cy.stub().as("onClick");
+
+          cy.mount(<ThumbField aria-label="thumb-field" onClick={onClick} />);
+
+          cy.findByLabelText("thumb-field").click();
+
+          cy.get("@onClick").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("onMouseDown", () => {
+      context("when pressing the mouse button on the thumb field", () => {
+        it("should call the mouse down handler", () => {
+          const onMouseDown = cy.stub().as("onMouseDown");
+
+          cy.mount(
+            <ThumbField aria-label="thumb-field" onMouseDown={onMouseDown} />
+          );
+
+          cy.findByLabelText("thumb-field").trigger("mousedown");
+          cy.wait(200);
+
+          cy.get("@onMouseDown").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("onMouseUp", () => {
+      context("when releasing the mouse button on the thumb field", () => {
+        it("should call the mouse up handler", () => {
+          const onMouseUp = cy.stub().as("onMouseUp");
+
+          cy.mount(
+            <ThumbField aria-label="thumb-field" onMouseUp={onMouseUp} />
+          );
+
+          cy.findByLabelText("thumb-field").trigger("mouseup");
+
+          cy.get("@onMouseUp").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("onMouseEnter", () => {
+      context("when hovering over the thumb field", () => {
+        it("should call the mouse enter handler", () => {
+          const onMouseEnter = cy.stub().as("onMouseEnter");
+
+          cy.mount(
+            <ThumbField aria-label="thumb-field" onMouseEnter={onMouseEnter} />
+          );
+
+          cy.findByLabelText("thumb-field").realHover();
+
+          cy.get("@onMouseEnter").should("have.been.calledOnce");
+        });
+      });
+    });
+
+    context("onMouseLeave", () => {
+      context("when moving the cursor away from the thumb field", () => {
+        it("should call the mouse leave handler", () => {
+          const onMouseLeave = cy.stub().as("onMouseLeave");
+
+          cy.mount(
+            <ThumbField aria-label="thumb-field" onMouseLeave={onMouseLeave} />
+          );
+
+          cy.findByLabelText("thumb-field").realHover();
+          cy.findByLabelText("thumb-field").trigger("mouseleave");
+
+          cy.get("@onMouseLeave").should("have.been.calledOnce");
+        });
+      });
+    });
+  });
+
+  context("thumbText", () => {
     context("when given text for both thumbs", () => {
       it("renders the up and down text", () => {
         cy.mount(
