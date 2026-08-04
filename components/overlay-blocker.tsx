@@ -1,15 +1,16 @@
 import {
   forwardRef,
-  useImperativeHandle,
-  useState,
+  ReactNode,
   useCallback,
   useEffect,
-  ReactNode,
+  useImperativeHandle,
+  useRef,
+  useState,
 } from "react";
 import styled, { CSSProp } from "styled-components";
+import { applyClassName } from "./../constants/classname";
 import { OverlayBlockerThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
-import { applyClassName } from "./../constants/classname";
 
 export interface OverlayBlockerRef {
   close: () => void;
@@ -30,6 +31,12 @@ export interface OverlayBlockerProps {
   className?: string;
   id?: string;
   exemptRegions?: string[];
+
+  /**
+   * Scopes the overlay to its nearest positioned ancestor. The parent must be (or
+   * become) `position: relative` for this to be contained correctly.
+   */
+  relative?: boolean;
 }
 
 export interface OverlayBlockerStyles {
@@ -43,18 +50,21 @@ export const OverlayBlocker = forwardRef<
   (
     {
       show = false,
-      zIndex = 9991999,
+      zIndex,
       onClick = "close",
       styles,
       children,
       className,
       id,
       exemptRegions: _exemptRegions,
+      relative = false,
     },
     ref
   ) => {
     const { currentTheme } = useTheme();
     const overlayBlockerTheme = currentTheme.overlayBlocker;
+
+    const resolvedZIndex = zIndex ?? (relative ? 10 : 9991999);
 
     const exemptRegions = [
       ".coneto-paper-dialog",
@@ -65,6 +75,7 @@ export const OverlayBlocker = forwardRef<
     ];
 
     const [visible, setVisible] = useState(show);
+    const overlayNodeRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
       if (!visible) return;
@@ -76,6 +87,9 @@ export const OverlayBlocker = forwardRef<
       const scrollY = window.scrollY;
       const body = document.body;
 
+      // `relative` scopes this to its own container, so the rest of the
+      // page must keep scrolling normally - only lock/restore the body
+      // when blocking the whole viewport.
       const prev = {
         overflow: body.style.overflow,
         position: body.style.position,
@@ -83,21 +97,30 @@ export const OverlayBlocker = forwardRef<
         width: body.style.width,
       };
 
-      body.style.overflow = "hidden";
-      body.style.position = "fixed";
-      body.style.top = `-${scrollY}px`;
-      body.style.width = "100%";
+      if (!relative) {
+        body.style.overflow = "hidden";
+        body.style.position = "fixed";
+        body.style.top = `-${scrollY}px`;
+        body.style.width = "100%";
+      }
 
       const allow = (target: EventTarget | null) =>
         isInSafeZone(target, safeRegions);
 
+      // When relative, only wheel/touch events landing on this overlay's
+      // own footprint are blocked - everything else on the page scrolls
+      // through untouched.
+      const withinScope = (target: EventTarget | null) =>
+        !relative ||
+        (target instanceof Node && overlayNodeRef.current?.contains(target));
+
       const blockWheel = (e: WheelEvent) => {
-        if (allow(e.target)) return;
+        if (allow(e.target) || !withinScope(e.target)) return;
         e.preventDefault();
       };
 
       const blockTouch = (e: TouchEvent) => {
-        if (allow(e.target)) return;
+        if (allow(e.target) || !withinScope(e.target)) return;
         e.preventDefault();
       };
 
@@ -105,17 +128,19 @@ export const OverlayBlocker = forwardRef<
       window.addEventListener("touchmove", blockTouch, { passive: false });
 
       return () => {
-        body.style.overflow = prev.overflow;
-        body.style.position = prev.position;
-        body.style.top = prev.top;
-        body.style.width = prev.width;
+        if (!relative) {
+          body.style.overflow = prev.overflow;
+          body.style.position = prev.position;
+          body.style.top = prev.top;
+          body.style.width = prev.width;
+
+          window.scrollTo(0, scrollY);
+        }
 
         window.removeEventListener("wheel", blockWheel);
         window.removeEventListener("touchmove", blockTouch);
-
-        window.scrollTo(0, scrollY);
       };
-    }, [exemptRegions, visible]);
+    }, [exemptRegions, visible, relative]);
 
     const isInSafeZone = (target: EventTarget | null, regions: string[]) => {
       if (!(target instanceof Element)) {
@@ -190,10 +215,12 @@ export const OverlayBlocker = forwardRef<
 
     return (
       <StyledOverlay
+        ref={overlayNodeRef}
         id={id}
         className={applyClassName("overlay-blocker", className)}
         aria-label="overlay-blocker"
-        $zIndex={zIndex}
+        $zIndex={resolvedZIndex}
+        $relative={relative}
         $theme={overlayBlockerTheme}
         onClick={handleClick}
         $style={styles?.self}
@@ -206,6 +233,7 @@ export const OverlayBlocker = forwardRef<
 
 const StyledOverlay = styled.div<{
   $zIndex: number;
+  $relative?: boolean;
   $style?: CSSProp;
   $theme?: OverlayBlockerThemeConfig;
 }>`
@@ -217,7 +245,7 @@ const StyledOverlay = styled.div<{
 
   overscroll-behavior: none;
 
-  position: fixed;
+  position: ${({ $relative }) => ($relative ? "absolute" : "fixed")};
   inset: 0;
   pointer-events: auto;
   background: ${({ $theme }) =>

@@ -1570,6 +1570,68 @@ describe("Table", () => {
           .and("have.css", "opacity", "0.8")
           .and("have.css", "padding", "4px 8px 4px 4px");
       });
+
+      it("scopes the overlay to the table instead of the full viewport", () => {
+        cy.mount(<BasicTable isLoading />);
+
+        cy.findByLabelText("overlay-blocker")
+          .should("have.css", "position", "absolute")
+          .and("have.css", "z-index", "10");
+      });
+    });
+
+    context("minimum visible duration", () => {
+      function ToggleLoadingTable() {
+        const [isLoading, setIsLoading] = useState(false);
+
+        return (
+          <>
+            <button onClick={() => setIsLoading(true)}>Start Loading</button>
+            <button onClick={() => setIsLoading(false)}>Stop Loading</button>
+            <BasicTable isLoading={isLoading} />
+          </>
+        );
+      }
+
+      it("keeps the overlay visible for at least 100ms even if loading finishes immediately", () => {
+        cy.clock();
+        cy.mount(<ToggleLoadingTable />);
+
+        cy.findByText("Start Loading").click();
+        cy.findByText("Stop Loading").click();
+
+        cy.findByLabelText("overlay-blocker").should("exist");
+
+        cy.tick(50);
+        cy.findByLabelText("overlay-blocker").should("exist");
+
+        cy.tick(60);
+        cy.findByLabelText("overlay-blocker").should("not.exist");
+      });
+
+      it("hides the overlay immediately once the minimum duration has already elapsed", () => {
+        cy.clock();
+        cy.mount(<ToggleLoadingTable />);
+
+        cy.findByText("Start Loading").click();
+        cy.findByLabelText("overlay-blocker").should("exist");
+
+        cy.tick(150);
+        cy.findByLabelText("overlay-blocker").should("exist");
+
+        cy.findByText("Stop Loading").click();
+        cy.findByLabelText("overlay-blocker").should("not.exist");
+      });
+
+      it("keeps showing the overlay while loading is still ongoing", () => {
+        cy.clock();
+        cy.mount(<ToggleLoadingTable />);
+
+        cy.findByText("Start Loading").click();
+        cy.tick(500);
+
+        cy.findByLabelText("overlay-blocker").should("exist");
+      });
     });
   });
 
