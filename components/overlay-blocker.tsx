@@ -90,16 +90,14 @@ export const OverlayBlocker = forwardRef<
       // `relative` scopes this to its own container, so the rest of the
       // page must keep scrolling normally - only lock/restore the body
       // when blocking the whole viewport.
-      const prev = !relative
-        ? {
-            overflow: body.style.overflow,
-            position: body.style.position,
-            top: body.style.top,
-            width: body.style.width,
-          }
-        : null;
+      const prev = {
+        overflow: body.style.overflow,
+        position: body.style.position,
+        top: body.style.top,
+        width: body.style.width,
+      };
 
-      if (prev) {
+      if (!relative) {
         body.style.overflow = "hidden";
         body.style.position = "fixed";
         body.style.top = `-${scrollY}px`;
@@ -130,7 +128,7 @@ export const OverlayBlocker = forwardRef<
       window.addEventListener("touchmove", blockTouch, { passive: false });
 
       return () => {
-        if (prev) {
+        if (!relative) {
           body.style.overflow = prev.overflow;
           body.style.position = prev.position;
           body.style.top = prev.top;
