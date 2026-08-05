@@ -8,7 +8,7 @@ describe("ThumbField", () => {
         it("should call the click handler", () => {
           const onClick = cy.stub().as("onClick");
 
-          cy.mount(<ThumbField aria-label="thumb-field" onClick={onClick} />);
+          cy.mount(<ThumbField onClick={onClick} />);
 
           cy.findByLabelText("thumb-field").click();
 
@@ -22,9 +22,7 @@ describe("ThumbField", () => {
         it("should call the mouse down handler", () => {
           const onMouseDown = cy.stub().as("onMouseDown");
 
-          cy.mount(
-            <ThumbField aria-label="thumb-field" onMouseDown={onMouseDown} />
-          );
+          cy.mount(<ThumbField onMouseDown={onMouseDown} />);
 
           cy.findByLabelText("thumb-field").trigger("mousedown");
           cy.wait(200);
@@ -39,9 +37,7 @@ describe("ThumbField", () => {
         it("should call the mouse up handler", () => {
           const onMouseUp = cy.stub().as("onMouseUp");
 
-          cy.mount(
-            <ThumbField aria-label="thumb-field" onMouseUp={onMouseUp} />
-          );
+          cy.mount(<ThumbField onMouseUp={onMouseUp} />);
 
           cy.findByLabelText("thumb-field").trigger("mouseup");
 
@@ -55,9 +51,7 @@ describe("ThumbField", () => {
         it("should call the mouse enter handler", () => {
           const onMouseEnter = cy.stub().as("onMouseEnter");
 
-          cy.mount(
-            <ThumbField aria-label="thumb-field" onMouseEnter={onMouseEnter} />
-          );
+          cy.mount(<ThumbField onMouseEnter={onMouseEnter} />);
 
           cy.findByLabelText("thumb-field").realHover();
 
@@ -71,9 +65,7 @@ describe("ThumbField", () => {
         it("should call the mouse leave handler", () => {
           const onMouseLeave = cy.stub().as("onMouseLeave");
 
-          cy.mount(
-            <ThumbField aria-label="thumb-field" onMouseLeave={onMouseLeave} />
-          );
+          cy.mount(<ThumbField onMouseLeave={onMouseLeave} />);
 
           cy.findByLabelText("thumb-field").realHover();
           cy.findByLabelText("thumb-field").trigger("mouseleave");
