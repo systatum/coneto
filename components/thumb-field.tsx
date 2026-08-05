@@ -25,6 +25,10 @@ interface BaseThumbFieldProps
   id?: string;
   showError?: boolean;
   thumbText?: ThumbFieldThumbText;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export interface ThumbFieldThumbText {
