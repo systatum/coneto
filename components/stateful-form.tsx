@@ -49,11 +49,11 @@ import { useTheme, StatefulFormThemeConfig } from "./../theme";
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   | {
-    target: {
-      name: string;
-      value: FormValueType;
+      target: {
+        name: string;
+        value: FormValueType;
+      };
     };
-  };
 
 export type FormValueType =
   | string
@@ -220,8 +220,16 @@ function StatefulForm<Z extends ZodTypeAny>({
   className,
   id,
 }: StatefulFormProps<Z>) {
+  // Tracks field names whose most recent change came from the internal
+  // onChange path (handleFieldChange), i.e. real user interaction through
+  // register/Controller — NOT from an external formValues update.
+  // RHF's own register/Controller already handles validate+touch for these,
+  // so we don't need (and don't want) to force setValue on them again.
+  const internallyChangedFieldsRef = useRef<Set<string>>(new Set());
+
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
     if (disabled) return;
+    internallyChangedFieldsRef.current.add(name as string);
     onChange?.({ currentState: { [name]: value } });
   };
 
@@ -229,7 +237,7 @@ function StatefulForm<Z extends ZodTypeAny>({
 
   const formConfig: UseFormProps<TypeOf<Z>> = {
     mode,
-    defaultValues: formValues,
+    values: formValues,
   };
 
   if (validationSchema) {
@@ -243,22 +251,87 @@ function StatefulForm<Z extends ZodTypeAny>({
     formState: { errors, touchedFields, isValid },
   } = useForm(formConfig) as ReturnType<typeof useForm<TypeOf<Z>>>;
 
-  const customFieldNames = fields
-    .flat()
-    .filter((field) => field.type === "custom")
-    .map((field) => field.name);
+  const isFile = (val: unknown): val is File => val instanceof File;
 
-  const customValues = customFieldNames.map((name) => formValues[name]);
+  const isFileArray = (val: unknown): val is File[] =>
+    Array.isArray(val) && val.every((v) => v instanceof File);
 
-  useEffect(() => {
-    customFieldNames.map((name) => {
-      setValue(name as any, formValues[name as any], {
-        shouldValidate: true,
-        shouldTouch: true,
-        shouldDirty: true,
-      });
+  // Recursively collect ALL field names that hold a real form value —
+  // including "custom" fields now, since they need the same touched/validate
+  // sync logic as every other field type. Only skip "button" (no value)
+  // and "hidden" (not meant to be validated/shown).
+  function flattenAllFieldNames(fields: FormFieldGroup[]): string[] {
+    return fields.flatMap((f) => {
+      if (Array.isArray(f)) {
+        return flattenAllFieldNames(f);
+      }
+
+      if (f.type === "frame" && f.fields) {
+        return flattenAllFieldNames(f.fields as FormFieldGroup[]);
+      }
+
+      // skip fields that don't hold a real, validatable form value
+      if (f.type === "button" || f.type === "custom" || f.hidden) {
+        return [];
+      }
+
+      return [f.name];
     });
-  }, [JSON.stringify(customValues), setValue]);
+  }
+
+  // Decide whether a value is "real" enough to be worth touching/validating.
+  // Prevents empty/untouched fields from getting falsely marked as touched
+  // on initial mount (which would make them show errors immediately).
+  const hasMeaningfulValue = (value: unknown): boolean => {
+    if (typeof value === "string") return value.length > 1;
+    if (typeof value === "number" || typeof value === "boolean") return true;
+    if (isFile(value) || isFileArray(value)) return true;
+    return value != null;
+  };
+
+  const allFieldNames = flattenAllFieldNames(fields);
+
+  const prevFormValuesRef = useRef<TypeOf<Z>>(formValues);
+
+  // Whenever `formValues` changes — whether from an external source (values
+  // prop reactive sync) or a "custom" field's own render logic — RHF's
+  // internal reset (triggered by the `values` prop) does NOT automatically
+  // mark fields as touched or re-run validation for display purposes.
+  // So we manually diff against the previous values and force `setValue`
+  // with `shouldValidate` + `shouldTouch` only on fields that actually changed,
+  // avoiding unnecessary re-validation on fields that didn't change.
+  useEffect(() => {
+    const prevFormValues = prevFormValuesRef.current;
+
+    allFieldNames.forEach((name) => {
+      const key = name as keyof TypeOf<Z>;
+      const value = formValues[key];
+      const prevValue = prevFormValues[key];
+
+      const changedInternally = internallyChangedFieldsRef.current.has(name);
+
+      // consume the flag either way, so it doesn't leak into future renders
+      internallyChangedFieldsRef.current.delete(name);
+
+      if (changedInternally) {
+        // came from real user interaction via register/Controller —
+        // RHF already validated + touched it, nothing to do here
+        return;
+      }
+
+      // only reaches here for changes NOT triggered by handleFieldChange,
+      // i.e. genuinely external updates (props, server data, programmatic set, etc.)
+      if (value !== prevValue && hasMeaningfulValue(value)) {
+        setValue(name as any, value as any, {
+          shouldValidate: true,
+          shouldTouch: true,
+          shouldDirty: true,
+        });
+      }
+    });
+
+    prevFormValuesRef.current = formValues;
+  }, [formValues, setValue]);
 
   useEffect(() => {
     if (onValidityChange) {
@@ -281,11 +354,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     const value = formValues[name];
     const touched = touchedFields[name];
     const error = errors[name];
-
-    const isFile = (val: unknown): val is File => val instanceof File;
-
-    const isFileArray = (val: unknown): val is File[] =>
-      Array.isArray(val) && val.every((v) => v instanceof File);
 
     const hasErrorMessage = (err: unknown): boolean => {
       if (!err || typeof err !== "object") return false;
@@ -700,8 +768,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.textbox}
@@ -784,8 +852,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.pinbox}
@@ -826,16 +894,16 @@ function FormFields<T extends FieldValues>({
                                   box-shadow: none;
                                   border-bottom: 1px solid
                                     ${shouldShowError(field.name)
-                                    ? pinboxTheme.errorBorderColor ||
-                                    "#f87171"
-                                    : pinboxTheme.borderColor || "#d1d5db"};
+                                      ? pinboxTheme.errorBorderColor ||
+                                        "#f87171"
+                                      : pinboxTheme.borderColor || "#d1d5db"};
 
                                   &:focus {
                                     border: none;
                                     box-shadow: none;
                                     border-bottom: 1px solid
                                       ${pinboxTheme.focusedBorderColor ||
-                                  "#61A9F9"};
+                                      "#61A9F9"};
                                     z-index: 9999;
                                   }
                                 `};
@@ -954,11 +1022,11 @@ function FormFields<T extends FieldValues>({
                         placeholder={
                           typeof field.placeholder === "string"
                             ? (() => {
-                              const [hour = "", minute = "", second = ""] =
-                                field.placeholder.split(/[:/]/);
+                                const [hour = "", minute = "", second = ""] =
+                                  field.placeholder.split(/[:/]/);
 
-                              return { hour, minute, second };
-                            })()
+                                return { hour, minute, second };
+                              })()
                             : field.placeholder
                         }
                         helper={field.helper}
@@ -977,8 +1045,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.timebox}
@@ -1005,16 +1073,16 @@ function FormFields<T extends FieldValues>({
                               box-shadow: none;
                               border-bottom: 1px solid
                                 ${shouldShowError(field.name)
-                                ? pinboxTheme.errorBorderColor || "#f87171"
-                                : pinboxTheme.borderColor || "#d1d5db"};
+                                  ? pinboxTheme.errorBorderColor || "#f87171"
+                                  : pinboxTheme.borderColor || "#d1d5db"};
 
                               &:focus {
                                 border: none;
                                 box-shadow: none;
                                 border-bottom: 1px solid
                                   ${shouldShowError(field.name)
-                                ? pinboxTheme.errorBorderColor || "#f87171"
-                                : pinboxTheme.borderColor || "#d1d5db"};
+                                    ? pinboxTheme.errorBorderColor || "#f87171"
+                                    : pinboxTheme.borderColor || "#d1d5db"};
                                 z-index: 9999;
                               }
                             `};
@@ -1118,8 +1186,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.textarea}
@@ -1199,8 +1267,8 @@ function FormFields<T extends FieldValues>({
                               }}
                               errorMessage={
                                 errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               required={required}
                               showError={shouldShowError(field.name)}
@@ -1321,8 +1389,8 @@ function FormFields<T extends FieldValues>({
                               checked={controllerField.value ?? false}
                               errorMessage={
                                 errors[field.name as keyof T]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               helper={field.helper}
                               required={required}
@@ -1429,11 +1497,11 @@ function FormFields<T extends FieldValues>({
                             onChange={(
                               e:
                                 | {
-                                  target: {
-                                    name: string;
-                                    value: PhoneboxCountryCode;
-                                  };
-                                }
+                                    target: {
+                                      name: string;
+                                      value: PhoneboxCountryCode;
+                                    };
+                                  }
                                 | ChangeEvent<HTMLInputElement>
                             ) => {
                               if (e.target.name === "phone") {
@@ -1447,8 +1515,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.phonebox}
@@ -1708,8 +1776,8 @@ function FormFields<T extends FieldValues>({
                         disabled={field.disabled || disabled}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         {...field.fileInputBox}
                         onFilesSelected={(files: File[]) => {
@@ -1825,8 +1893,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         {...field.imagebox}
                         styles={{
@@ -1896,8 +1964,8 @@ function FormFields<T extends FieldValues>({
                         showError={shouldShowError(field.name)}
                         errorMessage={
                           errors[field.name as keyof T]?.message as
-                          | string
-                          | undefined
+                            | string
+                            | undefined
                         }
                         disabled={field.disabled || disabled}
                         {...field.signbox}
@@ -2067,8 +2135,8 @@ function FormFields<T extends FieldValues>({
                               }}
                               errorMessage={
                                 errors[field.name as keyof T]?.[0]?.message as
-                                | string
-                                | undefined
+                                  | string
+                                  | undefined
                               }
                               onChange={(e) => {
                                 const inputValueEvent = {
@@ -2167,8 +2235,8 @@ function FormFields<T extends FieldValues>({
                             }}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             helper={field.helper}
                             onChange={(e) => {
@@ -2473,8 +2541,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.thumbField}
@@ -2574,8 +2642,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             disabled={field.disabled || disabled}
                             {...field.toggle}
@@ -2666,8 +2734,8 @@ function FormFields<T extends FieldValues>({
                             showError={shouldShowError(field.name)}
                             errorMessage={
                               errors[field.name as keyof T]?.message as
-                              | string
-                              | undefined
+                                | string
+                                | undefined
                             }
                             {...field.capsule}
                             styles={{
