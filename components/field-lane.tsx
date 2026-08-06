@@ -1,89 +1,89 @@
-import { RiCheckLine, RiErrorWarningLine } from "@remixicon/react";
-import React, { ReactElement, ReactNode } from "react";
-import styled, { css, CSSProp } from "styled-components";
-import { Button } from "./button";
-import { StatefulForm } from "./stateful-form";
-import { Tooltip } from "./tooltip";
-import { Figure, FigureProps } from "./figure";
-import { useTheme } from "./../theme/provider";
-import { FieldLaneThemeConfig } from "./../theme";
-import { BaseAction } from "../constants/action";
-import { applyClassName } from "./../constants/classname";
+import { RiCheckLine, RiErrorWarningLine } from "@remixicon/react"
+import React, { ReactElement, ReactNode } from "react"
+import styled, { css, CSSProp } from "styled-components"
+import { Button } from "./button"
+import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form"
+import { Tooltip } from "./tooltip"
+import { Figure, FigureProps } from "./figure"
+import { useTheme } from "./../theme/provider"
+import { FieldLaneThemeConfig } from "./../theme"
+import { BaseAction } from "../constants/action"
+import { applyClassName } from "./../constants/classname"
 
 export const FieldLaneErrorIconPosition = {
   Absolute: "absolute",
   Relative: "relative",
   None: "none",
-} as const;
+} as const
 
 export type FieldLaneErrorIconPosition =
-  (typeof FieldLaneErrorIconPosition)[keyof typeof FieldLaneErrorIconPosition];
+  (typeof FieldLaneErrorIconPosition)[keyof typeof FieldLaneErrorIconPosition]
 
 export const FieldLaneLabelPosition = {
   Top: "top",
   Left: "left",
-} as const;
+} as const
 
 export type FieldLaneLabelPosition =
-  (typeof FieldLaneLabelPosition)[keyof typeof FieldLaneLabelPosition];
+  (typeof FieldLaneLabelPosition)[keyof typeof FieldLaneLabelPosition]
 
 export interface FieldLaneProps {
-  label?: string;
-  showError?: boolean;
-  errorIconPosition?: FieldLaneErrorIconPosition;
-  errorMessage?: string;
-  dropdowns?: FieldLaneDropdown[];
-  styles?: FieldLaneStyles;
-  helper?: string;
-  disabled?: boolean;
-  children?: ReactNode;
-  actions?: FieldLaneAction[];
-  type?: string;
-  labelPosition?: FieldLaneLabelPosition;
-  labelWidth?: string;
-  labelGap?: number;
-  required?: boolean;
-  className?: string;
-  id?: string;
-  mobile?: boolean;
+  label?: string
+  showError?: boolean
+  errorIconPosition?: FieldLaneErrorIconPosition
+  errorMessage?: string
+  dropdowns?: FieldLaneDropdown[]
+  styles?: FieldLaneStyles
+  helper?: ReactNode
+  disabled?: boolean
+  children?: ReactNode
+  actions?: FieldLaneAction[]
+  type?: string
+  labelPosition?: FieldLaneLabelPosition
+  labelWidth?: string
+  labelGap?: number
+  required?: boolean
+  className?: string
+  id?: string
+  mobile?: boolean
 }
 
-export interface FieldLaneStyles {
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  controlStyle?: CSSProp;
-  bodyStyle?: CSSProp;
+export interface FieldLaneStyles extends Omit<StatefulFormLabelStyles, "self"> {
+  containerStyle?: CSSProp
+  labelStyle?: CSSProp
+  controlStyle?: CSSProp
+  bodyStyle?: CSSProp
 }
 
 export interface FieldLaneAction extends BaseAction {
-  titleShowDelay?: number;
+  titleShowDelay?: number
 }
 
 export interface FieldLaneDropdown {
-  disabled?: boolean;
-  options?: FieldLaneDropdownOption[];
-  caption?: string;
-  onChange?: (id: string) => void;
-  width?: string;
-  styles?: FieldLaneDropdownStyles;
-  withFilter?: boolean;
+  disabled?: boolean
+  options?: FieldLaneDropdownOption[]
+  caption?: string
+  onChange?: (id: string) => void
+  width?: string
+  styles?: FieldLaneDropdownStyles
+  withFilter?: boolean
   render?: (props: {
-    render?: (children?: ReactNode) => ReactNode;
-    setCaption?: (caption?: string) => void;
-  }) => ReactNode;
-  hidden?: boolean;
+    render?: (children?: ReactNode) => ReactNode
+    setCaption?: (caption?: string) => void
+  }) => ReactNode
+  hidden?: boolean
 }
 
 export interface FieldLaneDropdownStyles {
-  drawerStyle?: CSSProp;
-  containerStyle?: CSSProp;
-  self?: CSSProp;
+  drawerStyle?: CSSProp
+  containerStyle?: CSSProp
+  self?: CSSProp
 }
 
 export interface FieldLaneDropdownOption {
-  text: string;
-  value: string;
-  icon?: FigureProps;
+  text: string
+  value: string
+  icon?: FigureProps
 }
 
 function FieldLane({
@@ -106,15 +106,15 @@ function FieldLane({
   className,
   mobile,
 }: FieldLaneProps) {
-  const { currentTheme } = useTheme();
-  const fieldLaneTheme = currentTheme.fieldLane;
-  const bodyTheme = currentTheme.body;
+  const { currentTheme } = useTheme()
+  const fieldLaneTheme = currentTheme.fieldLane
+  const bodyTheme = currentTheme.body
 
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)
-    : [];
+    : []
 
-  const hasActions = filteredActions.length > 0;
+  const hasActions = filteredActions.length > 0
 
   const inputElement: ReactElement = (
     <InputWrapper
@@ -132,21 +132,21 @@ function FieldLane({
                 disabled={dropdown?.disabled}
                 subMenu={({ list, render }) => {
                   if (dropdown.render) {
-                    return dropdown.render({ render });
+                    return dropdown.render({ render })
                   }
 
                   const dropdownData = dropdown.options.map((prop) => ({
                     caption: prop.text,
                     icon: prop.icon,
                     onClick: () => {
-                      dropdown.onChange(prop.value);
+                      dropdown.onChange(prop.value)
                     },
                     id: prop.value,
-                  }));
+                  }))
 
                   return list(dropdownData, {
                     withFilter: dropdown.withFilter ?? false,
-                  });
+                  })
                 }}
                 showSubMenuOn="self"
                 variant="outline-default"
@@ -223,22 +223,22 @@ function FieldLane({
               >
                 {dropdown.caption}
               </Button>
-            );
+            )
           })}
 
       {children}
 
       {hasActions &&
         filteredActions.map((action, index) => {
-          const { icon, titleShowDelay = 1250 } = action;
-          const offsetBase = 8;
-          const offsetEach = 22;
-          const reverseIndex = filteredActions.length - 1 - index;
+          const { icon, titleShowDelay = 1250 } = action
+          const offsetBase = 8
+          const offsetEach = 22
+          const reverseIndex = filteredActions.length - 1 - index
           const offset =
             offsetBase +
             reverseIndex * offsetEach +
             (type === "password" ? offsetEach : 0) +
-            (showError ? offsetEach : 0);
+            (showError ? offsetEach : 0)
 
           return (
             <Button
@@ -248,9 +248,9 @@ function FieldLane({
               aria-label="action-icon"
               onMouseDown={(e) => e.preventDefault()}
               onClick={(e) => {
-                e.stopPropagation();
-                if (disabled || action?.disabled) return;
-                action?.onClick(e);
+                e.stopPropagation()
+                if (disabled || action?.disabled) return
+                action?.onClick(e)
               }}
               disabled={disabled ? disabled : action.disabled}
               styles={{
@@ -286,10 +286,10 @@ function FieldLane({
               <Tooltip
                 key={index}
                 onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                  e.preventDefault()
+                  e.stopPropagation()
                   if ((!disabled || !action?.disabled) && action.onClick) {
-                    action.onClick(e);
+                    action.onClick(e)
                   }
                 }}
                 styles={{
@@ -332,7 +332,7 @@ function FieldLane({
                 )}
               </Tooltip>
             </Button>
-          );
+          )
         })}
 
       {showError && (
@@ -348,7 +348,7 @@ function FieldLane({
         </ErrorIconWrapper>
       )}
     </InputWrapper>
-  );
+  )
 
   const CONETO_CLASSES = [
     "coneto-textarea",
@@ -372,11 +372,11 @@ function FieldLane({
     "coneto-toggle",
     "coneto-timebox",
     "coneto-textbox",
-  ];
+  ]
 
   const hasCustomConetoClass = CONETO_CLASSES.some((cls) =>
-    className?.includes(cls)
-  );
+    className?.includes(cls),
+  )
 
   return (
     <Container
@@ -416,6 +416,9 @@ function FieldLane({
 
                 ${styles?.labelStyle};
               `,
+              helperDrawerStyle: styles?.helperDrawerStyle,
+              helperIconStyle: styles?.helperIconStyle,
+              helperArrowStyle: styles?.helperArrowStyle,
             }}
             helper={helper}
             label={label}
@@ -429,12 +432,12 @@ function FieldLane({
         <ErrorText $theme={fieldLaneTheme}>{errorMessage}</ErrorText>
       )}
     </Container>
-  );
+  )
 }
 
 const Container = styled.div<{
-  $style?: CSSProp;
-  $disabled?: boolean;
+  $style?: CSSProp
+  $disabled?: boolean
 }>`
   *,
   ::before,
@@ -457,14 +460,14 @@ const Container = styled.div<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const Body = styled.div<{
-  $style?: CSSProp;
-  $disabled?: boolean;
-  $labelPosition?: FieldLaneProps["labelPosition"];
-  $labelGap?: number;
-  $theme?: FieldLaneThemeConfig;
+  $style?: CSSProp
+  $disabled?: boolean
+  $labelPosition?: FieldLaneProps["labelPosition"]
+  $labelGap?: number
+  $theme?: FieldLaneThemeConfig
 }>`
   position: relative;
   display: flex;
@@ -485,7 +488,7 @@ const Body = styled.div<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const InputWrapper = styled.label<{ $style?: CSSProp }>`
   box-sizing: border-box;
@@ -499,11 +502,11 @@ const InputWrapper = styled.label<{ $style?: CSSProp }>`
   height: fit-content;
 
   ${({ $style }) => $style}
-`;
+`
 
 const ErrorIconWrapper = styled.div<{
-  $position?: FieldLaneProps["errorIconPosition"];
-  $theme?: FieldLaneThemeConfig;
+  $position?: FieldLaneProps["errorIconPosition"]
+  $theme?: FieldLaneThemeConfig
 }>`
   ${({ $position }) =>
     $position === "absolute"
@@ -531,10 +534,10 @@ const ErrorIconWrapper = styled.div<{
     color: ${({ $theme }) => $theme?.errorForeground ?? "#fff"};
     border-radius: 9999px;
   }
-`;
+`
 
 const ErrorText = styled.span<{ $theme?: FieldLaneThemeConfig }>`
   color: ${({ $theme }) => $theme?.errorColor ?? "#dc2626"};
-`;
+`
 
-export { FieldLane };
+export { FieldLane }
