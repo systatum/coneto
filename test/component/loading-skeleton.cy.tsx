@@ -3,6 +3,93 @@ import { Grid } from "./../../components/grid";
 import { LoadingSkeleton } from "./../../components/loading-skeleton";
 
 describe("Loading Skeleton", () => {
+  function WrappedLoadingSkeleton() {
+    return (
+      <LoadingSkeleton
+        flashDirection="left-to-right"
+        flashRate="normal"
+        styles={{
+          self: css`
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          `,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <LoadingSkeleton.Item
+              height={40}
+              width={40}
+              styles={{
+                self: css`
+                  border-radius: 50%;
+                `,
+              }}
+            />
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <LoadingSkeleton.Item height={16} width={120} />
+              <LoadingSkeleton.Item height={13} width={80} />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 4,
+              alignItems: "flex-end",
+            }}
+          >
+            <LoadingSkeleton.Item height={20} width={32} />
+            <LoadingSkeleton.Item height={16} width={100} />
+          </div>
+        </div>
+
+        <LoadingSkeleton.Item height={16} width="90%" />
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <LoadingSkeleton.Item height={24} width={40} />
+            <LoadingSkeleton.Item height={24} width={40} />
+          </div>
+          <LoadingSkeleton.Item height={24} width={70} />
+        </div>
+      </LoadingSkeleton>
+    );
+  }
+
+  context("when wrapped by another element", () => {
+    it("uses the same color for all skeleton items", () => {
+      cy.mount(<WrappedLoadingSkeleton />);
+
+      cy.findAllByLabelText("loading-skeleton-item")
+        .should("have.length.greaterThan", 0)
+        .then(($items) => {
+          const firstColor = getComputedStyle($items[0]).backgroundColor;
+
+          Cypress.$($items).each((_, item) => {
+            expect(getComputedStyle(item).backgroundColor).to.equal(firstColor);
+          });
+        });
+    });
+  });
+
   context("when given", () => {
     it("renders content with loading", () => {
       function CardComponent() {
