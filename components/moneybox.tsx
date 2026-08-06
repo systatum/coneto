@@ -1,4 +1,4 @@
-import styled, { css, CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components"
 import {
   ChangeEvent,
   forwardRef,
@@ -9,19 +9,19 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { Button } from "./button";
-import { List } from "./list";
+} from "react"
+import { Button } from "./button"
+import { List } from "./list"
 import {
   FieldLane,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
-} from "./field-lane";
-import { StatefulForm } from "./stateful-form";
-import { useTheme } from "./../theme/provider";
-import { MoneyboxThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "./field-lane"
+import { StatefulForm } from "./stateful-form"
+import { useTheme } from "./../theme/provider"
+import { MoneyboxThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 import {
   autoUpdate,
   flip,
@@ -31,22 +31,22 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
-} from "@floating-ui/react";
-import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
-import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
+} from "@floating-ui/react"
+import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox"
+import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox"
 
 export const MoneyboxSeparator = {
   Dot: "dot",
   Comma: "comma",
-} as const;
+} as const
 
 export type MoneyboxSeparator =
-  (typeof MoneyboxSeparator)[keyof typeof MoneyboxSeparator];
+  (typeof MoneyboxSeparator)[keyof typeof MoneyboxSeparator]
 
 export interface MoneyboxCurrencyOption {
-  id: string;
-  name: string;
-  symbol: string;
+  id: string
+  name: string
+  symbol: string
 }
 
 interface BaseMoneyboxProps
@@ -54,30 +54,30 @@ interface BaseMoneyboxProps
     InputHTMLAttributes<HTMLInputElement>,
     "name" | "placeholder" | "style"
   > {
-  value?: string;
-  currency?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  name?: string;
-  placeholder?: string;
-  separator?: MoneyboxSeparator;
-  showError?: boolean;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  styles?: MoneyboxStyles;
-  editableCurrency?: boolean;
-  currencyOptions?: MoneyboxCurrencyOption[];
-  mobile?: boolean;
-  drawerHeight?: string;
-  id?: string;
+  value?: string
+  currency?: string
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  name?: string
+  placeholder?: string
+  separator?: MoneyboxSeparator
+  showError?: boolean
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+  styles?: MoneyboxStyles
+  editableCurrency?: boolean
+  currencyOptions?: MoneyboxCurrencyOption[]
+  mobile?: boolean
+  drawerHeight?: string
+  id?: string
 }
 
 export interface MoneyboxStyles {
-  self?: CSSProp;
-  toggleStyle?: CSSProp;
-  inputWrapperStyle?: CSSProp;
-  drawerStyle?: CSSProp;
+  self?: CSSProp
+  toggleStyle?: CSSProp
+  inputWrapperStyle?: CSSProp
+  drawerStyle?: CSSProp
 }
 
-export type MoneyboxDropdownOption = FieldLaneDropdownOption;
+export type MoneyboxDropdownOption = FieldLaneDropdownOption
 
 const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
   (
@@ -101,24 +101,24 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       drawerHeight,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const { currentTheme } = useTheme();
-    const moneyboxTheme = currentTheme.moneybox;
+    const { currentTheme } = useTheme()
+    const moneyboxTheme = currentTheme.moneybox
 
-    const moneyInputRef = useRef<HTMLInputElement>(null);
-    const currencyInputRef = useRef<HTMLInputElement>(null);
+    const moneyInputRef = useRef<HTMLInputElement>(null)
+    const currencyInputRef = useRef<HTMLInputElement>(null)
 
-    useImperativeHandle(ref, () => moneyInputRef.current!);
+    useImperativeHandle(ref, () => moneyInputRef.current!)
 
-    const [selectedCurrency, setSelectedCurrency] = useState<string>(currency);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const [selectedCurrency, setSelectedCurrency] = useState<string>(currency)
+    const [searchTerm, setSearchTerm] = useState("")
+    const [isOpen, setIsOpen] = useState(false)
+    const [highlightedIndex, setHighlightedIndex] = useState(0)
     const [interactionMode, setInteractionMode] = useState<
       "mouse" | "keyboard"
-    >("keyboard");
-    const [hasInteracted, setHasInteracted] = useState(false);
+    >("keyboard")
+    const [hasInteracted, setHasInteracted] = useState(false)
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -126,10 +126,10 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
       onOpenChange: setIsOpen,
       middleware: [offset(4), flip(), shift()],
       whileElementsMounted: autoUpdate,
-    });
+    })
 
-    const dismiss = useDismiss(context);
-    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
+    const dismiss = useDismiss(context)
+    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
 
     const FINAL_CURRENCY_OPTIONS: ComboboxOption[] = useMemo(
       () =>
@@ -143,126 +143,126 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
             </>
           ),
         })),
-      []
-    );
+      [],
+    )
 
     const FILTERED_CURRENCY_OPTIONS: ComboboxOption[] = useMemo(() => {
-      if (!hasInteracted || !searchTerm) return FINAL_CURRENCY_OPTIONS;
+      if (!hasInteracted || !searchTerm) return FINAL_CURRENCY_OPTIONS
 
       return FINAL_CURRENCY_OPTIONS.filter((option) => {
         const currency = currencyOptions.find(
-          (currency) => currency.id === option.value
-        );
-        if (!currency) return false;
+          (currency) => currency.id === option.value,
+        )
+        if (!currency) return false
         return (
           currency.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           currency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           currency.symbol.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
-    }, [searchTerm, FINAL_CURRENCY_OPTIONS]);
+        )
+      })
+    }, [searchTerm, FINAL_CURRENCY_OPTIONS])
 
-    const listRef = useRef<(HTMLLIElement | null)[]>([]);
+    const listRef = useRef<(HTMLLIElement | null)[]>([])
 
     // Keep the highlighted option visible while navigating the list.
     useEffect(() => {
       if (isOpen && listRef.current[highlightedIndex]) {
-        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" })
       }
-    }, [highlightedIndex, isOpen]);
+    }, [highlightedIndex, isOpen])
 
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (disabled) return;
+      if (disabled) return
 
-      setInteractionMode("keyboard");
+      setInteractionMode("keyboard")
 
       if (e.key === "ArrowDown") {
-        e.preventDefault();
-        if (!isOpen) await setIsOpen(true);
+        e.preventDefault()
+        if (!isOpen) await setIsOpen(true)
         await setHighlightedIndex((prev) =>
-          Math.min(prev + 1, FILTERED_CURRENCY_OPTIONS.length - 1)
-        );
+          Math.min(prev + 1, FILTERED_CURRENCY_OPTIONS.length - 1),
+        )
       } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        if (!isOpen) await setIsOpen(true);
-        await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
+        e.preventDefault()
+        if (!isOpen) await setIsOpen(true)
+        await setHighlightedIndex((prev) => Math.max(prev - 1, 0))
       } else if (e.key === "Enter") {
-        e.preventDefault();
-        const selectedOption = FILTERED_CURRENCY_OPTIONS[highlightedIndex];
+        e.preventDefault()
+        const selectedOption = FILTERED_CURRENCY_OPTIONS[highlightedIndex]
         const selectedCurrency = currencyOptions.find(
-          (currency) => currency.id === selectedOption.value
-        );
+          (currency) => currency.id === selectedOption.value,
+        )
         if (selectedCurrency) {
-          await handleSelectCurrency(selectedCurrency.id);
+          await handleSelectCurrency(selectedCurrency.id)
         }
       } else if (e.key === "Escape") {
-        e.preventDefault();
-        await setIsOpen(false);
+        e.preventDefault()
+        await setIsOpen(false)
       }
-    };
+    }
 
     const handleToggleDropdown = () => {
-      if (disabled) return;
-      setSearchTerm("");
+      if (disabled) return
+      setSearchTerm("")
       setIsOpen((prev) => {
-        const newState = !prev;
+        const newState = !prev
         if (newState) {
-          setTimeout(() => currencyInputRef.current?.focus(), 0);
+          setTimeout(() => currencyInputRef.current?.focus(), 0)
         }
-        return newState;
-      });
-    };
+        return newState
+      })
+    }
 
-    const [focus, setFocus] = useState(false);
+    const [focus, setFocus] = useState(false)
 
     const [inputValue, setInputValue] = useState(() =>
       formatMoneyboxNumber(
         unformatMoneyboxNumber(value ?? "", separator),
-        separator
-      )
-    );
+        separator,
+      ),
+    )
 
     useEffect(() => {
       if (!focus && value !== undefined) {
         const formatted = formatMoneyboxNumber(
           unformatMoneyboxNumber(value, separator),
-          separator
-        );
+          separator,
+        )
         if (formatted !== inputValue) {
-          setInputValue(formatted);
+          setInputValue(formatted)
         }
       }
-    }, [value, focus]);
+    }, [value, focus])
 
     const selectionCurrency = editableCurrency
       ? currencyOptions.find((props) => props.id === currency)?.symbol
-      : currency;
+      : currency
 
-    const boxRef = useRef<HTMLDivElement>(null);
+    const boxRef = useRef<HTMLDivElement>(null)
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      const raw = e.target.value;
-      setInputValue(raw);
+      const raw = e.target.value
+      setInputValue(raw)
 
-      const cleaned = unformatMoneyboxNumber(raw, separator);
+      const cleaned = unformatMoneyboxNumber(raw, separator)
       if (onChange) {
         const syntheticEvent = {
           target: {
             name,
             value: cleaned,
           },
-        };
-        onChange(syntheticEvent as ChangeEvent<HTMLInputElement>);
+        }
+        onChange(syntheticEvent as ChangeEvent<HTMLInputElement>)
       }
-    };
+    }
 
     const handleSelectCurrency = async (currency: string) => {
-      if (disabled) return;
+      if (disabled) return
 
-      await setSelectedCurrency(currency);
-      await setIsOpen(false);
-      await setSearchTerm("");
-      await setHighlightedIndex(0);
+      await setSelectedCurrency(currency)
+      await setIsOpen(false)
+      await setSearchTerm("")
+      await setHighlightedIndex(0)
 
       if (onChange) {
         const syntheticEvent = {
@@ -270,12 +270,12 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
             name: "currency",
             value: currency,
           },
-        } as ChangeEvent<HTMLInputElement>;
-        await onChange(syntheticEvent);
+        } as ChangeEvent<HTMLInputElement>
+        await onChange(syntheticEvent)
       }
 
-      await moneyInputRef?.current?.focus();
-    };
+      await moneyInputRef?.current?.focus()
+    }
 
     return (
       <Box
@@ -377,17 +377,17 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
             }}
             onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
               const selectedCurrency = await currencyOptions.find(
-                (currency) => currency.id === selectedOptions
-              );
+                (currency) => currency.id === selectedOptions,
+              )
               if (selectedCurrency) {
-                await handleSelectCurrency(selectedCurrency.id);
+                await handleSelectCurrency(selectedCurrency.id)
               }
-              moneyInputRef.current?.focus();
+              moneyInputRef.current?.focus()
             }}
             setSelectedOptionsLocal={(
-              selectedOptionsLocal?: SelectboxOption
+              selectedOptionsLocal?: SelectboxOption,
             ) => {
-              setSearchTerm(selectedOptionsLocal?.text);
+              setSearchTerm(selectedOptionsLocal?.text)
             }}
             setHasInteracted={setHasInteracted}
             options={FILTERED_CURRENCY_OPTIONS}
@@ -402,14 +402,14 @@ const BaseMoneybox = forwardRef<HTMLInputElement, BaseMoneyboxProps>(
           />
         )}
       </Box>
-    );
-  }
-);
+    )
+  },
+)
 
 export interface MoneyboxProps
   extends Omit<BaseMoneyboxProps, "styles" | "actions">,
     Omit<FieldLaneProps, "styles" | "type" | "actions"> {
-  styles?: MoneyboxStyles & FieldLaneStyles;
+  styles?: MoneyboxStyles & FieldLaneStyles
 }
 
 const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
@@ -428,21 +428,24 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       labelPosition,
       className,
       ...rest
-    } = props ?? {};
+    } = props ?? {}
 
     const {
       bodyStyle,
       containerStyle,
       controlStyle,
       labelStyle,
+      helperIconStyle,
+      helperDrawerStyle,
+      helperArrowStyle,
       ...moneyboxStyle
-    } = styles ?? {};
+    } = styles ?? {}
 
     const inputId = StatefulForm.sanitizeId({
       prefix: "moneybox",
       name: props.name,
       id: props.id,
-    });
+    })
 
     return (
       <FieldLane
@@ -465,6 +468,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseMoneybox
@@ -487,16 +493,16 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           ref={ref}
         />
       </FieldLane>
-    );
-  }
-);
+    )
+  },
+)
 
 const Box = styled.div<{
-  $error?: boolean;
-  $focus?: boolean;
-  $style?: CSSProp;
-  $disabled?: boolean;
-  $theme: MoneyboxThemeConfig;
+  $error?: boolean
+  $focus?: boolean
+  $style?: CSSProp
+  $disabled?: boolean
+  $theme: MoneyboxThemeConfig
 }>`
   display: flex;
   align-items: center;
@@ -528,12 +534,12 @@ const Box = styled.div<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const MoneyboxInput = styled.input<{
-  $disabled?: boolean;
-  $style?: CSSProp;
-  $theme: MoneyboxThemeConfig;
+  $disabled?: boolean
+  $style?: CSSProp
+  $theme: MoneyboxThemeConfig
 }>`
   background: transparent;
   text-align: right;
@@ -559,68 +565,68 @@ const MoneyboxInput = styled.input<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const unformatMoneyboxNumber = (
   val: string,
-  separator: MoneyboxSeparator
+  separator: MoneyboxSeparator,
 ): string => {
-  if (!val) return "";
+  if (!val) return ""
 
   if (separator === "dot") {
-    const lastCommaIndex = val.lastIndexOf(",");
+    const lastCommaIndex = val.lastIndexOf(",")
 
     if (lastCommaIndex === -1) {
-      return val.replace(/\./g, "").replace(/[^\d]/g, "");
+      return val.replace(/\./g, "").replace(/[^\d]/g, "")
     } else {
       const integerPart = val
         .substring(0, lastCommaIndex)
         .replace(/\./g, "")
-        .replace(/[^\d]/g, "");
+        .replace(/[^\d]/g, "")
       const decimalPart = val
         .substring(lastCommaIndex + 1)
-        .replace(/[^\d]/g, "");
-      return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
+        .replace(/[^\d]/g, "")
+      return decimalPart ? `${integerPart}.${decimalPart}` : integerPart
     }
   } else {
-    const lastDotIndex = val.lastIndexOf(".");
+    const lastDotIndex = val.lastIndexOf(".")
 
     if (lastDotIndex === -1) {
-      return val.replace(/,/g, "").replace(/[^\d]/g, "");
+      return val.replace(/,/g, "").replace(/[^\d]/g, "")
     } else {
       const integerPart = val
         .substring(0, lastDotIndex)
         .replace(/,/g, "")
-        .replace(/[^\d]/g, "");
-      const decimalPart = val.substring(lastDotIndex + 1).replace(/[^\d]/g, "");
-      return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
+        .replace(/[^\d]/g, "")
+      const decimalPart = val.substring(lastDotIndex + 1).replace(/[^\d]/g, "")
+      return decimalPart ? `${integerPart}.${decimalPart}` : integerPart
     }
   }
-};
+}
 
 const formatMoneyboxNumber = (
   val: string,
-  separator: MoneyboxSeparator
+  separator: MoneyboxSeparator,
 ): string => {
-  if (!val) return "";
+  if (!val) return ""
 
-  const [intPart, decimalPart = ""] = val.split(".");
+  const [intPart, decimalPart = ""] = val.split(".")
 
   if (separator === "dot") {
-    const thousandSep = ".";
-    const decimalSep = ",";
-    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSep);
+    const thousandSep = "."
+    const decimalSep = ","
+    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSep)
     return decimalPart
       ? `${intFormatted}${decimalSep}${decimalPart}`
-      : intFormatted;
+      : intFormatted
   } else {
-    const thousandSep = ",";
-    const decimalSep = ".";
-    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSep);
+    const thousandSep = ","
+    const decimalSep = "."
+    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSep)
     return decimalPart
       ? `${intFormatted}${decimalSep}${decimalPart}`
-      : intFormatted;
+      : intFormatted
   }
-};
+}
 
-export { Moneybox, formatMoneyboxNumber };
+export { Moneybox, formatMoneyboxNumber }

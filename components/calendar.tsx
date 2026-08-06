@@ -2,91 +2,91 @@ import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiCheckLine,
-} from "@remixicon/react";
-import { Fragment, useMemo, ReactNode } from "react";
-import React, { useState, useEffect } from "react";
-import { Button } from "./button";
-import { Combobox } from "./combobox";
-import { DrawerProps, SelectboxOption } from "./selectbox";
-import styled, { css, CSSProp } from "styled-components";
+} from "@remixicon/react"
+import { Fragment, useMemo, ReactNode } from "react"
+import React, { useState, useEffect } from "react"
+import { Button } from "./button"
+import { Combobox } from "./combobox"
+import { DrawerProps, SelectboxOption } from "./selectbox"
+import styled, { css, CSSProp } from "styled-components"
 import {
   getValidMultipleDate,
   isValidDateString,
   isWeekend,
   removeWeekend,
-} from "../lib/date";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { CalendarThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "../lib/date"
+import { StatefulForm } from "./stateful-form"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { useTheme } from "./../theme/provider"
+import { CalendarThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
 export interface BaseCalendarProps extends Partial<DrawerProps> {
-  options?: CalendarOption[];
-  selectedDates?: string[];
-  onChange?: (dates: string[]) => void;
-  dayNames?: CalendarOption[];
-  monthNames?: CalendarOption[];
-  disableWeekend?: boolean;
-  format?: CalendarFormat;
-  yearPastReach?: number;
-  futurePastReach?: number;
-  onClick?: () => void;
-  onCalendarPeriodChanged?: (date: Date) => void;
-  styles?: BaseCalendarStyles;
-  footer?: ReactNode;
-  todayButtonCaption?: string;
-  selectabilityMode?: CalendarSelectabilityMode;
-  id?: string;
-  name?: string;
+  options?: CalendarOption[]
+  selectedDates?: string[]
+  onChange?: (dates: string[]) => void
+  dayNames?: CalendarOption[]
+  monthNames?: CalendarOption[]
+  disableWeekend?: boolean
+  format?: CalendarFormat
+  yearPastReach?: number
+  futurePastReach?: number
+  onClick?: () => void
+  onCalendarPeriodChanged?: (date: Date) => void
+  styles?: BaseCalendarStyles
+  footer?: ReactNode
+  todayButtonCaption?: string
+  selectabilityMode?: CalendarSelectabilityMode
+  id?: string
+  name?: string
 }
 
-export type CalendarOption = SelectboxOption;
+export type CalendarOption = SelectboxOption
 
 export interface BaseCalendarStyles {
-  self?: CSSProp;
-  containerStyle?: CSSProp;
-  labelStyle?: CSSProp;
+  self?: CSSProp
+  containerStyle?: CSSProp
+  labelStyle?: CSSProp
 }
 
 interface CalendarState {
-  open: boolean;
-  month: string[];
-  year: string[];
+  open: boolean
+  month: string[]
+  year: string[]
 }
 
 type CustomChangeEvent = {
   target: {
-    name: string;
-    value: string[];
-  };
-};
+    name: string
+    value: string[]
+  }
+}
 
 export const CalendarFormat = {
   MM_DD_YYYY: "mm/dd/yyyy",
   YYYY_MM_DD: "yyyy/mm/dd",
   DD_MM_YYYY: "dd/mm/yyyy",
-} as const;
+} as const
 
 export type CalendarFormat =
-  (typeof CalendarFormat)[keyof typeof CalendarFormat];
+  (typeof CalendarFormat)[keyof typeof CalendarFormat]
 
 const DateBoxOpen = {
   Open: "open",
   Month: "month",
   Year: "year",
-} as const;
+} as const
 
-type DateBoxOpen = (typeof DateBoxOpen)[keyof typeof DateBoxOpen];
+type DateBoxOpen = (typeof DateBoxOpen)[keyof typeof DateBoxOpen]
 
 export const CalendarSelectabilityMode = {
   Single: "single",
   Multiple: "multiple",
   Ranged: "ranged",
-} as const;
+} as const
 
 export type CalendarSelectabilityMode =
-  (typeof CalendarSelectabilityMode)[keyof typeof CalendarSelectabilityMode];
+  (typeof CalendarSelectabilityMode)[keyof typeof CalendarSelectabilityMode]
 
 const DEFAULT_DAY_NAMES = [
   { text: "Su", value: "1" },
@@ -96,7 +96,7 @@ const DEFAULT_DAY_NAMES = [
   { text: "Th", value: "5" },
   { text: "Fr", value: "6" },
   { text: "Sa", value: "7" },
-];
+]
 
 const DEFAULT_MONTH_NAMES = [
   { text: "January", value: "1" },
@@ -111,7 +111,7 @@ const DEFAULT_MONTH_NAMES = [
   { text: "October", value: "10" },
   { text: "November", value: "11" },
   { text: "December", value: "12" },
-];
+]
 
 function BaseCalendar({
   highlightedIndex,
@@ -134,386 +134,386 @@ function BaseCalendar({
   onCalendarPeriodChanged,
   selectabilityMode = "single",
 }: BaseCalendarProps) {
-  const { currentTheme } = useTheme();
-  const calendarTheme = currentTheme?.calendar;
+  const { currentTheme } = useTheme()
+  const calendarTheme = currentTheme?.calendar
 
-  const today = new Date();
+  const today = new Date()
   const currentMonth = monthNames.find(
-    (data) => Number(data.value) === today.getMonth() + 1
-  );
-  const currentYear = today.getFullYear();
+    (data) => Number(data.value) === today.getMonth() + 1,
+  )
+  const currentYear = today.getFullYear()
 
   const initialValueState = () => {
-    const raw = selectedDates?.[0];
+    const raw = selectedDates?.[0]
     if (selectabilityMode === "ranged") {
       if (disableWeekend) {
         if (raw?.split("-")) {
-          return isWeekend(today) ? "" : formatDate(today, format);
+          return isWeekend(today) ? "" : formatDate(today, format)
         }
 
-        const value = raw?.split(", ") ?? [];
-        const firstValue = value[0];
-        const latestValue = value[value.length - 1];
+        const value = raw?.split(", ") ?? []
+        const firstValue = value[0]
+        const latestValue = value[value.length - 1]
 
-        return `${firstValue}-${latestValue}`;
+        return `${firstValue}-${latestValue}`
       }
 
-      return isValidDateString(raw) ? raw : "";
+      return isValidDateString(raw) ? raw : ""
     }
 
     if (selectabilityMode === "multiple") {
-      let validDates = getValidMultipleDate(raw);
+      let validDates = getValidMultipleDate(raw)
 
       if (disableWeekend) {
-        validDates = removeWeekend(validDates);
+        validDates = removeWeekend(validDates)
       }
 
-      return validDates.length > 0 ? validDates.join(", ") : "";
+      return validDates.length > 0 ? validDates.join(", ") : ""
     }
 
-    return isValidDateString(raw) ? raw : formatDate(today, format);
-  };
+    return isValidDateString(raw) ? raw : formatDate(today, format)
+  }
 
-  const normalized = initialValueState();
+  const normalized = initialValueState()
 
   const stateDate = useMemo(() => {
-    if (!normalized) return new Date();
+    if (!normalized) return new Date()
 
     const firstStr = normalized.includes(",")
       ? normalized.split(",")[0].trim()
       : normalized.includes("-")
         ? normalized.split("-")[0].trim()
-        : normalized.trim();
+        : normalized.trim()
 
-    const d = new Date(firstStr);
-    return isNaN(d.getTime()) ? new Date() : d;
-  }, [normalized]);
+    const d = new Date(firstStr)
+    return isNaN(d.getTime()) ? new Date() : d
+  }, [normalized])
 
-  const [currentDate, setCurrentDate] = useState(stateDate);
+  const [currentDate, setCurrentDate] = useState(stateDate)
 
   const [calendarState, setCalendarState] = useState<CalendarState>({
     open: false,
     month: [String(stateDate.getMonth() + 1)],
     year: [String(stateDate.getFullYear())],
-  });
+  })
 
   const [selectedDatesLocal, setSelectedDatesLocal] =
-    useState(initialValueState());
+    useState(initialValueState())
 
   const [startPicked, setStartPicked] = useState<{
-    picked: boolean;
-    indexPicked: Date | null;
-  }>({ picked: false, indexPicked: null });
+    picked: boolean
+    indexPicked: Date | null
+  }>({ picked: false, indexPicked: null })
 
-  const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0);
-  const highlightedIndexChange = highlightedIndex ?? highlightedIndexInternal;
+  const [highlightedIndexInternal, setHighlightedIndexInternal] = useState(0)
+  const highlightedIndexChange = highlightedIndex ?? highlightedIndexInternal
 
   const setHighlightedIndexChange = (index: number) => {
     if (setHighlightedIndex) {
-      setHighlightedIndex(index);
+      setHighlightedIndex(index)
     } else {
-      setHighlightedIndexInternal(index);
+      setHighlightedIndexInternal(index)
     }
-  };
+  }
 
   if (listRef && !listRef.current) {
-    listRef.current = [];
+    listRef.current = []
   }
 
   const onChangeValueDate = (e: CustomChangeEvent) => {
-    const { name, value } = e.target;
-    handleChangeValueDate(name, value);
-  };
+    const { name, value } = e.target
+    handleChangeValueDate(name, value)
+  }
 
   const handleChangeValueDate = (name: string, value: string[]) => {
-    setCalendarState((prev) => ({ ...prev, [name]: value }));
+    setCalendarState((prev) => ({ ...prev, [name]: value }))
 
     if (name === "month") {
-      const monthIndex = Number(value[0]) - 1;
-      const dateMonth = new Date(currentDate.getFullYear(), monthIndex, 1);
-      setCurrentDate(dateMonth);
+      const monthIndex = Number(value[0]) - 1
+      const dateMonth = new Date(currentDate.getFullYear(), monthIndex, 1)
+      setCurrentDate(dateMonth)
       if (onCalendarPeriodChanged) {
-        onCalendarPeriodChanged(dateMonth);
+        onCalendarPeriodChanged(dateMonth)
       }
     } else if (name === "year") {
-      const yearNumber = Number(value[0]);
+      const yearNumber = Number(value[0])
       if (!isNaN(yearNumber)) {
-        const month = currentDate.getMonth();
+        const month = currentDate.getMonth()
         const day = Math.min(
           currentDate.getDate(),
-          new Date(yearNumber, month + 1, 0).getDate()
-        );
-        const dateYear = new Date(yearNumber, month, day);
-        setCurrentDate(dateYear);
+          new Date(yearNumber, month + 1, 0).getDate(),
+        )
+        const dateYear = new Date(yearNumber, month, day)
+        setCurrentDate(dateYear)
         if (onCalendarPeriodChanged) {
-          onCalendarPeriodChanged(dateYear);
+          onCalendarPeriodChanged(dateYear)
         }
       }
     }
-  };
+  }
 
   const dates = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const lastDate = new Date(year, month + 1, 0).getDate();
-    const arr: Date[] = [];
-    for (let i = 1; i <= lastDate; i++) arr.push(new Date(year, month, i));
-    return arr;
-  }, [currentDate]);
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const lastDate = new Date(year, month + 1, 0).getDate()
+    const arr: Date[] = []
+    for (let i = 1; i <= lastDate; i++) arr.push(new Date(year, month, i))
+    return arr
+  }, [currentDate])
 
   const { yearOptions } = useMemo(() => {
-    const t = new Date();
+    const t = new Date()
     const min = new Date(
       t.getFullYear() - (yearPastReach ?? 80),
       t.getMonth(),
-      t.getDate()
-    );
+      t.getDate(),
+    )
     const max = new Date(
       t.getFullYear() + (futurePastReach ?? 50),
       t.getMonth(),
-      t.getDate()
-    );
+      t.getDate(),
+    )
     const years = Array.from(
       { length: max.getFullYear() - min.getFullYear() + 1 },
       (_, i) => ({
         text: String(min.getFullYear() + i),
         value: String(min.getFullYear() + i),
-      })
-    );
-    return { yearOptions: years };
-  }, [yearPastReach, futurePastReach]);
+      }),
+    )
+    return { yearOptions: years }
+  }, [yearPastReach, futurePastReach])
 
   const prevMonth = useMemo(
     () => new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1),
-    [currentDate]
-  );
+    [currentDate],
+  )
 
   const nextMonth = useMemo(
     () => new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1),
-    [currentDate]
-  );
+    [currentDate],
+  )
 
   const handleClickPrevMonth = (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (onCalendarPeriodChanged) {
-      onCalendarPeriodChanged(prevMonth);
+      onCalendarPeriodChanged(prevMonth)
     }
-    setCurrentDate(prevMonth);
-    setHighlightedIndexChange(0);
+    setCurrentDate(prevMonth)
+    setHighlightedIndexChange(0)
     setCalendarState((prev) => ({
       ...prev,
       month: [String(prevMonth.getMonth() + 1)],
       year: [prevMonth.getFullYear().toString()],
-    }));
-  };
+    }))
+  }
 
   const handleClickNextMonth = (e: React.MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    setCurrentDate(nextMonth);
+    setCurrentDate(nextMonth)
     if (onCalendarPeriodChanged) {
-      onCalendarPeriodChanged(nextMonth);
+      onCalendarPeriodChanged(nextMonth)
     }
-    setHighlightedIndexChange(0);
+    setHighlightedIndexChange(0)
     setCalendarState((prev) => ({
       ...prev,
       month: [String(nextMonth.getMonth() + 1)],
       year: [String(nextMonth.getFullYear())],
-    }));
-  };
+    }))
+  }
 
   const handleMoveToToday = () => {
     if (onCalendarPeriodChanged) {
-      onCalendarPeriodChanged(today);
+      onCalendarPeriodChanged(today)
     }
-    setCurrentDate(today);
+    setCurrentDate(today)
     if (onChange) {
-      onChange([formatDate(today, format)]);
+      onChange([formatDate(today, format)])
     }
 
-    setHighlightedIndexChange(0);
+    setHighlightedIndexChange(0)
     setCalendarState((prev) => ({
       ...prev,
       month: [String(currentMonth)],
       year: [String(currentYear)],
-    }));
-  };
+    }))
+  }
 
   const handleSelect = async (date: Date, e?: React.MouseEvent) => {
-    const formattedData = formatDate(date, format);
-    let newValues: string[];
+    const formattedData = formatDate(date, format)
+    let newValues: string[]
 
     if (selectabilityMode === "multiple") {
       await setSelectedDatesLocal((prev) => {
-        const values = prev ? prev.split(", ") : [];
+        const values = prev ? prev.split(", ") : []
 
         if (e?.shiftKey && values.length > 0) {
-          const lastDate = new Date(values[values.length - 1]);
-          const start = lastDate.getTime() < date.getTime() ? lastDate : date;
-          const end = lastDate.getTime() > date.getTime() ? lastDate : date;
+          const lastDate = new Date(values[values.length - 1])
+          const start = lastDate.getTime() < date.getTime() ? lastDate : date
+          const end = lastDate.getTime() > date.getTime() ? lastDate : date
 
-          const range: string[] = [];
-          let cursor = new Date(start);
+          const range: string[] = []
+          let cursor = new Date(start)
 
           while (cursor.getTime() <= end.getTime()) {
             if (!disableWeekend || !isWeekend(cursor)) {
-              range.push(formatDate(new Date(cursor), format));
+              range.push(formatDate(new Date(cursor), format))
             }
-            cursor.setDate(cursor.getDate() + 1);
+            cursor.setDate(cursor.getDate() + 1)
           }
 
-          const unique = new Set([...values, ...range]);
+          const unique = new Set([...values, ...range])
           newValues = Array.from(unique).sort(
-            (a, b) => new Date(a).getTime() - new Date(b).getTime()
-          );
+            (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+          )
         } else {
           if (values.includes(formattedData)) {
-            newValues = values.filter((value) => value !== formattedData);
+            newValues = values.filter((value) => value !== formattedData)
           } else {
-            newValues = [...values, formattedData];
+            newValues = [...values, formattedData]
           }
 
           newValues = newValues.sort(
-            (a, b) => new Date(a).getTime() - new Date(b).getTime()
-          );
+            (a, b) => new Date(a).getTime() - new Date(b).getTime(),
+          )
         }
 
-        const finalValues = newValues.join(", ");
+        const finalValues = newValues.join(", ")
         if (onChange) {
-          onChange([finalValues]);
+          onChange([finalValues])
         }
 
-        return finalValues;
-      });
+        return finalValues
+      })
     } else if (selectabilityMode === "ranged") {
       await setSelectedDatesLocal((prev) => {
-        const values = prev ? prev.split("-") : [];
+        const values = prev ? prev.split("-") : []
         if (!startPicked.picked) {
-          newValues = [formattedData];
-          setStartPicked((prev) => ({ ...prev, picked: true }));
+          newValues = [formattedData]
+          setStartPicked((prev) => ({ ...prev, picked: true }))
         } else {
           if (values.includes(formattedData)) {
             if (disableWeekend) {
-              newValues = [...new Set([...values, formattedData])];
+              newValues = [...new Set([...values, formattedData])]
             } else {
-              newValues = [formattedData, formattedData];
+              newValues = [formattedData, formattedData]
             }
           } else {
             if (disableWeekend) {
-              const startDate = new Date(values[0]);
-              const endDate = date;
+              const startDate = new Date(values[0])
+              const endDate = date
               const start =
-                startDate.getTime() < endDate.getTime() ? startDate : endDate;
+                startDate.getTime() < endDate.getTime() ? startDate : endDate
               const end =
-                startDate.getTime() > endDate.getTime() ? startDate : endDate;
+                startDate.getTime() > endDate.getTime() ? startDate : endDate
 
-              const rangeValues: string[] = [];
-              let cursor = new Date(start);
+              const rangeValues: string[] = []
+              let cursor = new Date(start)
 
               while (cursor.getTime() <= end.getTime()) {
                 if (!disableWeekend || !isWeekend(cursor)) {
-                  rangeValues.push(formatDate(new Date(cursor), format));
+                  rangeValues.push(formatDate(new Date(cursor), format))
                 }
-                cursor.setDate(cursor.getDate() + 1);
+                cursor.setDate(cursor.getDate() + 1)
               }
 
-              newValues = rangeValues;
+              newValues = rangeValues
             } else {
-              newValues = [...new Set([...values, formattedData])];
+              newValues = [...new Set([...values, formattedData])]
             }
           }
-          setStartPicked({ picked: false, indexPicked: null });
+          setStartPicked({ picked: false, indexPicked: null })
         }
 
         newValues = newValues.sort((a, b) => {
-          const dateA = new Date(a);
-          const dateB = new Date(b);
-          return dateA.getTime() - dateB.getTime();
-        });
+          const dateA = new Date(a)
+          const dateB = new Date(b)
+          return dateA.getTime() - dateB.getTime()
+        })
 
         const finalValues = disableWeekend
           ? newValues.join(", ")
-          : newValues.join("-");
+          : newValues.join("-")
 
-        const firstValueLocal = newValues[0];
+        const firstValueLocal = newValues[0]
         const latestValueLocal = newValues[newValues.length - 1]
           ? `-${newValues[newValues.length - 1]}`
-          : "";
+          : ""
 
-        const newValuesLocal = `${firstValueLocal}${latestValueLocal}`;
+        const newValuesLocal = `${firstValueLocal}${latestValueLocal}`
 
         if (onChange) {
-          onChange([finalValues]);
+          onChange([finalValues])
         }
 
-        return newValuesLocal;
-      });
+        return newValuesLocal
+      })
     }
 
     if (selectabilityMode === "single") {
       if (onChange) {
-        await onChange([formatDate(date, format)]);
+        await onChange([formatDate(date, format)])
       }
-      await setSelectedDatesLocal(formatDate(date, format));
+      await setSelectedDatesLocal(formatDate(date, format))
     }
 
     if (setIsOpen && selectabilityMode !== "single") {
-      await setIsOpen(true);
+      await setIsOpen(true)
     } else if (setIsOpen) {
-      await setIsOpen(false);
+      await setIsOpen(false)
     }
-  };
+  }
 
   const emptyCellsCount = new Date(
     currentDate.getFullYear(),
     currentDate.getMonth(),
-    1
-  ).getDay();
+    1,
+  ).getDay()
 
   const handleClickMode = (data: DateBoxOpen) => {
     if (data === "open") {
       setCalendarState((prev) => ({
         ...prev,
         open: !calendarState.open,
-      }));
+      }))
     }
-  };
+  }
 
   // for automaticly change when prop added disable weekend and today it's weekend
   useEffect(() => {
     if (selectedDates?.length > 0) {
-      const newDate = new Date(selectedDates[0]);
+      const newDate = new Date(selectedDates[0])
       if (!isNaN(newDate.getTime())) {
-        let validDate = newDate;
+        let validDate = newDate
 
         if (disableWeekend) {
-          const day = validDate.getDay();
+          const day = validDate.getDay()
           if (day === 6) {
-            validDate.setDate(validDate.getDate() - 1);
+            validDate.setDate(validDate.getDate() - 1)
           } else if (day === 0) {
-            validDate.setDate(validDate.getDate() + 1);
+            validDate.setDate(validDate.getDate() + 1)
           }
         }
 
         if (onCalendarPeriodChanged) {
-          onCalendarPeriodChanged(validDate);
+          onCalendarPeriodChanged(validDate)
         }
-        setCurrentDate(validDate);
+        setCurrentDate(validDate)
 
-        setSelectedDatesLocal(formatDate(validDate, format));
+        setSelectedDatesLocal(formatDate(validDate, format))
 
         if (selectedDates[0].length > 9) {
           if (onChange) {
-            onChange([formatDate(validDate, format)]);
+            onChange([formatDate(validDate, format)])
           }
         }
       }
     }
-  }, [selectedDates?.[0], format]);
+  }, [selectedDates?.[0], format])
 
   const SELECTED_DATES = useMemo(() => {
-    if (!selectedDatesLocal) return [];
+    if (!selectedDatesLocal) return []
 
     switch (selectabilityMode) {
       case "ranged":
@@ -521,30 +521,30 @@ function BaseCalendar({
           .split("-")
           .filter(Boolean)
           .map((dateStr) => {
-            const date = new Date(dateStr.trim());
-            return isNaN(date.getTime()) ? null : date;
+            const date = new Date(dateStr.trim())
+            return isNaN(date.getTime()) ? null : date
           })
-          .filter(Boolean);
+          .filter(Boolean)
 
       case "multiple":
         return selectedDatesLocal
           .split(", ")
           .filter(Boolean)
           .map((dateStr) => {
-            const date = new Date(dateStr.trim());
-            return isNaN(date.getTime()) ? null : date;
+            const date = new Date(dateStr.trim())
+            return isNaN(date.getTime()) ? null : date
           })
-          .filter(Boolean);
+          .filter(Boolean)
 
       case "single":
       default:
         if (selectedDatesLocal) {
-          const date = new Date(selectedDatesLocal);
-          return isNaN(date.getTime()) ? [] : [date];
+          const date = new Date(selectedDatesLocal)
+          return isNaN(date.getTime()) ? [] : [date]
         }
-        return [];
+        return []
     }
-  }, [selectedDatesLocal, selectabilityMode]);
+  }, [selectedDatesLocal, selectabilityMode])
 
   return (
     <CalendarContainer
@@ -599,9 +599,9 @@ function BaseCalendar({
               }}
               aria-label="calendar-select-date"
               onMouseDown={(e) => {
-                e.preventDefault();
+                e.preventDefault()
                 if (!calendarState.open) {
-                  handleClickMode("open");
+                  handleClickMode("open")
                 }
               }}
             >
@@ -635,7 +635,7 @@ function BaseCalendar({
                 onChange={(value: string[]) => {
                   onChangeValueDate({
                     target: { name: "month", value },
-                  });
+                  })
                 }}
               />
               <Combobox
@@ -651,7 +651,7 @@ function BaseCalendar({
                 onChange={(value: string[]) => {
                   onChangeValueDate({
                     target: { name: "year", value },
-                  });
+                  })
                 }}
               />
             </div>
@@ -786,113 +786,112 @@ function BaseCalendar({
               <li key={`empty-${i}`} />
             ))}
           {dates.map((date, i) => {
-            const idx = i + emptyCellsCount + 1;
-            const isHighlighted = idx === highlightedIndexChange;
+            const idx = i + emptyCellsCount + 1
+            const isHighlighted = idx === highlightedIndexChange
 
-            let isCurrentDate: boolean;
-            let isDisabled: boolean;
-            let isRangeStart: boolean;
-            let isRangeEnd: boolean;
-            let isInRange: boolean;
-            let isHighlightedPicked: boolean;
-            let isSameDate: boolean;
+            let isCurrentDate: boolean
+            let isDisabled: boolean
+            let isRangeStart: boolean
+            let isRangeEnd: boolean
+            let isInRange: boolean
+            let isHighlightedPicked: boolean
+            let isSameDate: boolean
 
             if (selectabilityMode === "ranged") {
               if (startPicked.picked) {
-                const selectedDate = SELECTED_DATES[0];
-                isDisabled = date.getTime() < selectedDate.getTime();
+                const selectedDate = SELECTED_DATES[0]
+                isDisabled = date.getTime() < selectedDate.getTime()
 
-                isRangeStart = date.getTime() === selectedDate.getTime();
+                isRangeStart = date.getTime() === selectedDate.getTime()
                 isHighlightedPicked =
                   date.getTime() >= selectedDate.getTime() &&
-                  date.getTime() <= startPicked?.indexPicked?.getTime();
+                  date.getTime() <= startPicked?.indexPicked?.getTime()
                 isSameDate =
-                  selectedDate.getTime() ===
-                  startPicked?.indexPicked?.getTime();
+                  selectedDate.getTime() === startPicked?.indexPicked?.getTime()
               }
 
               if (SELECTED_DATES.length === 2 && !startPicked.picked) {
-                const [startDate, endDate] = SELECTED_DATES;
+                const [startDate, endDate] = SELECTED_DATES
                 isCurrentDate =
                   date.getTime() >= startDate.getTime() &&
-                  date.getTime() <= endDate.getTime();
-                isRangeStart = date.getTime() === startDate.getTime();
-                isRangeEnd = date.getTime() === endDate.getTime();
+                  date.getTime() <= endDate.getTime()
+                isRangeStart = date.getTime() === startDate.getTime()
+                isRangeEnd = date.getTime() === endDate.getTime()
                 isInRange =
                   date.getTime() > startDate.getTime() &&
-                  date.getTime() < endDate.getTime();
+                  date.getTime() < endDate.getTime()
 
-                isSameDate = startDate.getTime() === endDate.getTime();
+                isSameDate = startDate.getTime() === endDate.getTime()
 
-                isCurrentDate = isRangeStart || isRangeEnd || isInRange;
+                isCurrentDate = isRangeStart || isRangeEnd || isInRange
               } else {
                 isCurrentDate = SELECTED_DATES.some(
                   (selected) =>
                     date.getDate() === selected.getDate() &&
                     date.getMonth() === selected.getMonth() &&
-                    date.getFullYear() === selected.getFullYear()
-                );
+                    date.getFullYear() === selected.getFullYear(),
+                )
               }
             } else if (selectabilityMode === "multiple") {
               isCurrentDate = SELECTED_DATES.some(
                 (selected) =>
                   date.getDate() === selected.getDate() &&
                   date.getMonth() === selected.getMonth() &&
-                  date.getFullYear() === selected.getFullYear()
-              );
+                  date.getFullYear() === selected.getFullYear(),
+              )
             } else {
               const selectedDate = selectedDatesLocal
                 ? new Date(selectedDatesLocal)
-                : new Date();
+                : new Date()
 
               if (disableWeekend && !selectedDatesLocal) {
-                const day = selectedDate.getDay();
+                const day = selectedDate.getDay()
                 if (day === 6) {
-                  selectedDate.setDate(selectedDate.getDate() - 1);
+                  selectedDate.setDate(selectedDate.getDate() - 1)
                 } else if (day === 0) {
-                  selectedDate.setDate(selectedDate.getDate() + 1);
+                  selectedDate.setDate(selectedDate.getDate() + 1)
                 }
               }
 
               isCurrentDate =
                 date.getDate() === selectedDate.getDate() &&
                 date.getMonth() === selectedDate.getMonth() &&
-                date.getFullYear() === selectedDate.getFullYear();
+                date.getFullYear() === selectedDate.getFullYear()
             }
 
             const isToday =
               date.getDate() === today.getDate() &&
               date.getMonth() === today.getMonth() &&
-              date.getFullYear() === today.getFullYear();
+              date.getFullYear() === today.getFullYear()
 
-            const isDateWeekend = isWeekend(date);
+            const isDateWeekend = isWeekend(date)
 
             return (
               <DateCellWrapper
                 key={date.toISOString()}
                 ref={(el) => {
                   if (listRef?.current) {
-                    listRef.current[idx] = el;
+                    listRef.current[idx] = el
                   }
                 }}
                 role="option"
                 aria-selected={isHighlighted}
                 id={`option-${idx}`}
                 onMouseDown={async (e) => {
-                  e.preventDefault();
+                  e.preventDefault()
 
                   if ((isDateWeekend && disableWeekend) || isDisabled) {
-                    return;
+                    return
                   }
 
-                  await handleSelect(date, e);
+                  await handleSelect(date, e)
                   if (onClick) {
-                    await onClick();
+                    await onClick()
                   }
                 }}
                 onMouseEnter={() => {
-                  setHighlightedIndexChange(idx);
-                  setStartPicked((prev) => ({ ...prev, indexPicked: date }));
+                  setHighlightedIndexChange(idx)
+                  setStartPicked((prev) => ({ ...prev, indexPicked: date }))
                 }}
                 tabIndex={isHighlighted ? 0 : -1}
                 $isHighlighted={isHighlighted}
@@ -971,21 +970,21 @@ function BaseCalendar({
                   )}
                 </DateCell>
               </DateCellWrapper>
-            );
+            )
           })}
         </GridDate>
       </>
       <>{footer}</>
     </CalendarContainer>
-  );
+  )
 }
 
-export type CalendarStyles = BaseCalendarStyles & FieldLaneStyles;
+export type CalendarStyles = BaseCalendarStyles & FieldLaneStyles
 
 export interface CalendarProps
   extends Omit<BaseCalendarProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: CalendarStyles;
+  styles?: CalendarStyles
 }
 
 function Calendar({
@@ -1005,15 +1004,18 @@ function Calendar({
     prefix: "calendar",
     name,
     id,
-  });
+  })
 
   const {
     bodyStyle,
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...baseCalendartyles
-  } = styles ?? {};
+  } = styles ?? {}
 
   return (
     <FieldLane
@@ -1031,15 +1033,18 @@ function Calendar({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCalendar {...rest} id={inputId} styles={baseCalendartyles} />
     </FieldLane>
-  );
+  )
 }
 
 const CalendarContainer = styled.div<{
-  $style?: CSSProp;
+  $style?: CSSProp
 }>`
   *,
   ::before,
@@ -1048,7 +1053,7 @@ const CalendarContainer = styled.div<{
   }
 
   ${({ $style }) => $style}
-`;
+`
 
 const CalendarHeader = styled.div`
   display: flex;
@@ -1061,7 +1066,7 @@ const CalendarHeader = styled.div`
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   gap: 0.5rem;
-`;
+`
 
 const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   display: grid;
@@ -1074,7 +1079,7 @@ const GridDay = styled.div<{ $theme?: CalendarThemeConfig }>`
   pointer-events: none;
 
   color: ${({ $theme }) => $theme?.dayTextColor || "#6b7280"};
-`;
+`
 
 const GridDate = styled.div`
   display: grid;
@@ -1084,12 +1089,12 @@ const GridDate = styled.div`
   width: 100%;
   overflow: hidden;
   text-align: center;
-`;
+`
 
 const DateCellWrapper = styled.li<{
-  $isHighlighted: boolean;
-  $isDisabled: boolean;
-  $isWeekend?: boolean;
+  $isHighlighted: boolean
+  $isDisabled: boolean
+  $isWeekend?: boolean
 }>`
   display: flex;
   align-self: center;
@@ -1104,19 +1109,19 @@ const DateCellWrapper = styled.li<{
     css`
       cursor: pointer;
     `}
-`;
+`
 
 export const DateCell = styled.span<{
-  $style?: CSSProp;
-  $isDisabled?: boolean;
-  $isWeekend?: boolean;
-  $disableWeekend?: boolean;
-  $isHighlighted?: boolean;
-  $isCurrentDate?: boolean;
-  $isToday?: boolean;
-  $isInRange?: boolean;
-  $isPickingProcess?: boolean;
-  $theme: CalendarThemeConfig;
+  $style?: CSSProp
+  $isDisabled?: boolean
+  $isWeekend?: boolean
+  $disableWeekend?: boolean
+  $isHighlighted?: boolean
+  $isCurrentDate?: boolean
+  $isToday?: boolean
+  $isInRange?: boolean
+  $isPickingProcess?: boolean
+  $theme: CalendarThemeConfig
 }>`
   width: 27px;
   height: 27px;
@@ -1200,22 +1205,22 @@ export const DateCell = styled.span<{
       return css`
         color: ${$theme?.hightlightDateColor || "#61a9f9"};
         background-color: transparent;
-      `;
+      `
     }
     if ($isToday && $isHighlighted && $isCurrentDate) {
       return css`
         color: ${$theme?.highlightedDateTextColor || "white"};
-      `;
+      `
     }
     if ($isToday && $isHighlighted && !$isWeekend) {
       return css`
         color: ${$theme?.hightlightDateColor || "#61a9f9"};
-      `;
+      `
     }
     if ($isToday && !$isCurrentDate && $isPickingProcess && $isDisabled) {
       return css`
         color: ${$theme?.disabledDateColor || "#d1d5db"};
-      `;
+      `
     }
     if (
       $isHighlighted &&
@@ -1226,15 +1231,15 @@ export const DateCell = styled.span<{
       return css`
         color: ${$theme?.disabledDateColor || "#d1d5db"};
         background-color: transparent;
-      `;
+      `
     }
 
     if ($isToday && !$isCurrentDate && !$disableWeekend) {
       return css`
         color: ${$theme?.hightlightDateColor || "#61a9f9"};
-      `;
+      `
     }
-    return null;
+    return null
   }};
 
   ${({ $isInRange, $disableWeekend, $isWeekend, $theme }) =>
@@ -1251,17 +1256,17 @@ export const DateCell = styled.span<{
         : null};
 
   ${({ $style }) => $style}
-`;
+`
 
 const DataCellRange = styled.span<{
-  $isInRange?: boolean;
-  $isRangeStart?: boolean;
-  $isRangeEnd?: boolean;
-  $isSameDate?: boolean;
-  $isPickingProcess?: boolean;
-  $disableWeekend?: boolean;
-  $isCurrentDate?: boolean;
-  $theme?: CalendarThemeConfig;
+  $isInRange?: boolean
+  $isRangeStart?: boolean
+  $isRangeEnd?: boolean
+  $isSameDate?: boolean
+  $isPickingProcess?: boolean
+  $disableWeekend?: boolean
+  $isCurrentDate?: boolean
+  $theme?: CalendarThemeConfig
 }>`
   position: absolute;
   width: 45px;
@@ -1297,16 +1302,16 @@ const DataCellRange = styled.span<{
       width: ${!$isPickingProcess && $isSameDate ? "0px" : "25px"};
       transform: translateX(-10%) translateY(-50%);
     `};
-`;
+`
 
 const DateCellTodayDot = styled.div<{
-  $isToday?: boolean;
-  $isDisabled?: boolean;
-  $isPickingProcess?: boolean;
-  $disableWeekend?: boolean;
-  $isWeekend?: boolean;
-  $isCurrentDate?: boolean;
-  $theme: CalendarThemeConfig;
+  $isToday?: boolean
+  $isDisabled?: boolean
+  $isPickingProcess?: boolean
+  $disableWeekend?: boolean
+  $isWeekend?: boolean
+  $isCurrentDate?: boolean
+  $theme: CalendarThemeConfig
 }>`
   position: absolute;
   bottom: 1px;
@@ -1339,22 +1344,22 @@ const DateCellTodayDot = styled.div<{
           background-color: ${$theme?.disabledDateColor || "#d1d5db"};
           border-color: ${$theme?.disabledDateColor || "#d1d5db"};
         `}
-`;
+`
 
 function formatDate(date: Date, format: CalendarFormat) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
 
   switch (format) {
     case "yyyy/mm/dd":
-      return `${year}/${month}/${day}`;
+      return `${year}/${month}/${day}`
     case "dd/mm/yyyy":
-      return `${day}/${month}/${year}`;
+      return `${day}/${month}/${year}`
     case "mm/dd/yyyy":
     default:
-      return `${month}/${day}/${year}`;
+      return `${month}/${day}/${year}`
   }
 }
 
-export { Calendar };
+export { Calendar }

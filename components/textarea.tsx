@@ -5,52 +5,50 @@ import {
   forwardRef,
   useEffect,
   useRef,
-} from "react";
-import styled, { css, CSSProp } from "styled-components";
+} from "react"
+import styled, { css, CSSProp } from "styled-components"
 import {
   FieldLane,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
-} from "./field-lane";
-import { StatefulForm } from "./stateful-form";
-import { useTheme } from "./../theme/provider";
-import { TextareaThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "./field-lane"
+import { StatefulForm } from "./stateful-form"
+import { useTheme } from "./../theme/provider"
+import { TextareaThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
 interface BaseTextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "style"> {
-  showError?: boolean;
-  styles?: TextareaStyles;
-  onChange?: (
-    data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-  autogrow?: boolean;
-  id?: string;
-  width?: string | number;
+  showError?: boolean
+  styles?: TextareaStyles
+  onChange?: (data: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  autogrow?: boolean
+  id?: string
+  width?: string | number
 }
 
 export interface TextareaStyles {
-  self?: CSSProp;
+  self?: CSSProp
 }
 
 const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
   (
     { id, showError, rows, onChange, autogrow, styles, width, ...props },
-    ref
+    ref,
   ) => {
-    const { currentTheme } = useTheme();
-    const textareaTheme = currentTheme?.textarea;
+    const { currentTheme } = useTheme()
+    const textareaTheme = currentTheme?.textarea
 
-    const innerRef = useRef<HTMLTextAreaElement | null>(null);
+    const innerRef = useRef<HTMLTextAreaElement | null>(null)
 
     // runs once on mount
     useEffect(() => {
       if (autogrow && innerRef.current) {
-        innerRef.current.style.height = "auto";
-        innerRef.current.style.height = `${innerRef.current.scrollHeight}px`;
+        innerRef.current.style.height = "auto"
+        innerRef.current.style.height = `${innerRef.current.scrollHeight}px`
       }
-    }, []);
+    }, [])
 
     return (
       <TextareaInput
@@ -60,21 +58,21 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
         $autogrow={autogrow}
         id={id}
         ref={(el) => {
-          innerRef.current = el;
+          innerRef.current = el
           if (typeof ref === "function") {
-            ref(el);
+            ref(el)
           } else if (ref) {
-            (ref as MutableRefObject<HTMLTextAreaElement | null>).current = el;
+            ;(ref as MutableRefObject<HTMLTextAreaElement | null>).current = el
           }
         }}
         onChange={(e) => {
           if (autogrow) {
-            e.target.style.height = "auto";
-            e.target.style.height = `${e.target.scrollHeight}px`;
+            e.target.style.height = "auto"
+            e.target.style.height = `${e.target.scrollHeight}px`
           }
 
           if (onChange) {
-            onChange(e);
+            onChange(e)
           }
         }}
         rows={rows ?? 3}
@@ -82,17 +80,17 @@ const BaseTextarea = forwardRef<HTMLTextAreaElement, BaseTextareaProps>(
         $style={styles?.self}
         {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
       />
-    );
-  }
-);
+    )
+  },
+)
 
 export interface TextareaProps
   extends Omit<BaseTextareaProps, "styles">,
     Omit<FieldLaneProps, "styles"> {
-  styles?: TextareaStyles & FieldLaneStyles;
+  styles?: TextareaStyles & FieldLaneStyles
 }
 
-export type TextareaDropdownOption = FieldLaneDropdownOption;
+export type TextareaDropdownOption = FieldLaneDropdownOption
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ ...props }, ref) => {
@@ -111,20 +109,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       labelPosition,
       className,
       ...rest
-    } = props;
+    } = props
     const inputId = StatefulForm.sanitizeId({
       prefix: "textarea",
       name: props.name,
       id: props.id,
-    });
+    })
 
     const {
       bodyStyle,
       containerStyle,
       controlStyle,
       labelStyle,
-      self: textareaStyles,
-    } = styles ?? {};
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      self,
+    } = styles ?? {}
 
     return (
       <FieldLane
@@ -147,6 +148,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTextarea
@@ -162,23 +166,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 border-bottom-left-radius: 0px;
               `}
 
-              ${textareaStyles}
+              ${self};
             `,
           }}
           ref={ref}
         />
       </FieldLane>
-    );
-  }
-);
+    )
+  },
+)
 
 const TextareaInput = styled.textarea<{
-  $error?: boolean;
-  $style?: CSSProp;
-  $autogrow?: boolean;
-  $disabled?: boolean;
-  $theme?: TextareaThemeConfig;
-  $width?: string | number;
+  $error?: boolean
+  $style?: CSSProp
+  $autogrow?: boolean
+  $disabled?: boolean
+  $theme?: TextareaThemeConfig
+  $width?: string | number
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -258,6 +262,6 @@ const TextareaInput = styled.textarea<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
-export { Textarea };
+export { Textarea }

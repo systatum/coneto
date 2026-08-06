@@ -12,7 +12,7 @@ import {
   forwardRef,
   InputHTMLAttributes,
   useMemo,
-} from "react";
+} from "react"
 import {
   useFloating,
   offset,
@@ -22,99 +22,93 @@ import {
   Placement,
   useDismiss,
   useInteractions,
-} from "@floating-ui/react";
-import {
-  RiArrowDownSLine,
-  RiArrowUpSLine,
-  RiCloseLine,
-} from "@remixicon/react";
-import styled, { css, CSSProp } from "styled-components";
-import { isValidDateString } from "../lib/date";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { FigureProps } from "./figure";
-import { StatefulForm } from "./stateful-form";
-import { LoadingSpinner } from "./loading-spinner";
-import { useTheme } from "./../theme/provider";
-import { SelectboxThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "@floating-ui/react"
+import { RiArrowDownSLine, RiArrowUpSLine, RiCloseLine } from "@remixicon/react"
+import styled, { css, CSSProp } from "styled-components"
+import { isValidDateString } from "../lib/date"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { FigureProps } from "./figure"
+import { StatefulForm } from "./stateful-form"
+import { LoadingSpinner } from "./loading-spinner"
+import { useTheme } from "./../theme/provider"
+import { SelectboxThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
-export type SelectboxSelectedOptions = number | string | number[] | string[];
+export type SelectboxSelectedOptions = number | string | number[] | string[]
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
-  options?: SelectboxOption[];
-  navigableOptions?: SelectboxOption[];
-  selectedOptions?: SelectboxSelectedOptions;
-  onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
-  placeholder?: string;
-  iconOpened?: FigureProps["image"];
-  iconClosed?: FigureProps["image"];
-  type?: "calendar" | "default";
-  clearable?: boolean;
-  highlightOnMatch?: boolean;
-  strict?: boolean;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
-  multiple?: boolean;
-  actions?: any[];
-  id?: string;
-  showError?: boolean;
-  maxSelectableItems?: number | undefined;
-  isLoading?: boolean;
-  mobile?: boolean;
+  options?: SelectboxOption[]
+  navigableOptions?: SelectboxOption[]
+  selectedOptions?: SelectboxSelectedOptions
+  onChange?: (selectedOptions: SelectboxSelectedOptions) => void
+  placeholder?: string
+  iconOpened?: FigureProps["image"]
+  iconClosed?: FigureProps["image"]
+  type?: "calendar" | "default"
+  clearable?: boolean
+  highlightOnMatch?: boolean
+  strict?: boolean
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+  onClick?: () => void
+  multiple?: boolean
+  actions?: any[]
+  id?: string
+  showError?: boolean
+  maxSelectableItems?: number | undefined
+  isLoading?: boolean
+  mobile?: boolean
   children?: (
     props: DrawerProps &
       InteractionModeProps & {
-        options: SelectboxOption[];
-        handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-        selectedOptionsLocal: SelectboxOption;
-        setSelectedOptionsLocal: (value: SelectboxOption) => void;
-        hasInteracted?: boolean;
-        setHasInteracted?: (value: boolean) => void;
-        ref?: Ref<HTMLInputElement>;
-        setConfirmedValue?: (option: SelectboxOption | null) => void;
-      }
-  ) => ReactNode;
-  styles?: SelectboxStyles;
-  labels?: SelectboxLabels;
+        options: SelectboxOption[]
+        handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+        selectedOptionsLocal: SelectboxOption
+        setSelectedOptionsLocal: (value: SelectboxOption) => void
+        hasInteracted?: boolean
+        setHasInteracted?: (value: boolean) => void
+        ref?: Ref<HTMLInputElement>
+        setConfirmedValue?: (option: SelectboxOption | null) => void
+      },
+  ) => ReactNode
+  styles?: BaseSelectboxStyles
+  labels?: SelectboxLabels
 }
 
 export interface SelectboxLabels {
-  loadingText?: string;
+  loadingText?: string
 }
 
 interface BaseSelectboxStyles {
-  selectboxStyle?: CSSProp;
-  self?: CSSProp;
+  selectboxStyle?: CSSProp
+  self?: CSSProp
 }
 
-export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
-
 export interface DrawerProps extends InteractionModeProps {
-  highlightedIndex: number | null;
-  setHighlightedIndex: (index: number | null) => void;
-  setIsOpen: (open: boolean) => void;
-  multiple?: boolean;
+  highlightedIndex: number | null
+  setHighlightedIndex: (index: number | null) => void
+  setIsOpen: (open: boolean) => void
+  multiple?: boolean
   getFloatingProps: (
-    userProps?: HTMLAttributes<HTMLUListElement>
-  ) => HTMLAttributes<HTMLUListElement>;
-  refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> };
-  listRef: MutableRefObject<(HTMLLIElement | null)[]>;
-  isOpen: boolean;
-  floatingStyles: CSSProperties;
-  onClick?: () => void;
+    userProps?: HTMLAttributes<HTMLUListElement>,
+  ) => HTMLAttributes<HTMLUListElement>
+  refs: { setFloating: Ref<HTMLUListElement>; setReference: Ref<HTMLElement> }
+  listRef: MutableRefObject<(HTMLLIElement | null)[]>
+  isOpen: boolean
+  floatingStyles: CSSProperties
+  onClick?: () => void
 }
 
 interface InteractionModeProps {
-  interactionMode: "keyboard" | "mouse";
-  setInteractionMode: (props: "keyboard" | "mouse") => void;
+  interactionMode: "keyboard" | "mouse"
+  setInteractionMode: (props: "keyboard" | "mouse") => void
 }
 
 export interface SelectboxOption {
-  text: string;
-  render?: ReactNode;
-  value: string | number;
-  hidden?: boolean;
+  text: string
+  render?: ReactNode
+  value: string | number
+  hidden?: boolean
 }
 
 const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
@@ -148,104 +142,104 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       mobile,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const { currentTheme } = useTheme();
-    const selectboxTheme = currentTheme?.selectbox;
+    const { currentTheme } = useTheme()
+    const selectboxTheme = currentTheme?.selectbox
 
     const finalOptions = useMemo(
       () => (Array.isArray(options) ? options : []),
-      [options]
-    );
+      [options],
+    )
 
     const finalSelectedOptions = useMemo(() => {
       if (Array.isArray(selectedOptions)) {
-        return selectedOptions.map(String);
+        return selectedOptions.map(String)
       }
       if (selectedOptions != null) {
-        return [String(selectedOptions)];
+        return [String(selectedOptions)]
       }
-      return [];
-    }, [selectedOptions]);
+      return []
+    }, [selectedOptions])
 
     // Sync local display state and confirmed value when selectedOptions prop changes
     // from outside (e.g. form reset, parent-controlled value update).
     // Only updates confirmedValue in strict mode to avoid overriding user's
     // in-progress input in non-strict (free-text) mode.
     useEffect(() => {
-      if (multiple) return;
+      if (multiple) return
       const matched = finalOptions.find(
-        (opt) => String(opt.value) === finalSelectedOptions?.[0]
-      );
+        (opt) => String(opt.value) === finalSelectedOptions?.[0],
+      )
       if (matched) {
-        setSelectedOptionsLocal(matched);
+        setSelectedOptionsLocal(matched)
         if (strict) {
-          setConfirmedValue(matched);
+          setConfirmedValue(matched)
         }
       }
-    }, [finalSelectedOptions?.[0], finalOptions, strict, multiple]);
+    }, [finalSelectedOptions?.[0], finalOptions, strict, multiple])
 
     const initialState = useMemo(
       () =>
         finalOptions.find(
-          (opt) => String(opt.value) === finalSelectedOptions?.[0]
+          (opt) => String(opt.value) === finalSelectedOptions?.[0],
         ) ?? {
           text: isValidDateString(finalSelectedOptions?.[0])
             ? finalSelectedOptions?.[0]
             : "",
           value: typeof selectedOptions === "number" ? 0 : "0",
         },
-      [finalOptions, finalSelectedOptions, selectedOptions]
-    );
+      [finalOptions, finalSelectedOptions, selectedOptions],
+    )
 
     const handleOnChange = (values: string[]) => {
-      if (!onChange) return;
+      if (!onChange) return
 
       if (Array.isArray(selectedOptions)) {
-        onChange(castValue(values, selectedOptions));
-        return;
+        onChange(castValue(values, selectedOptions))
+        return
       }
 
-      onChange(castValue(values[0], selectedOptions));
-    };
+      onChange(castValue(values[0], selectedOptions))
+    }
 
     const [selectedOptionsLocal, setSelectedOptionsLocal] =
-      useState<SelectboxOption>(initialState);
+      useState<SelectboxOption>(initialState)
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0);
-    const [hasInteracted, setHasInteracted] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
+    const [isOpen, setIsOpen] = useState(false)
+    const [highlightedIndex, setHighlightedIndex] = useState<number | null>(0)
+    const [hasInteracted, setHasInteracted] = useState(false)
+    const [isHovered, setIsHovered] = useState(false)
+    const [isFocused, setIsFocused] = useState(false)
     const [interactionMode, setInteractionMode] = useState<
       "keyboard" | "mouse"
-    >("mouse");
+    >("mouse")
 
     const [confirmedValue, setConfirmedValue] =
-      useState<SelectboxOption | null>(null);
+      useState<SelectboxOption | null>(null)
 
-    const inputRef = useRef<HTMLInputElement>(null);
-    const listRef = useRef<(HTMLLIElement | null)[]>([]);
+    const inputRef = useRef<HTMLInputElement>(null)
+    const listRef = useRef<(HTMLLIElement | null)[]>([])
 
     const FILTERED_OPTIONS = hasInteracted
       ? finalOptions.filter((opt) =>
           opt.text
             .toLowerCase()
-            .includes(selectedOptionsLocal.text.toLowerCase())
+            .includes(selectedOptionsLocal.text.toLowerCase()),
         )
-      : finalOptions;
+      : finalOptions
 
     const FILTERED_ACTIVE = finalOptions.some(
-      (opt) => opt.text === selectedOptionsLocal.text
-    );
+      (opt) => opt.text === selectedOptionsLocal.text,
+    )
 
     const FILTERED_NAVIGABLE_OPTIONS = hasInteracted
       ? navigableOptions.filter((opt) =>
           opt.text
             .toLowerCase()
-            .includes(selectedOptionsLocal.text.toLowerCase())
+            .includes(selectedOptionsLocal.text.toLowerCase()),
         )
-      : navigableOptions;
+      : navigableOptions
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -253,122 +247,120 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       onOpenChange: setIsOpen,
       middleware: [offset(4), flip(), shift()],
       whileElementsMounted: autoUpdate,
-    });
+    })
 
-    const dismiss = useDismiss(context);
-    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss]);
+    const dismiss = useDismiss(context)
+    const { getFloatingProps, getReferenceProps } = useInteractions([dismiss])
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setHasInteracted(true);
-      let value = e.target.value;
+      setHasInteracted(true)
+      let value = e.target.value
       if (type === "calendar") {
-        value = value.replace(/\D/g, "");
+        value = value.replace(/\D/g, "")
         if (value.length > 2 && value.length <= 4) {
-          value = value.slice(0, 2) + "/" + value.slice(2);
+          value = value.slice(0, 2) + "/" + value.slice(2)
         } else if (value.length > 4) {
           value =
             value.slice(0, 2) +
             "/" +
             value.slice(2, 4) +
             "/" +
-            value.slice(4, 8);
+            value.slice(4, 8)
         }
-        handleOnChange([value]);
+        handleOnChange([value])
       }
-      setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
-      setIsOpen(value.length > 0);
+      setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value })
+      setIsOpen(value.length > 0)
 
       const hasMatch = finalOptions.some((opt) =>
-        opt.text.toLowerCase().includes(value.toLowerCase())
-      );
-      setHighlightedIndex(hasMatch ? 0 : null);
-    };
+        opt.text.toLowerCase().includes(value.toLowerCase()),
+      )
+      setHighlightedIndex(hasMatch ? 0 : null)
+    }
 
-    const justCommittedRef = useRef(false);
+    const justCommittedRef = useRef(false)
 
     const commitOrRevert = (
       selectedOption?: SelectboxOption,
       currentLocal: SelectboxOption = selectedOptionsLocal,
-      currentConfirmed: SelectboxOption | null = confirmedValue
+      currentConfirmed: SelectboxOption | null = confirmedValue,
     ) => {
       if (selectedOption) {
-        const val = String(selectedOption.value);
-        setConfirmedValue(selectedOption);
-        setSelectedOptionsLocal(selectedOption);
-        handleOnChange?.([val]);
-        setIsOpen(false);
-        return;
+        const val = String(selectedOption.value)
+        setConfirmedValue(selectedOption)
+        setSelectedOptionsLocal(selectedOption)
+        handleOnChange?.([val])
+        setIsOpen(false)
+        return
       }
 
-      const matched = finalOptions.find(
-        (opt) => opt.text === currentLocal.text
-      );
+      const matched = finalOptions.find((opt) => opt.text === currentLocal.text)
 
       if (matched) {
-        const val = String(matched.value);
-        setConfirmedValue(matched);
-        setSelectedOptionsLocal(matched);
-        handleOnChange?.([val]);
-        setIsOpen(false);
-        return;
+        const val = String(matched.value)
+        setConfirmedValue(matched)
+        setSelectedOptionsLocal(matched)
+        handleOnChange?.([val])
+        setIsOpen(false)
+        return
       }
 
       if (currentConfirmed && strict) {
-        setSelectedOptionsLocal(currentConfirmed);
-        handleOnChange?.([String(currentConfirmed.value)]);
-        return;
+        setSelectedOptionsLocal(currentConfirmed)
+        handleOnChange?.([String(currentConfirmed.value)])
+        return
       }
 
       if (strict) {
-        setSelectedOptionsLocal({ text: "", value: "0" });
-        handleOnChange?.([]);
+        setSelectedOptionsLocal({ text: "", value: "0" })
+        handleOnChange?.([])
       } else {
-        handleOnChange?.([currentLocal.text]);
+        handleOnChange?.([currentLocal.text])
       }
-    };
+    }
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      onKeyDown?.(e);
+      onKeyDown?.(e)
 
       const totalItems =
-        (actions?.length ?? 0) + FILTERED_NAVIGABLE_OPTIONS.length - 1;
+        (actions?.length ?? 0) + FILTERED_NAVIGABLE_OPTIONS.length - 1
 
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
-        setInteractionMode("keyboard");
+        setInteractionMode("keyboard")
 
         if (!isOpen) {
-          setIsOpen(true);
+          setIsOpen(true)
         }
 
-        e.preventDefault();
+        e.preventDefault()
       }
 
       if (e.key === "ArrowDown") {
         if (highlightedIndex < totalItems) {
-          setHighlightedIndex(highlightedIndex + 1);
+          setHighlightedIndex(highlightedIndex + 1)
         }
-        e.preventDefault();
+        e.preventDefault()
       }
 
       if (e.key === "ArrowUp") {
         if (highlightedIndex > 0) {
-          setHighlightedIndex(highlightedIndex - 1);
+          setHighlightedIndex(highlightedIndex - 1)
         }
-        e.preventDefault();
+        e.preventDefault()
       }
 
       if (e.key === "Enter") {
         if (!multiple) {
-          setHasInteracted(false);
+          setHasInteracted(false)
         }
 
         if (
           highlightedIndex !== null &&
           highlightedIndex < (actions?.length || 0)
         ) {
-          actions?.[highlightedIndex]?.onClick?.();
-          setIsOpen(false);
-          return;
+          actions?.[highlightedIndex]?.onClick?.()
+          setIsOpen(false)
+          return
         }
 
         const selectedOption =
@@ -376,69 +368,69 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             ? FILTERED_NAVIGABLE_OPTIONS[
                 highlightedIndex - (actions?.length ?? 0)
               ]
-            : undefined;
+            : undefined
 
         if (multiple) {
           if (selectedOption) {
-            const val = String(selectedOption.value);
+            const val = String(selectedOption.value)
             if (!finalSelectedOptions.includes(val)) {
               if (
                 !maxSelectableItems ||
                 finalSelectedOptions.length < maxSelectableItems
               ) {
-                handleOnChange([...finalSelectedOptions, val]);
+                handleOnChange([...finalSelectedOptions, val])
               }
             } else {
-              handleOnChange(finalSelectedOptions.filter((v) => v !== val));
+              handleOnChange(finalSelectedOptions.filter((v) => v !== val))
             }
           }
         } else {
-          justCommittedRef.current = true;
-          commitOrRevert(selectedOption, selectedOptionsLocal, confirmedValue);
+          justCommittedRef.current = true
+          commitOrRevert(selectedOption, selectedOptionsLocal, confirmedValue)
         }
 
         requestAnimationFrame(() => {
           if (!multiple) {
-            setHighlightedIndex(null);
+            setHighlightedIndex(null)
           }
-        });
+        })
       }
 
       if (e.key === "Escape") {
-        setIsOpen(false);
-        setHasInteracted(false);
-        setIsFocused(false);
+        setIsOpen(false)
+        setHasInteracted(false)
+        setIsFocused(false)
 
         if (strict && confirmedValue) {
-          setSelectedOptionsLocal(confirmedValue);
+          setSelectedOptionsLocal(confirmedValue)
         }
 
         if (!isOpen) {
-          inputRef.current?.blur();
+          inputRef.current?.blur()
         }
 
         requestAnimationFrame(() => {
           if (!multiple) {
-            setHighlightedIndex(null);
+            setHighlightedIndex(null)
           }
-        });
+        })
       }
-    };
+    }
 
     // Sync highlightedIndex to the selected option's position when the dropdown open
     useEffect(() => {
       if (isOpen) {
         if (finalSelectedOptions.length > 0) {
-          const offset = actions?.length ?? 0;
+          const offset = actions?.length ?? 0
           const idx = (navigableOptions ?? finalOptions).findIndex(
-            (opt) => String(opt.value) === finalSelectedOptions[0]
-          );
-          setHighlightedIndex(idx !== -1 ? idx + offset : 0);
+            (opt) => String(opt.value) === finalSelectedOptions[0],
+          )
+          setHighlightedIndex(idx !== -1 ? idx + offset : 0)
         } else {
-          setHighlightedIndex(0);
+          setHighlightedIndex(0)
         }
       }
-    }, [isOpen]);
+    }, [isOpen])
 
     // Scroll the highlighted item into view on keyboard navigation
     useEffect(() => {
@@ -447,9 +439,9 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         listRef.current[highlightedIndex] &&
         finalSelectedOptions?.length > 0
       ) {
-        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" });
+        listRef.current[highlightedIndex]?.scrollIntoView({ block: "nearest" })
       }
-    }, [highlightedIndex, isOpen, finalSelectedOptions]);
+    }, [highlightedIndex, isOpen, finalSelectedOptions])
 
     // Reset search text when the dropdown closes in multiple mode
     useEffect(() => {
@@ -457,45 +449,45 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         setSelectedOptionsLocal({
           text: "",
           value: "",
-        });
+        })
       }
-    }, [isOpen]);
+    }, [isOpen])
 
     const multipleOptionsJoinedText = finalSelectedOptions
       ?.map((val) => finalOptions.find((o) => o.value === val)?.text)
       .filter(Boolean)
-      .join(", ");
+      .join(", ")
 
     const inputValue = multiple
       ? multipleOptionsJoinedText
-      : selectedOptionsLocal.text;
+      : selectedOptionsLocal.text
 
     const isClearable =
       clearable &&
       (multiple
         ? finalSelectedOptions?.length
-        : selectedOptionsLocal?.text.length) !== 0;
+        : selectedOptionsLocal?.text.length) !== 0
 
-    const { loadingText = "Loading..." } = labels ?? {};
+    const { loadingText = "Loading..." } = labels ?? {}
 
     return (
       <Container
         $isLoading={isLoading}
         onBlur={() => {
-          if (!isLoading) setIsHovered(false);
+          if (!isLoading) setIsHovered(false)
         }}
         onMouseEnter={() => {
-          if (!isLoading) setIsHovered(true);
+          if (!isLoading) setIsHovered(true)
         }}
         onMouseLeave={() => {
-          if (!isLoading) setIsHovered(false);
+          if (!isLoading) setIsHovered(false)
         }}
         role="combobox"
         $style={styles?.selectboxStyle}
         aria-expanded={isOpen}
         $disabled={disabled}
         onClick={() => {
-          inputRef.current?.focus();
+          inputRef.current?.focus()
         }}
       >
         {isLoading && (
@@ -529,50 +521,50 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           disabled={disabled || isLoading}
           $disabled={disabled || isLoading}
           ref={(el) => {
-            refs.setReference(el);
+            refs.setReference(el)
             if (!multiple) {
-              inputRef.current = el;
+              inputRef.current = el
             }
-            if (typeof ref === "function") ref(el);
+            if (typeof ref === "function") ref(el)
             else if (ref)
-              (ref as MutableRefObject<HTMLInputElement | null>).current = el;
+              (ref as MutableRefObject<HTMLInputElement | null>).current = el
           }}
           type="text"
           value={isLoading ? "" : inputValue}
           onChange={handleInputChange}
           onKeyDown={(e) => {
-            handleKeyDown(e);
+            handleKeyDown(e)
           }}
           readOnly={multiple || mobile}
           onMouseDown={() => {
             if (strict || mobile) {
               if (!isOpen) {
-                setIsOpen(true);
+                setIsOpen(true)
               }
             } else {
               if (!isOpen && !isFocused) {
-                setIsOpen(true);
+                setIsOpen(true)
               }
             }
           }}
           onFocus={() => {
-            if (type === "calendar" || selectedOptionsLocal) setIsFocused(true);
+            if (type === "calendar" || selectedOptionsLocal) setIsFocused(true)
 
-            setIsOpen(true);
+            setIsOpen(true)
           }}
           onBlur={() => {
-            setIsFocused(false);
+            setIsFocused(false)
 
             if (!multiple) {
-              setHasInteracted(false);
+              setHasInteracted(false)
             }
 
             if (strict && !multiple) {
               if (justCommittedRef.current) {
-                justCommittedRef.current = false;
-                return;
+                justCommittedRef.current = false
+                return
               }
-              commitOrRevert(undefined, selectedOptionsLocal, confirmedValue);
+              commitOrRevert(undefined, selectedOptionsLocal, confirmedValue)
             }
           }}
           placeholder={isLoading ? "" : placeholder || "Search your item..."}
@@ -587,10 +579,10 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
               $theme={selectboxTheme}
               aria-label="clearable-content"
               onMouseDown={() => {
-                handleOnChange?.([]);
-                setSelectedOptionsLocal({ text: "", value: "0" });
-                setConfirmedValue(null);
-                setHasInteracted(false);
+                handleOnChange?.([])
+                setSelectedOptionsLocal({ text: "", value: "0" })
+                setConfirmedValue(null)
+                setHasInteracted(false)
               }}
               $highlight={highlightOnMatch && FILTERED_ACTIVE}
               size={16}
@@ -604,12 +596,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
           aria-label="selectbox-opener"
           onClick={async () => {
             await setIsOpen((prev) => {
-              const newState = !prev;
-              if (newState && inputRef.current) inputRef.current?.focus();
-              return newState;
-            });
+              const newState = !prev
+              if (newState && inputRef.current) inputRef.current?.focus()
+              return newState
+            })
             if (multiple) {
-              await inputRef.current?.focus();
+              await inputRef.current?.focus()
             }
           }}
         >
@@ -657,14 +649,16 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
             ref: multiple ? inputRef : undefined,
           })}
       </Container>
-    );
-  }
-);
+    )
+  },
+)
+
+export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles
 
 export interface SelectboxProps
   extends Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
-  styles?: SelectboxStyles;
+  styles?: SelectboxStyles
 }
 
 const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
@@ -688,15 +682,27 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       className,
       mobile,
       ...rest
-    } = props;
+    } = props
+
     const inputId = StatefulForm.sanitizeId({
       prefix: "selectbox",
       name,
       id,
-    });
+    })
 
-    const hasCombo = className?.includes("coneto-combobox");
-    const hasDatebox = className?.includes("coneto-datebox");
+    const hasCombo = className?.includes("coneto-combobox")
+    const hasDatebox = className?.includes("coneto-datebox")
+
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperIconStyle,
+      helperDrawerStyle,
+      helperArrowStyle,
+      ...selectboxStyles
+    } = styles ?? {}
 
     return (
       <FieldLane
@@ -720,10 +726,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         errorIconPosition={errorIconPosition}
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseSelectbox
@@ -734,47 +743,48 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           mobile={mobile}
           disabled={disabled}
           styles={{
+            ...selectboxStyles,
             self: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${selectboxStyles?.self}
             `,
           }}
           type={type}
           ref={ref}
         />
       </FieldLane>
-    );
-  }
-);
+    )
+  },
+)
 
 export function castValue<T extends SelectboxSelectedOptions>(
   value: any,
-  original: T
+  original: T,
 ): T {
   if (Array.isArray(original)) {
     if (Array.isArray(value)) {
       return value.map((v) =>
-        typeof original[0] === "number" ? Number(v) : String(v)
-      ) as T;
+        typeof original[0] === "number" ? Number(v) : String(v),
+      ) as T
     }
-    return [value] as T;
+    return [value] as T
   }
 
   if (typeof original === "number") {
-    return Number(value) as T;
+    return Number(value) as T
   }
 
-  return String(value) as T;
+  return String(value) as T
 }
 
 const Container = styled.div<{
-  $style?: CSSProp;
-  $isLoading?: boolean;
-  $disabled?: boolean;
+  $style?: CSSProp
+  $isLoading?: boolean
+  $disabled?: boolean
 }>`
   position: relative;
   width: 100%;
@@ -796,17 +806,17 @@ const Container = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`;
+`
 
 const Input = styled.input<{
-  $highlight?: boolean;
-  $focused?: boolean;
-  $hovered?: boolean;
-  $style?: CSSProp;
-  $clearable?: boolean;
-  $hasError?: boolean;
-  $disabled?: boolean;
-  $theme: SelectboxThemeConfig;
+  $highlight?: boolean
+  $focused?: boolean
+  $hovered?: boolean
+  $style?: CSSProp
+  $clearable?: boolean
+  $hasError?: boolean
+  $disabled?: boolean
+  $theme: SelectboxThemeConfig
 }>`
   width: 100%;
   border-radius: 2px;
@@ -855,11 +865,11 @@ const Input = styled.input<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const ClearIcon = styled(RiCloseLine)<{
-  $highlight?: boolean;
-  $theme: SelectboxThemeConfig;
+  $highlight?: boolean
+  $theme: SelectboxThemeConfig
 }>`
   position: absolute;
   top: 50%;
@@ -883,10 +893,10 @@ const ClearIcon = styled(RiCloseLine)<{
     background-color: ${({ $theme }) =>
       $theme.clearIconHoverBackground || "#e5e7eb"};
   }
-`;
+`
 
 const Divider = styled.span<{
-  $theme: SelectboxThemeConfig;
+  $theme: SelectboxThemeConfig
 }>`
   position: absolute;
   top: 50%;
@@ -895,7 +905,7 @@ const Divider = styled.span<{
   width: 1px;
   min-height: 15px;
   border-right: 1px solid ${({ $theme }) => $theme.dividerColor || "#9ca3af"};
-`;
+`
 
 const IconWrapper = styled.div<{ $isLoading?: boolean }>`
   position: absolute;
@@ -909,6 +919,6 @@ const IconWrapper = styled.div<{ $isLoading?: boolean }>`
     css`
       opacity: 0.5;
     `}
-`;
+`
 
-export { Selectbox };
+export { Selectbox }

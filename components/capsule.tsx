@@ -1,40 +1,40 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
-import { Figure, FigureProps } from "./figure";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { CapsuleThemeConfig } from "./../theme";
-import { useTheme } from "./../theme/provider";
-import { applyClassName } from "./../constants/classname";
+import { ReactNode, useEffect, useRef, useState } from "react"
+import { motion } from "framer-motion"
+import styled, { css, CSSProp } from "styled-components"
+import { StatefulForm } from "./stateful-form"
+import { Figure, FigureProps } from "./figure"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { CapsuleThemeConfig } from "./../theme"
+import { useTheme } from "./../theme/provider"
+import { applyClassName } from "./../constants/classname"
 
 export interface CapsuleTab {
-  id: string;
-  title?: string;
-  content?: ReactNode;
-  icon?: FigureProps;
-  className?: string;
+  id: string
+  title?: string
+  content?: ReactNode
+  icon?: FigureProps
+  className?: string
 }
 
 interface BaseCapsuleProps {
-  tabs: CapsuleTab[];
-  activeTab?: string | null;
-  onTabChange?: (id: string) => void;
-  full?: boolean;
-  activeBackgroundColor?: string;
-  activeColor?: string;
-  styles?: BaseCapsuleStyles;
-  id?: string;
-  name?: string;
-  fontSize?: number;
-  disabled?: boolean;
-  showError?: boolean;
-  mobile?: boolean;
+  tabs: CapsuleTab[]
+  activeTab?: string | null
+  onTabChange?: (id: string) => void
+  full?: boolean
+  activeBackgroundColor?: string
+  activeColor?: string
+  styles?: BaseCapsuleStyles
+  id?: string
+  name?: string
+  fontSize?: number
+  disabled?: boolean
+  showError?: boolean
+  mobile?: boolean
 }
 
 interface BaseCapsuleStyles {
-  capsuleWrapperStyle?: CSSProp;
-  tabStyle?: CSSProp;
+  capsuleWrapperStyle?: CSSProp
+  tabStyle?: CSSProp
 }
 
 function BaseCapsule({
@@ -51,56 +51,56 @@ function BaseCapsule({
   showError,
   mobile,
 }: BaseCapsuleProps) {
-  const { currentTheme } = useTheme();
-  const capsuleTheme = currentTheme.capsule;
+  const { currentTheme } = useTheme()
+  const capsuleTheme = currentTheme.capsule
 
-  const [hovered, setHovered] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null)
 
-  const activeId = hovered || activeTab;
-  const activeIndex = tabs.findIndex((item) => item.id === activeTab);
-  const hoverIndex = tabs.findIndex((item) => item.id === activeId);
+  const activeId = hovered || activeTab
+  const activeIndex = tabs.findIndex((item) => item.id === activeTab)
+  const hoverIndex = tabs.findIndex((item) => item.id === activeId)
 
-  const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const tabRefs = useRef<Array<HTMLDivElement | null>>([])
   const [tabSizes, setTabSizes] = useState<{ width: number; left: number }[]>(
-    []
-  );
+    [],
+  )
 
-  const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
+  const [maxTabWidth, setMaxTabWidth] = useState<number>(0)
 
   useEffect(() => {
-    if (!mobile || !tabRefs.current.length) return;
+    if (!mobile || !tabRefs.current.length) return
 
     const calculateMaxWidth = () => {
-      if (!mobile || !tabRefs.current.length) return;
+      if (!mobile || !tabRefs.current.length) return
 
       const widths: number[] = tabRefs.current.map(
-        (el) => el?.getBoundingClientRect().width ?? 0
-      );
+        (el) => el?.getBoundingClientRect().width ?? 0,
+      )
 
-      const largest: number = widths.length ? Math.max(...widths) : 0;
+      const largest: number = widths.length ? Math.max(...widths) : 0
 
-      setMaxTabWidth((prev) => (prev !== largest ? largest : prev));
-    };
+      setMaxTabWidth((prev) => (prev !== largest ? largest : prev))
+    }
 
-    calculateMaxWidth();
-  }, [tabs, mobile]);
+    calculateMaxWidth()
+  }, [tabs, mobile])
 
-  const [isInitialized, setIsInitialized] = useState(false);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    tabRefs.current = tabRefs.current.slice(0, tabs.length);
+    tabRefs.current = tabRefs.current.slice(0, tabs.length)
 
     while (tabRefs.current.length < tabs.length) {
-      tabRefs.current.push(null);
+      tabRefs.current.push(null)
     }
-  }, [tabs]);
+  }, [tabs])
 
   useEffect(() => {
     if (!activeTab && tabs.length > 0) {
-      onTabChange(tabs[0].id);
+      onTabChange(tabs[0].id)
     }
-  }, [activeTab, tabs, onTabChange]);
+  }, [activeTab, tabs, onTabChange])
 
   useEffect(() => {
     const calculateTabSizes = () => {
@@ -109,46 +109,46 @@ function BaseCapsule({
         !tabRefs.current[0] ||
         !containerRef.current
       )
-        return;
+        return
 
-      const parentRect = containerRef.current.getBoundingClientRect();
+      const parentRect = containerRef.current.getBoundingClientRect()
 
       const sizes = tabRefs.current.map((tabRef) => {
-        if (!tabRef) return { width: 0, left: 0 };
+        if (!tabRef) return { width: 0, left: 0 }
 
-        const rect = tabRef.getBoundingClientRect();
-        const tabWidth = rect.width;
-        const bgWidth = tabWidth - 4;
-        const leftOffset = (tabWidth - bgWidth) / 4;
+        const rect = tabRef.getBoundingClientRect()
+        const tabWidth = rect.width
+        const bgWidth = tabWidth - 4
+        const leftOffset = (tabWidth - bgWidth) / 4
 
         return {
           width: bgWidth,
           left: rect.left - parentRect.left + leftOffset,
-        };
-      });
+        }
+      })
 
-      setTabSizes(sizes);
-      setIsInitialized(true);
-    };
+      setTabSizes(sizes)
+      setIsInitialized(true)
+    }
 
-    calculateTabSizes();
-    const timeoutId = setTimeout(calculateTabSizes, 50);
+    calculateTabSizes()
+    const timeoutId = setTimeout(calculateTabSizes, 50)
 
-    window.addEventListener("resize", calculateTabSizes);
+    window.addEventListener("resize", calculateTabSizes)
     return () => {
-      window.removeEventListener("resize", calculateTabSizes);
-      clearTimeout(timeoutId);
-    };
-  }, [tabs.length]);
+      window.removeEventListener("resize", calculateTabSizes)
+      clearTimeout(timeoutId)
+    }
+  }, [tabs.length])
 
   const setTabRef = (index: number) => (element: HTMLDivElement | null) => {
-    tabRefs.current[index] = element;
-  };
+    tabRefs.current[index] = element
+  }
 
   const getInitialPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (activeIndex === 0) {
-        return { left: 0, width: 60 };
+        return { left: 0, width: 60 }
       }
     }
 
@@ -156,16 +156,16 @@ function BaseCapsule({
       return {
         left: tabSizes[activeIndex].left,
         width: tabSizes[activeIndex].width,
-      };
+      }
     }
 
-    return { left: 0, width: 60 };
-  };
+    return { left: 0, width: 60 }
+  }
 
   const getHoverPosition = () => {
     if (!isInitialized && tabs.length > 0) {
       if (hoverIndex === 0) {
-        return { left: 0, width: 60 };
+        return { left: 0, width: 60 }
       }
     }
 
@@ -173,14 +173,14 @@ function BaseCapsule({
       return {
         left: tabSizes[hoverIndex].left,
         width: tabSizes[hoverIndex].width,
-      };
+      }
     }
 
-    return { left: 0, width: 60 };
-  };
+    return { left: 0, width: 60 }
+  }
 
-  const hoverPosition = getHoverPosition();
-  const initialPosition = getInitialPosition();
+  const hoverPosition = getHoverPosition()
+  const initialPosition = getInitialPosition()
 
   return (
     <CapsuleWrapper
@@ -237,7 +237,7 @@ function BaseCapsule({
       )}
 
       {tabs.map((tab, index) => {
-        const isActive = activeTab === tab.id;
+        const isActive = activeTab === tab.id
 
         return (
           <Tab
@@ -268,18 +268,18 @@ function BaseCapsule({
             )}
             {tab.title && tab.title}
           </Tab>
-        );
+        )
       })}
     </CapsuleWrapper>
-  );
+  )
 }
 
-export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles;
+export type CapsuleStyles = BaseCapsuleStyles & FieldLaneStyles
 
 export interface CapsuleProps
   extends Omit<BaseCapsuleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: CapsuleStyles;
+  styles?: CapsuleStyles
 }
 
 function Capsule({
@@ -298,11 +298,21 @@ function Capsule({
   errorIconPosition,
   ...rest
 }: CapsuleProps) {
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
+    ...capsuleStyles
+  } = styles ?? {}
   const inputId = StatefulForm.sanitizeId({
     prefix: "capsule",
     name,
     id,
-  });
+  })
 
   return (
     <FieldLane
@@ -319,10 +329,13 @@ function Capsule({
       required={rest.required}
       errorIconPosition={errorIconPosition}
       styles={{
-        bodyStyle: styles?.bodyStyle,
-        controlStyle: styles?.controlStyle,
-        containerStyle: styles?.containerStyle,
-        labelStyle: styles?.labelStyle,
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCapsule
@@ -330,21 +343,18 @@ function Capsule({
         id={inputId}
         disabled={disabled}
         showError={showError}
-        styles={{
-          capsuleWrapperStyle: styles?.capsuleWrapperStyle,
-          tabStyle: styles?.tabStyle,
-        }}
+        styles={capsuleStyles}
       />
     </FieldLane>
-  );
+  )
 }
 
 const CapsuleWrapper = styled.div<{
-  $full?: boolean;
-  $containerStyle?: CSSProp;
-  $disabled?: boolean;
-  $theme?: CapsuleThemeConfig;
-  $showError?: boolean;
+  $full?: boolean
+  $containerStyle?: CSSProp
+  $disabled?: boolean
+  $theme?: CapsuleThemeConfig
+  $showError?: boolean
 }>`
   *,
   ::before,
@@ -389,12 +399,12 @@ const CapsuleWrapper = styled.div<{
     `};
 
   ${({ $containerStyle }) => $containerStyle}
-`;
+`
 
 const ActiveBackground = styled(motion.div)<{
-  $style?: CSSProp;
-  $activeBackgroundColor?: string;
-  $theme?: CapsuleThemeConfig;
+  $style?: CSSProp
+  $activeBackgroundColor?: string
+  $theme?: CapsuleThemeConfig
 }>`
   position: absolute;
   top: 50%;
@@ -407,12 +417,12 @@ const ActiveBackground = styled(motion.div)<{
     $activeBackgroundColor ?? $theme?.active?.backgroundColor};
 
   ${({ $style }) => $style}
-`;
+`
 
 const HoverBorder = styled(motion.div)<{
-  $style?: CSSProp;
-  $activeBackgroundColor?: string;
-  $theme?: CapsuleThemeConfig;
+  $style?: CSSProp
+  $activeBackgroundColor?: string
+  $theme?: CapsuleThemeConfig
 }>`
   position: absolute;
   top: 50%;
@@ -426,18 +436,18 @@ const HoverBorder = styled(motion.div)<{
       $activeBackgroundColor ?? $theme?.hover?.borderColor};
 
   ${({ $style }) => $style}
-`;
+`
 
 const Tab = styled.div<{
-  $isActive?: boolean;
-  $activeTabStyle?: CSSProp;
-  $fontSize?: number;
-  $disabled?: boolean;
-  $activeColor?: string;
-  $theme?: CapsuleThemeConfig;
-  $mobile?: boolean;
-  $width?: number;
-  $tabsLength?: number;
+  $isActive?: boolean
+  $activeTabStyle?: CSSProp
+  $fontSize?: number
+  $disabled?: boolean
+  $activeColor?: string
+  $theme?: CapsuleThemeConfig
+  $mobile?: boolean
+  $width?: number
+  $tabsLength?: number
 }>`
   display: flex;
   flex-direction: row;
@@ -480,6 +490,6 @@ const Tab = styled.div<{
     `};
 
   ${({ $activeTabStyle }) => $activeTabStyle}
-`;
+`
 
-export { Capsule };
+export { Capsule }

@@ -1,25 +1,26 @@
-import { ChangeEvent, MouseEvent, ReactNode, useState } from "react";
-import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { RatingThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+import { ChangeEvent, MouseEvent, ReactNode, useState } from "react"
+import styled, { css, CSSProp } from "styled-components"
+import { StatefulForm } from "./stateful-form"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { useTheme } from "./../theme/provider"
+import { RatingThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
 export const RatingSize = {
   Small: "sm",
   Medium: "md",
   Large: "lg",
-} as const;
+} as const
 
-export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
+export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize]
 
 export type RatingScoreLabelRender =
-  ReactNode | ((props?: { value?: number; maxValue?: number }) => ReactNode);
+  | ReactNode
+  | ((props?: { value?: number; maxValue?: number }) => ReactNode)
 
 export interface RatingScoreLabel {
-  text?: RatingScoreLabelRender;
-  position?: RatingScoreLabelPosition;
+  text?: RatingScoreLabelRender
+  position?: RatingScoreLabelPosition
 }
 
 export const RatingScoreLabelPosition = {
@@ -27,25 +28,25 @@ export const RatingScoreLabelPosition = {
   Right: "right",
   Bottom: "bottom",
   Left: "left",
-} as const;
+} as const
 
 export type RatingScoreLabelPosition =
-  (typeof RatingScoreLabelPosition)[keyof typeof RatingScoreLabelPosition];
+  (typeof RatingScoreLabelPosition)[keyof typeof RatingScoreLabelPosition]
 
 interface BaseRatingProps {
-  rating?: string;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  scoreLabel?: RatingScoreLabel;
-  size?: RatingSize;
-  disabled?: boolean;
-  name?: string;
-  styles?: BaseRatingStyles;
-  id?: string;
+  rating?: string
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  scoreLabel?: RatingScoreLabel
+  size?: RatingSize
+  disabled?: boolean
+  name?: string
+  styles?: BaseRatingStyles
+  id?: string
 }
 interface BaseRatingStyles {
-  ratingWrapperStyle?: CSSProp;
-  starsWrapperStyle?: CSSProp;
-  ratingLabelStyle?: CSSProp;
+  ratingWrapperStyle?: CSSProp
+  starsWrapperStyle?: CSSProp
+  ratingLabelStyle?: CSSProp
 }
 
 function BaseRating({
@@ -58,62 +59,62 @@ function BaseRating({
   disabled,
   styles,
 }: BaseRatingProps) {
-  const { currentTheme } = useTheme();
-  const ratingTheme = currentTheme?.rating;
+  const { currentTheme } = useTheme()
+  const ratingTheme = currentTheme?.rating
 
   const { position = RatingScoreLabelPosition.Right, text: scoreText } =
-    scoreLabel ?? {};
+    scoreLabel ?? {}
 
-  const [hoverRating, setHoverRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0)
 
-  const maxValue = 5;
-  const rawValue = Number(rating || 0);
+  const maxValue = 5
+  const rawValue = Number(rating || 0)
 
-  const value = rawValue > maxValue ? (rawValue / 10) * maxValue : rawValue;
+  const value = rawValue > maxValue ? (rawValue / 10) * maxValue : rawValue
 
   const handleMouseMove = (e: MouseEvent<HTMLSpanElement>, index: number) => {
-    const { left, width } = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - left;
-    const isHalf = x < width / 2;
-    setHoverRating(isHalf ? index + 0.5 : index + 1);
-  };
+    const { left, width } = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - left
+    const isHalf = x < width / 2
+    setHoverRating(isHalf ? index + 0.5 : index + 1)
+  }
 
   const handleClick = (e: MouseEvent<HTMLSpanElement>, index: number) => {
-    const { left, width } = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - left;
-    const isHalf = x < width / 2;
-    const newRating = isHalf ? index + 0.5 : index + 1;
+    const { left, width } = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - left
+    const isHalf = x < width / 2
+    const newRating = isHalf ? index + 0.5 : index + 1
     const inputRatingEvent = {
       target: {
         name: name ?? "rating",
         value: String(newRating),
       },
-    } as ChangeEvent<HTMLInputElement>;
-    onChange?.(inputRatingEvent);
-  };
+    } as ChangeEvent<HTMLInputElement>
+    onChange?.(inputRatingEvent)
+  }
 
   const getStarType = (index: number) => {
-    const current = hoverRating || value;
-    if (current >= index + 1) return "full";
-    if (current >= index + 0.5) return "half";
-    return "empty";
-  };
+    const current = hoverRating || value
+    if (current >= index + 1) return "full"
+    if (current >= index + 0.5) return "half"
+    return "empty"
+  }
 
   const sizeMap = {
     sm: 16,
     md: 24,
     lg: 32,
-  };
+  }
 
-  const starSize = sizeMap[size];
+  const starSize = sizeMap[size]
 
   const renderStar = (type: "full" | "half" | "empty") => {
-    const STAR_COLOR = ratingTheme?.starFullColor;
-    const EMPTY_COLOR = ratingTheme?.starEmptyColor;
-    const BORDER_COLOR = ratingTheme?.starBorderColor;
+    const STAR_COLOR = ratingTheme?.starFullColor
+    const EMPTY_COLOR = ratingTheme?.starEmptyColor
+    const BORDER_COLOR = ratingTheme?.starBorderColor
 
     const pathD =
-      "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z";
+      "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
 
     const fullStar = (
       <svg
@@ -124,7 +125,7 @@ function BaseRating({
       >
         <path d={pathD} stroke={BORDER_COLOR} strokeWidth={1} />
       </svg>
-    );
+    )
 
     const halfStar = (
       <svg viewBox="0 0 24 24" width={starSize} height={starSize}>
@@ -141,7 +142,7 @@ function BaseRating({
           strokeWidth={1}
         />
       </svg>
-    );
+    )
 
     const emptyStar = (
       <svg
@@ -152,19 +153,17 @@ function BaseRating({
       >
         <path d={pathD} stroke={BORDER_COLOR} strokeWidth={1} />
       </svg>
-    );
+    )
 
-    if (type === "full") return fullStar;
-    if (type === "half") return halfStar;
-    return emptyStar;
-  };
+    if (type === "full") return fullStar
+    if (type === "half") return halfStar
+    return emptyStar
+  }
 
-  const editable = !disabled && !!onChange;
+  const editable = !disabled && !!onChange
 
   const scoreTextNode =
-    typeof scoreText === "function"
-      ? scoreText({ value, maxValue })
-      : scoreText;
+    typeof scoreText === "function" ? scoreText({ value, maxValue }) : scoreText
 
   return (
     <RatingWrapper
@@ -213,36 +212,35 @@ function BaseRating({
         </RatingLabel>
       )}
     </RatingWrapper>
-  );
+  )
 }
 
 function getPositionStyle(position: RatingScoreLabelPosition) {
   if (position === RatingScoreLabelPosition.Right) {
     return css`
       flex-direction: row;
-    `;
+    `
   } else if (position === RatingScoreLabelPosition.Left) {
     return css`
       flex-direction: row-reverse;
-    `;
+    `
   } else if (position === RatingScoreLabelPosition.Bottom) {
     return css`
       flex-direction: column;
-    `;
+    `
   } else {
     return css`
       flex-direction: column-reverse;
-    `;
+    `
   }
 }
 
-export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
+export type RatingStyles = BaseRatingStyles & FieldLaneStyles
 
 export interface RatingProps
-  extends
-    Omit<BaseRatingProps, "styles">,
+  extends Omit<BaseRatingProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: RatingStyles;
+  styles?: RatingStyles
 }
 
 function Rating({
@@ -264,15 +262,18 @@ function Rating({
     prefix: "rating",
     name,
     id,
-  });
+  })
 
   const {
     bodyStyle,
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...ratingStyles
-  } = styles ?? {};
+  } = styles ?? {}
 
   return (
     <FieldLane
@@ -293,6 +294,9 @@ function Rating({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseRating
@@ -303,7 +307,7 @@ function Rating({
         styles={ratingStyles}
       />
     </FieldLane>
-  );
+  )
 }
 
 const RatingWrapper = styled.div<{ $style?: CSSProp }>`
@@ -311,14 +315,14 @@ const RatingWrapper = styled.div<{ $style?: CSSProp }>`
   align-items: center;
   gap: 8px;
   ${({ $style }) => $style}
-`;
+`
 
 const StarsWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
   flex-direction: row;
   gap: 2px;
   ${({ $style }) => $style}
-`;
+`
 
 const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
   ${({ $editable, $disabled }) =>
@@ -332,13 +336,13 @@ const StarSpan = styled.span<{ $editable?: boolean; $disabled?: boolean }>`
         css`
           cursor: pointer;
         `}
-`;
+`
 
 const RatingLabel = styled.span<{
-  $size: "sm" | "md" | "lg";
-  $theme: RatingThemeConfig;
-  $disabled?: boolean;
-  $style?: CSSProp;
+  $size: "sm" | "md" | "lg"
+  $theme: RatingThemeConfig
+  $disabled?: boolean
+  $style?: CSSProp
 }>`
   font-weight: 500;
   color: ${({ $disabled, $theme }) =>
@@ -348,19 +352,19 @@ const RatingLabel = styled.span<{
       case "sm":
         return css`
           font-size: 0.875rem;
-        `;
+        `
       case "lg":
         return css`
           font-size: 1.25rem;
-        `;
+        `
       default:
         return css`
           font-size: 1rem;
-        `;
+        `
     }
   }}
 
   ${({ $style }) => $style}
-`;
+`
 
-export { Rating };
+export { Rating }

@@ -1,16 +1,31 @@
-import { css } from "styled-components";
-import { Tooltip } from "./tooltip";
-import { RiInformationLine } from "@remixicon/react";
-import { applyClassName } from "./../constants/classname";
+import { css, CSSProp } from "styled-components"
+import { Tooltip } from "./tooltip"
+import { RiInformationLine } from "@remixicon/react"
+import { applyClassName } from "./../constants/classname"
+import { ReactNode } from "react"
+import { Figure } from "./figure"
 
 export interface HelperProps {
-  value: string;
-  showDelayPeriod?: number;
-  className?: string;
-  id?: string;
+  value: ReactNode
+  showDelayPeriod?: number
+  className?: string
+  id?: string
+  styles?: HelperStyles
 }
 
-function Helper({ value, showDelayPeriod = 400, className, id }: HelperProps) {
+export interface HelperStyles {
+  self?: CSSProp
+  drawerStyle?: CSSProp
+  arrowStyle?: CSSProp
+}
+
+function Helper({
+  value,
+  showDelayPeriod = 400,
+  className,
+  id,
+  styles,
+}: HelperProps) {
   return (
     <Tooltip
       id={id}
@@ -23,24 +38,30 @@ function Helper({ value, showDelayPeriod = 400, className, id }: HelperProps) {
           ${placement?.endsWith("start") &&
           css`
             left: 5px;
-          `}
+          `};
           ${placement?.endsWith("end") &&
           css`
             right: 5px;
-          `}
+          `};
+
+          ${styles?.arrowStyle}
         `,
+        drawerStyle: styles?.drawerStyle,
       }}
       showDelayPeriod={showDelayPeriod}
       dialog={value}
     >
-      <RiInformationLine
-        style={{
-          cursor: "help",
-        }}
+      <Figure
+        image={RiInformationLine}
         size={18}
+        styles={{
+          self: css`
+            ${styles?.self}
+          `,
+        }}
       />
     </Tooltip>
-  );
+  )
 }
 
-export { Helper };
+export { Helper }

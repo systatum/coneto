@@ -7,49 +7,49 @@ import {
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
-import styled, { css, CSSProp } from "styled-components";
+} from "react"
+import styled, { css, CSSProp } from "styled-components"
 import {
   FieldLane,
   FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
-} from "./field-lane";
-import { StatefulForm } from "./stateful-form";
-import { useTheme } from "./../theme/provider";
-import { TimeboxThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
-import { Wheel } from "./wheel";
+} from "./field-lane"
+import { StatefulForm } from "./stateful-form"
+import { useTheme } from "./../theme/provider"
+import { TimeboxThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
+import { Wheel } from "./wheel"
 
 interface BaseTimeboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     "style" | "placeholder" | "value" | "name"
   > {
-  withSeconds?: boolean;
-  editable?: boolean;
-  styles?: TimeboxStyles;
-  showError?: boolean;
-  value?: string;
-  name?: string;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void;
-  placeholder?: TimeboxPlaceholder;
-  mobile?: boolean;
+  withSeconds?: boolean
+  editable?: boolean
+  styles?: TimeboxStyles
+  showError?: boolean
+  value?: string
+  name?: string
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement | HTMLDivElement>) => void
+  placeholder?: TimeboxPlaceholder
+  mobile?: boolean
 }
 
 export interface TimeboxStyles {
-  self?: CSSProp;
-  inputWrapperStyle?: CSSProp;
+  self?: CSSProp
+  inputWrapperStyle?: CSSProp
 }
 
 export interface TimeboxPlaceholder {
-  hour?: string;
-  minute?: string;
-  second?: string;
+  hour?: string
+  minute?: string
+  second?: string
 }
 
-export type TimeboxDropdownOption = FieldLaneDropdownOption;
+export type TimeboxDropdownOption = FieldLaneDropdownOption
 
 const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
   (
@@ -67,183 +67,183 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
       id,
       mobile,
     },
-    ref
+    ref,
   ) => {
-    const { currentTheme } = useTheme();
-    const timeboxTheme = currentTheme?.timebox;
+    const { currentTheme } = useTheme()
+    const timeboxTheme = currentTheme?.timebox
 
     const {
       hour: placeholderHour = "HH",
       minute: placeholderMinute = "MM",
       second: placeholderSecond = "SS",
-    } = placeholder ?? {};
+    } = placeholder ?? {}
 
-    const stateValue = value ? value : "";
+    const stateValue = value ? value : ""
 
-    const [valueLocal, setValueLocal] = useState<string>(stateValue);
-    const [hour, setHour] = useState<string>("");
-    const [minute, setMinute] = useState<string>("");
-    const [second, setSecond] = useState<string>("");
-    const [isFocused, setIsFocused] = useState(false);
+    const [valueLocal, setValueLocal] = useState<string>(stateValue)
+    const [hour, setHour] = useState<string>("")
+    const [minute, setMinute] = useState<string>("")
+    const [second, setSecond] = useState<string>("")
+    const [isFocused, setIsFocused] = useState(false)
 
-    const hourRef = useRef<HTMLInputElement>(null);
-    const minuteRef = useRef<HTMLInputElement>(null);
-    const secondRef = useRef<HTMLInputElement>(null);
+    const hourRef = useRef<HTMLInputElement>(null)
+    const minuteRef = useRef<HTMLInputElement>(null)
+    const secondRef = useRef<HTMLInputElement>(null)
 
-    const hasBeenFocused = useRef(false);
-    const blurTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const hasBeenFocused = useRef(false)
+    const blurTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-    const hourVal = useRef(hour);
-    const minuteVal = useRef(minute);
-    const secondVal = useRef(second);
+    const hourVal = useRef(hour)
+    const minuteVal = useRef(minute)
+    const secondVal = useRef(second)
 
-    useImperativeHandle(ref, () => hourRef.current!);
+    useImperativeHandle(ref, () => hourRef.current!)
 
-    const dataType = withSeconds ? `timebox-with-second` : `timebox`;
+    const dataType = withSeconds ? `timebox-with-second` : `timebox`
 
     useEffect(() => {
       if (valueLocal) {
-        const parts = valueLocal.split(":");
-        const [hh, mm, ss] = parts;
-        setHour(hh ?? "00");
-        setMinute(mm ?? "00");
-        setSecond(ss ?? "00");
+        const parts = valueLocal.split(":")
+        const [hh, mm, ss] = parts
+        setHour(hh ?? "00")
+        setMinute(mm ?? "00")
+        setSecond(ss ?? "00")
       }
-    }, []);
+    }, [])
 
     const handleChange = (
       type: "hour" | "minute" | "second",
-      value: string
+      value: string,
     ) => {
-      minuteVal.current = minute;
-      hourVal.current = hour;
-      secondVal.current = second;
+      minuteVal.current = minute
+      hourVal.current = hour
+      secondVal.current = second
 
-      const newDigit = value.slice(-1);
-      const numeric = /^\d$/.test(newDigit);
+      const newDigit = value.slice(-1)
+      const numeric = /^\d$/.test(newDigit)
 
-      if (!numeric && value !== "") return;
+      if (!numeric && value !== "") return
 
-      const maxValues = { hour: 24, minute: 59, second: 59 };
+      const maxValues = { hour: 24, minute: 59, second: 59 }
 
       const refMap = {
         hour: hourRef,
         minute: minuteRef,
         second: secondRef,
-      };
+      }
 
       const setters = {
         hour: setHour,
         minute: setMinute,
         second: setSecond,
-      };
+      }
 
       let nextType: "minute" | "second" | null =
         type === "hour"
           ? "minute"
           : type === "minute" && withSeconds
             ? "second"
-            : null;
+            : null
 
-      let nextHour = hour;
-      let nextMinute = minute;
-      let nextSecond = second;
+      let nextHour = hour
+      let nextMinute = minute
+      let nextSecond = second
 
       const setNext = (t: "hour" | "minute" | "second", val: string) => {
         if (t === "hour") {
-          nextHour = val;
-          hourVal.current = val;
+          nextHour = val
+          hourVal.current = val
         }
         if (t === "minute") {
-          nextMinute = val;
-          minuteVal.current = val;
+          nextMinute = val
+          minuteVal.current = val
         }
         if (t === "second") {
-          nextSecond = val;
-          secondVal.current = val;
+          nextSecond = val
+          secondVal.current = val
         }
-        setters[t](val);
-      };
+        setters[t](val)
+      }
 
       const callOnChange = () => {
         const formatted = [
           (nextHour || "0").padStart(2, "0"),
           (nextMinute || "0").padStart(2, "0"),
           (nextSecond || "0").padStart(2, "0"),
-        ].join(":");
+        ].join(":")
 
-        setValueLocal(formatted);
+        setValueLocal(formatted)
         if (onChange) {
           onChange({
             target: { name, value: formatted },
-          } as ChangeEvent<HTMLInputElement>);
+          } as ChangeEvent<HTMLInputElement>)
         }
-      };
+      }
 
       if (value.length <= 2) {
-        let num = Number(value);
+        let num = Number(value)
 
         if (value.length === 2 && num > maxValues[type]) {
-          const firstDigit = value[0];
-          const secondDigit = value[1];
+          const firstDigit = value[0]
+          const secondDigit = value[1]
 
-          setNext(type, firstDigit);
+          setNext(type, firstDigit)
 
           if (nextType && !mobile) {
-            refMap[nextType].current?.focus();
-            setNext(nextType, secondDigit);
+            refMap[nextType].current?.focus()
+            setNext(nextType, secondDigit)
           }
 
-          callOnChange();
-          return;
+          callOnChange()
+          return
         } else if (value.length === 2) {
-          setNext(type, value);
+          setNext(type, value)
           if (nextType && !mobile) {
-            refMap[nextType].current?.focus();
+            refMap[nextType].current?.focus()
           }
-          callOnChange();
-          return;
+          callOnChange()
+          return
         }
 
-        setNext(type, value);
+        setNext(type, value)
       }
 
       if (value.length > 2) {
-        const overflowDigit = value[value.length - 1];
-        const trimmedCurrent = value.slice(0, 2);
+        const overflowDigit = value[value.length - 1]
+        const trimmedCurrent = value.slice(0, 2)
 
-        setNext(type, trimmedCurrent);
+        setNext(type, trimmedCurrent)
 
         if (nextType && !mobile) {
-          refMap[nextType].current?.focus();
+          refMap[nextType].current?.focus()
 
-          const base = nextType === "minute" ? nextMinute : nextSecond;
-          const nextValue = (base + overflowDigit).slice(-2);
-          setNext(nextType, nextValue);
+          const base = nextType === "minute" ? nextMinute : nextSecond
+          const nextValue = (base + overflowDigit).slice(-2)
+          setNext(nextType, nextValue)
         }
       }
 
-      callOnChange();
-    };
+      callOnChange()
+    }
 
     const focusSmartField = () => {
       if (!hourVal.current || hourVal.current.length < 2) {
-        hourRef.current?.focus();
+        hourRef.current?.focus()
       } else if (!minuteVal.current || minuteVal.current.length < 2) {
-        minuteRef.current?.focus();
+        minuteRef.current?.focus()
       } else if (
         withSeconds &&
         (!secondVal.current || secondVal.current.length < 2)
       ) {
-        secondRef.current?.focus();
+        secondRef.current?.focus()
       } else {
         if (withSeconds) {
-          secondRef.current?.focus();
+          secondRef.current?.focus()
         } else {
-          minuteRef.current?.focus();
+          minuteRef.current?.focus()
         }
       }
-    };
+    }
 
     const wheelParts = {
       hour: {
@@ -258,7 +258,7 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
         id: "second",
         values: seconds,
       },
-    };
+    }
 
     return (
       <>
@@ -270,21 +270,21 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           $theme={timeboxTheme}
           onKeyDown={(e) => {
             if (onKeyDown && !mobile) {
-              onKeyDown(e);
+              onKeyDown(e)
             }
           }}
           onBlur={() => {
-            setIsFocused(false);
+            setIsFocused(false)
 
-            if (blurTimeout.current) clearTimeout(blurTimeout.current);
+            if (blurTimeout.current) clearTimeout(blurTimeout.current)
             blurTimeout.current = setTimeout(() => {
               const anyFocused = [hourRef, minuteRef, secondRef].some(
-                (r) => r.current === document.activeElement
-              );
+                (r) => r.current === document.activeElement,
+              )
               if (!anyFocused) {
-                hasBeenFocused.current = false;
+                hasBeenFocused.current = false
               }
-            }, 0);
+            }, 0)
           }}
         >
           <Input
@@ -304,29 +304,29 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             onChange={(e) => handleChange("hour", e.target.value)}
             $theme={timeboxTheme}
             onFocus={() => {
-              setIsFocused(true);
+              setIsFocused(true)
 
               if (!hasBeenFocused.current) {
-                hasBeenFocused.current = true;
-                focusSmartField();
+                hasBeenFocused.current = true
+                focusSmartField()
               }
             }}
             min={0}
             max={24}
             $inputStyle={styles?.self}
             onKeyDown={(e) => {
-              if (mobile) return;
+              if (mobile) return
 
-              const { selectionEnd, value } = e.currentTarget;
+              const { selectionEnd, value } = e.currentTarget
 
               if (e.key === "ArrowRight" && selectionEnd === value.length) {
-                e.preventDefault();
-                minuteRef.current?.focus();
+                e.preventDefault()
+                minuteRef.current?.focus()
               }
 
               if (e.key === ":") {
-                e.preventDefault();
-                minuteRef.current?.focus();
+                e.preventDefault()
+                minuteRef.current?.focus()
               }
             }}
           />
@@ -346,37 +346,37 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             value={minute}
             onChange={(e) => handleChange("minute", e.target.value)}
             onFocus={() => {
-              setIsFocused(true);
+              setIsFocused(true)
             }}
             onBlur={() => {
-              setIsFocused(false);
+              setIsFocused(false)
             }}
             min={0}
             max={59}
             $inputStyle={styles?.self}
             onKeyDown={(e) => {
-              if (mobile) return;
+              if (mobile) return
 
-              const { selectionStart, selectionEnd, value } = e.currentTarget;
+              const { selectionStart, selectionEnd, value } = e.currentTarget
 
               if (e.key === "Backspace" && selectionStart === 0) {
-                e.preventDefault();
-                hourRef.current?.focus();
+                e.preventDefault()
+                hourRef.current?.focus()
               }
 
               if (e.key === "ArrowRight" && selectionEnd === value.length) {
-                e.preventDefault();
-                if (withSeconds) secondRef.current?.focus();
+                e.preventDefault()
+                if (withSeconds) secondRef.current?.focus()
               }
 
               if (e.key === "ArrowLeft" && selectionStart === 0) {
-                e.preventDefault();
-                hourRef.current?.focus();
+                e.preventDefault()
+                hourRef.current?.focus()
               }
 
               if (e.key === ":") {
-                e.preventDefault();
-                secondRef.current?.focus();
+                e.preventDefault()
+                secondRef.current?.focus()
               }
             }}
           />
@@ -398,29 +398,29 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
                 value={second}
                 onChange={(e) => handleChange("second", e.target.value)}
                 onFocus={() => {
-                  setIsFocused(true);
+                  setIsFocused(true)
                 }}
                 onBlur={() => {
-                  setIsFocused(false);
+                  setIsFocused(false)
                 }}
                 min={0}
                 max={59}
                 $inputStyle={styles?.self}
                 onKeyDown={(e) => {
-                  if (mobile) return;
+                  if (mobile) return
 
-                  const { selectionStart } = e.currentTarget;
+                  const { selectionStart } = e.currentTarget
                   if (e.key === "Backspace" && selectionStart === 0) {
-                    e.preventDefault();
-                    minuteRef.current?.focus();
+                    e.preventDefault()
+                    minuteRef.current?.focus()
                   }
 
                   if (
                     e.key === "ArrowLeft" &&
                     e.currentTarget.selectionStart === 0
                   ) {
-                    e.preventDefault();
-                    minuteRef.current?.focus();
+                    e.preventDefault()
+                    minuteRef.current?.focus()
                   }
                 }}
               />
@@ -450,13 +450,13 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
             }}
             onChange={(value, changedId) => {
               if (changedId === "hour") {
-                handleChange("hour", value.hour);
+                handleChange("hour", value.hour)
               }
               if (changedId === "minute") {
-                handleChange("minute", value.minute);
+                handleChange("minute", value.minute)
               }
               if (withSeconds && changedId === "second") {
-                handleChange("second", value.second);
+                handleChange("second", value.second)
               }
             }}
             parts={[
@@ -472,17 +472,17 @@ const BaseTimebox = forwardRef<HTMLInputElement, BaseTimeboxProps>(
           />
         )}
       </>
-    );
-  }
-);
+    )
+  },
+)
 
 export interface TimeboxProps
   extends Omit<BaseTimeboxProps, "styles" | "inputId">,
     Omit<FieldLaneProps, "styles" | "inputId" | "type"> {
-  styles?: TimeboxStyles & FieldLaneStyles;
+  styles?: TimeboxStyles & FieldLaneStyles
 }
 
-export type TimeboxAction = FieldLaneAction;
+export type TimeboxAction = FieldLaneAction
 
 const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
   ({ ...props }, ref) => {
@@ -500,16 +500,25 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelPosition,
       className,
       ...rest
-    } = props;
+    } = props
 
     const inputId = StatefulForm.sanitizeId({
       prefix: "timebox",
       name: props.name,
       id: props.id,
-    });
+    })
 
-    const { bodyStyle, containerStyle, controlStyle, labelStyle } =
-      styles ?? {};
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      inputWrapperStyle,
+      self,
+    } = styles ?? {}
 
     return (
       <FieldLane
@@ -532,6 +541,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTimebox
@@ -546,23 +558,23 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
-              `}
-              ${styles?.inputWrapperStyle}
+              `};
+              ${inputWrapperStyle};
             `,
-            self: styles?.self,
+            self,
           }}
         />
       </FieldLane>
-    );
-  }
-);
+    )
+  },
+)
 
 const InputGroup = styled.div<{
-  $focused: boolean;
-  $error: boolean;
-  $style?: CSSProp;
-  $disabled?: boolean;
-  $theme?: TimeboxThemeConfig;
+  $focused: boolean
+  $error: boolean
+  $style?: CSSProp
+  $disabled?: boolean
+  $theme?: TimeboxThemeConfig
 }>`
   display: flex;
   flex-direction: row;
@@ -591,11 +603,11 @@ const InputGroup = styled.div<{
         `};
 
   ${({ $style }) => $style}
-`;
+`
 
 const Input = styled.input<{
-  $inputStyle?: CSSProp;
-  $theme?: TimeboxThemeConfig;
+  $inputStyle?: CSSProp
+  $theme?: TimeboxThemeConfig
 }>`
   min-width: 50px;
   max-width: 50px;
@@ -628,22 +640,22 @@ const Input = styled.input<{
   }
 
   ${({ $inputStyle }) => $inputStyle}
-`;
+`
 
 const Colon = styled.span<{ $theme?: TimeboxThemeConfig }>`
   transform: translateY(-1px);
-`;
+`
 
 const hours = Array.from({ length: 24 }, (_, i) => {
-  const h = i;
-  return { value: h.toString(), text: h.toString() };
-});
+  const h = i
+  return { value: h.toString(), text: h.toString() }
+})
 
 const minutes = Array.from({ length: 60 }, (_, i) => ({
   value: i.toString(),
   text: i.toString().padStart(2, "0"),
-}));
+}))
 
-const seconds = minutes;
+const seconds = minutes
 
-export { Timebox };
+export { Timebox }

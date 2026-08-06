@@ -1,47 +1,46 @@
-import styled, { css, CSSProp } from "styled-components";
+import styled, { css, CSSProp } from "styled-components"
 import {
   DetailedHTMLProps,
   InputHTMLAttributes,
   useEffect,
   useRef,
-} from "react";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { CheckboxThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "react"
+import { StatefulForm } from "./stateful-form"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { useTheme } from "./../theme/provider"
+import { CheckboxThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
-type WithoutStyle<T> = Omit<T, "style">;
+type WithoutStyle<T> = Omit<T, "style">
 
 export interface CheckboxOption {
-  value: string;
-  label: string;
-  description: string;
+  value: string
+  label: string
+  description: string
 }
 
 interface BaseCheckboxProps
   extends WithoutStyle<
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   > {
-  label?: string;
-  name?: string;
-  showError?: boolean;
-  errorMessage?: string;
-  indeterminate?: boolean;
-  description?: string;
-  highlightOnChecked?: boolean;
-  styles?: BaseCheckboxStyles;
-  helper?: string;
+  label?: string
+  name?: string
+  showError?: boolean
+  errorMessage?: string
+  indeterminate?: boolean
+  description?: string
+  highlightOnChecked?: boolean
+  styles?: BaseCheckboxStyles
 }
 
 interface BaseCheckboxStyles {
-  self?: CSSProp;
-  inputWrapperStyle?: CSSProp;
-  titleStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  iconStyle?: CSSProp;
-  boxStyle?: CSSProp;
-  descriptionStyle?: CSSProp;
+  self?: CSSProp
+  inputWrapperStyle?: CSSProp
+  titleStyle?: CSSProp
+  labelStyle?: CSSProp
+  iconStyle?: CSSProp
+  boxStyle?: CSSProp
+  descriptionStyle?: CSSProp
 }
 
 function BaseCheckbox({
@@ -55,18 +54,18 @@ function BaseCheckbox({
   id,
   ...props
 }: BaseCheckboxProps) {
-  const { currentTheme } = useTheme();
-  const checkboxTheme = currentTheme.checkbox;
+  const { currentTheme } = useTheme()
+  const checkboxTheme = currentTheme.checkbox
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const isChecked = Boolean(props.checked);
+  const isChecked = Boolean(props.checked)
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.indeterminate = indeterminate;
+      inputRef.current.indeterminate = indeterminate
     }
-  }, [indeterminate]);
+  }, [indeterminate])
 
   return (
     <InputWrapper
@@ -151,15 +150,15 @@ function BaseCheckbox({
         </DescriptionText>
       )}
     </InputWrapper>
-  );
+  )
 }
 
-export type CheckboxStyles = BaseCheckboxStyles & FieldLaneStyles;
+export type CheckboxStyles = BaseCheckboxStyles & FieldLaneStyles
 
 export interface CheckboxProps
   extends Omit<BaseCheckboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: CheckboxStyles;
+  styles?: CheckboxStyles
 }
 
 function Checkbox({
@@ -183,15 +182,18 @@ function Checkbox({
     prefix: "checkbox",
     name,
     id,
-  });
+  })
 
   const {
     bodyStyle,
     controlStyle,
     containerStyle,
     titleStyle,
-    ...CheckboxStyles
-  } = styles ?? {};
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    ...checkboxStyles
+  } = styles ?? {}
 
   return (
     <FieldLane
@@ -218,6 +220,9 @@ function Checkbox({
           ${containerStyle}
         `,
         labelStyle: titleStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseCheckbox
@@ -225,22 +230,22 @@ function Checkbox({
         id={inputId}
         disabled={disabled}
         showError={showError}
-        styles={CheckboxStyles}
+        styles={checkboxStyles}
         label={label}
         name={name}
         description={description}
       />
     </FieldLane>
-  );
+  )
 }
 
 const InputWrapper = styled.label<{
-  $hasDescription: boolean;
-  $highlight: boolean;
-  $checked: boolean;
-  $theme: CheckboxThemeConfig;
-  $style?: CSSProp;
-  $disabled?: boolean;
+  $hasDescription: boolean
+  $highlight: boolean
+  $checked: boolean
+  $theme: CheckboxThemeConfig
+  $style?: CSSProp
+  $disabled?: boolean
 }>`
   width: 100%;
   display: flex;
@@ -264,11 +269,11 @@ const InputWrapper = styled.label<{
       &:hover {
         background-color: ${() => {
           if ($highlight && $checked) {
-            return $theme?.highlightCheckedBackgroundColor ?? "#E7F2FC";
+            return $theme?.highlightCheckedBackgroundColor ?? "#E7F2FC"
           } else if ($highlight) {
-            return $theme?.highlightHoverBackgroundColor;
+            return $theme?.highlightHoverBackgroundColor
           } else {
-            return "transparent";
+            return "transparent"
           }
         }};
       }
@@ -283,7 +288,7 @@ const InputWrapper = styled.label<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
   position: relative;
@@ -292,18 +297,18 @@ const CheckboxBox = styled.div<{ $highlight: boolean; $style?: CSSProp }>`
   justify-content: center;
 
   ${({ $style }) => $style}
-`;
+`
 
 const HiddenCheckbox = styled.input<{
-  $isError?: boolean;
-  $checked?: boolean;
-  $indeterminate?: boolean;
-  $backgroundColor?: string;
-  $checkedBackgroundColor?: string;
-  $borderColor?: string;
-  $checkedBorderColor?: string;
-  $style?: CSSProp;
-  $disabled?: boolean;
+  $isError?: boolean
+  $checked?: boolean
+  $indeterminate?: boolean
+  $backgroundColor?: string
+  $checkedBackgroundColor?: string
+  $borderColor?: string
+  $checkedBorderColor?: string
+  $style?: CSSProp
+  $disabled?: boolean
 }>`
   margin: 0;
   padding: 0;
@@ -346,12 +351,12 @@ const HiddenCheckbox = styled.input<{
       }
     `}
   ${({ $style }) => $style};
-`;
+`
 
 const Icon = styled.svg<{
-  $visible?: boolean;
-  $iconColor?: string;
-  $style?: CSSProp;
+  $visible?: boolean
+  $iconColor?: string
+  $style?: CSSProp
 }>`
   position: absolute;
   top: 50%;
@@ -366,7 +371,7 @@ const Icon = styled.svg<{
   transition: transform 150ms;
   pointer-events: none;
   ${({ $style }) => $style};
-`;
+`
 
 const InputContainer = styled.div`
   display: flex;
@@ -374,12 +379,12 @@ const InputContainer = styled.div`
   align-items: center;
   gap: 0.5rem;
   height: 100%;
-`;
+`
 
 const DescriptionText = styled.span<{
-  $highlight?: boolean;
-  $descriptionColor?: string;
-  $style?: CSSProp;
+  $highlight?: boolean
+  $descriptionColor?: string
+  $style?: CSSProp
 }>`
   ${({ $highlight }) =>
     $highlight &&
@@ -389,6 +394,6 @@ const DescriptionText = styled.span<{
   margin-left: 24px;
   color: ${({ $descriptionColor }) => $descriptionColor ?? "#4b5563"};
   ${({ $style }) => $style};
-`;
+`
 
-export { Checkbox };
+export { Checkbox }

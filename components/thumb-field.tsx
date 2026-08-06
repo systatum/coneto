@@ -4,48 +4,48 @@ import {
   RiThumbDownLine,
   RiThumbUpFill,
   RiThumbUpLine,
-} from "@remixicon/react";
-import { ChangeEvent, ReactNode, useRef, useState } from "react";
-import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { ThumbFieldThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "@remixicon/react"
+import { ChangeEvent, ReactNode, useRef, useState } from "react"
+import styled, { css, CSSProp } from "styled-components"
+import { StatefulForm } from "./stateful-form"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { useTheme } from "./../theme/provider"
+import { ThumbFieldThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 
 interface BaseThumbFieldProps {
-  value?: boolean | null;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  thumbsUpBackgroundColor?: string;
-  thumbsDownBackgroundColor?: string;
-  disabled?: boolean;
-  name?: string;
-  styles?: BaseThumbFieldStyles;
-  id?: string;
-  showError?: boolean;
-  thumbText?: ThumbFieldThumbText;
+  value?: boolean | null
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+  thumbsUpBackgroundColor?: string
+  thumbsDownBackgroundColor?: string
+  disabled?: boolean
+  name?: string
+  styles?: BaseThumbFieldStyles
+  id?: string
+  showError?: boolean
+  thumbText?: ThumbFieldThumbText
 }
 
 export interface ThumbFieldThumbText {
-  up?: ReactNode;
-  down?: ReactNode;
+  up?: ReactNode
+  down?: ReactNode
 }
 
 interface BaseThumbFieldStyles {
-  triggerWrapperStyle?: CSSProp;
-  triggerUpStyle?: CSSProp;
-  triggerDownStyle?: CSSProp;
-  thumbUpTextStyle?: CSSProp;
-  thumbDownTextStyle?: CSSProp;
+  triggerWrapperStyle?: CSSProp
+  triggerUpStyle?: CSSProp
+  triggerDownStyle?: CSSProp
+  thumbUpTextStyle?: CSSProp
+  thumbDownTextStyle?: CSSProp
 }
 
 const ThumbFieldValue = {
   Up: "up",
   Down: "down",
   Blank: "blank",
-} as const;
+} as const
 
-type ThumbFieldValue = (typeof ThumbFieldValue)[keyof typeof ThumbFieldValue];
+type ThumbFieldValue = (typeof ThumbFieldValue)[keyof typeof ThumbFieldValue]
 
 function BaseThumbField({
   onChange,
@@ -59,26 +59,26 @@ function BaseThumbField({
   styles,
   id,
 }: BaseThumbFieldProps) {
-  const { currentTheme } = useTheme();
-  const thumbFieldTheme = currentTheme.thumbField;
+  const { currentTheme } = useTheme()
+  const thumbFieldTheme = currentTheme.thumbField
 
   const inputId = StatefulForm.sanitizeId({
     prefix: "thumbfield",
     name,
     id,
-  });
+  })
 
   const thumbValue =
     value === true
       ? ThumbFieldValue.Up
       : value === false
         ? ThumbFieldValue.Down
-        : ThumbFieldValue.Blank;
+        : ThumbFieldValue.Blank
 
-  const thumbInputRef = useRef<HTMLInputElement>(null);
+  const thumbInputRef = useRef<HTMLInputElement>(null)
 
   const handleChangeValue = (value: ThumbFieldValue) => {
-    if (disabled) return;
+    if (disabled) return
 
     if (onChange) {
       const syntheticEvent = {
@@ -91,11 +91,11 @@ function BaseThumbField({
                 ? false
                 : "",
         },
-      } as ChangeEvent<HTMLInputElement>;
+      } as ChangeEvent<HTMLInputElement>
 
-      onChange(syntheticEvent);
+      onChange(syntheticEvent)
     }
-  };
+  }
 
   return (
     <InputGroup aria-label="thumb-field" $style={styles?.triggerWrapperStyle}>
@@ -173,16 +173,15 @@ function BaseThumbField({
         </ErrorIconWrapper>
       )}
     </InputGroup>
-  );
+  )
 }
 
-export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
+export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles
 
 export interface ThumbFieldProps
-  extends
-    Omit<BaseThumbFieldProps, "styles">,
+  extends Omit<BaseThumbFieldProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: ThumbFieldStyles;
+  styles?: ThumbFieldStyles
 }
 
 function ThumbField({
@@ -204,15 +203,18 @@ function ThumbField({
     prefix: "ThumbField",
     name,
     id,
-  });
+  })
 
   const {
     bodyStyle,
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...thumbFieldStyles
-  } = styles ?? {};
+  } = styles ?? {}
 
   return (
     <FieldLane
@@ -233,6 +235,9 @@ function ThumbField({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseThumbField
@@ -244,14 +249,14 @@ function ThumbField({
         showError={showError}
       />
     </FieldLane>
-  );
+  )
 }
 
 const ThumbText = styled.span<{ $style?: CSSProp }>`
   font-size: 14px;
 
   ${({ $style }) => $style}
-`;
+`
 
 const InputGroup = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -259,15 +264,15 @@ const InputGroup = styled.div<{ $style?: CSSProp }>`
   gap: 8px;
   align-items: center;
   ${({ $style }) => $style};
-`;
+`
 
 const TriggerWrapper = styled.div<{
-  $triggerStyle?: CSSProp;
-  $active?: boolean;
-  $activeColor?: string;
-  $showError?: boolean;
-  $disabled?: boolean;
-  $theme?: ThumbFieldThemeConfig;
+  $triggerStyle?: CSSProp
+  $active?: boolean
+  $activeColor?: string
+  $showError?: boolean
+  $disabled?: boolean
+  $theme?: ThumbFieldThemeConfig
 }>`
   display: flex;
   align-items: center;
@@ -299,7 +304,7 @@ const TriggerWrapper = styled.div<{
   }
 
   ${({ $triggerStyle }) => $triggerStyle}
-`;
+`
 
 const ErrorIconWrapper = styled.div`
   background-color: #dc2626;
@@ -309,6 +314,6 @@ const ErrorIconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`
 
-export { ThumbField };
+export { ThumbField }

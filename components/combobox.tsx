@@ -10,7 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
+} from "react"
 import {
   castValue,
   DrawerProps,
@@ -19,116 +19,115 @@ import {
   SelectboxLabels,
   SelectboxSelectedOptions,
   SelectboxStyles,
-} from "./selectbox";
-import styled, { css, CSSProp } from "styled-components";
-import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
-import { StatefulForm } from "./stateful-form";
-import { useTheme } from "./../theme/provider";
-import { ComboboxThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
+} from "./selectbox"
+import styled, { css, CSSProp } from "styled-components"
+import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane"
+import { StatefulForm } from "./stateful-form"
+import { useTheme } from "./../theme/provider"
+import { ComboboxThemeConfig } from "./../theme"
+import { applyClassName } from "./../constants/classname"
 import {
   TreeList,
   TreeListAction,
   TreeListContent,
   TreeListItem,
   TreeListItemAction,
-} from "./treelist";
-import { Searchbox, SearchboxProps } from "./searchbox";
-import { Checkbox, CheckboxProps } from "./checkbox";
-import { createPortal } from "react-dom";
+} from "./treelist"
+import { Searchbox, SearchboxProps } from "./searchbox"
+import { Checkbox, CheckboxProps } from "./checkbox"
+import { createPortal } from "react-dom"
 
 interface BaseComboboxProps {
-  selectedOptions?: SelectboxSelectedOptions;
-  onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
-  clearable?: boolean;
-  placeholder?: string;
-  emptySlate?: string;
-  highlightOnMatch?: boolean;
-  actions?: ComboboxAction[];
-  name?: string;
-  multiple?: boolean;
-  maxSelectableItems?: number | undefined;
-  styles?: ComboboxStyles;
-  helper?: string;
-  disabled?: boolean;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
-  strict?: boolean;
-  options: ComboboxOption[];
-  isLoading?: boolean;
-  labels?: ComboboxLabelsProps;
-  mobile?: boolean;
-  drawerHeight?: string;
+  selectedOptions?: SelectboxSelectedOptions
+  onChange?: (selectedOptions: SelectboxSelectedOptions) => void
+  clearable?: boolean
+  placeholder?: string
+  emptySlate?: string
+  highlightOnMatch?: boolean
+  actions?: ComboboxAction[]
+  name?: string
+  multiple?: boolean
+  maxSelectableItems?: number | undefined
+  styles?: ComboboxStyles
+  disabled?: boolean
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+  onClick?: () => void
+  strict?: boolean
+  options: ComboboxOption[]
+  isLoading?: boolean
+  labels?: ComboboxLabelsProps
+  mobile?: boolean
+  drawerHeight?: string
 }
 
 export const ComboboxGroupInitialState = {
   Opened: "opened",
   Closed: "closed",
-} as const;
+} as const
 
 export type ComboboxGroupInitialState =
-  (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState];
+  (typeof ComboboxGroupInitialState)[keyof typeof ComboboxGroupInitialState]
 
 export type ComboboxOption = SelectboxOption &
   ComboboxActionOption & {
-    groupOptions?: ComboboxOption[];
-    groupSetting?: ComboboxGroupSetting;
-  };
+    groupOptions?: ComboboxOption[]
+    groupSetting?: ComboboxGroupSetting
+  }
 
 interface ComboboxGroupSetting {
-  collapsible?: boolean;
-  initialState?: ComboboxGroupInitialState;
+  collapsible?: boolean
+  initialState?: ComboboxGroupInitialState
 }
 
 interface ComboboxActionOption {
-  actions?: (id?: string) => ComboboxItemAction[];
+  actions?: (id?: string) => ComboboxItemAction[]
 }
 
-export type ComboboxItemAction = TreeListItemAction;
+export type ComboboxItemAction = TreeListItemAction
 
-export type ComboboxDropdownOption = FieldLaneDropdownOption;
+export type ComboboxDropdownOption = FieldLaneDropdownOption
 
 export interface ComboboxLabelsProps extends SelectboxLabels {}
 
 export interface ComboboxStyles extends Omit<SelectboxStyles, "self"> {
-  selectboxStyle?: CSSProp;
-  drawerStyle?: CSSProp;
-  rowStyle?: CSSProp;
-  rowContainerStyle?: CSSProp;
+  selectboxStyle?: CSSProp
+  drawerStyle?: CSSProp
+  rowStyle?: CSSProp
+  rowContainerStyle?: CSSProp
 }
 
-export type ComboboxAction = TreeListAction;
+export type ComboboxAction = TreeListAction
 
 export type ComboboxDrawerProps = Omit<DrawerProps, "refs"> &
   BaseComboboxProps & {
-    inputRef?: Ref<HTMLInputElement>;
-    handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
-    selectedOptionsLocal: SelectboxOption;
-    setSelectedOptionsLocal: (value: SelectboxOption) => void;
-    setHasInteracted?: (value: boolean) => void;
-    setConfirmedValue?: (option: SelectboxOption | null) => void;
-    openedCategoryGroup?: Set<string>;
+    inputRef?: Ref<HTMLInputElement>
+    handleKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void
+    selectedOptionsLocal: SelectboxOption
+    setSelectedOptionsLocal: (value: SelectboxOption) => void
+    setHasInteracted?: (value: boolean) => void
+    setConfirmedValue?: (option: SelectboxOption | null) => void
+    openedCategoryGroup?: Set<string>
     setOpenedCategoryGroup?: (
-      updater: (prev: Set<string>) => Set<string>
-    ) => void;
+      updater: (prev: Set<string>) => Set<string>,
+    ) => void
     refs?: {
-      setFloating?: Ref<HTMLUListElement>;
-      reference?: Ref<HTMLElement> & { current?: HTMLElement | null };
-    };
-    children?: ReactNode;
-    navigableOptions?: SelectboxOption[];
-    fadeEffect?: ComboboxDrawerFadeEffect[];
-    searchbox?: SearchboxProps | boolean;
-    checkbox?: CheckboxProps | boolean;
-  };
+      setFloating?: Ref<HTMLUListElement>
+      reference?: Ref<HTMLElement> & { current?: HTMLElement | null }
+    }
+    children?: ReactNode
+    navigableOptions?: SelectboxOption[]
+    fadeEffect?: ComboboxDrawerFadeEffect[]
+    searchbox?: SearchboxProps | boolean
+    checkbox?: CheckboxProps | boolean
+  }
 
 export const ComboboxDrawerFadeEffect = {
   Top: "top",
   Bottom: "bottom",
-} as const;
+} as const
 
 export type ComboboxDrawerFadeEffect =
-  (typeof ComboboxDrawerFadeEffect)[keyof typeof ComboboxDrawerFadeEffect];
+  (typeof ComboboxDrawerFadeEffect)[keyof typeof ComboboxDrawerFadeEffect]
 
 export interface ComboboxProps
   extends BaseComboboxProps,
@@ -173,72 +172,84 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       mobile,
       drawerHeight,
     },
-    ref
+    ref,
   ) => {
     const inputId = StatefulForm.sanitizeId({
       prefix: "combobox",
       name,
       id,
-    });
+    })
 
     const finalGroup = useMemo(() => {
       const collectOpened = (items: ComboboxOption[]): string[] => {
         return items.flatMap((item) => {
-          if (item.hidden) return [];
+          if (item.hidden) return []
           const self =
             (item.groupSetting?.initialState ?? "closed") === "opened"
               ? [String(item.value)]
-              : [];
+              : []
           const children = item.groupOptions?.length
             ? collectOpened(item.groupOptions)
-            : [];
-          return [...self, ...children];
-        });
-      };
-      return collectOpened(options ?? []);
-    }, [options]);
+            : []
+          return [...self, ...children]
+        })
+      }
+      return collectOpened(options ?? [])
+    }, [options])
 
     const [openedCategoryGroup, setOpenedCategoryGroup] = useState<Set<string>>(
-      () => new Set(finalGroup)
-    );
+      () => new Set(finalGroup),
+    )
 
     const flatOptions = useMemo<SelectboxOption[]>(() => {
       return (
         options?.flatMap((item) => {
-          if (item.hidden) return [];
+          if (item.hidden) return []
           if (item.groupOptions?.length) {
             const allChildren = item.groupOptions
               .filter((o) => !o.hidden)
               .flatMap((child) =>
                 child.groupOptions?.length
                   ? [child, ...child.groupOptions.filter((o) => !o.hidden)]
-                  : [child]
-              );
-            return [item, ...allChildren];
+                  : [child],
+              )
+            return [item, ...allChildren]
           }
-          return [item];
+          return [item]
         }) ?? []
-      );
-    }, [options]);
+      )
+    }, [options])
 
     const navigableOptions = useMemo<SelectboxOption[]>(() => {
       const flatten = (items: ComboboxOption[]): SelectboxOption[] => {
         return items.flatMap((item) => {
-          if (item.hidden) return [];
+          if (item.hidden) return []
 
           if (item.groupOptions?.length) {
             // Group parent → skip self, only include children if open
-            if (!openedCategoryGroup.has(String(item.value))) return [];
-            return flatten(item.groupOptions);
+            if (!openedCategoryGroup.has(String(item.value))) return []
+            return flatten(item.groupOptions)
           }
 
           // Leaf node
-          return [item];
-        });
-      };
+          return [item]
+        })
+      }
 
-      return flatten(options ?? []);
-    }, [options, openedCategoryGroup]);
+      return flatten(options ?? [])
+    }, [options, openedCategoryGroup])
+
+    const {
+      containerStyle,
+      bodyStyle,
+      controlStyle,
+      labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      selectboxStyle,
+      ...comboboxDrawerStyles
+    } = styles ?? {}
 
     return (
       <Selectbox
@@ -259,17 +270,20 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         required={required}
         labels={labels}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
           self: css`
             ${dropdowns &&
             css`
               border-top-left-radius: 0px;
               border-bottom-left-radius: 0px;
             `}
-            ${styles?.selectboxStyle}
+            ${selectboxStyle}
           `,
         }}
         id={inputId}
@@ -294,37 +308,37 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
            */
           const filterOptions = (
             opts: ComboboxOption[],
-            search: string
+            search: string,
           ): ComboboxOption[] => {
             return opts
               .map((opt) => {
-                if (opt.hidden) return null;
+                if (opt.hidden) return null
 
                 if (opt.groupOptions?.length) {
-                  const selfMatches = opt.text.toLowerCase().includes(search);
+                  const selfMatches = opt.text.toLowerCase().includes(search)
 
                   // Parent matches — keep it with ALL children untouched
                   if (selfMatches) {
-                    return opt;
+                    return opt
                   }
 
                   // Parent doesn't match — recurse into children
                   const filteredChildren = filterOptions(
                     opt.groupOptions,
-                    search
-                  );
+                    search,
+                  )
                   if (filteredChildren.length > 0) {
-                    return { ...opt, groupOptions: filteredChildren };
+                    return { ...opt, groupOptions: filteredChildren }
                   }
 
-                  return null;
+                  return null
                 }
 
                 // Leaf node
-                return opt.text.toLowerCase().includes(search) ? opt : null;
+                return opt.text.toLowerCase().includes(search) ? opt : null
               })
-              .filter(Boolean) as ComboboxOption[];
-          };
+              .filter(Boolean) as ComboboxOption[]
+          }
 
           /**
            * filteredNavigableOptions — search-filtered navigable options passed to the drawer.
@@ -339,23 +353,23 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
                   opt?.text
                     ?.toLowerCase()
                     .includes(
-                      props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
-                    )
+                      props?.selectedOptionsLocal?.text?.toLowerCase() ?? "",
+                    ),
                 )
-              : navigableOptions;
+              : navigableOptions
 
           // Then replace the filteredForDrawer block:
           const filteredForDrawer: ComboboxOption[] = props?.hasInteracted
             ? filterOptions(
                 options ?? [],
-                props?.selectedOptionsLocal?.text?.toLowerCase() ?? ""
+                props?.selectedOptionsLocal?.text?.toLowerCase() ?? "",
               )
-            : options;
+            : options
 
           return (
             <ComboboxDrawer
               {...props}
-              styles={styles}
+              styles={comboboxDrawerStyles}
               mobile={mobile}
               navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}
@@ -376,16 +390,16 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               openedCategoryGroup={openedCategoryGroup}
               setOpenedCategoryGroup={setOpenedCategoryGroup}
             />
-          );
+          )
         }}
       </Selectbox>
-    );
-  }
+    )
+  },
 ) as ForwardRefExoticComponent<
   ComboboxProps & RefAttributes<HTMLInputElement>
 > & {
-  Drawer: typeof ComboboxDrawer;
-};
+  Drawer: typeof ComboboxDrawer
+}
 
 function ComboboxDrawer({
   floatingStyles,
@@ -424,64 +438,64 @@ function ComboboxDrawer({
   checkbox,
   fadeEffect,
 }: ComboboxDrawerProps) {
-  const { mode, currentTheme } = useTheme();
-  const comboboxTheme = currentTheme?.combobox;
-  const treeListTheme = currentTheme?.treelist;
+  const { mode, currentTheme } = useTheme()
+  const comboboxTheme = currentTheme?.combobox
+  const treeListTheme = currentTheme?.treelist
 
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const [showFadeTop, setShowFadeTop] = useState(true);
-  const [showFadeBottom, setShowFadeBottom] = useState(true);
+  const [hasScrolled, setHasScrolled] = useState(false)
+  const [showFadeTop, setShowFadeTop] = useState(true)
+  const [showFadeBottom, setShowFadeBottom] = useState(true)
 
-  const floatingRef = useRef<HTMLUListElement>(null);
+  const floatingRef = useRef<HTMLUListElement>(null)
 
-  const hasNestedOptions = options?.some((opt) => opt.groupOptions?.length);
+  const hasNestedOptions = options?.some((opt) => opt.groupOptions?.length)
 
   const finalOptions = useMemo<SelectboxOption[]>(() => {
     return (
       options?.flatMap((item) => {
-        if (item?.hidden) return [];
+        if (item?.hidden) return []
         if (item.groupOptions?.length) {
-          return [item, ...item.groupOptions.filter((o) => !o.hidden)];
+          return [item, ...item.groupOptions.filter((o) => !o.hidden)]
         }
-        return [item];
+        return [item]
       }) ?? []
-    );
-  }, [options, openedCategoryGroup]);
+    )
+  }, [options, openedCategoryGroup])
 
   const finalSelectedOptions = useMemo(() => {
     if (Array.isArray(selectedOptions)) {
-      return selectedOptions.map(String);
+      return selectedOptions.map(String)
     }
     if (selectedOptions != null) {
-      return [String(selectedOptions)];
+      return [String(selectedOptions)]
     }
-    return [];
-  }, [selectedOptions]);
+    return []
+  }, [selectedOptions])
 
   const selectedIndex = useMemo(
     () =>
       finalOptions?.findIndex((option) =>
-        finalSelectedOptions?.includes(String(option.value))
+        finalSelectedOptions?.includes(String(option.value)),
       ) + (actions?.length ?? 0),
-    [finalOptions, finalSelectedOptions, actions]
-  );
+    [finalOptions, finalSelectedOptions, actions],
+  )
 
   const handleOnChange = (values: string[]) => {
-    if (!onChange) return;
+    if (!onChange) return
 
     if (Array.isArray(selectedOptions)) {
-      onChange(castValue(values, selectedOptions));
-      return;
+      onChange(castValue(values, selectedOptions))
+      return
     }
 
-    onChange(castValue(values[0], selectedOptions));
-  };
+    onChange(castValue(values[0], selectedOptions))
+  }
 
   useEffect(() => {
     if (isOpen && selectedIndex) {
-      setHighlightedIndex(selectedIndex);
+      setHighlightedIndex(selectedIndex)
     }
-  }, [isOpen]);
+  }, [isOpen])
 
   useEffect(() => {
     if (
@@ -489,12 +503,12 @@ function ComboboxDrawer({
       finalSelectedOptions?.length > 0 &&
       finalOptions?.length > 0
     ) {
-      const selectedEl = listRef.current[selectedIndex];
+      const selectedEl = listRef.current[selectedIndex]
       if (selectedEl) {
         requestAnimationFrame(() => {
-          selectedEl.scrollIntoView({ block: "center" });
-        });
-        setHasScrolled(true);
+          selectedEl.scrollIntoView({ block: "center" })
+        })
+        setHasScrolled(true)
       }
     }
   }, [
@@ -502,7 +516,7 @@ function ComboboxDrawer({
     hasScrolled,
     finalSelectedOptions?.length,
     finalOptions?.length,
-  ]);
+  ])
 
   useEffect(() => {
     if (
@@ -511,33 +525,33 @@ function ComboboxDrawer({
       searchbox &&
       interactionMode === "keyboard"
     ) {
-      const element = listRef.current[highlightedIndex];
-      const container = floatingRef.current;
+      const element = listRef.current[highlightedIndex]
+      const container = floatingRef.current
 
       if (element && container) {
-        const searchboxHeight = 38;
-        const elementTop = element.offsetTop;
-        const containerScrollTop = container.scrollTop;
-        const containerHeight = container.clientHeight;
+        const searchboxHeight = 38
+        const elementTop = element.offsetTop
+        const containerScrollTop = container.scrollTop
+        const containerHeight = container.clientHeight
 
         if (elementTop < containerScrollTop + searchboxHeight) {
-          container.scrollTop = elementTop - searchboxHeight;
+          container.scrollTop = elementTop - searchboxHeight
         } else if (
           elementTop + element.clientHeight >
           containerScrollTop + containerHeight
         ) {
           container.scrollTop =
-            elementTop + element.clientHeight - containerHeight;
+            elementTop + element.clientHeight - containerHeight
         }
       }
     }
-  }, [highlightedIndex, searchbox, interactionMode]);
+  }, [highlightedIndex, searchbox, interactionMode])
 
   const filteredActions: TreeListAction[] = Array.isArray(actions)
     ? actions
         ?.filter((action) => !action?.hidden)
         .map((action, index) => {
-          const shouldHighlight = highlightedIndex === index;
+          const shouldHighlight = highlightedIndex === index
 
           return {
             id: action?.id,
@@ -545,12 +559,12 @@ function ComboboxDrawer({
             hidden: action?.hidden,
             icon: action?.icon,
             onClick: () => {
-              action?.onClick();
-              setIsOpen(false);
+              action?.onClick()
+              setIsOpen(false)
             },
             onMouseEnter: () => {
-              if (interactionMode !== "mouse") return;
-              setHighlightedIndex(index);
+              if (interactionMode !== "mouse") return
+              setHighlightedIndex(index)
             },
             className: shouldHighlight ? "is-highlighted" : "",
             styles: {
@@ -567,45 +581,45 @@ function ComboboxDrawer({
                 ${action?.styles?.self}
               `,
             },
-          };
+          }
         })
-    : [];
+    : []
 
-  const optionByTreeId = useRef<Record<string, ComboboxOption>>({});
+  const optionByTreeId = useRef<Record<string, ComboboxOption>>({})
 
   const flatIndexMap = useMemo(() => {
-    const map: Record<string, number> = {};
-    const offset = filteredActions.length;
+    const map: Record<string, number> = {}
+    const offset = filteredActions.length
 
     navigableOptions?.forEach((opt, i) => {
-      map[String(opt.value)] = i + offset;
-    });
+      map[String(opt.value)] = i + offset
+    })
 
-    return map;
-  }, [navigableOptions, filteredActions.length]);
+    return map
+  }, [navigableOptions, filteredActions.length])
 
-  const checkboxProps = typeof checkbox === "object" && checkbox;
+  const checkboxProps = typeof checkbox === "object" && checkbox
 
   const generateContent = (): TreeListContent[] => {
-    optionByTreeId.current = {};
+    optionByTreeId.current = {}
 
     const registerAll = (opts: ComboboxOption[]) => {
       for (const opt of opts) {
-        optionByTreeId.current[String(opt.value)] = opt;
-        if (opt.groupOptions?.length) registerAll(opt.groupOptions);
+        optionByTreeId.current[String(opt.value)] = opt
+        if (opt.groupOptions?.length) registerAll(opt.groupOptions)
       }
-    };
+    }
 
-    registerAll(finalOptions);
+    registerAll(finalOptions)
 
     const renderCaption = (opt: ComboboxOption): ReactNode => {
-      const isSelected = finalSelectedOptions.includes(String(opt.value));
+      const isSelected = finalSelectedOptions.includes(String(opt.value))
 
-      const label = opt.render ?? opt.text;
-      const hasChildren = Boolean(opt?.groupOptions?.length);
+      const label = opt.render ?? opt.text
+      const hasChildren = Boolean(opt?.groupOptions?.length)
 
       if (multiple && hasChildren) {
-        return label;
+        return label
       }
 
       return (
@@ -667,16 +681,16 @@ function ComboboxDrawer({
           )}
           {label}
         </>
-      );
-    };
+      )
+    }
 
     const mapToItem = (opt: ComboboxOption): TreeListItem => {
-      const id = String(opt.value);
+      const id = String(opt.value)
 
-      const itemIndex = flatIndexMap[id];
-      const isSelected = finalSelectedOptions.includes(id);
+      const itemIndex = flatIndexMap[id]
+      const isSelected = finalSelectedOptions.includes(id)
       const shouldHighlight =
-        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex
 
       return {
         id,
@@ -696,7 +710,7 @@ function ComboboxDrawer({
         })),
         onClick: ({ withoutSelection }) => {
           if (opt?.groupOptions?.length > 0) {
-            withoutSelection();
+            withoutSelection()
           }
         },
         ...(opt?.groupOptions?.length > 0
@@ -706,16 +720,16 @@ function ComboboxDrawer({
                 .map((child) => mapToItem(child)),
             }
           : {}),
-      };
-    };
+      }
+    }
 
     const mapToContent = (option: ComboboxOption): TreeListContent => {
-      const id = String(option.value);
+      const id = String(option.value)
 
-      const itemIndex = flatIndexMap[id];
-      const isSelected = finalSelectedOptions.includes(id);
+      const itemIndex = flatIndexMap[id]
+      const isSelected = finalSelectedOptions.includes(id)
       const shouldHighlight =
-        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex;
+        highlightOnMatch && isSelected ? true : highlightedIndex === itemIndex
 
       return {
         id,
@@ -741,11 +755,11 @@ function ComboboxDrawer({
                 .map((child) => mapToItem(child)),
             }
           : {}),
-      };
-    };
+      }
+    }
 
-    return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent);
-  };
+    return (options ?? []).filter((opt) => !opt.hidden).map(mapToContent)
+  }
 
   const content = useMemo(
     () => generateContent(),
@@ -757,29 +771,29 @@ function ComboboxDrawer({
       flatIndexMap,
       multiple,
       mobile,
-    ]
-  );
+    ],
+  )
 
   const onMouseDown = (props: {
-    event: React.MouseEvent;
-    item?: TreeListContent;
+    event: React.MouseEvent
+    item?: TreeListContent
   }) => {
-    const { event, item } = props;
-    event?.preventDefault();
-    event?.stopPropagation();
+    const { event, item } = props
+    event?.preventDefault()
+    event?.stopPropagation()
 
-    const hasChildren = item?.items?.length > 0;
+    const hasChildren = item?.items?.length > 0
 
-    if (hasChildren) return;
+    if (hasChildren) return
 
-    const originalOption = optionByTreeId.current[item?.id];
+    const originalOption = optionByTreeId.current[item?.id]
 
     const option: ComboboxOption = {
       text: originalOption?.text ?? "",
       value: item?.id,
-    };
+    }
 
-    const optionValue = item?.id;
+    const optionValue = item?.id
 
     if (multiple) {
       if (!finalSelectedOptions.includes(item?.id)) {
@@ -787,48 +801,48 @@ function ComboboxDrawer({
           !maxSelectableItems ||
           finalSelectedOptions?.length < maxSelectableItems
         ) {
-          handleOnChange([...finalSelectedOptions, item?.id]);
+          handleOnChange([...finalSelectedOptions, item?.id])
         }
       } else {
-        handleOnChange(finalSelectedOptions.filter((val) => val !== item?.id));
+        handleOnChange(finalSelectedOptions.filter((val) => val !== item?.id))
       }
 
-      (inputRef as RefObject<HTMLInputElement>)?.current?.focus();
+      ;(inputRef as RefObject<HTMLInputElement>)?.current?.focus()
     } else {
-      const hasChildren = (item?.items?.length ?? 0) > 0;
-      if (hasChildren) return;
+      const hasChildren = (item?.items?.length ?? 0) > 0
+      if (hasChildren) return
 
-      setIsOpen(false);
-      setConfirmedValue?.(option);
-      setSelectedOptionsLocal(option);
-      handleOnChange([optionValue]);
-      setHasInteracted(false);
+      setIsOpen(false)
+      setConfirmedValue?.(option)
+      setSelectedOptionsLocal(option)
+      handleOnChange([optionValue])
+      setHasInteracted(false)
     }
 
     requestAnimationFrame(() => {
-      if (!multiple) setHighlightedIndex(null);
-    });
-    onClick?.();
-  };
+      if (!multiple) setHighlightedIndex(null)
+    })
+    onClick?.()
+  }
 
   const onMouseMove = () => {
     if (interactionMode !== "mouse") {
-      setInteractionMode("mouse");
+      setInteractionMode("mouse")
     }
-  };
+  }
 
   const onMouseEnter = (props: {
-    event: React.MouseEvent;
-    item?: TreeListContent;
+    event: React.MouseEvent
+    item?: TreeListContent
   }) => {
-    const { item } = props;
-    const index = flatIndexMap[item.id];
+    const { item } = props
+    const index = flatIndexMap[item.id]
 
-    if (interactionMode !== "mouse") return;
+    if (interactionMode !== "mouse") return
     if (typeof index === "number") {
-      setHighlightedIndex(index);
+      setHighlightedIndex(index)
     }
-  };
+  }
 
   /**
    * Dynamically show/hide the top and bottom fade overlays based on the
@@ -838,55 +852,55 @@ function ComboboxDrawer({
    * `threshold` pixels of that edge, and reappears once it scrolls past.
    */
   useEffect(() => {
-    const container = floatingRef.current;
-    if (!container || !mobile) return;
+    const container = floatingRef.current
+    if (!container || !mobile) return
 
     const updateFade = () => {
-      const selectedEl = listRef.current[selectedIndex];
+      const selectedEl = listRef.current[selectedIndex]
 
       if (!selectedEl) {
-        setShowFadeTop(true);
-        setShowFadeBottom(true);
-        return;
+        setShowFadeTop(true)
+        setShowFadeBottom(true)
+        return
       }
 
-      const containerRect = container.getBoundingClientRect();
-      const itemRect = selectedEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect()
+      const itemRect = selectedEl.getBoundingClientRect()
 
-      const itemMidY = itemRect.top + itemRect.height / 2;
+      const itemMidY = itemRect.top + itemRect.height / 2
 
-      const distanceFromTop = itemMidY - containerRect.top;
-      const distanceFromBottom = containerRect.bottom - itemMidY;
+      const distanceFromTop = itemMidY - containerRect.top
+      const distanceFromBottom = containerRect.bottom - itemMidY
 
-      const threshold = 40;
+      const threshold = 40
 
-      const itemNearTop = distanceFromTop >= 0 && distanceFromTop <= threshold;
+      const itemNearTop = distanceFromTop >= 0 && distanceFromTop <= threshold
       const itemNearBottom =
-        distanceFromBottom >= 0 && distanceFromBottom <= threshold;
+        distanceFromBottom >= 0 && distanceFromBottom <= threshold
 
-      setShowFadeTop(!itemNearTop);
-      setShowFadeBottom(!itemNearBottom);
-      setShowFadeBottom(!itemNearBottom);
-    };
+      setShowFadeTop(!itemNearTop)
+      setShowFadeBottom(!itemNearBottom)
+      setShowFadeBottom(!itemNearBottom)
+    }
 
-    updateFade();
-    container.addEventListener("scroll", updateFade);
+    updateFade()
+    container.addEventListener("scroll", updateFade)
 
-    return () => container.removeEventListener("scroll", updateFade);
-  }, [selectedIndex, finalOptions.length]);
+    return () => container.removeEventListener("scroll", updateFade)
+  }, [selectedIndex, finalOptions.length])
 
-  const searchboxProps = typeof searchbox === "object" && searchbox;
+  const searchboxProps = typeof searchbox === "object" && searchbox
 
-  const hasFewOptions = finalOptions?.length <= 5;
+  const hasFewOptions = finalOptions?.length <= 5
 
   const mainCombobox = (
     <DrawerWrapper
       {...getFloatingProps()}
       ref={(node) => {
         if (typeof refs?.setFloating === "function") {
-          refs?.setFloating(node);
+          refs?.setFloating(node)
         }
-        floatingRef.current = node;
+        floatingRef.current = node
       }}
       $hasFewOptions={hasFewOptions}
       $hasNestedOptions={hasNestedOptions}
@@ -905,13 +919,13 @@ function ComboboxDrawer({
         <Searchbox
           onKeyDown={handleKeyDown}
           onChange={(e) => {
-            const { value } = e.target;
-            setHasInteracted(true);
-            setHighlightedIndex(0);
+            const { value } = e.target
+            setHasInteracted(true)
+            setHighlightedIndex(0)
             setSelectedOptionsLocal({
               ...selectedOptionsLocal,
               text: value,
-            });
+            })
           }}
           autoComplete="off"
           ref={inputRef}
@@ -972,15 +986,15 @@ function ComboboxDrawer({
         <>
           <TreeList
             ref={({ el, item }) => {
-              const index = flatIndexMap[item.id];
+              const index = flatIndexMap[item.id]
               if (typeof index === "number") {
-                listRef.current[index] = el;
+                listRef.current[index] = el
               }
             }}
             refItem={({ el, item }) => {
-              const index = flatIndexMap[item.id];
+              const index = flatIndexMap[item.id]
               if (typeof index === "number") {
-                listRef.current[index] = el;
+                listRef.current[index] = el
               }
             }}
             multiple={multiple}
@@ -995,14 +1009,14 @@ function ComboboxDrawer({
             onMouseEnterItem={onMouseEnter}
             onOpenChange={({ id }) => {
               setOpenedCategoryGroup((prev) => {
-                const next = new Set(prev);
+                const next = new Set(prev)
                 if (next.has(id)) {
-                  next.delete(id);
+                  next.delete(id)
                 } else {
-                  next.add(id);
+                  next.add(id)
                 }
-                return next;
-              });
+                return next
+              })
             }}
             arrowSize={mobile ? 18 : 14}
             maxActionsBeforeCollapsing={1}
@@ -1157,11 +1171,11 @@ function ComboboxDrawer({
         </>
       )}
     </DrawerWrapper>
-  );
+  )
 
   if (mobile) {
     const finalFadeEffect =
-      fadeEffect ?? (searchbox ? ["bottom"] : ["top", "bottom"]);
+      fadeEffect ?? (searchbox ? ["bottom"] : ["top", "bottom"])
 
     return createPortal(
       <DrawerContainer
@@ -1185,16 +1199,16 @@ function ComboboxDrawer({
         )}
         {mainCombobox}
       </DrawerContainer>,
-      document.body
-    );
+      document.body,
+    )
   }
 
-  return mainCombobox;
+  return mainCombobox
 }
 
 const DrawerContainer = styled.div<{
-  $theme?: ComboboxThemeConfig;
-  $mobile?: boolean;
+  $theme?: ComboboxThemeConfig
+  $mobile?: boolean
 }>`
   *,
   ::before,
@@ -1211,17 +1225,17 @@ const DrawerContainer = styled.div<{
   border-radius: 14px;
   background-color: ${({ $mobile, $theme }) =>
     $mobile ? $theme.mobileBackgroundColor : $theme.backgroundColor};
-`;
+`
 
 const DrawerWrapper = styled.ul<{
-  $width?: number;
-  $theme: ComboboxThemeConfig;
-  $style?: CSSProp;
-  $mobile?: boolean;
-  $searchbox?: boolean;
-  $hasNestedOptions?: boolean;
-  $hasFewOptions?: boolean;
-  $drawerHeight?: string;
+  $width?: number
+  $theme: ComboboxThemeConfig
+  $style?: CSSProp
+  $mobile?: boolean
+  $searchbox?: boolean
+  $hasNestedOptions?: boolean
+  $hasFewOptions?: boolean
+  $drawerHeight?: string
 }>`
   *,
   ::before,
@@ -1268,7 +1282,7 @@ const DrawerWrapper = styled.ul<{
     $drawerHeight,
     $hasFewOptions,
   }) => {
-    const $height = $drawerHeight ?? "220px";
+    const $height = $drawerHeight ?? "220px"
 
     return css`
       height: ${$hasFewOptions ? "fit-content" : $height};
@@ -1293,11 +1307,11 @@ const DrawerWrapper = styled.ul<{
             ? $theme.mobileBackgroundColor
             : $theme.backgroundColor};
       `}
-    `;
+    `
   }}
 
   ${({ $style }) => $style}
-`;
+`
 
 const rowStyle = ({
   interactionMode,
@@ -1307,12 +1321,12 @@ const rowStyle = ({
   hasNestedOptions,
   level,
 }: {
-  interactionMode?: "mouse" | "keyboard";
-  multiple?: boolean;
-  theme?: ComboboxThemeConfig;
-  mobile?: boolean;
-  hasNestedOptions?: boolean;
-  level?: number;
+  interactionMode?: "mouse" | "keyboard"
+  multiple?: boolean
+  theme?: ComboboxThemeConfig
+  mobile?: boolean
+  hasNestedOptions?: boolean
+  level?: number
 }) => css`
   transition: background-color 0ms;
   background-color: ${mobile
@@ -1370,12 +1384,12 @@ const rowStyle = ({
       }
     `}
   }
-`;
+`
 
 const FadeTop = styled.div<{
-  $style?: CSSProp;
-  $theme: ComboboxThemeConfig;
-  $visible?: boolean;
+  $style?: CSSProp
+  $theme: ComboboxThemeConfig
+  $visible?: boolean
 }>`
   pointer-events: none;
   position: absolute;
@@ -1393,12 +1407,12 @@ const FadeTop = styled.div<{
   z-index: 99999999;
 
   ${({ $style }) => $style}
-`;
+`
 
 const FadeBottom = styled.div<{
-  $style?: CSSProp;
-  $theme: ComboboxThemeConfig;
-  $visible?: boolean;
+  $style?: CSSProp
+  $theme: ComboboxThemeConfig
+  $visible?: boolean
 }>`
   pointer-events: none;
   position: absolute;
@@ -1416,8 +1430,8 @@ const FadeBottom = styled.div<{
   z-index: 99999999;
 
   ${({ $style }) => $style}
-`;
+`
 
-Combobox.Drawer = ComboboxDrawer;
+Combobox.Drawer = ComboboxDrawer
 
-export { Combobox };
+export { Combobox }

@@ -1,50 +1,49 @@
-import styled, { css, CSSProp } from "styled-components";
-import { ChangeEvent, InputHTMLAttributes } from "react";
-import { StatefulForm } from "./stateful-form";
-import { Figure, FigureProps } from "./figure";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { RadioThemeConfig } from "theme";
-import { applyClassName } from "./../constants/classname";
+import styled, { css, CSSProp } from "styled-components"
+import { ChangeEvent, InputHTMLAttributes } from "react"
+import { StatefulForm } from "./stateful-form"
+import { Figure, FigureProps } from "./figure"
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
+import { useTheme } from "./../theme/provider"
+import { RadioThemeConfig } from "theme"
+import { applyClassName } from "./../constants/classname"
 
 export const RadioMode = {
   Radio: "radio",
   Button: "button",
-} as const;
+} as const
 
-export type RadioMode = (typeof RadioMode)[keyof typeof RadioMode];
+export type RadioMode = (typeof RadioMode)[keyof typeof RadioMode]
 
 interface BaseRadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
-  value?: string;
-  label?: string;
-  description?: string;
-  checked?: boolean;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  name?: string;
-  highlightOnChecked?: boolean;
-  styles?: BaseRadioStyles;
-  showError?: boolean;
-  errorMessage?: string;
-  mode?: RadioMode;
-  helper?: string;
-  icon?: FigureProps;
+  value?: string
+  label?: string
+  description?: string
+  checked?: boolean
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+  name?: string
+  highlightOnChecked?: boolean
+  styles?: BaseRadioStyles
+  showError?: boolean
+  errorMessage?: string
+  mode?: RadioMode
+  icon?: FigureProps
 }
 
 interface BaseRadioStyles {
-  descriptionStyle?: CSSProp;
-  self?: CSSProp;
-  titleStyle?: CSSProp;
-  inputWrapperStyle?: CSSProp;
-  labelStyle?: CSSProp;
-  textWrapperStyle?: CSSProp;
+  descriptionStyle?: CSSProp
+  self?: CSSProp
+  titleStyle?: CSSProp
+  inputWrapperStyle?: CSSProp
+  labelStyle?: CSSProp
+  textWrapperStyle?: CSSProp
 }
 
 export interface RadioOption {
-  value?: string;
-  label?: string;
-  description?: string;
-  icon?: FigureProps;
+  value?: string
+  label?: string
+  description?: string
+  icon?: FigureProps
 }
 
 function BaseRadio({
@@ -62,10 +61,10 @@ function BaseRadio({
   id,
   ...props
 }: BaseRadioProps) {
-  const { currentTheme } = useTheme();
-  const radioTheme = currentTheme.radio;
+  const { currentTheme } = useTheme()
+  const radioTheme = currentTheme.radio
 
-  const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16);
+  const resolvediconSize = icon?.size ?? (mode === "button" ? 25 : 16)
 
   return (
     <Label
@@ -132,15 +131,15 @@ function BaseRadio({
         </DescriptionText>
       )}
     </Label>
-  );
+  )
 }
 
-export type RadioStyles = BaseRadioStyles & FieldLaneStyles;
+export type RadioStyles = BaseRadioStyles & FieldLaneStyles
 
 export interface RadioProps
   extends Omit<BaseRadioProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: RadioStyles;
+  styles?: RadioStyles
 }
 
 function Radio({
@@ -164,15 +163,18 @@ function Radio({
     id: id ? `${id}-${rest.value ?? "value"}` : null,
     prefix: `radio-${rest.value ?? "value"}`,
     name,
-  });
+  })
 
   const {
     bodyStyle,
     controlStyle,
     containerStyle,
     titleStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
     ...baseRadiotyles
-  } = styles ?? {};
+  } = styles ?? {}
 
   return (
     <FieldLane
@@ -195,6 +197,9 @@ function Radio({
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseRadio
@@ -208,17 +213,17 @@ function Radio({
         styles={baseRadiotyles}
       />
     </FieldLane>
-  );
+  )
 }
 
 const Label = styled.label<{
-  $highlight?: boolean;
-  $checked?: boolean;
-  $style?: CSSProp;
-  $hasDescription?: boolean;
-  $disabled?: boolean;
-  $isRadio?: boolean;
-  $theme: RadioThemeConfig;
+  $highlight?: boolean
+  $checked?: boolean
+  $style?: CSSProp
+  $hasDescription?: boolean
+  $disabled?: boolean
+  $isRadio?: boolean
+  $theme: RadioThemeConfig
 }>`
   display: flex;
   align-items: flex-start;
@@ -234,9 +239,9 @@ const Label = styled.label<{
         $theme?.highlightCheckedBackgroundColor ||
         $theme?.checkedBackgroundColor ||
         "transparent"
-      );
+      )
 
-    return "transparent";
+    return "transparent"
   }};
 
   ${({ $highlight, $checked, $isRadio, $theme }) =>
@@ -271,11 +276,11 @@ const Label = styled.label<{
 
         background-color: ${(() => {
           if ($highlight && $checked) {
-            return $theme?.highlightCheckedBackgroundColor;
+            return $theme?.highlightCheckedBackgroundColor
           } else if ($highlight) {
-            return $theme?.highlightBackgroundColor;
+            return $theme?.highlightBackgroundColor
           }
-          return "transparent";
+          return "transparent"
         })()};
       }
     `};
@@ -296,7 +301,7 @@ const Label = styled.label<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const HiddenRadio = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
   position: absolute;
@@ -315,13 +320,13 @@ const HiddenRadio = styled.input<{ $disabled?: boolean; $style?: CSSProp }>`
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const Circle = styled.div<{
-  $style?: CSSProp;
-  $error?: boolean;
-  $isRadio?: boolean;
-  $theme: RadioThemeConfig;
+  $style?: CSSProp
+  $error?: boolean
+  $isRadio?: boolean
+  $theme: RadioThemeConfig
 }>`
   width: 16px;
   height: 16px;
@@ -352,7 +357,7 @@ const Circle = styled.div<{
     `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const InputWrapper = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
   display: flex;
@@ -370,19 +375,19 @@ const InputWrapper = styled.div<{ $style?: CSSProp; $isRadio?: boolean }>`
         `}
 
   ${({ $style }) => $style}
-`;
+`
 
 const LabelText = styled.div<{ $style?: CSSProp; $theme: RadioThemeConfig }>`
   font-size: 14px;
   color: ${({ $theme }) => $theme.textColor || "#000"};
   ${({ $style }) => $style}
-`;
+`
 
 const DescriptionText = styled.span<{
-  $highlight?: boolean;
-  $style?: CSSProp;
-  $isRadio?: boolean;
-  $descriptionColor?: string;
+  $highlight?: boolean
+  $style?: CSSProp
+  $isRadio?: boolean
+  $descriptionColor?: string
 }>`
   ${({ $highlight }) =>
     $highlight &&
@@ -397,6 +402,6 @@ const DescriptionText = styled.span<{
       margin-left: 24px;
     `}
   ${({ $style }) => $style};
-`;
+`
 
-export { Radio };
+export { Radio }
