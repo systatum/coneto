@@ -55,9 +55,7 @@ function Helper({
         image={RiInformationLine}
         size={18}
         styles={{
-          self: css`
-            ${styles?.self}
-          `,
+          self: styles?.self,
         }}
       />
     </Tooltip>
