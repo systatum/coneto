@@ -1,4 +1,4 @@
-import { AppTheme } from "./../index";
+import { AppTheme } from "./../index"
 import {
   createActionButtonTheme,
   createActionCapsuleTheme,
@@ -72,14 +72,14 @@ import {
   createFlippable,
   createTrackbarTheme,
   createScrollbar,
-} from "./creator";
+} from "./creator"
 
 // Dark
 const darkBody = createBodyTheme({
   backgroundColor: "#1f2023",
   textColor: "#caced4",
   borderColor: "#4b5563",
-});
+})
 
 const darkFieldLane = createFieldLaneTheme(darkBody, {
   disabledOpacity: 0.5,
@@ -109,7 +109,7 @@ const darkFieldLane = createFieldLaneTheme(darkBody, {
 
   helperColor: "#9ca3af",
   dividerColor: "#6b7280",
-});
+})
 
 const darkActionButton = createActionButtonTheme({
   backgroundColor: "transparent",
@@ -125,19 +125,19 @@ const darkActionButton = createActionButtonTheme({
 
   dividerColor: "#3a3a3f",
   dropdownWidth: "170px",
-});
+})
 
 const darkActionCapsule = createActionCapsuleTheme(darkBody, {
   activeBackgroundColor: "rgb(57, 62, 65)",
   textColor: "#f9fafb",
   tabTextColor: "rgb(233, 233, 233)",
   borderColor: "#3a3a3f",
-});
+})
 
 const darkAvatar = createAvatarTheme(darkBody, {
   textColor: "black",
   overlayBackgroundColor: "rgba(0,0,0,0.6)",
-});
+})
 
 const darkButton = createButtonTheme(darkBody, {
   default: {
@@ -234,13 +234,13 @@ const darkButton = createButtonTheme(darkBody, {
     borderColor: "#03973d",
     dividerColor: "rgba(19, 156, 17, 0.69)",
   },
-});
+})
 
 const darkButtonTipMenuContainer = createTipMenuContainerTheme(darkBody, {
   backgroundColor: "rgb(35, 35, 35)",
   borderColor: "#303030",
   boxShadow: "0 1px 2px rgba(0, 0, 0, 0.3)",
-});
+})
 
 const darkBadge = createBadgeTheme(darkBody, {
   borderColor: "rgb(55, 55, 55)",
@@ -251,13 +251,13 @@ const darkBadge = createBadgeTheme(darkBody, {
     focusRingColor: "#ffffff33",
     disabledOpacity: 0.4,
   },
-});
+})
 
 const darkBoxbar = createBoxbarTheme(darkBody, {
   borderColor: "#333333",
   toggleButtonColor: "#f5f5f5",
   toggleButtonHoverColor: "#222222",
-});
+})
 
 const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
   dayTextColor: "#d1d5db",
@@ -273,7 +273,7 @@ const darkCalendar = createCalendarTheme(darkBody, darkFieldLane, {
 
   mobileBorderColor: "#2c2c2e",
   mobileBackgroundColor: "#2c2c2e",
-});
+})
 
 const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {
   borderColor: "#303030",
@@ -291,14 +291,14 @@ const darkCapsule = createCapsuleTheme(darkBody, darkFieldLane, {
   hover: {
     borderColor: "#303030",
   },
-});
+})
 
 const darkCapsuleTab = createCapsuleTabTheme(darkBody, {
   backgroundColor: "#262627",
   borderColor: "#303030",
   boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
   activeBackgroundColor: "#303030",
-});
+})
 
 const darkCard = createCardTheme(darkBody, {
   backgroundColor: "rgb(31, 31, 33)",
@@ -308,7 +308,7 @@ const darkCard = createCardTheme(darkBody, {
   subtitleColor: "#9ca3af",
   closeIconColor: "#f9fafb",
   closeIconHoverBackground: "#374151",
-});
+})
 
 const darkChips = createChipsTheme(darkBody, {
   backgroundColor: "rgb(35,35,35)",
@@ -322,13 +322,13 @@ const darkChips = createChipsTheme(darkBody, {
   dividerColor: "rgba(255,255,255,0.08)",
 
   boxShadow: "0 1px 2px rgba(0,0,0,0.8)",
-});
+})
 
 const darkChoiceGroup = createChoiceGroupTheme(darkBody, {
   borderColor: "#374151",
   dividerColor: "#4b5563",
   descriptionColor: "#d1d5db",
-});
+})
 
 const darkCheckbox = createCheckboxTheme(darkBody, {
   borderColor: "rgb(55, 59, 65)",
@@ -339,9 +339,9 @@ const darkCheckbox = createCheckboxTheme(darkBody, {
   descriptionColor: "#d1d5db",
   highlightCheckedBackgroundColor: "#2563EB33",
   highlightHoverBackgroundColor: "#2563EB55",
-});
+})
 
-const darkColorbox = createColorboxTheme(darkBody, darkFieldLane);
+const darkColorbox = createColorboxTheme(darkBody, darkFieldLane)
 
 const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   selectedTextColor: darkBody.textColor,
@@ -350,7 +350,7 @@ const darkCombobox = createComboboxTheme(darkBody, darkFieldLane, {
   fadeColor: "#2c2c2e",
   mobileBackgroundColor: "#2c2c2e",
   mobileGroupBackgroundColor: "#2a2a2a",
-});
+})
 
 const darkCrumb = createCrumbTheme(darkBody, {
   hoverColor: darkButton?.primary?.hoverBackgroundColor,
@@ -358,14 +358,14 @@ const darkCrumb = createCrumbTheme(darkBody, {
   arrowColor: "#9ca3af",
   ellipsisColor: "#9ca3af",
   ellipsisHoverColor: darkButton?.primary?.hoverBackgroundColor,
-});
+})
 
 const darkDialog = createDialogTheme(darkBody, {
   backgroundColor: "rgb(26, 26, 26)",
   borderColor: "#303030",
   boxShadow: "rgba(0, 0, 0, 0.65) 0px 8px 24px",
   subtitleColor: "#a3a3a3",
-});
+})
 
 const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
   backgroundColor: "#434345",
@@ -374,7 +374,7 @@ const darkDocumentViewer = createDocumentViewerTheme(darkBody, {
   hoverBoxBorderColor: "#3b82f6",
   hoverBoxTextColor: "#020617",
   hoverBoxBackgroundColor: "rgba(59, 130, 246, 0.15)",
-});
+})
 
 const darkDormantText = createDormantTextTheme(darkBody, {
   hoverBackgroundColor: "rgb(26, 26, 26)",
@@ -382,7 +382,7 @@ const darkDormantText = createDormantTextTheme(darkBody, {
   pencilColor: "#ccc",
   actionButtonColor: "#ccc",
   actionButtonHoverBackground: "#363636",
-});
+})
 
 const darkDrawerTab = createDrawerTabTheme(darkBody, {
   borderColor: "#303030",
@@ -390,13 +390,13 @@ const darkDrawerTab = createDrawerTabTheme(darkBody, {
   headerBackgroundColor: "#1a1a1a",
   closeButtonHoverBackground: "#363636",
   dividerColor: "#3f3f46",
-});
+})
 
 const darkErrorSlate = createErrorSlateTheme(darkBody, {
   cubeFaceBackground: "#ff4d4f",
   cubeFaceBorder: "#a8071a",
   cubeFaceText: "#ffffff",
-});
+})
 
 const darkFlippable = createFlippable(darkBody, {
   back: {
@@ -407,7 +407,7 @@ const darkFlippable = createFlippable(darkBody, {
     ...darkBody,
     backgroundColor: "rgb(26, 26, 26)",
   },
-});
+})
 
 const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
   defaultGradientColor: "#9ca3af",
@@ -416,7 +416,7 @@ const darkFileInputBox = createFileInputBoxTheme(darkBody, darkFieldLane, {
 
   dragActiveColor: "#60a5fa",
   dragActiveBackgroundColor: "#eff6ff",
-});
+})
 
 const darkFileDropBox = createFileDropBoxTheme(darkBody, darkFieldLane, {
   defaultGradientColor: "#9ca3af",
@@ -432,7 +432,7 @@ const darkFileDropBox = createFileDropBoxTheme(darkBody, darkFieldLane, {
 
   dragActiveBackgroundColor: "#1e3a8a",
   dragActiveTextColor: "#93c5fd",
-});
+})
 
 const darkFrame = createFrameTheme(darkBody, {
   backgroundColor: "rgb(31, 32, 35)",
@@ -441,7 +441,7 @@ const darkFrame = createFrameTheme(darkBody, {
   titleBackgroundColor: "rgb(31, 32, 35)",
   overlayBackgroundColor: "rgb(31, 32, 35)",
   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.2)",
-});
+})
 
 const darkGrid = createGridTheme(darkBody, {
   backgroundColor: "#1a1a1a",
@@ -450,7 +450,7 @@ const darkGrid = createGridTheme(darkBody, {
   cardBorderColor: "#333333",
   cardShadow: "0 1px 3px rgba(0,0,0,0.6)",
   thumbnailBackgroundColor: "#2a2a2a",
-});
+})
 
 const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
   draggingBackgroundColor: "#1e3a8a33",
@@ -458,14 +458,14 @@ const darkImagebox = createImageboxTheme(darkBody, darkFieldLane, {
   draggingTextColor: "#60a5fa",
 
   iconColor: "#9ca3af",
-});
+})
 
 const darkKeynote = createKeynoteTheme({
   keyColor: "rgb(243, 244, 246)",
   valueColor: "#f3f4f6",
-});
+})
 
-const darkLaunchpad = createLaunchpadTheme(darkBody);
+const darkLaunchpad = createLaunchpadTheme(darkBody)
 
 const darkList = createListTheme(darkBody, {
   hoverBackgroundColor: "#212c37",
@@ -479,16 +479,16 @@ const darkList = createListTheme(darkBody, {
   toggleBackgroundColor: "#1e3a5f",
   hoverTextColor: "#111111",
   maxItemTextColor: "#9ca3af",
-});
+})
 
 const darkLoadingSkeleton = createLoadingSkeletonTheme({
   baseColor: "#2b313a",
   highlightColor: "#3b424c",
-});
+})
 
 const darkLoadingSpinner = createLoadingSpinnerTheme(darkBody, {
   spinnerColor: "rgb(142 214 255)",
-});
+})
 
 const darkMessagebox = createMessageboxTheme({
   primary: {
@@ -511,16 +511,16 @@ const darkMessagebox = createMessageboxTheme({
     textColor: "#fdba74",
     activeColor: "#fb923c",
   },
-});
+})
 
-const darkMoneybox = createMoneyboxTheme(darkBody, darkFieldLane);
+const darkMoneybox = createMoneyboxTheme(darkBody, darkFieldLane)
 
 const darkModalDialog = createModalDialogTheme(darkBody, {
   backgroundColor: "#272727",
   borderColor: "#303030",
   subtitleColor: "#9ca3af",
   dividerColor: "rgb(60, 49, 110)",
-});
+})
 
 const darkNavTab = createNavTabTheme(darkBody, {
   backgroundColor: "rgb(35, 35, 35)",
@@ -538,12 +538,12 @@ const darkNavTab = createNavTabTheme(darkBody, {
     inset 0 0.5px 3px rgba(255,255,255,0.06),
     inset 0 -0.5px 0.5px rgba(0,0,0,0.8)
   `,
-});
+})
 
 const darkOverlayBlocker = createOverlayBlockerTheme({
   backgroundColor: "rgb(17 17 17 / 80%)",
   backdropFilter: "blur(1px)",
-});
+})
 
 const darkPaperDialog = createPaperDialogTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
@@ -551,7 +551,7 @@ const darkPaperDialog = createPaperDialogTheme(darkBody, {
   boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
   textColor: darkBody.textColor,
   actionHoverBackgroundColor: "#363636",
-});
+})
 
 const darkPagination = createPaginationTheme(darkBody, darkFieldLane, {
   borderColor: "rgb(55, 65, 81)",
@@ -563,11 +563,11 @@ const darkPagination = createPaginationTheme(darkBody, darkFieldLane, {
 
   disabledBackgroundColor: "rgb(56, 58, 61)",
   disabledTextColor: "rgb(160, 160, 160)",
-});
+})
 
-const darkPinbox = createPinboxTheme(darkBody, darkFieldLane);
+const darkPinbox = createPinboxTheme(darkBody, darkFieldLane)
 
-const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane);
+const darkPhonebox = createPhoneboxTheme(darkBody, darkFieldLane)
 
 const darkTrackbar = createTrackbarTheme({
   primary: {
@@ -604,7 +604,7 @@ const darkTrackbar = createTrackbarTheme({
     barColor: "#94A3B8",
     trackColor: "#334155",
   },
-});
+})
 
 const darkRadio = createRadioTheme(darkBody, {
   borderColor: "#374151",
@@ -619,7 +619,7 @@ const darkRadio = createRadioTheme(darkBody, {
 
   highlightBorderColor: "rgb(75, 85, 99)",
   highlightCheckedBorderColor: "#1465d3bf",
-});
+})
 
 const darkRating = createRatingTheme(darkBody, darkFieldLane, {
   starFullColor: "#facc15",
@@ -627,7 +627,7 @@ const darkRating = createRatingTheme(darkBody, darkFieldLane, {
   starBorderColor: "#fbbf24",
 
   hoverStarColor: "#f59e0b",
-});
+})
 
 const darkRichEditor = createRichEditorTheme(
   darkBody,
@@ -637,14 +637,14 @@ const darkRichEditor = createRichEditorTheme(
     scrollThumb: "#52525b",
     toolbarBackground: darkButton?.default?.backgroundColor,
     preBackgroundColor: "#2D2D2D",
-  }
-);
+  },
+)
 
 const darkScrollbar = createScrollbar({
   scrollbarThumbActiveColor: "rgba(255, 255, 255, 0.7)",
   scrollbarThumbColor: "rgba(255, 255, 255, 0.3)",
   scrollbarTrackColor: "transparent",
-});
+})
 
 const darkSearchbox = createSearchboxTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
@@ -655,9 +655,9 @@ const darkSearchbox = createSearchboxTheme(darkBody, {
   focusShadow: "0 0 0 1px rgb(85, 65, 160)",
   iconColor: "#a1a1aa",
   clearIconColor: "#a1a1aa",
-});
+})
 
-const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane);
+const darkSelectbox = createSelectboxTheme(darkBody, darkFieldLane)
 
 const darkSeparator = createSeparatorTheme(darkBody, {
   containerColor: "#d1d5db",
@@ -666,9 +666,9 @@ const darkSeparator = createSeparatorTheme(darkBody, {
   titleColor: "rgb(171, 171, 171)",
   backgroundTitleColor: "#1f2023",
   tooltipBackgroundColor: "rgb(62, 69, 89)",
-});
+})
 
-const darkSignbox = createSignboxTheme(darkBody, darkFieldLane);
+const darkSignbox = createSignboxTheme(darkBody, darkFieldLane)
 
 const darkSidebar = createSidebarTheme(darkBody, {
   backgroundColor: darkBody.backgroundColor,
@@ -685,7 +685,7 @@ const darkSidebar = createSidebarTheme(darkBody, {
     borderColor: "#303030",
     hoverBackgroundColor: "#363636",
   },
-});
+})
 
 const darkStatusbar = createStatusbarTheme({
   backgroundColor: "#272727",
@@ -697,12 +697,24 @@ const darkStatusbar = createStatusbarTheme({
     activeBackgroundColor: "#363636",
     hoverBackgroundColor: "#404040",
   },
-});
+})
 
 const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
   mobileRowFrameBackgroundColor: "rgb(4, 4, 4)",
-});
+
+  fieldTooltip: {
+    textColor: darkBody.textColor,
+    mutedTextColor: "#838891",
+
+    panelBackground: "rgb(26, 26, 26)",
+    panelBorder: "rgb(39, 39, 48)",
+    dividerColor: "rgb(39, 39, 48)",
+
+    scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
+    scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
+  },
+})
 
 const darkTimeline = createTimelineTheme(darkBody, darkButton, {
   outerCircle: {
@@ -722,11 +734,11 @@ const darkTimeline = createTimelineTheme(darkBody, darkButton, {
     completed: darkButton?.success?.backgroundColor || "#00b62e",
     error: darkButton?.error?.backgroundColor || "#b60000",
   },
-});
+})
 
 const darkStepline = createSteplineTheme(darkBody, darkButton, {
   line: darkTimeline.line,
-});
+})
 
 const darkTable = createTableTheme(darkBody, {
   boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
@@ -762,25 +774,25 @@ const darkTable = createTableTheme(darkBody, {
     "linear-gradient(to right, rgb(8 8 8 / 38%), transparent)",
   rightLooseEffectColor:
     "linear-gradient(to left, rgb(8 8 8 / 38%), transparent)",
-});
+})
 
 const darkTextarea = createTextareaTheme(darkBody, darkFieldLane, {
   boxShadow: "0 0 0 0.5px transparent",
   scrollbarThumbColor: "#52525b",
-});
+})
 
 const darkTextbox = createTextboxTheme(darkBody, darkFieldLane, {
   boxShadow: "0 0 0 0.5px transparent",
-});
+})
 
-const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane);
+const darkTimebox = createTimeboxTheme(darkBody, darkFieldLane)
 
 const darkTipMenu = createTipMenuTheme(darkButton, {
   default: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
   primary: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
   danger: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
   success: { disabledTextColor: "rgba(180, 180, 180, 0.45)" },
-});
+})
 
 const darkTitle = createTitleTheme(darkBody, {
   pretitle: {
@@ -799,20 +811,20 @@ const darkTitle = createTitleTheme(darkBody, {
     backgroundColor: "transparent",
     hoverBackgroundColor: "rgba(0, 0, 0, 0.45)",
   },
-});
+})
 
 const darkThumbField = createThumbFieldTheme({
   thumbsUpColor: "rgb(134, 111, 238)",
   thumbsDownColor: "rgb(236, 65, 108)",
   inactiveColor: "#6b7280",
   errorColor: "#f87171",
-});
+})
 
 const sharedDarkToast = {
   backgroundColor: "#18181b7d",
   textColor: "rgba(255, 255, 255, 0.8)",
   iconColor: "#FFFFFF",
-};
+}
 
 const darkToast = createToastTheme({
   primary: {
@@ -849,7 +861,7 @@ const darkToast = createToastTheme({
     iconBackgroundColor: "#334155",
     progressColor: "#94A3B8",
   },
-});
+})
 
 const darkToggle = createToggleTheme(darkBody, {
   backgroundColor: "rgb(80, 80, 80)",
@@ -859,7 +871,7 @@ const darkToggle = createToggleTheme(darkBody, {
   textColor: "#f5f5f5",
   descriptionColor: "#9ca3af",
   boxShadow: "0 2px 6px rgba(0,0,0,0.4)",
-});
+})
 
 const darkToolbar = createToolbarTheme({
   default: darkButton.default,
@@ -867,7 +879,7 @@ const darkToolbar = createToolbarTheme({
   danger: darkButton.danger,
   ghost: darkButton.ghost,
   success: darkButton.success,
-});
+})
 
 const darkTooltip = createTooltipTheme({
   arrowBackgroundColor: "#3e4143",
@@ -875,7 +887,7 @@ const darkTooltip = createTooltipTheme({
   nodeElementBackgroundColor: "#3e4143",
   literalStringTextColor: darkBody?.textColor,
   nodeElementTextColor: darkBody?.textColor,
-});
+})
 
 const darkTreeList = createTreeListTheme(darkBody, {
   textColor: "#f9fafb",
@@ -889,11 +901,11 @@ const darkTreeList = createTreeListTheme(darkBody, {
   dividerHierarchySelectedColor: "#485c7d",
 
   rowActionBackgroundColor: "#1e3a5f",
-});
+})
 
 const darkSplitPane = createSplitPaneTheme(darkBody, {
   dividerColor: "#374151",
-});
+})
 
 const darkWheel = createWheelTheme({
   backgroundColor: "#2c2c2e",
@@ -907,7 +919,7 @@ const darkWheel = createWheelTheme({
   inactiveTextColor: "rgba(255,255,255,0.38)",
 
   separatorColor: "rgba(255,255,255,0.5)",
-});
+})
 
 export const darkTheme: AppTheme = {
   body: darkBody,
@@ -984,7 +996,7 @@ export const darkTheme: AppTheme = {
   trackbar: darkTrackbar,
   treelist: darkTreeList,
   wheel: darkWheel,
-};
+}
 
 export {
   darkActionButton,
@@ -1059,4 +1071,4 @@ export {
   darkTooltip,
   darkTreeList,
   darkWheel,
-};
+}

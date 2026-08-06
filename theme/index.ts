@@ -1,365 +1,366 @@
-import { MessageboxVariant } from "./../components/messagebox";
-import { ButtonVariants } from "./../components/button";
-import { ToolbarVariant } from "./../components/toolbar";
-import { BaseSteplineItem } from "./../constants/step-component-util";
-import { TipMenuVariant } from "./../components/tip-menu";
-import { ToastVariant } from "./../components/toast";
-import { TrackbarVariant } from "../components/trackbar";
+import { MessageboxVariant } from "./../components/messagebox"
+import { ButtonVariants } from "./../components/button"
+import { ToolbarVariant } from "./../components/toolbar"
+import { BaseSteplineItem } from "./../constants/step-component-util"
+import { TipMenuVariant } from "./../components/tip-menu"
+import { ToastVariant } from "./../components/toast"
+import { TrackbarVariant } from "../components/trackbar"
 
 // body
 export interface BodyThemeConfig {
-  backgroundColor?: string;
-  textColor?: string;
-  borderColor?: string;
+  backgroundColor?: string
+  textColor?: string
+  borderColor?: string
+  mutedTextColor?: string
 }
 
 // action-capsule
 export interface ActionCapsuleThemeConfig {
-  activeBackgroundColor?: string;
-  textColor?: string;
-  borderColor?: string;
-  boxShadow?: string;
-  borderRadius?: string;
-  capsuleFontSize?: string;
-  tabTextColor?: string;
-  tabBorderRadius?: string;
+  activeBackgroundColor?: string
+  textColor?: string
+  borderColor?: string
+  boxShadow?: string
+  borderRadius?: string
+  capsuleFontSize?: string
+  tabTextColor?: string
+  tabBorderRadius?: string
 }
 
 // action-button.tsx
 export interface ActionButtonThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  disabledBackgroundColor?: string;
-  disabledOpacity?: number;
-  borderRadius?: string;
+  hoverBackgroundColor?: string
+  disabledBackgroundColor?: string
+  disabledOpacity?: number
+  borderRadius?: string
 
-  toggleBackgroundColor?: string;
-  toggleTextColor?: string;
-  toggleHoverBackgroundColor?: string;
-  toggleBorderColor?: string;
-  toggleBorderRadius?: string;
+  toggleBackgroundColor?: string
+  toggleTextColor?: string
+  toggleHoverBackgroundColor?: string
+  toggleBorderColor?: string
+  toggleBorderRadius?: string
 
-  dividerColor?: string;
+  dividerColor?: string
 
-  dropdownWidth?: string;
+  dropdownWidth?: string
 }
 
 // avatar.tsx
 export interface AvatarThemeConfig
   extends Omit<BodyThemeConfig, "backgroundColor"> {
-  overlayBackgroundColor?: string;
-  overlayIconColor?: string;
+  overlayBackgroundColor?: string
+  overlayIconColor?: string
 }
 
 // badge.tsx
 export interface BadgeThemeConfig extends BodyThemeConfig {
-  circleColor?: string;
+  circleColor?: string
   action?: {
-    hoverBackgroundColor?: string;
-    activeBackgroundColor?: string;
-    focusRingColor?: string;
-    disabledOpacity?: number;
-  };
+    hoverBackgroundColor?: string
+    activeBackgroundColor?: string
+    focusRingColor?: string
+    disabledOpacity?: number
+  }
 }
 
 // boxbar.tsx
 export interface BoxbarThemeConfig extends BodyThemeConfig {
-  toggleButtonColor?: string;
-  toggleButtonHoverColor?: string;
+  toggleButtonColor?: string
+  toggleButtonHoverColor?: string
 }
 
 // button.tsx
 export interface ButtonThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  activeBackgroundColor?: string;
-  textDecoration?: string;
-  focusBackgroundColor?: string;
-  dividerColor?: string;
+  hoverBackgroundColor?: string
+  activeBackgroundColor?: string
+  textDecoration?: string
+  focusBackgroundColor?: string
+  dividerColor?: string
 }
 
 export interface TipMenuContainerThemeConfig extends BodyThemeConfig {
-  boxShadow?: string;
+  boxShadow?: string
 }
 
 // calendar.tsx
 export interface CalendarThemeConfig extends BodyThemeConfig {
-  dayTextColor: string;
+  dayTextColor: string
 
-  disabledDateColor?: string;
-  weekendDateColor?: string;
+  disabledDateColor?: string
+  weekendDateColor?: string
 
-  rangeDateBackgroundColor?: string;
-  rangeDateTextColor?: string;
+  rangeDateBackgroundColor?: string
+  rangeDateTextColor?: string
 
-  highlightedDateTextColor?: string;
-  hightlightDateColor?: string;
+  highlightedDateTextColor?: string
+  hightlightDateColor?: string
 
-  mobileBackgroundColor?: string;
-  mobileBorderColor?: string;
+  mobileBackgroundColor?: string
+  mobileBorderColor?: string
 
-  boxShadow?: string;
+  boxShadow?: string
 }
 
 // capsule.tsx
 export interface CapsuleThemeConfig extends BodyThemeConfig {
-  errorBorderColor?: string;
-  boxShadow?: string;
+  errorBorderColor?: string
+  boxShadow?: string
   tab?: {
-    textColor?: string;
-    activeTextColor?: string;
-  };
+    textColor?: string
+    activeTextColor?: string
+  }
   active?: {
-    backgroundColor?: string;
-  };
+    backgroundColor?: string
+  }
   hover?: {
-    borderColor?: string;
-  };
+    borderColor?: string
+  }
 }
 
 // capsule-tab.tsx
 export interface CapsuleTabThemeConfig extends BodyThemeConfig {
-  boxShadow?: string;
-  activeBackgroundColor?: string;
+  boxShadow?: string
+  activeBackgroundColor?: string
 }
 
 // card.tsx
 export interface CardThemeConfig extends BodyThemeConfig {
-  dividerColor?: string;
-  titleColor?: string;
-  subtitleColor?: string;
-  headerBackground?: string;
-  footerBackground?: string;
-  closeIconColor?: string;
-  closeIconHoverBackground?: string;
+  dividerColor?: string
+  titleColor?: string
+  subtitleColor?: string
+  headerBackground?: string
+  footerBackground?: string
+  closeIconColor?: string
+  closeIconHoverBackground?: string
 }
 
 // chips.tsx
 export interface ChipsThemeConfig extends BodyThemeConfig {
-  mutedTextColor?: string;
+  mutedTextColor?: string
 
-  hoverBackgroundColor?: string;
-  selectedBackgroundColor?: string;
+  hoverBackgroundColor?: string
+  selectedBackgroundColor?: string
 
-  dividerColor?: string;
+  dividerColor?: string
 
-  boxShadow?: string;
+  boxShadow?: string
 }
 
 // choice-group.tsx
 export interface ChoiceGroupThemeConfig
   extends Omit<BodyThemeConfig, "textColor"> {
-  dividerColor?: string;
-  labelColor?: string;
-  descriptionColor?: string;
+  dividerColor?: string
+  labelColor?: string
+  descriptionColor?: string
 }
 
 // checkbox.tsx
 export interface CheckboxThemeConfig
   extends Omit<BodyThemeConfig, "textColor"> {
-  checkedBorderColor?: string;
-  checkedBackgroundColor?: string;
-  iconColor?: string;
-  labelColor?: string;
-  descriptionColor?: string;
-  highlightCheckedBackgroundColor?: string;
-  highlightHoverBackgroundColor?: string;
+  checkedBorderColor?: string
+  checkedBackgroundColor?: string
+  iconColor?: string
+  labelColor?: string
+  descriptionColor?: string
+  highlightCheckedBackgroundColor?: string
+  highlightHoverBackgroundColor?: string
 }
 
 // combobox.tsx
 export interface ComboboxThemeConfig extends BodyThemeConfig {
-  groupBackgroundColor?: string;
-  mobileGroupBackgroundColor?: string;
+  groupBackgroundColor?: string
+  mobileGroupBackgroundColor?: string
 
-  highlightBackgroundColor?: string;
-  selectedBackgroundColor?: string;
-  selectedTextColor?: string;
+  highlightBackgroundColor?: string
+  selectedBackgroundColor?: string
+  selectedTextColor?: string
 
-  disabledTextColor?: string;
-  emptyTextColor?: string;
+  disabledTextColor?: string
+  emptyTextColor?: string
 
-  dividerColor?: string;
-  boxShadow?: string;
+  dividerColor?: string
+  boxShadow?: string
 
-  scrollThumbColor?: string;
+  scrollThumbColor?: string
 
-  mobileBackgroundColor?: string;
-  fadeColor?: string;
+  mobileBackgroundColor?: string
+  fadeColor?: string
 }
 
 // colorbox.tsx
 export interface ColorboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  errorBorderColor?: string;
-  errorTextColor?: string;
+  errorBorderColor?: string
+  errorTextColor?: string
 
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
+  disabledBorderColor?: string
+  disabledTextColor?: string
 
-  prefixColor?: string;
+  prefixColor?: string
 
-  boxBackgroundColor?: string;
+  boxBackgroundColor?: string
 }
 
 // crumb.tsx
 export interface CrumbThemeConfig
   extends Omit<BodyThemeConfig, "borderColor" | "backgroundColor"> {
-  hoverColor?: string;
-  lastTextColor?: string;
-  arrowColor?: string;
-  ellipsisColor?: string;
-  ellipsisHoverColor?: string;
+  hoverColor?: string
+  lastTextColor?: string
+  arrowColor?: string
+  ellipsisColor?: string
+  ellipsisHoverColor?: string
 }
 
 // dialog.tsx
 export interface DialogThemeConfig extends BodyThemeConfig {
-  boxShadow?: string;
-  subtitleColor?: string;
+  boxShadow?: string
+  subtitleColor?: string
 }
 
 // document-viewer.tsx
 export interface DocumentViewerThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
-  toolbarBackgroundColor?: string;
-  errorColor?: string;
-  hoverBoxTextColor?: string;
-  hoverBoxBorderColor?: string;
-  hoverBoxBackgroundColor?: string;
+  toolbarBackgroundColor?: string
+  errorColor?: string
+  hoverBoxTextColor?: string
+  hoverBoxBorderColor?: string
+  hoverBoxBackgroundColor?: string
 }
 
 // dormant-text.tsx
 export interface DormantTextThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  pencilColor?: string;
-  actionButtonColor?: string;
-  actionButtonHoverBackground?: string;
+  hoverBackgroundColor?: string
+  pencilColor?: string
+  actionButtonColor?: string
+  actionButtonHoverBackground?: string
 }
 
 // drawer-tab.tsx
 export interface DrawerTabThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  headerBackgroundColor?: string;
-  closeButtonHoverBackground?: string;
-  dividerColor?: string;
+  hoverBackgroundColor?: string
+  headerBackgroundColor?: string
+  closeButtonHoverBackground?: string
+  dividerColor?: string
 }
 
 // error-slate.tsx
 export interface ErrorSlateThemeConfig {
-  cubeFaceBackground?: string;
-  cubeFaceBorder?: string;
-  cubeFaceText?: string;
-  titleColor?: string;
+  cubeFaceBackground?: string
+  cubeFaceBorder?: string
+  cubeFaceText?: string
+  titleColor?: string
 }
 
 // field-lane.tsx
 export interface FieldLaneThemeConfig
   extends Omit<BodyThemeConfig, "backgroundColor"> {
-  buttonTextColor?: string;
-  buttonBorderColor?: string;
-  buttonErrorTextColor?: string;
-  buttonErrorBorderColor?: string;
+  buttonTextColor?: string
+  buttonBorderColor?: string
+  buttonErrorTextColor?: string
+  buttonErrorBorderColor?: string
 
-  highlightBackgroundColor: string;
+  highlightBackgroundColor: string
 
-  placeholderColor?: string;
-  focusedBorderColor?: string;
+  placeholderColor?: string
+  focusedBorderColor?: string
 
-  disabledOpacity?: number;
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
+  disabledOpacity?: number
+  disabledBorderColor?: string
+  disabledTextColor?: string
 
-  actionColor?: string;
-  actionHoverColor?: string;
-  actionHoverBackgroundColor?: string;
+  actionColor?: string
+  actionHoverColor?: string
+  actionHoverBackgroundColor?: string
 
-  errorColor?: string;
-  errorBackground?: string;
-  errorBorderColor?: string;
-  errorForeground?: string;
+  errorColor?: string
+  errorBackground?: string
+  errorBorderColor?: string
+  errorForeground?: string
 
-  selectedBackgroundColor?: string;
+  selectedBackgroundColor?: string
 
-  helperColor?: string;
-  dividerColor?: string;
+  helperColor?: string
+  dividerColor?: string
 }
 
 // flippable.tsx
 export interface FlippableThemeConfig {
-  front?: BodyThemeConfig;
-  back?: BodyThemeConfig;
+  front?: BodyThemeConfig
+  back?: BodyThemeConfig
 }
 
 // file-input-box.tsx
 export interface FileInputBoxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
-  errorBorderColor?: string;
+  focusedBorderColor?: string
+  errorBorderColor?: string
 
-  placeholderColor?: string;
+  placeholderColor?: string
 
-  disabledTextColor?: string;
+  disabledTextColor?: string
 
-  disabledGradientColor?: string;
-  errorGradientColor?: string;
-  defaultGradientColor?: string;
+  disabledGradientColor?: string
+  errorGradientColor?: string
+  defaultGradientColor?: string
 
-  dragActiveColor?: string;
-  dragActiveBackgroundColor?: string;
+  dragActiveColor?: string
+  dragActiveBackgroundColor?: string
 }
 
 // file-drop-box.tsx
 
 export interface FileDropBoxThemeConfig extends BodyThemeConfig {
-  placeholderColor?: string;
+  placeholderColor?: string
 
-  defaultGradientColor?: string;
-  dragActiveGradientColor?: string;
-  errorGradientColor?: string;
-  disabledGradientColor?: string;
+  defaultGradientColor?: string
+  dragActiveGradientColor?: string
+  errorGradientColor?: string
+  disabledGradientColor?: string
 
-  dragActiveBackgroundColor?: string;
-  dragActiveTextColor?: string;
+  dragActiveBackgroundColor?: string
+  dragActiveTextColor?: string
 
-  iconColor?: string;
+  iconColor?: string
 
-  disabledTextColor?: string;
+  disabledTextColor?: string
 
-  progressBackgroundColor?: string;
-  progressBarColor?: string;
-  progressTextColor?: string;
+  progressBackgroundColor?: string
+  progressBarColor?: string
+  progressTextColor?: string
 }
 
 // frame.tsx
 export interface FrameThemeConfig extends BodyThemeConfig {
-  titleColor?: string;
-  titleBackgroundColor?: string;
-  overlayBackgroundColor?: string;
-  boxShadow?: string;
+  titleColor?: string
+  titleBackgroundColor?: string
+  overlayBackgroundColor?: string
+  boxShadow?: string
 }
 
 // grid.tsx
 export interface GridThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
-  cardHoverBackgroundColor?: string;
-  cardSelectedBackgroundColor?: string;
-  cardBorderColor?: string;
-  cardShadow?: string;
-  thumbnailBackgroundColor?: string;
+  cardHoverBackgroundColor?: string
+  cardSelectedBackgroundColor?: string
+  cardBorderColor?: string
+  cardShadow?: string
+  thumbnailBackgroundColor?: string
 }
 
 export interface ImageboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  draggingBackgroundColor?: string;
-  draggingBorderColor?: string;
-  draggingTextColor?: string;
+  draggingBackgroundColor?: string
+  draggingBorderColor?: string
+  draggingTextColor?: string
 
-  disabledBackgroundColor?: string;
+  disabledBackgroundColor?: string
 
-  iconColor?: string;
+  iconColor?: string
 }
 
 // keynote.tsx
 export interface KeynoteThemeConfig {
-  keyColor?: string;
-  valueColor?: string;
+  keyColor?: string
+  valueColor?: string
 }
 
 // launchpad.tsx
@@ -367,353 +368,365 @@ export interface LaunchpadThemeConfig extends BodyThemeConfig {}
 
 // list.tsx
 export interface ListThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  hoverTextColor?: string;
-  mutedTextColor?: string;
-  dragLineColor?: string;
-  emptyHoverBackgroundColor?: string;
-  toggleBackgroundColor?: string;
-  badgeTextColor?: string;
-  badgeBackgroundColor?: string;
-  badgeBorderColor?: string;
-  maxItemTextColor?: string;
+  hoverBackgroundColor?: string
+  hoverTextColor?: string
+  mutedTextColor?: string
+  dragLineColor?: string
+  emptyHoverBackgroundColor?: string
+  toggleBackgroundColor?: string
+  badgeTextColor?: string
+  badgeBackgroundColor?: string
+  badgeBorderColor?: string
+  maxItemTextColor?: string
 }
 
 // loading-skeleton.tsx
 export interface LoadingSkeletonThemeConfig {
-  baseColor?: string;
-  highlightColor?: string;
+  baseColor?: string
+  highlightColor?: string
 }
 
 // loading-spinner.tsx
 export interface LoadingSpinnerThemeConfig {
-  spinnerColor?: string;
-  textColor?: string;
+  spinnerColor?: string
+  textColor?: string
 }
 
 // messagebox.tsx
 export interface MessageboxVariantTheme
   extends Omit<BodyThemeConfig, "borderColor"> {
-  activeColor: string;
+  activeColor: string
 }
 
 export type MessageboxThemeConfig = {
-  [K in MessageboxVariant]: MessageboxVariantTheme;
-};
+  [K in MessageboxVariant]: MessageboxVariantTheme
+}
 
 // moneybox.tsx
 export interface MoneyboxThemeConfig extends BodyThemeConfig {
-  errorBorderColor?: string;
-  focusedBorderColor?: string;
+  errorBorderColor?: string
+  focusedBorderColor?: string
 
-  placeholderColor?: string;
-  disabledTextColor?: string;
+  placeholderColor?: string
+  disabledTextColor?: string
 
-  inputPadding?: string;
-  fontSize?: string;
-  borderRadius?: string;
+  inputPadding?: string
+  fontSize?: string
+  borderRadius?: string
 }
 
 // modal-dialog.tsx
 export interface ModalDialogThemeConfig extends DialogThemeConfig {
-  dividerColor?: string;
+  dividerColor?: string
 }
 
 // nav-tab.tsx
 export interface NavTabThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  activeBackgroundColor?: string;
-  selectedBackgroundColor?: string;
+  hoverBackgroundColor?: string
+  activeBackgroundColor?: string
+  selectedBackgroundColor?: string
 
-  indicatorColor?: string;
-  boxShadow?: string;
+  indicatorColor?: string
+  boxShadow?: string
 
-  circleInactiveColor?: string;
+  circleInactiveColor?: string
 
-  activeInsetShadow?: string;
+  activeInsetShadow?: string
 }
 
 // overlay-blocker.tsx
 export interface OverlayBlockerThemeConfig {
-  backgroundColor?: string;
-  backdropFilter?: string;
+  backgroundColor?: string
+  backdropFilter?: string
 }
 
 // paper-dialog.tsx
 export interface PaperDialogThemeConfig extends BodyThemeConfig {
-  boxShadow?: string;
-  actionHoverBackgroundColor?: string;
+  boxShadow?: string
+  actionHoverBackgroundColor?: string
 }
 
 // pagination.tsx
 export interface PaginationThemeConfig extends BodyThemeConfig {
-  activeBorderColor?: string;
-  hoverBorderColor?: string;
+  activeBorderColor?: string
+  hoverBorderColor?: string
 
-  activeTextColor?: string;
+  activeTextColor?: string
 
-  disabledBackgroundColor?: string;
-  disabledTextColor?: string;
+  disabledBackgroundColor?: string
+  disabledTextColor?: string
 }
 
 //pinbox.tsx
 export interface PinboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  errorBorderColor?: string;
-  errorTextColor?: string;
+  errorBorderColor?: string
+  errorTextColor?: string
 
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
+  disabledBorderColor?: string
+  disabledTextColor?: string
 
-  placeholderColor?: string;
-  boxShadow?: string;
+  placeholderColor?: string
+  boxShadow?: string
 }
 
 // phonebox.tsx
 export interface PhoneboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  errorBorderColor?: string;
-  errorTextColor?: string;
+  errorBorderColor?: string
+  errorTextColor?: string
 
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
+  disabledBorderColor?: string
+  disabledTextColor?: string
 
-  placeholderColor?: string;
+  placeholderColor?: string
 
-  boxShadow?: string;
+  boxShadow?: string
 
-  optionHighlightedBackground?: string;
+  optionHighlightedBackground?: string
 }
 
 // trackbar.tsx
 export interface TrackbarVariantTheme
   extends Omit<BodyThemeConfig, "borderColor"> {
-  barColor: string;
-  trackColor: string;
+  barColor: string
+  trackColor: string
 }
 
 export type TrackbarThemeConfig = {
-  [K in TrackbarVariant]: TrackbarVariantTheme;
-};
+  [K in TrackbarVariant]: TrackbarVariantTheme
+}
 
 // radio.tsx
 export interface RadioThemeConfig extends BodyThemeConfig {
-  checkedBorderColor?: string;
+  checkedBorderColor?: string
 
-  checkedOutsideBorderColor?: string;
-  checkedBackgroundColor?: string;
-  iconColor?: string;
-  descriptionColor?: string;
+  checkedOutsideBorderColor?: string
+  checkedBackgroundColor?: string
+  iconColor?: string
+  descriptionColor?: string
 
-  highlightCheckedBackgroundColor?: string;
-  highlightBackgroundColor?: string;
+  highlightCheckedBackgroundColor?: string
+  highlightBackgroundColor?: string
 
-  highlightCheckedBorderColor?: string;
-  highlightBorderColor?: string;
+  highlightCheckedBorderColor?: string
+  highlightBorderColor?: string
 }
 
 // rating.tsx
 export interface RatingThemeConfig {
-  starFullColor?: string;
-  starEmptyColor?: string;
-  starBorderColor?: string;
+  starFullColor?: string
+  starEmptyColor?: string
+  starBorderColor?: string
 
-  labelTextColor?: string;
+  labelTextColor?: string
 
-  disabledStarColor?: string;
-  disabledLabelColor?: string;
+  disabledStarColor?: string
+  disabledLabelColor?: string
 
-  hoverStarColor?: string;
+  hoverStarColor?: string
 }
 
 // rich-editor.tsx
 
 export interface RichEditorThemeConfig extends BodyThemeConfig {
-  placeholderColor?: string;
-  toolbarBackground?: string;
-  toolbarButtonActive?: string;
-  toolbarButtonHover?: string;
-  toolbarButtonFocused?: string;
-  scrollThumb?: string;
-  preBackgroundColor?: string;
+  placeholderColor?: string
+  toolbarBackground?: string
+  toolbarButtonActive?: string
+  toolbarButtonHover?: string
+  toolbarButtonFocused?: string
+  scrollThumb?: string
+  preBackgroundColor?: string
 }
 
 // searchbox.tsx
 export interface SearchboxThemeConfig extends BodyThemeConfig {
-  activeBackgroundColor?: string;
-  focusBorderColor?: string;
-  focusShadow?: string;
-  iconColor?: string;
-  clearIconColor?: string;
+  activeBackgroundColor?: string
+  focusBorderColor?: string
+  focusShadow?: string
+  iconColor?: string
+  clearIconColor?: string
 }
 
 // selectbox.tsx
 export interface SelectboxThemeConfig extends BodyThemeConfig {
-  hoverBorderColor: string;
-  focusedBorderColor: string;
+  hoverBorderColor: string
+  focusedBorderColor: string
 
-  errorBorderColor: string;
+  errorBorderColor: string
 
-  placeholderColor: string;
+  placeholderColor: string
 
-  iconColor: string;
-  iconActiveColor: string;
+  iconColor: string
+  iconActiveColor: string
 
-  clearIconColor: string;
-  clearIconBackground: string;
-  clearIconHoverBackground: string;
+  clearIconColor: string
+  clearIconBackground: string
+  clearIconHoverBackground: string
 
-  dividerColor: string;
-  disabledOpacity: number;
+  dividerColor: string
+  disabledOpacity: number
 }
 
 // separator.tsx
 export interface SeparatorThemeConfig {
-  containerColor?: string;
-  lineColor?: string;
-  lineShadow?: string;
-  titleColor?: string;
-  backgroundTitleColor?: string;
-  tooltipBackgroundColor?: string;
+  containerColor?: string
+  lineColor?: string
+  lineShadow?: string
+  titleColor?: string
+  backgroundTitleColor?: string
+  tooltipBackgroundColor?: string
 }
 
 // signbox.tsx
 export interface SignboxThemeConfig extends BodyThemeConfig {
-  errorBorderColor?: string;
+  errorBorderColor?: string
 
-  clearIconColor?: string;
-  clearIconHoverBackground?: string;
+  clearIconColor?: string
+  clearIconHoverBackground?: string
 }
 
 // sidebar.tsx
 export interface SidebarThemeConfig extends BodyThemeConfig {
-  boxShadow?: string;
+  boxShadow?: string
 
   item?: {
-    hoverBackgroundColor?: string;
-    activeBackgroundColor?: string;
-  };
+    hoverBackgroundColor?: string
+    activeBackgroundColor?: string
+  }
 
   toggle?: {
-    backgroundColor?: string;
-    borderColor?: string;
-    hoverBackgroundColor?: string;
-  };
+    backgroundColor?: string
+    borderColor?: string
+    hoverBackgroundColor?: string
+  }
 }
 
 // stepline.tsx
 export interface SteplineThemeConfig {
-  outerCircle: Record<BaseSteplineItem["variant"], string>;
-  innerCircle: Record<BaseSteplineItem["variant"], string>;
-  text: Record<BaseSteplineItem["variant"], string>;
+  outerCircle: Record<BaseSteplineItem["variant"], string>
+  innerCircle: Record<BaseSteplineItem["variant"], string>
+  text: Record<BaseSteplineItem["variant"], string>
   line?: {
-    default: string;
-    completed: string;
-    error: string;
-  };
+    default: string
+    completed: string
+    error: string
+  }
 }
 // statusbar.tsx
 export interface StatusbarThemeConfig extends BodyThemeConfig {
-  boxShadow: string;
+  boxShadow: string
   item: {
-    activeBackgroundColor: string;
-    hoverBackgroundColor: string;
-  };
+    activeBackgroundColor: string
+    hoverBackgroundColor: string
+  }
 }
 
+// stateful-form.tsx
 export interface StatefulFormThemeConfig extends BodyThemeConfig {
-  rowFrameBackgroundColor: string;
-  mobileRowFrameBackgroundColor: string;
+  rowFrameBackgroundColor: string
+  mobileRowFrameBackgroundColor: string
+  fieldTooltip: StatefulFormFieldTooltipThemeConfig
+}
+
+export interface StatefulFormFieldTooltipThemeConfig {
+  textColor: string
+  mutedTextColor: string
+  panelBackground: string
+  panelBorder: string
+  dividerColor: string
+  scrollbarThumbColor: string
+  scrollbarTrackColor: string
 }
 
 // table.tsx
 export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
-  boxShadow?: string;
+  boxShadow?: string
 
-  headerActionBackgroundColor?: string;
-  headerActionBorderColor?: string;
-  headerActionHoverBackgroundColor?: string;
+  headerActionBackgroundColor?: string
+  headerActionBorderColor?: string
+  headerActionHoverBackgroundColor?: string
 
-  leftLooseEffectColor?: string;
-  rightLooseEffectColor?: string;
+  leftLooseEffectColor?: string
+  rightLooseEffectColor?: string
 
-  headerBackgroundColor?: string;
-  headerBorderColor?: string;
+  headerBackgroundColor?: string
+  headerBorderColor?: string
 
-  rowGroupBackgroundColor?: string;
-  rowGroupSubtitleTextColor?: string;
+  rowGroupBackgroundColor?: string
+  rowGroupSubtitleTextColor?: string
 
-  rowBackgroundColor?: string;
-  rowBorderColor?: string;
-  rowHoverBackgroundColor?: string;
-  rowSelectedBackgroundColor?: string;
-  rowContentBackgroundColor?: string;
-  rowContentBoxShadow?: string;
+  rowBackgroundColor?: string
+  rowBorderColor?: string
+  rowHoverBackgroundColor?: string
+  rowSelectedBackgroundColor?: string
+  rowContentBackgroundColor?: string
+  rowContentBoxShadow?: string
 
-  summaryBackgroundColor?: string;
-  summaryBorderColor?: string;
+  summaryBackgroundColor?: string
+  summaryBorderColor?: string
 
-  toggleRowBackgroundColor?: string;
+  toggleRowBackgroundColor?: string
 
-  scrollbarThumbColor?: string;
-  scrollbarTrackColor?: string;
+  scrollbarThumbColor?: string
+  scrollbarTrackColor?: string
 }
 
 // textbox.tsx
 export interface TextboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  errorBorderColor?: string;
-  errorTextColor?: string;
+  errorBorderColor?: string
+  errorTextColor?: string
 
-  disabledBorderColor?: string;
-  disabledTextColor?: string;
+  disabledBorderColor?: string
+  disabledTextColor?: string
 
-  placeholderColor?: string;
+  placeholderColor?: string
 
-  boxShadow?: string;
+  boxShadow?: string
 }
 
 // textarea.tsx
 export interface TextareaThemeConfig extends TextboxThemeConfig {
-  scrollbarThumbColor?: string;
+  scrollbarThumbColor?: string
 }
 
 // title.tsx
 export interface TitleThemeConfig
   extends Omit<BodyThemeConfig, "textColor" | "borderColor"> {
   pretitle?: {
-    textColor?: string;
-    opacity?: number;
-    fontWeight?: number;
-  };
+    textColor?: string
+    opacity?: number
+    fontWeight?: number
+  }
 
   title?: {
-    textColor?: string;
-    fontWeight?: number;
-  };
+    textColor?: string
+    fontWeight?: number
+  }
 
   subtitle?: {
-    textColor?: string;
-    fontWeight?: number;
-  };
+    textColor?: string
+    fontWeight?: number
+  }
 
   icon?: {
-    hoverBackgroundColor?: string;
-    backgroundColor?: string;
-    textColor?: string;
-  };
+    hoverBackgroundColor?: string
+    backgroundColor?: string
+    textColor?: string
+  }
 }
 
 // timebox.tsx
 export interface TimeboxThemeConfig extends BodyThemeConfig {
-  focusedBorderColor?: string;
+  focusedBorderColor?: string
 
-  errorBorderColor?: string;
-  errorTextColor?: string;
-  colonColor?: string;
+  errorBorderColor?: string
+  errorTextColor?: string
+  colonColor?: string
 }
 
 // timeline.tsx
@@ -721,176 +734,176 @@ export interface TimelineThemeConfig extends SteplineThemeConfig {}
 
 // tooltip.tsx
 export interface TooltipThemeConfig {
-  boxShadow?: string;
-  arrowBackgroundColor: string;
-  literalStringBackgroundColor: string;
-  literalStringTextColor?: string;
-  nodeElementBackgroundColor: string;
-  nodeElementTextColor: string;
+  boxShadow?: string
+  arrowBackgroundColor: string
+  literalStringBackgroundColor: string
+  literalStringTextColor?: string
+  nodeElementBackgroundColor: string
+  nodeElementTextColor: string
 }
 
 // toast.tsx
 export interface ToastThemeConfig extends BodyThemeConfig {
-  iconBackgroundColor: string;
-  iconColor: string;
-  progressColor: string;
+  iconBackgroundColor: string
+  iconColor: string
+  progressColor: string
 }
 
 // thumb-field.tsx
 export interface ThumbFieldThemeConfig {
-  thumbsUpColor?: string;
-  thumbsDownColor?: string;
-  inactiveColor?: string;
-  errorColor?: string;
-  disabledOpacity?: number;
+  thumbsUpColor?: string
+  thumbsDownColor?: string
+  inactiveColor?: string
+  errorColor?: string
+  disabledOpacity?: number
 }
 
 // toggle.tsx
 export interface ToggleThemeConfig extends BodyThemeConfig {
-  checkedBackgroundColor?: string;
-  thumbColor?: string;
-  descriptionColor?: string;
-  disabledOpacity?: number;
-  boxShadow?: string;
+  checkedBackgroundColor?: string
+  thumbColor?: string
+  descriptionColor?: string
+  disabledOpacity?: number
+  boxShadow?: string
 }
 
 // toolbar.tsx
 export interface ToolbarThemeConfig extends BodyThemeConfig {
-  hoverBackgroundColor?: string;
-  activeBackgroundColor?: string;
-  focusBackgroundColor?: string;
-  textDecoration?: string;
-  dividerColor?: string;
+  hoverBackgroundColor?: string
+  activeBackgroundColor?: string
+  focusBackgroundColor?: string
+  textDecoration?: string
+  dividerColor?: string
 }
 
 // tip-menu.tsx
 export interface TipMenuThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
-  hoverBackgroundColor?: string;
-  activeBackgroundColor?: string;
-  focusBackgroundColor?: string;
-  disabledTextColor?: string;
+  hoverBackgroundColor?: string
+  activeBackgroundColor?: string
+  focusBackgroundColor?: string
+  disabledTextColor?: string
 }
 
 // treelist.tsx
 export interface TreeListThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
-  hoverBackgroundColor?: string;
-  selectedBackgroundColor?: string;
+  hoverBackgroundColor?: string
+  selectedBackgroundColor?: string
 
-  highlightedText?: string;
+  highlightedText?: string
 
-  dividerHierarchyColor?: string;
-  dividerHierarchySelectedColor?: string;
-  dividerHierarchyRelatedColor?: string;
+  dividerHierarchyColor?: string
+  dividerHierarchySelectedColor?: string
+  dividerHierarchyRelatedColor?: string
 
-  rowActionBackgroundColor?: string;
+  rowActionBackgroundColor?: string
 }
 
 // scrollbar.tsx
 export interface ScrollbarThemeConfig {
-  scrollbarThumbActiveColor?: string;
-  scrollbarThumbColor?: string;
-  scrollbarTrackColor?: string;
+  scrollbarThumbActiveColor?: string
+  scrollbarThumbColor?: string
+  scrollbarTrackColor?: string
 }
 
 // split-pane.tsx
 export interface SplitPaneThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
-  dividerColor?: string;
+  dividerColor?: string
 }
 
 // wheel.tsx
 export interface WheelThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
-  overlayBackgroundColor?: string;
-  overlayBorderColor?: string;
+  overlayBackgroundColor?: string
+  overlayBorderColor?: string
 
-  fadeColor?: string;
+  fadeColor?: string
 
-  inactiveTextColor?: string;
+  inactiveTextColor?: string
 
-  separatorColor?: string;
+  separatorColor?: string
 }
 
 // app-theme.tsx
 export interface AppTheme {
-  body: BodyThemeConfig;
+  body: BodyThemeConfig
 
-  actionCapsule: ActionCapsuleThemeConfig;
-  actionButton: ActionButtonThemeConfig;
+  actionCapsule: ActionCapsuleThemeConfig
+  actionButton: ActionButtonThemeConfig
 
-  avatar: AvatarThemeConfig;
-  badge: BadgeThemeConfig;
-  boxbar: BoxbarThemeConfig;
-  button: Record<ButtonVariants["variant"], ButtonThemeConfig>;
-  buttonTipMenu: TipMenuContainerThemeConfig;
-  calendar: CalendarThemeConfig;
-  capsule: CapsuleThemeConfig;
-  capsuleTab: CapsuleTabThemeConfig;
-  card: CardThemeConfig;
-  chips: ChipsThemeConfig;
-  choiceGroup: ChoiceGroupThemeConfig;
-  checkbox: CheckboxThemeConfig;
-  colorbox: ColorboxThemeConfig;
-  combobox: ComboboxThemeConfig;
-  crumb: CrumbThemeConfig;
-  dialog: DialogThemeConfig;
-  documentViewer: DocumentViewerThemeConfig;
-  dormantText: DormantTextThemeConfig;
-  drawerTab: DrawerTabThemeConfig;
-  errorSlate: ErrorSlateThemeConfig;
-  fieldLane: FieldLaneThemeConfig;
-  flippable: FlippableThemeConfig;
-  fileInputBox: FileInputBoxThemeConfig;
-  fileDropBox: FileDropBoxThemeConfig;
-  frame: FrameThemeConfig;
-  grid: GridThemeConfig;
-  imagebox: ImageboxThemeConfig;
-  keynote: KeynoteThemeConfig;
-  launchpad: LaunchpadThemeConfig;
-  list: ListThemeConfig;
-  loadingSkeleton: LoadingSkeletonThemeConfig;
-  loadingSpinner: LoadingSpinnerThemeConfig;
-  messagebox: MessageboxThemeConfig;
-  moneybox: MoneyboxThemeConfig;
-  modalDialog: ModalDialogThemeConfig;
-  navTab: NavTabThemeConfig;
-  overlayBlocker: OverlayBlockerThemeConfig;
-  paperDialog: PaperDialogThemeConfig;
-  pagination: PaginationThemeConfig;
-  pinbox: PinboxThemeConfig;
-  phonebox: PhoneboxThemeConfig;
-  radio: RadioThemeConfig;
-  rating: RatingThemeConfig;
-  richEditor: RichEditorThemeConfig;
-  scrollbar: ScrollbarThemeConfig;
-  searchbox: SearchboxThemeConfig;
-  selectbox: SelectboxThemeConfig;
-  separator: SeparatorThemeConfig;
-  sidebar: SidebarThemeConfig;
-  signbox: SignboxThemeConfig;
-  statusbar: StatusbarThemeConfig;
-  statefulForm: StatefulFormThemeConfig;
-  stepline: SteplineThemeConfig;
-  splitPane: SplitPaneThemeConfig;
-  table: TableThemeConfig;
-  textbox: TextboxThemeConfig;
-  textarea: TextareaThemeConfig;
-  thumbField: ThumbFieldThemeConfig;
-  timeline: TimelineThemeConfig;
-  tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>;
-  timebox: TimeboxThemeConfig;
-  title: TitleThemeConfig;
-  toast: Record<ToastVariant, ToastThemeConfig>;
-  toggle: ToggleThemeConfig;
-  toolbar: Record<ToolbarVariant, ToolbarThemeConfig>;
-  tooltip: TooltipThemeConfig;
-  trackbar: TrackbarThemeConfig;
-  treelist: TreeListThemeConfig;
-  wheel: WheelThemeConfig;
+  avatar: AvatarThemeConfig
+  badge: BadgeThemeConfig
+  boxbar: BoxbarThemeConfig
+  button: Record<ButtonVariants["variant"], ButtonThemeConfig>
+  buttonTipMenu: TipMenuContainerThemeConfig
+  calendar: CalendarThemeConfig
+  capsule: CapsuleThemeConfig
+  capsuleTab: CapsuleTabThemeConfig
+  card: CardThemeConfig
+  chips: ChipsThemeConfig
+  choiceGroup: ChoiceGroupThemeConfig
+  checkbox: CheckboxThemeConfig
+  colorbox: ColorboxThemeConfig
+  combobox: ComboboxThemeConfig
+  crumb: CrumbThemeConfig
+  dialog: DialogThemeConfig
+  documentViewer: DocumentViewerThemeConfig
+  dormantText: DormantTextThemeConfig
+  drawerTab: DrawerTabThemeConfig
+  errorSlate: ErrorSlateThemeConfig
+  fieldLane: FieldLaneThemeConfig
+  flippable: FlippableThemeConfig
+  fileInputBox: FileInputBoxThemeConfig
+  fileDropBox: FileDropBoxThemeConfig
+  frame: FrameThemeConfig
+  grid: GridThemeConfig
+  imagebox: ImageboxThemeConfig
+  keynote: KeynoteThemeConfig
+  launchpad: LaunchpadThemeConfig
+  list: ListThemeConfig
+  loadingSkeleton: LoadingSkeletonThemeConfig
+  loadingSpinner: LoadingSpinnerThemeConfig
+  messagebox: MessageboxThemeConfig
+  moneybox: MoneyboxThemeConfig
+  modalDialog: ModalDialogThemeConfig
+  navTab: NavTabThemeConfig
+  overlayBlocker: OverlayBlockerThemeConfig
+  paperDialog: PaperDialogThemeConfig
+  pagination: PaginationThemeConfig
+  pinbox: PinboxThemeConfig
+  phonebox: PhoneboxThemeConfig
+  radio: RadioThemeConfig
+  rating: RatingThemeConfig
+  richEditor: RichEditorThemeConfig
+  scrollbar: ScrollbarThemeConfig
+  searchbox: SearchboxThemeConfig
+  selectbox: SelectboxThemeConfig
+  separator: SeparatorThemeConfig
+  sidebar: SidebarThemeConfig
+  signbox: SignboxThemeConfig
+  statusbar: StatusbarThemeConfig
+  statefulForm: StatefulFormThemeConfig
+  stepline: SteplineThemeConfig
+  splitPane: SplitPaneThemeConfig
+  table: TableThemeConfig
+  textbox: TextboxThemeConfig
+  textarea: TextareaThemeConfig
+  thumbField: ThumbFieldThemeConfig
+  timeline: TimelineThemeConfig
+  tipmenu: Record<TipMenuVariant, TipMenuThemeConfig>
+  timebox: TimeboxThemeConfig
+  title: TitleThemeConfig
+  toast: Record<ToastVariant, ToastThemeConfig>
+  toggle: ToggleThemeConfig
+  toolbar: Record<ToolbarVariant, ToolbarThemeConfig>
+  tooltip: TooltipThemeConfig
+  trackbar: TrackbarThemeConfig
+  treelist: TreeListThemeConfig
+  wheel: WheelThemeConfig
 }
 
-export * from "./provider";
-export * from "./mode";
-export * from "./registry";
-export * from "./create-theme";
+export * from "./provider"
+export * from "./mode"
+export * from "./registry"
+export * from "./create-theme"
