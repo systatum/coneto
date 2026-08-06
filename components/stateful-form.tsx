@@ -288,7 +288,7 @@ function StatefulForm<Z extends ZodTypeAny>({
   // Prevents empty/untouched fields from getting falsely marked as touched
   // on initial mount (which would make them show errors immediately).
   const hasMeaningfulValue = (value: unknown): boolean => {
-    if (typeof value === "string") return value.length > 1
+    if (typeof value === "string") return value.length > 0
     if (typeof value === "number" || typeof value === "boolean") return true
     if (isFile(value) || isFileArray(value)) return true
     return value != null
@@ -375,7 +375,7 @@ function StatefulForm<Z extends ZodTypeAny>({
     }
 
     if (typeof value === "string") {
-      return value.length > 1 && !!touched && hasErrorMessage(error)
+      return value.length > 0 && !!touched && hasErrorMessage(error)
     }
 
     if (typeof value === "number" || typeof value === "boolean") {
