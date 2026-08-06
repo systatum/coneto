@@ -349,6 +349,106 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("StatefulForm.FieldTooltip", () => {
+    context("items", () => {
+      context("when given only a title", () => {
+        it("should render the title", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Account Information",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item").should(
+            "contain.text",
+            "Account Information"
+          );
+        });
+      });
+
+      context("when given only a description", () => {
+        it("should render the description", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  description: "Enter your full legal name.",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item").should(
+            "contain.text",
+            "Enter your full legal name."
+          );
+        });
+      });
+
+      context("when given a title and description", () => {
+        it("should render both", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Name",
+                  description: "Enter your full legal name.",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item")
+            .should("contain.text", "Name")
+            .and("contain.text", "Enter your full legal name.");
+        });
+      });
+
+      context("when given multiple items", () => {
+        it("should render all items", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Name",
+                  description: "Enter your full legal name.",
+                },
+                {
+                  title: "Email",
+                  description: "Use an active email address.",
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("field-tooltip-item").should("have.length", 2);
+
+          cy.findAllByLabelText("field-tooltip-item")
+            .eq(0)
+            .should("contain.text", "Name")
+            .and("contain.text", "Enter your full legal name.");
+
+          cy.findAllByLabelText("field-tooltip-item")
+            .eq(1)
+            .should("contain.text", "Email")
+            .and("contain.text", "Use an active email address.");
+        });
+      });
+
+      context("when no items are provided", () => {
+        it("should not render field-tooltip", () => {
+          cy.mount(<StatefulForm.FieldTooltip items={[]} />);
+
+          cy.findByLabelText("field-tooltip").should("not.exist");
+        });
+      });
+    });
+  });
+
   context("general", () => {
     function StatefulFormWithAsync({
       state = "valid",
