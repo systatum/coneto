@@ -3112,7 +3112,11 @@ function StatefulFormLabel({
       <FieldTooltip
         styles={{
           itemStyle: css`
-            padding: 4px;
+            padding: 4px 8px;
+            background-color: transparent;
+          `,
+          containerStyle: css`
+            background-color: transparent;
           `,
         }}
         items={[
