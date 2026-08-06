@@ -317,6 +317,32 @@ const ALL_INPUT: FormFieldGroup[] = [
   },
 ]
 
+const FIELD_HELPERS: Record<string, string> = {
+  text: "Enter any text value.",
+  email: "Enter a valid email address.",
+  number: "Enter a numeric value.",
+  password: "Enter a secure password.",
+  textarea: "Enter a longer message.",
+  time: "Select a time value.",
+  pin: "Enter your PIN code.",
+  checkbox: "Toggle the checkbox.",
+  radio: "Select one option.",
+  color: "Choose a color.",
+  combo: "Select an option from the list.",
+  date: "Select a date.",
+  file_drop_box: "Drag and drop a file here.",
+  file: "Upload a file.",
+  image: "Upload an image.",
+  money: "Enter a monetary value.",
+  phone: "Enter a phone number.",
+  signbox: "Provide your signature.",
+  rating: "Rate the item.",
+  thumbfield: "Upload or select a thumbnail.",
+  toggle: "Toggle the switch.",
+  chips: "Select one or more chips.",
+  capsule: "Choose a monetary option.",
+}
+
 const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   groups.flatMap((group) =>
     Array.isArray(group) ? flattenFields(group) : [group],
@@ -554,6 +580,117 @@ describe("StatefulForm", () => {
 
   context("mobile", () => {
     context("styles", () => {
+      const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
+        Array.isArray(group)
+          ? group.map((item) => ({
+              ...item,
+              helper: (
+                <span aria-label="helper-with-react-node">
+                  {FIELD_HELPERS[item.type]}
+                </span>
+              ),
+            }))
+          : {
+              ...group,
+              helper: (
+                <span aria-label="helper-with-react-node">
+                  {FIELD_HELPERS[group.type]}
+                </span>
+              ),
+            },
+      )
+
+      const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props)
+      context("helperArrowStyle", () => {
+        context("when given green background", () => {
+          it("renders with background with rgb(0, 255, 0)", () => {
+            cy.mount(
+              <StatefulForm
+                styles={{
+                  helperArrowStyle: css`
+                    background-color: rgb(0, 255, 0);
+                  `,
+                }}
+                fields={INPUT_WITH_HELPER}
+                formValues={allValue}
+                mode="onChange"
+              />,
+            )
+
+            cy.findAllByLabelText("tooltip-trigger")
+              .should("have.length", FLAT_INPUT.length)
+              .each(($el, index) => {
+                cy.wrap($el).trigger("mouseover")
+
+                cy.findAllByLabelText("tooltip-arrow")
+                  .eq(index)
+                  .should("have.css", "background-color", "rgb(0, 255, 0)")
+              })
+          })
+        })
+      })
+
+      context("helperIconStyle", () => {
+        context("when given red color", () => {
+          it("renders the svg with rgb(255, 0, 0)", () => {
+            cy.mount(
+              <StatefulForm
+                styles={{
+                  helperIconStyle: css`
+                    svg {
+                      fill: red;
+                    }
+                  `,
+                }}
+                fields={INPUT_WITH_HELPER}
+                formValues={allValue}
+                mode="onChange"
+              />,
+            )
+
+            cy.findAllByLabelText("tooltip-trigger")
+              .should("have.length", FLAT_INPUT.length)
+              .each(($el, index) => {
+                cy.wrap($el).trigger("mouseover")
+
+                cy.findAllByLabelText("tooltip-trigger")
+                  .eq(index)
+                  .find("svg")
+                  .should("have.css", "fill", "rgb(255, 0, 0)")
+              })
+          })
+        })
+      })
+
+      context("helperDrawerStyle", () => {
+        context("when given background yellow", () => {
+          it("renders the background color with rgb(255, 255, 0)", () => {
+            cy.mount(
+              <StatefulForm
+                styles={{
+                  helperDrawerStyle: css`
+                    background-color: yellow;
+                  `,
+                }}
+                fields={INPUT_WITH_HELPER}
+                formValues={allValue}
+                mode="onChange"
+              />,
+            )
+
+            cy.findAllByLabelText("tooltip-trigger")
+              .should("have.length", FLAT_INPUT.length)
+              .each(($el, index) => {
+                cy.wrap($el).trigger("mouseover")
+
+                cy.findAllByLabelText("tooltip-drawer")
+                  .eq(index)
+                  .should("have.css", "background-color", "rgb(255, 255, 0)")
+              })
+          })
+        })
+      })
+
       context("mobileFieldGroupStyle", () => {
         context("when given padding 30px", () => {
           it("should render the padding in all side with 30px", () => {
@@ -2856,32 +2993,6 @@ describe("StatefulForm", () => {
   })
 
   context("helper", () => {
-    const FIELD_HELPERS: Record<string, string> = {
-      text: "Enter any text value.",
-      email: "Enter a valid email address.",
-      number: "Enter a numeric value.",
-      password: "Enter a secure password.",
-      textarea: "Enter a longer message.",
-      time: "Select a time value.",
-      pin: "Enter your PIN code.",
-      checkbox: "Toggle the checkbox.",
-      radio: "Select one option.",
-      color: "Choose a color.",
-      combo: "Select an option from the list.",
-      date: "Select a date.",
-      file_drop_box: "Drag and drop a file here.",
-      file: "Upload a file.",
-      image: "Upload an image.",
-      money: "Enter a monetary value.",
-      phone: "Enter a phone number.",
-      signbox: "Provide your signature.",
-      rating: "Rate the item.",
-      thumbfield: "Upload or select a thumbnail.",
-      toggle: "Toggle the switch.",
-      chips: "Select one or more chips.",
-      capsule: "Choose a monetary option.",
-    }
-
     const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
       Array.isArray(group)
         ? group.map((item) => ({
@@ -2912,6 +3023,49 @@ describe("StatefulForm", () => {
 
           cy.findByText(String(FLAT_INPUT[index].helper))
         })
+    })
+
+    context("with reactNode", () => {
+      const INPUT_WITH_HELPER_REACTNODE = ALL_INPUT.map(
+        (group) =>
+          Array.isArray(group)
+            ? group.map((item) => ({
+                ...item,
+                helper: (
+                  <span aria-label="helper-with-react-node">
+                    {FIELD_HELPERS[item.type]}
+                  </span>
+                ),
+              }))
+            : {
+                ...group,
+                helper: (
+                  <span aria-label="helper-with-react-node">
+                    {FIELD_HELPERS[group.type]}
+                  </span>
+                ),
+              },
+
+        it("renders tooltip field with react node", () => {
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_HELPER_REACTNODE}
+              formValues={allValue}
+              mode="onChange"
+            />,
+          )
+
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover")
+
+              cy.findAllByLabelText("helper-with-react-node")
+                .eq(index)
+                .should("have.text", FLAT_INPUT[index].helper)
+            })
+        }),
+      )
     })
   })
 
