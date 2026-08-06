@@ -3265,6 +3265,7 @@ function FieldTooltip({ items, styles }: FieldTooltipProps) {
 
   return (
     <FieldTooltipWrapper
+      aria-label="field-tooltip"
       ref={wrapperRef}
       $theme={statefulFormTheme}
       $scrollable={isScrollable}
@@ -3273,17 +3274,20 @@ function FieldTooltip({ items, styles }: FieldTooltipProps) {
       {items.map(({ title, description }, index) => (
         <FieldTooltipItem
           key={index}
+          aria-label="field-tooltip-item"
           $theme={statefulFormTheme}
           $isLast={index === items.length - 1}
           $style={styles?.itemStyle}
         >
           <FieldTooltipTitle
+            aria-label="field-tooltip-title"
             $style={styles?.titleStyle}
             $theme={statefulFormTheme}
           >
             {title}
           </FieldTooltipTitle>
           <FieldTooltipDescription
+            aria-label="field-tooltip-description"
             $style={styles?.descriptionStyle}
             $theme={statefulFormTheme}
           >
