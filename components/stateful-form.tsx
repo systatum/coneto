@@ -3107,6 +3107,24 @@ function StatefulFormLabel({
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
 
+  const helperValue =
+    typeof helper === "string" ? (
+      <FieldTooltip
+        styles={{
+          itemStyle: css`
+            padding: 4px;
+          `,
+        }}
+        items={[
+          {
+            description: helper,
+          },
+        ]}
+      />
+    ) : (
+      helper
+    );
+
   return (
     <Label
       {...props}
@@ -3131,6 +3149,7 @@ function StatefulFormLabel({
             arrowStyle: css`
               background-color: ${statefulFormTheme?.fieldTooltip
                 ?.panelBackground};
+              display: none;
 
               ${styles?.helperArrowStyle};
             `,
@@ -3139,11 +3158,12 @@ function StatefulFormLabel({
                 ?.panelBackground};
               color: ${statefulFormTheme?.fieldTooltip?.mutedTextColor};
               max-width: 300px;
+              padding: 0px;
               ${styles?.helperDrawerStyle}
             `,
             self: styles?.helperIconStyle,
           }}
-          value={helper}
+          value={helperValue}
         />
       )}
     </Label>
