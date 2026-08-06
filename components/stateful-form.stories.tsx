@@ -99,6 +99,50 @@ const fields = [
 - Listen to \`onChange\` for live updates and \`onValidityChange\` to track form validity.
 - Customize appearance and spacing using \`styles\`.
 - Render fully custom inputs using \`type="custom"\` and the \`render\` prop.
+
+---
+
+### 💡 StatefulForm.FieldTooltip
+
+\`StatefulForm.FieldTooltip\` provides a structured way to display contextual guidance for a form field. Unlike a plain helper string, it supports multiple titled sections, making it ideal for explaining requirements, best practices, or additional information.
+
+Use it by passing the component to a field's \`helper\` property.
+
+\`\`\`tsx
+helper: (
+  <StatefulForm.FieldTooltip
+    items={[
+      {
+        title: "Purpose",
+        description:
+          "Use this field to enter a short, descriptive title.",
+      },
+      {
+        title: "Best Practice",
+        description:
+          "Choose a clear and concise value that is easy to understand.",
+      },
+      {
+        title: "Requirements",
+        description:
+          "Avoid using special characters unless they are required.",
+      },
+    ]}
+  />
+)
+\`\`\`
+
+For simple helper text, you can continue using a string:
+
+\`\`\`tsx
+helper: "Enter a unique title."
+\`\`\`
+
+Use \`StatefulForm.FieldTooltip\` when:
+- 📖 You need to explain multiple rules or requirements.
+- 💡 You want to provide additional context or guidance.
+- 📋 You want to organize helper content into titled sections.
+- 🎨 You need to customize the tooltip appearance using the \`styles\` prop.
 `,
       },
     },
@@ -1792,29 +1836,29 @@ export const AllCase: Story = {
           <StatefulForm.FieldTooltip
             items={[
               {
-                title: "Work Email Preferred",
+                title: "Purpose",
                 description:
-                  "Use your company email address if you're registering for an organization.",
+                  "Use this field to enter short text such as a name, title, or label.",
               },
               {
-                title: "Verification Required",
+                title: "Keep It Concise",
                 description:
-                  "We'll send a verification email before your account becomes active.",
+                  "Enter clear and meaningful text that is easy for others to understand.",
               },
               {
-                title: "Password Recovery",
+                title: "Required Field",
                 description:
-                  "This email address will be used to recover your account if you forget your password.",
+                  "Fields marked with an asterisk (*) must be completed before submitting the form.",
               },
               {
-                title: "Notifications",
+                title: "Supported Characters",
                 description:
-                  "Important security alerts and account updates will be sent to this address.",
+                  "Letters, numbers, spaces, and common punctuation are accepted unless otherwise specified.",
               },
               {
-                title: "Double-check Spelling",
+                title: "Review Before Continuing",
                 description:
-                  "Make sure your email address is correct to avoid missing verification emails.",
+                  "Double-check your input for spelling or typing mistakes before proceeding.",
               },
             ]}
           />
