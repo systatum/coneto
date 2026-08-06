@@ -1,25 +1,25 @@
-import { Meta, StoryObj } from "@storybook/react/";
-import { useMemo, useState } from "react";
-import styled, { css } from "styled-components";
-import { z } from "zod";
-import { COUNTRY_CODES } from "./../constants/countries";
-import { BadgeProps } from "./badge";
-import { Button } from "./button";
-import { CapsuleTab } from "./capsule";
-import { Card } from "./card";
+import { Meta, StoryObj } from "@storybook/react/"
+import { useMemo, useState } from "react"
+import styled, { css } from "styled-components"
+import { z } from "zod"
+import { COUNTRY_CODES } from "./../constants/countries"
+import { BadgeProps } from "./badge"
+import { Button } from "./button"
+import { CapsuleTab } from "./capsule"
+import { Card } from "./card"
 import {
   OnCompleteFunctionArgs,
   OnFileDroppedFunctionArgs,
-} from "./file-drop-box";
-import { Messagebox } from "./messagebox";
-import { MoneyboxCurrencyOption } from "./moneybox";
-import { PhoneboxCountryCode } from "./phonebox";
-import { PinboxParts } from "./pinbox";
-import { SelectboxOption } from "./selectbox";
-import { FormFieldGroup, StatefulForm } from "./stateful-form";
-import { BodyThemeConfig, ThemeMode } from "./../theme";
-import { useTheme } from "./../theme/provider";
-import { darkenColor, lightenColor } from "./../lib/color";
+} from "./file-drop-box"
+import { Messagebox } from "./messagebox"
+import { MoneyboxCurrencyOption } from "./moneybox"
+import { PhoneboxCountryCode } from "./phonebox"
+import { PinboxParts } from "./pinbox"
+import { SelectboxOption } from "./selectbox"
+import { FormFieldGroup, StatefulForm } from "./stateful-form"
+import { BodyThemeConfig, ThemeMode } from "./../theme"
+import { useTheme } from "./../theme/provider"
+import { darkenColor, lightenColor } from "./../lib/color"
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -29,12 +29,13 @@ const meta: Meta<typeof StatefulForm> = {
     docs: {
       description: {
         component: `
-**StatefulForm** is a form renderer capable to handle complex scenarios involving data validation,
-nested fields, custom input rendering, and state management. It works seamlessly with Zod.
+**StatefulForm** is a flexible form renderer designed to handle complex forms with data validation, 
+nested layouts, custom field rendering, and controlled state management. It integrates seamlessly with Zod.
 
 ---
 
 ### ✨ Features
+- 🎛 **Controlled by design**: The form is driven by the \`formValues\` prop, making it easy to synchronize with React state, Zustand, Redux, or any external store.
 - 🖊 **Flexible input types**: Supports text, email, password, textarea, checkbox, radio, phone, file, image, color, date, money, rating, toggle, pin, and fully custom fields.
 - 📦 **Nested/grouped fields**: Organize fields in groups or frames for complex layouts.
 - ⚠️ **Validation**: Integrates with Zod schemas, supporting \`onChange\`, \`onBlur\`, or \`onSubmit\` validation modes.
@@ -43,6 +44,20 @@ nested fields, custom input rendering, and state management. It works seamlessly
 - 🔍 **Error handling**: Automatically shows validation errors for touched fields.
 - 🖌 **Custom render**: For fields with \`type="custom"\`, you can render any JSX/component.
 - 🎯 **AutoFocus**: Focus on a specific field when the form mounts.
+
+---
+
+### 🔄 Controlled State
+
+\`StatefulForm\` follows the controlled component pattern.
+
+1. The parent owns the form state.
+2. The parent passes the latest state through \`formValues\`.
+3. User interactions trigger \`onChange\`.
+4. The parent updates its state.
+5. The updated \`formValues\` are passed back to \`StatefulForm\`.
+
+Because the component always renders from \`formValues\`, external updates (such as API responses, resetting a form, or loading draft data) are reflected automatically.
 
 ---
 
@@ -162,20 +177,18 @@ Custom styles for form components:
       table: { type: { summary: "StatefulFormStyles" } },
     },
   },
-};
+}
 
-export default meta;
+export default meta
 
-type Story = StoryObj<typeof StatefulForm>;
+type Story = StoryObj<typeof StatefulForm>
 
 export const Default: Story = {
   render: () => {
-    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US"
-    );
+    const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find((data) => data.id === "US")
 
     if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.")
     }
 
     const [value, setValue] = useState({
@@ -187,15 +200,15 @@ export const Default: Story = {
       note: "",
       access: false,
       country_code: DEFAULT_COUNTRY_CODES,
-    });
+    })
 
     const SALUTATION_OPTIONS: SelectboxOption[] = [
       { text: "Mr.", value: "1" },
       { text: "Mrs.", value: "2" },
       { text: "Ms.", value: "3" },
-    ];
+    ]
 
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
 
     const employeeSchema = z.object({
       salutation: z
@@ -204,9 +217,9 @@ export const Default: Story = {
         .refine(
           (arr) =>
             arr.every((val) =>
-              SALUTATION_OPTIONS.some((opt) => opt.value === val)
+              SALUTATION_OPTIONS.some((opt) => opt.value === val),
             ),
-          "Invalid value in combo"
+          "Invalid value in combo",
         ),
       first_name: z
         .string()
@@ -221,7 +234,7 @@ export const Default: Story = {
       access: z.boolean().refine((val) => val === true, {
         message: "Access must be true",
       }),
-    });
+    })
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
@@ -337,7 +350,7 @@ export const Default: Story = {
         placeholder: "Enter text",
         rowJustifyPosition: "end",
       },
-    ];
+    ]
 
     return (
       <div
@@ -355,7 +368,7 @@ export const Default: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => ({ ...prev, ...currentState }));
+            setValue((prev) => ({ ...prev, ...currentState }))
           }}
           fields={EMPLOYEE_FIELDS}
           formValues={value}
@@ -365,13 +378,13 @@ export const Default: Story = {
           mode="onChange"
         />
       </div>
-    );
+    )
   },
-};
+}
 
 export const WithFrame: Story = {
   render: () => {
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
     const [value, setValue] = useState({
       name: "",
       department: "",
@@ -379,13 +392,13 @@ export const WithFrame: Story = {
       start_date: [""],
       end_date: [""],
       purpose: "",
-    });
+    })
 
     const dateArraySchema = z
       .array(
-        z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date")
+        z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date"),
       )
-      .min(1, "At least one date is required");
+      .min(1, "At least one date is required")
 
     const employeeSchema = z.object({
       name: z.string().min(3, "Name is required"),
@@ -394,17 +407,17 @@ export const WithFrame: Story = {
       start_date: dateArraySchema,
       end_date: dateArraySchema,
       purpose: z.string().min(10, "Business purpose is required"),
-    });
+    })
 
     const MANAGER_NAME_OPTIONS: SelectboxOption[] = [
       { text: "Alim Naufal", value: "1" },
       { text: "Soekarno", value: "2" },
-    ];
+    ]
 
     const DEPARTMENT_OPTIONS: SelectboxOption[] = [
       { text: "HR", value: "1" },
       { text: "IT", value: "2" },
-    ];
+    ]
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       {
@@ -473,7 +486,7 @@ export const WithFrame: Story = {
         disabled: !isFormValid,
         rowJustifyPosition: "end",
       },
-    ];
+    ]
 
     return (
       <div
@@ -491,7 +504,7 @@ export const WithFrame: Story = {
       >
         <StatefulForm
           onChange={({ currentState }) => {
-            setValue((prev) => ({ ...prev, ...currentState }));
+            setValue((prev) => ({ ...prev, ...currentState }))
           }}
           validationSchema={employeeSchema}
           onValidityChange={setIsFormValid}
@@ -500,20 +513,20 @@ export const WithFrame: Story = {
           mode="onChange"
         />
       </div>
-    );
+    )
   },
-};
+}
 
 export const ConditionalElement: Story = {
   render: () => {
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
     const [formFields, setFormFields] = useState({
       quantType: "",
       compEffort: "",
       scheIterations: "",
       target: "",
       hostArch: "",
-    });
+    })
 
     const schema = z.object({
       quantType: z.string().optional(),
@@ -524,46 +537,46 @@ export const ConditionalElement: Story = {
         .optional(),
       target: z.string().min(1, "Target is required"),
       hostArch: z.string().optional(),
-    });
+    })
 
     const HostArchitecture = {
       x86: 0,
       x64: 1,
       ARM: 2,
       ARM64: 3,
-    } as const;
+    } as const
 
     const CompilationTarget = {
       Interpreter: 0,
       Simulator: 1,
       IP: 2,
-    } as const;
+    } as const
 
     const CompilationEffort = {
       SimpleScheduling: 0,
       Performance: 1,
       Aggressive: 2,
-    } as const;
+    } as const
 
     const Quantization = {
       Int8: 0,
       Bf16: 1,
       Fp16: 2,
       Fp32: 3,
-    } as const;
+    } as const
 
     const HOST_ARCHITECTURE_OPTIONS: SelectboxOption[] = [
       { value: String(HostArchitecture.x86), text: "x86" },
       { value: String(HostArchitecture.x64), text: "x64" },
       { value: String(HostArchitecture.ARM), text: "ARM" },
       { value: String(HostArchitecture.ARM64), text: "ARM64" },
-    ];
+    ]
 
     const COMPILATION_TARGET_OPTIONS: SelectboxOption[] = [
       { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
       { value: String(CompilationTarget.Simulator), text: "Simulator" },
       { value: String(CompilationTarget.IP), text: "IP" },
-    ];
+    ]
 
     const COMPILATION_EFFORT_OPTIONS: SelectboxOption[] = [
       {
@@ -578,21 +591,21 @@ export const ConditionalElement: Story = {
         value: String(CompilationEffort.Aggressive),
         text: "Aggressive",
       },
-    ];
+    ]
 
     const QUANTIZATION_TYPE_OPTIONS: SelectboxOption[] = [
       { value: String(Quantization.Int8), text: "INT8" },
       { value: String(Quantization.Bf16), text: "BF16" },
       { value: String(Quantization.Fp16), text: "FP16" },
       { value: String(Quantization.Fp32), text: "FP32" },
-    ];
+    ]
 
     const COMPILATION_FIELDS: FormFieldGroup[] = useMemo(() => {
       const isInt8Quantization =
-        formFields.quantType === String(Quantization.Int8);
+        formFields.quantType === String(Quantization.Int8)
 
       const isPerfCompilation =
-        formFields.compEffort === String(CompilationEffort.Performance);
+        formFields.compEffort === String(CompilationEffort.Performance)
 
       return [
         {
@@ -653,13 +666,13 @@ export const ConditionalElement: Story = {
           disabled: !isFormValid,
           rowJustifyPosition: "end",
         },
-      ] as FormFieldGroup[];
-    }, [formFields.compEffort, formFields.quantType, isFormValid]);
+      ] as FormFieldGroup[]
+    }, [formFields.compEffort, formFields.quantType, isFormValid])
 
     return (
       <StatefulForm
         onChange={({ currentState }) => {
-          setFormFields((prev) => ({ ...prev, ...currentState }));
+          setFormFields((prev) => ({ ...prev, ...currentState }))
         }}
         onValidityChange={setIsFormValid}
         validationSchema={schema}
@@ -667,33 +680,33 @@ export const ConditionalElement: Story = {
         formValues={formFields}
         mode="onChange"
       />
-    );
+    )
   },
-};
+}
 
 export const LeftLabeled: Story = {
   render: () => {
-    const { currentTheme, mode } = useTheme();
-    const bodyTheme = currentTheme?.body;
+    const { currentTheme, mode } = useTheme()
+    const bodyTheme = currentTheme?.body
 
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (country) => country.id === "US"
-    );
+      (country) => country.id === "US",
+    )
 
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
     const [value, setValue] = useState<{
-      name: string;
-      email: string;
-      phone: string;
-      country_code: PhoneboxCountryCode;
-      password: string;
+      name: string
+      email: string
+      phone: string
+      country_code: PhoneboxCountryCode
+      password: string
     }>({
       name: "",
       email: "",
       phone: "",
       country_code: DEFAULT_COUNTRY_CODES,
       password: "",
-    });
+    })
 
     const SIGN_UP_FIELDS: FormFieldGroup[] = [
       {
@@ -731,14 +744,14 @@ export const LeftLabeled: Story = {
         required: true,
         labelPosition: "left",
       },
-    ];
+    ]
 
     const signUpSchema = z.object({
       name: z.string().min(3, "Name must be at least 3 characters"),
       phone: z.string().min(8, "Phone number must be 8 digits"),
       email: z.string().email("Please enter a valid email"),
       password: z.string().min(8, "Password must be at least 8 characters"),
-    });
+    })
 
     return (
       <Card
@@ -789,14 +802,14 @@ export const LeftLabeled: Story = {
           </div>
         </Footer>
       </Card>
-    );
+    )
   },
-};
+}
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-`;
+`
 
 const Title = styled.h3`
   font-family: monospace;
@@ -808,7 +821,7 @@ const Title = styled.h3`
   @media (min-width: 768px) {
     font-size: 1.5rem;
   }
-`;
+`
 
 const Description = styled.span`
   font-size: 0.625rem;
@@ -817,18 +830,18 @@ const Description = styled.span`
   @media (min-width: 768px) {
     font-size: 0.75rem;
   }
-`;
+`
 
 const FormBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 2rem;
-`;
+`
 
 const Footer = styled.div<{
-  $theme?: BodyThemeConfig;
-  $mode: ThemeMode | string;
+  $theme?: BodyThemeConfig
+  $mode: ThemeMode | string
 }>`
   display: flex;
   flex-direction: row;
@@ -856,7 +869,7 @@ const Footer = styled.div<{
   .loader {
     margin-left: 0.5rem;
   }
-`;
+`
 
 const ScrollBox = styled.div`
   max-height: 120px;
@@ -881,17 +894,17 @@ const ScrollBox = styled.div`
 
   scrollbar-width: thin;
   scrollbar-color: #ccc transparent;
-`;
+`
 
 export const Mobile: Story = {
   render: () => {
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
+      (data) => data.id === "US" || COUNTRY_CODES[206],
+    )
 
     if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.")
     }
 
     const FRUIT_OPTIONS: SelectboxOption[] = [
@@ -902,7 +915,7 @@ export const Mobile: Story = {
       { text: "Pineapple", value: "5" },
       { text: "Strawberry", value: "6" },
       { text: "Watermelon", value: "7" },
-    ];
+    ]
 
     const BADGE_OPTIONS: BadgeProps[] = [
       {
@@ -945,7 +958,7 @@ export const Mobile: Story = {
         id: "10",
         caption: "Webtoons",
       },
-    ];
+    ]
 
     const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
@@ -958,36 +971,36 @@ export const Mobile: Story = {
       { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
       { id: "KRW", name: "South Korean Won", symbol: "₩" },
       { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
-    ];
+    ]
 
     interface AllCaseValueProps {
-      text: string;
-      time: string;
-      email: string;
-      number: string;
-      password: string;
-      textarea: string;
-      rating: string;
-      check: boolean;
+      text: string
+      time: string
+      email: string
+      number: string
+      password: string
+      textarea: string
+      rating: string
+      check: boolean
       chips?: {
-        searchText: string;
-        selectedOptions: string[];
-      };
-      color: string;
-      combo: string[];
-      date: string[];
-      file_drop_box?: File[];
-      file: File[] | undefined;
-      image: File | undefined;
-      money: string;
-      phone: string;
-      thumb_field: boolean;
-      toggle: boolean;
-      signature: string;
-      capsule: string;
-      country_code?: PhoneboxCountryCode;
-      currency: string;
-      pin: string;
+        searchText: string
+        selectedOptions: string[]
+      }
+      color: string
+      combo: string[]
+      date: string[]
+      file_drop_box?: File[]
+      file: File[] | undefined
+      image: File | undefined
+      money: string
+      phone: string
+      thumb_field: boolean
+      toggle: boolean
+      signature: string
+      capsule: string
+      country_code?: PhoneboxCountryCode
+      currency: string
+      pin: string
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -1018,7 +1031,7 @@ export const Mobile: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
       currency: "USD",
       pin: "",
-    });
+    })
 
     const CAPSULE_TABS: CapsuleTab[] = [
       {
@@ -1029,7 +1042,7 @@ export const Mobile: Story = {
         id: "unpaid",
         title: "Unpaid",
       },
-    ];
+    ]
 
     const PARTS_INPUT: PinboxParts[] = [
       {
@@ -1052,7 +1065,7 @@ export const Mobile: Story = {
       {
         type: "alphabet",
       },
-    ];
+    ]
 
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
@@ -1076,10 +1089,10 @@ export const Mobile: Story = {
           (arr) =>
             arr.every((val) =>
               FRUIT_OPTIONS.some((opt) => {
-                return opt.value === val;
-              })
+                return opt.value === val
+              }),
             ),
-          "Invalid value in combo"
+          "Invalid value in combo",
         ),
       date: z.array(
         z
@@ -1090,15 +1103,15 @@ export const Mobile: Story = {
               /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
             {
               message: "Invalid date",
-            }
-          )
+            },
+          ),
       ),
       file_drop_box: z.any().optional(),
       file: z
         .preprocess((value) => {
-          if (value instanceof FileList) return Array.from(value);
-          if (Array.isArray(value)) return value;
-          return [];
+          if (value instanceof FileList) return Array.from(value)
+          if (Array.isArray(value)) return value
+          return []
         }, z.array(z.any()))
         .refine((files) => files.length > 0, {
           message: "At least one file is required",
@@ -1110,17 +1123,17 @@ export const Mobile: Story = {
           (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
           {
             message: "Each file must be 5MB or less",
-          }
+          },
         ),
       image: z
         .any()
         .refine(
           (file) => {
-            return file?.type === "image/jpeg";
+            return file?.type === "image/jpeg"
           },
           {
             message: "Only JPEG file are allowed",
-          }
+          },
         )
         .refine((file) => file?.size <= 5 * 1024 * 1024, {
           message: "File size must be 5MB or less",
@@ -1141,7 +1154,7 @@ export const Mobile: Story = {
           code: z.string(),
         })
         .optional(),
-    });
+    })
 
     const onFileDropped = async ({
       error,
@@ -1149,27 +1162,27 @@ export const Mobile: Story = {
       setProgressLabel,
       succeed,
     }: OnFileDroppedFunctionArgs) => {
-      const file = files[0];
-      setProgressLabel(`Uploading ${file.name}`);
+      const file = files[0]
+      setProgressLabel(`Uploading ${file.name}`)
 
       return new Promise<void>((resolve) => {
-        let progress = 0;
+        let progress = 0
         const interval = setInterval(() => {
-          progress += 20;
+          progress += 20
 
           if (progress >= 100) {
-            clearInterval(interval);
+            clearInterval(interval)
             if (file === null) {
-              error(file, `file ${files[0].name} is not uploaded`);
+              error(file, `file ${files[0].name} is not uploaded`)
             } else {
-              succeed(file);
+              succeed(file)
             }
-            setProgressLabel(`Uploaded ${files[0].name}`);
-            resolve();
+            setProgressLabel(`Uploaded ${files[0].name}`)
+            resolve()
           }
-        }, 300);
-      });
-    };
+        }, 300)
+      })
+    }
 
     const onComplete = ({
       failedFiles,
@@ -1179,13 +1192,13 @@ export const Mobile: Story = {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
-      }));
-      console.log(succeedFiles, "This is succeedFiles");
-      console.log(failedFiles, "This is failedFiles");
+      }))
+      console.log(succeedFiles, "This is succeedFiles")
+      console.log(failedFiles, "This is failedFiles")
       setProgressLabel(
-        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
-      );
-    };
+        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`,
+      )
+    }
 
     const MONTH_NAMES = [
       { text: "JAN", value: "1" },
@@ -1200,7 +1213,7 @@ export const Mobile: Story = {
       { text: "OCT", value: "10" },
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
-    ];
+    ]
 
     const FIELDS: FormFieldGroup[] = [
       [
@@ -1404,7 +1417,7 @@ export const Mobile: Story = {
           },
         },
       ],
-    ];
+    ]
 
     return (
       <StatefulForm
@@ -1420,7 +1433,7 @@ export const Mobile: Story = {
           `,
         }}
         onChange={({ currentState }) => {
-          const [[key, value]] = Object.entries(currentState);
+          const [[key, value]] = Object.entries(currentState)
 
           setValue((prev) => ({
             ...prev,
@@ -1433,7 +1446,7 @@ export const Mobile: Story = {
                   },
                 }
               : currentState),
-          }));
+          }))
         }}
         onValidityChange={setIsFormValid}
         labelSize="14px"
@@ -1443,19 +1456,19 @@ export const Mobile: Story = {
         validationSchema={schema}
         mode="onChange"
       />
-    );
+    )
   },
-};
+}
 
 export const AllCase: Story = {
   render: () => {
-    const [isFormValid, setIsFormValid] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false)
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-      (data) => data.id === "US" || COUNTRY_CODES[206]
-    );
+      (data) => data.id === "US" || COUNTRY_CODES[206],
+    )
 
     if (!DEFAULT_COUNTRY_CODES) {
-      throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+      throw new Error("Default country code 'US' not found in COUNTRY_CODES.")
     }
 
     const FRUIT_OPTIONS: SelectboxOption[] = [
@@ -1466,7 +1479,7 @@ export const AllCase: Story = {
       { text: "Pineapple", value: "5" },
       { text: "Strawberry", value: "6" },
       { text: "Watermelon", value: "7" },
-    ];
+    ]
 
     const BADGE_OPTIONS: BadgeProps[] = [
       {
@@ -1509,7 +1522,7 @@ export const AllCase: Story = {
         id: "10",
         caption: "Webtoons",
       },
-    ];
+    ]
 
     const CURRENCY_OPTIONS: MoneyboxCurrencyOption[] = [
       { id: "IDR", name: "Indonesian Rupiah", symbol: "Rp" },
@@ -1522,36 +1535,36 @@ export const AllCase: Story = {
       { id: "MYR", name: "Malaysian Ringgit", symbol: "RM" },
       { id: "KRW", name: "South Korean Won", symbol: "₩" },
       { id: "CNY", name: "Chinese Yuan", symbol: "¥" },
-    ];
+    ]
 
     interface AllCaseValueProps {
-      text: string;
-      time: string;
-      email: string;
-      number: string;
-      password: string;
-      textarea: string;
-      rating: string;
-      check: boolean;
+      text: string
+      time: string
+      email: string
+      number: string
+      password: string
+      textarea: string
+      rating: string
+      check: boolean
       chips?: {
-        searchText: string;
-        selectedOptions: string[];
-      };
-      color: string;
-      combo: string[];
-      date: string[];
-      file_drop_box?: File[];
-      file: File[] | undefined;
-      image: File | undefined;
-      money: string;
-      phone: string;
-      thumb_field: boolean;
-      toggle: boolean;
-      signature: string;
-      capsule: string;
-      country_code?: PhoneboxCountryCode;
-      currency: string;
-      pin: string;
+        searchText: string
+        selectedOptions: string[]
+      }
+      color: string
+      combo: string[]
+      date: string[]
+      file_drop_box?: File[]
+      file: File[] | undefined
+      image: File | undefined
+      money: string
+      phone: string
+      thumb_field: boolean
+      toggle: boolean
+      signature: string
+      capsule: string
+      country_code?: PhoneboxCountryCode
+      currency: string
+      pin: string
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -1582,7 +1595,7 @@ export const AllCase: Story = {
       country_code: DEFAULT_COUNTRY_CODES,
       currency: "USD",
       pin: "",
-    });
+    })
 
     const CAPSULE_TABS: CapsuleTab[] = [
       {
@@ -1593,7 +1606,7 @@ export const AllCase: Story = {
         id: "unpaid",
         title: "Unpaid",
       },
-    ];
+    ]
 
     const PARTS_INPUT: PinboxParts[] = [
       {
@@ -1616,7 +1629,7 @@ export const AllCase: Story = {
       {
         type: "alphabet",
       },
-    ];
+    ]
 
     const schema = z.object({
       text: z.string().min(3, "Text must be at least 3 characters"),
@@ -1640,10 +1653,10 @@ export const AllCase: Story = {
           (arr) =>
             arr.every((val) =>
               FRUIT_OPTIONS.some((opt) => {
-                return opt.value === val;
-              })
+                return opt.value === val
+              }),
             ),
-          "Invalid value in combo"
+          "Invalid value in combo",
         ),
       date: z.array(
         z
@@ -1654,15 +1667,15 @@ export const AllCase: Story = {
               /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(val),
             {
               message: "Invalid date",
-            }
-          )
+            },
+          ),
       ),
       file_drop_box: z.any().optional(),
       file: z
         .preprocess((value) => {
-          if (value instanceof FileList) return Array.from(value);
-          if (Array.isArray(value)) return value;
-          return [];
+          if (value instanceof FileList) return Array.from(value)
+          if (Array.isArray(value)) return value
+          return []
         }, z.array(z.any()))
         .refine((files) => files.length > 0, {
           message: "At least one file is required",
@@ -1674,17 +1687,17 @@ export const AllCase: Story = {
           (files) => files.every((file) => file.size <= 5 * 1024 * 1024),
           {
             message: "Each file must be 5MB or less",
-          }
+          },
         ),
       image: z
         .any()
         .refine(
           (file) => {
-            return file?.type === "image/jpeg";
+            return file?.type === "image/jpeg"
           },
           {
             message: "Only JPEG file are allowed",
-          }
+          },
         )
         .refine((file) => file?.size <= 5 * 1024 * 1024, {
           message: "File size must be 5MB or less",
@@ -1705,7 +1718,7 @@ export const AllCase: Story = {
           code: z.string(),
         })
         .optional(),
-    });
+    })
 
     const onFileDropped = async ({
       error,
@@ -1713,27 +1726,27 @@ export const AllCase: Story = {
       setProgressLabel,
       succeed,
     }: OnFileDroppedFunctionArgs) => {
-      const file = files[0];
-      setProgressLabel(`Uploading ${file.name}`);
+      const file = files[0]
+      setProgressLabel(`Uploading ${file.name}`)
 
       return new Promise<void>((resolve) => {
-        let progress = 0;
+        let progress = 0
         const interval = setInterval(() => {
-          progress += 20;
+          progress += 20
 
           if (progress >= 100) {
-            clearInterval(interval);
+            clearInterval(interval)
             if (file === null) {
-              error(file, `file ${files[0].name} is not uploaded`);
+              error(file, `file ${files[0].name} is not uploaded`)
             } else {
-              succeed(file);
+              succeed(file)
             }
-            setProgressLabel(`Uploaded ${files[0].name}`);
-            resolve();
+            setProgressLabel(`Uploaded ${files[0].name}`)
+            resolve()
           }
-        }, 300);
-      });
-    };
+        }, 300)
+      })
+    }
 
     const onComplete = ({
       failedFiles,
@@ -1743,13 +1756,13 @@ export const AllCase: Story = {
       setValue((prev) => ({
         ...prev,
         file_drop_box: succeedFiles,
-      }));
-      console.log(succeedFiles, "This is succeedFiles");
-      console.log(failedFiles, "This is failedFiles");
+      }))
+      console.log(succeedFiles, "This is succeedFiles")
+      console.log(failedFiles, "This is failedFiles")
       setProgressLabel(
-        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
-      );
-    };
+        `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`,
+      )
+    }
 
     const MONTH_NAMES = [
       { text: "JAN", value: "1" },
@@ -1764,7 +1777,7 @@ export const AllCase: Story = {
       { text: "OCT", value: "10" },
       { text: "NOV", value: "11" },
       { text: "DEC", value: "12" },
-    ];
+    ]
 
     const FIELDS: FormFieldGroup[] = [
       {
@@ -1978,9 +1991,9 @@ export const AllCase: Story = {
         disabled: !isFormValid,
         rowJustifyPosition: "end",
       },
-    ];
+    ]
 
-    console.log(value.chips.searchText);
+    console.log(value.chips.searchText)
 
     return (
       <StatefulForm
@@ -1995,7 +2008,7 @@ export const AllCase: Story = {
           `,
         }}
         onChange={({ currentState }) => {
-          const [[key, value]] = Object.entries(currentState);
+          const [[key, value]] = Object.entries(currentState)
 
           setValue((prev) => ({
             ...prev,
@@ -2008,7 +2021,7 @@ export const AllCase: Story = {
                   },
                 }
               : currentState),
-          }));
+          }))
         }}
         onValidityChange={setIsFormValid}
         labelSize="14px"
@@ -2018,40 +2031,40 @@ export const AllCase: Story = {
         validationSchema={schema}
         mode="onChange"
       />
-    );
+    )
   },
-};
+}
 
 export const AllCaseDisabled: Story = {
   render: () => {
     interface AllCaseValueProps {
-      text: string;
-      time: string;
-      email: string;
-      number: string;
-      password: string;
-      textarea: string;
-      rating: string;
-      check: boolean;
+      text: string
+      time: string
+      email: string
+      number: string
+      password: string
+      textarea: string
+      rating: string
+      check: boolean
       chips?: {
-        searchText: string;
-        selectedOptions: string[];
-      };
-      color: string;
-      combo: string[];
-      date: string[];
-      file_drop_box?: File[];
-      file: File[] | undefined;
-      image: File | undefined;
-      money: string;
-      phone: string;
-      thumb_field: boolean;
-      togglebox: boolean;
-      signature: string;
-      capsule: string;
-      country_code?: PhoneboxCountryCode;
-      currency: string;
-      pin: string;
+        searchText: string
+        selectedOptions: string[]
+      }
+      color: string
+      combo: string[]
+      date: string[]
+      file_drop_box?: File[]
+      file: File[] | undefined
+      image: File | undefined
+      money: string
+      phone: string
+      thumb_field: boolean
+      togglebox: boolean
+      signature: string
+      capsule: string
+      country_code?: PhoneboxCountryCode
+      currency: string
+      pin: string
     }
 
     const [value, setValue] = useState<AllCaseValueProps>({
@@ -2082,7 +2095,7 @@ export const AllCaseDisabled: Story = {
       country_code: undefined,
       currency: "USD",
       pin: "",
-    });
+    })
 
     const CAPSULE_TABS: CapsuleTab[] = [
       {
@@ -2093,7 +2106,7 @@ export const AllCaseDisabled: Story = {
         id: "unpaid",
         title: "Unpaid",
       },
-    ];
+    ]
 
     const PARTS_INPUT: PinboxParts[] = [
       {
@@ -2116,7 +2129,7 @@ export const AllCaseDisabled: Story = {
       {
         type: "alphabet",
       },
-    ];
+    ]
 
     const FIELDS: FormFieldGroup[] = [
       {
@@ -2331,7 +2344,7 @@ export const AllCaseDisabled: Story = {
         required: true,
         rowJustifyPosition: "end",
       },
-    ];
+    ]
 
     return (
       <StatefulForm
@@ -2347,13 +2360,13 @@ export const AllCaseDisabled: Story = {
         }}
         disabled
         onChange={({ currentState }) => {
-          const { chips, ...rest } = currentState;
-          void chips;
+          const { chips, ...rest } = currentState
+          void chips
 
           setValue((prev) => ({
             ...prev,
             ...rest,
-          }));
+          }))
         }}
         labelSize="14px"
         fieldSize="14px"
@@ -2361,6 +2374,6 @@ export const AllCaseDisabled: Story = {
         formValues={value}
         mode="onChange"
       />
-    );
+    )
   },
-};
+}

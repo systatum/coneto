@@ -438,6 +438,7 @@
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.4",
     "globals": "^15.15.0",
+    "oxfmt": "^0.62.0",
     "prettier": "^3.5.3",
     "storybook": "^8.6.14",
     "typescript": "^5.4.0",

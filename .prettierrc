@@ -1,6 +1,10 @@
 {
-  "semi": true,
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [],
+  "semi": false,
   "singleQuote": false,
-  "trailingComma": "es5",
-  "tabWidth": 2
+  "trailingComma": "all",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "endOfLine": "lf"
 }
