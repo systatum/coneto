@@ -3291,6 +3291,10 @@ function FieldTooltip({ items, styles }: FieldTooltipProps) {
     return () => observer.disconnect();
   }, [items]);
 
+  if (items.length === 0) {
+    return null;
+  }
+
   return (
     <FieldTooltipWrapper
       aria-label="field-tooltip"
