@@ -1,5 +1,5 @@
-import { ToolbarVariant } from "./../../components/toolbar"
-import { ButtonVariants } from "./../../components/button"
+import { ToolbarVariant } from "./../../components/toolbar";
+import { ButtonVariants } from "./../../components/button";
 import {
   ActionButtonThemeConfig,
   ActionCapsuleThemeConfig,
@@ -73,15 +73,15 @@ import {
   TooltipThemeConfig,
   TreeListThemeConfig,
   WheelThemeConfig,
-} from "./../index"
-import { TipMenuVariant } from "./../../components/tip-menu"
-import { ToastVariant } from "./../../components/toast"
+} from "./../index";
+import { TipMenuVariant } from "./../../components/tip-menu";
+import { ToastVariant } from "./../../components/toast";
 
 function mergeTheme<T extends object>(
   defaultTheme: T,
   ...themeConfigurations: Array<Partial<T>>
 ): T {
-  return Object.assign({}, defaultTheme, ...themeConfigurations)
+  return Object.assign({}, defaultTheme, ...themeConfigurations);
 }
 
 // body
@@ -95,8 +95,8 @@ export function createBodyTheme(
       borderColor: "#d1d5db",
       mutedTextColor: "#6b7280",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // action-capsule
@@ -115,8 +115,8 @@ export function createActionCapsuleTheme(
       tabBorderRadius: "6px",
       borderColor: "#ebebeb",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // action-button.tsx
@@ -143,8 +143,8 @@ export function createActionButtonTheme(
 
       dropdownWidth: "170px",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // avatar.tsx
@@ -158,8 +158,8 @@ export function createAvatarTheme(
       textColor: body.textColor,
       overlayIconColor: "#ffffff",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // badge.tsx
@@ -178,17 +178,17 @@ export function createBadgeTheme(
       focusRingColor: "#00000033",
       disabledOpacity: 0.4,
     },
-  }
+  };
 
-  const merged = mergeTheme(defaultTheme, ...themeConfigurations)
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
 
   return {
     ...merged,
     action: mergeTheme(
       defaultTheme.action,
-      ...themeConfigurations.map((o) => o.action ?? {}),
+      ...themeConfigurations.map((o) => o.action ?? {})
     ),
-  }
+  };
 }
 
 // boxbar.tsx
@@ -204,8 +204,8 @@ export function createBoxbarTheme(
       toggleButtonHoverColor: "#f3f4f6",
       textColor: body.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // button.tsx
@@ -315,22 +315,22 @@ export function createButtonTheme(
       borderColor: "#42A340",
       dividerColor: "rgba(19, 156, 17, 0.69)",
     },
-  }
+  };
 
   const allKeys = new Set([
     ...Object.keys(defaultVariants),
     ...themeConfigurations.flatMap((o) => Object.keys(o)),
-  ])
+  ]);
 
-  const merged: Record<string, ButtonThemeConfig> = {}
+  const merged: Record<string, ButtonThemeConfig> = {};
   for (const key of allKeys) {
     merged[key] = mergeTheme(
       defaultVariants[key] ?? {},
-      ...themeConfigurations.map((o) => o[key] ?? {}),
-    )
+      ...themeConfigurations.map((o) => o[key] ?? {})
+    );
   }
 
-  return merged
+  return merged;
 }
 
 // tip-menu-container.tsx
@@ -345,8 +345,8 @@ export function createTipMenuContainerTheme(
       textColor: body?.textColor || "inherit",
       boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // calendar.tsx
@@ -375,8 +375,8 @@ export function createCalendarTheme(
 
       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // capsule.tsx
@@ -401,25 +401,25 @@ export function createCapsuleTheme(
     hover: {
       borderColor: "oklch(54.6% .245 262.881)",
     },
-  }
+  };
 
-  const merged = mergeTheme(defaultTheme, ...themeConfigurations)
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
 
   return {
     ...merged,
     tab: mergeTheme(
       defaultTheme.tab,
-      ...themeConfigurations.map((o) => o.tab ?? {}),
+      ...themeConfigurations.map((o) => o.tab ?? {})
     ),
     active: mergeTheme(
       defaultTheme.active,
-      ...themeConfigurations.map((o) => o.active ?? {}),
+      ...themeConfigurations.map((o) => o.active ?? {})
     ),
     hover: mergeTheme(
       defaultTheme.hover,
-      ...themeConfigurations.map((o) => o.hover ?? {}),
+      ...themeConfigurations.map((o) => o.hover ?? {})
     ),
-  }
+  };
 }
 
 // capsule-tab.tsx
@@ -434,8 +434,8 @@ export function createCapsuleTabTheme(
       boxShadow: "0 1px 3px -3px #5b5b5b",
       activeBackgroundColor: "black",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // card.tsx
@@ -456,8 +456,8 @@ export function createCardTheme(
       closeIconColor: body.textColor,
       closeIconHoverBackground: "#d1d5db",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // chips.tsx
@@ -479,8 +479,8 @@ export function createChipsTheme(
 
       boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // choice-group.tsx
@@ -496,8 +496,8 @@ export function createChoiceGroupTheme(
       backgroundColor: body.backgroundColor || "#fff",
       descriptionColor: "#4b5563",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // checkbox.tsx
@@ -517,8 +517,8 @@ export function createCheckboxTheme(
       highlightCheckedBackgroundColor: "#DBEAFE",
       highlightHoverBackgroundColor: "#E7F2FC",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // colorbox.tsx
@@ -545,8 +545,8 @@ export function createColorboxTheme(
 
       boxBackgroundColor: body.backgroundColor || "#ffffff",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // crumb.tsx
@@ -563,8 +563,8 @@ export function createCrumbTheme(
       ellipsisColor: "#6b7280",
       ellipsisHoverColor: "#61a9f9",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // combobox.tsx
@@ -591,8 +591,8 @@ export function createComboboxTheme(
       scrollThumbColor: "#b9bfc8",
       fadeColor: "#f4f5f8",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // dialog.tsx
@@ -608,8 +608,8 @@ export function createDialogTheme(
       boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
       subtitleColor: "#5a606b",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // document-viewer.tsx
@@ -627,8 +627,8 @@ export function createDocumentViewerTheme(
       hoverBoxBackgroundColor: "rgba(77, 170, 245, 0.2)",
       hoverBoxTextColor: "#323639",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // dormant-text.tsx
@@ -646,8 +646,8 @@ export function createDormantTextTheme(
       actionButtonColor: "#666666",
       actionButtonHoverBackground: "#d1d5db",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // drawer-tab.tsx
@@ -665,8 +665,8 @@ export function createDrawerTabTheme(
       closeButtonHoverBackground: "#d1d5db",
       dividerColor: "#e5e7eb",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // error-slate.tsx
@@ -681,8 +681,8 @@ export function createErrorSlateTheme(
       cubeFaceText: "#ffffff",
       titleColor: body?.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // field-lane.tsx
@@ -722,8 +722,8 @@ export function createFieldLaneTheme(
       helperColor: "#6b7280",
       dividerColor: "#9ca3af",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // flippable.tsx
@@ -744,8 +744,8 @@ export function createFlippable(
         textColor: body?.textColor,
       },
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // file-input-box.tsx
@@ -771,8 +771,8 @@ export function createFileInputBoxTheme(
       dragActiveColor: "#3b82f6",
       dragActiveBackgroundColor: "#eff6ff",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // file-drop-box.tsx
@@ -805,8 +805,8 @@ export function createFileDropBoxTheme(
 
       disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // frame.tsx
@@ -824,8 +824,8 @@ export function createFrameTheme(
       overlayBackgroundColor: body.backgroundColor || "#ffffff",
       boxShadow: "var(--shadow-xs)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // grid.tsx
@@ -843,8 +843,8 @@ export function createGridTheme(
       backgroundColor: body.backgroundColor,
       textColor: body?.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // imagebox.tsx
@@ -868,8 +868,8 @@ export function createImageboxTheme(
 
       iconColor: "#c3c3c3",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // keynote.tsx
@@ -881,8 +881,8 @@ export function createKeynoteTheme(
       keyColor: "#374151",
       valueColor: "#111827",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // launchpad.tsx
@@ -896,8 +896,8 @@ export function createLaunchpadTheme(
       borderColor: body?.borderColor,
       textColor: body?.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // list.tsx
@@ -921,8 +921,8 @@ export function createListTheme(
       mutedTextColor: "#6b7280",
       maxItemTextColor: "rgb(97, 97, 97)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // loading-skeleton.tsx
@@ -934,8 +934,8 @@ export function createLoadingSkeletonTheme(
       baseColor: "#eeeeee",
       highlightColor: "#dddddd",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // loading-spinner.tsx
@@ -948,8 +948,8 @@ export function createLoadingSpinnerTheme(
       spinnerColor: "#3b82f6",
       textColor: body.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // messagebox.tsx
@@ -977,26 +977,26 @@ export function createMessageboxTheme(
       textColor: "#9e5b20",
       activeColor: "#734418",
     },
-  }
+  };
 
   return {
     primary: mergeTheme(
       defaultTheme.primary,
-      ...themeConfigurations.map((o) => o.primary ?? {}),
+      ...themeConfigurations.map((o) => o.primary ?? {})
     ),
     success: mergeTheme(
       defaultTheme.success,
-      ...themeConfigurations.map((o) => o.success ?? {}),
+      ...themeConfigurations.map((o) => o.success ?? {})
     ),
     danger: mergeTheme(
       defaultTheme.danger,
-      ...themeConfigurations.map((o) => o.danger ?? {}),
+      ...themeConfigurations.map((o) => o.danger ?? {})
     ),
     warning: mergeTheme(
       defaultTheme.warning,
-      ...themeConfigurations.map((o) => o.warning ?? {}),
+      ...themeConfigurations.map((o) => o.warning ?? {})
     ),
-  }
+  };
 }
 
 // moneybox.tsx
@@ -1021,8 +1021,8 @@ export function createMoneyboxTheme(
       fontSize: "0.75rem",
       borderRadius: "2px",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // modal-dialog.tsx
@@ -1039,8 +1039,8 @@ export function createModalDialogTheme(
       subtitleColor: "#6b7280",
       dividerColor: "#3b82f6",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // nav-tab.tsx
@@ -1065,8 +1065,8 @@ export function createNavTabTheme(
       activeInsetShadow:
         "inset 0 0.5px 4px rgb(243 244 246 / 100%), inset 0 -0.5px 0.5px rgb(243 244 246 / 80%)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // overlay-blocker.tsx
@@ -1078,8 +1078,8 @@ export function createOverlayBlockerTheme(
       backgroundColor: "rgba(3, 3, 3, 0.2)",
       backdropFilter: "blur(2px)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // paper-dialog.tsx
@@ -1095,8 +1095,8 @@ export function createPaperDialogTheme(
       textColor: body.textColor,
       actionHoverBackgroundColor: "#f3f4f6",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // pagination.tsx
@@ -1119,8 +1119,8 @@ export function createPaginationTheme(
       disabledBackgroundColor: body.backgroundColor || "#ffffff",
       disabledTextColor: fieldLane.disabledTextColor || "#9ca3af",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // pinbox.tsx
@@ -1145,8 +1145,8 @@ export function createPinboxTheme(
       placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
       boxShadow: "0 0 0 0.5px transparent",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // phonebox.tsx
@@ -1175,8 +1175,8 @@ export function createPhoneboxTheme(
       optionHighlightedBackground:
         fieldLane?.highlightBackgroundColor || "#dbeafe",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 export function createTrackbarTheme(
@@ -1217,30 +1217,30 @@ export function createTrackbarTheme(
       barColor: "#64748B",
       trackColor: "#CBD5E1",
     },
-  }
+  };
 
   return {
     primary: mergeTheme(
       defaultTheme.primary,
-      ...themeConfigurations.map((o) => o.primary ?? {}),
+      ...themeConfigurations.map((o) => o.primary ?? {})
     ),
     success: mergeTheme(
       defaultTheme.success,
-      ...themeConfigurations.map((o) => o.success ?? {}),
+      ...themeConfigurations.map((o) => o.success ?? {})
     ),
     danger: mergeTheme(
       defaultTheme.danger,
-      ...themeConfigurations.map((o) => o.danger ?? {}),
+      ...themeConfigurations.map((o) => o.danger ?? {})
     ),
     warning: mergeTheme(
       defaultTheme.warning,
-      ...themeConfigurations.map((o) => o.warning ?? {}),
+      ...themeConfigurations.map((o) => o.warning ?? {})
     ),
     neutral: mergeTheme(
       defaultTheme.neutral,
-      ...themeConfigurations.map((o) => o.neutral ?? {}),
+      ...themeConfigurations.map((o) => o.neutral ?? {})
     ),
-  }
+  };
 }
 
 // radio.tsx
@@ -1263,8 +1263,8 @@ export function createRadioTheme(
       highlightCheckedBackgroundColor: "#DBEAFE",
       highlightCheckedBorderColor: "#e5e7eb",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // rating.tsx
@@ -1286,8 +1286,8 @@ export function createRatingTheme(
       disabledStarColor: fieldLane?.borderColor || "#d1d5db",
       disabledLabelColor: fieldLane?.disabledTextColor || "#9ca3af",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // rich-editor.tsx
@@ -1310,8 +1310,8 @@ export function createRichEditorTheme(
       scrollThumb: "#9ca3af",
       preBackgroundColor: "#D3D3D3",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // scrollbar.tsx
@@ -1324,8 +1324,8 @@ export function createScrollbar(
       scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
       scrollbarTrackColor: "transparent",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // searchbox.tsx
@@ -1345,8 +1345,8 @@ export function createSearchboxTheme(
       clearIconColor: "#9ca3af",
       textColor: "#111827",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // stepline.tsx
@@ -1379,26 +1379,26 @@ export function createSteplineTheme(
       completed: buttonTheme?.success?.backgroundColor || "#00b62e",
       error: buttonTheme?.danger?.backgroundColor || "#b60000",
     },
-  }
+  };
 
   return {
     outerCircle: mergeTheme(
       defaultTheme.outerCircle,
-      ...themeConfigurations.map((o) => o.outerCircle ?? {}),
+      ...themeConfigurations.map((o) => o.outerCircle ?? {})
     ),
     innerCircle: mergeTheme(
       defaultTheme.innerCircle,
-      ...themeConfigurations.map((o) => o.innerCircle ?? {}),
+      ...themeConfigurations.map((o) => o.innerCircle ?? {})
     ),
     text: mergeTheme(
       defaultTheme.text,
-      ...themeConfigurations.map((o) => o.text ?? {}),
+      ...themeConfigurations.map((o) => o.text ?? {})
     ),
     line: mergeTheme(
       defaultTheme.line,
-      ...themeConfigurations.map((o) => o.line ?? {}),
+      ...themeConfigurations.map((o) => o.line ?? {})
     ),
-  }
+  };
 }
 
 // selectbox.tsx
@@ -1431,8 +1431,8 @@ export function createSelectboxTheme(
       dividerColor: fieldLane.dividerColor || "#9ca3af",
       disabledOpacity: fieldLane.disabledOpacity,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // separator.tsx
@@ -1449,8 +1449,8 @@ export function createSeparatorTheme(
       backgroundTitleColor: body.backgroundColor,
       tooltipBackgroundColor: "rgb(236, 236, 236)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // sidebar.tsx
@@ -1472,21 +1472,21 @@ export function createSidebarTheme(
       borderColor: "#e5e7eb",
       hoverBackgroundColor: "#f3f3f3",
     },
-  }
+  };
 
-  const merged = mergeTheme(defaultTheme, ...themeConfigurations)
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
 
   return {
     ...merged,
     item: mergeTheme(
       defaultTheme.item,
-      ...themeConfigurations.map((o) => o.item ?? {}),
+      ...themeConfigurations.map((o) => o.item ?? {})
     ),
     toggle: mergeTheme(
       defaultTheme.toggle,
-      ...themeConfigurations.map((o) => o.toggle ?? {}),
+      ...themeConfigurations.map((o) => o.toggle ?? {})
     ),
-  }
+  };
 }
 
 // signbox.tsx
@@ -1506,8 +1506,8 @@ export function createSignboxTheme(
       clearIconColor: fieldLane?.actionColor || "#6b7280",
       clearIconHoverBackground: fieldLane?.actionHoverColor || "#e5e7eb",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // statusbar.tsx
@@ -1523,17 +1523,17 @@ export function createStatusbarTheme(
       activeBackgroundColor: "#d1d5db",
       hoverBackgroundColor: "#e5e7eb",
     },
-  }
+  };
 
-  const merged = mergeTheme(defaultTheme, ...themeConfigurations)
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
 
   return {
     ...merged,
     item: mergeTheme(
       defaultTheme.item,
-      ...themeConfigurations.map((o) => o.item ?? {}),
+      ...themeConfigurations.map((o) => o.item ?? {})
     ),
-  }
+  };
 }
 
 // stateful-form.tsx
@@ -1558,8 +1558,8 @@ export function createStatefulFormTheme(
         scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
       },
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // textarea.tsx
@@ -1589,8 +1589,8 @@ export function createTextareaTheme(
 
       boxShadow: "0 0 0 1px transparent",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // textbox.tsx
@@ -1613,8 +1613,8 @@ export function createTextboxTheme(
       placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
       boxShadow: "0 0 0 0.5px transparent",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // table.tsx
@@ -1659,8 +1659,8 @@ export function createTableTheme(
       rightLooseEffectColor:
         "linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // timebox.tsx
@@ -1679,8 +1679,8 @@ export function createTimeboxTheme(
       errorTextColor: fieldLane?.errorColor,
       colonColor: body.textColor,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // toast.tsx
@@ -1694,7 +1694,7 @@ export function createToastTheme(
     backgroundColor: "#ffffff7d",
     textColor: "rgba(0, 0, 0, 0.8)",
     iconColor: "#FFFFFF",
-  }
+  };
 
   const defaultTheme: Record<ToastVariant, ToastThemeConfig> = {
     primary: {
@@ -1731,30 +1731,30 @@ export function createToastTheme(
       iconBackgroundColor: "#64748B",
       progressColor: "#64748B",
     },
-  }
+  };
 
   return {
     primary: mergeTheme(
       defaultTheme.primary,
-      ...themeConfigurations.map((o) => o.primary ?? {}),
+      ...themeConfigurations.map((o) => o.primary ?? {})
     ),
     success: mergeTheme(
       defaultTheme.success,
-      ...themeConfigurations.map((o) => o.success ?? {}),
+      ...themeConfigurations.map((o) => o.success ?? {})
     ),
     danger: mergeTheme(
       defaultTheme.danger,
-      ...themeConfigurations.map((o) => o.danger ?? {}),
+      ...themeConfigurations.map((o) => o.danger ?? {})
     ),
     warning: mergeTheme(
       defaultTheme.warning,
-      ...themeConfigurations.map((o) => o.warning ?? {}),
+      ...themeConfigurations.map((o) => o.warning ?? {})
     ),
     neutral: mergeTheme(
       defaultTheme.neutral,
-      ...themeConfigurations.map((o) => o.neutral ?? {}),
+      ...themeConfigurations.map((o) => o.neutral ?? {})
     ),
-  }
+  };
 }
 
 // timeline.tsx
@@ -1787,26 +1787,26 @@ export function createTimelineTheme(
       completed: buttonTheme?.success?.backgroundColor || "#00b62e",
       error: buttonTheme?.danger?.backgroundColor || "#b60000",
     },
-  }
+  };
 
   return {
     outerCircle: mergeTheme(
       defaultTheme.outerCircle,
-      ...themeConfigurations.map((o) => o.outerCircle ?? {}),
+      ...themeConfigurations.map((o) => o.outerCircle ?? {})
     ),
     innerCircle: mergeTheme(
       defaultTheme.innerCircle,
-      ...themeConfigurations.map((o) => o.innerCircle ?? {}),
+      ...themeConfigurations.map((o) => o.innerCircle ?? {})
     ),
     text: mergeTheme(
       defaultTheme.text,
-      ...themeConfigurations.map((o) => o.text ?? {}),
+      ...themeConfigurations.map((o) => o.text ?? {})
     ),
     line: mergeTheme(
       defaultTheme.line,
-      ...themeConfigurations.map((o) => o.line ?? {}),
+      ...themeConfigurations.map((o) => o.line ?? {})
     ),
-  }
+  };
 }
 
 // tipmenu.tsx
@@ -1821,28 +1821,28 @@ export function createTipMenuTheme(
     danger: "danger",
     success: "success",
     primary: "primary",
-  }
+  };
 
   return Object.fromEntries(
     (Object.keys(variantMap) as TipMenuVariant[]).map((variant) => {
-      const buttonKey = variantMap[variant]
+      const buttonKey = variantMap[variant];
       const defaultConfig: TipMenuThemeConfig = {
         focusBackgroundColor: buttonTheme?.[buttonKey]?.focusBackgroundColor,
         backgroundColor: buttonTheme?.[buttonKey]?.backgroundColor,
         textColor: buttonTheme?.[buttonKey]?.textColor,
         activeBackgroundColor: buttonTheme?.[buttonKey]?.activeBackgroundColor,
         hoverBackgroundColor: buttonTheme?.[buttonKey]?.hoverBackgroundColor,
-      }
+      };
 
       return [
         variant,
         mergeTheme(
           defaultConfig,
-          ...themeConfigurations.map((o) => o[variant] ?? {}),
+          ...themeConfigurations.map((o) => o[variant] ?? {})
         ),
-      ]
-    }),
-  ) as Record<TipMenuVariant, TipMenuThemeConfig>
+      ];
+    })
+  ) as Record<TipMenuVariant, TipMenuThemeConfig>;
 }
 
 // title.tsx
@@ -1870,29 +1870,29 @@ export function createTitleTheme(
       backgroundColor: "transparent",
       hoverBackgroundColor: "rgba(255, 255, 255, 0.45)",
     },
-  }
+  };
 
-  const merged = mergeTheme(defaultTheme, ...themeConfigurations)
+  const merged = mergeTheme(defaultTheme, ...themeConfigurations);
 
   return {
     ...merged,
     pretitle: mergeTheme(
       defaultTheme.pretitle,
-      ...themeConfigurations.map((o) => o.pretitle ?? {}),
+      ...themeConfigurations.map((o) => o.pretitle ?? {})
     ),
     title: mergeTheme(
       defaultTheme.title,
-      ...themeConfigurations.map((o) => o.title ?? {}),
+      ...themeConfigurations.map((o) => o.title ?? {})
     ),
     subtitle: mergeTheme(
       defaultTheme.subtitle,
-      ...themeConfigurations.map((o) => o.subtitle ?? {}),
+      ...themeConfigurations.map((o) => o.subtitle ?? {})
     ),
     icon: mergeTheme(
       defaultTheme.icon,
-      ...themeConfigurations.map((o) => o.icon ?? {}),
+      ...themeConfigurations.map((o) => o.icon ?? {})
     ),
-  }
+  };
 }
 
 // toggle.tsx
@@ -1911,8 +1911,8 @@ export function createToggleTheme(
       disabledOpacity: 0.5,
       boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // toolbar.tsx
@@ -1968,22 +1968,22 @@ export function createToolbarTheme(
       activeBackgroundColor: baseButton?.ghost?.activeBackgroundColor,
       focusBackgroundColor: baseButton?.ghost?.focusBackgroundColor,
     },
-  }
+  };
 
   const allKeys = new Set([
     ...Object.keys(defaultVariants),
     ...themeConfigurations.flatMap((o) => Object.keys(o)),
-  ]) as Set<ToolbarVariant>
+  ]) as Set<ToolbarVariant>;
 
-  const merged = {} as Record<ToolbarVariant, ToolbarThemeConfig>
+  const merged = {} as Record<ToolbarVariant, ToolbarThemeConfig>;
   for (const key of allKeys) {
     merged[key] = mergeTheme(
       defaultVariants[key] ?? {},
-      ...themeConfigurations.map((o) => o[key] ?? {}),
-    )
+      ...themeConfigurations.map((o) => o[key] ?? {})
+    );
   }
 
-  return merged
+  return merged;
 }
 
 // tooltip.tsx
@@ -1999,8 +1999,8 @@ export function createTooltipTheme(
       boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
       arrowBackgroundColor: "#b9babc",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // thumb-field.tsx
@@ -2015,8 +2015,8 @@ export function createThumbFieldTheme(
       errorColor: "#dc2626",
       disabledOpacity: 0.5,
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // treelist.tsx
@@ -2036,8 +2036,8 @@ export function createTreeListTheme(
       dividerHierarchySelectedColor: "#3b82f6",
       rowActionBackgroundColor: "rgb(193, 214, 241)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // split-pane.tsx
@@ -2051,8 +2051,8 @@ export function createSplitPaneTheme(
       textColor: body?.textColor || "#111827",
       dividerColor: "#d1d5db",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }
 
 // wheel.tsx
@@ -2069,6 +2069,6 @@ export function createWheelTheme(
       inactiveTextColor: "rgba(17,24,39,0.35)",
       separatorColor: "rgba(17,24,39,0.45)",
     },
-    ...themeConfigurations,
-  )
+    ...themeConfigurations
+  );
 }

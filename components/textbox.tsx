@@ -1,51 +1,51 @@
-import { RiEyeLine, RiEyeOffLine } from "@remixicon/react"
+import { RiEyeLine, RiEyeOffLine } from "@remixicon/react";
 import {
   ChangeEvent,
   InputHTMLAttributes,
   forwardRef,
   useEffect,
   useState,
-} from "react"
-import styled, { css, CSSProp } from "styled-components"
-import { Button } from "./button"
+} from "react";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
 import {
   FieldLane,
   FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
-} from "./field-lane"
-import { StatefulForm } from "./stateful-form"
-import { useTheme } from "./../theme/provider"
-import { TextboxThemeConfig } from "./../theme"
-import { applyClassName } from "./../constants/classname"
+} from "./field-lane";
+import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { TextboxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseTextboxProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
     "style"
   > {
-  showError?: boolean
-  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  styles?: TextboxStyles
+  showError?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  styles?: TextboxStyles;
 }
 
 export interface TextboxStyles {
-  self?: CSSProp
+  self?: CSSProp;
 }
 
 const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
   ({ showError, onChange, styles, type = "text", id, ...props }, ref) => {
-    const { currentTheme } = useTheme()
-    const textboxTheme = currentTheme?.textbox
+    const { currentTheme } = useTheme();
+    const textboxTheme = currentTheme?.textbox;
 
-    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     useEffect(() => {
       if (showError) {
-        setShowPassword(false)
+        setShowPassword(false);
       }
-    }, [showError])
+    }, [showError]);
 
     return (
       <>
@@ -105,19 +105,19 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
           </Button>
         )}
       </>
-    )
-  },
-)
+    );
+  }
+);
 
-export type TextboxDropdownOption = FieldLaneDropdownOption
+export type TextboxDropdownOption = FieldLaneDropdownOption;
 
 export interface TextboxProps
   extends Omit<BaseTextboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "id" | "type"> {
-  styles?: TextboxStyles & FieldLaneStyles
+  styles?: TextboxStyles & FieldLaneStyles;
 }
 
-export type TextboxAction = FieldLaneAction
+export type TextboxAction = FieldLaneAction;
 
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
   ({ ...props }, ref) => {
@@ -136,13 +136,13 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelWidth,
       className,
       ...rest
-    } = props
+    } = props;
 
     const inputId = StatefulForm.sanitizeId({
       prefix: "textbox",
       name: props.name,
       id: props.id,
-    })
+    });
 
     const {
       bodyStyle,
@@ -153,7 +153,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       helperIconStyle,
       helperArrowStyle,
       self,
-    } = styles ?? {}
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -200,15 +200,15 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
           ref={ref}
         />
       </FieldLane>
-    )
-  },
-)
+    );
+  }
+);
 
 const Input = styled.input<{
-  $error?: boolean
-  $style?: CSSProp
-  $disabled?: boolean
-  $theme: TextboxThemeConfig
+  $error?: boolean;
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $theme: TextboxThemeConfig;
 }>`
   border-radius: 2px;
   font-size: 0.75rem;
@@ -270,6 +270,6 @@ const Input = styled.input<{
   }
 
   ${({ $style }) => $style}
-`
+`;
 
-export { Textbox }
+export { Textbox };

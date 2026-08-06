@@ -1,26 +1,26 @@
-import { applyClassName } from "./../constants/classname"
-import { ComponentType, HTMLAttributes } from "react"
-import styled, { css, CSSProp } from "styled-components"
+import { applyClassName } from "./../constants/classname";
+import { ComponentType, HTMLAttributes } from "react";
+import styled, { css, CSSProp } from "styled-components";
 
 export interface FigureProps
   extends Omit<HTMLAttributes<HTMLSpanElement>, "style"> {
-  image?: ComponentType<any> | string
-  size?: number
-  color?: string
-  styles?: FigureStyles
-  notificationBadge?: FigureNotification
+  image?: ComponentType<any> | string;
+  size?: number;
+  color?: string;
+  styles?: FigureStyles;
+  notificationBadge?: FigureNotification;
 }
 
 export interface FigureNotification {
-  content?: string
-  backgroundColor?: string
-  frameSize?: string
-  fontSize?: string
+  content?: string;
+  backgroundColor?: string;
+  frameSize?: string;
+  fontSize?: string;
 }
 
 export interface FigureStyles {
-  self?: CSSProp
-  notificationBadgeStyle?: CSSProp
+  self?: CSSProp;
+  notificationBadgeStyle?: CSSProp;
 }
 
 function Figure({
@@ -33,7 +33,7 @@ function Figure({
   notificationBadge,
   ...rest
 }: FigureProps) {
-  if (!Icon) return null
+  if (!Icon) return null;
 
   return (
     <Wrapper
@@ -74,7 +74,7 @@ function Figure({
         />
       )}
     </Wrapper>
-  )
+  );
 }
 
 const Wrapper = styled.span<{ $style?: CSSProp }>`
@@ -83,15 +83,15 @@ const Wrapper = styled.span<{ $style?: CSSProp }>`
   position: relative;
 
   ${({ $style }) => $style}
-`
+`;
 
 const Notification = styled.span<{
-  $style?: CSSProp
-  $size?: number
-  $frameSize?: string
-  $fontSize?: string
-  $backgroundColor?: string
-  $contentLength?: number
+  $style?: CSSProp;
+  $size?: number;
+  $frameSize?: string;
+  $fontSize?: string;
+  $backgroundColor?: string;
+  $contentLength?: number;
 }>`
   position: absolute;
   top: 5%;
@@ -122,5 +122,5 @@ const Notification = styled.span<{
         `};
 
   ${({ $style }) => $style};
-`
-export { Figure }
+`;
+export { Figure };

@@ -1,28 +1,28 @@
-import { ChangeEvent, DragEvent, InputHTMLAttributes, useState } from "react"
-import { RiCloseLine } from "@remixicon/react"
-import styled, { css, CSSProp } from "styled-components"
-import { Button } from "./button"
-import { StatefulForm } from "./stateful-form"
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
-import { useTheme } from "./../theme/provider"
-import { FileInputBoxThemeConfig } from "./../theme"
-import { applyClassName } from "./../constants/classname"
+import { ChangeEvent, DragEvent, InputHTMLAttributes, useState } from "react";
+import { RiCloseLine } from "@remixicon/react";
+import styled, { css, CSSProp } from "styled-components";
+import { Button } from "./button";
+import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { FileInputBoxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
-  placeholder?: string
-  accept?: string
-  multiple?: boolean
-  onFilesSelected?: (files: File[]) => void
-  label?: string
-  showError?: boolean
-  errorMessage?: string
-  styles?: BaseFileInputBoxStyles
+  placeholder?: string;
+  accept?: string;
+  multiple?: boolean;
+  onFilesSelected?: (files: File[]) => void;
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  styles?: BaseFileInputBoxStyles;
 }
 
 interface BaseFileInputBoxStyles {
-  containerStyle?: CSSProp
-  labelStyle?: CSSProp
-  self?: CSSProp
+  containerStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 function BaseFileInputBox({
@@ -36,52 +36,52 @@ function BaseFileInputBox({
   disabled,
   ...props
 }: BaseFileInputBoxProps) {
-  const { currentTheme } = useTheme()
-  const fileInputBoxTheme = currentTheme.fileInputBox
+  const { currentTheme } = useTheme();
+  const fileInputBoxTheme = currentTheme.fileInputBox;
 
-  const [isDragging, setIsDragging] = useState(false)
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleDeleteFile = (index: number) => {
-    const updatedFiles = selectedFiles.filter((_, i) => i !== index)
-    setSelectedFiles(updatedFiles)
+    const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(updatedFiles);
     if (onFilesSelected) {
-      onFilesSelected(updatedFiles)
+      onFilesSelected(updatedFiles);
     }
-  }
+  };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files)
-      const updatedFiles = multiple ? [...selectedFiles, ...files] : files
-      setSelectedFiles(updatedFiles)
+      const files = Array.from(e.target.files);
+      const updatedFiles = multiple ? [...selectedFiles, ...files] : files;
+      setSelectedFiles(updatedFiles);
       if (onFilesSelected) {
-        onFilesSelected(updatedFiles)
+        onFilesSelected(updatedFiles);
       }
     }
-  }
+  };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
     if (e.dataTransfer.files) {
-      const files = Array.from(e.dataTransfer.files)
-      const updatedFiles = multiple ? [...selectedFiles, ...files] : files
-      setSelectedFiles(updatedFiles)
+      const files = Array.from(e.dataTransfer.files);
+      const updatedFiles = multiple ? [...selectedFiles, ...files] : files;
+      setSelectedFiles(updatedFiles);
       if (onFilesSelected) {
-        onFilesSelected(updatedFiles)
+        onFilesSelected(updatedFiles);
       }
     }
-  }
+  };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
   const handleDragLeave = () => {
-    setIsDragging(false)
-  }
+    setIsDragging(false);
+  };
 
   return (
     <InputBox
@@ -90,16 +90,16 @@ function BaseFileInputBox({
       $isDragging={!disabled && isDragging}
       $hasFile={selectedFiles.length > 0}
       onDrop={(e) => {
-        if (disabled) return
-        handleDrop(e)
+        if (disabled) return;
+        handleDrop(e);
       }}
       onDragOver={(e) => {
-        if (disabled) return
-        handleDragOver(e)
+        if (disabled) return;
+        handleDragOver(e);
       }}
       onDragLeave={() => {
-        if (disabled) return
-        handleDragLeave()
+        if (disabled) return;
+        handleDragLeave();
       }}
       aria-label="file-input-box-wrapper"
       $disabled={disabled}
@@ -125,8 +125,8 @@ function BaseFileInputBox({
                   `,
                 }}
                 onClick={(e) => {
-                  e.stopPropagation()
-                  handleDeleteFile(index)
+                  e.stopPropagation();
+                  handleDeleteFile(index);
                 }}
               >
                 <RiCloseLine size={14} />
@@ -149,15 +149,15 @@ function BaseFileInputBox({
         hidden
       />
     </InputBox>
-  )
+  );
 }
 
-export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles
+export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: FileInputBoxStyles
+  styles?: FileInputBoxStyles;
 }
 
 function FileInputBox({
@@ -179,7 +179,7 @@ function FileInputBox({
     prefix: "file-input-box",
     name,
     id,
-  })
+  });
 
   const {
     bodyStyle,
@@ -190,7 +190,7 @@ function FileInputBox({
     helperDrawerStyle,
     helperIconStyle,
     ...baseFileInputBoxtyles
-  } = styles ?? {}
+  } = styles ?? {};
 
   return (
     <FieldLane
@@ -223,17 +223,17 @@ function FileInputBox({
         styles={baseFileInputBoxtyles}
       />
     </FieldLane>
-  )
+  );
 }
 
 const InputBox = styled.div<{
-  $isDragging: boolean
-  $hasFile: boolean
-  $isError?: boolean
-  $self?: CSSProp
-  $style?: CSSProp
-  $disabled?: boolean
-  $theme: FileInputBoxThemeConfig
+  $isDragging: boolean;
+  $hasFile: boolean;
+  $isError?: boolean;
+  $self?: CSSProp;
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $theme: FileInputBoxThemeConfig;
 }>`
   padding: 12px;
   user-select: none;
@@ -298,14 +298,14 @@ const InputBox = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`
+`;
 
 const FileList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
   width: 100%;
-`
+`;
 
 const FileItem = styled.div`
   display: flex;
@@ -313,7 +313,7 @@ const FileItem = styled.div`
   width: 100%;
   position: relative;
   gap: 6px;
-`
+`;
 
 const FileName = styled.div<{ $theme: FileInputBoxThemeConfig }>`
   font-size: 14px;
@@ -325,7 +325,7 @@ const FileName = styled.div<{ $theme: FileInputBoxThemeConfig }>`
   ${({ $theme }) => css`
     color: ${$theme.placeholderColor};
   `}
-`
+`;
 
 const Placeholder = styled.span<{ $theme: FileInputBoxThemeConfig }>`
   font-size: 14px;
@@ -334,6 +334,6 @@ const Placeholder = styled.span<{ $theme: FileInputBoxThemeConfig }>`
   ${({ $theme }) => css`
     color: ${$theme.placeholderColor};
   `}
-`
+`;
 
-export { FileInputBox }
+export { FileInputBox };

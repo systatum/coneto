@@ -4,31 +4,31 @@ import {
   FormFieldType,
   StatefulForm,
   StatefulFormProps,
-} from "./../../components/stateful-form"
-import { COUNTRY_CODES } from "./../../constants/countries"
-import { Boxbar } from "./../../components/boxbar"
-import { Badge, BadgeProps } from "./../../components/badge"
-import { css } from "styled-components"
-import { SelectboxOption } from "./../../components/selectbox"
-import { CapsuleTab } from "./../../components/capsule"
-import { useEffect, useMemo, useState } from "react"
+} from "./../../components/stateful-form";
+import { COUNTRY_CODES } from "./../../constants/countries";
+import { Boxbar } from "./../../components/boxbar";
+import { Badge, BadgeProps } from "./../../components/badge";
+import { css } from "styled-components";
+import { SelectboxOption } from "./../../components/selectbox";
+import { CapsuleTab } from "./../../components/capsule";
+import { useEffect, useMemo, useState } from "react";
 import {
   OnCompleteFunctionArgs,
   FileDropBox,
   OnFileDroppedFunctionArgs,
-} from "./../../components/file-drop-box"
-import { Table } from "./../../components/table"
-import { RiDeleteBin2Fill } from "@remixicon/react"
-import z from "zod"
-import { PinboxParts } from "./../../components/pinbox"
+} from "./../../components/file-drop-box";
+import { Table } from "./../../components/table";
+import { RiDeleteBin2Fill } from "@remixicon/react";
+import z from "zod";
+import { PinboxParts } from "./../../components/pinbox";
 
 const DEFAULT_COUNTRY_CODES = (() => {
   const code =
-    COUNTRY_CODES.find((data) => data.id === "US") ?? COUNTRY_CODES[206]
+    COUNTRY_CODES.find((data) => data.id === "US") ?? COUNTRY_CODES[206];
   if (!code)
-    throw new Error("Default country code 'US' not found in COUNTRY_CODES.")
-  return code
-})()
+    throw new Error("Default country code 'US' not found in COUNTRY_CODES.");
+  return code;
+})();
 
 const FRUIT_OPTIONS: SelectboxOption[] = [
   { text: "Apple", value: "1" },
@@ -38,7 +38,7 @@ const FRUIT_OPTIONS: SelectboxOption[] = [
   { text: "Pineapple", value: "5" },
   { text: "Strawberry", value: "6" },
   { text: "Watermelon", value: "7" },
-]
+];
 
 const MONTH_NAMES = [
   { text: "JAN", value: "1" },
@@ -53,12 +53,12 @@ const MONTH_NAMES = [
   { text: "OCT", value: "10" },
   { text: "NOV", value: "11" },
   { text: "DEC", value: "12" },
-]
+];
 
 const CAPSULE_TABS: CapsuleTab[] = [
   { id: "paid", title: "Paid" },
   { id: "unpaid", title: "Unpaid" },
-]
+];
 
 const PARTS_INPUT: PinboxParts[] = [
   { type: "static", text: "S" },
@@ -66,7 +66,7 @@ const PARTS_INPUT: PinboxParts[] = [
   { type: "digit" },
   { type: "alphabet" },
   { type: "static", text: "-" },
-]
+];
 
 const BADGE_OPTIONS_FULL = [
   { id: 1, caption: "Anime" },
@@ -79,12 +79,12 @@ const BADGE_OPTIONS_FULL = [
   { id: 8, caption: "Music" },
   { id: 9, caption: "Games" },
   { id: 10, caption: "Webtoons" },
-]
+];
 
 const BADGE_OPTIONS_SHORT: BadgeProps[] = [
   { id: "1", caption: "Anime" },
   { id: "2", caption: "Manga" },
-]
+];
 
 const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
   text: "textbox",
@@ -114,7 +114,7 @@ const TYPE_TO_ID_PREFIX: Record<FormFieldType, string> = {
   chips: "chips",
   custom: "custom",
   frame: "frame",
-}
+};
 
 const allValue = {
   text: "",
@@ -141,7 +141,7 @@ const allValue = {
   signature: "",
   capsule: "",
   country_code: DEFAULT_COUNTRY_CODES,
-}
+};
 
 const ALL_INPUT: FormFieldGroup[] = [
   [
@@ -315,7 +315,7 @@ const ALL_INPUT: FormFieldGroup[] = [
       tabs: CAPSULE_TABS,
     },
   },
-]
+];
 
 const FIELD_HELPERS: Record<string, string> = {
   text: "Enter any text value.",
@@ -341,26 +341,28 @@ const FIELD_HELPERS: Record<string, string> = {
   toggle: "Toggle the switch.",
   chips: "Select one or more chips.",
   capsule: "Choose a monetary option.",
-}
+};
 
 const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   groups.flatMap((group) =>
-    Array.isArray(group) ? flattenFields(group) : [group],
-  )
+    Array.isArray(group) ? flattenFields(group) : [group]
+  );
 
 describe("StatefulForm", () => {
   context("general", () => {
     function StatefulFormWithAsync({
       state = "valid",
     }: {
-      state?: "valid" | "invalid" | "empty"
+      state?: "valid" | "invalid" | "empty";
     }) {
       const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
-        (data) => data.id === "US",
-      )
+        (data) => data.id === "US"
+      );
 
       if (!DEFAULT_COUNTRY_CODES) {
-        throw new Error("Default country code 'US' not found in COUNTRY_CODES.")
+        throw new Error(
+          "Default country code 'US' not found in COUNTRY_CODES."
+        );
       }
 
       const [value, setValue] = useState({
@@ -368,9 +370,9 @@ describe("StatefulForm", () => {
         email: "",
         phone: "",
         country_code: DEFAULT_COUNTRY_CODES,
-      })
+      });
 
-      const [isFormValid, setIsFormValid] = useState(false)
+      const [isFormValid, setIsFormValid] = useState(false);
 
       useEffect(() => {
         const timer = setTimeout(() => {
@@ -381,8 +383,8 @@ describe("StatefulForm", () => {
                 name: "John Doe",
                 email: "john@example.com",
                 phone: "081234567890",
-              }))
-              break
+              }));
+              break;
 
             case "invalid":
               setValue((prev) => ({
@@ -390,17 +392,17 @@ describe("StatefulForm", () => {
                 name: "Jo",
                 email: "invalid-email",
                 phone: "123",
-              }))
-              break
+              }));
+              break;
 
             case "empty":
             default:
-              break
+              break;
           }
-        }, 300)
+        }, 300);
 
-        return () => clearTimeout(timer)
-      }, [state])
+        return () => clearTimeout(timer);
+      }, [state]);
 
       const employeeSchema = z.object({
         name: z
@@ -411,7 +413,7 @@ describe("StatefulForm", () => {
           .string()
           .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
           .optional(),
-      })
+      });
 
       const EMPLOYEE_FIELDS: FormFieldGroup[] = [
         {
@@ -449,7 +451,7 @@ describe("StatefulForm", () => {
           disabled: !isFormValid,
           rowJustifyPosition: "end",
         },
-      ]
+      ];
 
       return (
         <StatefulForm
@@ -462,121 +464,123 @@ describe("StatefulForm", () => {
             setValue((prev) => ({
               ...prev,
               ...currentState,
-            }))
+            }));
           }}
         />
-      )
+      );
     }
 
     context("when typing with invalid value", () => {
       context("while focused", () => {
         it("does not show the error", () => {
-          cy.mount(<StatefulFormWithAsync state="empty" />)
+          cy.mount(<StatefulFormWithAsync state="empty" />);
 
-          cy.findByPlaceholderText("Enter first name").type("T")
+          cy.findByPlaceholderText("Enter first name").type("T");
 
           cy.findByText("First name must be at least 3 characters long").should(
-            "not.exist",
-          )
-        })
-      })
+            "not.exist"
+          );
+        });
+      });
 
       context("after blur", () => {
         it("shows the error", () => {
-          cy.mount(<StatefulFormWithAsync state="empty" />)
+          cy.mount(<StatefulFormWithAsync state="empty" />);
           cy.findByText("First name must be at least 3 characters long").should(
-            "not.exist",
-          )
+            "not.exist"
+          );
 
-          cy.findByPlaceholderText("Enter first name").type("T")
-          cy.get("body").click("topRight")
+          cy.findByPlaceholderText("Enter first name").type("T");
+          cy.get("body").click("topRight");
 
           cy.findByText("First name must be at least 3 characters long").should(
-            "be.visible",
-          )
-        })
+            "be.visible"
+          );
+        });
 
         context("when typing in another field", () => {
           it("keeps the previous error", () => {
-            cy.mount(<StatefulFormWithAsync state="empty" />)
+            cy.mount(<StatefulFormWithAsync state="empty" />);
             cy.findByText(
-              "First name must be at least 3 characters long",
-            ).should("not.exist")
+              "First name must be at least 3 characters long"
+            ).should("not.exist");
 
-            cy.findByPlaceholderText("Enter first name").type("Te")
-            cy.get("body").click("topRight")
+            cy.findByPlaceholderText("Enter first name").type("Te");
+            cy.get("body").click("topRight");
 
             cy.findByText(
-              "First name must be at least 3 characters long",
-            ).should("be.visible")
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
 
-            cy.findByPlaceholderText("Enter email address").type("iamalim@test")
+            cy.findByPlaceholderText("Enter email address").type(
+              "iamalim@test"
+            );
 
             // still shows if in focus
 
             cy.findByText(
-              "First name must be at least 3 characters long",
-            ).should("be.visible")
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
 
-            cy.get("body").click("topRight")
+            cy.get("body").click("topRight");
 
             // still shows after unfocused
 
             cy.findByText(
-              "First name must be at least 3 characters long",
-            ).should("be.visible")
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
             cy.findByText("Please enter a valid email address").should(
-              "be.visible",
-            )
-          })
-        })
-      })
-    })
+              "be.visible"
+            );
+          });
+        });
+      });
+    });
 
     context("async", () => {
       context("when data is valid", () => {
         it("renders without error", () => {
-          cy.mount(<StatefulFormWithAsync state="valid" />)
+          cy.mount(<StatefulFormWithAsync state="valid" />);
 
-          cy.wait(600)
+          cy.wait(600);
 
-          cy.findByDisplayValue("John Doe").should("exist")
-          cy.findByDisplayValue("john@example.com").should("exist")
-          cy.findByDisplayValue("081234567890").should("exist")
+          cy.findByDisplayValue("John Doe").should("exist");
+          cy.findByDisplayValue("john@example.com").should("exist");
+          cy.findByDisplayValue("081234567890").should("exist");
 
           cy.findByText("First name must be at least 3 characters long").should(
-            "not.exist",
-          )
+            "not.exist"
+          );
           cy.findByText("Please enter a valid email address").should(
-            "not.exist",
-          )
+            "not.exist"
+          );
           cy.findByText("Phone number must be between 10 and 15 digits").should(
-            "not.exist",
-          )
-        })
-      })
+            "not.exist"
+          );
+        });
+      });
 
       context("when data is invalid", () => {
         it("renders with error", () => {
-          cy.mount(<StatefulFormWithAsync state="invalid" />)
+          cy.mount(<StatefulFormWithAsync state="invalid" />);
 
-          cy.wait(600)
+          cy.wait(600);
 
-          cy.findByDisplayValue("Jo").should("exist")
-          cy.findByDisplayValue("invalid-email").should("exist")
-          cy.findByDisplayValue("123").should("exist")
+          cy.findByDisplayValue("Jo").should("exist");
+          cy.findByDisplayValue("invalid-email").should("exist");
+          cy.findByDisplayValue("123").should("exist");
 
           cy.findByText("First name must be at least 3 characters long").should(
-            "exist",
-          )
-          cy.findByText("Please enter a valid email address").should("exist")
+            "exist"
+          );
+          cy.findByText("Please enter a valid email address").should("exist");
           cy.findByText("Phone number must be between 10 and 15 digits").should(
-            "exist",
-          )
-        })
-      })
-    })
-  })
+            "exist"
+          );
+        });
+      });
+    });
+  });
 
   context("mobile", () => {
     context("styles", () => {
@@ -597,10 +601,10 @@ describe("StatefulForm", () => {
                   {FIELD_HELPERS[group.type]}
                 </span>
               ),
-            },
-      )
+            }
+      );
 
-      const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props)
+      const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
       context("helperArrowStyle", () => {
         context("when given green background", () => {
           it("renders with background with rgb(0, 255, 0)", () => {
@@ -614,21 +618,21 @@ describe("StatefulForm", () => {
                 fields={INPUT_WITH_HELPER}
                 formValues={allValue}
                 mode="onChange"
-              />,
-            )
+              />
+            );
 
             cy.findAllByLabelText("tooltip-trigger")
               .should("have.length", FLAT_INPUT.length)
               .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover")
+                cy.wrap($el).trigger("mouseover");
 
                 cy.findAllByLabelText("tooltip-arrow")
                   .eq(index)
-                  .should("have.css", "background-color", "rgb(0, 255, 0)")
-              })
-          })
-        })
-      })
+                  .should("have.css", "background-color", "rgb(0, 255, 0)");
+              });
+          });
+        });
+      });
 
       context("helperIconStyle", () => {
         context("when given red color", () => {
@@ -645,22 +649,22 @@ describe("StatefulForm", () => {
                 fields={INPUT_WITH_HELPER}
                 formValues={allValue}
                 mode="onChange"
-              />,
-            )
+              />
+            );
 
             cy.findAllByLabelText("tooltip-trigger")
               .should("have.length", FLAT_INPUT.length)
               .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover")
+                cy.wrap($el).trigger("mouseover");
 
                 cy.findAllByLabelText("tooltip-trigger")
                   .eq(index)
                   .find("svg")
-                  .should("have.css", "fill", "rgb(255, 0, 0)")
-              })
-          })
-        })
-      })
+                  .should("have.css", "fill", "rgb(255, 0, 0)");
+              });
+          });
+        });
+      });
 
       context("helperDrawerStyle", () => {
         context("when given background yellow", () => {
@@ -675,21 +679,21 @@ describe("StatefulForm", () => {
                 fields={INPUT_WITH_HELPER}
                 formValues={allValue}
                 mode="onChange"
-              />,
-            )
+              />
+            );
 
             cy.findAllByLabelText("tooltip-trigger")
               .should("have.length", FLAT_INPUT.length)
               .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover")
+                cy.wrap($el).trigger("mouseover");
 
                 cy.findAllByLabelText("tooltip-drawer")
                   .eq(index)
-                  .should("have.css", "background-color", "rgb(255, 255, 0)")
-              })
-          })
-        })
-      })
+                  .should("have.css", "background-color", "rgb(255, 255, 0)");
+              });
+          });
+        });
+      });
 
       context("mobileFieldGroupStyle", () => {
         context("when given padding 30px", () => {
@@ -705,17 +709,17 @@ describe("StatefulForm", () => {
                     padding: 30px;
                   `,
                 }}
-              />,
-            )
+              />
+            );
 
             cy.findAllByLabelText("stateful-form-field-group").should(
               "have.css",
               "padding",
-              "30px",
-            )
-          })
-        })
-      })
+              "30px"
+            );
+          });
+        });
+      });
 
       context("mobileFieldGroupRowDividerStyle", () => {
         context("when given color red", () => {
@@ -731,18 +735,18 @@ describe("StatefulForm", () => {
                     background-color: red;
                   `,
                 }}
-              />,
-            )
+              />
+            );
 
             cy.findAllByLabelText("stateful-form-field-group-divider").should(
               "have.css",
               "background-color",
-              "rgb(255, 0, 0)",
-            )
-          })
-        })
-      })
-    })
+              "rgb(255, 0, 0)"
+            );
+          });
+        });
+      });
+    });
     it("renders with background rgb(236, 236, 236)", () => {
       cy.mount(
         <StatefulForm
@@ -750,15 +754,15 @@ describe("StatefulForm", () => {
           formValues={allValue}
           mode="onChange"
           mobile
-        />,
-      )
+        />
+      );
 
       cy.findAllByLabelText("stateful-form-field-group").should(
         "have.css",
         "background-color",
-        "rgb(236, 236, 236)",
-      )
-    })
+        "rgb(236, 236, 236)"
+      );
+    });
 
     it("renders row with radius 24px and padding 10px 20px", () => {
       cy.mount(
@@ -767,18 +771,18 @@ describe("StatefulForm", () => {
           formValues={allValue}
           mode="onChange"
           mobile
-        />,
-      )
+        />
+      );
 
       cy.findAllByLabelText("stateful-form-field-group")
         .should("have.css", "border-radius", "24px")
-        .and("have.css", "padding", "10px 20px")
-    })
+        .and("have.css", "padding", "10px 20px");
+    });
 
     context("radio", () => {
       context("clicking in center row element", () => {
         it("should give callback in onChanges", () => {
-          const onChangeValue = cy.stub().as("onChangeValue")
+          const onChangeValue = cy.stub().as("onChangeValue");
 
           cy.mount(
             <StatefulForm
@@ -794,21 +798,21 @@ describe("StatefulForm", () => {
               mode="onChange"
               onChange={() => onChangeValue()}
               mobile
-            />,
-          )
-          cy.get("@onChangeValue").should("not.have.been.calledOnce")
+            />
+          );
+          cy.get("@onChangeValue").should("not.have.been.calledOnce");
 
-          cy.findAllByLabelText("stateful-form-field-group").click("center")
+          cy.findAllByLabelText("stateful-form-field-group").click("center");
 
-          cy.get("@onChangeValue").should("have.been.calledOnce")
-        })
-      })
-    })
+          cy.get("@onChangeValue").should("have.been.calledOnce");
+        });
+      });
+    });
 
     context("checkbox", () => {
       context("clicking in center row element", () => {
         it("should give callback in onChanges", () => {
-          const onChangeValue = cy.stub().as("onChangeValue")
+          const onChangeValue = cy.stub().as("onChangeValue");
 
           cy.mount(
             <StatefulForm
@@ -824,21 +828,21 @@ describe("StatefulForm", () => {
               mode="onChange"
               onChange={() => onChangeValue()}
               mobile
-            />,
-          )
-          cy.get("@onChangeValue").should("not.have.been.calledOnce")
+            />
+          );
+          cy.get("@onChangeValue").should("not.have.been.calledOnce");
 
-          cy.findAllByLabelText("stateful-form-field-group").click("center")
+          cy.findAllByLabelText("stateful-form-field-group").click("center");
 
-          cy.get("@onChangeValue").should("have.been.calledOnce")
-        })
-      })
-    })
+          cy.get("@onChangeValue").should("have.been.calledOnce");
+        });
+      });
+    });
 
     context("button", () => {
       context("when given 2 or more button", () => {
         it("should separate with percentage in flex row", () => {
-          cy.viewport(500, 500)
+          cy.viewport(500, 500);
           cy.mount(
             <StatefulForm
               fields={[
@@ -865,22 +869,22 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("stateful-form-field-group")
             .should("have.css", "flex-direction", "row")
-            .and("have.css", "width", "460px")
+            .and("have.css", "width", "460px");
 
-          cy.findAllByRole("button").should("have.length", 2)
-          cy.findAllByRole("button").eq(0).should("have.css", "width", "230px")
-          cy.findAllByRole("button").eq(1).should("have.css", "width", "230px")
-        })
-      })
+          cy.findAllByRole("button").should("have.length", 2);
+          cy.findAllByRole("button").eq(0).should("have.css", "width", "230px");
+          cy.findAllByRole("button").eq(1).should("have.css", "width", "230px");
+        });
+      });
 
       context("when given 2 or more button and 1 input", () => {
         it("should renders as usual with flex column", () => {
-          cy.viewport(500, 500)
+          cy.viewport(500, 500);
           cy.mount(
             <StatefulForm
               fields={[
@@ -914,30 +918,30 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("stateful-form-field-group")
             .should("have.css", "flex-direction", "column")
-            .and("have.css", "width", "460px")
+            .and("have.css", "width", "460px");
 
-          cy.findAllByRole("button").should("have.length", 2)
+          cy.findAllByRole("button").should("have.length", 2);
           cy.findAllByRole("button")
             .eq(0)
-            .should("not.have.css", "width", "230px")
+            .should("not.have.css", "width", "230px");
           cy.findAllByRole("button")
             .eq(1)
-            .should("not.have.css", "width", "230px")
-        })
-      })
-    })
+            .should("not.have.css", "width", "230px");
+        });
+      });
+    });
 
     context("Capsule", () => {
       context("when error", () => {
         it("should not render the error icon", () => {
           const capsuleSchema = z.object({
             capsule: z.string().max(4, "Paid is required"),
-          })
+          });
 
           cy.mount(
             <StatefulForm
@@ -956,22 +960,22 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findByText("Paid is required").should("not.exist")
-          cy.get("body").find("svg").should("not.exist")
+          cy.findByText("Paid is required").should("not.exist");
+          cy.get("body").find("svg").should("not.exist");
 
-          cy.findByText("Unpaid").click()
+          cy.findByText("Unpaid").click();
 
-          cy.findByText("Paid is required").should("exist")
+          cy.findByText("Paid is required").should("exist");
           cy.get("body")
             .find("svg")
             .parent()
-            .should("have.css", "display", "none")
-        })
-      })
-    })
+            .should("have.css", "display", "none");
+        });
+      });
+    });
 
     context("textbox", () => {
       context("when given title", () => {
@@ -989,11 +993,11 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findByPlaceholderText("Text Placeholder").should("exist")
-        })
+          cy.findByPlaceholderText("Text Placeholder").should("exist");
+        });
 
         context("when given placeholder", () => {
           it("should replace the placeholder input text", () => {
@@ -1012,15 +1016,15 @@ describe("StatefulForm", () => {
                 formValues={{}}
                 mode="onChange"
                 mobile
-              />,
-            )
+              />
+            );
 
-            cy.findByPlaceholderText("Text Placeholder").should("not.exist")
-            cy.findByPlaceholderText("Enter text").should("not.exist")
-          })
-        })
-      })
-    })
+            cy.findByPlaceholderText("Text Placeholder").should("not.exist");
+            cy.findByPlaceholderText("Enter text").should("not.exist");
+          });
+        });
+      });
+    });
 
     context("colorbox", () => {
       it("renders with flex row-reverse", () => {
@@ -1038,14 +1042,14 @@ describe("StatefulForm", () => {
             formValues={{}}
             mode="onChange"
             mobile
-          />,
-        )
+          />
+        );
 
         cy.findByLabelText("colorbox")
           .should("exist")
-          .and("have.css", "flex-direction", "row-reverse")
-      })
-    })
+          .and("have.css", "flex-direction", "row-reverse");
+      });
+    });
 
     context("moneybox", () => {
       context("when clicking the currency button", () => {
@@ -1066,17 +1070,17 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findByLabelText("moneybox-currency-toggle").click()
+          cy.findByLabelText("moneybox-currency-toggle").click();
 
           cy.findByLabelText("combobox-drawer-mobile")
             .should("have.css", "bottom", "10px")
-            .and("have.css", "position", "fixed")
-        })
-      })
-    })
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
 
     context("chips", () => {
       function ProductStatefulChips() {
@@ -1085,7 +1089,7 @@ describe("StatefulForm", () => {
             selectedOptions: [],
             searchText: "",
           },
-        })
+        });
 
         return (
           <StatefulForm
@@ -1104,7 +1108,7 @@ describe("StatefulForm", () => {
               },
             ]}
             onChange={({ currentState }) => {
-              const [[key, value]] = Object.entries(currentState)
+              const [[key, value]] = Object.entries(currentState);
 
               setValue((prev) => ({
                 ...prev,
@@ -1118,46 +1122,46 @@ describe("StatefulForm", () => {
                       },
                     }
                   : currentState),
-              }))
+              }));
             }}
             formValues={value}
             mode="onChange"
           />
-        )
+        );
       }
 
       it("renders with row reverse", () => {
-        cy.mount(<ProductStatefulChips />)
+        cy.mount(<ProductStatefulChips />);
 
-        cy.findByLabelText("chips-container-input").click()
+        cy.findByLabelText("chips-container-input").click();
 
         cy.findByLabelText("combobox-drawer-mobile")
           .should("exist")
           .and("have.css", "bottom", "10px")
-          .and("have.css", "position", "fixed")
+          .and("have.css", "position", "fixed");
 
-        cy.findByText("Anime").click()
-        cy.findByText("Manga").click()
+        cy.findByText("Anime").click();
+        cy.findByText("Manga").click();
 
         cy.findByLabelText("chips-container-input").should(
           "have.css",
           "flex-direction",
-          "row-reverse",
-        )
-      })
+          "row-reverse"
+        );
+      });
       context("when clicking the button", () => {
         it("renders in the bottom of screen", () => {
-          cy.mount(<ProductStatefulChips />)
+          cy.mount(<ProductStatefulChips />);
 
-          cy.findByLabelText("chips-container-input").click()
+          cy.findByLabelText("chips-container-input").click();
 
           cy.findByLabelText("combobox-drawer-mobile")
             .should("exist")
             .and("have.css", "bottom", "10px")
-            .and("have.css", "position", "fixed")
-        })
-      })
-    })
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
 
     context("datebox", () => {
       context("when clicking the selectbox", () => {
@@ -1176,18 +1180,18 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findAllByPlaceholderText("Select a date").click()
+          cy.findAllByPlaceholderText("Select a date").click();
 
           cy.findByLabelText("calendar")
             .should("exist")
             .and("have.css", "bottom", "10px")
-            .and("have.css", "position", "fixed")
-        })
-      })
-    })
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
 
     context("phonebox", () => {
       context("renders in the text align to right side", () => {
@@ -1206,14 +1210,14 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
           cy.findByLabelText("phonebox-input-number")
             .should("exist")
-            .and("have.css", "text-align", "end")
-        })
-      })
+            .and("have.css", "text-align", "end");
+        });
+      });
 
       context("when clicking the countrybox", () => {
         it("renders drawer in the bottom of screen", () => {
@@ -1231,18 +1235,18 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findByLabelText("phonebox-country-toggle").click()
+          cy.findByLabelText("phonebox-country-toggle").click();
 
           cy.findByLabelText("combobox-drawer-mobile")
             .should("exist")
             .and("have.css", "bottom", "10px")
-            .and("have.css", "position", "fixed")
-        })
-      })
-    })
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
 
     context("timebox", () => {
       context("when clicking the input", () => {
@@ -1260,19 +1264,19 @@ describe("StatefulForm", () => {
               formValues={{}}
               mode="onChange"
               mobile
-            />,
-          )
+            />
+          );
 
-          cy.findByLabelText("timebox-hour").click()
+          cy.findByLabelText("timebox-hour").click();
 
           cy.findByLabelText("wheel-container")
             .should("exist")
             .and("have.css", "bottom", "10px")
-            .and("have.css", "position", "fixed")
-        })
-      })
-    })
-  })
+            .and("have.css", "position", "fixed");
+        });
+      });
+    });
+  });
 
   context("chips", () => {
     function StatefulChips() {
@@ -1281,7 +1285,7 @@ describe("StatefulForm", () => {
           selectedOptions: [],
           searchText: "",
         },
-      })
+      });
       return (
         <StatefulForm
           fields={[
@@ -1298,7 +1302,7 @@ describe("StatefulForm", () => {
             },
           ]}
           onChange={({ currentState }) => {
-            const [[key, value]] = Object.entries(currentState)
+            const [[key, value]] = Object.entries(currentState);
 
             setValue((prev) => ({
               ...prev,
@@ -1311,37 +1315,37 @@ describe("StatefulForm", () => {
                     },
                   }
                 : currentState),
-            }))
+            }));
           }}
           formValues={value}
           mode="onChange"
         />
-      )
+      );
     }
 
     context("when select one option", () => {
       it("renders option selected", () => {
-        cy.mount(<StatefulChips />)
-        cy.findByRole("button").click()
+        cy.mount(<StatefulChips />);
+        cy.findByRole("button").click();
 
-        cy.findAllByLabelText("chips-selected").should("not.exist")
+        cy.findAllByLabelText("chips-selected").should("not.exist");
 
-        cy.findByText("Anime").click()
-        cy.findByText("Manga").click()
+        cy.findByText("Anime").click();
+        cy.findByText("Manga").click();
 
-        cy.wait(400)
+        cy.wait(400);
 
         cy.findAllByLabelText("chips-selected")
           .eq(0)
           .should("exist")
-          .should("have.css", "background-color", "rgb(255, 255, 255)")
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
         cy.findAllByLabelText("chips-selected")
           .eq(1)
           .should("exist")
-          .should("have.css", "background-color", "rgb(255, 255, 255)")
-      })
-    })
-  })
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
+      });
+    });
+  });
 
   context("height", () => {
     it("mostly renders with 34px", () => {
@@ -1350,12 +1354,12 @@ describe("StatefulForm", () => {
           fields={ALL_INPUT}
           formValues={allValue}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
       flattenFields(ALL_INPUT).map((field) => {
         if (field.type === "frame" || field.type === "chips") {
-          return
+          return;
         } else if (
           field.type === "radio" ||
           field.type === "image" ||
@@ -1367,56 +1371,56 @@ describe("StatefulForm", () => {
           cy.findAllByLabelText("radio-input-container").should(
             "have.css",
             "height",
-            "16px",
-          )
+            "16px"
+          );
           cy.findAllByLabelText("file-input-box-wrapper").should(
             "have.css",
             "height",
-            "47px",
-          )
+            "47px"
+          );
           cy.findAllByLabelText("imagebox-input").should(
             "have.css",
             "height",
-            "120px",
-          )
+            "120px"
+          );
           cy.findAllByLabelText("signbox-canvas").should(
             "have.css",
             "height",
-            "200px",
-          )
+            "200px"
+          );
           cy.findAllByLabelText("file-drop-box-area").should(
             "have.css",
             "height",
-            "221px",
-          )
+            "221px"
+          );
           cy.findAllByLabelText("signbox-canvas").should(
             "have.css",
             "height",
-            "200px",
-          )
+            "200px"
+          );
           cy.findAllByLabelText("rating-wrapper").should(
             "have.css",
             "height",
-            "24px",
-          )
+            "24px"
+          );
         } else {
           cy.findAllByLabelText("field-lane-control").should(
             "have.css",
             "height",
-            "34px",
-          )
+            "34px"
+          );
         }
-      })
-    })
-  })
+      });
+    });
+  });
 
   context("combobox", () => {
     const comboField = flattenFields(ALL_INPUT).filter(
-      (field) => field.type === "combo",
-    )
+      (field) => field.type === "combo"
+    );
 
     function ComboboxInput(props: Partial<StatefulFormProps<any>>) {
-      const [value, setValue] = useState({ combo: ["4"] })
+      const [value, setValue] = useState({ combo: ["4"] });
 
       return (
         <StatefulForm
@@ -1427,20 +1431,20 @@ describe("StatefulForm", () => {
           }
           {...props}
         />
-      )
+      );
     }
 
     beforeEach(() => {
-      cy.mount(<ComboboxInput />)
-    })
+      cy.mount(<ComboboxInput />);
+    });
 
     it("should shows value from formValues", () => {
-      cy.get("#combobox-combo").should("have.value", "Grape")
-    })
+      cy.get("#combobox-combo").should("have.value", "Grape");
+    });
 
     context("when given four comboboxes in a row", () => {
       it("renders each with a width smaller than 140px (min-width)", () => {
-        cy.viewport(500, 750)
+        cy.viewport(500, 750);
         const fields = Array.from({ length: 4 }, (_, i) => ({
           id: `combo-${i + 1}`,
           name: `combo${i + 1}`,
@@ -1451,26 +1455,26 @@ describe("StatefulForm", () => {
           combobox: {
             options: FRUIT_OPTIONS,
           },
-        }))
-        cy.mount(<StatefulForm fields={[fields]} formValues={{}} />)
+        }));
+        cy.mount(<StatefulForm fields={[fields]} formValues={{}} />);
 
         cy.then(() => {
-          const widths: number[] = []
+          const widths: number[] = [];
 
           cy.wrap(fields).each((field: (typeof fields)[number]) => {
             cy.get(`#${field.id}`).then(($el) => {
-              widths.push($el[0].getBoundingClientRect().width)
-            })
-          })
+              widths.push($el[0].getBoundingClientRect().width);
+            });
+          });
 
           cy.then(() => {
             widths.forEach((width) => {
-              expect(width).to.be.closeTo(110.5, 1)
-            })
-          })
-        })
-      })
-    })
+              expect(width).to.be.closeTo(110.5, 1);
+            });
+          });
+        });
+      });
+    });
 
     context("when given value from selectedOptions", () => {
       const comboFieldWithValue = comboField.map((field) => ({
@@ -1479,25 +1483,25 @@ describe("StatefulForm", () => {
           ...field?.combobox,
           selectedOptions: ["1"],
         },
-      }))
+      }));
 
       beforeEach(() => {
-        cy.mount(<ComboboxInput fields={comboFieldWithValue} />)
-      })
+        cy.mount(<ComboboxInput fields={comboFieldWithValue} />);
+      });
       it("should shows value from formValues", () => {
-        cy.get("#combobox-combo").should("have.value", "Apple")
-      })
-    })
-  })
+        cy.get("#combobox-combo").should("have.value", "Apple");
+      });
+    });
+  });
 
   context("with type frame", () => {
     function StatefulWithFrame() {
-      const [isFormValid, setIsFormValid] = useState(false)
+      const [isFormValid, setIsFormValid] = useState(false);
       const [value, setValue] = useState({
         start_date: [""],
         end_date: [""],
         purpose: "",
-      })
+      });
 
       const EMPLOYEE_FIELDS: FormFieldGroup[] = [
         {
@@ -1542,19 +1546,19 @@ describe("StatefulForm", () => {
           disabled: !isFormValid,
           rowJustifyPosition: "end",
         },
-      ]
+      ];
 
       const dateArraySchema = z
         .array(
-          z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date"),
+          z.string().refine((val) => !isNaN(Date.parse(val)), "Invalid date")
         )
-        .min(1, "At least one date is required")
+        .min(1, "At least one date is required");
 
       const employeeSchema = z.object({
         start_date: dateArraySchema,
         end_date: dateArraySchema,
         purpose: z.string().min(10, "Business purpose is required"),
-      })
+      });
 
       return (
         <div
@@ -1572,7 +1576,7 @@ describe("StatefulForm", () => {
         >
           <StatefulForm
             onChange={({ currentState }) => {
-              setValue((prev) => ({ ...prev, ...currentState }))
+              setValue((prev) => ({ ...prev, ...currentState }));
             }}
             fields={EMPLOYEE_FIELDS}
             onValidityChange={setIsFormValid}
@@ -1581,107 +1585,107 @@ describe("StatefulForm", () => {
             mode="onChange"
           />
         </div>
-      )
+      );
     }
 
     const initializeFrame = () => {
-      cy.mount(<StatefulWithFrame />)
+      cy.mount(<StatefulWithFrame />);
       cy.findAllByLabelText("frame").then(() => {
-        cy.findAllByLabelText("stateful-form-row").should("have.length", 4)
-        cy.get("#datebox-start_date").should("exist")
-        cy.get("#datebox-end_date").should("exist")
-        cy.get("#textbox-purpose").should("exist")
-        cy.findByRole("button").should("exist").and("be.disabled")
-      })
-    }
+        cy.findAllByLabelText("stateful-form-row").should("have.length", 4);
+        cy.get("#datebox-start_date").should("exist");
+        cy.get("#datebox-end_date").should("exist");
+        cy.get("#textbox-purpose").should("exist");
+        cy.findByRole("button").should("exist").and("be.disabled");
+      });
+    };
 
     beforeEach(() => {
-      initializeFrame()
-    })
+      initializeFrame();
+    });
 
     it("shows the form fields inside of frame", () => {
       // shows from beforeEach
-    })
+    });
 
     context("when typing", () => {
       it("should added value", () => {
         cy.get("#datebox-start_date")
           .click()
           .then(($el) => {
-            cy.findByLabelText("calendar-select-date").click()
-            cy.findByLabelText("combobox-month").click()
-            cy.findByText("March").click()
-            cy.findByLabelText("combobox-year").click()
-            cy.findByText("2026").click()
-            cy.findByText("20").click()
-            cy.wrap($el).should("have.value", "03/20/2026")
-          })
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
         cy.get("#datebox-end_date")
           .click()
           .then(($el) => {
-            cy.findByLabelText("calendar-select-date").click()
-            cy.findByLabelText("combobox-month").click()
-            cy.findByText("March").click()
-            cy.findByLabelText("combobox-year").click()
-            cy.findByText("2026").click()
-            cy.findByText("20").click()
-            cy.wrap($el).should("have.value", "03/20/2026")
-          })
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
         cy.get("#textbox-purpose")
           .type("Getting better life")
-          .should("have.value", "Getting better life")
+          .should("have.value", "Getting better life");
 
-        cy.findByRole("button").should("exist").and("not.be.disabled")
-      })
-    })
+        cy.findByRole("button").should("exist").and("not.be.disabled");
+      });
+    });
 
     context("when typing but not fully", () => {
       it("renders error validation", () => {
-        cy.findByText("Business purpose is required").should("not.exist")
+        cy.findByText("Business purpose is required").should("not.exist");
 
         cy.get("#datebox-start_date")
           .click()
           .then(($el) => {
-            cy.findByLabelText("calendar-select-date").click()
-            cy.findByLabelText("combobox-month").click()
-            cy.findByText("March").click()
-            cy.findByLabelText("combobox-year").click()
-            cy.findByText("2026").click()
-            cy.findByText("20").click()
-            cy.wrap($el).should("have.value", "03/20/2026")
-          })
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
         cy.get("#datebox-end_date")
           .click()
           .then(($el) => {
-            cy.findByLabelText("calendar-select-date").click()
-            cy.findByLabelText("combobox-month").click()
-            cy.findByText("March").click()
-            cy.findByLabelText("combobox-year").click()
-            cy.findByText("2026").click()
-            cy.findByText("20").click()
-            cy.wrap($el).should("have.value", "03/20/2026")
-          })
+            cy.findByLabelText("calendar-select-date").click();
+            cy.findByLabelText("combobox-month").click();
+            cy.findByText("March").click();
+            cy.findByLabelText("combobox-year").click();
+            cy.findByText("2026").click();
+            cy.findByText("20").click();
+            cy.wrap($el).should("have.value", "03/20/2026");
+          });
         cy.get("#textbox-purpose")
           .type("Getting")
-          .should("have.value", "Getting")
-        cy.get("body").click("bottomRight")
+          .should("have.value", "Getting");
+        cy.get("body").click("bottomRight");
 
-        cy.findByText("Business purpose is required").should("exist")
-        cy.findByRole("button").should("exist").and("be.disabled")
-      })
-    })
-  })
+        cy.findByText("Business purpose is required").should("exist");
+        cy.findByRole("button").should("exist").and("be.disabled");
+      });
+    });
+  });
 
   context("conditional form", () => {
     function ConditionalStatefulForm() {
-      const [isFormValid, setIsFormValid] = useState(false)
+      const [isFormValid, setIsFormValid] = useState(false);
       const [formFields, setFormFields] = useState({
         quantType: "",
         compEffort: "",
         scheIterations: "",
         target: "",
         hostArch: "",
-      })
+      });
 
       const schema = z.object({
         quantType: z.string().optional(),
@@ -1692,46 +1696,46 @@ describe("StatefulForm", () => {
           .optional(),
         target: z.string().min(1, "Target is required"),
         hostArch: z.string().optional(),
-      })
+      });
 
       const HostArchitecture = {
         x86: 0,
         x64: 1,
         ARM: 2,
         ARM64: 3,
-      } as const
+      } as const;
 
       const CompilationTarget = {
         Interpreter: 0,
         Simulator: 1,
         IP: 2,
-      } as const
+      } as const;
 
       const CompilationEffort = {
         SimpleScheduling: 0,
         Performance: 1,
         Aggressive: 2,
-      } as const
+      } as const;
 
       const Quantization = {
         Int8: 0,
         Bf16: 1,
         Fp16: 2,
         Fp32: 3,
-      } as const
+      } as const;
 
       const HOST_ARCHITECTURE_OPTIONS: SelectboxOption[] = [
         { value: String(HostArchitecture.x86), text: "x86" },
         { value: String(HostArchitecture.x64), text: "x64" },
         { value: String(HostArchitecture.ARM), text: "ARM" },
         { value: String(HostArchitecture.ARM64), text: "ARM64" },
-      ]
+      ];
 
       const COMPILATION_TARGET_OPTIONS: SelectboxOption[] = [
         { value: String(CompilationTarget.Interpreter), text: "Interpreter" },
         { value: String(CompilationTarget.Simulator), text: "Simulator" },
         { value: String(CompilationTarget.IP), text: "IP" },
-      ]
+      ];
 
       const COMPILATION_EFFORT_OPTIONS: SelectboxOption[] = [
         {
@@ -1746,21 +1750,21 @@ describe("StatefulForm", () => {
           value: String(CompilationEffort.Aggressive),
           text: "Aggressive",
         },
-      ]
+      ];
 
       const QUANTIZATION_TYPE_OPTIONS: SelectboxOption[] = [
         { value: String(Quantization.Int8), text: "INT8" },
         { value: String(Quantization.Bf16), text: "BF16" },
         { value: String(Quantization.Fp16), text: "FP16" },
         { value: String(Quantization.Fp32), text: "FP32" },
-      ]
+      ];
 
       const COMPILATION_FIELDS: FormFieldGroup[] = useMemo(() => {
         const isInt8Quantization =
-          formFields.quantType === String(Quantization.Int8)
+          formFields.quantType === String(Quantization.Int8);
 
         const isPerfCompilation =
-          formFields.compEffort === String(CompilationEffort.Performance)
+          formFields.compEffort === String(CompilationEffort.Performance);
 
         return [
           {
@@ -1820,13 +1824,13 @@ describe("StatefulForm", () => {
             type: "button",
             disabled: !isFormValid,
           },
-        ]
-      }, [formFields.compEffort, formFields.quantType, isFormValid])
+        ];
+      }, [formFields.compEffort, formFields.quantType, isFormValid]);
 
       return (
         <StatefulForm
           onChange={({ currentState }) => {
-            setFormFields((prev) => ({ ...prev, ...currentState }))
+            setFormFields((prev) => ({ ...prev, ...currentState }));
           }}
           onValidityChange={setIsFormValid}
           validationSchema={schema}
@@ -1834,27 +1838,27 @@ describe("StatefulForm", () => {
           formValues={formFields}
           mode="onChange"
         />
-      )
+      );
     }
 
     context("when choosen option", () => {
       it("shows the value on the another field", () => {
-        cy.mount(<ConditionalStatefulForm />)
-        cy.findAllByLabelText("stateful-form-row").should("have.length", 4)
-        cy.findByText("Compilation Effort").should("not.exist")
-        cy.findByText("Precision").should("exist").click()
-        cy.findByText("INT8").should("exist").click()
+        cy.mount(<ConditionalStatefulForm />);
+        cy.findAllByLabelText("stateful-form-row").should("have.length", 4);
+        cy.findByText("Compilation Effort").should("not.exist");
+        cy.findByText("Precision").should("exist").click();
+        cy.findByText("INT8").should("exist").click();
 
-        cy.findAllByLabelText("stateful-form-row").should("have.length", 5)
-        cy.findByText("Compilation Effort").should("exist")
-      })
-    })
-  })
+        cy.findAllByLabelText("stateful-form-row").should("have.length", 5);
+        cy.findByText("Compilation Effort").should("exist");
+      });
+    });
+  });
 
   context("disabled", () => {
     context("when given by parent", () => {
       it("should render with cursor not-allowed and user-select none", () => {
-        const onChange = cy.spy().as("onChange")
+        const onChange = cy.spy().as("onChange");
         cy.mount(
           <StatefulForm
             fields={ALL_INPUT}
@@ -1862,23 +1866,23 @@ describe("StatefulForm", () => {
             disabled={true}
             mode="onChange"
             onChange={onChange}
-          />,
-        )
+          />
+        );
 
         cy.findAllByLabelText("field-lane-wrapper")
           .should("have.css", "cursor", "not-allowed")
-          .and("have.css", "user-select", "none")
+          .and("have.css", "user-select", "none");
         cy.findAllByLabelText("chips-container-input")
           .should("have.css", "cursor", "not-allowed")
-          .and("have.css", "user-select", "none")
+          .and("have.css", "user-select", "none");
         cy.findAllByLabelText("file-drop-box-container")
           .should("have.css", "cursor", "not-allowed")
-          .and("have.css", "user-select", "none")
-      })
+          .and("have.css", "user-select", "none");
+      });
 
       context("when trying to interact", () => {
         it("should not change value", () => {
-          const onChange = cy.spy().as("onChange")
+          const onChange = cy.spy().as("onChange");
           cy.mount(
             <StatefulForm
               fields={ALL_INPUT}
@@ -1886,19 +1890,19 @@ describe("StatefulForm", () => {
               disabled={true}
               mode="onChange"
               onChange={onChange}
-            />,
-          )
+            />
+          );
 
           cy.get("input, textarea, [role='radio'], [role='checkbox']").each(
             ($el) => {
-              cy.wrap($el).should("be.disabled").click({ force: true })
-            },
-          )
+              cy.wrap($el).should("be.disabled").click({ force: true });
+            }
+          );
 
-          cy.get("@onChange").should("not.have.been.called")
-        })
-      })
-    })
+          cy.get("@onChange").should("not.have.been.called");
+        });
+      });
+    });
 
     context("when given by per field", () => {
       const INPUT_WITH_DISABLED: FormFieldGroup[] = ALL_INPUT.map((group) =>
@@ -1910,8 +1914,8 @@ describe("StatefulForm", () => {
           : {
               ...group,
               disabled: true,
-            },
-      )
+            }
+      );
       context("when given true", () => {
         it("should render with cursor not-allowed and user-select none", () => {
           cy.mount(
@@ -1924,20 +1928,20 @@ describe("StatefulForm", () => {
                   width: 480px;
                 `,
               }}
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("field-lane-wrapper")
             .should("have.css", "cursor", "not-allowed")
-            .and("have.css", "user-select", "none")
+            .and("have.css", "user-select", "none");
           cy.findAllByLabelText("chips-container-input")
             .should("have.css", "cursor", "not-allowed")
-            .and("have.css", "user-select", "none")
+            .and("have.css", "user-select", "none");
           cy.findAllByLabelText("file-drop-box-container")
             .should("have.css", "cursor", "not-allowed")
-            .and("have.css", "user-select", "none")
-        })
-      })
+            .and("have.css", "user-select", "none");
+        });
+      });
 
       it("should renders with disabled each input", () => {
         cy.mount(
@@ -1945,17 +1949,17 @@ describe("StatefulForm", () => {
             fields={INPUT_WITH_DISABLED}
             formValues={allValue}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         cy.get("input, textarea, [role='radio'], [role='checkbox']").each(
           ($el) => {
-            cy.wrap($el).should("be.disabled")
-          },
-        )
-      })
-    })
-  })
+            cy.wrap($el).should("be.disabled");
+          }
+        );
+      });
+    });
+  });
 
   context("label", () => {
     context("labelPosition", () => {
@@ -1970,8 +1974,8 @@ describe("StatefulForm", () => {
               : {
                   ...group,
                   labelPosition: "left",
-                },
-        )
+                }
+        );
 
         it("should render with flex-row and 25% width label", () => {
           cy.mount(
@@ -1984,26 +1988,26 @@ describe("StatefulForm", () => {
                   width: 480px;
                 `,
               }}
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("stateful-form-label-wrapper").each(
             ($el, i) => {
               cy.wrap($el)
                 .invoke("css", "width")
                 .then((width) => {
-                  const w = width as unknown as string
+                  const w = width as unknown as string;
                   if (i < 2) {
-                    expect(parseFloat(w)).to.be.closeTo(45, 3)
+                    expect(parseFloat(w)).to.be.closeTo(45, 3);
                   } else {
-                    expect(parseFloat(w)).to.be.closeTo(90, 6)
+                    expect(parseFloat(w)).to.be.closeTo(90, 6);
                   }
-                })
-            },
-          )
-        })
-      })
-    })
+                });
+            }
+          );
+        });
+      });
+    });
 
     context("labelWidth", () => {
       context("when given 70%", () => {
@@ -2019,8 +2023,8 @@ describe("StatefulForm", () => {
                   ...group,
                   labelPosition: "left",
                   labelWidth: "70%",
-                },
-          )
+                }
+          );
 
         it("should render with 70% width", () => {
           cy.mount(
@@ -2033,26 +2037,26 @@ describe("StatefulForm", () => {
                   width: 480px;
                 `,
               }}
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("stateful-form-label-wrapper").each(
             ($el, i) => {
               cy.wrap($el)
                 .invoke("css", "width")
                 .then((width) => {
-                  const w = width as unknown as string
+                  const w = width as unknown as string;
                   if (i < 2) {
-                    expect(parseFloat(w)).to.be.closeTo(100, 6)
+                    expect(parseFloat(w)).to.be.closeTo(100, 6);
                   } else {
-                    expect(parseFloat(w)).to.be.closeTo(200, 12)
+                    expect(parseFloat(w)).to.be.closeTo(200, 12);
                   }
-                })
-            },
-          )
-        })
-      })
-    })
+                });
+            }
+          );
+        });
+      });
+    });
 
     context("labelGap", () => {
       context("when given 30px", () => {
@@ -2068,8 +2072,8 @@ describe("StatefulForm", () => {
                   ...group,
                   labelPosition: "left",
                   labelGap: 30,
-                },
-          )
+                }
+          );
 
         it("should render with 30px width", () => {
           cy.mount(
@@ -2077,23 +2081,23 @@ describe("StatefulForm", () => {
               fields={INPUT_WITH_LABEL_POSITION_AND_GAP}
               formValues={allValue}
               mode="onChange"
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("field-lane-wrapper")
             .should("have.length", 22)
             .each(($el) => {
-              cy.wrap($el).should("have.css", "gap", "30px")
-            })
+              cy.wrap($el).should("have.css", "gap", "30px");
+            });
           cy.findAllByLabelText("file-drop-box-container")
             .should("have.length", 1)
             .each(($el) => {
-              cy.wrap($el).should("have.css", "gap", "30px")
-            })
-        })
-      })
-    })
-  })
+              cy.wrap($el).should("have.css", "gap", "30px");
+            });
+        });
+      });
+    });
+  });
 
   context("asterisk", () => {
     context("when given required", () => {
@@ -2103,25 +2107,25 @@ describe("StatefulForm", () => {
             fields={ALL_INPUT}
             formValues={allValue}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         const inputWithRequired = flattenFields(ALL_INPUT).filter(
-          (props) => props.required,
-        )
+          (props) => props.required
+        );
 
         cy.findAllByLabelText("stateful-form-label-asterisk").should(
           "have.length",
-          inputWithRequired.length,
-        )
-      })
-    })
-  })
+          inputWithRequired.length
+        );
+      });
+    });
+  });
 
   context("pinbox", () => {
     const pinboxSchema = z.object({
       pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
-    })
+    });
 
     const FIELDS: FormFieldGroup[] = [
       {
@@ -2134,10 +2138,10 @@ describe("StatefulForm", () => {
           parts: PARTS_INPUT,
         },
       },
-    ]
+    ];
 
     function PinboxProduct() {
-      const [state, setState] = useState({ pin: "" })
+      const [state, setState] = useState({ pin: "" });
       return (
         <StatefulForm
           validationSchema={pinboxSchema}
@@ -2145,36 +2149,36 @@ describe("StatefulForm", () => {
           fields={FIELDS}
           formValues={state}
         />
-      )
+      );
     }
 
     context("validation error", () => {
       context("when pressing 2 character (not eligible)", () => {
         it("should not show an error", () => {
-          cy.mount(<PinboxProduct />)
-          cy.findAllByRole("textbox").eq(1).type("23")
+          cy.mount(<PinboxProduct />);
+          cy.findAllByRole("textbox").eq(1).type("23");
           cy.findByText("Pinbox does not follow the acceptable format").should(
-            "not.exist",
-          )
-        })
+            "not.exist"
+          );
+        });
 
         context("when blurring from the input", () => {
           it("should displaying an error", () => {
-            cy.mount(<PinboxProduct />)
-            cy.findAllByRole("textbox").eq(1).type("23")
+            cy.mount(<PinboxProduct />);
+            cy.findAllByRole("textbox").eq(1).type("23");
             cy.findByText(
-              "Pinbox does not follow the acceptable format",
-            ).should("not.exist")
-            cy.get("body").click("top")
-            cy.wait(200)
+              "Pinbox does not follow the acceptable format"
+            ).should("not.exist");
+            cy.get("body").click("top");
+            cy.wait(200);
             cy.findByText(
-              "Pinbox does not follow the acceptable format",
-            ).should("exist")
-          })
-        })
-      })
-    })
-  })
+              "Pinbox does not follow the acceptable format"
+            ).should("exist");
+          });
+        });
+      });
+    });
+  });
 
   context("button", () => {
     const VARIANTS = [
@@ -2213,13 +2217,13 @@ describe("StatefulForm", () => {
         hover: "rgb(42, 115, 195)",
         active: "rgb(30, 91, 168)",
       },
-    ] as const
+    ] as const;
 
     context("when hover", () => {
       it("renders the the hover color", () => {
         cy.window().then((win) => {
-          cy.spy(win.console, "log").as("consoleLog")
-        })
+          cy.spy(win.console, "log").as("consoleLog");
+        });
 
         cy.mount(
           <StatefulForm
@@ -2234,25 +2238,25 @@ describe("StatefulForm", () => {
             }))}
             formValues={{}}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         VARIANTS.forEach(({ hover }, index) => {
           cy.findAllByRole("button")
             .eq(index)
             .realHover()
             .wait(200)
-            .should("have.css", "background-color", hover)
-        })
-      })
-    })
+            .should("have.css", "background-color", hover);
+        });
+      });
+    });
 
     context("when given an onClick", () => {
       context("when clicking", () => {
         it("renders the the active with usual color", () => {
           cy.window().then((win) => {
-            cy.spy(win.console, "log").as("consoleLog")
-          })
+            cy.spy(win.console, "log").as("consoleLog");
+          });
 
           cy.mount(
             <StatefulForm
@@ -2268,24 +2272,24 @@ describe("StatefulForm", () => {
               }))}
               formValues={{}}
               mode="onChange"
-            />,
-          )
+            />
+          );
 
           VARIANTS.forEach(({ active }, index) => {
-            cy.findAllByRole("button").eq(index).realMouseDown()
+            cy.findAllByRole("button").eq(index).realMouseDown();
 
             cy.findAllByRole("button")
               .eq(index)
-              .should("have.css", "background-color", active)
+              .should("have.css", "background-color", active);
 
-            cy.findAllByRole("button").eq(index).realMouseUp()
-          })
-        })
+            cy.findAllByRole("button").eq(index).realMouseUp();
+          });
+        });
 
         it("renders the callback from top-level", () => {
           cy.window().then((win) => {
-            cy.spy(win.console, "log").as("consoleLog")
-          })
+            cy.spy(win.console, "log").as("consoleLog");
+          });
 
           cy.mount(
             <StatefulForm
@@ -2300,24 +2304,24 @@ describe("StatefulForm", () => {
               ]}
               formValues={{}}
               mode="onChange"
-            />,
-          )
+            />
+          );
 
-          cy.findByRole("button").eq(0).click()
+          cy.findByRole("button").eq(0).click();
 
           cy.get("@consoleLog").should(
             "have.been.calledWith",
-            "this is callback from the top level",
-          )
-        })
-      })
+            "this is callback from the top level"
+          );
+        });
+      });
 
       context("when given a buttonProps.onClick", () => {
         context("when clicking", () => {
           it("renders the callback from buttonProps instead", () => {
             cy.window().then((win) => {
-              cy.spy(win.console, "log").as("consoleLog")
-            })
+              cy.spy(win.console, "log").as("consoleLog");
+            });
 
             cy.mount(
               <StatefulForm
@@ -2336,20 +2340,20 @@ describe("StatefulForm", () => {
                 ]}
                 formValues={{}}
                 mode="onChange"
-              />,
-            )
+              />
+            );
 
-            cy.findByRole("button").eq(0).click()
+            cy.findByRole("button").eq(0).click();
 
             cy.get("@consoleLog").should(
               "have.been.calledWith",
-              "this is callback from the specific level",
-            )
-          })
-        })
-      })
-    })
-  })
+              "this is callback from the specific level"
+            );
+          });
+        });
+      });
+    });
+  });
 
   context("when array of array", () => {
     const value = {
@@ -2360,7 +2364,7 @@ describe("StatefulForm", () => {
       note: "",
       access: false,
       country_code: DEFAULT_COUNTRY_CODES,
-    }
+    };
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
@@ -2407,7 +2411,7 @@ describe("StatefulForm", () => {
         type: "checkbox",
         required: false,
       },
-    ]
+    ];
 
     it("render in the one row", () => {
       cy.mount(
@@ -2415,20 +2419,20 @@ describe("StatefulForm", () => {
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
       cy.findAllByLabelText("stateful-form-row")
         .eq(0)
         .within(() => {
-          cy.contains("First Name").should("exist")
-          cy.contains("Last Name").should("exist")
+          cy.contains("First Name").should("exist");
+          cy.contains("Last Name").should("exist");
 
-          cy.contains("Email").should("not.exist")
-          cy.contains("Phone Number").should("not.exist")
-          cy.contains("Note").should("not.exist")
-          cy.contains("Has access to login").should("not.exist")
-        })
-    })
+          cy.contains("Email").should("not.exist");
+          cy.contains("Phone Number").should("not.exist");
+          cy.contains("Note").should("not.exist");
+          cy.contains("Has access to login").should("not.exist");
+        });
+    });
 
     context("when given without title", () => {
       const FIELDS_WITHOUT_TITLE: FormFieldGroup[] = [
@@ -2481,63 +2485,63 @@ describe("StatefulForm", () => {
             type: "button",
           },
         ],
-      ]
+      ];
 
       it("should not break the height", () => {
-        cy.viewport(1000, 900)
+        cy.viewport(1000, 900);
         cy.mount(
           <StatefulForm
             fields={FIELDS_WITHOUT_TITLE}
             formValues={value}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         cy.findAllByLabelText("stateful-form-row")
           .eq(0)
           .within(() => {
-            cy.contains("First Name").should("exist")
-            cy.contains("Last Name").should("not.exist")
-            cy.contains("Phone").should("not.exist")
-            cy.contains("Combo").should("not.exist")
+            cy.contains("First Name").should("exist");
+            cy.contains("Last Name").should("not.exist");
+            cy.contains("Phone").should("not.exist");
+            cy.contains("Combo").should("not.exist");
           })
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
 
         cy.get("#textbox-first_name")
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.get("#textbox-last_name")
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.get("#phonebox-phone")
           .parent()
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.get("#capsule-capsule")
           .parent()
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.get("#combobox-combo")
           .parent()
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.get("#datebox-date")
           .parent()
           .parent()
           .parent()
-          .should("have.css", "height", "60px")
+          .should("have.css", "height", "60px");
         cy.findAllByRole("button")
           .eq(1)
           .parent()
-          .should("have.css", "margin-top", "26px")
-      })
-    })
-  })
+          .should("have.css", "margin-top", "26px");
+      });
+    });
+  });
 
   context("id", () => {
     it("renders each field with a proper and unique ID", () => {
@@ -2546,26 +2550,26 @@ describe("StatefulForm", () => {
           fields={ALL_INPUT}
           formValues={allValue}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
       flattenFields(ALL_INPUT).map((field) => {
         if (field.type === "frame" || field.type === "chips") {
-          return
+          return;
         } else if (field.type === "radio") {
-          cy.get(`#radio-value-radio`).should("exist")
+          cy.get(`#radio-value-radio`).should("exist");
         } else {
           const prefix =
             TYPE_TO_ID_PREFIX[field.type] ??
-            field.type.replace(/\s+/g, "_").toLowerCase()
+            field.type.replace(/\s+/g, "_").toLowerCase();
           const expectedId = field.name
             ? `${prefix}-${field.name.replace(/\s+/g, "_").toLowerCase()}`
-            : prefix
+            : prefix;
 
-          cy.get(`#${expectedId}`).should("exist")
+          cy.get(`#${expectedId}`).should("exist");
         }
-      })
-    })
+      });
+    });
 
     context("when given with non-ASCII IDs", () => {
       const FIELDS_NOT_NORMAL_ASCII: FormFieldGroup[] = [
@@ -2694,7 +2698,7 @@ describe("StatefulForm", () => {
           required: false,
           id: "field-signature-✍️ sign here!",
         },
-      ]
+      ];
 
       it("renders sanitized ASCII-only IDs for input elements", () => {
         cy.mount(
@@ -2702,12 +2706,12 @@ describe("StatefulForm", () => {
             fields={FIELDS_NOT_NORMAL_ASCII}
             formValues={allValue}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         const sanitized = flattenFields(FIELDS_NOT_NORMAL_ASCII).map((field) =>
-          StatefulForm.sanitizeId({ id: field.id }),
-        )
+          StatefulForm.sanitizeId({ id: field.id })
+        );
 
         const expected = [
           "field-text-_hello_world",
@@ -2726,14 +2730,14 @@ describe("StatefulForm", () => {
           "field-money-_1000",
           "field-phone-_askdaosdk",
           "field-signature-_sign_here",
-        ]
+        ];
 
         sanitized.map((result, i) => {
-          expect(result).to.equal(expected[i])
-        })
-      })
-    })
-  })
+          expect(result).to.equal(expected[i]);
+        });
+      });
+    });
+  });
 
   context("with type custom", () => {
     function StatefulFormCustom() {
@@ -2741,9 +2745,9 @@ describe("StatefulForm", () => {
         first_name: "",
         access: false,
         files: [],
-      })
+      });
 
-      const [isFormValid, setIsFormValid] = useState(false)
+      const [isFormValid, setIsFormValid] = useState(false);
 
       const onFileDropped = async ({
         error,
@@ -2751,28 +2755,28 @@ describe("StatefulForm", () => {
         setProgressLabel,
         succeed,
       }: OnFileDroppedFunctionArgs) => {
-        const file = files[0]
-        setValue((prev) => ({ ...prev, files: [...prev.files, file] }))
-        setProgressLabel(`Uploading ${file.name}`)
+        const file = files[0];
+        setValue((prev) => ({ ...prev, files: [...prev.files, file] }));
+        setProgressLabel(`Uploading ${file.name}`);
 
         return new Promise<void>((resolve) => {
-          let progress = 0
+          let progress = 0;
           const interval = setInterval(() => {
-            progress += 20
+            progress += 20;
 
             if (progress >= 100) {
-              clearInterval(interval)
+              clearInterval(interval);
               if (file === null) {
-                error(file, `file ${file.name} is not uploaded`)
+                error(file, `file ${file.name} is not uploaded`);
               } else {
-                succeed(file)
+                succeed(file);
               }
-              setProgressLabel(`Uploaded ${files[0].name}`)
-              resolve()
+              setProgressLabel(`Uploaded ${files[0].name}`);
+              resolve();
             }
-          }, 300)
-        })
-      }
+          }, 300);
+        });
+      };
 
       const onComplete = async ({
         failedFiles,
@@ -2781,14 +2785,14 @@ describe("StatefulForm", () => {
         hideProgressLabel,
         showUploaderForm,
       }: OnCompleteFunctionArgs) => {
-        console.log(succeedFiles, "This is succeedFiles")
-        console.log(failedFiles, "This is failedFiles")
+        console.log(succeedFiles, "This is succeedFiles");
+        console.log(failedFiles, "This is failedFiles");
         await setProgressLabel(
-          `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`,
-        )
-        await hideProgressLabel()
-        await showUploaderForm()
-      }
+          `Upload complete! Success: ${succeedFiles.length}, Failed: ${failedFiles.length}`
+        );
+        await hideProgressLabel();
+        await showUploaderForm();
+      };
 
       const CUSTOM_FIELDS: FormFieldGroup[] = [
         {
@@ -2865,9 +2869,9 @@ describe("StatefulForm", () => {
                             setValue((prev) => ({
                               ...prev,
                               files: prev.files.filter(
-                                (val) => val.name !== id,
+                                (val) => val.name !== id
                               ),
-                            }))
+                            }));
                           }
                         },
                       },
@@ -2901,7 +2905,7 @@ describe("StatefulForm", () => {
           disabled: !isFormValid,
           rowJustifyPosition: "end",
         },
-      ]
+      ];
 
       const customSchema = z.object({
         first_name: z
@@ -2914,29 +2918,29 @@ describe("StatefulForm", () => {
           .array(
             z.instanceof(File).refine(
               (file) => {
-                if (!file) return false
+                if (!file) return false;
 
-                const allowedExtensions = ["png", "jpg", "jpeg", "gif"]
-                const ext = file.name.split(".").pop()?.toLowerCase()
+                const allowedExtensions = ["png", "jpg", "jpeg", "gif"];
+                const ext = file.name.split(".").pop()?.toLowerCase();
 
                 const isImage =
                   (file.type && file.type.startsWith("image/")) ||
-                  (ext ? allowedExtensions.includes(ext) : false)
+                  (ext ? allowedExtensions.includes(ext) : false);
 
-                if (!isImage) return false
+                if (!isImage) return false;
 
-                if (file.size > 5 * 1024 * 1024) return false
+                if (file.size > 5 * 1024 * 1024) return false;
 
-                return true
+                return true;
               },
               {
                 message:
                   "File must be an image (png, jpg, jpeg, gif) and ≤ 5 MB",
-              },
-            ),
+              }
+            )
           )
           .min(1, "At least one file must be selected"),
-      })
+      });
 
       return (
         <StatefulForm
@@ -2949,25 +2953,25 @@ describe("StatefulForm", () => {
           }
           mode="onChange"
         />
-      )
+      );
     }
 
     it("should render custom renderer", () => {
-      cy.mount(<StatefulFormCustom />)
+      cy.mount(<StatefulFormCustom />);
 
-      cy.findByLabelText("boxbar-toggle").click()
+      cy.findByLabelText("boxbar-toggle").click();
 
       BADGE_OPTIONS_FULL.map((data) => {
-        cy.findByText(data.caption).should("exist")
-      })
-    })
+        cy.findByText(data.caption).should("exist");
+      });
+    });
 
     context("when given validationSchema", () => {
       it("should synchronize values after all fields valid", () => {
-        cy.mount(<StatefulFormCustom />)
-        cy.findAllByRole("button").eq(1).and("be.disabled")
+        cy.mount(<StatefulFormCustom />);
+        cy.findAllByRole("button").eq(1).and("be.disabled");
 
-        cy.get("#textbox-first_name").type("Alim Naufal")
+        cy.get("#textbox-first_name").type("Alim Naufal");
         cy.findByLabelText("file-drop-box-area").selectFile(
           [
             "test/fixtures/test-images/sample-1.jpg",
@@ -2976,21 +2980,21 @@ describe("StatefulForm", () => {
           {
             action: "drag-drop",
             force: true,
-          },
-        )
-        cy.wait(1000)
+          }
+        );
+        cy.wait(1000);
 
         cy.findByLabelText("file-drop-box-area").then(($input) => {
-          cy.spy($input[0], "click").as("fileClick")
-        })
-        cy.findByText("sample-1.jpg").should("be.visible").click()
-        cy.findByText("sample-2.jpg").should("be.visible").click()
-        cy.findByText("Access").should("be.visible").click()
+          cy.spy($input[0], "click").as("fileClick");
+        });
+        cy.findByText("sample-1.jpg").should("be.visible").click();
+        cy.findByText("sample-2.jpg").should("be.visible").click();
+        cy.findByText("Access").should("be.visible").click();
 
-        cy.findAllByRole("button").eq(1).and("not.be.disabled")
-      })
-    })
-  })
+        cy.findAllByRole("button").eq(1).and("not.be.disabled");
+      });
+    });
+  });
 
   context("helper", () => {
     const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
@@ -3002,10 +3006,10 @@ describe("StatefulForm", () => {
         : {
             ...group,
             helper: FIELD_HELPERS[group.type],
-          },
-    )
+          }
+    );
 
-    const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props)
+    const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
 
     it("renders with tooltip", () => {
       cy.mount(
@@ -3013,17 +3017,17 @@ describe("StatefulForm", () => {
           fields={INPUT_WITH_HELPER}
           formValues={allValue}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
       cy.findAllByLabelText("tooltip-trigger")
         .should("have.length", FLAT_INPUT.length)
         .each(($el, index) => {
-          cy.wrap($el).trigger("mouseover")
+          cy.wrap($el).trigger("mouseover");
 
-          cy.findByText(String(FLAT_INPUT[index].helper))
-        })
-    })
+          cy.findByText(String(FLAT_INPUT[index].helper));
+        });
+    });
 
     context("with reactNode", () => {
       const INPUT_WITH_HELPER_REACTNODE = ALL_INPUT.map(
@@ -3052,22 +3056,22 @@ describe("StatefulForm", () => {
               fields={INPUT_WITH_HELPER_REACTNODE}
               formValues={allValue}
               mode="onChange"
-            />,
-          )
+            />
+          );
 
           cy.findAllByLabelText("tooltip-trigger")
             .should("have.length", FLAT_INPUT.length)
             .each(($el, index) => {
-              cy.wrap($el).trigger("mouseover")
+              cy.wrap($el).trigger("mouseover");
 
               cy.findAllByLabelText("helper-with-react-node")
                 .eq(index)
-                .should("have.text", FLAT_INPUT[index].helper)
-            })
-        }),
-      )
-    })
-  })
+                .should("have.text", FLAT_INPUT[index].helper);
+            });
+        })
+      );
+    });
+  });
 
   context("with style", () => {
     context("when given background wheat", () => {
@@ -3222,7 +3226,7 @@ describe("StatefulForm", () => {
             },
           },
         },
-      }
+      };
 
       const INPUT_WITH_STYLE = ALL_INPUT.map((group) =>
         Array.isArray(group)
@@ -3233,8 +3237,8 @@ describe("StatefulForm", () => {
           : {
               ...group,
               ...FIELD_STYLES[group.type],
-            },
-      )
+            }
+      );
 
       it("renders with background wheat", () => {
         cy.mount(
@@ -3242,15 +3246,15 @@ describe("StatefulForm", () => {
             fields={INPUT_WITH_STYLE}
             formValues={allValue}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         const isFieldWithPlaceholder = (
-          field: FormFieldGroup,
+          field: FormFieldGroup
         ): field is FormFieldProps & { placeholder: string } =>
           !Array.isArray(field) &&
           "placeholder" in field &&
-          typeof field.placeholder === "string"
+          typeof field.placeholder === "string";
 
         const PLACEHOLDER_FIELDS = INPUT_WITH_STYLE.filter(
           (field): field is FormFieldProps & { placeholder: string } =>
@@ -3268,48 +3272,48 @@ describe("StatefulForm", () => {
               "date",
               "signature",
               "image",
-            ].includes(field.type),
-        )
+            ].includes(field.type)
+        );
 
         PLACEHOLDER_FIELDS.forEach((field) => {
           if (field.type === "image") {
             cy.findByPlaceholderText("imagebox-input")
               .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "signbox") {
             cy.findByPlaceholderText("signbox-canvas")
               .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "phone") {
             cy.findByPlaceholderText(field.placeholder)
               .should("exist")
               .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "color") {
             cy.findByPlaceholderText(field.placeholder)
               .should("exist")
               .parent()
               .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else if (field.type === "money") {
             cy.findByPlaceholderText(field.placeholder)
               .should("exist")
               .parent()
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           } else {
             cy.findByPlaceholderText(field.placeholder)
               .should("exist")
-              .and("have.css", "background-color", "rgb(245, 222, 179)")
+              .and("have.css", "background-color", "rgb(245, 222, 179)");
           }
-        })
-      })
-    })
-  })
+        });
+      });
+    });
+  });
 
   context("radio", () => {
     const value = {
       access: false,
-    }
+    };
 
     const RADIO_FIELDS: FormFieldGroup[] = [
       {
@@ -3319,7 +3323,7 @@ describe("StatefulForm", () => {
         type: "radio",
         required: false,
       },
-    ]
+    ];
     context("with title", () => {
       it("should render on the label field", () => {
         cy.mount(
@@ -3327,12 +3331,12 @@ describe("StatefulForm", () => {
             fields={RADIO_FIELDS}
             formValues={value}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
-        cy.findAllByText(RADIO_FIELDS[0]["title"]).eq(0).should("be.visible")
-      })
-    })
+        cy.findAllByText(RADIO_FIELDS[0]["title"]).eq(0).should("be.visible");
+      });
+    });
 
     context("with placeholder", () => {
       it("should render on the right side", () => {
@@ -3341,21 +3345,21 @@ describe("StatefulForm", () => {
             fields={RADIO_FIELDS}
             formValues={value}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         cy.findByLabelText("radio-label-wrapper").should(
           "have.text",
-          RADIO_FIELDS[0]["placeholder"],
-        )
-      })
-    })
-  })
+          RADIO_FIELDS[0]["placeholder"]
+        );
+      });
+    });
+  });
 
   context("capsule", () => {
     const value = {
       capsule: "unpaid",
-    }
+    };
 
     context("when initial value", () => {
       const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
@@ -3368,7 +3372,7 @@ describe("StatefulForm", () => {
             tabs: CAPSULE_TABS,
           },
         },
-      ]
+      ];
 
       it("should render active related with id value", () => {
         cy.mount(
@@ -3376,23 +3380,23 @@ describe("StatefulForm", () => {
             fields={CHECKBOX_TITLE_FIELDS}
             formValues={value}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
-        cy.findByText("Paid").should("have.css", "color", "rgb(17, 24, 39)")
+        cy.findByText("Paid").should("have.css", "color", "rgb(17, 24, 39)");
         cy.findByText("Unpaid").should(
           "have.css",
           "color",
-          "rgb(255, 255, 255)",
-        )
-      })
-    })
-  })
+          "rgb(255, 255, 255)"
+        );
+      });
+    });
+  });
 
   context("checkbox", () => {
     const value = {
       access: false,
-    }
+    };
 
     const CHECKBOX_TITLE_FIELDS: FormFieldGroup[] = [
       {
@@ -3402,7 +3406,7 @@ describe("StatefulForm", () => {
         type: "checkbox",
         required: false,
       },
-    ]
+    ];
 
     const statefulForCheckbox = () =>
       cy.mount(
@@ -3410,49 +3414,49 @@ describe("StatefulForm", () => {
           fields={CHECKBOX_TITLE_FIELDS}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
     context("with title", () => {
       it("should render on the label field", () => {
-        statefulForCheckbox()
+        statefulForCheckbox();
 
         cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["title"])
           .eq(0)
-          .should("be.visible")
-      })
+          .should("be.visible");
+      });
 
       context("when clicking", () => {
         it("renders checked the checkbox", () => {
-          statefulForCheckbox()
+          statefulForCheckbox();
 
-          cy.findByRole("checkbox").should("not.be.checked")
-          cy.findByText("Access").click()
-          cy.findByRole("checkbox").should("be.checked")
-        })
-      })
-    })
+          cy.findByRole("checkbox").should("not.be.checked");
+          cy.findByText("Access").click();
+          cy.findByRole("checkbox").should("be.checked");
+        });
+      });
+    });
 
     context("with placeholder", () => {
       it("should render on the right side", () => {
-        statefulForCheckbox()
+        statefulForCheckbox();
 
         cy.findAllByText(CHECKBOX_TITLE_FIELDS[0]["placeholder"])
           .eq(0)
-          .should("be.visible")
-      })
+          .should("be.visible");
+      });
 
       context("when clicking", () => {
         it("renders checked the checkbox", () => {
-          statefulForCheckbox()
+          statefulForCheckbox();
 
-          cy.findByRole("checkbox").should("not.be.checked")
-          cy.findByText("Access placeholder").click()
-          cy.findByRole("checkbox").should("be.checked")
-        })
-      })
-    })
-  })
+          cy.findByRole("checkbox").should("not.be.checked");
+          cy.findByText("Access placeholder").click();
+          cy.findByRole("checkbox").should("be.checked");
+        });
+      });
+    });
+  });
 
   context("with justifyContent", () => {
     const value = {
@@ -3463,7 +3467,7 @@ describe("StatefulForm", () => {
       note: "",
       access: false,
       country_code: DEFAULT_COUNTRY_CODES,
-    }
+    };
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
@@ -3519,7 +3523,7 @@ describe("StatefulForm", () => {
         width: "15%",
         rowJustifyPosition: "end",
       },
-    ]
+    ];
 
     it("render style align on the one row", () => {
       cy.mount(
@@ -3527,14 +3531,14 @@ describe("StatefulForm", () => {
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
       cy.findAllByLabelText("stateful-form-row")
         .eq(5)
-        .should("have.css", "justify-content", "end")
-    })
-  })
+        .should("have.css", "justify-content", "end");
+    });
+  });
 
   context("with autoFocusField", () => {
     const value = {
@@ -3545,7 +3549,7 @@ describe("StatefulForm", () => {
       note: "",
       access: false,
       country_code: DEFAULT_COUNTRY_CODES,
-    }
+    };
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       [
@@ -3592,7 +3596,7 @@ describe("StatefulForm", () => {
         type: "checkbox",
         required: false,
       },
-    ]
+    ];
 
     it("render in the one row", () => {
       cy.mount(
@@ -3601,21 +3605,21 @@ describe("StatefulForm", () => {
           formValues={value}
           mode="onChange"
           autoFocusField="first_name"
-        />,
-      )
+        />
+      );
       cy.findAllByLabelText("stateful-form-row")
         .eq(0)
         .within(() => {
-          cy.findAllByRole("textbox").eq(0).should("exist").and("be.focused")
-        })
-    })
-  })
+          cy.findAllByRole("textbox").eq(0).should("exist").and("be.focused");
+        });
+    });
+  });
 
   context("when not given a title", () => {
     const value = {
       first_name: "",
       access: false,
-    }
+    };
 
     const EMPLOYEE_FIELDS: FormFieldGroup[] = [
       {
@@ -3630,11 +3634,11 @@ describe("StatefulForm", () => {
         type: "checkbox",
         required: false,
       },
-    ]
+    ];
 
-    const TITLE_EMPLOYEE_FIELD = ["First Name", "Has access to login"]
+    const TITLE_EMPLOYEE_FIELD = ["First Name", "Has access to login"];
 
-    const PLACEHOLDER_EMPLOYEE_FIELD = ["Enter first name"]
+    const PLACEHOLDER_EMPLOYEE_FIELD = ["Enter first name"];
 
     it("should render only the input", () => {
       cy.mount(
@@ -3642,22 +3646,22 @@ describe("StatefulForm", () => {
           fields={EMPLOYEE_FIELDS}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
       PLACEHOLDER_EMPLOYEE_FIELD.map((data) => {
-        cy.findByPlaceholderText(data).should("exist")
-      })
+        cy.findByPlaceholderText(data).should("exist");
+      });
       TITLE_EMPLOYEE_FIELD.map((data) => {
-        cy.findByText(data).should("not.exist")
-      })
-    })
-  })
+        cy.findByText(data).should("not.exist");
+      });
+    });
+  });
 
   context("with hidden", () => {
     const value = {
       first_name: "",
       access: false,
-    }
+    };
 
     const EMPLOYEE_FIELDS_WITH_HIDDEN: FormFieldGroup[] = [
       {
@@ -3681,7 +3685,7 @@ describe("StatefulForm", () => {
         type: "checkbox",
         required: false,
       },
-    ]
+    ];
 
     it("should hidden the input element", () => {
       cy.mount(
@@ -3689,13 +3693,15 @@ describe("StatefulForm", () => {
           fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[0]["title"]).should("exist")
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[1]["title"]).should("not.exist")
-      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[2]["title"]).should("exist")
-    })
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[0]["title"]).should("exist");
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[1]["title"]).should(
+        "not.exist"
+      );
+      cy.findByText(EMPLOYEE_FIELDS_WITH_HIDDEN[2]["title"]).should("exist");
+    });
 
     it("should hidden the row input element", () => {
       cy.mount(
@@ -3703,12 +3709,12 @@ describe("StatefulForm", () => {
           fields={EMPLOYEE_FIELDS_WITH_HIDDEN}
           formValues={value}
           mode="onChange"
-        />,
-      )
+        />
+      );
 
-      cy.findAllByLabelText("stateful-form-row").should("have.length", 2)
-    })
-  })
+      cy.findAllByLabelText("stateful-form-row").should("have.length", 2);
+    });
+  });
 
   context("with width", () => {
     context("when given all input elements", () => {
@@ -3716,44 +3722,44 @@ describe("StatefulForm", () => {
         const INPUT_WITH_WIDTH = ALL_INPUT.map((group) =>
           Array.isArray(group)
             ? group.map((item) => ({ ...item, width: "50%" }))
-            : { ...group, width: "50%" },
-        )
+            : { ...group, width: "50%" }
+        );
 
         cy.mount(
           <StatefulForm
             fields={INPUT_WITH_WIDTH}
             formValues={allValue}
             mode="onChange"
-          />,
-        )
+          />
+        );
 
         flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
-          if (prop.name === "country_code") return
+          if (prop.name === "country_code") return;
           if (prop.name === "toggle") {
             cy.findByLabelText("toggle-row-wrapper").then(($el) => {
-              const width = $el.width()
-              expect(width).to.be.closeTo(222.5, 10)
-            })
+              const width = $el.width();
+              expect(width).to.be.closeTo(222.5, 10);
+            });
           } else {
             cy.findByText(prop.title)
               .parent()
               .then(($el) => {
-                const elWidth = $el.width()
-                expect(elWidth).to.be.closeTo(222.5, 10)
-              })
+                const elWidth = $el.width();
+                expect(elWidth).to.be.closeTo(222.5, 10);
+              });
           }
-        })
-      })
+        });
+      });
 
       context("when using small screen", () => {
         it("still render input elements with sizing", () => {
           const INPUT_WITH_WIDTH = ALL_INPUT.map((group) =>
             Array.isArray(group)
               ? group.map((item) => ({ ...item, width: "50%" }))
-              : { ...group, width: "50%" },
-          )
+              : { ...group, width: "50%" }
+          );
 
-          cy.viewport(440, 750)
+          cy.viewport(440, 750);
           // assume this in phone
 
           cy.mount(
@@ -3761,27 +3767,27 @@ describe("StatefulForm", () => {
               fields={INPUT_WITH_WIDTH}
               formValues={allValue}
               mode="onChange"
-            />,
-          )
+            />
+          );
 
           flattenFields(INPUT_WITH_WIDTH).forEach((prop) => {
-            if (prop.name === "country_code") return
+            if (prop.name === "country_code") return;
             if (prop.name === "toggle") {
               cy.findByLabelText("toggle-row-wrapper").then(($el) => {
-                const width = $el.width()
-                expect(width).to.be.closeTo(197.5, 10)
-              })
+                const width = $el.width();
+                expect(width).to.be.closeTo(197.5, 10);
+              });
             } else {
               cy.findByText(prop.title)
                 .parent()
                 .then(($el) => {
-                  const elWidth = $el.width()
-                  expect(elWidth).to.be.closeTo(197.5, 10)
-                })
+                  const elWidth = $el.width();
+                  expect(elWidth).to.be.closeTo(197.5, 10);
+                });
             }
-          })
-        })
-      })
-    })
-  })
-})
+          });
+        });
+      });
+    });
+  });
+});

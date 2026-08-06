@@ -37,10 +37,8 @@ export interface LoadingSkeletonOption {
   highlightColor?: string;
 }
 
-interface LoadingSkeletonBaseProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+interface LoadingSkeletonBaseProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   styles?: LoadingSkeletonStyles;
 }
@@ -50,7 +48,8 @@ export interface LoadingSkeletonStyles {
 }
 
 export interface LoadingSkeletonProps
-  extends LoadingSkeletonBaseProps, LoadingSkeletonOption {
+  extends LoadingSkeletonBaseProps,
+    LoadingSkeletonOption {
   height?: number | string;
   width?: number | string;
 }
@@ -121,7 +120,8 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 `;
 
 export interface LoadingSkeletonItemProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style">, LoadingSkeletonOption {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
+    LoadingSkeletonOption {
   styles?: LoadingSkeletonStyles;
   height?: number | string;
   width?: number | string;

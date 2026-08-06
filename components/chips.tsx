@@ -1,5 +1,5 @@
-import { RiAddLine } from "@remixicon/react"
-import { Badge, BadgeAction, BadgeProps } from "./badge"
+import { RiAddLine } from "@remixicon/react";
+import { Badge, BadgeAction, BadgeProps } from "./badge";
 import {
   ChangeEvent,
   Fragment,
@@ -9,7 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react"
+} from "react";
 import {
   autoUpdate,
   flip,
@@ -19,61 +19,61 @@ import {
   useFloating,
   useInteractions,
   useRole,
-} from "@floating-ui/react"
-import styled, { css, CSSProp } from "styled-components"
-import { StatefulForm } from "./stateful-form"
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
-import { useTheme } from "./../theme/provider"
-import { ChipsThemeConfig } from "./../theme"
-import { applyClassName } from "./../constants/classname"
-import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox"
-import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox"
+} from "@floating-ui/react";
+import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ChipsThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
+import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
+import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
 
-export type ChipAction = BadgeAction
+export type ChipAction = BadgeAction;
 
-export type ChipProps = BadgeProps
+export type ChipProps = BadgeProps;
 
 interface BaseChipsProps {
-  options?: ChipProps[]
-  inputValue?: string
+  options?: ChipProps[];
+  inputValue?: string;
   setInputValue?: (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => void
-  filterPlaceholder?: string
-  missingOptionLabel?: string
-  creatable?: boolean
-  selectedOptions?: string[]
-  onChange?: (selectedOptions: string[]) => void
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  filterPlaceholder?: string;
+  missingOptionLabel?: string;
+  creatable?: boolean;
+  selectedOptions?: string[];
+  onChange?: (selectedOptions: string[]) => void;
   missingOptionForm?:
     | ReactNode
-    | ((props?: MissingOptionFormProps) => ReactNode)
-  emptySlate?: string
-  renderer?: (props: ChipRendererProps) => ReactNode
-  styles?: BaseChipsStyles
-  name?: string
-  id?: string
-  disabled?: boolean
-  mobile?: boolean
-  drawerHeight?: string
+    | ((props?: MissingOptionFormProps) => ReactNode);
+  emptySlate?: string;
+  renderer?: (props: ChipRendererProps) => ReactNode;
+  styles?: BaseChipsStyles;
+  name?: string;
+  id?: string;
+  disabled?: boolean;
+  mobile?: boolean;
+  drawerHeight?: string;
 }
 
 export interface BaseChipsStyles {
-  chipsContainerStyle?: CSSProp
-  chipSelectedStyle?: CSSProp
-  chipOptionWrapperStyle?: CSSProp
-  chipOptionStyle?: CSSProp
-  chipsDrawerStyle?: CSSProp
+  chipsContainerStyle?: CSSProp;
+  chipSelectedStyle?: CSSProp;
+  chipOptionWrapperStyle?: CSSProp;
+  chipOptionStyle?: CSSProp;
+  chipsDrawerStyle?: CSSProp;
 }
 
 export interface ChipRendererProps {
-  id?: string
-  caption?: string
-  metadata?: Record<string, unknown>
+  id?: string;
+  caption?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface MissingOptionFormProps {
-  firstInputRef?: Ref<HTMLInputElement>
-  closeForm?: () => void
+  firstInputRef?: Ref<HTMLInputElement>;
+  closeForm?: () => void;
 }
 
 function BaseChips({
@@ -95,23 +95,23 @@ function BaseChips({
   mobile,
   drawerHeight,
 }: BaseChipsProps) {
-  const { currentTheme } = useTheme()
-  const chipsTheme = currentTheme.chips
-  const textboxTheme = currentTheme.textbox
+  const { currentTheme } = useTheme();
+  const chipsTheme = currentTheme.chips;
+  const textboxTheme = currentTheme.textbox;
 
-  const inputRef = useRef<HTMLInputElement>(null)
-  const inputMissingRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputMissingRef = useRef<HTMLInputElement>(null);
 
-  const [mode, setMode] = useState<"idle" | "create">("idle")
+  const [mode, setMode] = useState<"idle" | "create">("idle");
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [hasInteracted, setHasInteracted] = useState(false)
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [isOpen, setIsOpen] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [interactionMode, setInteractionMode] = useState<"mouse" | "keyboard">(
-    "keyboard",
-  )
+    "keyboard"
+  );
 
-  const listRef = useRef<(HTMLLIElement | null)[]>([])
+  const listRef = useRef<(HTMLLIElement | null)[]>([]);
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
@@ -122,50 +122,50 @@ function BaseChips({
     ],
     whileElementsMounted: autoUpdate,
     placement: "bottom-start",
-  })
+  });
 
-  const click = useClick(context)
-  const dismiss = useDismiss(context)
-  const role = useRole(context)
+  const click = useClick(context);
+  const dismiss = useDismiss(context);
+  const role = useRole(context);
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
     click,
     dismiss,
     role,
-  ])
+  ]);
 
   // Keep selected options at the top, following the order in selectedOptions.
   // Unselected options preserve their original order.
   const sortedOptions = [...options].sort((a, b) => {
-    const aIndex = selectedOptions?.findIndex((id) => id === a.id) ?? -1
-    const bIndex = selectedOptions?.findIndex((id) => id === b.id) ?? -1
+    const aIndex = selectedOptions?.findIndex((id) => id === a.id) ?? -1;
+    const bIndex = selectedOptions?.findIndex((id) => id === b.id) ?? -1;
 
     if (aIndex !== -1 && bIndex !== -1) {
-      return aIndex - bIndex
+      return aIndex - bIndex;
     }
 
-    if (aIndex !== -1) return -1
-    if (bIndex !== -1) return 1
+    if (aIndex !== -1) return -1;
+    if (bIndex !== -1) return 1;
 
-    return 0
-  })
+    return 0;
+  });
 
   const FINAL_OPTIONS: ComboboxOption[] = useMemo(() => {
     return sortedOptions.map((badge, index) => {
       const isSelected = selectedOptions?.some(
-        (selectedOption) => selectedOption === badge.id,
-      )
+        (selectedOption) => selectedOption === badge.id
+      );
 
       const badgeActions = badge?.actions?.map((action) => ({
         ...action,
         onClick: ({ badge, event }) => {
-          event?.preventDefault()
+          event?.preventDefault();
           action?.onClick?.({
             badge,
             event,
-          })
+          });
         },
-      }))
+      }));
 
       return {
         text: badge.caption,
@@ -176,7 +176,7 @@ function BaseChips({
               sortedOptions[index - 1] &&
               selectedOptions?.some(
                 (selectedOption) =>
-                  selectedOption === sortedOptions[index - 1].id,
+                  selectedOption === sortedOptions[index - 1].id
               ) &&
               !isSelected && (
                 <Divider
@@ -209,80 +209,80 @@ function BaseChips({
             />
           </Fragment>
         ),
-      }
-    })
-  }, [sortedOptions, selectedOptions, styles?.chipOptionStyle, chipsTheme])
+      };
+    });
+  }, [sortedOptions, selectedOptions, styles?.chipOptionStyle, chipsTheme]);
 
   const FILTERED_OPTIONS: ComboboxOption[] = useMemo(() => {
-    if (!hasInteracted || !inputValue) return FINAL_OPTIONS
+    if (!hasInteracted || !inputValue) return FINAL_OPTIONS;
 
-    const search = inputValue.toLowerCase()
+    const search = inputValue.toLowerCase();
 
     return FINAL_OPTIONS.filter((option) => {
-      return option.text?.toLowerCase().includes(search)
-    })
-  }, [hasInteracted, inputValue, FINAL_OPTIONS])
+      return option.text?.toLowerCase().includes(search);
+    });
+  }, [hasInteracted, inputValue, FINAL_OPTIONS]);
 
-  const hasNoFilter = FILTERED_OPTIONS.length === 0 && inputValue.length > 1
+  const hasNoFilter = FILTERED_OPTIONS.length === 0 && inputValue.length > 1;
 
   const RENDER_SELECTED_OPTIONS: BadgeProps[] = useMemo(() => {
     return sortedOptions.filter((badge) =>
-      selectedOptions?.some((selectedOption) => selectedOption === badge.id),
-    )
-  }, [sortedOptions, selectedOptions])
+      selectedOptions?.some((selectedOption) => selectedOption === badge.id)
+    );
+  }, [sortedOptions, selectedOptions]);
 
   useEffect(() => {
     if (isOpen && mode === "idle") {
-      inputRef.current?.focus()
+      inputRef.current?.focus();
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (disabled) return
+    if (disabled) return;
 
-    setInteractionMode("keyboard")
+    setInteractionMode("keyboard");
 
     if (e.key === "ArrowDown") {
-      e.preventDefault()
-      if (!isOpen) await setIsOpen(true)
+      e.preventDefault();
+      if (!isOpen) await setIsOpen(true);
       await setHighlightedIndex((prev) =>
-        Math.min(prev + 1, FILTERED_OPTIONS.length - 1),
-      )
+        Math.min(prev + 1, FILTERED_OPTIONS.length - 1)
+      );
     } else if (e.key === "ArrowUp") {
-      e.preventDefault()
-      if (!isOpen) await setIsOpen(true)
-      await setHighlightedIndex((prev) => Math.max(prev - 1, 0))
+      e.preventDefault();
+      if (!isOpen) await setIsOpen(true);
+      await setHighlightedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter") {
-      e.preventDefault()
+      e.preventDefault();
       if (hasNoFilter) {
-        await setMode("create")
-        await inputMissingRef?.current?.focus()
+        await setMode("create");
+        await inputMissingRef?.current?.focus();
       } else {
-        const selectedOption = FILTERED_OPTIONS[highlightedIndex]
-        if (!selectedOption) return
+        const selectedOption = FILTERED_OPTIONS[highlightedIndex];
+        if (!selectedOption) return;
 
-        const optionId = String(selectedOption.value)
-        const isSelected = selectedOptions?.some((id) => id === optionId)
+        const optionId = String(selectedOption.value);
+        const isSelected = selectedOptions?.some((id) => id === optionId);
 
         const finalSelectedOptions = isSelected
           ? selectedOptions?.filter((id) => id !== optionId)
-          : [...(selectedOptions ?? []), optionId]
+          : [...(selectedOptions ?? []), optionId];
 
         if (onChange) {
-          onChange(finalSelectedOptions)
+          onChange(finalSelectedOptions);
         }
       }
     } else if (e.key === "Escape") {
-      e.preventDefault()
-      await setIsOpen(false)
+      e.preventDefault();
+      await setIsOpen(false);
     }
-  }
+  };
 
   const finalDrawerHeight = mobile
     ? (drawerHeight ?? "320px")
-    : (drawerHeight ?? "220px")
+    : (drawerHeight ?? "220px");
 
-  const hasFewOptions = FILTERED_OPTIONS?.length < 5
+  const hasFewOptions = FILTERED_OPTIONS?.length < 5;
 
   return (
     <>
@@ -303,7 +303,7 @@ function BaseChips({
             <Badge
               key={badge.id}
               onClick={(e) => {
-                e.stopPropagation()
+                e.stopPropagation();
               }}
               aria-label="chips-selected"
               variant={badge.variant}
@@ -319,7 +319,7 @@ function BaseChips({
               caption={badge.caption}
               withCircle
             />
-          ),
+          )
         )}
 
         <AddButton
@@ -330,7 +330,7 @@ function BaseChips({
           $isOpen={isOpen}
           {...getReferenceProps({
             onClick: (e) => {
-              e.preventDefault()
+              e.preventDefault();
             },
           })}
         />
@@ -419,8 +419,8 @@ function BaseChips({
           }}
           fadeEffect={hasFewOptions ? [] : ["bottom"]}
           onChange={async (selectedOptions?: SelectboxSelectedOptions) => {
-            if (!Array.isArray(selectedOptions)) return
-            onChange?.(selectedOptions as string[])
+            if (!Array.isArray(selectedOptions)) return;
+            onChange?.(selectedOptions as string[]);
           }}
           setSelectedOptionsLocal={(selectedOptionsLocal?: SelectboxOption) => {
             setInputValue?.({
@@ -428,7 +428,7 @@ function BaseChips({
                 name,
                 value: selectedOptionsLocal?.text || "",
               },
-            } as ChangeEvent<HTMLInputElement>)
+            } as ChangeEvent<HTMLInputElement>);
           }}
           setHasInteracted={setHasInteracted}
           options={mode === "idle" ? FILTERED_OPTIONS : []}
@@ -442,8 +442,8 @@ function BaseChips({
           {mode === "idle" && hasNoFilter && creatable && (
             <EmptyOptionContainer
               onClick={async () => {
-                await setMode("create")
-                await inputMissingRef?.current?.focus()
+                await setMode("create");
+                await inputMissingRef?.current?.focus();
               }}
               $hovered={highlightedIndex === 0}
               $theme={chipsTheme}
@@ -470,8 +470,8 @@ function BaseChips({
                 ? missingOptionForm({
                     firstInputRef: inputMissingRef,
                     closeForm: async () => {
-                      await setMode("idle")
-                      await inputRef.current?.focus()
+                      await setMode("idle");
+                      await inputRef.current?.focus();
                     },
                   })
                 : missingOptionForm}
@@ -480,12 +480,12 @@ function BaseChips({
         </Combobox.Drawer>
       )}
     </>
-  )
+  );
 }
 
 const InputGroup = styled.div<{
-  $containerStyle?: CSSProp
-  $disabled?: boolean
+  $containerStyle?: CSSProp;
+  $disabled?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -500,12 +500,12 @@ const InputGroup = styled.div<{
     `};
 
   ${({ $containerStyle }) => $containerStyle}
-`
+`;
 
 const AddButton = styled(RiAddLine)<{
-  $isOpen?: boolean
-  $disabled?: boolean
-  $theme?: ChipsThemeConfig
+  $isOpen?: boolean;
+  $disabled?: boolean;
+  $theme?: ChipsThemeConfig;
 }>`
   cursor: pointer;
   border: 1px solid transparent;
@@ -535,14 +535,14 @@ const AddButton = styled(RiAddLine)<{
       box-shadow: ${$theme?.boxShadow || "0 4px 6px rgba(0,0,0,0.1)"};
       border-color: ${$theme?.borderColor || "#d1d5db"};
     `}
-`
+`;
 
-export type ChipsStyles = BaseChipsStyles & FieldLaneStyles
+export type ChipsStyles = BaseChipsStyles & FieldLaneStyles;
 
 export interface ChipsProps
   extends Omit<BaseChipsProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: ChipsStyles
+  styles?: ChipsStyles;
 }
 
 function Chips({
@@ -565,7 +565,7 @@ function Chips({
     prefix: "chips",
     name,
     id,
-  })
+  });
 
   const {
     bodyStyle,
@@ -576,7 +576,7 @@ function Chips({
     helperIconStyle,
     helperArrowStyle,
     ...baseChipStyles
-  } = styles ?? {}
+  } = styles ?? {};
 
   return (
     <FieldLane
@@ -612,11 +612,11 @@ function Chips({
         disabled={disabled}
       />
     </FieldLane>
-  )
+  );
 }
 
 const Divider = styled.div<{
-  $theme?: ChipsThemeConfig
+  $theme?: ChipsThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -626,11 +626,11 @@ const Divider = styled.div<{
   transform: translateX(-50%);
 
   border-bottom: 1px solid ${({ $theme }) => $theme?.dividerColor};
-`
+`;
 
 const EmptyOptionContainer = styled.div<{
-  $hovered?: boolean
-  $theme: ChipsThemeConfig
+  $hovered?: boolean;
+  $theme: ChipsThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -657,6 +657,6 @@ const EmptyOptionContainer = styled.div<{
       background-color: ${$theme.hoverBackgroundColor};
     `}
   `}
-`
+`;
 
-export { Chips }
+export { Chips };

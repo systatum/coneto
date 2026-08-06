@@ -1,4 +1,4 @@
-import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react"
+import { RiFile2Line, RiFileUploadLine, RiImageLine } from "@remixicon/react";
 import {
   ChangeEvent,
   DragEvent,
@@ -7,64 +7,64 @@ import {
   ReactNode,
   useRef,
   useState,
-} from "react"
-import styled, { css, CSSProp } from "styled-components"
-import { LoadingSpinner } from "./loading-spinner"
-import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form"
-import { Figure } from "./figure"
-import { FieldLaneProps } from "./field-lane"
-import { useTheme } from "./../theme/provider"
-import { FileDropBoxThemeConfig } from "./../theme"
-import { applyClassName } from "./../constants/classname"
+} from "react";
+import styled, { css, CSSProp } from "styled-components";
+import { LoadingSpinner } from "./loading-spinner";
+import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form";
+import { Figure } from "./figure";
+import { FieldLaneProps } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { FileDropBoxThemeConfig } from "./../theme";
+import { applyClassName } from "./../constants/classname";
 
 export interface OnFileDroppedFunctionArgs {
-  files: File[]
-  succeed: (file: File) => void
-  error: (file: File, errorMessage: string) => void
-  setProgressLabel: (label: string) => void
-  progressPercentage?: number
+  files: File[];
+  succeed: (file: File) => void;
+  error: (file: File, errorMessage: string) => void;
+  setProgressLabel: (label: string) => void;
+  progressPercentage?: number;
 }
 
 export interface OnCompleteFunctionArgs {
-  succeedFiles?: File[]
-  failedFiles?: File[]
-  setProgressLabel?: (label: string) => void
-  hideProgressLabel?: () => void
-  showUploaderForm?: () => void
+  succeedFiles?: File[];
+  failedFiles?: File[];
+  setProgressLabel?: (label: string) => void;
+  hideProgressLabel?: () => void;
+  showUploaderForm?: () => void;
 }
 
 export interface FileDropBoxProps {
-  description?: ReactNode
-  placeholder?: ReactNode
-  accept?: string
-  label?: string
-  onFileDropped?: (props: OnFileDroppedFunctionArgs) => void
-  onComplete?: (props: OnCompleteFunctionArgs) => void
-  progressPercentage?: number
-  helper?: ReactNode
-  children?: ReactNode
-  styles?: FileDropBoxStyles
-  name?: string
-  id?: string
-  labelPosition?: FieldLaneProps["labelPosition"]
-  labelGap?: FieldLaneProps["labelGap"]
-  labelWidth?: FieldLaneProps["labelWidth"]
-  required?: boolean
-  disabled?: boolean
-  className?: string
+  description?: ReactNode;
+  placeholder?: ReactNode;
+  accept?: string;
+  label?: string;
+  onFileDropped?: (props: OnFileDroppedFunctionArgs) => void;
+  onComplete?: (props: OnCompleteFunctionArgs) => void;
+  progressPercentage?: number;
+  helper?: ReactNode;
+  children?: ReactNode;
+  styles?: FileDropBoxStyles;
+  name?: string;
+  id?: string;
+  labelPosition?: FieldLaneProps["labelPosition"];
+  labelGap?: FieldLaneProps["labelGap"];
+  labelWidth?: FieldLaneProps["labelWidth"];
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
 export interface FileDropBoxStyles extends StatefulFormLabelStyles {
-  containerStyle?: CSSProp
-  dragOverStyle?: CSSProp
-  successStyle?: CSSProp
-  labelStyle?: CSSProp
-  contentStyle?: CSSProp
-  placeholderStyle?: CSSProp
-  descriptionStyle?: CSSProp
+  containerStyle?: CSSProp;
+  dragOverStyle?: CSSProp;
+  successStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  contentStyle?: CSSProp;
+  placeholderStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
 }
 
-type ProgressProps = "idle" | "loading" | "succeed" | null
+type ProgressProps = "idle" | "loading" | "succeed" | null;
 
 function FileDropBox({
   placeholder = "Drag and Drop Your File",
@@ -85,100 +85,100 @@ function FileDropBox({
   disabled,
   className,
 }: FileDropBoxProps) {
-  const { currentTheme } = useTheme()
-  const fileDropBoxTheme = currentTheme.fileDropBox
+  const { currentTheme } = useTheme();
+  const fileDropBoxTheme = currentTheme.fileDropBox;
 
   const FILE_ICON = [
     { id: 1, icon: RiImageLine, size: 50 },
     { id: 2, icon: RiFileUploadLine, size: 80 },
     { id: 3, icon: RiFile2Line, size: 50 },
-  ]
+  ];
 
   const inputId = StatefulForm.sanitizeId({
     prefix: "file-drop-box",
     name,
     id,
-  })
+  });
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
-  const [progressLabel, setProgressLabel] = useState("")
-  const [progressPercentage, setProgressPercentage] = useState(0)
-  const [progress, setProgress] = useState<ProgressProps>("idle")
-  const [errorMessages, setErrorMessages] = useState<string[]>([])
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [progressLabel, setProgressLabel] = useState("");
+  const [progressPercentage, setProgressPercentage] = useState(0);
+  const [progress, setProgress] = useState<ProgressProps>("idle");
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
-  const handleBrowseClick = () => fileInputRef.current?.click()
+  const handleBrowseClick = () => fileInputRef.current?.click();
   const handleErrorMessage = (msg: string) =>
-    setErrorMessages((prev) => [...prev, msg])
+    setErrorMessages((prev) => [...prev, msg]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files)
-      handleUploadFile(files)
+      const files = Array.from(e.target.files);
+      handleUploadFile(files);
     }
-  }
+  };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
     if (e.dataTransfer.files) {
-      const files = Array.from(e.dataTransfer.files)
-      handleUploadFile(files)
+      const files = Array.from(e.dataTransfer.files);
+      handleUploadFile(files);
     }
-  }
+  };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
-  const handleDragLeave = () => setIsDragging(false)
+  const handleDragLeave = () => setIsDragging(false);
 
   const hideProgressLabel = () => {
-    setProgress(null)
-  }
+    setProgress(null);
+  };
 
   const showUploaderForm = () => {
-    setProgress("idle")
-  }
+    setProgress("idle");
+  };
 
   const handleUploadFile = async (files: File[]) => {
-    if (!onFileDropped) return
+    if (!onFileDropped) return;
 
-    await setProgress("loading")
+    await setProgress("loading");
 
-    const succeedFiles: File[] = []
-    const failedFiles: File[] = []
-    const total = files.length
+    const succeedFiles: File[] = [];
+    const failedFiles: File[] = [];
+    const total = files.length;
 
     const succeed = (file: File) => {
-      succeedFiles.push(file)
-      updateProgressBar(succeedFiles.length, total)
-    }
+      succeedFiles.push(file);
+      updateProgressBar(succeedFiles.length, total);
+    };
 
     const error = (file: File, message: string) => {
-      failedFiles.push(file)
-      handleErrorMessage(message)
-      updateProgressBar(succeedFiles.length, total)
-    }
+      failedFiles.push(file);
+      handleErrorMessage(message);
+      updateProgressBar(succeedFiles.length, total);
+    };
 
     const updateProgressBar = (succeedCount: number, totalCount: number) => {
-      const percentage = Math.round((succeedCount / totalCount) * 100)
-      setProgressPercentage(percentage)
-    }
+      const percentage = Math.round((succeedCount / totalCount) * 100);
+      setProgressPercentage(percentage);
+    };
 
     for (let i = 0; i < files.length; i++) {
-      setCurrentIndex(i)
+      setCurrentIndex(i);
       await onFileDropped({
         files: [files[i]],
         succeed,
         error,
         setProgressLabel,
         progressPercentage,
-      })
+      });
     }
-    await setProgress("succeed")
+    await setProgress("succeed");
 
     await onComplete?.({
       succeedFiles,
@@ -186,8 +186,8 @@ function FileDropBox({
       setProgressLabel,
       hideProgressLabel,
       showUploaderForm,
-    })
-  }
+    });
+  };
 
   const inputElement: ReactElement = (
     <DropArea
@@ -198,20 +198,20 @@ function FileDropBox({
       $progress={progress}
       aria-label="file-drop-box-area"
       onClick={() => {
-        if (disabled) return
-        handleBrowseClick()
+        if (disabled) return;
+        handleBrowseClick();
       }}
       onDrop={(e) => {
-        if (disabled) return
-        handleDrop(e)
+        if (disabled) return;
+        handleDrop(e);
       }}
       onDragOver={(e) => {
-        if (disabled) return
-        handleDragOver(e)
+        if (disabled) return;
+        handleDragOver(e);
       }}
       onDragLeave={() => {
-        if (disabled) return
-        handleDragLeave()
+        if (disabled) return;
+        handleDragLeave();
       }}
     >
       {progress === "loading" && currentIndex !== null ? (
@@ -295,7 +295,7 @@ function FileDropBox({
         />
       )}
     </DropArea>
-  )
+  );
 
   return (
     <InputWrapper
@@ -340,15 +340,15 @@ function FileDropBox({
         </ErrorList>
       )}
     </InputWrapper>
-  )
+  );
 }
 
 const InputWrapper = styled.div<{
-  $containerStyle?: CSSProp
-  $hide?: boolean
-  $labelPosition?: FieldLaneProps["labelPosition"]
-  $labelGap?: FieldLaneProps["labelGap"]
-  $disabled?: boolean
+  $containerStyle?: CSSProp;
+  $hide?: boolean;
+  $labelPosition?: FieldLaneProps["labelPosition"];
+  $labelGap?: FieldLaneProps["labelGap"];
+  $disabled?: boolean;
 }>`
   display: flex;
   width: 100%;
@@ -373,10 +373,10 @@ const InputWrapper = styled.div<{
     `};
 
   ${({ $containerStyle }) => $containerStyle}
-`
+`;
 
 const ContentWrapper = styled.div<{
-  $style?: CSSProp
+  $style?: CSSProp;
 }>`
   display: flex;
   width: 100%;
@@ -387,14 +387,14 @@ const ContentWrapper = styled.div<{
   cursor: default;
 
   ${({ $style }) => $style}
-`
+`;
 
 const DropArea = styled.div<{
-  $isDragging: boolean
-  $progress: ProgressProps
-  $dragOverStyle?: CSSProp
-  $successStyle?: CSSProp
-  $theme: FileDropBoxThemeConfig
+  $isDragging: boolean;
+  $progress: ProgressProps;
+  $dragOverStyle?: CSSProp;
+  $successStyle?: CSSProp;
+  $theme: FileDropBoxThemeConfig;
 }>`
   display: flex;
   flex-direction: column;
@@ -512,7 +512,7 @@ const DropArea = styled.div<{
       border: 1px solid ${$theme.borderColor};
       ${$successStyle}
     `};
-`
+`;
 
 const UploadContent = styled.div`
   font-size: 0.875rem;
@@ -522,41 +522,41 @@ const UploadContent = styled.div`
   gap: 0.5rem;
   align-items: center;
   padding: 1.5rem;
-`
+`;
 
 const IconsRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-end;
   gap: 0.5rem;
-`
+`;
 
 const PlaceholderText = styled.span<{
-  $isDragging: boolean
-  $theme: FileDropBoxThemeConfig
-  $style?: CSSProp
+  $isDragging: boolean;
+  $theme: FileDropBoxThemeConfig;
+  $style?: CSSProp;
 }>`
   font-size: 1.25rem;
   color: ${({ $theme, $isDragging }) =>
     $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
-`
+`;
 
 const DescriptionText = styled.span<{
-  $isDragging: boolean
-  $theme: FileDropBoxThemeConfig
-  $style?: CSSProp
+  $isDragging: boolean;
+  $theme: FileDropBoxThemeConfig;
+  $style?: CSSProp;
 }>`
   color: ${({ $theme, $isDragging }) =>
     $isDragging ? $theme.dragActiveTextColor : $theme.textColor};
-`
+`;
 
 const LinkText = styled.span<{ $theme: FileDropBoxThemeConfig }>`
   color: ${({ $theme }) => $theme.dragActiveTextColor || "#3b82f6"};
   text-decoration: underline;
-`
+`;
 
 const ProgressContainer = styled.div<{
-  $theme: FileDropBoxThemeConfig
+  $theme: FileDropBoxThemeConfig;
 }>`
   width: 100%;
   font-size: 0.875rem;
@@ -567,10 +567,10 @@ const ProgressContainer = styled.div<{
   align-items: center;
   gap: 0.5rem;
   border: 1px solid ${({ $theme }) => $theme.borderColor};
-`
+`;
 
 const ProgressBarWrapper = styled.div<{
-  $theme: FileDropBoxThemeConfig
+  $theme: FileDropBoxThemeConfig;
 }>`
   height: 4px;
   width: 100%;
@@ -578,11 +578,11 @@ const ProgressBarWrapper = styled.div<{
   left: 0;
   bottom: 0;
   background-color: ${({ $theme }) => $theme.backgroundColor || "#e5e7eb"};
-`
+`;
 
 const ProgressBar = styled.div<{
-  $width: number
-  $theme: FileDropBoxThemeConfig
+  $width: number;
+  $theme: FileDropBoxThemeConfig;
 }>`
   height: 4px;
   position: absolute;
@@ -592,7 +592,7 @@ const ProgressBar = styled.div<{
   transition: all 0.2s ease;
   width: ${({ $width }) => $width}%;
   background-color: ${({ $theme }) => $theme.progressBarColor};
-`
+`;
 
 const ErrorList = styled.ul`
   margin: 0;
@@ -600,6 +600,6 @@ const ErrorList = styled.ul`
   list-style-type: disc;
   font-size: 0.875rem;
   margin-left: 2.5rem;
-`
+`;
 
-export { FileDropBox }
+export { FileDropBox };

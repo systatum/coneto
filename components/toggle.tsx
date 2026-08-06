@@ -1,34 +1,34 @@
-import { ChangeEvent, InputHTMLAttributes } from "react"
-import { motion } from "framer-motion"
-import { LoadingSpinner } from "./loading-spinner"
-import styled, { css, CSSProp } from "styled-components"
-import { StatefulForm } from "./stateful-form"
-import { Figure, FigureProps } from "./figure"
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
-import { useTheme } from "../theme/provider"
-import { ToggleThemeConfig } from "../theme"
-import { applyClassName } from "./../constants/classname"
+import { ChangeEvent, InputHTMLAttributes } from "react";
+import { motion } from "framer-motion";
+import { LoadingSpinner } from "./loading-spinner";
+import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
+import { Figure, FigureProps } from "./figure";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import { useTheme } from "../theme/provider";
+import { ToggleThemeConfig } from "../theme";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseToggleProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "style"> {
-  checked?: boolean
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-  icon?: FigureProps
-  isLoading?: boolean
-  name?: string
-  label?: string
-  description?: string
-  size?: number
-  styles?: BaseToggleStyles
+  checked?: boolean;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  icon?: FigureProps;
+  isLoading?: boolean;
+  name?: string;
+  label?: string;
+  description?: string;
+  size?: number;
+  styles?: BaseToggleStyles;
 }
 
 interface BaseToggleStyles {
-  descriptionStyle?: CSSProp
-  rowStyle?: CSSProp
-  textWrapperStyle?: CSSProp
-  errorStyle?: CSSProp
-  labelStyle?: CSSProp
-  titleStyle?: CSSProp
+  descriptionStyle?: CSSProp;
+  rowStyle?: CSSProp;
+  textWrapperStyle?: CSSProp;
+  errorStyle?: CSSProp;
+  labelStyle?: CSSProp;
+  titleStyle?: CSSProp;
 }
 
 function BaseToggle({
@@ -45,11 +45,11 @@ function BaseToggle({
   disabled,
   ...props
 }: BaseToggleProps) {
-  const { currentTheme } = useTheme()
-  const toggleTheme = currentTheme.toggle
+  const { currentTheme } = useTheme();
+  const toggleTheme = currentTheme.toggle;
 
   const { heightWrapper, widthWrapper, thumbShift, iconSize } =
-    getToggleSize(size)
+    getToggleSize(size);
 
   return (
     <ToggleWrapper
@@ -80,9 +80,9 @@ function BaseToggle({
           checked={checked}
           disabled={disabled}
           onChange={(e) => {
-            if (disabled) return
+            if (disabled) return;
             if (onChange) {
-              onChange(e)
+              onChange(e);
             }
           }}
         />
@@ -134,15 +134,15 @@ function BaseToggle({
         </ToggleTextWrapper>
       )}
     </ToggleWrapper>
-  )
+  );
 }
 
-export type ToggleStyles = BaseToggleStyles & FieldLaneStyles
+export type ToggleStyles = BaseToggleStyles & FieldLaneStyles;
 
 export interface ToggleProps
   extends Omit<BaseToggleProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: ToggleStyles
+  styles?: ToggleStyles;
 }
 
 function Toggle({
@@ -166,7 +166,7 @@ function Toggle({
     prefix: "toggle",
     name,
     id,
-  })
+  });
 
   const {
     bodyStyle,
@@ -177,7 +177,7 @@ function Toggle({
     helperIconStyle,
     helperArrowStyle,
     ...toggleStyles
-  } = styles ?? {}
+  } = styles ?? {};
 
   return (
     <FieldLane
@@ -216,27 +216,27 @@ function Toggle({
         description={description}
       />
     </FieldLane>
-  )
+  );
 }
 
 const getToggleSize = (size: number) => {
-  const widthWrapper = size * 2
-  const heightWrapper = size * 1
-  const thumbShift = size * 1.02
-  const iconSize = size * 0.6
+  const widthWrapper = size * 2;
+  const heightWrapper = size * 1;
+  const thumbShift = size * 1.02;
+  const iconSize = size * 0.6;
 
   return {
     widthWrapper,
     heightWrapper,
     thumbShift,
     iconSize,
-  }
-}
+  };
+};
 
 const ToggleWrapper = styled.div<{
-  $style?: CSSProp
-  $disabled?: boolean
-  $theme?: ToggleThemeConfig
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $theme?: ToggleThemeConfig;
 }>`
   display: flex;
   flex-direction: row;
@@ -255,7 +255,7 @@ const ToggleWrapper = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`
+`;
 
 const ToggleTextWrapper = styled.div<{ $style?: CSSProp }>`
   display: flex;
@@ -263,7 +263,7 @@ const ToggleTextWrapper = styled.div<{ $style?: CSSProp }>`
   width: 100%;
 
   ${({ $style }) => $style}
-`
+`;
 
 const StyledLabel = styled(motion.label)<{ $disabled?: boolean }>`
   position: relative;
@@ -278,18 +278,18 @@ const StyledLabel = styled(motion.label)<{ $disabled?: boolean }>`
       cursor: not-allowed;
       pointer-events: none;
     `}
-`
+`;
 
 const StyledInput = styled.input`
   position: absolute;
   width: 0;
   height: 0;
   opacity: 0;
-`
+`;
 
 const ToggleBackground = styled.div<{
-  $checked: boolean
-  $theme?: ToggleThemeConfig
+  $checked: boolean;
+  $theme?: ToggleThemeConfig;
 }>`
   width: 100%;
   height: 100%;
@@ -299,10 +299,10 @@ const ToggleBackground = styled.div<{
   background-color: ${({ $checked, $theme }) =>
     $checked ? $theme?.checkedBackgroundColor : $theme?.backgroundColor};
   border: 1px solid ${({ $theme }) => $theme?.borderColor};
-`
+`;
 
 const ToggleButton = styled(motion.div)<{
-  $theme?: ToggleThemeConfig
+  $theme?: ToggleThemeConfig;
 }>`
   position: absolute;
   top: 0;
@@ -313,16 +313,16 @@ const ToggleButton = styled(motion.div)<{
   border-radius: 9999px;
   background-color: ${({ $theme }) => $theme?.thumbColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
-`
+`;
 
 const Description = styled.span<{
-  $style?: CSSProp
-  $theme?: ToggleThemeConfig
+  $style?: CSSProp;
+  $theme?: ToggleThemeConfig;
 }>`
   font-size: 12px;
   width: 100%;
   color: ${({ $theme }) => $theme?.descriptionColor};
   ${({ $style }) => $style}
-`
+`;
 
-export { Toggle }
+export { Toggle };

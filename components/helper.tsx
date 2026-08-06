@@ -1,22 +1,22 @@
-import { css, CSSProp } from "styled-components"
-import { Tooltip } from "./tooltip"
-import { RiInformationLine } from "@remixicon/react"
-import { applyClassName } from "./../constants/classname"
-import { ReactNode } from "react"
-import { Figure } from "./figure"
+import { css, CSSProp } from "styled-components";
+import { Tooltip } from "./tooltip";
+import { RiInformationLine } from "@remixicon/react";
+import { applyClassName } from "./../constants/classname";
+import { ReactNode } from "react";
+import { Figure } from "./figure";
 
 export interface HelperProps {
-  value: ReactNode
-  showDelayPeriod?: number
-  className?: string
-  id?: string
-  styles?: HelperStyles
+  value: ReactNode;
+  showDelayPeriod?: number;
+  className?: string;
+  id?: string;
+  styles?: HelperStyles;
 }
 
 export interface HelperStyles {
-  self?: CSSProp
-  drawerStyle?: CSSProp
-  arrowStyle?: CSSProp
+  self?: CSSProp;
+  drawerStyle?: CSSProp;
+  arrowStyle?: CSSProp;
 }
 
 function Helper({
@@ -59,7 +59,7 @@ function Helper({
         }}
       />
     </Tooltip>
-  )
+  );
 }
 
-export { Helper }
+export { Helper };

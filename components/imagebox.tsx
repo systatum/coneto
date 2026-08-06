@@ -1,36 +1,36 @@
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react"
-import { RiAddLine, RiImageLine } from "@remixicon/react"
-import styled, { css, CSSProp } from "styled-components"
-import { StatefulForm } from "./stateful-form"
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane"
-import { useTheme } from "./../theme/provider"
-import { ImageboxThemeConfig } from "theme"
-import { applyClassName } from "./../constants/classname"
+import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
+import { RiAddLine, RiImageLine } from "@remixicon/react";
+import styled, { css, CSSProp } from "styled-components";
+import { StatefulForm } from "./stateful-form";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import { useTheme } from "./../theme/provider";
+import { ImageboxThemeConfig } from "theme";
+import { applyClassName } from "./../constants/classname";
 
 export const ImageboxSize = {
   ExtraSmall: "xs",
   Small: "sm",
   Medium: "md",
   Large: "lg",
-} as const
+} as const;
 
-export type ImageboxSize = (typeof ImageboxSize)[keyof typeof ImageboxSize]
+export type ImageboxSize = (typeof ImageboxSize)[keyof typeof ImageboxSize];
 
 interface BaseImageboxProps {
-  onFileSelected?: (file: File | undefined) => void
-  size?: ImageboxSize
-  name?: string
-  styles?: BaseImageboxStyles
-  value?: File | string | null
-  borderless?: boolean
-  editable?: boolean
-  url?: string
-  id?: string
-  disabled?: boolean
+  onFileSelected?: (file: File | undefined) => void;
+  size?: ImageboxSize;
+  name?: string;
+  styles?: BaseImageboxStyles;
+  value?: File | string | null;
+  borderless?: boolean;
+  editable?: boolean;
+  url?: string;
+  id?: string;
+  disabled?: boolean;
 }
 
 interface BaseImageboxStyles {
-  self?: CSSProp
+  self?: CSSProp;
 }
 
 const SIZE_STYLES = {
@@ -50,7 +50,7 @@ const SIZE_STYLES = {
     dimension: "160px",
     icon: 28,
   },
-}
+};
 
 function BaseImagebox({
   onFileSelected,
@@ -64,99 +64,99 @@ function BaseImagebox({
   url,
   id,
 }: BaseImageboxProps) {
-  const { currentTheme } = useTheme()
-  const imageboxTheme = currentTheme?.imagebox
+  const { currentTheme } = useTheme();
+  const imageboxTheme = currentTheme?.imagebox;
 
   const inputId = StatefulForm.sanitizeId({
     prefix: "imagebox",
     name,
     id,
-  })
+  });
 
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
-  const { dimension, icon } = SIZE_STYLES[size]
+  const { dimension, icon } = SIZE_STYLES[size];
 
-  const isControlled = !value && !url
+  const isControlled = !value && !url;
 
   useEffect(() => {
     try {
       if (value instanceof File) {
-        const objectUrl = URL.createObjectURL(value)
-        setSelectedFile(objectUrl)
+        const objectUrl = URL.createObjectURL(value);
+        setSelectedFile(objectUrl);
 
         return () => {
-          URL.revokeObjectURL(objectUrl)
-        }
+          URL.revokeObjectURL(objectUrl);
+        };
       }
 
       if (typeof value === "string") {
-        setSelectedFile(value)
+        setSelectedFile(value);
       }
 
       if (value === null) {
-        setSelectedFile(null)
+        setSelectedFile(null);
       }
 
       if (!value && url) {
-        setSelectedFile(url)
+        setSelectedFile(url);
       }
     } catch (err) {
-      console.error("Imagebox: Failed to render value", err)
-      setSelectedFile(null)
+      console.error("Imagebox: Failed to render value", err);
+      setSelectedFile(null);
     }
-  }, [value, isControlled, url])
+  }, [value, isControlled, url]);
 
   const handleBrowseClick = () => {
-    if (editable) fileInputRef.current?.click()
-  }
+    if (editable) fileInputRef.current?.click();
+  };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && editable) {
-      const file = e.target.files[0]
+      const file = e.target.files[0];
       if (onFileSelected) {
-        onFileSelected?.(file)
+        onFileSelected?.(file);
       }
 
       if (!isControlled) {
-        const objectUrl = URL.createObjectURL(file)
-        setSelectedFile(objectUrl)
+        const objectUrl = URL.createObjectURL(file);
+        setSelectedFile(objectUrl);
       }
     }
-  }
+  };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragging(false)
+    e.preventDefault();
+    setIsDragging(false);
     if (e.dataTransfer.files && onFileSelected) {
-      const file = e.dataTransfer.files[0]
-      if (!file) return
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
 
       if (onFileSelected) {
-        onFileSelected(file)
+        onFileSelected(file);
       }
 
       if (!isControlled) {
-        const objectUrl = URL.createObjectURL(file)
-        setSelectedFile(objectUrl)
+        const objectUrl = URL.createObjectURL(file);
+        setSelectedFile(objectUrl);
       }
     }
-  }
+  };
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     if (editable) {
-      e.preventDefault()
-      setIsDragging(true)
+      e.preventDefault();
+      setIsDragging(true);
     }
-  }
+  };
 
   const handleDragLeave = () => {
     if (editable) {
-      setIsDragging(false)
+      setIsDragging(false);
     }
-  }
+  };
 
   return (
     <InputBox
@@ -178,8 +178,8 @@ function BaseImagebox({
           src={selectedFile}
           alt="preview"
           onError={() => {
-            console.error("Imagebox: Unable to render image source")
-            setSelectedFile(null)
+            console.error("Imagebox: Unable to render image source");
+            setSelectedFile(null);
           }}
         />
       ) : (
@@ -208,15 +208,15 @@ function BaseImagebox({
         <RiAddLine size={icon} />
       </AddIconWrapper>
     </InputBox>
-  )
+  );
 }
 
-export type ImageboxStyles = BaseImageboxStyles & FieldLaneStyles
+export type ImageboxStyles = BaseImageboxStyles & FieldLaneStyles;
 
 export interface ImageboxProps
   extends Omit<BaseImageboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
-  styles?: ImageboxStyles
+  styles?: ImageboxStyles;
 }
 
 function Imagebox({
@@ -238,7 +238,7 @@ function Imagebox({
     prefix: "imagebox",
     name,
     id,
-  })
+  });
 
   const {
     bodyStyle,
@@ -249,7 +249,7 @@ function Imagebox({
     helperIconStyle,
     helperArrowStyle,
     ...imageboxStyles
-  } = styles ?? {}
+  } = styles ?? {};
 
   return (
     <FieldLane
@@ -282,17 +282,17 @@ function Imagebox({
         styles={imageboxStyles}
       />
     </FieldLane>
-  )
+  );
 }
 
 const InputBox = styled.div<{
-  $dimension: string
-  $isDragging: boolean
-  $style?: CSSProp
-  $editable?: boolean
-  $borderless?: boolean
-  $disabled?: boolean
-  $theme: ImageboxThemeConfig
+  $dimension: string;
+  $isDragging: boolean;
+  $style?: CSSProp;
+  $editable?: boolean;
+  $borderless?: boolean;
+  $disabled?: boolean;
+  $theme: ImageboxThemeConfig;
 }>`
   position: relative;
   width: ${({ $dimension }) => $dimension};
@@ -327,17 +327,17 @@ const InputBox = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`
+`;
 
 const IconPlaceholder = styled.div<{
-  $theme: ImageboxThemeConfig
+  $theme: ImageboxThemeConfig;
 }>`
   position: absolute;
   top: 50%;
   left: 50%;
   color: ${({ $theme }) => $theme.iconColor};
   transform: translate(-50%, -50%);
-`
+`;
 
 const PreviewImage = styled.img`
   position: absolute;
@@ -345,12 +345,12 @@ const PreviewImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`
+`;
 
 const AddIconWrapper = styled.div<{
-  $isDragging: boolean
-  $editable?: boolean
-  $theme: ImageboxThemeConfig
+  $isDragging: boolean;
+  $editable?: boolean;
+  $theme: ImageboxThemeConfig;
 }>`
   position: absolute;
   bottom: -4px;
@@ -371,10 +371,10 @@ const AddIconWrapper = styled.div<{
     css`
       display: none;
     `}
-`
+`;
 
 const HiddenInput = styled.input`
   display: none;
-`
+`;
 
-export { Imagebox }
+export { Imagebox };

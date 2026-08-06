@@ -1,61 +1,61 @@
-import { RiCalendar2Line } from "@remixicon/react"
+import { RiCalendar2Line } from "@remixicon/react";
 import {
   DrawerProps,
   SelectboxOption,
   Selectbox,
   SelectboxLabels,
   SelectboxStyles,
-} from "./selectbox"
+} from "./selectbox";
 import {
   Calendar,
   BaseCalendarProps,
   CalendarSelectabilityMode,
   CalendarStyles,
-} from "./calendar"
-import styled, { css, CSSProp } from "styled-components"
-import { forwardRef, ReactNode } from "react"
-import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane"
-import { StatefulForm } from "./stateful-form"
-import { useTheme } from "./../theme/provider"
-import { applyClassName } from "./../constants/classname"
-import { CalendarThemeConfig } from "theme"
-import { createPortal } from "react-dom"
+} from "./calendar";
+import styled, { css, CSSProp } from "styled-components";
+import { forwardRef, ReactNode } from "react";
+import { FieldLaneDropdownOption, FieldLaneProps } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
+import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
+import { CalendarThemeConfig } from "theme";
+import { createPortal } from "react-dom";
 
 type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
-  name?: string
-  label?: string
-  showError?: boolean
-  errorMessage?: string
-  disabled?: boolean
-  calendarFooter?: ReactNode
-  calendarTodayButtonCaption?: string
-  calendarSelectabilityMode?: CalendarSelectabilityMode
-  placeholder?: string
-  styles?: DateboxStyles
-  id?: string
-  isLoading?: boolean
-  mobile?: boolean
-  labels?: SelectboxLabels
-}
+  name?: string;
+  label?: string;
+  showError?: boolean;
+  errorMessage?: string;
+  disabled?: boolean;
+  calendarFooter?: ReactNode;
+  calendarTodayButtonCaption?: string;
+  calendarSelectabilityMode?: CalendarSelectabilityMode;
+  placeholder?: string;
+  styles?: DateboxStyles;
+  id?: string;
+  isLoading?: boolean;
+  mobile?: boolean;
+  labels?: SelectboxLabels;
+};
 
 export type DateboxStyles = SelectboxStyles & {
-  calendarDrawerStyle?: CSSProp
-}
+  calendarDrawerStyle?: CSSProp;
+};
 
 type CalendarDrawerProps = BaseCalendarProps &
   Partial<
     DrawerProps & {
-      selectedOptionsLocal?: SelectboxOption
-      mobile?: boolean
-      setSelectedOptionsLocal?: (option: SelectboxOption) => void
-      calendarFooter?: ReactNode
-      calendarTodayButtonCaption?: string
-      calendarSelectabilityMode?: CalendarSelectabilityMode
-      showError?: boolean
+      selectedOptionsLocal?: SelectboxOption;
+      mobile?: boolean;
+      setSelectedOptionsLocal?: (option: SelectboxOption) => void;
+      calendarFooter?: ReactNode;
+      calendarTodayButtonCaption?: string;
+      calendarSelectabilityMode?: CalendarSelectabilityMode;
+      showError?: boolean;
     }
-  >
+  >;
 
-export type DateboxDropdownOption = FieldLaneDropdownOption
+export type DateboxDropdownOption = FieldLaneDropdownOption;
 
 export interface DateboxProps
   extends BaseDateboxProps,
@@ -84,13 +84,13 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     labels,
     className,
     ...rest
-  } = props
+  } = props;
 
   const inputId = StatefulForm.sanitizeId({
     prefix: "datebox",
     name,
     id,
-  })
+  });
 
   const {
     bodyStyle,
@@ -103,7 +103,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     helperArrowStyle,
     helperDrawerStyle,
     helperIconStyle,
-  } = styles ?? {}
+  } = styles ?? {};
 
   return (
     <Selectbox
@@ -164,18 +164,18 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
             onChange={onChange}
             selectedDates={selectedDates}
           />
-        )
+        );
       }}
     </Selectbox>
-  )
-})
+  );
+});
 
 function CalendarDrawer(props: CalendarDrawerProps) {
-  const { mobile, styles, ...rest } = props ?? {}
-  const { currentTheme } = useTheme()
-  const calendarTheme = currentTheme?.calendar
+  const { mobile, styles, ...rest } = props ?? {};
+  const { currentTheme } = useTheme();
+  const calendarTheme = currentTheme?.calendar;
 
-  const { self, containerStyle } = styles ?? {}
+  const { self, containerStyle } = styles ?? {};
 
   const calendarStyle: CalendarStyles = {
     ...props.styles,
@@ -193,7 +193,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         justify-content: center;
       `}
     `,
-  }
+  };
 
   return createPortal(
     <CalendarWrapper
@@ -220,27 +220,27 @@ function CalendarDrawer(props: CalendarDrawerProps) {
         footer={props.calendarFooter}
         onChange={(data: string[]) => {
           if (props.onChange) {
-            props.onChange(data)
+            props.onChange(data);
           }
           props.setSelectedOptionsLocal({
             text: data[0],
             value: data[0],
-          })
+          });
         }}
         todayButtonCaption={props.calendarTodayButtonCaption}
         selectabilityMode={props.calendarSelectabilityMode}
         label={null}
       />
     </CalendarWrapper>,
-    document.body,
-  )
+    document.body
+  );
 }
 
 const CalendarWrapper = styled.ul<{
-  $style?: CSSProp
-  $theme?: CalendarThemeConfig
-  $mobile?: boolean
-  $showError?: boolean
+  $style?: CSSProp;
+  $theme?: CalendarThemeConfig;
+  $mobile?: boolean;
+  $showError?: boolean;
 }>`
   list-style: none;
   margin: 0;
@@ -280,6 +280,6 @@ const CalendarWrapper = styled.ul<{
   `};
 
   ${({ $style }) => $style}
-`
+`;
 
-export { Datebox }
+export { Datebox };

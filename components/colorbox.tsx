@@ -5,35 +5,35 @@ import {
   useCallback,
   useRef,
   useState,
-} from "react"
-import styled, { css, CSSProp } from "styled-components"
+} from "react";
+import styled, { css, CSSProp } from "styled-components";
 import {
   FieldLane,
   FieldLaneAction,
   FieldLaneDropdownOption,
   FieldLaneProps,
   FieldLaneStyles,
-} from "./field-lane"
-import { StatefulForm } from "./stateful-form"
-import { ColorboxThemeConfig } from "theme"
-import { useTheme } from "./../theme/provider"
-import { applyClassName } from "./../constants/classname"
+} from "./field-lane";
+import { StatefulForm } from "./stateful-form";
+import { ColorboxThemeConfig } from "theme";
+import { useTheme } from "./../theme/provider";
+import { applyClassName } from "./../constants/classname";
 
 interface BaseColorboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "style"> {
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void
-  value?: string
-  showError?: boolean
-  onClick?: () => void
-  styles?: BaseColorboxStyles
-  id?: string
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  showError?: boolean;
+  onClick?: () => void;
+  styles?: BaseColorboxStyles;
+  id?: string;
 }
 
 export interface BaseColorboxStyles {
-  textInputGroupStyle?: CSSProp
-  textInputStyle?: CSSProp
-  boxStyle?: CSSProp
-  self?: CSSProp
+  textInputGroupStyle?: CSSProp;
+  textInputStyle?: CSSProp;
+  boxStyle?: CSSProp;
+  self?: CSSProp;
 }
 
 const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
@@ -49,21 +49,21 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const { currentTheme } = useTheme()
-    const colorboxTheme = currentTheme?.colorbox
+    const { currentTheme } = useTheme();
+    const colorboxTheme = currentTheme?.colorbox;
 
-    const [hovered, setHovered] = useState(false)
+    const [hovered, setHovered] = useState(false);
 
-    const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleColorChange = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value
+        const newValue = e.target.value;
 
         if (debounceTimeout.current) {
-          clearTimeout(debounceTimeout.current)
+          clearTimeout(debounceTimeout.current);
         }
 
         debounceTimeout.current = setTimeout(() => {
@@ -73,12 +73,12 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
                 name: props.name,
                 value: newValue,
               },
-            } as ChangeEvent<HTMLInputElement>)
+            } as ChangeEvent<HTMLInputElement>);
           }
-        }, 2)
+        }, 2);
       },
-      [onChange, props.name],
-    )
+      [onChange, props.name]
+    );
 
     return (
       <ColorInputContainer
@@ -89,7 +89,7 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
         $hovered={hovered}
         $showError={!!showError}
         onBlur={() => {
-          setHovered(false)
+          setHovered(false);
         }}
       >
         <ColorBox
@@ -97,9 +97,9 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           $theme={colorboxTheme}
           $disabled={disabled}
           onClick={() => {
-            setHovered(true)
-            document.getElementById(id)?.click()
-            if (onClick) onClick()
+            setHovered(true);
+            document.getElementById(id)?.click();
+            if (onClick) onClick();
           }}
           tabIndex={0}
           $bgColor={value}
@@ -138,16 +138,16 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
             $style={styles?.textInputStyle}
             value={value?.replace(/^#/, "")}
             onChange={(e) => {
-              const cleanValue = e.target.value.replace(/#/g, "")
+              const cleanValue = e.target.value.replace(/#/g, "");
 
               const inputChangeEvent = {
                 target: {
                   name: props.name,
                   value: `#${cleanValue}`,
                 },
-              } as ChangeEvent<HTMLInputElement>
+              } as ChangeEvent<HTMLInputElement>;
               if (onChange) {
-                onChange(inputChangeEvent)
+                onChange(inputChangeEvent);
               }
             }}
             placeholder={placeholder}
@@ -159,20 +159,20 @@ const BaseColorbox = forwardRef<HTMLInputElement, BaseColorboxProps>(
           />
         </TextInputGroup>
       </ColorInputContainer>
-    )
-  },
-)
+    );
+  }
+);
 
-export type ColorboxDropdownOption = FieldLaneDropdownOption
+export type ColorboxDropdownOption = FieldLaneDropdownOption;
 
-export type ColorboxStyles = BaseColorboxStyles & FieldLaneStyles
+export type ColorboxStyles = BaseColorboxStyles & FieldLaneStyles;
 export interface ColorboxProps
   extends Omit<BaseColorboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type"> {
-  styles?: ColorboxStyles
+  styles?: ColorboxStyles;
 }
 
-export type ColorboxAction = FieldLaneAction
+export type ColorboxAction = FieldLaneAction;
 
 const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
   ({ ...props }, ref) => {
@@ -191,13 +191,13 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       labelPosition,
       className,
       ...rest
-    } = props
+    } = props;
 
     const inputId = StatefulForm.sanitizeId({
       prefix: "colorbox",
       name: props.name,
       id: props.id,
-    })
+    });
 
     const {
       self,
@@ -205,7 +205,7 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       textInputStyle,
       boxStyle,
       ...fieldLaneInput
-    } = styles ?? {}
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -246,16 +246,16 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
           ref={ref}
         />
       </FieldLane>
-    )
-  },
-)
+    );
+  }
+);
 
 const ColorInputContainer = styled.div<{
-  $hovered: boolean
-  $showError: boolean
-  $style?: CSSProp
-  $disabled?: boolean
-  $theme: ColorboxThemeConfig
+  $hovered: boolean;
+  $showError: boolean;
+  $style?: CSSProp;
+  $disabled?: boolean;
+  $theme: ColorboxThemeConfig;
 }>`
   position: relative;
   display: flex;
@@ -285,14 +285,14 @@ const ColorInputContainer = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`
+`;
 
 const ColorBox = styled.div<{
-  $bgColor?: string
-  $showError?: boolean
-  $disabled?: boolean
-  $theme: ColorboxThemeConfig
-  $style?: CSSProp
+  $bgColor?: string;
+  $showError?: boolean;
+  $disabled?: boolean;
+  $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   min-width: 24px;
   min-height: 24px;
@@ -317,7 +317,7 @@ const ColorBox = styled.div<{
     `};
 
   ${({ $style }) => $style}
-`
+`;
 
 const HiddenColorInput = styled.input`
   position: absolute;
@@ -326,14 +326,14 @@ const HiddenColorInput = styled.input`
   width: 1px;
   height: 1px;
   opacity: 0;
-`
+`;
 
 const TextInputGroup = styled.span<{
-  $hovered: boolean
-  $showError: boolean
-  $disabled?: boolean
-  $theme: ColorboxThemeConfig
-  $style?: CSSProp
+  $hovered: boolean;
+  $showError: boolean;
+  $disabled?: boolean;
+  $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   display: flex;
   align-items: center;
@@ -357,21 +357,21 @@ const TextInputGroup = styled.span<{
   width: 100%;
 
   ${({ $style }) => $style}
-`
+`;
 
 const Prefix = styled.span<{
-  $showError: boolean
-  $theme: ColorboxThemeConfig
+  $showError: boolean;
+  $theme: ColorboxThemeConfig;
 }>`
   color: ${({ $theme, $showError }) =>
     $showError ? $theme.errorTextColor : $theme.prefixColor};
-`
+`;
 
 const TextInput = styled.input<{
-  $showError: boolean
-  $disabled?: boolean
-  $theme: ColorboxThemeConfig
-  $style?: CSSProp
+  $showError: boolean;
+  $disabled?: boolean;
+  $theme: ColorboxThemeConfig;
+  $style?: CSSProp;
 }>`
   flex: 1;
   width: 100%;
@@ -396,6 +396,6 @@ const TextInput = styled.input<{
         : $theme.textColor};
 
   ${({ $style }) => $style}
-`
+`;
 
-export { Colorbox }
+export { Colorbox };
