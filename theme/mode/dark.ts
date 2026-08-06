@@ -707,7 +707,7 @@ const darkStatefulForm = createStatefulFormTheme(darkBody, {
     textColor: darkBody.textColor,
     mutedTextColor: "#838891",
 
-    panelBackground: "rgb(26, 26, 26)",
+    panelBackground: "rgb(30, 30, 30)",
     panelBorder: "rgb(39, 39, 48)",
     dividerColor: "rgb(39, 39, 48)",
 
