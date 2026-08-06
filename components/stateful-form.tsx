@@ -238,6 +238,12 @@ function StatefulForm<Z extends ZodTypeAny>({
   const formConfig: UseFormProps<TypeOf<Z>> = {
     mode,
     values: formValues,
+    // Prevent RHF from resetting errors/touched on every formValues change
+    resetOptions: {
+      keepErrors: true,
+      keepTouched: true,
+      keepDirtyValues: true,
+    },
   }
 
   if (validationSchema) {
@@ -370,7 +376,7 @@ function StatefulForm<Z extends ZodTypeAny>({
     }
 
     if (typeof value === "string") {
-      return value.length > 0 && !!touched && hasErrorMessage(error)
+      return value.length > 1 && !!touched && hasErrorMessage(error)
     }
 
     if (typeof value === "number" || typeof value === "boolean") {
