@@ -447,7 +447,7 @@ describe("StatefulForm", () => {
         it("does not show the error", () => {
           cy.mount(<StatefulFormWithAsync state="empty" />)
 
-          cy.findByPlaceholderText("Enter first name").type("Te")
+          cy.findByPlaceholderText("Enter first name").type("T")
 
           cy.findByText("First name must be at least 3 characters long").should(
             "not.exist",
@@ -462,7 +462,7 @@ describe("StatefulForm", () => {
             "not.exist",
           )
 
-          cy.findByPlaceholderText("Enter first name").type("Te")
+          cy.findByPlaceholderText("Enter first name").type("T")
           cy.get("body").click("topRight")
 
           cy.findByText("First name must be at least 3 characters long").should(
