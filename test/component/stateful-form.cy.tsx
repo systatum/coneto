@@ -582,119 +582,119 @@ describe("StatefulForm", () => {
     });
   });
 
-  context("mobile", () => {
-    context("styles", () => {
-      const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
-        Array.isArray(group)
-          ? group.map((item) => ({
-              ...item,
-              helper: (
-                <span aria-label="helper-with-react-node">
-                  {FIELD_HELPERS[item.type]}
-                </span>
-              ),
-            }))
-          : {
-              ...group,
-              helper: (
-                <span aria-label="helper-with-react-node">
-                  {FIELD_HELPERS[group.type]}
-                </span>
-              ),
-            }
-      );
+  context("styles", () => {
+    const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            helper: (
+              <span aria-label="helper-with-react-node">
+                {FIELD_HELPERS[item.type]}
+              </span>
+            ),
+          }))
+        : {
+            ...group,
+            helper: (
+              <span aria-label="helper-with-react-node">
+                {FIELD_HELPERS[group.type]}
+              </span>
+            ),
+          }
+    );
 
-      const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
-      context("helperArrowStyle", () => {
-        context("when given green background", () => {
-          it("renders with background with rgb(0, 255, 0)", () => {
-            cy.mount(
-              <StatefulForm
-                styles={{
-                  helperArrowStyle: css`
-                    background-color: rgb(0, 255, 0);
-                  `,
-                }}
-                fields={INPUT_WITH_HELPER}
-                formValues={allValue}
-                mode="onChange"
-              />
-            );
+    const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
+    context("helperArrowStyle", () => {
+      context("when given green background", () => {
+        it("renders with background with rgb(0, 255, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperArrowStyle: css`
+                  background-color: rgb(0, 255, 0);
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
 
-            cy.findAllByLabelText("tooltip-trigger")
-              .should("have.length", FLAT_INPUT.length)
-              .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover");
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
 
-                cy.findAllByLabelText("tooltip-arrow")
-                  .eq(index)
-                  .should("have.css", "background-color", "rgb(0, 255, 0)");
-              });
-          });
+              cy.findAllByLabelText("tooltip-arrow")
+                .eq(index)
+                .should("have.css", "background-color", "rgb(0, 255, 0)");
+            });
         });
       });
+    });
 
-      context("helperIconStyle", () => {
-        context("when given red color", () => {
-          it("renders the svg with rgb(255, 0, 0)", () => {
-            cy.mount(
-              <StatefulForm
-                styles={{
-                  helperIconStyle: css`
-                    svg {
-                      fill: red;
-                    }
-                  `,
-                }}
-                fields={INPUT_WITH_HELPER}
-                formValues={allValue}
-                mode="onChange"
-              />
-            );
+    context("helperIconStyle", () => {
+      context("when given red color", () => {
+        it("renders the svg with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperIconStyle: css`
+                  svg {
+                    fill: red;
+                  }
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
 
-            cy.findAllByLabelText("tooltip-trigger")
-              .should("have.length", FLAT_INPUT.length)
-              .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover");
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
 
-                cy.findAllByLabelText("tooltip-trigger")
-                  .eq(index)
-                  .find("svg")
-                  .should("have.css", "fill", "rgb(255, 0, 0)");
-              });
-          });
+              cy.findAllByLabelText("tooltip-trigger")
+                .eq(index)
+                .find("svg")
+                .should("have.css", "fill", "rgb(255, 0, 0)");
+            });
         });
       });
+    });
 
-      context("helperDrawerStyle", () => {
-        context("when given background yellow", () => {
-          it("renders the background color with rgb(255, 255, 0)", () => {
-            cy.mount(
-              <StatefulForm
-                styles={{
-                  helperDrawerStyle: css`
-                    background-color: yellow;
-                  `,
-                }}
-                fields={INPUT_WITH_HELPER}
-                formValues={allValue}
-                mode="onChange"
-              />
-            );
+    context("helperDrawerStyle", () => {
+      context("when given background yellow", () => {
+        it("renders the background color with rgb(255, 255, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperDrawerStyle: css`
+                  background-color: yellow;
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
 
-            cy.findAllByLabelText("tooltip-trigger")
-              .should("have.length", FLAT_INPUT.length)
-              .each(($el, index) => {
-                cy.wrap($el).trigger("mouseover");
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
 
-                cy.findAllByLabelText("tooltip-drawer")
-                  .eq(index)
-                  .should("have.css", "background-color", "rgb(255, 255, 0)");
-              });
-          });
+              cy.findAllByLabelText("tooltip-drawer")
+                .eq(index)
+                .should("have.css", "background-color", "rgb(255, 255, 0)");
+            });
         });
       });
+    });
 
+    context("mobile", () => {
       context("mobileFieldGroupStyle", () => {
         context("when given padding 30px", () => {
           it("should render the padding in all side with 30px", () => {
@@ -747,6 +747,9 @@ describe("StatefulForm", () => {
         });
       });
     });
+  });
+
+  context("mobile", () => {
     it("renders with background rgb(236, 236, 236)", () => {
       cy.mount(
         <StatefulForm

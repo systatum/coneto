@@ -3149,7 +3149,6 @@ function StatefulFormLabel({
             arrowStyle: css`
               background-color: ${statefulFormTheme?.fieldTooltip
                 ?.panelBackground};
-              display: none;
 
               ${styles?.helperArrowStyle};
             `,
