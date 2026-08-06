@@ -442,9 +442,9 @@ describe("StatefulForm", () => {
       )
     }
 
-    context("when typing", () => {
-      context("when invalid, but still focus", () => {
-        it("still renders without error", () => {
+    context("when typing with invalid value", () => {
+      context("while focused", () => {
+        it("does not show the error", () => {
           cy.mount(<StatefulFormWithAsync state="empty" />)
 
           cy.findByPlaceholderText("Enter first name").type("Te")
@@ -455,8 +455,8 @@ describe("StatefulForm", () => {
         })
       })
 
-      context("when invalid, but unfocused", () => {
-        it("renders with error", () => {
+      context("after blur", () => {
+        it("shows the error", () => {
           cy.mount(<StatefulFormWithAsync state="empty" />)
           cy.findByText("First name must be at least 3 characters long").should(
             "not.exist",
@@ -468,6 +468,41 @@ describe("StatefulForm", () => {
           cy.findByText("First name must be at least 3 characters long").should(
             "be.visible",
           )
+        })
+
+        context("when typing in another field", () => {
+          it("keeps the previous error", () => {
+            cy.mount(<StatefulFormWithAsync state="empty" />)
+            cy.findByText(
+              "First name must be at least 3 characters long",
+            ).should("not.exist")
+
+            cy.findByPlaceholderText("Enter first name").type("Te")
+            cy.get("body").click("topRight")
+
+            cy.findByText(
+              "First name must be at least 3 characters long",
+            ).should("be.visible")
+
+            cy.findByPlaceholderText("Enter email address").type("iamalim@test")
+
+            // still shows if in focus
+
+            cy.findByText(
+              "First name must be at least 3 characters long",
+            ).should("be.visible")
+
+            cy.get("body").click("topRight")
+
+            // still shows after unfocused
+
+            cy.findByText(
+              "First name must be at least 3 characters long",
+            ).should("be.visible")
+            cy.findByText("Please enter a valid email address").should(
+              "be.visible",
+            )
+          })
         })
       })
     })

@@ -242,7 +242,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     resetOptions: {
       keepErrors: true,
       keepTouched: true,
-      keepDirtyValues: true,
     },
   }
 
