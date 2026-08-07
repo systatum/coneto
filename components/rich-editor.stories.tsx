@@ -554,6 +554,9 @@ export default Content
           autogrow
           onChange={(e) => setValue(e)}
           value={value}
+          formatting={{
+            allowCheckBoxes: true,
+          }}
           toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         />
         <div
@@ -999,6 +1002,9 @@ export default Content
           mode="view-only"
           onChange={(e) => setValue(e)}
           value={value}
+          formatting={{
+            allowCheckBoxes: true,
+          }}
         />
         {value !== "" && (
           <pre
