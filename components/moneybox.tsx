@@ -435,6 +435,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       containerStyle,
       controlStyle,
       labelStyle,
+      helperIconStyle,
+      helperDrawerStyle,
+      helperArrowStyle,
       ...moneyboxStyle
     } = styles ?? {};
 
@@ -465,6 +468,9 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseMoneybox

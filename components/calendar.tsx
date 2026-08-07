@@ -1012,6 +1012,9 @@ function Calendar({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...baseCalendartyles
   } = styles ?? {};
 
@@ -1031,6 +1034,9 @@ function Calendar({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCalendar {...rest} id={inputId} styles={baseCalendartyles} />

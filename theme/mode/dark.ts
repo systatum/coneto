@@ -702,6 +702,18 @@ const darkStatusbar = createStatusbarTheme({
 const darkStatefulForm = createStatefulFormTheme(darkBody, {
   rowFrameBackgroundColor: "rgb(48, 48, 48)",
   mobileRowFrameBackgroundColor: "rgb(4, 4, 4)",
+
+  fieldTooltip: {
+    textColor: darkBody.textColor,
+    mutedTextColor: "#838891",
+
+    panelBackground: "rgb(30, 30, 30)",
+    panelBorder: "rgb(39, 39, 48)",
+    dividerColor: "rgb(39, 39, 48)",
+
+    scrollbarThumbColor: "rgba(255, 255, 255, 0.2)",
+    scrollbarTrackColor: "rgba(255, 255, 255, 0.1)",
+  },
 });
 
 const darkTimeline = createTimelineTheme(darkBody, darkButton, {

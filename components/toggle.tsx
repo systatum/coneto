@@ -173,6 +173,9 @@ function Toggle({
     controlStyle,
     containerStyle,
     titleStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...toggleStyles
   } = styles ?? {};
 
@@ -199,6 +202,9 @@ function Toggle({
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseToggle

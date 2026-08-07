@@ -93,6 +93,7 @@ export function createBodyTheme(
       backgroundColor: "#ffffff",
       textColor: "#000000",
       borderColor: "#d1d5db",
+      mutedTextColor: "#6b7280",
     },
     ...themeConfigurations
   );
@@ -1542,10 +1543,20 @@ export function createStatefulFormTheme(
 ): StatefulFormThemeConfig {
   return mergeTheme<StatefulFormThemeConfig>(
     {
+      ...body,
       backgroundColor: body.backgroundColor,
       textColor: body.textColor,
       rowFrameBackgroundColor: "#f3f4f6",
       mobileRowFrameBackgroundColor: "rgb(236, 236, 236)",
+      fieldTooltip: {
+        textColor: body?.textColor,
+        mutedTextColor: body?.mutedTextColor,
+        panelBackground: "rgb(238, 238, 238)",
+        panelBorder: "#e5e7eb",
+        dividerColor: "#e5e7eb",
+        scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
+        scrollbarTrackColor: "rgba(168, 167, 167, 0.1)",
+      },
     },
     ...themeConfigurations
   );

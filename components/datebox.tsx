@@ -32,7 +32,6 @@ type BaseDateboxProps = Omit<BaseCalendarProps, "selectabilityMode"> & {
   calendarSelectabilityMode?: CalendarSelectabilityMode;
   placeholder?: string;
   styles?: DateboxStyles;
-  helper?: string;
   id?: string;
   isLoading?: boolean;
   mobile?: boolean;
@@ -101,6 +100,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     containerStyle,
     self,
     calendarDrawerStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
   } = styles ?? {};
 
   return (
@@ -126,6 +128,9 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
         bodyStyle,
         labelStyle,
         containerStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
         self: css`
           ${dropdowns &&
           css`

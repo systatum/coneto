@@ -10,7 +10,7 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
-import { StatefulForm } from "./stateful-form";
+import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form";
 import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
@@ -41,7 +41,7 @@ export interface FileDropBoxProps {
   onFileDropped?: (props: OnFileDroppedFunctionArgs) => void;
   onComplete?: (props: OnCompleteFunctionArgs) => void;
   progressPercentage?: number;
-  helper?: string;
+  helper?: ReactNode;
   children?: ReactNode;
   styles?: FileDropBoxStyles;
   name?: string;
@@ -54,7 +54,7 @@ export interface FileDropBoxProps {
   className?: string;
 }
 
-export interface FileDropBoxStyles {
+export interface FileDropBoxStyles extends StatefulFormLabelStyles {
   containerStyle?: CSSProp;
   dragOverStyle?: CSSProp;
   successStyle?: CSSProp;
@@ -322,6 +322,9 @@ function FileDropBox({
 
               ${styles?.labelStyle};
             `,
+            helperArrowStyle: styles?.helperArrowStyle,
+            helperIconStyle: styles?.helperIconStyle,
+            helperDrawerStyle: styles?.helperDrawerStyle,
           }}
           helper={helper}
           label={label}

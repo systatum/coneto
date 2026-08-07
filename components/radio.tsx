@@ -27,7 +27,6 @@ interface BaseRadioProps
   showError?: boolean;
   errorMessage?: string;
   mode?: RadioMode;
-  helper?: string;
   icon?: FigureProps;
 }
 
@@ -171,6 +170,9 @@ function Radio({
     controlStyle,
     containerStyle,
     titleStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
     ...baseRadiotyles
   } = styles ?? {};
 
@@ -195,6 +197,9 @@ function Radio({
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseRadio
