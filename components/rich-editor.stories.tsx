@@ -337,7 +337,7 @@ export const Default: Story = {
     const { currentTheme } = useTheme();
     const richEditorTheme = currentTheme?.richEditor;
 
-    const [value, setValue] = useState("[ ] test");
+    const [value, setValue] = useState("");
     const [printValue, setPrintValue] = useState("");
 
     const ref = useRef<RichEditorRef>(null);
