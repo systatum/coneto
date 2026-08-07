@@ -1648,7 +1648,7 @@ function FormFields<T extends FieldValues>({
                         className={field?.className}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
-                        icon={field.icon}
+                        labelIcon={field.icon}
                         labelPosition={field.labelPosition}
                         helper={field.helper}
                         name={field.name}

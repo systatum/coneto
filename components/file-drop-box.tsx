@@ -52,7 +52,7 @@ export interface FileDropBoxProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
-  icon?: FigureProps;
+  labelIcon?: FigureProps;
 }
 
 export interface FileDropBoxStyles {
@@ -85,7 +85,7 @@ function FileDropBox({
   required,
   disabled,
   className,
-  icon,
+  labelIcon,
 }: FileDropBoxProps) {
   const { currentTheme } = useTheme();
   const fileDropBoxTheme = currentTheme.fileDropBox;
@@ -191,20 +191,20 @@ function FileDropBox({
     });
   };
 
-  const fileDropBoxIcon = (
+  const fileDropBoxLabelIcon = (
     <Figure
-      aria-label="file-dropbox-icon"
+      aria-label="file-dropbox-label-icon"
       styles={{
-        ...icon?.styles,
+        ...labelIcon?.styles,
         self: css`
           display: flex;
           flex-direction: column;
           height: 100%;
           align-self: center;
-          ${icon?.styles?.self};
+          ${labelIcon?.styles?.self};
         `,
       }}
-      {...icon}
+      {...labelIcon}
     />
   );
 
@@ -345,7 +345,7 @@ function FileDropBox({
           helper={helper}
           label={label}
         >
-          {fileDropBoxIcon}
+          {fileDropBoxLabelIcon}
         </StatefulForm.Label>
       )}
       {inputElement}
