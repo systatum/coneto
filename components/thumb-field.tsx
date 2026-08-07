@@ -179,8 +179,7 @@ function BaseThumbField({
 export type ThumbFieldStyles = BaseThumbFieldStyles & FieldLaneStyles;
 
 export interface ThumbFieldProps
-  extends
-    Omit<BaseThumbFieldProps, "styles">,
+  extends Omit<BaseThumbFieldProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: ThumbFieldStyles;
 }
@@ -198,6 +197,8 @@ function ThumbField({
   labelWidth,
   labelPosition,
   className,
+  mobile,
+  icon,
   ...rest
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -218,6 +219,8 @@ function ThumbField({
     <FieldLane
       id={inputId}
       labelGap={labelGap}
+      icon={icon}
+      mobile={mobile}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
       showError={showError}
