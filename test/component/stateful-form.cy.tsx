@@ -323,6 +323,61 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
+  context("icon (labelIcon)", () => {
+    const FIELDS_WITH_ICON = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            icon: {
+              image: RiDeleteBin2Fill,
+            },
+          }))
+        : {
+            ...group,
+            icon: {
+              image: RiDeleteBin2Fill,
+            },
+          }
+    );
+    const fields = FIELDS_WITH_ICON.flat();
+
+    context("desktop", () => {
+      it("renders inside of StatefulForm label", () => {
+        cy.mount(<StatefulForm fields={FIELDS_WITH_ICON} formValues={{}} />);
+
+        fields.flatMap((field, index) => {
+          if (field.type !== "file_drop_box") {
+            cy.findAllByLabelText("stateful-form-label-wrapper")
+              .eq(index)
+              .find("#field-lane-icon")
+              .should("exist");
+          } else {
+            cy.findByLabelText("file-dropbox-label-icon").should("exist");
+          }
+        });
+      });
+    });
+
+    context("mobile", () => {
+      it("renders inside of body", () => {
+        cy.mount(
+          <StatefulForm fields={FIELDS_WITH_ICON} formValues={{}} mobile />
+        );
+
+        const mobileFields = FIELDS_WITH_ICON.flat().filter(
+          (field) => field.type !== "file_drop_box" && field.type !== "file"
+        );
+
+        mobileFields.forEach((_, index) => {
+          cy.findAllByLabelText("field-lane-wrapper")
+            .eq(index)
+            .find("#field-lane-icon")
+            .should("exist");
+        });
+      });
+    });
+  });
+
   context("mobile", () => {
     context("styles", () => {
       context("mobileFieldGroupStyle", () => {
@@ -394,7 +449,7 @@ describe("StatefulForm", () => {
       );
     });
 
-    it("renders row with radius 24px and padding 10px 20px", () => {
+    it("renders row with radius 15px and padding 10px 20px", () => {
       cy.mount(
         <StatefulForm
           fields={ALL_INPUT}
@@ -405,7 +460,7 @@ describe("StatefulForm", () => {
       );
 
       cy.findAllByLabelText("stateful-form-field-group")
-        .should("have.css", "border-radius", "12px")
+        .should("have.css", "border-radius", "15px")
         .and("have.css", "padding", "10px 20px");
     });
 
