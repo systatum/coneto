@@ -675,7 +675,7 @@ function FormFields<T extends FieldValues>({
                         className={field?.className}
                         type={field.type}
                         mobile={mobile}
-                        icon={field?.icon}
+                        labelIcon={field?.icon}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
                         labelPosition={labelPosition}
@@ -767,7 +767,7 @@ function FormFields<T extends FieldValues>({
                             labelWidth={field.labelWidth}
                             required={required}
                             label={field.title}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             mobile={mobile}
                             showIconError={mobile ? false : true}
                             value={controllerField.value ?? ""}
@@ -942,7 +942,7 @@ function FormFields<T extends FieldValues>({
                         label={field.title}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
-                        icon={field?.icon}
+                        labelIcon={field?.icon}
                         labelPosition={labelPosition}
                         value={formValues[field.name as keyof T] ?? ""}
                         required={required}
@@ -1087,7 +1087,7 @@ function FormFields<T extends FieldValues>({
                         id={field.id}
                         label={label}
                         rows={field.rows}
-                        icon={field?.icon}
+                        labelIcon={field?.icon}
                         mobile={mobile}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
@@ -1179,7 +1179,7 @@ function FormFields<T extends FieldValues>({
                             <Checkbox
                               id={field.id}
                               title={titleCheckbox}
-                              icon={field?.icon}
+                              labelIcon={field?.icon}
                               mobile={mobile}
                               label={placeholderCheckbox}
                               labelGap={field.labelGap}
@@ -1314,7 +1314,7 @@ function FormFields<T extends FieldValues>({
                               labelPosition={labelPosition}
                               className={field?.className}
                               name={field.name}
-                              icon={field?.icon}
+                              labelIcon={field?.icon}
                               mobile={mobile}
                               title={titleRadio}
                               label={placeholderRadio}
@@ -1413,7 +1413,7 @@ function FormFields<T extends FieldValues>({
                             name={field.name}
                             label={label}
                             mobile={mobile}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
@@ -1529,7 +1529,7 @@ function FormFields<T extends FieldValues>({
                             label={field.title}
                             placeholder={field.placeholder}
                             required={required}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             mobile={mobile}
                             className={field?.className}
                             helper={field.helper}
@@ -1648,6 +1648,7 @@ function FormFields<T extends FieldValues>({
                         className={field?.className}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
+                        icon={field.icon}
                         labelPosition={field.labelPosition}
                         helper={field.helper}
                         name={field.name}
@@ -1699,11 +1700,11 @@ function FormFields<T extends FieldValues>({
                       <FileInputBox
                         key={index}
                         id={field.id}
-                        mobile={mobile}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
+                        labelIcon={field.icon}
                         labelPosition={field.labelPosition}
-                        className={field?.className}
+                        className={field.className}
                         label={field.title}
                         placeholder={field.placeholder}
                         required={required}
@@ -1789,7 +1790,7 @@ function FormFields<T extends FieldValues>({
                         labelPosition={labelPosition}
                         className={field?.className}
                         name={field.name}
-                        icon={field?.icon}
+                        labelIcon={field?.icon}
                         helper={field.helper}
                         mobile={mobile}
                         value={formValues[field.name as keyof T] ?? ""}
@@ -1885,7 +1886,7 @@ function FormFields<T extends FieldValues>({
                         label={field.title}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
-                        icon={field?.icon}
+                        labelIcon={field?.icon}
                         mobile={mobile}
                         labelPosition={labelPosition}
                         className={field?.className}
@@ -1957,7 +1958,7 @@ function FormFields<T extends FieldValues>({
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             className={field?.className}
                             ref={(el) => {
                               if (el) refs.current[field.name] = el;
@@ -2061,7 +2062,7 @@ function FormFields<T extends FieldValues>({
                               id={field.id}
                               name={field.name}
                               label={field.title}
-                              icon={field?.icon}
+                              labelIcon={field?.icon}
                               placeholder={field.placeholder}
                               helper={field.helper}
                               required={required}
@@ -2163,7 +2164,7 @@ function FormFields<T extends FieldValues>({
                             id={field.id}
                             name={field.name}
                             mobile={mobile}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
@@ -2275,7 +2276,7 @@ function FormFields<T extends FieldValues>({
                             helper={field.helper}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             labelPosition={labelPosition}
                             className={field?.className}
                             required={required}
@@ -2382,7 +2383,7 @@ function FormFields<T extends FieldValues>({
                               labelGap={field.labelGap}
                               labelWidth={field.labelWidth}
                               size={size}
-                              icon={field?.icon}
+                              labelIcon={field?.icon}
                               mobile={mobile}
                               labelPosition={labelPosition}
                               className={field?.className}
@@ -2462,7 +2463,7 @@ function FormFields<T extends FieldValues>({
                           <ThumbField
                             id={field.id}
                             label={field.title}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             mobile={mobile}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
@@ -2572,7 +2573,7 @@ function FormFields<T extends FieldValues>({
                         render={({ field: controllerField }) => (
                           <Toggle
                             id={field.id}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             mobile={mobile}
                             name={controllerField.name}
                             labelGap={field.labelGap}
@@ -2668,7 +2669,7 @@ function FormFields<T extends FieldValues>({
                             name={field.name}
                             label={field.title}
                             labelGap={field.labelGap}
-                            icon={field?.icon}
+                            labelIcon={field?.icon}
                             labelWidth={field.labelWidth}
                             labelPosition={labelPosition}
                             className={field?.className}
@@ -2807,6 +2808,7 @@ function StatefulFormLabel({
   disabled,
   className,
   id,
+  children,
   ...props
 }: StatefulFormLabelProps) {
   return (
@@ -2828,6 +2830,7 @@ function StatefulFormLabel({
       </LabelText>
 
       {helper && <Helper value={helper} />}
+      {children}
     </Label>
   );
 }
