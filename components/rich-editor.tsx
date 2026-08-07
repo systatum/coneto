@@ -2110,6 +2110,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
                 const cleanedHTML = cleanupHtml(html);
 
+                console.log(`html:{html:${html}, cleanup: ${cleanedHTML}}`);
+
                 const markdown = turndownService.turndown(cleanedHTML);
                 const cleanedMarkdown = cleanSpacing(markdown);
                 if (onChange) {
@@ -2657,7 +2659,7 @@ const cleanupHtml = (html: string): string => {
   Array.from(container.querySelectorAll("p")).forEach((p) => {
     if (
       p.querySelector(
-        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, u, input, strong, [data-token-start]"
+        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, u, em, input, strong, [data-token-start]"
       )
     )
       return;
