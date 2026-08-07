@@ -20,6 +20,36 @@ import { FormFieldGroup, StatefulForm } from "./stateful-form";
 import { BodyThemeConfig, ThemeMode } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { darkenColor, lightenColor } from "./../lib/color";
+import {
+  RiArrowRightSLine,
+  RiImage2Fill,
+  RiLogoutBoxRLine,
+  RiQuestionLine,
+  RiText,
+  RiMailLine,
+  RiHashtag,
+  RiLockPasswordLine,
+  RiTimeLine,
+  RiFileTextLine,
+  RiPinDistanceLine,
+  RiCheckboxLine,
+  RiRadioButtonLine,
+  RiPaletteLine,
+  RiArrowDownSLine,
+  RiCalendarLine,
+  RiFolderUploadLine,
+  RiUpload2Line,
+  RiImage2Line,
+  RiMoneyDollarCircleLine,
+  RiPhoneLine,
+  RiQuillPenLine,
+  RiStarLine,
+  RiThumbUpLine,
+  RiToggleLine,
+  RiPriceTag3Line,
+  RiCoinsLine,
+  RiInformationLine,
+} from "@remixicon/react";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -885,6 +915,8 @@ const ScrollBox = styled.div`
 
 export const Mobile: Story = {
   render: () => {
+    const { currentTheme, mode } = useTheme();
+
     const [isFormValid, setIsFormValid] = useState(false);
     const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
       (data) => data.id === "US" || COUNTRY_CODES[206]
@@ -1202,6 +1234,37 @@ export const Mobile: Story = {
       { text: "DEC", value: "12" },
     ];
 
+    const defaultBackgroundColor = css`
+      background-color: ${mode === "dark"
+        ? "rgb(43, 44, 46)"
+        : "rgb(236, 236, 236)"};
+    `;
+
+    const buttonLabelStyle = css`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    `;
+
+    const buttonSelfStyle = css`
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      padding-right: 28px;
+      ${defaultBackgroundColor}
+    `;
+
+    const dangerButtonSelfStyle = css`
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      padding-right: 28px;
+    `;
+
+    const buttonStyles = {
+      self: buttonSelfStyle,
+      labelStyle: buttonLabelStyle,
+    };
+
     const FIELDS: FormFieldGroup[] = [
       [
         {
@@ -1404,48 +1467,120 @@ export const Mobile: Story = {
           },
         },
       ],
+      {
+        name: "render",
+        type: "custom",
+        render: (
+          <InfoContainer>
+            <RiInformationLine size={18} />
+            <Caption>The following examples demonstrate custom icons.</Caption>
+          </InfoContainer>
+        ),
+        rowStyle: css`
+          background-color: transparent;
+        `,
+      },
+      [
+        {
+          name: "help-center",
+          type: "button",
+          icon: {
+            image: RiArrowRightSLine,
+            size: 18,
+          },
+          button: {
+            children: (
+              <>
+                <RiQuestionLine size={16} />
+                Help Center
+              </>
+            ),
+            styles: buttonStyles,
+          },
+          rowStyle: css`
+            flex-direction: column;
+          `,
+        },
+        {
+          name: "logout",
+          type: "button",
+          icon: {
+            image: RiArrowRightSLine,
+            size: 18,
+          },
+          button: {
+            children: (
+              <>
+                <RiLogoutBoxRLine size={16} />
+                Logout
+              </>
+            ),
+            variant: "danger",
+            styles: {
+              self: dangerButtonSelfStyle,
+              labelStyle: buttonLabelStyle,
+            },
+          },
+          onClick: async () => {},
+        },
+      ],
     ];
 
     return (
-      <StatefulForm
-        mobile
-        styles={{
-          containerStyle: css`
-            margin-left: auto;
-            margin-right: auto;
-            display: flex;
-            width: 100%;
-            padding: 1rem;
-            max-width: 500px;
-          `,
-        }}
-        onChange={({ currentState }) => {
-          const [[key, value]] = Object.entries(currentState);
+      <>
+        <StatefulForm
+          mobile
+          styles={{
+            containerStyle: css`
+              margin-left: auto;
+              margin-right: auto;
+              display: flex;
+              width: 100%;
+              padding: 1rem;
+              max-width: 500px;
+            `,
+          }}
+          onChange={({ currentState }) => {
+            const [[key, value]] = Object.entries(currentState);
 
-          setValue((prev) => ({
-            ...prev,
-            ...(key === "chips"
-              ? {
-                  chips: {
-                    ...prev.chips,
-                    [Array.isArray(value) ? "selectedOptions" : "searchText"]:
-                      value,
-                  },
-                }
-              : currentState),
-          }));
-        }}
-        onValidityChange={setIsFormValid}
-        labelSize="14px"
-        fieldSize="14px"
-        fields={FIELDS}
-        formValues={value}
-        validationSchema={schema}
-        mode="onChange"
-      />
+            setValue((prev) => ({
+              ...prev,
+              ...(key === "chips"
+                ? {
+                    chips: {
+                      ...prev.chips,
+                      [Array.isArray(value) ? "selectedOptions" : "searchText"]:
+                        value,
+                    },
+                  }
+                : currentState),
+            }));
+          }}
+          onValidityChange={setIsFormValid}
+          labelSize="14px"
+          fieldSize="14px"
+          fields={FIELDS}
+          formValues={value}
+          validationSchema={schema}
+          mode="onChange"
+        />
+      </>
     );
   },
 };
+
+const InfoContainer = styled.div<{ $theme?: BodyThemeConfig }>`
+  background-color: ${({ $theme }) => $theme?.backgroundColor};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const Caption = styled.div<{ $theme?: BodyThemeConfig }>`
+  color: ${({ $theme }) => $theme?.textColor};
+  font-size: 14px;
+  line-height: 1.5;
+`;
 
 export const AllCase: Story = {
   render: () => {
