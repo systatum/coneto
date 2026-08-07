@@ -40,6 +40,7 @@ export interface RichEditorFormattingOptions {
   allowOrderedList?: boolean;
   allowUnorderedList?: boolean;
   allowCheckBoxes?: boolean;
+  allowHeading?: boolean;
 }
 
 const DEFAULT_FORMATTING_OPTIONS: Required<RichEditorFormattingOptions> = {
@@ -49,6 +50,7 @@ const DEFAULT_FORMATTING_OPTIONS: Required<RichEditorFormattingOptions> = {
   allowOrderedList: true,
   allowUnorderedList: true,
   allowCheckBoxes: false,
+  allowHeading: true,
 };
 
 export interface RichEditorProps {
@@ -230,6 +232,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       allowOrderedList,
       allowUnorderedList,
       allowCheckBoxes,
+      allowHeading,
     } = useMemo(
       () => ({ ...DEFAULT_FORMATTING_OPTIONS, ...formatting }),
       [
@@ -239,6 +242,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         formatting?.allowOrderedList,
         formatting?.allowUnorderedList,
         formatting?.allowCheckBoxes,
+        formatting?.allowHeading,
       ]
     );
 
@@ -428,16 +432,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
-    turndownService.addRule("underline", {
-      filter: ["u"],
-      replacement: (content, node) => {
-        console.log("Underline node:", node);
-        console.log("Underline content:", content);
-
-        return `~${content}~`;
-      },
-    });
-
     // When bold/italic are disallowed, strip the tags on the way back to
     // markdown instead of emitting ** / _ markers, so re-parsing never
     // reintroduces formatting the editor isn't supposed to support.
@@ -455,10 +449,25 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       });
     }
 
+    if (!allowHeading) {
+      turndownService.addRule("disallowedHeading", {
+        filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+        replacement: (content) => content,
+      });
+    }
+
+    // Underline is not part of the Markdown specification.
+    // This custom rule preserves or serializes <u> elements because
+    // Turndown does not support underline out of the box.
     if (!allowUnderline) {
       turndownService.addRule("disallowedUnderline", {
         filter: ["u"],
         replacement: (content) => content,
+      });
+    } else {
+      turndownService.addRule("italic", {
+        filter: ["u"],
+        replacement: (content) => `~${content}~`,
       });
     }
 
@@ -572,7 +581,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            return `<h${token.depth}>${token.text}</h${token.depth}>`;
+            return allowHeading
+              ? `<h${token.depth}>${token.text}</h${token.depth}>`
+              : token.text;
           },
         },
         {
@@ -2109,8 +2120,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                 const html =
                   editorRef.current?.innerHTML.replace(/\u00A0/g, "") || "";
                 const cleanedHTML = cleanupHtml(html);
-
-                console.log(`html:{html:${html}, cleanup: ${cleanedHTML}}`);
 
                 const markdown = turndownService.turndown(cleanedHTML);
                 const cleanedMarkdown = cleanSpacing(markdown);
