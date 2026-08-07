@@ -22,10 +22,36 @@ import { useTheme } from "./../theme/provider";
 import { darkenColor, lightenColor } from "./../lib/color";
 import {
   RiArrowRightSLine,
+  RiImage2Fill,
   RiLogoutBoxRLine,
   RiQuestionLine,
+  RiText,
+  RiMailLine,
+  RiHashtag,
+  RiLockPasswordLine,
+  RiTimeLine,
+  RiFileTextLine,
+  RiPinDistanceLine,
+  RiCheckboxLine,
+  RiRadioButtonLine,
+  RiPaletteLine,
+  RiArrowDownSLine,
+  RiCalendarLine,
+  RiFolderUploadLine,
+  RiUpload2Line,
+  RiImage2Line,
+  RiMoneyDollarCircleLine,
+  RiPhoneLine,
+  RiQuillPenLine,
+  RiStarLine,
+  RiThumbUpLine,
+  RiToggleLine,
+  RiPriceTag3Line,
+  RiCoinsLine,
   RiInformationLine,
+  RiTranslate2,
 } from "@remixicon/react";
+import { ComboboxOption } from "./combobox";
 
 const meta: Meta<typeof StatefulForm> = {
   title: "Input Elements/StatefulForm",
@@ -1241,7 +1267,39 @@ export const Mobile: Story = {
       labelStyle: buttonLabelStyle,
     };
 
+    const THEME_OPTIONS: ComboboxOption[] = [
+      {
+        text: "Light",
+        value: 1,
+      },
+      {
+        text: "Dark",
+        value: 2,
+      },
+    ];
+
+    const LOCALE_OPTIONS: ComboboxOption[] = [
+      {
+        text: "English",
+        value: 1,
+      },
+      {
+        text: "Bahasa Indonesia",
+        value: 2,
+      },
+    ];
+
     const FIELDS: FormFieldGroup[] = [
+      {
+        name: "render",
+        type: "custom",
+        render: "Mobile input element",
+        rowStyle: css`
+          background-color: transparent;
+          padding: 10px;
+          font-weight: 600;
+        `,
+      },
       [
         {
           name: "text",
@@ -1447,13 +1505,64 @@ export const Mobile: Story = {
         name: "render",
         type: "custom",
         render: (
-          <InfoContainer>
+          <>
             <RiInformationLine size={18} />
-            <Caption>The following examples demonstrate custom icons.</Caption>
-          </InfoContainer>
+            <span>
+              The following examples demonstrate custom icons in mobile
+            </span>
+          </>
         ),
         rowStyle: css`
           background-color: transparent;
+          flex-direction: row;
+          justify-content: start;
+          padding: 20px 0px 0px 10px;
+          font-size: 14px;
+          font-weight: 500;
+        `,
+      },
+      {
+        name: "render",
+        type: "custom",
+        render: "Input elements",
+        rowStyle: css`
+          background-color: transparent;
+          padding: 10px;
+          font-weight: 600;
+        `,
+      },
+      [
+        {
+          name: "theme",
+          title: "Theme",
+          type: "combo",
+          icon: {
+            image: RiPaletteLine,
+          },
+          combobox: {
+            options: THEME_OPTIONS,
+          },
+        },
+        {
+          name: "locale",
+          title: "Language",
+          type: "combo",
+          icon: {
+            image: RiTranslate2,
+          },
+          combobox: {
+            options: LOCALE_OPTIONS,
+          },
+        },
+      ],
+      {
+        name: "render",
+        type: "custom",
+        render: "Button element",
+        rowStyle: css`
+          background-color: transparent;
+          padding: 10px;
+          font-weight: 600;
         `,
       },
       [
