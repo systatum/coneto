@@ -12,7 +12,7 @@ import { Badge } from "./../../components/badge";
 
 describe("RichEditor", () => {
   function ProductRichEditor(props: RichEditorProps) {
-    const [value, setValue] = useState("test");
+    const [value, setValue] = useState(props?.value ?? "test");
 
     const CODE_EDITOR_ACTIONS: RichEditorCodeAction[] = [
       {
@@ -24,15 +24,352 @@ describe("RichEditor", () => {
       },
     ];
 
+    const TOOLBAR_RIGHT_PANEL_ACTIONS = (
+      <RichEditor.ToolbarButton
+        ariaLabel="toolbar-print"
+        icon={{ image: RiPrinterFill }}
+        onClick={() => {
+          console.log(value);
+        }}
+      >
+        Print
+      </RichEditor.ToolbarButton>
+    );
+
     return (
       <RichEditor
         value={value}
         onChange={(val) => setValue(val)}
+        toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         codeEditor={{ actions: CODE_EDITOR_ACTIONS }}
         {...props}
       />
     );
   }
+
+  context.only("formatting rule", () => {
+    it("renders except checkboxes and code", () => {
+      cy.mount(<ProductRichEditor />);
+
+      cy.findByLabelText("rich-editor-toolbar-bold").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-italic").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-underline").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-ordered-list").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-unordered-list").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-heading-menu").should("exist");
+
+      cy.findByLabelText("rich-editor-toolbar-checkbox").should("not.exist");
+      cy.findByLabelText("rich-editor-toolbar-code-block").should("not.exist");
+    });
+
+    context("when make all false", () => {
+      it("renders without action button", () => {
+        cy.mount(
+          <ProductRichEditor
+            formatting={{
+              allowBold: false,
+              allowCheckBoxes: false,
+              allowItalic: false,
+              allowOrderedList: false,
+              allowUnderline: false,
+              allowUnorderedList: false,
+            }}
+          />
+        );
+
+        cy.findByLabelText("rich-editor-toolbar-bold").should("not.exist");
+        cy.findByLabelText("rich-editor-toolbar-italic").should("not.exist");
+        cy.findByLabelText("rich-editor-toolbar-underline").should("not.exist");
+        cy.findByLabelText("rich-editor-toolbar-ordered-list").should(
+          "not.exist"
+        );
+        cy.findByLabelText("rich-editor-toolbar-unordered-list").should(
+          "not.exist"
+        );
+        cy.findByLabelText("rich-editor-toolbar-heading-menu").should(
+          "not.exist"
+        );
+
+        cy.findByLabelText("rich-editor-toolbar-checkbox").should("not.exist");
+        cy.findByLabelText("rich-editor-toolbar-code-block").should(
+          "not.exist"
+        );
+      });
+    });
+
+    context("initial value", () => {
+      context("bold", () => {
+        context("with true", () => {
+          it("renders the markdown with **", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+            cy.mount(<ProductRichEditor value="**Test**" />);
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "**Test**");
+          });
+
+          it("renders the html with <strong>", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+            cy.mount(<ProductRichEditor value="**Test**" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p><strong>Test</strong></p>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders on the markdown without **", () => {});
+          it("renders on the markdown without <b>", () => {});
+        });
+      });
+
+      context("italic", () => {
+        context("with true", () => {
+          it("renders the markdown with _", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="_Test_" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "_Test_");
+          });
+
+          it("renders the html with <em>", () => {
+            cy.mount(<ProductRichEditor value="_Test_" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p><em>Test</em></p>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders the markdown without _", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "Test");
+          });
+
+          it("renders the html without <em>", () => {
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p>Test</p>");
+          });
+        });
+      });
+
+      context("underline", () => {
+        context("with true", () => {
+          it("renders the markdown with <u>", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="<u>Test</u>" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "<u>Test</u>");
+          });
+
+          it("renders the html with <u>", () => {
+            cy.mount(<ProductRichEditor value="<u>Test</u>" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p><u>Test</u></p>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders the markdown without <u>", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "Test");
+          });
+
+          it("renders the html without <u>", () => {
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p>Test</p>");
+          });
+        });
+      });
+
+      context("unordered list", () => {
+        context("with true", () => {
+          it("renders the markdown with *", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="* Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "* Test");
+          });
+
+          it("renders the html with <ul><li>", () => {
+            cy.mount(<ProductRichEditor value="* Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<ul><li>Test</li></ul>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders the markdown without *", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "Test");
+          });
+
+          it("renders the html without <ul><li>", () => {
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p>Test</p>");
+          });
+        });
+      });
+
+      context("ordered list", () => {
+        context("with true", () => {
+          it("renders the markdown with number", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="1. Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "1. Test");
+          });
+
+          it("renders the html with <ol><li>", () => {
+            cy.mount(<ProductRichEditor value="1. Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<ol><li>Test</li></ol>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders the markdown without number", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "Test");
+          });
+
+          it("renders the html without <ol><li>", () => {
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p>Test</p>");
+          });
+        });
+      });
+
+      context("heading", () => {
+        context("with true", () => {
+          it("renders the markdown with #", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="# Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "# Test");
+          });
+
+          it("renders the html with <h1>", () => {
+            cy.mount(<ProductRichEditor value="# Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<h1>Test</h1>");
+          });
+        });
+
+        context("with false", () => {
+          it("renders the markdown without #", () => {
+            cy.window().then((win) => {
+              cy.spy(win.console, "log").as("consoleLog");
+            });
+
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByLabelText("toolbar-print").click();
+
+            cy.get("@consoleLog").should("have.been.calledWith", "Test");
+          });
+
+          it("renders the html without <h1>", () => {
+            cy.mount(<ProductRichEditor value="Test" />);
+
+            cy.findByRole("textbox")
+              .invoke("html")
+              .then((html) => html.replace(/\n/g, ""))
+              .should("eq", "<p>Test</p>");
+          });
+        });
+      });
+    });
+  });
 
   context("tokenRenderers", () => {
     function ProductRichEditorWithTokenRenderers() {
