@@ -2657,7 +2657,7 @@ const cleanupHtml = (html: string): string => {
   Array.from(container.querySelectorAll("p")).forEach((p) => {
     if (
       p.querySelector(
-        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong, [data-token-start]"
+        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, u, input, strong, [data-token-start]"
       )
     )
       return;
