@@ -84,7 +84,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     isLoading,
     labels,
     className,
-    icon,
+    labelIcon,
     mobile,
     ...rest
   } = props;
@@ -109,7 +109,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     <Selectbox
       {...rest}
       ref={ref}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       labels={labels}
       labelGap={labelGap}

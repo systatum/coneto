@@ -498,7 +498,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
-      icon,
+      labelIcon,
       mobile,
       className,
       ...rest
@@ -516,7 +516,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
     return (
       <FieldLane
         id={inputId}
-        icon={icon}
+        labelIcon={labelIcon}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}

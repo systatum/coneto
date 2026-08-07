@@ -109,7 +109,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       labelGap,
       labelWidth,
       labelPosition,
-      icon,
+      labelIcon,
       mobile,
       className,
       ...rest
@@ -131,7 +131,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <FieldLane
         className={applyClassName("textarea", className)}
-        icon={icon}
+        labelIcon={labelIcon}
         mobile={mobile}
         id={inputId}
         labelGap={labelGap}

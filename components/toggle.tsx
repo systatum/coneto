@@ -160,7 +160,7 @@ function Toggle({
   labelPosition,
   disabled,
   className,
-  icon,
+  labelIcon,
   mobile,
   ...rest
 }: ToggleProps) {
@@ -181,7 +181,7 @@ function Toggle({
   return (
     <FieldLane
       id={inputId}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       className={applyClassName("toggle", className)}
       labelGap={labelGap}

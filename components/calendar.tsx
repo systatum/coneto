@@ -1000,7 +1000,7 @@ function Calendar({
   labelPosition,
   className,
   mobile,
-  icon,
+  labelIcon,
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -1020,7 +1020,7 @@ function Calendar({
   return (
     <FieldLane
       id={inputId}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       showError={showError}
       errorMessage={errorMessage}

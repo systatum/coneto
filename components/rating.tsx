@@ -258,7 +258,7 @@ function Rating({
   labelWidth,
   labelPosition,
   className,
-  icon,
+  labelIcon,
   mobile,
   ...rest
 }: RatingProps) {
@@ -279,7 +279,7 @@ function Rating({
   return (
     <FieldLane
       id={inputId}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}

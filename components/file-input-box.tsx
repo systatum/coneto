@@ -157,7 +157,10 @@ export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
+    Omit<
+      FieldLaneProps,
+      "styles" | "type" | "dropdowns" | "actions" | "mobile"
+    > {
   styles?: FileInputBoxStyles;
 }
 
@@ -174,8 +177,7 @@ function FileInputBox({
   labelWidth,
   labelPosition,
   className,
-  icon,
-  mobile,
+  labelIcon,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -195,8 +197,7 @@ function FileInputBox({
   return (
     <FieldLane
       id={inputId}
-      icon={icon}
-      mobile={mobile}
+      labelIcon={labelIcon}
       className={applyClassName("file-input-box", className)}
       showError={showError}
       labelGap={labelGap}

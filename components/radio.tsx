@@ -158,7 +158,7 @@ function Radio({
   labelWidth,
   labelPosition,
   className,
-  icon,
+  labelIcon,
   mobile,
   ...rest
 }: RadioProps) {
@@ -179,7 +179,7 @@ function Radio({
   return (
     <FieldLane
       id={inputId}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}

@@ -686,7 +686,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelWidth,
       labelPosition,
       className,
-      icon,
+      labelIcon,
       mobile,
       ...rest
     } = props;
@@ -702,7 +702,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     return (
       <FieldLane
         id={inputId}
-        icon={icon}
+        labelIcon={labelIcon}
         mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}

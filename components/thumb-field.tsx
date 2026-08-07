@@ -198,7 +198,7 @@ function ThumbField({
   labelPosition,
   className,
   mobile,
-  icon,
+  labelIcon,
   ...rest
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -219,7 +219,7 @@ function ThumbField({
     <FieldLane
       id={inputId}
       labelGap={labelGap}
-      icon={icon}
+      labelIcon={labelIcon}
       mobile={mobile}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
