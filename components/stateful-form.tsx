@@ -526,7 +526,6 @@ function FormFields<T extends FieldValues>({
         const mobileBodyStyle =
           mobile &&
           css`
-            gap: 0px;
             justify-content: space-between;
             align-items: center;
           `;
@@ -769,6 +768,7 @@ function FormFields<T extends FieldValues>({
                             required={required}
                             label={field.title}
                             icon={field?.icon}
+                            mobile={mobile}
                             showIconError={mobile ? false : true}
                             value={controllerField.value ?? ""}
                             helper={field.helper}
@@ -1699,7 +1699,6 @@ function FormFields<T extends FieldValues>({
                       <FileInputBox
                         key={index}
                         id={field.id}
-                        icon={field?.icon}
                         mobile={mobile}
                         labelGap={field.labelGap}
                         labelWidth={field.labelWidth}
@@ -1792,6 +1791,7 @@ function FormFields<T extends FieldValues>({
                         name={field.name}
                         icon={field?.icon}
                         helper={field.helper}
+                        mobile={mobile}
                         value={formValues[field.name as keyof T] ?? ""}
                         onFileSelected={(e: File | undefined) => {
                           const file = e;
@@ -2341,6 +2341,11 @@ function FormFields<T extends FieldValues>({
                               `,
                               controlStyle: css`
                                 ${mobileControlStyle};
+                                ${mobile &&
+                                css`
+                                  width: 100%;
+                                  justify-content: end;
+                                `};
 
                                 ${field.chips?.styles?.controlStyle}
                               `,
@@ -2568,6 +2573,7 @@ function FormFields<T extends FieldValues>({
                           <Toggle
                             id={field.id}
                             icon={field?.icon}
+                            mobile={mobile}
                             name={controllerField.name}
                             labelGap={field.labelGap}
                             labelWidth={field.labelWidth}
