@@ -43,16 +43,6 @@ export interface RichEditorFormattingOptions {
   allowHeading?: boolean;
 }
 
-const DEFAULT_FORMATTING_OPTIONS: Required<RichEditorFormattingOptions> = {
-  allowBold: true,
-  allowItalic: true,
-  allowUnderline: true,
-  allowOrderedList: true,
-  allowUnorderedList: true,
-  allowCheckBoxes: false,
-  allowHeading: true,
-};
-
 export interface RichEditorProps {
   value?: string;
   onChange?: (value: string) => void;
@@ -226,25 +216,14 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     ref
   ) => {
     const {
-      allowBold,
-      allowItalic,
-      allowUnderline,
-      allowOrderedList,
-      allowUnorderedList,
-      allowCheckBoxes,
-      allowHeading,
-    } = useMemo(
-      () => ({ ...DEFAULT_FORMATTING_OPTIONS, ...formatting }),
-      [
-        formatting?.allowBold,
-        formatting?.allowItalic,
-        formatting?.allowUnderline,
-        formatting?.allowOrderedList,
-        formatting?.allowUnorderedList,
-        formatting?.allowCheckBoxes,
-        formatting?.allowHeading,
-      ]
-    );
+      allowBold = true,
+      allowItalic = true,
+      allowUnderline = true,
+      allowOrderedList = true,
+      allowUnorderedList = true,
+      allowCheckBoxes = false,
+      allowHeading = true,
+    } = formatting ?? {};
 
     const {
       languageOptions: _languageOptions = Object.values(RichEditorCodeLanguage),
