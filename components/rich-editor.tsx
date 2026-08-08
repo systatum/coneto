@@ -20,6 +20,7 @@ import {
   RiItalic,
   RiListOrdered,
   RiListUnordered,
+  RiUnderline,
 } from "@remixicon/react";
 import TurndownService from "./../lib/turndown/turndown";
 import { marked } from "./../lib/marked/marked";
@@ -31,6 +32,16 @@ import { useTheme } from "./../theme/provider";
 import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
 import { applyClassName } from "./../constants/classname";
 import { createPortal } from "react-dom";
+
+export interface RichEditorFormattingOptions {
+  allowBold?: boolean;
+  allowItalic?: boolean;
+  allowUnderline?: boolean;
+  allowOrderedList?: boolean;
+  allowUnorderedList?: boolean;
+  allowCheckBoxes?: boolean;
+  allowHeading?: boolean;
+}
 
 export interface RichEditorProps {
   value?: string;
@@ -47,6 +58,7 @@ export interface RichEditorProps {
   className?: string;
   tokenRenderers?: RichEditorTokenRenderer;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
+  formatting?: RichEditorFormattingOptions;
 }
 
 export type RichEditorTokenRenderer = Record<string, TokenRenderer>;
@@ -199,9 +211,20 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       id,
       tokenRenderers,
       onKeyDown,
+      formatting,
     },
     ref
   ) => {
+    const {
+      allowBold = true,
+      allowItalic = true,
+      allowUnderline = true,
+      allowOrderedList = true,
+      allowUnorderedList = true,
+      allowCheckBoxes = false,
+      allowHeading = true,
+    } = formatting ?? {};
+
     const {
       languageOptions: _languageOptions = Object.values(RichEditorCodeLanguage),
       language = _languageOptions[0],
@@ -388,11 +411,81 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       },
     });
 
+    // When bold/italic are disallowed, strip the tags on the way back to
+    // markdown instead of emitting ** / _ markers, so re-parsing never
+    // reintroduces formatting the editor isn't supposed to support.
+    if (!allowBold) {
+      turndownService.addRule("disallowedBold", {
+        filter: ["strong", "b"],
+        replacement: (content) => content,
+      });
+    }
+
+    if (!allowItalic) {
+      turndownService.addRule("disallowedItalic", {
+        filter: ["em", "i"],
+        replacement: (content) => content,
+      });
+    }
+
+    if (!allowHeading) {
+      turndownService.addRule("disallowedHeading", {
+        filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
+        replacement: (content) => content,
+      });
+    }
+
+    // Underline is not part of the Markdown specification.
+    // This custom rule preserves or serializes <u> elements because
+    // Turndown does not support underline out of the box.
+    if (!allowUnderline) {
+      turndownService.addRule("disallowedUnderline", {
+        filter: ["u"],
+        replacement: (content) => content,
+      });
+    } else {
+      turndownService.addRule("italic", {
+        filter: ["u"],
+        replacement: (content) => `~${content}~`,
+      });
+    }
+
     CodeEditor.addFencedCodeMarkedExtension();
+
+    const isLegal = isLegalDocument(value);
+
+    let prevWalkToken: any = null;
 
     marked.use({
       gfm: false,
       breaks: true,
+      // Disable the built-in strong/em/list renderers when the
+      // corresponding formatting isn't allowed, so markdown syntax like
+      // `**bold**` or `- item` renders as plain text instead of the
+      // matching element.
+      renderer: {
+        strong(token) {
+          if (!allowBold) return this.parser.parseInline(token.tokens);
+          return false;
+        },
+        em(token) {
+          if (!allowItalic) return this.parser.parseInline(token.tokens);
+          return false;
+        },
+        list(token) {
+          if (
+            (token.ordered && !allowOrderedList) ||
+            (!token.ordered && !allowUnorderedList)
+          ) {
+            return token.items
+              .map(
+                (item: any) => `<p>${this.parser.parseInline(item.tokens)}</p>`
+              )
+              .join("\n");
+          }
+          return false;
+        },
+      },
       // Track previous token so we can detect
       // blank lines that appear immediately after headings.
       walkTokens(token) {
@@ -411,6 +504,38 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         prevWalkToken = token;
       },
       extensions: [
+        {
+          /**
+           * Custom underline tokenizer.
+           * Markdown has no native underline syntax, so this editor
+           * claims `~text~` as its own inline convention — safe to reuse
+           * since `gfm: false` keeps the GFM `~~strikethrough~~` extension
+           * off, so a single `~` is otherwise unclaimed here.
+           *
+           * When underline is disallowed, the tildes are dropped and the
+           * inner content renders as plain inline text instead of <u>,
+           * matching how disallowed bold/italic fall back to plain text.
+           */
+          name: "underline",
+          level: "inline",
+          start(src) {
+            return src.indexOf("~");
+          },
+          tokenizer(src) {
+            const match = src.match(/^~((?:(?!~).)+?)~/);
+            if (match) {
+              return {
+                type: "underline",
+                raw: match[0],
+                tokens: this.lexer.inlineTokens(match[1]),
+              };
+            }
+          },
+          renderer(token) {
+            if (!allowUnderline) return this.parser.parseInline(token.tokens);
+            return `<u>${this.parser.parseInline(token.tokens)}</u>`;
+          },
+        },
         {
           /**
            * Custom heading tokenizer.
@@ -435,7 +560,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             }
           },
           renderer(token) {
-            return `<h${token.depth}>${token.text}</h${token.depth}>`;
+            return allowHeading
+              ? `<h${token.depth}>${token.text}</h${token.depth}>`
+              : token.text;
           },
         },
         {
@@ -559,166 +686,6 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       marked.use({ extensions });
     }
 
-    const isLegal = isLegalDocument(value);
-
-    let prevWalkToken: any = null;
-
-    marked.use({
-      gfm: false,
-      breaks: true,
-      // Track previous token so we can detect
-      // blank lines that appear immediately after headings.
-      walkTokens(token) {
-        if (
-          token.type === "space" &&
-          token.raw.length >= 2 &&
-          prevWalkToken?.type === "heading"
-        ) {
-          const blankLines = token.raw.length - 1;
-
-          // Convert heading-following spaces into a custom
-          // emptyParagraph token so we can preserve spacing.
-          token.type = "emptyParagraph";
-          (token as any).count = blankLines;
-        }
-        prevWalkToken = token;
-      },
-      extensions: [
-        {
-          /**
-           * Custom heading tokenizer.
-           * Ensures markdown headings are parsed consistently
-           * and rendered as native h1-h6 elements.
-           */
-          name: "heading",
-          level: "block",
-          start(src) {
-            return src.indexOf("#");
-          },
-          tokenizer(src) {
-            const match = src.match(/^(#{1,6}) ([^\n]+)/);
-            if (match) {
-              return {
-                type: "heading",
-                raw: match[0],
-                depth: match[1].length,
-                text: match[2],
-                tokens: [],
-              };
-            }
-          },
-          renderer(token) {
-            return `<h${token.depth}>${token.text}</h${token.depth}>`;
-          },
-        },
-        {
-          /**
-           * Preserves multiple blank lines by converting them
-           * into explicit empty paragraph elements.
-           *
-           * Skipped for:
-           * - list contexts
-           * - legal document rendering
-           */
-          name: "emptyParagraph",
-          level: "block",
-          start(src) {
-            return src.indexOf("\n\n");
-          },
-          tokenizer(src, tokens) {
-            const prevToken = tokens?.[tokens.length - 1];
-            if (prevToken?.type === "list") return;
-
-            const isListContext = /^[ \t]*([-*+]|\d+\.)\s/m.test(src);
-            if (isListContext) return;
-
-            const match = src.match(/^(\n{2,})/);
-            if (match) {
-              const isAfterHeading = prevToken?.type === "heading";
-              // Add an extra line when spacing follows a heading.
-              const blankLines = match[0].length - 1 + (isAfterHeading ? 1 : 0);
-              return {
-                type: "emptyParagraph",
-                raw: match[0],
-                count: blankLines,
-              };
-            }
-          },
-          renderer(token) {
-            if (isLegal) return "";
-
-            return "<p><br></p>".repeat(token.count);
-          },
-        },
-        {
-          /**
-           * Converts consecutive single-line breaks into
-           * individual paragraph elements.
-           *
-           * Example:
-           *   Line A
-           *   Line B
-           *
-           * Becomes:
-           *   <p>Line A</p>
-           *   <p>Line B</p>
-           *
-           * Skipped for:
-           * - headings
-           * - code fences
-           * - lists
-           * - indented blocks
-           * - wrapped paragraphs
-           */
-          name: "lineSeparated",
-          level: "block",
-          start(src) {
-            return src.indexOf("\n");
-          },
-          tokenizer(src, tokens) {
-            const isHeading = /^#{1,6}\s/.test(src);
-            if (isHeading) return;
-
-            const isCodeFence = /^`{3,}/.test(src);
-            if (isCodeFence) return;
-
-            const firstLine = src.split("\n")[0];
-            if (/^[ \t]*([-*+]|\d+\.)\s/.test(firstLine)) return;
-            if (/^[ \t]+/.test(firstLine)) return;
-
-            const match = src.match(/^([^\n]+)(\n(?!\n)[^\n]+)*(?=\n\n|\n?$)/);
-            if (match && match[0].includes("\n")) {
-              const lines = match[0].split("\n");
-
-              // Treat long consecutive lines as a wrapped paragraph,
-              // not as separate paragraphs.
-              const looksLikeWrappedParagraph =
-                lines.length > 1 && lines.every((l) => l.length > 20);
-
-              if (looksLikeWrappedParagraph) return;
-
-              if (lines.some((l) => /^`{3,}/.test(l.trim()))) return;
-              if (lines.some((l) => /^ {4,}/.test(l))) return;
-              if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
-              if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
-
-              return {
-                type: "lineSeparated",
-                raw: match[0],
-                lines: lines.filter((l) => l.trim() !== ""),
-              };
-            }
-          },
-          renderer(token) {
-            if (isLegal) return "";
-            return token.lines
-              .map((line: string) => `<p>${line}</p>`)
-              .join("\n");
-          },
-        },
-      ],
-    });
-
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
@@ -829,6 +796,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const [formatStates, setFormatStates] = useState({
       bold: false,
       italic: false,
+      underline: false,
     });
 
     const updateFormatStates = () => {
@@ -840,17 +808,19 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const node = sel.anchorNode;
 
       if (!node || !editorRef.current.contains(node)) {
-        setFormatStates({ bold: false, italic: false });
+        setFormatStates({ bold: false, italic: false, underline: false });
         return;
       }
 
       try {
         const bold = document.queryCommandState("bold");
         const italic = document.queryCommandState("italic");
+        const underline = document.queryCommandState("underline");
 
         setFormatStates({
           bold,
           italic,
+          underline,
         });
       } catch (error) {
         console.warn("Error checking command state:", error);
@@ -936,6 +906,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }, []);
 
     const handleFilteringCheckbox = () => {
+      if (!allowCheckBoxes) return;
+
       const walker = document.createTreeWalker(
         editorRef.current,
         NodeFilter.SHOW_TEXT
@@ -1068,12 +1040,21 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       command:
         | "bold"
         | "italic"
+        | "underline"
         | "insertOrderedList"
         | "insertUnorderedList"
         | "checkbox"
         | "codeBlock"
     ) => {
       if (!editorRef.current) return;
+
+      if (command === "bold" && !allowBold) return;
+      if (command === "italic" && !allowItalic) return;
+      if (command === "underline" && !allowUnderline) return;
+      if (command === "insertOrderedList" && !allowOrderedList) return;
+      if (command === "insertUnorderedList" && !allowUnorderedList) return;
+      if (command === "checkbox" && !allowCheckBoxes) return;
+
       editorRef.current.focus();
 
       if (command === "codeBlock") {
@@ -1122,6 +1103,17 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         return;
       }
 
+      if (command === "underline") {
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord(command);
+        } else {
+          document.execCommand(command);
+        }
+
+        handleEditorChange();
+        return;
+      }
+
       document.execCommand(command);
       handleEditorChange();
     };
@@ -1147,11 +1139,29 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "u") {
         e.preventDefault();
+
+        if (!allowUnderline) return;
+
+        const sel = window.getSelection();
+
+        if (sel && sel.rangeCount && sel.isCollapsed) {
+          applyInlineStyleToWord("underline");
+        } else {
+          document.execCommand("underline");
+        }
+        setTimeout(() => {
+          updateFormatStates();
+        }, 0);
+
+        handleEditorChange();
         return;
       }
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
         e.preventDefault();
+
+        if (!allowBold) return;
+
         const sel = window.getSelection();
 
         if (sel && sel.rangeCount && sel.isCollapsed) {
@@ -1169,6 +1179,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "i") {
         e.preventDefault();
+
+        if (!allowItalic) return;
+
         const sel = window.getSelection();
         if (sel && sel.rangeCount && sel.isCollapsed) {
           applyInlineStyleToWord("italic");
@@ -1449,76 +1462,82 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           const beforeCaret = text.slice(0, caretPos);
           const afterCaret = text.slice(caretPos);
 
-          const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
-          const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
+          if (allowCheckBoxes) {
+            const checkedCheckboxMatch = beforeCaret.match(/\[x\]$/);
+            const uncheckedCheckboxMatch = beforeCaret.match(/\[ \]$/);
 
-          if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
-            e.preventDefault();
+            if (checkedCheckboxMatch || uncheckedCheckboxMatch) {
+              e.preventDefault();
 
-            const patternLength = checkedCheckboxMatch
-              ? checkedCheckboxMatch[0].length
-              : uncheckedCheckboxMatch![0].length;
-            const beforePattern = beforeCaret.slice(0, -patternLength);
+              const patternLength = checkedCheckboxMatch
+                ? checkedCheckboxMatch[0].length
+                : uncheckedCheckboxMatch![0].length;
+              const beforePattern = beforeCaret.slice(0, -patternLength);
 
-            const checkboxWrapper = createCheckboxWrapper(
-              !!checkedCheckboxMatch,
-              turndownService,
-              editorRef,
-              onChange
-            );
+              const checkboxWrapper = createCheckboxWrapper(
+                !!checkedCheckboxMatch,
+                turndownService,
+                editorRef,
+                onChange
+              );
 
-            const spaceNode = document.createTextNode("\u00A0");
-            checkboxWrapper.after(spaceNode);
+              const spaceNode = document.createTextNode("\u00A0");
+              checkboxWrapper.after(spaceNode);
 
-            if (beforePattern || afterCaret) {
-              const afterText = afterCaret ?? "";
+              if (beforePattern || afterCaret) {
+                const afterText = afterCaret ?? "";
 
-              node.textContent = beforePattern + afterText;
+                node.textContent = beforePattern + afterText;
 
-              const newRange = document.createRange();
-              newRange.setStart(node, beforePattern.length);
-              newRange.collapse(true);
+                const newRange = document.createRange();
+                newRange.setStart(node, beforePattern.length);
+                newRange.collapse(true);
 
-              newRange.insertNode(checkboxWrapper);
+                newRange.insertNode(checkboxWrapper);
 
-              if (!afterText.startsWith(" ")) {
-                const spaceNode = document.createTextNode("\u00A0");
-                checkboxWrapper.after(spaceNode);
-              }
-
-              const finalRange = document.createRange();
-              if (checkboxWrapper.nextSibling) {
-                finalRange.setStartAfter(checkboxWrapper.nextSibling);
-              } else {
-                finalRange.setStartAfter(checkboxWrapper);
-              }
-              finalRange.collapse(true);
-
-              sel.removeAllRanges();
-              sel.addRange(finalRange);
-            } else {
-              const parent = node.parentNode;
-              if (parent) {
-                parent.replaceChild(checkboxWrapper, node);
-
-                const spaceNode = document.createTextNode("\u00A0");
-                parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
+                if (!afterText.startsWith(" ")) {
+                  const spaceNode = document.createTextNode("\u00A0");
+                  checkboxWrapper.after(spaceNode);
+                }
 
                 const finalRange = document.createRange();
-                finalRange.setStartAfter(spaceNode);
+                if (checkboxWrapper.nextSibling) {
+                  finalRange.setStartAfter(checkboxWrapper.nextSibling);
+                } else {
+                  finalRange.setStartAfter(checkboxWrapper);
+                }
                 finalRange.collapse(true);
 
                 sel.removeAllRanges();
                 sel.addRange(finalRange);
-              }
-            }
+              } else {
+                const parent = node.parentNode;
+                if (parent) {
+                  parent.replaceChild(checkboxWrapper, node);
 
-            handleEditorChange();
-            return;
+                  const spaceNode = document.createTextNode("\u00A0");
+                  parent.insertBefore(spaceNode, checkboxWrapper.nextSibling);
+
+                  const finalRange = document.createRange();
+                  finalRange.setStartAfter(spaceNode);
+                  finalRange.collapse(true);
+
+                  sel.removeAllRanges();
+                  sel.addRange(finalRange);
+                }
+              }
+
+              handleEditorChange();
+              return;
+            }
           }
 
-          const orderedMatch = beforeCaret.match(/^(\d+)\.$/);
-          const unorderedMatch = beforeCaret.match(/^[-*]$/);
+          const orderedMatch = allowOrderedList
+            ? beforeCaret.match(/^(\d+)\.$/)
+            : null;
+          const unorderedMatch = allowUnorderedList
+            ? beforeCaret.match(/^[-*]$/)
+            : null;
 
           if (orderedMatch || unorderedMatch) {
             e.preventDefault();
@@ -1955,37 +1974,56 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           leftSidePanel={
             mode !== "view-only" && (
               <>
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-bold"
-                  isActive={formatStates.bold}
-                  icon={{ image: RiBold }}
-                  onClick={() => handleCommand("bold")}
-                />
+                {allowBold && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-bold"
+                    isActive={formatStates.bold}
+                    icon={{ image: RiBold }}
+                    onClick={() => handleCommand("bold")}
+                  />
+                )}
 
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-italic"
-                  isActive={formatStates.italic}
-                  icon={{ image: RiItalic }}
-                  onClick={() => handleCommand("italic")}
-                />
+                {allowItalic && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-italic"
+                    isActive={formatStates.italic}
+                    icon={{ image: RiItalic }}
+                    onClick={() => handleCommand("italic")}
+                  />
+                )}
 
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-ordered-list"
-                  icon={{ image: RiListOrdered }}
-                  onClick={() => handleCommand("insertOrderedList")}
-                />
+                {allowUnderline && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-underline"
+                    isActive={formatStates.underline}
+                    icon={{ image: RiUnderline }}
+                    onClick={() => handleCommand("underline")}
+                  />
+                )}
 
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-unordered-list"
-                  icon={{ image: RiListUnordered }}
-                  onClick={() => handleCommand("insertUnorderedList")}
-                />
+                {allowOrderedList && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-ordered-list"
+                    icon={{ image: RiListOrdered }}
+                    onClick={() => handleCommand("insertOrderedList")}
+                  />
+                )}
 
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-checkbox"
-                  icon={{ image: RiCheckboxLine }}
-                  onClick={() => handleCommand("checkbox")}
-                />
+                {allowUnorderedList && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-unordered-list"
+                    icon={{ image: RiListUnordered }}
+                    onClick={() => handleCommand("insertUnorderedList")}
+                  />
+                )}
+
+                {allowCheckBoxes && (
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-checkbox"
+                    icon={{ image: RiCheckboxLine }}
+                    onClick={() => handleCommand("checkbox")}
+                  />
+                )}
 
                 {mode === "markdown-editor" && (
                   <RichEditorToolbarButton
@@ -2609,7 +2647,7 @@ const cleanupHtml = (html: string): string => {
   Array.from(container.querySelectorAll("p")).forEach((p) => {
     if (
       p.querySelector(
-        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, input, strong, [data-token-start]"
+        "ul, ol, h1, h2, h3, h4, h5, h6, b, i, u, em, input, strong, [data-token-start]"
       )
     )
       return;
@@ -2675,8 +2713,8 @@ const cleanupHtml = (html: string): string => {
   return container.innerHTML;
 };
 
-// To apply instyle to word bold or italic
-const applyInlineStyleToWord = (style: "bold" | "italic") => {
+// To apply instyle to word bold, italic or underline
+const applyInlineStyleToWord = (style: "bold" | "italic" | "underline") => {
   const sel = window.getSelection();
   if (!sel || !sel.rangeCount) return;
 
