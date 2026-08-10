@@ -1,8 +1,38 @@
+import { generateSentence } from "./../../lib/text";
 import { Badge } from "./../../components/badge";
 import { Tooltip, TooltipDialogPlacement } from "./../../components/tooltip";
 import { css } from "styled-components";
 
 describe("Tooltip", () => {
+  context("when open in the right side on a small screen", () => {
+    it("keeps the tooltip content visible", () => {
+      const longSentence = generateSentence({
+        minLen: 40,
+        maxLen: 50,
+        seed: 123,
+      });
+      cy.viewport(300, 300);
+      cy.mount(
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
+            justifyContent: "end",
+            alignItems: "end",
+          }}
+        >
+          <Tooltip dialog={longSentence}>This tooltip</Tooltip>
+        </div>
+      );
+
+      cy.findByText("This tooltip").realHover();
+      cy.wait(200);
+
+      cy.findByText(longSentence).should("be.visible");
+    });
+  });
+
   context("theme", () => {
     context("light", () => {
       it("renders tooltip with rgb(185, 186, 188)", () => {
