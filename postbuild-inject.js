@@ -85,10 +85,12 @@ function processFile(fullPath) {
     process.exit(1);
   }
 
-  // Inject "use client" only for component files, because hooks,
+  // Inject "use client" only for component .js files, because hooks,
   // browser APIs, and interactive UI logic require Client Components
-  // in Next.js App Router.
-  const isComponent = fullPath.includes(`${path.sep}components${path.sep}`);
+  // in Next.js App Router. Declaration files must not get this directive.
+  const isComponent =
+    fullPath.endsWith(".js") &&
+    fullPath.includes(`${path.sep}components${path.sep}`);
   if (isComponent) {
     let lines = content.split("\n");
     const hasUseClient = lines[0]?.trim() === useClientDirective;
@@ -118,7 +120,11 @@ function walk(dir) {
       continue;
     }
 
-    if (file.endsWith(".js")) {
+    // .d.ts files need the same relative-import extension fix as .js —
+    // under NodeNext/node16 module resolution, an extensionless relative
+    // import in a declaration file fails to resolve, silently widening the
+    // imported type to `any`/unknown.
+    if (file.endsWith(".js") || file.endsWith(".d.ts")) {
       processFile(fullPath);
       console.log(`✅ Processed: ${path.relative(distDir, fullPath)}`);
     }
