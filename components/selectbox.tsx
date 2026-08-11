@@ -75,7 +75,7 @@ interface BaseSelectboxProps
         setConfirmedValue?: (option: SelectboxOption | null) => void;
       }
   ) => ReactNode;
-  styles?: SelectboxStyles;
+  styles?: BaseSelectboxStyles;
   labels?: SelectboxLabels;
 }
 
@@ -87,8 +87,6 @@ interface BaseSelectboxStyles {
   selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
-
-export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
 
 export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
@@ -661,6 +659,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   }
 );
 
+export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
+
 export interface SelectboxProps
   extends Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
@@ -689,6 +689,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       mobile,
       ...rest
     } = props;
+
     const inputId = StatefulForm.sanitizeId({
       prefix: "selectbox",
       name,
@@ -697,6 +698,17 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
 
     const hasCombo = className?.includes("coneto-combobox");
     const hasDatebox = className?.includes("coneto-datebox");
+
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperIconStyle,
+      helperDrawerStyle,
+      helperArrowStyle,
+      ...selectboxStyles
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -720,10 +732,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         errorIconPosition={errorIconPosition}
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseSelectbox
@@ -734,13 +749,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           mobile={mobile}
           disabled={disabled}
           styles={{
+            ...selectboxStyles,
             self: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${selectboxStyles?.self}
             `,
           }}
           type={type}

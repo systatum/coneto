@@ -15,7 +15,8 @@ export const RatingSize = {
 export type RatingSize = (typeof RatingSize)[keyof typeof RatingSize];
 
 export type RatingScoreLabelRender =
-  ReactNode | ((props?: { value?: number; maxValue?: number }) => ReactNode);
+  | ReactNode
+  | ((props?: { value?: number; maxValue?: number }) => ReactNode);
 
 export interface RatingScoreLabel {
   text?: RatingScoreLabelRender;
@@ -239,8 +240,7 @@ function getPositionStyle(position: RatingScoreLabelPosition) {
 export type RatingStyles = BaseRatingStyles & FieldLaneStyles;
 
 export interface RatingProps
-  extends
-    Omit<BaseRatingProps, "styles">,
+  extends Omit<BaseRatingProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
   styles?: RatingStyles;
 }
@@ -271,6 +271,9 @@ function Rating({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...ratingStyles
   } = styles ?? {};
 
@@ -293,6 +296,9 @@ function Rating({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseRating

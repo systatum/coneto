@@ -245,7 +245,10 @@ function Imagebox({
     controlStyle,
     containerStyle,
     labelStyle,
-    ...ImageboxStyles
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
+    ...imageboxStyles
   } = styles ?? {};
 
   return (
@@ -267,13 +270,16 @@ function Imagebox({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseImagebox
         {...rest}
         id={inputId}
         disabled={disabled}
-        styles={ImageboxStyles}
+        styles={imageboxStyles}
       />
     </FieldLane>
   );

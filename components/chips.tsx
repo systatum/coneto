@@ -572,6 +572,9 @@ function Chips({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...baseChipStyles
   } = styles ?? {};
 
@@ -596,6 +599,9 @@ function Chips({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseChips

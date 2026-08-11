@@ -220,6 +220,9 @@ function ThumbField({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...thumbFieldStyles
   } = styles ?? {};
 
@@ -242,6 +245,9 @@ function ThumbField({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseThumbField

@@ -16,7 +16,6 @@ import { applyClassName } from "./../constants/classname";
 interface BasePinboxProps {
   fontSize?: number;
   label?: string;
-  helper?: string;
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
@@ -499,6 +498,9 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       controlStyle,
       containerStyle,
       labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
       ...pinboxStyles
     } = styles ?? {};
 
@@ -521,6 +523,9 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
         }}
       >
         <BasePinbox

@@ -11,6 +11,7 @@ export interface BodyThemeConfig {
   backgroundColor?: string;
   textColor?: string;
   borderColor?: string;
+  mutedTextColor?: string;
 }
 
 // action-capsule
@@ -623,9 +624,21 @@ export interface StatusbarThemeConfig extends BodyThemeConfig {
   };
 }
 
+// stateful-form.tsx
 export interface StatefulFormThemeConfig extends BodyThemeConfig {
   rowFrameBackgroundColor: string;
   mobileRowFrameBackgroundColor: string;
+  fieldTooltip: StatefulFormFieldTooltipThemeConfig;
+}
+
+export interface StatefulFormFieldTooltipThemeConfig {
+  textColor: string;
+  mutedTextColor: string;
+  panelBackground: string;
+  panelBorder: string;
+  dividerColor: string;
+  scrollbarThumbColor: string;
+  scrollbarTrackColor: string;
 }
 
 // table.tsx
