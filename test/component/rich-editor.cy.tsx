@@ -1138,7 +1138,7 @@ describe("RichEditor", () => {
                     : anchorNode?.parentElement;
 
                 // Should NOT be inside the monaco/code block
-                expect(el?.closest("[data-monaco-block-id]")).to.be.null;
+                expect(el?.closest("[data-cm-block-id]")).to.be.null;
 
                 // Should equal on the line 1 (a <p> with text "Test")
                 expect(el?.textContent?.trim()).to.equal("Test");
