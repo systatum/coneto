@@ -3,10 +3,12 @@ import {
   getFloatingPlacement,
 } from "./../lib/floating-placement";
 import {
+  arrow,
   autoUpdate,
   flip,
   offset,
   Placement,
+  shift,
   size,
   useFloating,
 } from "@floating-ui/react";
@@ -105,13 +107,39 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
       },
     }));
 
-    const { floatingStyles, refs, placement } = useFloating({
+    // Ref to the actual arrow DOM node. Passed to the `arrow()` middleware so
+    // Floating UI can measure the arrow's real dimensions and compute the
+    // exact x/y offset needed to keep it visually centered on (and always
+    // pointing at) the reference/trigger element — even after `shift()`
+    // nudges the tooltip to stay inside the viewport. Without this, the
+    // arrow's position would be static and drift away from the trigger
+    // whenever the tooltip itself gets shifted or flipped.
+    const arrowRef = useRef<HTMLDivElement>(null);
+
+    const { floatingStyles, refs, placement, middlewareData } = useFloating({
       placement: getFloatingPlacement(dialogPlacement),
       open: open,
       onOpenChange: setIsOpenLocal,
       middleware: [
         offset(8),
-        flip(),
+        flip({ padding: 8 }),
+        shift({ padding: 8 }),
+        // Reads arrowRef's measured size/position each update and returns
+        // middlewareData.arrow.{x,y}, which TooltipArrow then uses to
+        // reposition itself so it always "sticks" to the trigger element.
+        arrow({ element: arrowRef, padding: 8 }), // padding keeps it off the rounded corners
+        // Caps the floating element's width to whatever space is actually left
+        // in the viewport (minus 8px padding on each side), so on a 400px
+        // screen the drawer never renders wider than the screen itself —
+        // it'll wrap text instead of overflowing.
+        size({
+          padding: 8,
+          apply({ availableWidth, elements }) {
+            Object.assign(elements.floating.style, {
+              maxWidth: `${availableWidth}px`,
+            });
+          },
+        }),
         ...(anchorRef
           ? [
               size({
@@ -239,6 +267,9 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
             >
               <TooltipContainer
                 placement={placement}
+                arrowRef={arrowRef}
+                arrowX={middlewareData.arrow?.x}
+                arrowY={middlewareData.arrow?.y}
                 styles={{
                   arrowStyle:
                     typeof styles?.arrowStyle === "function"
@@ -267,6 +298,9 @@ export interface TooltipContainerProps {
   placement?: Placement;
   styles?: TooltipContainerStyles;
   dialog?: ReactNode;
+  arrowRef?: React.RefObject<HTMLDivElement>;
+  arrowX?: number;
+  arrowY?: number;
 }
 
 export interface TooltipContainerStyles {
@@ -279,6 +313,9 @@ function TooltipContainer({
   placement,
   styles,
   dialog,
+  arrowRef,
+  arrowX,
+  arrowY,
 }: TooltipContainerProps) {
   const { currentTheme } = useTheme();
   const tooltipTheme = currentTheme?.tooltip;
@@ -295,7 +332,10 @@ function TooltipContainer({
         }
       />
       <TooltipArrow
+        ref={arrowRef}
         $theme={tooltipTheme}
+        $arrowX={arrowX}
+        $arrowY={arrowY}
         $placement={placement}
         aria-label="tooltip-arrow"
         $arrowStyle={
@@ -378,6 +418,8 @@ const TooltipArrow = styled.div<{
   $arrowStyle?: CSSProp;
   $placement?: Placement;
   $theme: TooltipThemeConfig;
+  $arrowX?: number;
+  $arrowY?: number;
 }>`
   position: absolute;
   width: 8px;
@@ -387,74 +429,25 @@ const TooltipArrow = styled.div<{
   z-index: -1;
   pointer-events: none;
 
-  ${({ $placement }) => {
-    return $placement === "bottom-start"
-      ? css`
-          top: -4px;
-          left: 10%;
-        `
-      : $placement === "bottom-end"
-        ? css`
-            top: -4px;
-            right: 10%;
-            left: auto;
-          `
-        : $placement === "bottom"
-          ? css`
-              top: -4px;
-              left: 50%;
-              transform: translateX(-50%) rotate(45deg);
-            `
-          : $placement === "top-start"
-            ? css`
-                bottom: -4px;
-                left: 10%;
-              `
-            : $placement === "top-end"
-              ? css`
-                  bottom: -4px;
-                  right: 10%;
-                `
-              : $placement === "top"
-                ? css`
-                    bottom: -4px;
-                    left: 50%;
-                    transform: translateX(-50%) rotate(45deg);
-                  `
-                : $placement === "left-start"
-                  ? css`
-                      right: -2px;
-                      top: 10%;
-                    `
-                  : $placement === "left-end"
-                    ? css`
-                        right: -2px;
-                        bottom: 10%;
-                      `
-                    : $placement === "left"
-                      ? css`
-                          right: -2px;
-                          top: 50%;
-                          transform: translateY(-50%) rotate(45deg);
-                        `
-                      : $placement === "right-start"
-                        ? css`
-                            left: -2px;
-                            top: 10%;
-                          `
-                        : $placement === "right-end"
-                          ? css`
-                              left: -2px;
-                              bottom: 10%;
-                            `
-                          : $placement === "right"
-                            ? css`
-                                left: -2px;
-                                top: 50%;
-                                transform: translateY(-50%) rotate(45deg);
-                              `
-                            : null;
-  }};
+  ${({ $placement, $arrowX, $arrowY }) => {
+    const staticSide: Record<string, string> = {
+      top: "bottom",
+      right: "left",
+      bottom: "top",
+      left: "right",
+    };
+
+    const side = $placement?.split("-")[0] ?? "bottom";
+    const opposite = staticSide[side];
+
+    return css`
+      left: ${$arrowX != null ? `calc(${$arrowX}px - 5%)` : "auto"};
+      top: ${$arrowY != null ? `${$arrowY}px` : "auto"};
+      right: auto;
+      bottom: auto;
+      ${opposite}: -4px;
+    `;
+  }}
 
   ${({ $arrowStyle }) => $arrowStyle}
 `;
@@ -477,7 +470,8 @@ const TooltipDrawer = styled.div<{
   font-size: 12px;
   padding: 4px 8px;
   border-radius: 4px;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   box-shadow: ${({ $theme }) =>
     $theme.boxShadow || "0 1px 2px rgba(0,0,0,0.1)"};
 
