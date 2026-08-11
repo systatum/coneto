@@ -1,10 +1,9 @@
 import {
-  Children,
-  cloneElement,
+  createContext,
   HTMLAttributes,
-  isValidElement,
-  ReactElement,
   ReactNode,
+  useContext,
+  useMemo,
 } from "react";
 import styled, { css, CSSProp, keyframes } from "styled-components";
 import { useTheme } from "./../theme/provider";
@@ -37,10 +36,8 @@ export interface LoadingSkeletonOption {
   highlightColor?: string;
 }
 
-interface LoadingSkeletonBaseProps extends Omit<
-  HTMLAttributes<HTMLDivElement>,
-  "style"
-> {
+interface LoadingSkeletonBaseProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style"> {
   children?: ReactNode;
   styles?: LoadingSkeletonStyles;
 }
@@ -50,10 +47,17 @@ export interface LoadingSkeletonStyles {
 }
 
 export interface LoadingSkeletonProps
-  extends LoadingSkeletonBaseProps, LoadingSkeletonOption {
+  extends LoadingSkeletonBaseProps,
+    LoadingSkeletonOption {
   height?: number | string;
   width?: number | string;
 }
+
+// Context carries the resolved defaults down to LoadingSkeleton.Item
+// without needing to walk/clone the children tree.
+const LoadingSkeletonContext = createContext<LoadingSkeletonOption>({});
+
+const useLoadingSkeletonContext = () => useContext(LoadingSkeletonContext);
 
 function LoadingSkeleton({
   styles,
@@ -73,37 +77,28 @@ function LoadingSkeleton({
   const finalHighlightColor =
     highlightColor ?? loadingSkeletonTheme.highlightColor;
 
-  const childArray = Children.toArray(children).filter(isValidElement);
+  const contextValue = useMemo(
+    () => ({
+      flashDirection,
+      flashRate,
+      baseColor: finalBaseColor,
+      highlightColor: finalHighlightColor,
+    }),
+    [flashDirection, flashRate, finalBaseColor, finalHighlightColor]
+  );
 
   return (
-    <LoadingSkeletonWrapper
-      aria-label="loading-skeleton-wrapper"
-      {...props}
-      id={id}
-      className={applyClassName("loading-skeleton", className)}
-      $style={styles?.self}
-    >
-      {childArray.map((child, index) => {
-        const componentChild = child as ReactElement<
-          LoadingSkeletonItemProps & LoadingSkeletonOption
-        >;
-
-        const isItem = componentChild.type === LoadingSkeleton.Item;
-
-        return cloneElement(componentChild, {
-          key: index,
-          ...(isItem && {
-            ...componentChild.props,
-            flashDirection:
-              componentChild.props.flashDirection ?? flashDirection,
-            flashRate: componentChild.props.flashRate ?? flashRate,
-            baseColor: componentChild.props.baseColor ?? finalBaseColor,
-            highlightColor:
-              componentChild.props.highlightColor ?? finalHighlightColor,
-          }),
-        });
-      })}
-    </LoadingSkeletonWrapper>
+    <LoadingSkeletonContext value={contextValue}>
+      <LoadingSkeletonWrapper
+        aria-label="loading-skeleton-wrapper"
+        {...props}
+        id={id}
+        className={applyClassName("loading-skeleton", className)}
+        $style={styles?.self}
+      >
+        {children}
+      </LoadingSkeletonWrapper>
+    </LoadingSkeletonContext>
   );
 }
 
@@ -121,7 +116,8 @@ const LoadingSkeletonWrapper = styled.div<{ $style?: CSSProp }>`
 `;
 
 export interface LoadingSkeletonItemProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "style">, LoadingSkeletonOption {
+  extends Omit<HTMLAttributes<HTMLDivElement>, "style">,
+    LoadingSkeletonOption {
   styles?: LoadingSkeletonStyles;
   height?: number | string;
   width?: number | string;
@@ -131,12 +127,22 @@ function LoadingSkeletonItem({
   styles,
   height,
   width,
-  flashDirection,
-  flashRate,
-  baseColor,
-  highlightColor,
+  flashDirection: _flashDirection,
+  flashRate: _flashRate,
+  baseColor: _baseColor,
+  highlightColor: _highlightColor,
   ...props
 }: LoadingSkeletonItemProps) {
+  const loadingSkeletonContext = useLoadingSkeletonContext();
+
+  // Own props win over the values inherited from the parent LoadingSkeleton.
+  const flashDirection =
+    _flashDirection ?? loadingSkeletonContext.flashDirection;
+  const flashRate = _flashRate ?? loadingSkeletonContext.flashRate;
+  const baseColor = _baseColor ?? loadingSkeletonContext.baseColor;
+  const highlightColor =
+    _highlightColor ?? loadingSkeletonContext.highlightColor;
+
   return (
     <LoadingSkeletonItemStyled
       aria-label="loading-skeleton-item"

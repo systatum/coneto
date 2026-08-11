@@ -62,10 +62,7 @@ function Separator({
             $grow={textFloat === "right"}
             $basis={textFloat === "left" ? depth : undefined}
           />
-          <Title
-            $style={styles?.titleStyle}
-            $color={separatorTheme.titleColor}
-          >
+          <Title $style={styles?.titleStyle} $color={separatorTheme.titleColor}>
             {title}
           </Title>
           <Line
@@ -160,7 +157,8 @@ const Line = styled.span<{
   border-radius: 0.125rem;
   background-color: ${({ $color }) => $color};
   box-shadow: ${({ $lineShadow }) => $lineShadow};
-  flex: ${({ $grow, $basis }) => ($grow ? "1 1 auto" : `0 0 ${$basis ?? "0px"}`)};
+  flex: ${({ $grow, $basis }) =>
+    $grow ? "1 1 auto" : `0 0 ${$basis ?? "0px"}`};
 
   ${({ $style }) => $style}
 `;

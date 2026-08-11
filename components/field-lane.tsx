@@ -2,7 +2,7 @@ import { RiCheckLine, RiErrorWarningLine } from "@remixicon/react";
 import React, { ReactElement, ReactNode } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
-import { StatefulForm } from "./stateful-form";
+import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form";
 import { Tooltip } from "./tooltip";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
@@ -34,7 +34,7 @@ export interface FieldLaneProps {
   errorMessage?: string;
   dropdowns?: FieldLaneDropdown[];
   styles?: FieldLaneStyles;
-  helper?: string;
+  helper?: ReactNode;
   disabled?: boolean;
   children?: ReactNode;
   actions?: FieldLaneAction[];
@@ -49,7 +49,7 @@ export interface FieldLaneProps {
   mobile?: boolean;
 }
 
-export interface FieldLaneStyles {
+export interface FieldLaneStyles extends Omit<StatefulFormLabelStyles, "self"> {
   containerStyle?: CSSProp;
   labelStyle?: CSSProp;
   controlStyle?: CSSProp;
@@ -437,6 +437,9 @@ function FieldLane({
 
                 ${styles?.labelStyle};
               `,
+              helperDrawerStyle: styles?.helperDrawerStyle,
+              helperIconStyle: styles?.helperIconStyle,
+              helperArrowStyle: styles?.helperArrowStyle,
             }}
             helper={helper}
             label={label}

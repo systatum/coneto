@@ -17,7 +17,6 @@ interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   showError?: boolean;
   errorMessage?: string;
   styles?: BaseFileInputBoxStyles;
-  helper?: string;
 }
 
 interface BaseFileInputBoxStyles {
@@ -191,6 +190,9 @@ function FileInputBox({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
     ...baseFileInputBoxtyles
   } = styles ?? {};
 
@@ -213,6 +215,9 @@ function FileInputBox({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseFileInputBox

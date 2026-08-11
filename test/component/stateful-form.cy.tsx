@@ -11,7 +11,7 @@ import { Badge, BadgeProps } from "./../../components/badge";
 import { css } from "styled-components";
 import { SelectboxOption } from "./../../components/selectbox";
 import { CapsuleTab } from "./../../components/capsule";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   OnCompleteFunctionArgs,
   FileDropBox,
@@ -317,12 +317,138 @@ const ALL_INPUT: FormFieldGroup[] = [
   },
 ];
 
+const FIELD_HELPERS: Record<string, string> = {
+  text: "Enter any text value.",
+  email: "Enter a valid email address.",
+  number: "Enter a numeric value.",
+  password: "Enter a secure password.",
+  textarea: "Enter a longer message.",
+  time: "Select a time value.",
+  pin: "Enter your PIN code.",
+  checkbox: "Toggle the checkbox.",
+  radio: "Select one option.",
+  color: "Choose a color.",
+  combo: "Select an option from the list.",
+  date: "Select a date.",
+  file_drop_box: "Drag and drop a file here.",
+  file: "Upload a file.",
+  image: "Upload an image.",
+  money: "Enter a monetary value.",
+  phone: "Enter a phone number.",
+  signbox: "Provide your signature.",
+  rating: "Rate the item.",
+  thumbfield: "Upload or select a thumbnail.",
+  toggle: "Toggle the switch.",
+  chips: "Select one or more chips.",
+  capsule: "Choose a monetary option.",
+};
+
 const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   groups.flatMap((group) =>
     Array.isArray(group) ? flattenFields(group) : [group]
   );
 
 describe("StatefulForm", () => {
+  context("FieldTooltip", () => {
+    context("items", () => {
+      context("when given only a title", () => {
+        it("should render the title", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Account Information",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item").should(
+            "contain.text",
+            "Account Information"
+          );
+        });
+      });
+
+      context("when given only a description", () => {
+        it("should render the description", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  description: "Enter your full legal name.",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item").should(
+            "contain.text",
+            "Enter your full legal name."
+          );
+        });
+      });
+
+      context("when given a title and description", () => {
+        it("should render both", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Name",
+                  description: "Enter your full legal name.",
+                },
+              ]}
+            />
+          );
+
+          cy.findByLabelText("field-tooltip-item")
+            .should("contain.text", "Name")
+            .and("contain.text", "Enter your full legal name.");
+        });
+      });
+
+      context("when given multiple items", () => {
+        it("should render all items", () => {
+          cy.mount(
+            <StatefulForm.FieldTooltip
+              items={[
+                {
+                  title: "Name",
+                  description: "Enter your full legal name.",
+                },
+                {
+                  title: "Email",
+                  description: "Use an active email address.",
+                },
+              ]}
+            />
+          );
+
+          cy.findAllByLabelText("field-tooltip-item").should("have.length", 2);
+
+          cy.findAllByLabelText("field-tooltip-item")
+            .eq(0)
+            .should("contain.text", "Name")
+            .and("contain.text", "Enter your full legal name.");
+
+          cy.findAllByLabelText("field-tooltip-item")
+            .eq(1)
+            .should("contain.text", "Email")
+            .and("contain.text", "Use an active email address.");
+        });
+      });
+
+      context("when no items are provided", () => {
+        it("should not render field-tooltip", () => {
+          cy.mount(<StatefulForm.FieldTooltip items={[]} />);
+
+          cy.findByLabelText("field-tooltip").should("not.exist");
+        });
+      });
+    });
+  });
+
   context("icon (labelIcon)", () => {
     const FIELDS_WITH_ICON = ALL_INPUT.map((group) =>
       Array.isArray(group)
@@ -378,8 +504,352 @@ describe("StatefulForm", () => {
     });
   });
 
-  context("mobile", () => {
-    context("styles", () => {
+  context("general", () => {
+    function StatefulFormWithAsync({
+      state = "valid",
+    }: {
+      state?: "valid" | "invalid" | "empty";
+    }) {
+      const DEFAULT_COUNTRY_CODES = COUNTRY_CODES.find(
+        (data) => data.id === "US"
+      );
+
+      if (!DEFAULT_COUNTRY_CODES) {
+        throw new Error(
+          "Default country code 'US' not found in COUNTRY_CODES."
+        );
+      }
+
+      const [value, setValue] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        country_code: DEFAULT_COUNTRY_CODES,
+      });
+
+      const [isFormValid, setIsFormValid] = useState(false);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          switch (state) {
+            case "valid":
+              setValue((prev) => ({
+                ...prev,
+                name: "John Doe",
+                email: "john@example.com",
+                phone: "081234567890",
+              }));
+              break;
+
+            case "invalid":
+              setValue((prev) => ({
+                ...prev,
+                name: "Jo",
+                email: "invalid-email",
+                phone: "123",
+              }));
+              break;
+
+            case "empty":
+            default:
+              break;
+          }
+        }, 300);
+
+        return () => clearTimeout(timer);
+      }, [state]);
+
+      const employeeSchema = z.object({
+        name: z
+          .string()
+          .min(3, "First name must be at least 3 characters long"),
+        email: z.string().email("Please enter a valid email address"),
+        phone: z
+          .string()
+          .regex(/^\d{10,15}$/, "Phone number must be between 10 and 15 digits")
+          .optional(),
+      });
+
+      const EMPLOYEE_FIELDS: FormFieldGroup[] = [
+        {
+          name: "name",
+          title: "First Name",
+          type: "text",
+          required: true,
+          placeholder: "Enter first name",
+        },
+        [
+          {
+            name: "email",
+            title: "Email",
+            type: "email",
+            required: true,
+            placeholder: "Enter email address",
+          },
+          {
+            name: "text",
+            title: "Verify",
+            type: "button",
+          },
+        ],
+        {
+          name: "phone",
+          title: "Phone Number",
+          type: "phone",
+          required: true,
+          placeholder: "Enter phone number",
+        },
+        {
+          name: "text",
+          title: "Save",
+          type: "button",
+          disabled: !isFormValid,
+          rowJustifyPosition: "end",
+        },
+      ];
+
+      return (
+        <StatefulForm
+          fields={EMPLOYEE_FIELDS}
+          formValues={value}
+          validationSchema={employeeSchema}
+          mode="onChange"
+          onValidityChange={setIsFormValid}
+          onChange={({ currentState }) => {
+            setValue((prev) => ({
+              ...prev,
+              ...currentState,
+            }));
+          }}
+        />
+      );
+    }
+
+    context("when typing with invalid value", () => {
+      context("while focused", () => {
+        it("does not show the error", () => {
+          cy.mount(<StatefulFormWithAsync state="empty" />);
+
+          cy.findByPlaceholderText("Enter first name").type("T");
+
+          cy.findByText("First name must be at least 3 characters long").should(
+            "not.exist"
+          );
+        });
+      });
+
+      context("after blur", () => {
+        it("shows the error", () => {
+          cy.mount(<StatefulFormWithAsync state="empty" />);
+          cy.findByText("First name must be at least 3 characters long").should(
+            "not.exist"
+          );
+
+          cy.findByPlaceholderText("Enter first name").type("T");
+          cy.get("body").click("topRight");
+
+          cy.findByText("First name must be at least 3 characters long").should(
+            "be.visible"
+          );
+        });
+
+        context("when typing in another field", () => {
+          it("keeps the previous error", () => {
+            cy.mount(<StatefulFormWithAsync state="empty" />);
+            cy.findByText(
+              "First name must be at least 3 characters long"
+            ).should("not.exist");
+
+            cy.findByPlaceholderText("Enter first name").type("Te");
+            cy.get("body").click("topRight");
+
+            cy.findByText(
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
+
+            cy.findByPlaceholderText("Enter email address").type(
+              "iamalim@test"
+            );
+
+            // still shows if in focus
+
+            cy.findByText(
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
+
+            cy.get("body").click("topRight");
+
+            // still shows after unfocused
+
+            cy.findByText(
+              "First name must be at least 3 characters long"
+            ).should("be.visible");
+            cy.findByText("Please enter a valid email address").should(
+              "be.visible"
+            );
+          });
+        });
+      });
+    });
+
+    context("async", () => {
+      context("when data is valid", () => {
+        it("renders without error", () => {
+          cy.mount(<StatefulFormWithAsync state="valid" />);
+
+          cy.wait(600);
+
+          cy.findByDisplayValue("John Doe").should("exist");
+          cy.findByDisplayValue("john@example.com").should("exist");
+          cy.findByDisplayValue("081234567890").should("exist");
+
+          cy.findByText("First name must be at least 3 characters long").should(
+            "not.exist"
+          );
+          cy.findByText("Please enter a valid email address").should(
+            "not.exist"
+          );
+          cy.findByText("Phone number must be between 10 and 15 digits").should(
+            "not.exist"
+          );
+        });
+      });
+
+      context("when data is invalid", () => {
+        it("renders with error", () => {
+          cy.mount(<StatefulFormWithAsync state="invalid" />);
+
+          cy.wait(600);
+
+          cy.findByDisplayValue("Jo").should("exist");
+          cy.findByDisplayValue("invalid-email").should("exist");
+          cy.findByDisplayValue("123").should("exist");
+
+          cy.findByText("First name must be at least 3 characters long").should(
+            "exist"
+          );
+          cy.findByText("Please enter a valid email address").should("exist");
+          cy.findByText("Phone number must be between 10 and 15 digits").should(
+            "exist"
+          );
+        });
+      });
+    });
+  });
+
+  context("styles", () => {
+    const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            helper: (
+              <span aria-label="helper-with-react-node">
+                {FIELD_HELPERS[item.type]}
+              </span>
+            ),
+          }))
+        : {
+            ...group,
+            helper: (
+              <span aria-label="helper-with-react-node">
+                {FIELD_HELPERS[group.type]}
+              </span>
+            ),
+          }
+    );
+
+    const FLAT_INPUT = INPUT_WITH_HELPER.flatMap((props) => props);
+    context("helperArrowStyle", () => {
+      context("when given green background", () => {
+        it("renders with background with rgb(0, 255, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperArrowStyle: css`
+                  background-color: rgb(0, 255, 0);
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
+
+              cy.findAllByLabelText("tooltip-arrow")
+                .eq(index)
+                .should("have.css", "background-color", "rgb(0, 255, 0)");
+            });
+        });
+      });
+    });
+
+    context("helperIconStyle", () => {
+      context("when given red color", () => {
+        it("renders the svg with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperIconStyle: css`
+                  svg {
+                    fill: red;
+                  }
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
+
+              cy.findAllByLabelText("tooltip-trigger")
+                .eq(index)
+                .find("svg")
+                .should("have.css", "fill", "rgb(255, 0, 0)");
+            });
+        });
+      });
+    });
+
+    context("helperDrawerStyle", () => {
+      context("when given background yellow", () => {
+        it("renders the background color with rgb(255, 255, 0)", () => {
+          cy.mount(
+            <StatefulForm
+              styles={{
+                helperDrawerStyle: css`
+                  background-color: yellow;
+                `,
+              }}
+              fields={INPUT_WITH_HELPER}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
+
+              cy.findAllByLabelText("tooltip-drawer")
+                .eq(index)
+                .should("have.css", "background-color", "rgb(255, 255, 0)");
+            });
+        });
+      });
+    });
+
+    context("mobile", () => {
       context("mobileFieldGroupStyle", () => {
         context("when given padding 30px", () => {
           it("should render the padding in all side with 30px", () => {
@@ -432,6 +902,9 @@ describe("StatefulForm", () => {
         });
       });
     });
+  });
+
+  context("mobile", () => {
     it("renders with background rgb(236, 236, 236)", () => {
       cy.mount(
         <StatefulForm
@@ -2711,32 +3184,6 @@ describe("StatefulForm", () => {
   });
 
   context("helper", () => {
-    const FIELD_HELPERS: Record<string, string> = {
-      text: "Enter any text value.",
-      email: "Enter a valid email address.",
-      number: "Enter a numeric value.",
-      password: "Enter a secure password.",
-      textarea: "Enter a longer message.",
-      time: "Select a time value.",
-      pin: "Enter your PIN code.",
-      checkbox: "Toggle the checkbox.",
-      radio: "Select one option.",
-      color: "Choose a color.",
-      combo: "Select an option from the list.",
-      date: "Select a date.",
-      file_drop_box: "Drag and drop a file here.",
-      file: "Upload a file.",
-      image: "Upload an image.",
-      money: "Enter a monetary value.",
-      phone: "Enter a phone number.",
-      signbox: "Provide your signature.",
-      rating: "Rate the item.",
-      thumbfield: "Upload or select a thumbnail.",
-      toggle: "Toggle the switch.",
-      chips: "Select one or more chips.",
-      capsule: "Choose a monetary option.",
-    };
-
     const INPUT_WITH_HELPER = ALL_INPUT.map((group) =>
       Array.isArray(group)
         ? group.map((item) => ({
@@ -2767,6 +3214,49 @@ describe("StatefulForm", () => {
 
           cy.findByText(String(FLAT_INPUT[index].helper));
         });
+    });
+
+    context("with reactNode", () => {
+      const INPUT_WITH_HELPER_REACTNODE = ALL_INPUT.map(
+        (group) =>
+          Array.isArray(group)
+            ? group.map((item) => ({
+                ...item,
+                helper: (
+                  <span aria-label="helper-with-react-node">
+                    {FIELD_HELPERS[item.type]}
+                  </span>
+                ),
+              }))
+            : {
+                ...group,
+                helper: (
+                  <span aria-label="helper-with-react-node">
+                    {FIELD_HELPERS[group.type]}
+                  </span>
+                ),
+              },
+
+        it("renders tooltip field with react node", () => {
+          cy.mount(
+            <StatefulForm
+              fields={INPUT_WITH_HELPER_REACTNODE}
+              formValues={allValue}
+              mode="onChange"
+            />
+          );
+
+          cy.findAllByLabelText("tooltip-trigger")
+            .should("have.length", FLAT_INPUT.length)
+            .each(($el, index) => {
+              cy.wrap($el).trigger("mouseover");
+
+              cy.findAllByLabelText("helper-with-react-node")
+                .eq(index)
+                .should("have.text", FLAT_INPUT[index].helper);
+            });
+        })
+      );
     });
   });
 

@@ -49,7 +49,6 @@ interface BaseComboboxProps {
   multiple?: boolean;
   maxSelectableItems?: number | undefined;
   styles?: ComboboxStyles;
-  helper?: string;
   disabled?: boolean;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
@@ -241,6 +240,18 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       return flatten(options ?? []);
     }, [options, openedCategoryGroup]);
 
+    const {
+      containerStyle,
+      bodyStyle,
+      controlStyle,
+      labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      selectboxStyle,
+      ...comboboxDrawerStyles
+    } = styles ?? {};
+
     return (
       <Selectbox
         ref={ref}
@@ -261,17 +272,20 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         required={required}
         labels={labels}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
           self: css`
             ${dropdowns &&
             css`
               border-top-left-radius: 0px;
               border-bottom-left-radius: 0px;
             `}
-            ${styles?.selectboxStyle}
+            ${selectboxStyle}
           `,
         }}
         id={inputId}
@@ -357,7 +371,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
           return (
             <ComboboxDrawer
               {...props}
-              styles={styles}
+              styles={comboboxDrawerStyles}
               mobile={mobile}
               navigableOptions={filteredNavigableOptions}
               inputRef={props.ref}

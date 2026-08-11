@@ -125,7 +125,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       containerStyle,
       controlStyle,
       labelStyle,
-      self: textareaStyles,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      self,
     } = styles ?? {};
 
     return (
@@ -151,6 +154,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTextarea
@@ -166,7 +172,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 border-bottom-left-radius: 0px;
               `}
 
-              ${textareaStyles}
+              ${self};
             `,
           }}
           ref={ref}

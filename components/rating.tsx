@@ -273,6 +273,9 @@ function Rating({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...ratingStyles
   } = styles ?? {};
 
@@ -297,6 +300,9 @@ function Rating({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseRating

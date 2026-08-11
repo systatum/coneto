@@ -300,6 +300,16 @@ function Capsule({
   labelIcon,
   ...rest
 }: CapsuleProps) {
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
+    ...capsuleStyles
+  } = styles ?? {};
   const inputId = StatefulForm.sanitizeId({
     prefix: "capsule",
     name,
@@ -323,10 +333,13 @@ function Capsule({
       required={rest.required}
       errorIconPosition={errorIconPosition}
       styles={{
-        bodyStyle: styles?.bodyStyle,
-        controlStyle: styles?.controlStyle,
-        containerStyle: styles?.containerStyle,
-        labelStyle: styles?.labelStyle,
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCapsule
@@ -334,10 +347,7 @@ function Capsule({
         id={inputId}
         disabled={disabled}
         showError={showError}
-        styles={{
-          capsuleWrapperStyle: styles?.capsuleWrapperStyle,
-          tabStyle: styles?.tabStyle,
-        }}
+        styles={capsuleStyles}
       />
     </FieldLane>
   );

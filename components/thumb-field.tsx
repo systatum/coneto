@@ -5,7 +5,7 @@ import {
   RiThumbUpFill,
   RiThumbUpLine,
 } from "@remixicon/react";
-import { ChangeEvent, ReactNode, useRef, useState } from "react";
+import { ChangeEvent, HTMLAttributes, ReactNode, useRef } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
@@ -13,7 +13,8 @@ import { useTheme } from "./../theme/provider";
 import { ThumbFieldThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 
-interface BaseThumbFieldProps {
+interface BaseThumbFieldProps
+  extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
   value?: boolean | null;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   thumbsUpBackgroundColor?: string;
@@ -24,6 +25,10 @@ interface BaseThumbFieldProps {
   id?: string;
   showError?: boolean;
   thumbText?: ThumbFieldThumbText;
+  onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export interface ThumbFieldThumbText {
@@ -58,6 +63,7 @@ function BaseThumbField({
   thumbText,
   styles,
   id,
+  ...props
 }: BaseThumbFieldProps) {
   const { currentTheme } = useTheme();
   const thumbFieldTheme = currentTheme.thumbField;
@@ -98,7 +104,11 @@ function BaseThumbField({
   };
 
   return (
-    <InputGroup aria-label="thumb-field" $style={styles?.triggerWrapperStyle}>
+    <InputGroup
+      {...props}
+      aria-label="thumb-field"
+      $style={styles?.triggerWrapperStyle}
+    >
       <input
         aria-label="thumbfield-input"
         ref={thumbInputRef}
@@ -199,7 +209,7 @@ function ThumbField({
   className,
   mobile,
   labelIcon,
-  ...rest
+  ...props
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "ThumbField",
@@ -212,6 +222,9 @@ function ThumbField({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...thumbFieldStyles
   } = styles ?? {};
 
@@ -230,16 +243,19 @@ function ThumbField({
       label={label}
       errorIconPosition="none"
       className={applyClassName("thumb-field", className)}
-      required={rest.required}
+      required={props.required}
       styles={{
         bodyStyle,
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseThumbField
-        {...rest}
+        {...props}
         disabled={disabled}
         name={name}
         id={inputId}

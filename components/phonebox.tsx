@@ -59,7 +59,6 @@ interface BasePhoneboxProps {
       | ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
-  helper?: string;
   disabled?: boolean;
   showError?: boolean;
   errorMessage?: string;
@@ -423,6 +422,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       containerStyle,
       controlStyle,
       labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
       ...phoneboxStyle
     } = styles ?? {};
 
@@ -454,6 +456,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
         }}
       >
         <BasePhonebox

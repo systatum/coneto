@@ -61,12 +61,13 @@ const meta: Meta<typeof StatefulForm> = {
     docs: {
       description: {
         component: `
-**StatefulForm** is a form renderer capable to handle complex scenarios involving data validation,
-nested fields, custom input rendering, and state management. It works seamlessly with Zod.
+**StatefulForm** is a flexible form renderer designed to handle complex forms with data validation, 
+nested layouts, custom field rendering, and controlled state management. It integrates seamlessly with Zod.
 
 ---
 
 ### ✨ Features
+- 🎛 **Controlled by design**: The form is driven by the \`formValues\` prop, making it easy to synchronize with React state, Zustand, Redux, or any external store.
 - 🖊 **Flexible input types**: Supports text, email, password, textarea, checkbox, radio, phone, file, image, color, date, money, rating, toggle, pin, and fully custom fields.
 - 📦 **Nested/grouped fields**: Organize fields in groups or frames for complex layouts.
 - ⚠️ **Validation**: Integrates with Zod schemas, supporting \`onChange\`, \`onBlur\`, or \`onSubmit\` validation modes.
@@ -75,6 +76,20 @@ nested fields, custom input rendering, and state management. It works seamlessly
 - 🔍 **Error handling**: Automatically shows validation errors for touched fields.
 - 🖌 **Custom render**: For fields with \`type="custom"\`, you can render any JSX/component.
 - 🎯 **AutoFocus**: Focus on a specific field when the form mounts.
+
+---
+
+### 🔄 Controlled State
+
+\`StatefulForm\` follows the controlled component pattern.
+
+1. The parent owns the form state.
+2. The parent passes the latest state through \`formValues\`.
+3. User interactions trigger \`onChange\`.
+4. The parent updates its state.
+5. The updated \`formValues\` are passed back to \`StatefulForm\`.
+
+Because the component always renders from \`formValues\`, external updates (such as API responses, resetting a form, or loading draft data) are reflected automatically.
 
 ---
 
@@ -116,6 +131,50 @@ const fields = [
 - Listen to \`onChange\` for live updates and \`onValidityChange\` to track form validity.
 - Customize appearance and spacing using \`styles\`.
 - Render fully custom inputs using \`type="custom"\` and the \`render\` prop.
+
+---
+
+### 💡 StatefulForm.FieldTooltip
+
+\`StatefulForm.FieldTooltip\` provides a structured way to display contextual guidance for a form field. Unlike a plain helper string, it supports multiple titled sections, making it ideal for explaining requirements, best practices, or additional information.
+
+Use it by passing the component to a field's \`helper\` property.
+
+\`\`\`tsx
+helper: (
+  <StatefulForm.FieldTooltip
+    items={[
+      {
+        title: "Purpose",
+        description:
+          "Use this field to enter a short, descriptive title.",
+      },
+      {
+        title: "Best Practice",
+        description:
+          "Choose a clear and concise value that is easy to understand.",
+      },
+      {
+        title: "Requirements",
+        description:
+          "Avoid using special characters unless they are required.",
+      },
+    ]}
+  />
+)
+\`\`\`
+
+For simple helper text, you can continue using a string:
+
+\`\`\`tsx
+helper: "Enter a unique title."
+\`\`\`
+
+Use \`StatefulForm.FieldTooltip\` when:
+- 📖 You need to explain multiple rules or requirements.
+- 💡 You want to provide additional context or guidance.
+- 📋 You want to organize helper content into titled sections.
+- 🎨 You need to customize the tooltip appearance using the \`styles\` prop.
 `,
       },
     },
@@ -1993,7 +2052,44 @@ export const AllCase: Story = {
         type: "text",
         required: true,
         placeholder: "Enter text",
-        helper: "This field is used to enter a single line of text",
+        helper: (
+          <StatefulForm.FieldTooltip
+            items={[
+              {
+                title: "Purpose",
+                description:
+                  "Use this field to enter short text such as a name, title, or label.",
+              },
+              {
+                title: "Keep It Concise",
+                description:
+                  "Enter clear and meaningful text that is easy for others to understand.",
+              },
+              {
+                title: "Required Field",
+                description:
+                  "Fields marked with an asterisk (*) must be completed before submitting the form.",
+              },
+              {
+                title: "Supported Characters",
+                description:
+                  "Letters, numbers, spaces, and common punctuation are accepted unless otherwise specified.",
+              },
+              {
+                title: "Review Before Continuing",
+                description:
+                  "Double-check your input for spelling or typing mistakes before proceeding.",
+              },
+            ]}
+          />
+        ),
+        textbox: {
+          styles: {
+            helperDrawerStyle: css`
+              padding: 0px;
+            `,
+          },
+        },
       },
       {
         name: "email",

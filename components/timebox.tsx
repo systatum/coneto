@@ -510,8 +510,17 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       id: props.id,
     });
 
-    const { bodyStyle, containerStyle, controlStyle, labelStyle } =
-      styles ?? {};
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      inputWrapperStyle,
+      self,
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -536,6 +545,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTimebox
@@ -551,10 +563,10 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
-              `}
-              ${styles?.inputWrapperStyle}
+              `};
+              ${inputWrapperStyle};
             `,
-            self: styles?.self,
+            self,
           }}
         />
       </FieldLane>

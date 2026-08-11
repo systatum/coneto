@@ -7,7 +7,9 @@ import React, {
   LabelHTMLAttributes,
   ReactNode,
   useEffect,
+  useLayoutEffect,
   useRef,
+  useState,
 } from "react";
 import {
   Control,
@@ -126,7 +128,7 @@ export interface StatefulFormProps<Z extends ZodTypeAny> {
   id?: string;
 }
 
-export interface StatefulFormStyles {
+export interface StatefulFormStyles extends StatefulFormLabelStyles {
   containerStyle?: CSSProp;
   frameContainerStyle?: CSSProp;
   frameTitleStyle?: CSSProp;
@@ -161,7 +163,7 @@ export interface FormFieldProps {
   id?: string;
   className?: string;
   title?: string;
-  helper?: string;
+  helper?: ReactNode;
   required?: boolean;
   type?: FormFieldType;
   placeholder?: string;
@@ -220,8 +222,16 @@ function StatefulForm<Z extends ZodTypeAny>({
   className,
   id,
 }: StatefulFormProps<Z>) {
+  // Tracks field names whose most recent change came from the internal
+  // onChange path (handleFieldChange), i.e. real user interaction through
+  // register/Controller — NOT from an external formValues update.
+  // RHF's own register/Controller already handles validate+touch for these,
+  // so we don't need (and don't want) to force setValue on them again.
+  const internallyChangedFieldsRef = useRef<Set<string>>(new Set());
+
   const handleFieldChange = (name: keyof TypeOf<Z>, value: FormValueType) => {
     if (disabled) return;
+    internallyChangedFieldsRef.current.add(name as string);
     onChange?.({ currentState: { [name]: value } });
   };
 
@@ -229,7 +239,12 @@ function StatefulForm<Z extends ZodTypeAny>({
 
   const formConfig: UseFormProps<TypeOf<Z>> = {
     mode,
-    defaultValues: formValues,
+    values: formValues,
+    // Prevent RHF from resetting errors/touched on every formValues change
+    resetOptions: {
+      keepErrors: true,
+      keepTouched: true,
+    },
   };
 
   if (validationSchema) {
@@ -243,22 +258,87 @@ function StatefulForm<Z extends ZodTypeAny>({
     formState: { errors, touchedFields, isValid },
   } = useForm(formConfig) as ReturnType<typeof useForm<TypeOf<Z>>>;
 
-  const customFieldNames = fields
-    .flat()
-    .filter((field) => field.type === "custom")
-    .map((field) => field.name);
+  const isFile = (val: unknown): val is File => val instanceof File;
 
-  const customValues = customFieldNames.map((name) => formValues[name]);
+  const isFileArray = (val: unknown): val is File[] =>
+    Array.isArray(val) && val.every((v) => v instanceof File);
 
-  useEffect(() => {
-    customFieldNames.map((name) => {
-      setValue(name as any, formValues[name as any], {
-        shouldValidate: true,
-        shouldTouch: true,
-        shouldDirty: true,
-      });
+  // Recursively collect ALL field names that hold a real form value —
+  // including "custom" fields now, since they need the same touched/validate
+  // sync logic as every other field type. Only skip "button" (no value)
+  // and "hidden" (not meant to be validated/shown).
+  function flattenAllFieldNames(fields: FormFieldGroup[]): string[] {
+    return fields.flatMap((f) => {
+      if (Array.isArray(f)) {
+        return flattenAllFieldNames(f);
+      }
+
+      if (f.type === "frame" && f.fields) {
+        return flattenAllFieldNames(f.fields as FormFieldGroup[]);
+      }
+
+      // skip fields that don't hold a real, validatable form value
+      if (f.type === "button" || f.type === "custom" || f.hidden) {
+        return [];
+      }
+
+      return [f.name];
     });
-  }, [JSON.stringify(customValues), setValue]);
+  }
+
+  // Decide whether a value is "real" enough to be worth touching/validating.
+  // Prevents empty/untouched fields from getting falsely marked as touched
+  // on initial mount (which would make them show errors immediately).
+  const hasMeaningfulValue = (value: unknown): boolean => {
+    if (typeof value === "string") return value.length > 0;
+    if (typeof value === "number" || typeof value === "boolean") return true;
+    if (isFile(value) || isFileArray(value)) return true;
+    return value != null;
+  };
+
+  const allFieldNames = flattenAllFieldNames(fields);
+
+  const prevFormValuesRef = useRef<TypeOf<Z>>(formValues);
+
+  // Whenever `formValues` changes — whether from an external source (values
+  // prop reactive sync) or a "custom" field's own render logic — RHF's
+  // internal reset (triggered by the `values` prop) does NOT automatically
+  // mark fields as touched or re-run validation for display purposes.
+  // So we manually diff against the previous values and force `setValue`
+  // with `shouldValidate` + `shouldTouch` only on fields that actually changed,
+  // avoiding unnecessary re-validation on fields that didn't change.
+  useEffect(() => {
+    const prevFormValues = prevFormValuesRef.current;
+
+    allFieldNames.forEach((name) => {
+      const key = name as keyof TypeOf<Z>;
+      const value = formValues[key];
+      const prevValue = prevFormValues[key];
+
+      const changedInternally = internallyChangedFieldsRef.current.has(name);
+
+      // consume the flag either way, so it doesn't leak into future renders
+      internallyChangedFieldsRef.current.delete(name);
+
+      if (changedInternally) {
+        // came from real user interaction via register/Controller —
+        // RHF already validated + touched it, nothing to do here
+        return;
+      }
+
+      // only reaches here for changes NOT triggered by handleFieldChange,
+      // i.e. genuinely external updates (props, server data, programmatic set, etc.)
+      if (value !== prevValue && hasMeaningfulValue(value)) {
+        setValue(name as any, value as any, {
+          shouldValidate: true,
+          shouldTouch: true,
+          shouldDirty: true,
+        });
+      }
+    });
+
+    prevFormValuesRef.current = formValues;
+  }, [formValues, setValue]);
 
   useEffect(() => {
     if (onValidityChange) {
@@ -281,11 +361,6 @@ function StatefulForm<Z extends ZodTypeAny>({
     const value = formValues[name];
     const touched = touchedFields[name];
     const error = errors[name];
-
-    const isFile = (val: unknown): val is File => val instanceof File;
-
-    const isFileArray = (val: unknown): val is File[] =>
-      Array.isArray(val) && val.every((v) => v instanceof File);
 
     const hasErrorMessage = (err: unknown): boolean => {
       if (!err || typeof err !== "object") return false;
@@ -455,7 +530,6 @@ function FormFields<T extends FieldValues>({
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
   const pinboxTheme = currentTheme?.pinbox;
-  const phoneboxTheme = currentTheme?.phonebox;
 
   const refs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -708,6 +782,18 @@ function FormFields<T extends FieldValues>({
                         {...field.textbox}
                         styles={{
                           ...field.textbox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.textbox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.textbox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.textbox?.styles?.helperIconStyle};
+                          `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
@@ -794,6 +880,18 @@ function FormFields<T extends FieldValues>({
                             {...field.pinbox}
                             styles={{
                               ...field.pinbox?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.pinbox?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.pinbox?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.pinbox?.styles?.helperIconStyle};
+                              `,
                               containerStyle: css`
                                 ${field.width &&
                                 css`
@@ -979,6 +1077,18 @@ function FormFields<T extends FieldValues>({
                         {...field.timebox}
                         styles={{
                           ...field.timebox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.timebox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.timebox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.timebox?.styles?.helperIconStyle};
+                          `,
                           self: css`
                             ${fieldSize &&
                             css`
@@ -1122,6 +1232,18 @@ function FormFields<T extends FieldValues>({
                         {...field.textarea}
                         styles={{
                           ...field.textarea?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.textarea?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.textarea?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.textarea?.styles?.helperIconStyle};
+                          `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
@@ -1218,6 +1340,18 @@ function FormFields<T extends FieldValues>({
                               {...field.checkbox}
                               styles={{
                                 ...field.checkbox?.styles,
+                                helperArrowStyle: css`
+                                  ${styles?.helperArrowStyle};
+                                  ${field.checkbox?.styles?.helperArrowStyle};
+                                `,
+                                helperDrawerStyle: css`
+                                  ${styles?.helperDrawerStyle};
+                                  ${field.checkbox?.styles?.helperDrawerStyle};
+                                `,
+                                helperIconStyle: css`
+                                  ${styles?.helperIconStyle};
+                                  ${field.checkbox?.styles?.helperIconStyle};
+                                `,
                                 titleStyle: css`
                                   ${labelSize &&
                                   css`
@@ -1342,6 +1476,18 @@ function FormFields<T extends FieldValues>({
                               disabled={field.disabled || disabled}
                               styles={{
                                 ...field.radio?.styles,
+                                helperArrowStyle: css`
+                                  ${styles?.helperArrowStyle};
+                                  ${field.radio?.styles?.helperArrowStyle};
+                                `,
+                                helperDrawerStyle: css`
+                                  ${styles?.helperDrawerStyle};
+                                  ${field.radio?.styles?.helperDrawerStyle};
+                                `,
+                                helperIconStyle: css`
+                                  ${styles?.helperIconStyle};
+                                  ${field.radio?.styles?.helperIconStyle};
+                                `,
                                 labelStyle: css`
                                   ${labelSize &&
                                   css`
@@ -1456,6 +1602,18 @@ function FormFields<T extends FieldValues>({
                             {...field.phonebox}
                             styles={{
                               ...field.phonebox?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.phonebox?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.phonebox?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.phonebox?.styles?.helperIconStyle};
+                              `,
                               labelStyle: css`
                                 ${labelSize &&
                                 css`
@@ -1556,6 +1714,18 @@ function FormFields<T extends FieldValues>({
                             {...field.colorbox}
                             styles={{
                               ...field.colorbox?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.colorbox?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.colorbox?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.colorbox?.styles?.helperIconStyle};
+                              `,
                               labelStyle: css`
                                 ${labelSize &&
                                 css`
@@ -1667,6 +1837,18 @@ function FormFields<T extends FieldValues>({
                         {...field.fileDropBox}
                         styles={{
                           ...field.fileDropBox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.fileDropBox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.fileDropBox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.fileDropBox?.styles?.helperIconStyle};
+                          `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
@@ -1745,6 +1927,18 @@ function FormFields<T extends FieldValues>({
                         }}
                         styles={{
                           ...field.fileInputBox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.fileInputBox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.fileInputBox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.fileInputBox?.styles?.helperIconStyle};
+                          `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
@@ -1839,6 +2033,18 @@ function FormFields<T extends FieldValues>({
                         {...field.imagebox}
                         styles={{
                           ...field.imagebox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.imagebox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.imagebox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.imagebox?.styles?.helperIconStyle};
+                          `,
                           containerStyle: css`
                             ${field.width &&
                             css`
@@ -1913,6 +2119,18 @@ function FormFields<T extends FieldValues>({
                         {...field.signbox}
                         styles={{
                           ...field.signbox?.styles,
+                          helperArrowStyle: css`
+                            ${styles?.helperArrowStyle};
+                            ${field.signbox?.styles?.helperArrowStyle};
+                          `,
+                          helperDrawerStyle: css`
+                            ${styles?.helperDrawerStyle};
+                            ${field.signbox?.styles?.helperDrawerStyle};
+                          `,
+                          helperIconStyle: css`
+                            ${styles?.helperIconStyle};
+                            ${field.signbox?.styles?.helperIconStyle};
+                          `,
                           labelStyle: css`
                             ${labelSize &&
                             css`
@@ -1995,6 +2213,18 @@ function FormFields<T extends FieldValues>({
                             {...field.money}
                             styles={{
                               ...field.money?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.money?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.money?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.money?.styles?.helperIconStyle};
+                              `,
                               inputWrapperStyle: css`
                                 height: 34px;
                                 ${mobileInputStyle};
@@ -2098,6 +2328,18 @@ function FormFields<T extends FieldValues>({
                               {...field.date}
                               styles={{
                                 ...field?.date?.styles,
+                                helperArrowStyle: css`
+                                  ${styles?.helperArrowStyle};
+                                  ${field.date?.styles?.helperArrowStyle};
+                                `,
+                                helperDrawerStyle: css`
+                                  ${styles?.helperDrawerStyle};
+                                  ${field.date?.styles?.helperDrawerStyle};
+                                `,
+                                helperIconStyle: css`
+                                  ${styles?.helperIconStyle};
+                                  ${field.date?.styles?.helperIconStyle};
+                                `,
                                 selectboxStyle: css`
                                   ${fieldSize &&
                                   css`
@@ -2201,6 +2443,18 @@ function FormFields<T extends FieldValues>({
                             strict={field?.combobox?.strict ?? true}
                             styles={{
                               ...field?.combobox?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.combobox?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.combobox?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.combobox?.styles?.helperIconStyle};
+                              `,
                               bodyStyle: css`
                                 ${!field.title &&
                                 hasFieldTitle &&
@@ -2313,6 +2567,18 @@ function FormFields<T extends FieldValues>({
                             {...field.chips}
                             styles={{
                               ...field.chips?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.chips?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.chips?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.chips?.styles?.helperIconStyle};
+                              `,
                               labelStyle: css`
                                 ${labelSize &&
                                 css`
@@ -2409,6 +2675,18 @@ function FormFields<T extends FieldValues>({
                               {...field.rating}
                               styles={{
                                 ...field.rating?.styles,
+                                helperArrowStyle: css`
+                                  ${styles?.helperArrowStyle};
+                                  ${field.rating?.styles?.helperArrowStyle};
+                                `,
+                                helperDrawerStyle: css`
+                                  ${styles?.helperDrawerStyle};
+                                  ${field.rating?.styles?.helperDrawerStyle};
+                                `,
+                                helperIconStyle: css`
+                                  ${styles?.helperIconStyle};
+                                  ${field.rating?.styles?.helperIconStyle};
+                                `,
                                 labelStyle: css`
                                   ${labelSize &&
                                   css`
@@ -2503,6 +2781,18 @@ function FormFields<T extends FieldValues>({
                             {...field.thumbField}
                             styles={{
                               ...field.thumbField?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.thumbField?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.thumbField?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.thumbField?.styles?.helperIconStyle};
+                              `,
                               labelStyle: css`
                                 ${labelSize &&
                                 css`
@@ -2608,6 +2898,18 @@ function FormFields<T extends FieldValues>({
                             label={field.placeholder}
                             styles={{
                               ...field.toggle?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.toggle?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.toggle?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.toggle?.styles?.helperIconStyle};
+                              `,
                               titleStyle: css`
                                 ${labelSize &&
                                 css`
@@ -2698,6 +3000,18 @@ function FormFields<T extends FieldValues>({
                             {...field.capsule}
                             styles={{
                               ...field.capsule?.styles,
+                              helperArrowStyle: css`
+                                ${styles?.helperArrowStyle};
+                                ${field.capsule?.styles?.helperArrowStyle};
+                              `,
+                              helperDrawerStyle: css`
+                                ${styles?.helperDrawerStyle};
+                                ${field.capsule?.styles?.helperDrawerStyle};
+                              `,
+                              helperIconStyle: css`
+                                ${styles?.helperIconStyle};
+                                ${field.capsule?.styles?.helperIconStyle};
+                              `,
                               labelStyle: css`
                                 ${labelSize &&
                                 css`
@@ -2790,12 +3104,19 @@ const Divider = styled.div<{
 export interface StatefulFormLabelProps
   extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
-  helper?: string;
-  styles: { self?: CSSProp };
+  helper?: ReactNode;
+  styles: StatefulFormLabelStyles;
   labelPosition?: FieldLaneProps["labelPosition"];
   labelWidth?: FieldLaneProps["labelWidth"];
   required?: boolean;
   disabled?: boolean;
+}
+
+export interface StatefulFormLabelStyles {
+  self?: CSSProp;
+  helperDrawerStyle?: CSSProp;
+  helperIconStyle?: CSSProp;
+  helperArrowStyle?: CSSProp;
 }
 
 function StatefulFormLabel({
@@ -2811,6 +3132,31 @@ function StatefulFormLabel({
   children,
   ...props
 }: StatefulFormLabelProps) {
+  const { currentTheme } = useTheme();
+  const statefulFormTheme = currentTheme?.statefulForm;
+
+  const helperValue =
+    typeof helper === "string" ? (
+      <FieldTooltip
+        styles={{
+          itemStyle: css`
+            padding: 4px 8px;
+            background-color: transparent;
+          `,
+          containerStyle: css`
+            background-color: transparent;
+          `,
+        }}
+        items={[
+          {
+            description: helper,
+          },
+        ]}
+      />
+    ) : (
+      helper
+    );
+
   return (
     <Label
       {...props}
@@ -2829,7 +3175,29 @@ function StatefulFormLabel({
         )}
       </LabelText>
 
-      {helper && <Helper value={helper} />}
+      {helper && (
+        <Helper
+          styles={{
+            arrowStyle: css`
+              background-color: ${statefulFormTheme?.fieldTooltip
+                ?.panelBackground};
+
+              ${styles?.helperArrowStyle};
+            `,
+            drawerStyle: css`
+              background-color: ${statefulFormTheme?.fieldTooltip
+                ?.panelBackground};
+              color: ${statefulFormTheme?.fieldTooltip?.mutedTextColor};
+              max-width: 300px;
+              padding: 0px;
+              ${styles?.helperDrawerStyle}
+            `,
+            self: styles?.helperIconStyle,
+          }}
+          value={helperValue}
+        />
+      )}
+
       {children}
     </Label>
   );
@@ -2916,7 +3284,164 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
+export interface FieldTooltipItem {
+  title?: ReactNode;
+  description?: ReactNode;
+}
+
+export interface FieldTooltipStyles {
+  containerStyle?: CSSProp;
+  itemStyle?: CSSProp;
+  titleStyle?: CSSProp;
+  descriptionStyle?: CSSProp;
+}
+
+export interface FieldTooltipProps {
+  items?: FieldTooltipItem[];
+  styles?: FieldTooltipStyles;
+}
+
+function FieldTooltip({ items, styles }: FieldTooltipProps) {
+  const { currentTheme } = useTheme();
+  const statefulFormTheme = currentTheme?.statefulForm;
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isScrollable, setIsScrollable] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const updateScrollable = () =>
+      setIsScrollable(el.scrollHeight > el.clientHeight + 2);
+
+    updateScrollable();
+    const observer = new ResizeObserver(updateScrollable);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [items]);
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  return (
+    <FieldTooltipWrapper
+      aria-label="field-tooltip"
+      ref={wrapperRef}
+      $theme={statefulFormTheme}
+      $scrollable={isScrollable}
+      $style={styles?.containerStyle}
+    >
+      {items.map(({ title, description }, index) => (
+        <FieldTooltipItem
+          key={index}
+          aria-label="field-tooltip-item"
+          $theme={statefulFormTheme}
+          $isLast={index === items.length - 1}
+          $style={styles?.itemStyle}
+        >
+          <FieldTooltipTitle
+            aria-label="field-tooltip-title"
+            $style={styles?.titleStyle}
+            $theme={statefulFormTheme}
+          >
+            {title}
+          </FieldTooltipTitle>
+          <FieldTooltipDescription
+            aria-label="field-tooltip-description"
+            $style={styles?.descriptionStyle}
+            $theme={statefulFormTheme}
+          >
+            {description}
+          </FieldTooltipDescription>
+        </FieldTooltipItem>
+      ))}
+    </FieldTooltipWrapper>
+  );
+}
+
+const FieldTooltipWrapper = styled.div<{
+  $theme?: StatefulFormThemeConfig;
+  $scrollable?: boolean;
+  $style?: CSSProp;
+}>`
+  width: 260px;
+  max-height: 30vh;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-y: ${({ $scrollable }) => ($scrollable ? "auto" : "hidden")};
+  overscroll-behavior: contain;
+  border-radius: 4px;
+  border: 1px solid ${({ $theme }) => $theme?.fieldTooltip?.panelBorder};
+  background: ${({ $theme }) => $theme?.fieldTooltip?.panelBackground};
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.03),
+    0 6px 16px rgba(0, 0, 0, 0.16);
+
+  scrollbar-color: ${({ $theme }) =>
+    `${$theme.fieldTooltip.scrollbarThumbColor} ${$theme.fieldTooltip.scrollbarTrackColor}`};
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${({ $theme }) => $theme?.fieldTooltip?.scrollbarTrackColor};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ $theme }) => $theme?.fieldTooltip?.scrollbarThumbColor};
+    border-radius: 8px;
+  }
+
+  ${({ $style }) => $style}
+`;
+
+const FieldTooltipItem = styled.div<{
+  $theme?: StatefulFormThemeConfig;
+  $isLast?: boolean;
+  $style?: CSSProp;
+}>`
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-bottom: ${({ $isLast, $theme }) =>
+    $isLast ? "none" : `1px solid ${$theme?.fieldTooltip?.dividerColor}`};
+
+  ${({ $style }) => $style}
+`;
+
+const FieldTooltipTitle = styled.div<{
+  $theme?: StatefulFormThemeConfig;
+  $style?: CSSProp;
+}>`
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: normal;
+  font-weight: 600;
+  font-size: 13px;
+  color: ${({ $theme }) => $theme?.fieldTooltip?.textColor};
+
+  ${({ $style }) => $style}
+`;
+
+const FieldTooltipDescription = styled.div<{
+  $theme?: StatefulFormThemeConfig;
+  $style?: CSSProp;
+}>`
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: break-word;
+  color: ${({ $theme }) => $theme?.fieldTooltip?.mutedTextColor};
+
+  ${({ $style }) => $style}
+`;
+
 StatefulForm.Label = StatefulFormLabel;
 StatefulForm.sanitizeId = sanitizeId;
+StatefulForm.FieldTooltip = FieldTooltip;
 
 export { StatefulForm };
