@@ -1490,7 +1490,7 @@ function FormFields<T extends FieldValues>({
                                   text-align: end;
                                   width: fit-content;
                                 `}
-                                ${field.phonebox?.styles?.inputWrapperStyle};
+                                ${field.phonebox?.styles?.self};
                               `,
                               containerStyle: css`
                                 ${field.width &&
