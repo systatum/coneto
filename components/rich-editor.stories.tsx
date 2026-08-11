@@ -35,9 +35,13 @@ const meta: Meta<typeof RichEditor> = {
   - Ensures clean spacing and consistent formatting
 
 - **Rich formatting**
-  - Bold and italic (toolbar + keyboard shortcuts)
-  - Headings (H1–H3) via floating menu
-  - Ordered and unordered lists
+  - Bold
+  - Italic
+  - Underline
+  - Headings (H1–H3)
+  - Ordered lists
+  - Unordered lists
+  - Optional task lists (checkboxes)
   - Smart inline formatting (auto-detect word styling)
 
 - **Checklist support**
@@ -67,6 +71,47 @@ const meta: Meta<typeof RichEditor> = {
     - \`view-only\`
     - \`markdown-editor\`
     - \`code-editor\`
+
+---
+
+### 🎨 Formatting Configuration
+
+Control which formatting features are available in the editor.
+
+By default, all formatting options are enabled except checkboxes.
+
+\`\`\`tsx
+<RichEditor
+  formatting={{
+    allowBold: true,
+    allowItalic: true,
+    allowUnderline: true,
+    allowOrderedList: true,
+    allowUnorderedList: true,
+    allowCheckBoxes: false,
+    allowHeading: true,
+  }}
+/>
+\`\`\`
+
+#### \`formatting\`
+
+| Option | Default | Description |
+| ------- | :-----: | ----------- |
+| \`allowBold\` | \`true\` | Enables bold formatting (\`**text**\`). |
+| \`allowItalic\` | \`true\` | Enables italic formatting (\`*text*\`). |
+| \`allowUnderline\` | \`true\` | Enables underline formatting (\`~text~\`). |
+| \`allowOrderedList\` | \`true\` | Enables ordered lists (\`1. Item\`). |
+| \`allowUnorderedList\` | \`true\` | Enables unordered lists (\`- Item\` or \`* Item\`). |
+| \`allowCheckBoxes\` | \`false\` | Enables Markdown task lists (\`[ ]\` and \`[x]\`). |
+| \`allowHeading\` | \`true\` | Enables Markdown headings (\`#\` through \`######\`). |
+
+When a formatting option is disabled:
+
+- Existing Markdown using that format is rendered as plain text.
+- Toolbar controls for the disabled feature are hidden or inactive.
+- Keyboard shortcuts and automatic formatting for the disabled feature are ignored.
+- Markdown serialization removes the disabled formatting.
 
 ---
 
@@ -356,6 +401,9 @@ This is unordered list
           ref={ref}
           onChange={(e) => setValue(e)}
           value={value}
+          formatting={{
+            allowCheckBoxes: true,
+          }}
           toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         />
         <div
@@ -506,6 +554,9 @@ export default Content
           autogrow
           onChange={(e) => setValue(e)}
           value={value}
+          formatting={{
+            allowCheckBoxes: true,
+          }}
           toolbarRightPanel={TOOLBAR_RIGHT_PANEL_ACTIONS}
         />
         <div
@@ -951,6 +1002,9 @@ export default Content
           mode="view-only"
           onChange={(e) => setValue(e)}
           value={value}
+          formatting={{
+            allowCheckBoxes: true,
+          }}
         />
         {value !== "" && (
           <pre
