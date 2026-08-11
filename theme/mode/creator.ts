@@ -1551,7 +1551,7 @@ export function createStatefulFormTheme(
       fieldTooltip: {
         textColor: body?.textColor,
         mutedTextColor: body?.mutedTextColor,
-        panelBackground: "rgb(238, 238, 238)",
+        panelBackground: "rgb(252, 252, 252)",
         panelBorder: "#e5e7eb",
         dividerColor: "#e5e7eb",
         scrollbarThumbColor: "rgba(145, 142, 142, 0.3)",
