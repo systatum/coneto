@@ -19,82 +19,86 @@ import { RiCloseLine } from "@remixicon/react";
 import {
   RichEditor,
   RichEditorAction,
-  MonacoCodeLanguageEquivalent,
+  CodeLanguageEquivalent,
   RichEditorToolbarPosition,
 } from "./rich-editor";
 import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 import marked from "./../lib/marked/marked";
-
-/**
- * Monaco Editor uses Web Workers to run language services
- * (like TypeScript, JSON validation, IntelliSense, etc.) in a separate thread.
- *
- * In environments like Vite, workers are NOT automatically bundled or resolved.
- * So we must explicitly import each worker using the `?worker` suffix.
- *
- * The `?worker` tells Vite to:
- * - Treat the file as a Web Worker
- * - Bundle it separately
- * - Return a Worker constructor we can instantiate
- *
- * Without this setup:
- * - Monaco will fail to load language features
- * - You may see errors like:
- *   "Cannot read file ... json.worker.js"
- * - IntelliSense / syntax validation will not work
- */
-
-import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
-import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
-import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
-import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
 import { applyClassName } from "./../constants/classname";
 
 /**
- * Registers the Monaco web worker factory on `window.MonacoEnvironment`.
- * Must be called before any editor instance is created. Safe to call multiple times.
+ * ── CodeMirror 6 ──
+ * Unlike Monaco, CodeMirror ships as plain ES modules with no web-worker
+ * bootstrapping required, so there's no environment/worker registration
+ * step here (compare to the old `initMonacoEnvironment`). Language support
+ * packages are small and imported eagerly below; if the bundle size becomes
+ * a concern these can be swapped for dynamic `import()` per-language later.
  */
 
-let initialized = false;
-
-function initMonacoEnvironment() {
-  if (initialized || typeof window === "undefined") return;
-
-  (window as any).MonacoEnvironment = {
-    getWorker(_: unknown, label: string) {
-      if (label === "json") return new JsonWorker();
-      if (label === "css" || label === "scss" || label === "less")
-        return new CssWorker();
-      if (label === "html") return new HtmlWorker();
-      if (label === "typescript") return new TsWorker();
-      return new EditorWorker();
-    },
-  };
-
-  initialized = true;
-}
-
-// Cached promise so the Monaco bundle is only imported once.
-let monacoPromise: Promise<
-  typeof import("monaco-editor/esm/vs/editor/editor.main")
-> | null = null;
+import { EditorView, KeyBinding, keymap, lineNumbers } from "@codemirror/view";
+import { Compartment, EditorState, Prec } from "@codemirror/state";
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import {
+  indentOnInput,
+  bracketMatching,
+  syntaxHighlighting,
+  defaultHighlightStyle,
+  LanguageSupport,
+} from "@codemirror/language";
+import {
+  closeBrackets,
+  closeBracketsKeymap,
+  autocompletion,
+  completionKeymap,
+} from "@codemirror/autocomplete";
+import { javascript } from "@codemirror/lang-javascript";
+import { json } from "@codemirror/lang-json";
+import { css as cssLanguage } from "@codemirror/lang-css";
+import { html as htmlLanguage } from "@codemirror/lang-html";
+import { python } from "@codemirror/lang-python";
+import { markdown } from "@codemirror/lang-markdown";
+import { oneDark } from "@codemirror/theme-one-dark";
 
 /**
- * Lazily imports and caches the Monaco editor module.
- * @returns Promise resolving to the Monaco editor namespace.
+ * Resolves a language identifier (as used throughout this file / the
+ * combobox `options`) to the matching CodeMirror `LanguageSupport`
+ * extension. Anything unrecognized falls back to plain text (no
+ * highlighting)
  */
-
-export function getMonacoEditor() {
-  if (!monacoPromise) {
-    monacoPromise = import("monaco-editor/esm/vs/editor/editor.main");
+function getLanguageExtension(lang: string): LanguageSupport | [] {
+  switch (lang) {
+    case "typescript":
+    case "ts":
+      return javascript({ typescript: true });
+    case "tsx":
+      return javascript({ jsx: true, typescript: true });
+    case "javascript":
+    case "js":
+      return javascript();
+    case "jsx":
+      return javascript({ jsx: true });
+    case "json":
+      return json();
+    case "css":
+    case "scss":
+    case "less":
+      return cssLanguage();
+    case "html":
+      return htmlLanguage();
+    case "python":
+    case "py":
+      return python();
+    case "markdown":
+    case "md":
+      return markdown();
+    default:
+      return [];
   }
-  return monacoPromise;
 }
 
-export type CodeEditorLanguage = MonacoCodeLanguageEquivalent;
+export type CodeEditorLanguage = CodeLanguageEquivalent;
 
 export interface CodeEditorAction extends Omit<RichEditorAction, "onClick"> {
   onClick?: (props: { code?: string }) => void;
@@ -142,157 +146,185 @@ function CodeEditor({
 }: CodeEditorProps) {
   const { currentTheme, mode } = useTheme();
   const richEditorTheme = currentTheme?.richEditor;
-  const editorTheme = mode === "dark" ? "vs-dark" : "vs";
-
-  useEffect(() => {
-    initMonacoEnvironment();
-  }, []);
 
   const uid = useId();
   const comboboxId = `codeed-combo-${uid}`;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorView | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const [lang, setLang] = useState<CodeEditorLanguage>(
     language ?? (options[0]?.value as CodeEditorLanguage)
   );
   const langRef = useRef(lang);
-
   langRef.current = lang;
 
+  // Compartments let us swap language/theme/read-only state on an existing
+  // view via `dispatch` instead of tearing the whole editor down (the CM6
+  // equivalent of Monaco's `setModelLanguage` / `editor.setTheme`)
+
+  const languageCompartment = useRef(new Compartment()).current;
+  const themeCompartment = useRef(new Compartment()).current;
+  const readOnlyCompartment = useRef(new Compartment()).current;
+
+  const updateHeight = (view: EditorView) => {
+    const lineCount = view.state.doc.lines;
+    const lineHeight = 20;
+    const padding = 20;
+    const newHeight = Math.max(60, lineCount * lineHeight + padding);
+    if (containerRef.current) {
+      containerRef.current.style.height = `${newHeight}px`;
+    }
+  };
+
+  const transparentBackground = Prec.high(
+    EditorView.theme({
+      "&": {
+        backgroundColor: "transparent",
+      },
+      ".cm-content": {
+        backgroundColor: "transparent",
+      },
+      ".cm-gutters": {
+        border: "none",
+        padding: "0px 4px 0px 2px",
+      },
+      ".cm-scroller": {
+        scrollbarWidth: "thin", // Firefox
+        scrollbarColor: `${richEditorTheme?.scrollThumb ?? "rgba(120,120,120,0.4)"} transparent`,
+      },
+      ".cm-scroller::-webkit-scrollbar": {
+        width: "8px",
+        height: "8px",
+      },
+      ".cm-scroller::-webkit-scrollbar-track": {
+        background: "transparent",
+      },
+      ".cm-scroller::-webkit-scrollbar-thumb": {
+        backgroundColor:
+          richEditorTheme?.scrollThumb ?? "rgba(120,120,120,0.4)",
+        borderRadius: "4px",
+      },
+      ".cm-scroller::-webkit-scrollbar-thumb:hover": {
+        backgroundColor:
+          richEditorTheme?.scrollThumb ?? "rgba(120,120,120,0.6)",
+      },
+    })
+  );
+
   useEffect(() => {
-    let disposed = false;
-
-    (async () => {
-      if (!containerRef.current) return;
-      if (editorRef.current) return;
-
-      try {
-        const { KeyCode, editor } = await getMonacoEditor();
-
-        if (disposed || !containerRef.current) return;
-
-        const monacoEditor = editor.create(containerRef.current, {
-          value,
-          language,
-          theme: editorTheme,
-          fontSize: 13,
-          lineHeight: 20,
-          fontFamily:
-            '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
-          fontLigatures: true,
-          minimap: { enabled: false },
-          scrollBeyondLastLine: false,
-          wordWrap: "off",
-          renderLineHighlight: "none",
-          cursorBlinking: "smooth",
-          smoothScrolling: true,
-          automaticLayout: true,
-          fixedOverflowWidgets: true,
-          tabSize: 2,
-          lineNumbers: "on",
-          glyphMargin: false,
-          folding: false,
-          readOnly,
-          scrollbar: {
-            verticalScrollbarSize: 4,
-            horizontalScrollbarSize: 4,
-            alwaysConsumeMouseWheel: false,
-          },
-          padding: { top: 10, bottom: 10 },
-          overviewRulerLanes: 0,
-          contextmenu: !readOnly,
-        });
-
-        editorRef.current = monacoEditor;
-
-        if (id) {
-          const record = codeBlockRegistry.get(id);
-          if (record) {
-            record.editor = monacoEditor;
-          }
-        }
-
-        if (autoFocus) {
-          requestAnimationFrame(() => {
-            if (!disposed) {
-              monacoEditor.focus();
-            }
-          });
-        }
-
-        const updateHeight = () => {
-          const lineCount = monacoEditor.getModel()?.getLineCount() ?? 1;
-          const lineHeight = 20;
-          const padding = 20;
-          const newHeight = Math.max(60, lineCount * lineHeight + padding);
-          if (containerRef.current) {
-            containerRef.current.style.height = `${newHeight}px`;
-          }
-          monacoEditor.layout();
-        };
-
-        updateHeight();
-
-        monacoEditor.onDidChangeModelContent(() => {
-          updateHeight();
-          onChange?.(monacoEditor.getValue(), langRef.current);
-        });
-
-        monacoEditor.onKeyDown((e) => {
-          const position = monacoEditor.getPosition();
-          const model = monacoEditor.getModel();
-
-          if (!position || !model) return;
-
-          const lineNumber = position.lineNumber;
-          const column = position.column;
-
-          const isFirstLine = position.lineNumber === 1;
-          const isLastLine = position.lineNumber === model.getLineCount();
-
-          const lineMaxColumn = model.getLineMaxColumn(lineNumber);
-
-          const isAtLineStart = column === 1;
-          const isAtLineEnd = column === lineMaxColumn;
-
-          if (e.keyCode === KeyCode.UpArrow && isFirstLine && isAtLineStart) {
-            e.preventDefault();
+    if (!containerRef.current || editorRef.current) return;
+    const editorKeymap: readonly KeyBinding[] = [
+      {
+        key: "ArrowUp",
+        run: (view) => {
+          const { head, empty } = view.state.selection.main;
+          const atFirstLine = view.state.doc.lineAt(head).number === 1;
+          if (empty && atFirstLine && head === 0) {
             CodeEditor.exitToEditor(id, "above");
-            return;
+            return true;
           }
-
-          if (
-            e.keyCode === KeyCode.Backspace &&
-            removeOnEmpty &&
-            monacoEditor.getValue().length === 0
-          ) {
-            e.preventDefault();
-            onClosed?.();
-            return;
-          }
-
-          if (e.keyCode === KeyCode.DownArrow && isLastLine && isAtLineEnd) {
-            e.preventDefault();
+          return false;
+        },
+      },
+      {
+        key: "ArrowDown",
+        run: (view) => {
+          const { head, empty } = view.state.selection.main;
+          const isLastLine =
+            view.state.doc.lineAt(head).number === view.state.doc.lines;
+          const atDocEnd = head === view.state.doc.length;
+          if (empty && isLastLine && atDocEnd) {
             CodeEditor.exitToEditor(id, "below");
-            return;
+            return true;
           }
-        });
-        setIsLoaded(true);
-      } catch (e: any) {
-        if (e?.message === "Canceled") return;
-        throw e;
+          return false;
+        },
+      },
+      {
+        key: "Backspace",
+        run: (view) => {
+          if (removeOnEmpty && view.state.doc.length === 0) {
+            onClosed?.();
+            return true;
+          }
+          return false;
+        },
+      },
+    ];
+
+    const view = new EditorView({
+      state: EditorState.create({
+        doc: value,
+        extensions: [
+          lineNumbers(),
+          history(),
+          indentOnInput(),
+          bracketMatching(),
+          closeBrackets(),
+          autocompletion(),
+          syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+          keymap.of([
+            ...editorKeymap,
+            ...closeBracketsKeymap,
+            ...completionKeymap,
+            ...historyKeymap,
+            ...defaultKeymap,
+          ]),
+          languageCompartment.of(getLanguageExtension(lang)),
+          themeCompartment.of(
+            mode === "dark" ? [oneDark, transparentBackground] : []
+          ),
+          readOnlyCompartment.of(EditorView.editable.of(!readOnly)),
+          EditorState.readOnly.of(readOnly),
+          EditorView.theme({
+            "&": {
+              fontSize: "13px",
+              height: "100%",
+            },
+            ".cm-content": {
+              fontFamily:
+                '"Fira Code", "Cascadia Code", "JetBrains Mono", "Consolas", monospace',
+              padding: "10px 0",
+              caretColor: "auto",
+            },
+            ".cm-gutters": {
+              borderRadius: "0px",
+            },
+          }),
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              updateHeight(update.view);
+              onChange?.(update.state.doc.toString(), langRef.current);
+            }
+          }),
+        ],
+      }),
+      parent: containerRef.current,
+    });
+
+    editorRef.current = view;
+
+    if (id) {
+      const record = codeBlockRegistry.get(id);
+      if (record) {
+        record.editor = view;
       }
-    })();
+    }
+
+    if (autoFocus) {
+      requestAnimationFrame(() => {
+        view.focus();
+      });
+    }
+
+    updateHeight(view);
+    setIsLoaded(true);
 
     return () => {
-      disposed = true;
-      if (editorRef.current) {
-        editorRef.current.dispose();
-        editorRef.current = null;
-      }
+      view.destroy();
+      editorRef.current = null;
     };
     // Re-create the editor whenever the color-mode changes (same as before)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -301,49 +333,40 @@ function CodeEditor({
   // Update theme after change mode, to always synchronize.
   useEffect(() => {
     if (!editorRef.current) return;
+    editorRef.current.dispatch({
+      effects: themeCompartment.reconfigure(
+        mode === "dark" ? [oneDark, transparentBackground] : []
+      ),
+    });
+  }, [mode]);
 
-    (async () => {
-      try {
-        const { editor } = await getMonacoEditor();
-        editor.setTheme(editorTheme);
-      } catch {
-        return;
-      }
-    })();
-  }, [mode, editorTheme]);
+  // Keep the read-only compartment synced if the prop changes post-mount.
+  useEffect(() => {
+    if (!editorRef.current) return;
+    editorRef.current.dispatch({
+      effects: [
+        readOnlyCompartment.reconfigure(EditorView.editable.of(!readOnly)),
+      ],
+    });
+  }, [readOnly]);
 
   useEffect(() => {
-    if (!lang) return;
-    applyLangToMonaco(lang).catch((e) => {
-      if (e?.message !== "Canceled") throw e;
+    if (!lang || !editorRef.current) return;
+    editorRef.current.dispatch({
+      effects: languageCompartment.reconfigure(getLanguageExtension(lang)),
     });
   }, [lang, isLoaded]);
 
   const handleLangChange = (newLang: CodeEditorLanguage) => {
     setLang(newLang);
-    onChange?.(editorRef.current?.getValue() ?? "", newLang);
-  };
-
-  const applyLangToMonaco = async (newLang: CodeEditorLanguage) => {
-    if (!editorRef.current) return;
-
-    try {
-      const { editor } = await getMonacoEditor();
-
-      const actualLang = newLang === "tsx" ? "typescript" : newLang;
-
-      editor.setModelLanguage(editorRef.current.getModel(), actualLang);
-    } catch (e: any) {
-      if (e?.message === "Canceled") return;
-      throw e;
-    }
+    onChange?.(editorRef.current?.state.doc.toString() ?? "", newLang);
   };
 
   const filteredActions = actions?.map((action) => ({
     ...action,
     onClick: () =>
       action?.onClick({
-        code: editorRef.current?.getValue(),
+        code: editorRef.current?.state.doc.toString(),
       }),
   }));
 
@@ -481,12 +504,7 @@ const Editor = styled.div<{
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transition: opacity 0.15s;
   border-radius: 4px;
-  overflow: visible;
-
-  & .monaco-editor,
-  & .monaco-editor .overflow-guard {
-    border-radius: 8px;
-  }
+  overflow: hidden;
 
   ${({ $toolbarPosition, $readOnly }) =>
     !$readOnly &&
@@ -510,19 +528,19 @@ interface CodeEditor {
   wrapper: HTMLElement;
   code: string;
   lang: string;
-  editor?: any;
+  editor?: EditorView;
 }
 
 const codeBlockRegistry = new Map<string, CodeEditor>();
 let blockIdCounter = 0;
 
-/** Returns the next unique block ID (e.g. "monaco-block-1"). */
+/** Returns the next unique block ID (e.g. "code-mirror-block-1"). */
 function nextBlockId() {
-  return `monaco-block-${++blockIdCounter}`;
+  return `code-mirror-block-${++blockIdCounter}`;
 }
 
 // ── CodeEditorBridge ──
-// Rendered into each isolated React root (one per Monaco block).
+// Rendered into each isolated React root (one per Code Mirror block).
 // Subscribes to the global theme store so the nested CodeEditor stays in sync
 // even though it lives outside the main React tree.
 function CodeEditorBridge({
@@ -623,12 +641,12 @@ function RenderCodeEditor(
 }
 
 /**
- * Serializes the full editor content (rich text + Monaco blocks) to Markdown
+ * Serializes the full editor content (rich text + Code mirror blocks) to Markdown
  * and delivers it via `onChange`.
  *
  * Steps:
  * 1. Clone the editor DOM to avoid mutating live nodes.
- * 2. Replace each Monaco wrapper with a `<pre><code>` element from the registry.
+ * 2. Replace each CodeMirror wrapper with a `<pre><code>` element from the registry.
  * 3. Convert HTML → Markdown via Turndown, then clean up spacing.
  */
 function serializeAndEmit(
@@ -641,10 +659,10 @@ function serializeAndEmit(
   // Clone the editor DOM so we can mutate it safely
   const clone = editorRef.current.cloneNode(true) as HTMLElement;
 
-  // Replace each Monaco wrapper in the clone with a <pre><code> block so
+  // Replace each CodeMirror wrapper in the clone with a <pre><code> block so
   // turndown can convert it to fenced markdown
-  clone.querySelectorAll("[data-monaco-block-id]").forEach((node) => {
-    const id = (node as HTMLElement).dataset.monacoBlockId!;
+  clone.querySelectorAll("[data-cm-block-id]").forEach((node) => {
+    const id = (node as HTMLElement).dataset.cmBlockId!;
     const record = codeBlockRegistry.get(id);
     if (!record) return;
 
@@ -665,7 +683,7 @@ function serializeAndEmit(
 
 /**
  * Scans the editor for unhydrated `<pre>` elements and replaces each with
- * a live Monaco widget. Called after `marked` renders Markdown into HTML.
+ * a live CodeMirror widget. Called after `marked` renders Markdown into HTML.
  */
 function hydrateFencedCodeEditors(
   editorRef: React.RefObject<HTMLDivElement>,
@@ -679,18 +697,18 @@ function hydrateFencedCodeEditors(
   if (!editorRef.current) return;
 
   editorRef.current.querySelectorAll("pre").forEach((pre) => {
-    if (pre.dataset.monacoHydrated) return;
+    if (pre.dataset.cmHydrated) return;
 
     const codeEl = pre.querySelector("code");
     const langClass = codeEl?.className ?? "";
     const hasLangClass = /language-\w+/.test(langClass);
 
     if (!hasLangClass) {
-      pre.dataset.monacoHydrated = "true";
+      pre.dataset.cmHydrated = "true";
       return;
     }
 
-    pre.dataset.monacoHydrated = "true";
+    pre.dataset.cmHydrated = "true";
 
     const rawCode = codeEl?.textContent ?? pre.textContent ?? "";
     const langMatch = langClass.match(/language-(\w+)/);
@@ -698,7 +716,7 @@ function hydrateFencedCodeEditors(
 
     const id = nextBlockId();
     const wrapper = document.createElement("div");
-    wrapper.dataset.monacoBlockId = id;
+    wrapper.dataset.cmBlockId = id;
     wrapper.contentEditable = "false";
 
     pre.replaceWith(wrapper);
@@ -740,18 +758,18 @@ function addFencedCodeRule(ts: TurndownService) {
 }
 
 /**
- * Moves the cursor focus out of a Monaco code block and into the
+ * Moves the cursor focus out of a CodeMirror code block and into the
  * adjacent rich-text editor content, either above or below the block.
  *
  * This is triggered when the user presses the Up arrow on the first line
  * of the editor (exits above) or the Down arrow on the last line (exits below).
  *
- * @param id        - The Monaco block ID (`data-monaco-block-id` attribute).
+ * @param id        - The CodeMirror block ID (`data-cm-block-id` attribute).
  * @param direction - "above" to move to the preceding sibling element,
  *                    "below" to move to the following sibling element.
  */
 function exitToEditor(id: string, direction: "above" | "below") {
-  const wrapper = document.querySelector(`[data-monaco-block-id="${id}"]`);
+  const wrapper = document.querySelector(`[data-cm-block-id="${id}"]`);
   if (!wrapper) return;
 
   // Resolve the adjacent sibling element in the requested direction.
@@ -760,12 +778,12 @@ function exitToEditor(id: string, direction: "above" | "below") {
       ? (wrapper.previousElementSibling as HTMLElement)
       : (wrapper.nextElementSibling as HTMLElement);
 
-  const isMonaco = (el: HTMLElement | null) =>
-    el?.dataset.monacoBlockId !== undefined;
+  const isCmBlock = (el: HTMLElement | null) =>
+    el?.dataset.cmBlockId !== undefined;
 
   // If no sibling exists, inject a new empty paragraph so the cursor
   // always has a valid landing spot.
-  if (!target || isMonaco(target)) {
+  if (!target || isCmBlock(target)) {
     const p = document.createElement("p");
     p.innerHTML = "<br>";
     if (direction === "above") {

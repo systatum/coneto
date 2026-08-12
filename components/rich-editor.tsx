@@ -33,7 +33,7 @@ import { CodeEditor, CodeEditorAction, CodeEditorOption } from "./code-editor";
 import { applyClassName } from "./../constants/classname";
 import { createPortal } from "react-dom";
 
-export interface RichEditorFormattingOptions {
+export interface RichEditorFormatting {
   allowBold?: boolean;
   allowItalic?: boolean;
   allowUnderline?: boolean;
@@ -58,7 +58,7 @@ export interface RichEditorProps {
   className?: string;
   tokenRenderers?: RichEditorTokenRenderer;
   onKeyDown?: (event: KeyboardEvent<HTMLDivElement>) => void;
-  formatting?: RichEditorFormattingOptions;
+  formatting?: RichEditorFormatting;
 }
 
 export type RichEditorTokenRenderer = Record<string, TokenRenderer>;
@@ -119,7 +119,7 @@ export const TranslatedRichEditorCodeLanguage: Record<
   txt: "Text",
 };
 
-export const MonacoCodeLanguageEquivalent = {
+export const CodeLanguageEquivalent = {
   tsx: "tsx",
   py: "python",
   rb: "ruby",
@@ -135,8 +135,8 @@ export const MonacoCodeLanguageEquivalent = {
   txt: "plaintext",
 } as const;
 
-export type MonacoCodeLanguageEquivalent =
-  (typeof MonacoCodeLanguageEquivalent)[keyof typeof MonacoCodeLanguageEquivalent];
+export type CodeLanguageEquivalent =
+  (typeof CodeLanguageEquivalent)[keyof typeof CodeLanguageEquivalent];
 
 export interface RichEditorStyles extends BaseRichEditorStyles {
   editorStyle?: CSSProp;
@@ -243,7 +243,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const OPTIONS_LANGUAGES: CodeEditorOption[] = languagesOptions.map(
       (lang) => ({
         text: TranslatedRichEditorCodeLanguage[lang],
-        value: MonacoCodeLanguageEquivalent[lang],
+        value: CodeLanguageEquivalent[lang],
       })
     );
 
@@ -989,7 +989,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
       const id = CodeEditor.nextBlockId();
       const wrapper = document.createElement("div");
-      wrapper.dataset.monacoBlockId = id;
+      wrapper.dataset.cmBlockId = id;
       wrapper.contentEditable = "false";
 
       const after = document.createElement("p");
@@ -998,7 +998,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const parent = insertAfter?.parentNode ?? editorRef.current;
       const sibling = insertAfter?.nextSibling ?? null;
 
-      // If the current block is an empty <p>, replace it with the monaco block
+      // If the current block is an empty <p>, replace it with the code mirror block
       const isEmptyParagraph =
         insertAfter instanceof HTMLElement &&
         insertAfter.tagName === "P" &&
@@ -1023,7 +1023,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         wrapper,
         id,
         "",
-        MonacoCodeLanguageEquivalent[language],
+        CodeLanguageEquivalent[language],
         editorRef,
         onChange,
         turndownServiceRef,
@@ -1220,9 +1220,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             ? currentBlock.nextElementSibling
             : currentBlock.previousElementSibling;
 
-        if (!targetSibling?.hasAttribute("data-monaco-block-id")) return;
+        if (!targetSibling?.hasAttribute("data-cm-block-id")) return;
 
-        // Is caret on the edge line facing Monaco?
+        // Is caret on the edge line facing CodeMirror?
         const blockRect = currentBlock.getBoundingClientRect();
 
         // Build a single-char range to get accurate caret Y in Chrome
@@ -1265,11 +1265,25 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         if (isOnEdgeLine) {
           e.preventDefault();
-          const focusTarget =
-            targetSibling.querySelector<HTMLElement>(".native-edit-context") ??
-            targetSibling.querySelector<HTMLElement>(".monaco-editor textarea");
+          const cmContent =
+            targetSibling.querySelector<HTMLElement>(".cm-content");
 
-          focusTarget?.focus();
+          cmContent.focus();
+
+          const cmSel = window.getSelection();
+          const cmRange = document.createRange();
+
+          const targetLine =
+            e.key === "ArrowDown"
+              ? cmContent.firstElementChild
+              : cmContent.lastElementChild;
+
+          if (targetLine) {
+            cmRange.selectNodeContents(targetLine);
+            cmRange.collapse(e.key === "ArrowDown");
+            cmSel?.removeAllRanges();
+            cmSel?.addRange(cmRange);
+          }
         }
       }
 
@@ -1626,7 +1640,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         const container = range.startContainer;
 
-        // Delete monaco block when caret is at start of block right after it
+        // Delete code mirror block when caret is at start of block right after it
         const currentBlock =
           container.nodeType === Node.TEXT_NODE
             ? (container.parentNode as HTMLElement)?.closest(
@@ -1640,7 +1654,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           const prevSibling = currentBlock.previousElementSibling;
           if (
             prevSibling instanceof HTMLElement &&
-            prevSibling.dataset.monacoBlockId !== undefined
+            prevSibling.dataset.cmBlockId !== undefined
           ) {
             e.preventDefault();
             prevSibling.remove();
@@ -1649,13 +1663,13 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           }
         }
 
-        // Fallback: caret is at root editor level directly after monaco block
+        // Fallback: caret is at root editor level directly after code mirror block
         if (container === editorRef.current) {
           const nodeBefore =
             editorRef.current.childNodes[range.startOffset - 1];
           if (
             nodeBefore instanceof HTMLElement &&
-            nodeBefore.dataset.monacoBlockId !== undefined
+            nodeBefore.dataset.cmBlockId !== undefined
           ) {
             e.preventDefault();
             nodeBefore.remove();
@@ -1947,7 +1961,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           toolbarPosition={toolbarPosition}
           actions={codeEditorActions}
           value={value}
-          language={MonacoCodeLanguageEquivalent[language]}
+          language={CodeLanguageEquivalent[language]}
           options={OPTIONS_LANGUAGES}
           onChange={(code) => onChange(code)}
         />
@@ -2419,8 +2433,8 @@ const EditorArea = styled.div<{
             `
         : ""};
 
-  pre[data-monaco-hydrated]:not([data-monaco-block-id]),
-  pre[data-monaco-hydrated]:not([data-monaco-block-id]) code {
+  pre[data-cm-hydrated]:not([data-cm-block-id]),
+  pre[data-cm-hydrated]:not([data-cm-block-id]) code {
     padding-bottom: 0.5rem;
   }
 
