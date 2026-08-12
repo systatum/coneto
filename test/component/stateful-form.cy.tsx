@@ -349,7 +349,7 @@ const flattenFields = (groups: FormFieldGroup[]): FormFieldProps[] =>
   );
 
 describe("StatefulForm", () => {
-  context("StatefulForm.FieldTooltip", () => {
+  context("FieldTooltip", () => {
     context("items", () => {
       context("when given only a title", () => {
         it("should render the title", () => {
@@ -444,6 +444,61 @@ describe("StatefulForm", () => {
           cy.mount(<StatefulForm.FieldTooltip items={[]} />);
 
           cy.findByLabelText("field-tooltip").should("not.exist");
+        });
+      });
+    });
+  });
+
+  context("icon (labelIcon)", () => {
+    const FIELDS_WITH_ICON = ALL_INPUT.map((group) =>
+      Array.isArray(group)
+        ? group.map((item) => ({
+            ...item,
+            icon: {
+              image: RiDeleteBin2Fill,
+            },
+          }))
+        : {
+            ...group,
+            icon: {
+              image: RiDeleteBin2Fill,
+            },
+          }
+    );
+    const fields = FIELDS_WITH_ICON.flat();
+
+    context("desktop", () => {
+      it("renders inside of StatefulForm label", () => {
+        cy.mount(<StatefulForm fields={FIELDS_WITH_ICON} formValues={{}} />);
+
+        fields.flatMap((field, index) => {
+          if (field.type !== "file_drop_box") {
+            cy.findAllByLabelText("stateful-form-label-wrapper")
+              .eq(index)
+              .find("#field-lane-icon")
+              .should("exist");
+          } else {
+            cy.findByLabelText("file-dropbox-label-icon").should("exist");
+          }
+        });
+      });
+    });
+
+    context("mobile", () => {
+      it("renders inside of body", () => {
+        cy.mount(
+          <StatefulForm fields={FIELDS_WITH_ICON} formValues={{}} mobile />
+        );
+
+        const mobileFields = FIELDS_WITH_ICON.flat().filter(
+          (field) => field.type !== "file_drop_box" && field.type !== "file"
+        );
+
+        mobileFields.forEach((_, index) => {
+          cy.findAllByLabelText("field-lane-wrapper")
+            .eq(index)
+            .find("#field-lane-icon")
+            .should("exist");
         });
       });
     });
@@ -867,7 +922,7 @@ describe("StatefulForm", () => {
       );
     });
 
-    it("renders row with radius 24px and padding 10px 20px", () => {
+    it("renders row with radius 15px and padding 10px 20px", () => {
       cy.mount(
         <StatefulForm
           fields={ALL_INPUT}
@@ -878,7 +933,7 @@ describe("StatefulForm", () => {
       );
 
       cy.findAllByLabelText("stateful-form-field-group")
-        .should("have.css", "border-radius", "24px")
+        .should("have.css", "border-radius", "15px")
         .and("have.css", "padding", "10px 20px");
     });
 
@@ -943,6 +998,35 @@ describe("StatefulForm", () => {
     });
 
     context("button", () => {
+      context("when given children", () => {
+        it("renders with children", () => {
+          cy.mount(
+            <StatefulForm
+              fields={[
+                {
+                  name: "save",
+                  title: "Save",
+                  type: "button",
+                  required: true,
+                  rowJustifyPosition: "end",
+                  button: {
+                    variant: "primary",
+                    children: <span aria-label="save">Save The Element</span>,
+                  },
+                },
+              ]}
+              formValues={{}}
+              mode="onChange"
+              mobile
+            />
+          );
+
+          cy.findAllByLabelText("stateful-form-field-group").should("exist");
+
+          cy.findByLabelText("save").should("have.text", "Save The Element");
+        });
+      });
+
       context("when given 2 or more button", () => {
         it("should separate with percentage in flex row", () => {
           cy.viewport(500, 500);

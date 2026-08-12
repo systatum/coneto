@@ -157,6 +157,8 @@ function Radio({
   labelWidth,
   labelPosition,
   className,
+  labelIcon,
+  mobile,
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -179,6 +181,8 @@ function Radio({
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

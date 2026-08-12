@@ -427,6 +427,8 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
       labelWidth,
       labelPosition,
       className,
+      mobile,
+      labelIcon,
       ...rest
     } = props ?? {};
 
@@ -450,6 +452,8 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         className={applyClassName("moneybox", className)}
         labelGap={labelGap}
         labelWidth={labelWidth}
@@ -476,6 +480,7 @@ const Moneybox = forwardRef<HTMLInputElement, MoneyboxProps>(
         <BaseMoneybox
           {...rest}
           id={inputId}
+          mobile={mobile}
           showError={showError}
           disabled={disabled}
           styles={{

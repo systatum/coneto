@@ -190,6 +190,8 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
       labelWidth,
       labelPosition,
       className,
+      labelIcon,
+      mobile,
       ...rest
     } = props;
 
@@ -210,6 +212,8 @@ const Colorbox = forwardRef<HTMLInputElement, ColorboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         dropdowns={dropdowns}
         showError={showError}
         labelGap={labelGap}

@@ -83,6 +83,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     isLoading,
     labels,
     className,
+    labelIcon,
+    mobile,
     ...rest
   } = props;
 
@@ -109,6 +111,8 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
     <Selectbox
       {...rest}
       ref={ref}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labels={labels}
       labelGap={labelGap}
       labelWidth={labelWidth}
@@ -152,6 +156,7 @@ const Datebox = forwardRef<HTMLInputElement, DateboxProps>((props, ref) => {
           <CalendarDrawer
             {...rest}
             {...selectBoxProps}
+            mobile={mobile}
             dayNames={dayNames}
             monthNames={monthNames}
             calendarFooter={calendarFooter}

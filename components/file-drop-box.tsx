@@ -10,8 +10,8 @@ import {
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { LoadingSpinner } from "./loading-spinner";
+import { Figure, FigureProps } from "./figure";
 import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form";
-import { Figure } from "./figure";
 import { FieldLaneProps } from "./field-lane";
 import { useTheme } from "./../theme/provider";
 import { FileDropBoxThemeConfig } from "./../theme";
@@ -52,6 +52,7 @@ export interface FileDropBoxProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  labelIcon?: FigureProps;
 }
 
 export interface FileDropBoxStyles extends StatefulFormLabelStyles {
@@ -84,6 +85,7 @@ function FileDropBox({
   required,
   disabled,
   className,
+  labelIcon,
 }: FileDropBoxProps) {
   const { currentTheme } = useTheme();
   const fileDropBoxTheme = currentTheme.fileDropBox;
@@ -188,6 +190,23 @@ function FileDropBox({
       showUploaderForm,
     });
   };
+
+  const fileDropBoxLabelIcon = (
+    <Figure
+      aria-label="file-dropbox-label-icon"
+      styles={{
+        ...labelIcon?.styles,
+        self: css`
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          align-self: center;
+          ${labelIcon?.styles?.self};
+        `,
+      }}
+      {...labelIcon}
+    />
+  );
 
   const inputElement: ReactElement = (
     <DropArea
@@ -328,7 +347,9 @@ function FileDropBox({
           }}
           helper={helper}
           label={label}
-        />
+        >
+          {fileDropBoxLabelIcon}
+        </StatefulForm.Label>
       )}
       {inputElement}
 

@@ -258,6 +258,8 @@ function Rating({
   labelWidth,
   labelPosition,
   className,
+  labelIcon,
+  mobile,
   ...rest
 }: RatingProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -280,6 +282,8 @@ function Rating({
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}

@@ -559,6 +559,8 @@ function Chips({
   labelPosition,
   className,
   required,
+  mobile,
+  labelIcon,
   ...props
 }: ChipsProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -581,6 +583,8 @@ function Chips({
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       showError={showError}
       errorMessage={errorMessage}
       label={label}
@@ -608,6 +612,7 @@ function Chips({
         {...props}
         id={inputId}
         name={name}
+        mobile={mobile}
         styles={baseChipStyles}
         disabled={disabled}
       />

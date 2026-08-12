@@ -296,6 +296,8 @@ function Capsule({
   labelWidth,
   className,
   errorIconPosition,
+  mobile,
+  labelIcon,
   ...rest
 }: CapsuleProps) {
   const {
@@ -317,6 +319,8 @@ function Capsule({
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       className={applyClassName("capsule", className)}
       showError={showError}
       errorMessage={errorMessage}

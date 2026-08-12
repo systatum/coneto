@@ -686,6 +686,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelWidth,
       labelPosition,
       className,
+      labelIcon,
       mobile,
       ...rest
     } = props;
@@ -713,10 +714,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
-        mobile={mobile}
         className={
           hasCombo || hasDatebox
             ? className
