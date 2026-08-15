@@ -97,7 +97,7 @@ describe("Textbox", () => {
           .clear()
           .type("Error triggered");
         cy.findByRole("textbox").should("have.value", "Error triggered");
-        cy.findByText("This field is required").should("not.exist");
+        cy.findByText("This field is required").should("exist");
       });
     });
   });

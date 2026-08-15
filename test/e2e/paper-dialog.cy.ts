@@ -48,7 +48,7 @@ describe("PaperDialog", () => {
     it("should open and close the left-positioned dialog", () => {
       cy.visit(getIdContent("stage-paperdialog--fixed-left"));
 
-      cy.findByText("trigger").click();
+      cy.findByText("Trigger").click();
 
       cy.findByText("Add New Employee").should("exist");
 
@@ -83,7 +83,7 @@ describe("PaperDialog", () => {
           .trigger("mouseover")
           .then(() => {
             cy.wait(100);
-            cy.findAllByRole("button").eq(4).click();
+            cy.findAllByRole("button").eq(1).click();
             cy.findByText("Edit").eq(0).should("exist");
             cy.findByText("Delete").eq(0).should("exist");
           });

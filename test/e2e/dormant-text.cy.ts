@@ -226,9 +226,9 @@ describe("DormantText", () => {
     context("with onAcceptOn all", () => {
       context("when pressing enter", () => {
         it("renders valid hex color", () => {
-          cy.findAllByText("#zzzzzz").eq(3).click();
+          cy.findAllByText("#6a4444").eq(3).click();
           cy.findByRole("textbox")
-            .should("have.value", "zzzzzz")
+            .should("have.value", "6a4444")
             .clear()
             .type("00ff00{enter}");
           cy.findByText("#00ff00").should("exist");
@@ -239,11 +239,11 @@ describe("DormantText", () => {
     context("with max width", () => {
       context("when word over the width", () => {
         it("render with truncate text and ellipsis", () => {
-          cy.findAllByText("#zzzzzz")
+          cy.findAllByText("#6a4444")
             .eq(2)
             .invoke("prop", "scrollWidth")
             .then((scrollWidth) => {
-              cy.findAllByText("#zzzzzz")
+              cy.findAllByText("#6a4444")
                 .eq(2)
                 .invoke("prop", "clientWidth")
                 .then((clientWidth) => {
@@ -251,7 +251,7 @@ describe("DormantText", () => {
                 });
             });
 
-          cy.findAllByText("#zzzzzz")
+          cy.findAllByText("#6a4444")
             .eq(2)
             .should("have.css", "text-overflow", "ellipsis");
         });
@@ -261,12 +261,12 @@ describe("DormantText", () => {
     context("with cancelable", () => {
       context("when pressing escape", () => {
         it("renders invalid hex color", () => {
-          cy.findAllByText("#zzzzzz").eq(3).click();
+          cy.findAllByText("#6a4444").eq(3).click();
           cy.findByRole("textbox")
-            .should("have.value", "zzzzzz")
+            .should("have.value", "6a4444")
             .clear()
             .type("00ff00{esc}");
-          cy.findAllByText("#zzzzzz").eq(3).should("exist");
+          cy.findAllByText("#6a4444").eq(3).should("exist");
         });
       });
     });

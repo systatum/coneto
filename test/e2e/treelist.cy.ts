@@ -213,7 +213,7 @@ describe("Treelist", () => {
           cy.wait(2000);
           cy.findByLabelText("circle").should("not.exist");
           cy.contains("Adam Noto Hakarsa").should("exist");
-          cy.wait(20000);
+          cy.wait(2000);
           cy.contains("Member of Technical Staff").click();
           cy.contains("Member of Technical Staff").click();
           cy.findByLabelText("circle").should("exist");

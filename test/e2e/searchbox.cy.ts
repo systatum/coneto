@@ -9,10 +9,8 @@ context("Searchbox Component", () => {
     it("Should type and clear input correctly", () => {
       cy.findByPlaceholderText("Search here...")
         .should("exist")
-        .type("Hello world")
+        .type("Hello world", { delay: 50 })
         .should("have.value", "Hello world");
-
-      cy.wait(200);
 
       cy.findByLabelText("delete-input").should("exist").click();
 
