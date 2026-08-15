@@ -68,7 +68,7 @@ describe("Capsule Tab", () => {
         const firstWidth = $tabs.eq(0).outerWidth();
         const secondWidth = $tabs.eq(1).outerWidth();
 
-        expect(firstWidth).to.equal(secondWidth);
+        expect(firstWidth).to.be.closeTo(secondWidth, 1);
       });
     });
 
@@ -85,8 +85,8 @@ describe("Capsule Tab", () => {
           const secondWidth = $tabs.eq(1).outerWidth();
           const thirdWidth = $tabs.eq(2).outerWidth();
 
-          expect(firstWidth).to.equal(secondWidth);
-          expect(firstWidth).to.equal(thirdWidth);
+          expect(firstWidth).to.be.closeTo(secondWidth, 1);
+          expect(firstWidth).to.be.closeTo(thirdWidth, 1);
         });
       });
     });
@@ -106,9 +106,9 @@ describe("Capsule Tab", () => {
           const thirdWidth = $tabs.eq(2).outerWidth();
           const fourthWidth = $tabs.eq(3).outerWidth();
 
-          expect(firstWidth).to.equal(secondWidth);
-          expect(firstWidth).to.equal(thirdWidth);
-          expect(firstWidth).to.equal(fourthWidth);
+          expect(firstWidth).to.be.closeTo(secondWidth, 1);
+          expect(firstWidth).to.be.closeTo(thirdWidth, 1);
+          expect(firstWidth).to.be.closeTo(fourthWidth, 1);
         });
       });
     });

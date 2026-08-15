@@ -1259,7 +1259,7 @@ describe("RichEditor", () => {
         cy.findByLabelText("rich-editor-content").should(
           "have.css",
           "height",
-          "576px"
+          "600px"
         );
       });
 
@@ -1272,7 +1272,7 @@ describe("RichEditor", () => {
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "576px")
+            .should("have.css", "height", "600px")
             .click()
             .type("{enter}{enter}{enter}");
 

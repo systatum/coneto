@@ -246,31 +246,35 @@ function Carousel({
         ))}
       </Track>
 
-      <PrevButton
-        $controller={controller}
-        onClick={handlePrev}
-        disabled={atStart}
-        aria-label="carousel-previous-slide"
-        $style={css`
-          ${defaultArrowCss}
-          ${styles?.arrowControllerStyle}
-        `}
-      >
-        <RiArrowLeftSLine />
-      </PrevButton>
+      {controller?.arrow && (
+        <>
+          <PrevButton
+            $controller={controller}
+            onClick={handlePrev}
+            disabled={atStart}
+            aria-label="carousel-previous-slide"
+            $style={css`
+              ${defaultArrowCss}
+              ${styles?.arrowControllerStyle}
+            `}
+          >
+            <RiArrowLeftSLine />
+          </PrevButton>
 
-      <NextButton
-        $controller={controller}
-        onClick={handleNext}
-        disabled={atEnd}
-        aria-label="carousel-next-slide"
-        $style={css`
-          ${defaultArrowCss}
-          ${styles?.arrowControllerStyle}
-        `}
-      >
-        <RiArrowRightSLine />
-      </NextButton>
+          <NextButton
+            $controller={controller}
+            onClick={handleNext}
+            disabled={atEnd}
+            aria-label="carousel-next-slide"
+            $style={css`
+              ${defaultArrowCss}
+              ${styles?.arrowControllerStyle}
+            `}
+          >
+            <RiArrowRightSLine />
+          </NextButton>
+        </>
+      )}
 
       {controller && totalPages > 1 && (
         <Controls

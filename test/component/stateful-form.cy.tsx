@@ -2311,7 +2311,7 @@ describe("StatefulForm", () => {
 
   context("pinbox", () => {
     const pinboxSchema = z.object({
-      pin: z.string().min(4, "Pinbox does not follow the acceptable format"),
+      pin: z.string().min(5, "Pinbox does not follow the acceptable format"),
     });
 
     const FIELDS: FormFieldGroup[] = [

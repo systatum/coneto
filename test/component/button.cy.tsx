@@ -978,7 +978,7 @@ describe("Button", () => {
           </Button>
         );
 
-        cy.findByText("onMouseLeave").closest("button").trigger("mouseenter");
+        cy.findByText("onMouseLeave").closest("button").realHover();
 
         cy.get("@consoleLog").should(
           "not.have.been.calledWith",
