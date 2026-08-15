@@ -3435,7 +3435,7 @@ const FieldTooltipDescription = styled.div<{
   line-height: 1.45;
   white-space: normal;
   overflow-wrap: break-word;
-  color: ${({ $theme }) => $theme?.fieldTooltip?.mutedTextColor};
+  color: ${({ $theme }) => $theme?.fieldTooltip?.textColor};
 
   ${({ $style }) => $style}
 `;
