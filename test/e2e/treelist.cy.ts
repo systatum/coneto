@@ -206,14 +206,19 @@ describe("Treelist", () => {
       });
 
       context("with lastFetch", () => {
-        it("renders fetch after one minute", () => {
+        it("renders fetch after the fetch becomes stale", () => {
+          cy.clock();
+
           cy.contains("Adam Noto Hakarsa").should("not.exist");
           cy.contains("Member of Technical Staff").click();
           cy.findByLabelText("circle").should("exist");
-          cy.wait(2000);
+          cy.tick(2000);
           cy.findByLabelText("circle").should("not.exist");
           cy.contains("Adam Noto Hakarsa").should("exist");
-          cy.wait(2000);
+
+          // Story's onOpenChange only re-fetches once the previous fetch
+          // is more than 20s stale (see treelist.stories.tsx TWENTY_SECOND).
+          cy.tick(20000);
           cy.contains("Member of Technical Staff").click();
           cy.contains("Member of Technical Staff").click();
           cy.findByLabelText("circle").should("exist");

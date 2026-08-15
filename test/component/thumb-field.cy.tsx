@@ -68,7 +68,7 @@ describe("ThumbField", () => {
           cy.mount(<ThumbField onMouseLeave={onMouseLeave} />);
 
           cy.findByLabelText("thumb-field").realHover();
-          cy.findByLabelText("thumb-field").trigger("mouseleave");
+          cy.get("body").realMouseMove(0, 0);
 
           cy.get("@onMouseLeave").should("have.been.calledOnce");
         });

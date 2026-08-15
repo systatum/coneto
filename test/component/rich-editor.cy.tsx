@@ -744,9 +744,16 @@ describe("RichEditor", () => {
 
               const zws = document.createTextNode("\u200B");
 
+              // Insert both nodes as a single fragment so the sibling order
+              // (tokenSpan, then zws) is deterministic \u2014 two sequential
+              // insertNode() calls on the same range don't reliably
+              // preserve insertion order across browsers.
+              const fragment = document.createDocumentFragment();
+              fragment.appendChild(tokenSpan);
+              fragment.appendChild(zws);
+
               const currentRange = sel.getRangeAt(0);
-              currentRange.insertNode(zws);
-              currentRange.insertNode(tokenSpan);
+              currentRange.insertNode(fragment);
 
               const afterRange = document.createRange();
               afterRange.setStartAfter(zws);
@@ -891,17 +898,15 @@ describe("RichEditor", () => {
               .eq(1)
               .should("have.text", "@mention");
 
-            cy.wait(400);
+            cy.wait(1000);
 
             cy.findByText("Print").click();
 
-            cy.get("pre")
-              .invoke("text")
-              .then((text) => {
-                const lines = text.split("\n");
+            cy.get("pre").should(($pre) => {
+              const lines = $pre.text().split("\n");
 
-                expect(lines[1].trim()).to.eq('<{["mention"]}> Test 123');
-              });
+              expect(lines[1]?.trim()).to.eq('<{["mention"]}> Test 123');
+            });
           });
         });
       });
@@ -1156,6 +1161,15 @@ describe("RichEditor", () => {
           cy.findByLabelText("rich-editor-content")
             .realClick()
             .realType("{downarrow}```");
+
+          // Wait for the second Monaco instance to actually finish mounting
+          // before any dependent test proceeds — under heavy load (e.g. deep
+          // into a full-suite run) its async initialization can take well
+          // over the default 4s command timeout.
+          cy.findAllByLabelText("rich-editor-code", { timeout: 15000 }).should(
+            "have.length",
+            2
+          );
         });
 
         it("should render double code-editor", () => {
