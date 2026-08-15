@@ -202,6 +202,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
     const [resizeWidth, setResizeWidth] = useState<number | null>(null);
     const [resizeHeight, setResizeHeight] = useState<number | null>(null);
 
+    // The `close()` half of a withTimeout minimize-then-close (see
+    // closeDialog below), pending until its delay elapses.
+    const pendingCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+      null
+    );
+
     const isResizingDesktop = useRef(false);
     const isResizingMobile = useRef(false);
     const resizeStartX = useRef(0);
@@ -462,6 +468,18 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
       [setDialogState, onChange]
     );
 
+    // A withTimeout minimize-then-close schedules its `close()` half for
+    // later; cancel it whenever something else (a reopen, another
+    // minimize/close) changes the dialog's intent before it fires, so a
+    // stale close from a previous gesture can't clobber a newer state.
+    const cancelPendingClose = useCallback(() => {
+      if (pendingCloseTimeoutRef.current == null) return;
+      clearTimeout(pendingCloseTimeoutRef.current);
+      pendingCloseTimeoutRef.current = null;
+    }, []);
+
+    useEffect(() => cancelPendingClose, [cancelPendingClose]);
+
     const closeDialog = useCallback(
       async (
         { withMinimize, withTimeout }: PaperDialogCloseOption = {},
@@ -470,6 +488,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
         const close = async () =>
           await handleChangeDialog(PaperDialogState.Closed, trigger);
 
+        cancelPendingClose();
         await setResizeHeight(null);
         await setResizeWidth(null);
 
@@ -477,7 +496,10 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           await handleChangeDialog(PaperDialogState.Minimized, trigger);
 
           if (withTimeout) {
-            setTimeout(close, 400);
+            pendingCloseTimeoutRef.current = setTimeout(() => {
+              pendingCloseTimeoutRef.current = null;
+              close();
+            }, 400);
           } else {
             await close();
           }
@@ -485,11 +507,12 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           await close();
         }
       },
-      [mobile, handleChangeDialog]
+      [mobile, handleChangeDialog, cancelPendingClose]
     );
 
     useImperativeHandle(ref, () => ({
       openDialog: () => {
+        cancelPendingClose();
         handleChangeDialog(PaperDialogState.Restored, PaperDialogTrigger.API);
       },
       closeDialog: ({
@@ -504,6 +527,7 @@ const PaperDialog = forwardRef<PaperDialogRef, PaperDialogProps>(
           PaperDialogTrigger.API
         ),
       minimizeDialog: () => {
+        cancelPendingClose();
         handleChangeDialog(PaperDialogState.Minimized, PaperDialogTrigger.API);
       },
     }));
