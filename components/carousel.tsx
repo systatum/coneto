@@ -1,6 +1,5 @@
-import { applyClassName } from "./../constants/classname";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
-import {
+import React, {
   Children,
   ReactNode,
   useCallback,
@@ -9,6 +8,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { applyClassName } from "./../constants/classname";
 
 export interface CarouselProps {
   length?: number;

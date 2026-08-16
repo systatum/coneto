@@ -5,22 +5,22 @@ import {
   RiSubtractLine,
 } from "@remixicon/react";
 import { motion, useDragControls } from "framer-motion";
-import {
-  ReactNode,
-  useState,
-  useImperativeHandle,
+import React, {
   forwardRef,
+  ReactNode,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
+  useState,
 } from "react";
-import { ButtonStyles, ButtonVariants } from "./button";
 import styled, { css, CSSProp } from "styled-components";
+import { applyClassName } from "./../constants/classname";
+import { PaperDialogThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
+import { ButtonStyles, ButtonVariants } from "./button";
 import { Figure, FigureProps } from "./figure";
 import { OverlayBlocker } from "./overlay-blocker";
-import { useTheme } from "./../theme/provider";
-import { PaperDialogThemeConfig } from "./../theme";
-import { applyClassName } from "./../constants/classname";
 import { Title } from "./title";
 
 export const PaperDialogState = {

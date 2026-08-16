@@ -1,11 +1,11 @@
+import React, { HTMLAttributes, MouseEvent } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { ChangeEvent, HTMLAttributes, MouseEvent } from "react";
-import { strToColor } from "./../lib/code-color";
-import { Button, ButtonStyles } from "./button";
-import { useTheme } from "./../theme/provider";
-import { BadgeThemeConfig } from "./../theme";
 import { BaseAction } from "./../constants/action";
 import { applyClassName } from "./../constants/classname";
+import { strToColor } from "./../lib/code-color";
+import { BadgeThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
+import { Button, ButtonStyles } from "./button";
 
 export const BadgeVariant = {
   Neutral: "neutral",

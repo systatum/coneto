@@ -1,31 +1,31 @@
-import styled, { css, CSSProp } from "styled-components";
-import { Combobox, ComboboxOption } from "./combobox";
+import { RiCloseLine } from "@remixicon/react";
 import React, {
   MutableRefObject,
   RefObject,
   useEffect,
+  useId,
   useRef,
   useState,
 } from "react";
+import ReactDOM from "react-dom/client";
+import styled, { css, CSSProp } from "styled-components";
 import {
-  RichEditorThemeConfig,
-  useTheme,
   getThemeSnapshot,
+  RichEditorThemeConfig,
   subscribeTheme,
   ThemeProvider,
+  useTheme,
 } from "../theme";
+import marked from "./../lib/marked/marked";
+import TurndownService from "./../lib/turndown/turndown";
 import { Button } from "./button";
-import { RiCloseLine } from "@remixicon/react";
+import { Combobox, ComboboxOption } from "./combobox";
 import {
+  MonacoCodeLanguageEquivalent,
   RichEditor,
   RichEditorAction,
-  MonacoCodeLanguageEquivalent,
   RichEditorToolbarPosition,
 } from "./rich-editor";
-import { useId } from "react";
-import ReactDOM from "react-dom/client";
-import TurndownService from "./../lib/turndown/turndown";
-import marked from "./../lib/marked/marked";
 
 /**
  * Monaco Editor uses Web Workers to run language services
@@ -47,10 +47,10 @@ import marked from "./../lib/marked/marked";
  */
 
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
-import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
 import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
 import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
+import JsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
+import TsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
 import { applyClassName } from "./../constants/classname";
 
 /**
@@ -295,7 +295,6 @@ function CodeEditor({
       }
     };
     // Re-create the editor whenever the color-mode changes (same as before)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update theme after change mode, to always synchronize.

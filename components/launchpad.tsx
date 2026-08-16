@@ -1,4 +1,5 @@
-import {
+import { motion, useDragControls, useMotionValue } from "framer-motion";
+import React, {
   Children,
   isValidElement,
   ReactNode,
@@ -6,12 +7,11 @@ import {
   useRef,
   useState,
 } from "react";
-import { Separator } from "./separator";
-import { motion, useDragControls, useMotionValue } from "framer-motion";
-import { Grid, GridPresetKey } from "./grid";
 import styled, { css, CSSProp } from "styled-components";
 import { applyClassName } from "./../constants/classname";
 import { LaunchpadThemeConfig, useTheme } from "./../theme";
+import { Grid, GridPresetKey } from "./grid";
+import { Separator } from "./separator";
 
 export interface LaunchpadProps {
   children: ReactNode;
