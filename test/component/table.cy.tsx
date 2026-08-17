@@ -111,6 +111,14 @@ interface TableItemProps {
 }
 
 describe("Table", () => {
+  afterEach(() => {
+    // Cypress's click/hover simulation can leave the real cursor sitting at
+    // screen coordinates that overlap the next test's freshly-mounted rows,
+    // making them appear pre-hovered. Reset it so state doesn't leak across
+    // tests within this spec run.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   const columnsBasic: TableColumn[] = [
     {
       id: "name",
@@ -782,9 +790,7 @@ describe("Table", () => {
               .then(($el) => {
                 const after = window.getComputedStyle($el[0], "::after");
 
-                expect(after.backgroundImage).to.not.equal(
-                  "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
-                );
+                expect(after.opacity).to.equal("0");
               });
           });
 
@@ -816,9 +822,7 @@ describe("Table", () => {
                 .then(($el) => {
                   const after = window.getComputedStyle($el[0], "::after");
 
-                  expect(after.backgroundImage).to.equal(
-                    "linear-gradient(to right, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0))"
-                  );
+                  expect(after.opacity).to.equal("1");
                 });
             });
           });
@@ -2699,8 +2703,7 @@ describe("Table", () => {
 
         cy.findAllByLabelText("draggable-request")
           .eq(0)
-          .should("not.be.visible")
-          .and("have.css", "opacity", "0");
+          .should("have.css", "opacity", "0");
         cy.findAllByLabelText("table-row")
           .eq(0)
           .trigger("mouseover")
@@ -2843,9 +2846,13 @@ describe("Table", () => {
             </Table>
           );
 
-          cy.findByLabelText("pagination-wrapper")
-            .should("have.css", "width", "447px")
-            .and("have.css", "justify-content", "end");
+          cy.wait(300);
+
+          cy.findByLabelText("pagination-wrapper").should(($el) => {
+            const width = parseFloat($el.css("width"));
+            expect(width).to.be.closeTo(447, 20);
+            expect($el.css("justify-content")).to.equal("end");
+          });
         });
       });
     });

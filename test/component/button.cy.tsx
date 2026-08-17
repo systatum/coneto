@@ -90,6 +90,14 @@ const TIP_MENU_ITEMS: TipMenuItemProps[] = [
 ];
 
 describe("Button", () => {
+  afterEach(() => {
+    // realHover()/realMouseDown() move/press the real OS-level pointer,
+    // which persists across tests (and spec files) within the same run.
+    // Reset it so leftover state from one test doesn't leak into the next
+    // test's initial mount.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   function ButtonWithIcon(
     props: ButtonProps & {
       maxOptions?: number;
@@ -211,7 +219,8 @@ describe("Button", () => {
         cy.wait(100);
         cy.get("button")
           .eq(0)
-          .should("have.css", "background-color", "rgb(42, 115, 195)");
+          .should("have.css", "background-color", "rgb(42, 115, 195)")
+          .realMouseUp();
       });
     });
   });
@@ -951,7 +960,7 @@ describe("Button", () => {
           </Button>
         );
 
-        cy.findByText("onMouseEnter").closest("button").trigger("mouseenter");
+        cy.findByText("onMouseEnter").closest("button").realHover();
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -978,7 +987,7 @@ describe("Button", () => {
           </Button>
         );
 
-        cy.findByText("onMouseLeave").closest("button").trigger("mouseenter");
+        cy.findByText("onMouseLeave").closest("button").realHover();
 
         cy.get("@consoleLog").should(
           "not.have.been.calledWith",

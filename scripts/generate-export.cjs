@@ -57,6 +57,10 @@ const additionalExports = {
     import: "./dist/lib/phone/*.js",
     types: "./dist/lib/phone/*.d.ts",
   },
+  "./converter": {
+    import: "./dist/lib/converter.js",
+    types: "./dist/lib/converter.d.ts",
+  },
   "./code-color": {
     import: "./dist/lib/code-color.js",
     types: "./dist/lib/code-color.d.ts",

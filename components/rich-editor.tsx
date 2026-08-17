@@ -2231,6 +2231,7 @@ function RichEditorToolbarButton({
       $style={styles?.self}
       type="button"
       $isOpen={isOpen}
+      onMouseDown={(e) => e.preventDefault()}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

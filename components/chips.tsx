@@ -1,15 +1,3 @@
-import { RiAddLine } from "@remixicon/react";
-import { Badge, BadgeAction, BadgeProps } from "./badge";
-import {
-  ChangeEvent,
-  Fragment,
-  ReactNode,
-  Ref,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 import {
   autoUpdate,
   flip,
@@ -20,14 +8,26 @@ import {
   useInteractions,
   useRole,
 } from "@floating-ui/react";
+import { RiAddLine } from "@remixicon/react";
+import React, {
+  ChangeEvent,
+  Fragment,
+  ReactNode,
+  Ref,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { ChipsThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { ChipsThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
+import { Badge, BadgeAction, BadgeProps } from "./badge";
 import { Combobox, ComboboxDrawerProps, ComboboxOption } from "./combobox";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { SelectboxOption, SelectboxSelectedOptions } from "./selectbox";
+import { StatefulForm } from "./stateful-form";
 
 export type ChipAction = BadgeAction;
 

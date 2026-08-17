@@ -29,6 +29,10 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
+import {
+  castValue,
+  type SelectboxSelectedOptions,
+} from "../lib/converter";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { FigureProps } from "./figure";
@@ -38,7 +42,8 @@ import { useTheme } from "./../theme/provider";
 import { SelectboxThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 
-export type SelectboxSelectedOptions = number | string | number[] | string[];
+export { castValue };
+export type { SelectboxSelectedOptions };
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
@@ -768,26 +773,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     );
   }
 );
-
-export function castValue<T extends SelectboxSelectedOptions>(
-  value: any,
-  original: T
-): T {
-  if (Array.isArray(original)) {
-    if (Array.isArray(value)) {
-      return value.map((v) =>
-        typeof original[0] === "number" ? Number(v) : String(v)
-      ) as T;
-    }
-    return [value] as T;
-  }
-
-  if (typeof original === "number") {
-    return Number(value) as T;
-  }
-
-  return String(value) as T;
-}
 
 const Container = styled.div<{
   $style?: CSSProp;

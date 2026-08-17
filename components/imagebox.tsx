@@ -199,14 +199,16 @@ function BaseImagebox({
         onChange={handleFileChange}
       />
 
-      <AddIconWrapper
-        aria-label="imagebox-add-icon"
-        $isDragging={isDragging}
-        $editable={editable}
-        $theme={imageboxTheme}
-      >
-        <RiAddLine size={icon} />
-      </AddIconWrapper>
+      {editable && (
+        <AddIconWrapper
+          aria-label="imagebox-add-icon"
+          $isDragging={isDragging}
+          $editable={editable}
+          $theme={imageboxTheme}
+        >
+          <RiAddLine size={icon} />
+        </AddIconWrapper>
+      )}
     </InputBox>
   );
 }

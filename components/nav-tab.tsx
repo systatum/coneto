@@ -2,6 +2,7 @@ import React, {
   Fragment,
   ReactNode,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -139,7 +140,7 @@ function NavTab({
   // mobile appearance
   const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!mobile || !tabRefs.current.length) return;
 
     const calculateMaxWidth = () => {
@@ -618,7 +619,7 @@ function NavTab({
                               isTipMenuOpen === tab.id
                                 ? "auto"
                                 : "none"};
-                              transition: all 0.3s ease-in-out;
+                              transition: opacity 0.3s ease-in-out;
                               width: fit-content;
                               position: absolute;
                               top: 50%;

@@ -174,7 +174,7 @@ describe("Tooltip", () => {
       cy.tick(100);
       cy.findByLabelText("tooltip-content").should("exist");
 
-      cy.findByText("With Show Delay").trigger("mouseleave");
+      cy.get("body").realMouseMove(0, 0);
       cy.findByLabelText("tooltip-content").should("not.exist");
     });
 

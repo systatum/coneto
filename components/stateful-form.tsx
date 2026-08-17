@@ -1,6 +1,4 @@
-import { useForm, UseFormProps, UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z, { ZodTypeAny, TypeOf, ZodObject } from "zod";
 import React, {
   ChangeEvent,
   Fragment,
@@ -17,36 +15,40 @@ import {
   FieldErrors,
   FieldValues,
   Path,
+  useForm,
+  UseFormProps,
   UseFormRegister,
+  UseFormSetValue,
 } from "react-hook-form";
-import { Phonebox, PhoneboxCountryCode, PhoneboxProps } from "./phonebox";
+import styled, { css, CSSProp } from "styled-components";
+import z, { TypeOf, ZodObject, ZodTypeAny } from "zod";
+import { applyClassName } from "./../constants/classname";
+import { StatefulFormThemeConfig, useTheme } from "./../theme";
+import { Button, ButtonProps } from "./button";
+import { Capsule, CapsuleProps } from "./capsule";
 import { Checkbox, CheckboxProps } from "./checkbox";
-import { Textbox, TextboxProps } from "./textbox";
+import { Chips, ChipsProps } from "./chips";
 import { Colorbox, ColorboxProps } from "./colorbox";
+import { Combobox, ComboboxProps } from "./combobox";
+import { Datebox, DateboxProps } from "./datebox";
+import { FieldLaneProps } from "./field-lane";
+import { FigureProps } from "./figure";
 import { FileDropBox, FileDropBoxProps } from "./file-drop-box";
 import { FileInputBox, FileInputBoxProps } from "./file-input-box";
+import { Frame, FrameProps } from "./frame";
+import { Helper } from "./helper";
 import { Imagebox, ImageboxProps } from "./imagebox";
 import { Moneybox, MoneyboxProps } from "./moneybox";
-import { Datebox, DateboxProps } from "./datebox";
-import { Combobox, ComboboxProps } from "./combobox";
-import { Chips, ChipsProps } from "./chips";
+import { Phonebox, PhoneboxCountryCode, PhoneboxProps } from "./phonebox";
+import { Pinbox, PinboxProps } from "./pinbox";
+import { Radio, RadioProps } from "./radio";
+import { Rating, RatingProps } from "./rating";
 import { Signbox, SignboxProps } from "./signbox";
 import { Textarea, TextareaProps } from "./textarea";
-import styled, { css, CSSProp } from "styled-components";
-import { Rating, RatingProps } from "./rating";
+import { Textbox, TextboxProps } from "./textbox";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
-import { Toggle, ToggleProps } from "./toggle";
-import { Capsule, CapsuleProps } from "./capsule";
 import { Timebox, TimeboxProps } from "./timebox";
-import { Button, ButtonProps } from "./button";
-import { Radio, RadioProps } from "./radio";
-import { Helper } from "./helper";
-import { FigureProps } from "./figure";
-import { Pinbox, PinboxProps } from "./pinbox";
-import { FieldLaneProps } from "./field-lane";
-import { Frame, FrameProps } from "./frame";
-import { applyClassName } from "./../constants/classname";
-import { useTheme, StatefulFormThemeConfig } from "./../theme";
+import { Toggle, ToggleProps } from "./toggle";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -3435,7 +3437,7 @@ const FieldTooltipDescription = styled.div<{
   line-height: 1.45;
   white-space: normal;
   overflow-wrap: break-word;
-  color: ${({ $theme }) => $theme?.fieldTooltip?.mutedTextColor};
+  color: ${({ $theme }) => $theme?.fieldTooltip?.textColor};
 
   ${({ $style }) => $style}
 `;

@@ -1,4 +1,10 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
@@ -67,7 +73,7 @@ function BaseCapsule({
 
   const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!mobile || !tabRefs.current.length) return;
 
     const calculateMaxWidth = () => {
@@ -347,6 +353,7 @@ function Capsule({
         id={inputId}
         disabled={disabled}
         showError={showError}
+        mobile={mobile}
         styles={capsuleStyles}
       />
     </FieldLane>
