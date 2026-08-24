@@ -172,18 +172,32 @@ describe("Timebox", () => {
                 .eq(number)
                 .trigger("pointerdown", {
                   pointerId: 1,
-                  clientY: 130,
+                  clientY: 300,
                   buttons: 1,
                 })
                 .trigger("pointermove", {
                   pointerId: 1,
-                  clientY: 100,
+                  clientY: 124,
+                  buttons: 1,
+                });
+              cy.wait(50);
+              cy.findAllByLabelText("wheel-column-container")
+                .eq(number)
+                // Settle at the final position (no further movement) so the
+                // wheel's release velocity reads as ~0 and it commits based
+                // on the raw drag offset, instead of racing real frame
+                // timing in the momentum/inertia follow-through — a single
+                // synthetic jump otherwise produces a wildly inconsistent
+                // velocity estimate, making the landing index flaky.
+                .trigger("pointermove", {
+                  pointerId: 1,
+                  clientY: 124,
                   buttons: 1,
                 })
                 .trigger("pointerup", {
                   pointerId: 1,
                 });
-              cy.wait(800);
+              cy.wait(200);
             });
 
             cy.findAllByLabelText("wheel-column-item")

@@ -31,7 +31,6 @@ interface BaseCheckboxProps
   description?: string;
   highlightOnChecked?: boolean;
   styles?: BaseCheckboxStyles;
-  helper?: string;
 }
 
 interface BaseCheckboxStyles {
@@ -177,6 +176,8 @@ function Checkbox({
   labelWidth,
   labelPosition,
   className,
+  mobile,
+  labelIcon,
   ...rest
 }: CheckboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -190,12 +191,17 @@ function Checkbox({
     controlStyle,
     containerStyle,
     titleStyle,
-    ...CheckboxStyles
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    ...checkboxStyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
@@ -218,6 +224,9 @@ function Checkbox({
           ${containerStyle}
         `,
         labelStyle: titleStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseCheckbox
@@ -225,7 +234,7 @@ function Checkbox({
         id={inputId}
         disabled={disabled}
         showError={showError}
-        styles={CheckboxStyles}
+        styles={checkboxStyles}
         label={label}
         name={name}
         description={description}

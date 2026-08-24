@@ -109,6 +109,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      labelIcon,
+      mobile,
       className,
       ...rest
     } = props;
@@ -123,12 +125,17 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       containerStyle,
       controlStyle,
       labelStyle,
-      self: textareaStyles,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      self,
     } = styles ?? {};
 
     return (
       <FieldLane
         className={applyClassName("textarea", className)}
+        labelIcon={labelIcon}
+        mobile={mobile}
         id={inputId}
         labelGap={labelGap}
         labelWidth={labelWidth}
@@ -147,6 +154,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTextarea
@@ -162,7 +172,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
                 border-bottom-left-radius: 0px;
               `}
 
-              ${textareaStyles}
+              ${self};
             `,
           }}
           ref={ref}

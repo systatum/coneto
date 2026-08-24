@@ -1,11 +1,11 @@
-import {
-  useRef,
-  useState,
+import React, {
+  forwardRef,
+  ReactNode,
   useCallback,
   useEffect,
-  forwardRef,
   useImperativeHandle,
-  ReactNode,
+  useRef,
+  useState,
 } from "react";
 import styled, { CSSProperties } from "styled-components";
 import { ScrollbarThemeConfig, useTheme } from "./../theme";

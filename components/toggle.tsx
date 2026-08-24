@@ -160,6 +160,8 @@ function Toggle({
   labelPosition,
   disabled,
   className,
+  labelIcon,
+  mobile,
   ...rest
 }: ToggleProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -173,12 +175,17 @@ function Toggle({
     controlStyle,
     containerStyle,
     titleStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...toggleStyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       className={applyClassName("toggle", className)}
       labelGap={labelGap}
       labelWidth={labelWidth}
@@ -199,6 +206,9 @@ function Toggle({
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseToggle

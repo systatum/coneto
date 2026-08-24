@@ -1,22 +1,27 @@
-import styled, { css, CSSProp } from "styled-components";
-import { Combobox, ComboboxOption } from "./combobox";
+import { RiCloseLine } from "@remixicon/react";
 import React, {
   MutableRefObject,
   RefObject,
   useEffect,
+  useId,
   useRef,
   useState,
 } from "react";
+import ReactDOM from "react-dom/client";
+import styled, { css, CSSProp } from "styled-components";
 import {
-  RichEditorThemeConfig,
-  useTheme,
   getThemeSnapshot,
+  RichEditorThemeConfig,
   subscribeTheme,
   ThemeProvider,
+  useTheme,
 } from "../theme";
+import marked from "./../lib/marked/marked";
+import TurndownService from "./../lib/turndown/turndown";
 import { Button } from "./button";
-import { RiCloseLine } from "@remixicon/react";
+import { Combobox, ComboboxOption } from "./combobox";
 import {
+  MonacoCodeLanguageEquivalent,
   RichEditor,
   RichEditorAction,
   CodeLanguageEquivalent,
@@ -327,7 +332,6 @@ function CodeEditor({
       editorRef.current = null;
     };
     // Re-create the editor whenever the color-mode changes (same as before)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update theme after change mode, to always synchronize.

@@ -4,6 +4,7 @@ import {
   ScreensMap,
   ScreenTransition,
   ScreenTransitionProps,
+  ScreenTransitionRef,
 } from "./../../components/screen-transition";
 import styled, { css } from "styled-components";
 import { RiArrowLeftSLine } from "@remixicon/react";
@@ -720,6 +721,116 @@ describe("Screen Transition", () => {
 
           cy.get("@onScreenChange").should("have.been.calledWith", ["a"]);
         });
+      });
+    });
+  });
+
+  context("reopen", () => {
+    // goBack() applies its removal ~300ms after being triggered, to let the
+    // close animation play. A caller that re-pushes the same screen key in
+    // that window doesn't change `activeScreens` at all, since the key was
+    // already on top, so the pending removal has no way to notice it should
+    // stand down and wipes the freshly re-opened screen once its timer fires.
+    function ReopenableTransition({
+      screens,
+      onReopen,
+    }: {
+      screens: ScreensMap;
+      onReopen?: (ref: ScreenTransitionRef | null) => void;
+    }) {
+      const [activeScreens, setActiveScreens] = useState<
+        (keyof ScreensMap)[]
+      >(["a"]);
+
+      return (
+        <ScreenTransition
+          ref={onReopen}
+          screens={screens}
+          activeScreens={activeScreens}
+          onScreenChange={setActiveScreens}
+        />
+      );
+    }
+
+    context("when the same screen is re-opened before a pending close applies", () => {
+      it("cancels the pending close and keeps the screen open", () => {
+        let transitionRef: ScreenTransitionRef | null = null;
+
+        cy.mount(
+          <ReopenableTransition
+            screens={productScreen}
+            onReopen={(ref) => {
+              transitionRef = ref;
+            }}
+          />
+        );
+
+        cy.findByLabelText("title-title").should("have.text", "Page A");
+
+        // triggers goBack(), which schedules the removal of "a" ~300ms out
+        cy.findAllByLabelText("title-action").eq(0).click();
+
+        cy.then(() => {
+          // Simulate a caller re-opening the same key before that timer
+          // fires. activeScreens is already ["a"], so this is a no-op push
+          // from the transition's point of view; `reopen` is the only signal
+          // it gets that a fresh open is happening.
+          transitionRef?.reopen("a");
+        });
+
+        cy.wait(400);
+
+        cy.findByLabelText("title-title").should("have.text", "Page A");
+      });
+    });
+
+    context("when nothing re-opens the screen before a pending close applies", () => {
+      it("still removes the screen as usual", () => {
+        cy.mount(<ReopenableTransition screens={productScreen} />);
+
+        cy.findByLabelText("title-title").should("have.text", "Page A");
+
+        cy.findAllByLabelText("title-action").eq(0).click();
+        cy.wait(400);
+
+        cy.findByLabelText("title-title").should("not.exist");
+      });
+    });
+
+    context("when a different screen is pushed while a pending close applies", () => {
+      it("only removes the closing screen, keeping the newly pushed one", () => {
+        let setActiveScreens: ((screens: ("a" | "b")[]) => void) | null = null;
+
+        function GrowableTransition() {
+          const [activeScreens, setScreens] = useState<("a" | "b")[]>(["a"]);
+          setActiveScreens = setScreens;
+
+          return (
+            <ScreenTransition
+              screens={productScreen}
+              activeScreens={activeScreens}
+              onScreenChange={(screens) => setScreens(screens as ("a" | "b")[])}
+            />
+          );
+        }
+
+        cy.mount(<GrowableTransition />);
+
+        cy.findByLabelText("title-title").should("have.text", "Page A");
+
+        // triggers goBack(), which schedules the removal of "a" ~300ms out
+        cy.findAllByLabelText("title-action").eq(0).click();
+
+        cy.then(() => {
+          // A different screen is pushed on top before that timer fires,
+          // growing the stack instead of dedup-matching the closing key.
+          setActiveScreens?.(["a", "b"]);
+        });
+
+        cy.wait(400);
+
+        cy.findAllByLabelText("title-title").should("have.length", 1);
+        cy.findByLabelText("title-title").should("have.text", "Page B");
       });
     });
   });

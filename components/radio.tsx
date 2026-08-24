@@ -27,7 +27,6 @@ interface BaseRadioProps
   showError?: boolean;
   errorMessage?: string;
   mode?: RadioMode;
-  helper?: string;
   icon?: FigureProps;
 }
 
@@ -158,6 +157,8 @@ function Radio({
   labelWidth,
   labelPosition,
   className,
+  labelIcon,
+  mobile,
   ...rest
 }: RadioProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -171,12 +172,17 @@ function Radio({
     controlStyle,
     containerStyle,
     titleStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
     ...baseRadiotyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
@@ -195,6 +201,9 @@ function Radio({
         controlStyle,
         containerStyle,
         labelStyle: titleStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseRadio

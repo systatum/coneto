@@ -106,7 +106,7 @@ describe("Combobox", () => {
       it("should not accept free text if not in options", () => {
         cy.findByPlaceholderText("Select a fruit...").type("Durian").blur();
 
-        cy.findByDisplayValue("Durian").should("exist");
+        cy.findByDisplayValue("Durian").should("not.exist");
         cy.get("body").click("topLeft");
         cy.findByDisplayValue("Durian").should("not.exist");
       });

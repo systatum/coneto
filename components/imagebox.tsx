@@ -199,14 +199,16 @@ function BaseImagebox({
         onChange={handleFileChange}
       />
 
-      <AddIconWrapper
-        aria-label="imagebox-add-icon"
-        $isDragging={isDragging}
-        $editable={editable}
-        $theme={imageboxTheme}
-      >
-        <RiAddLine size={icon} />
-      </AddIconWrapper>
+      {editable && (
+        <AddIconWrapper
+          aria-label="imagebox-add-icon"
+          $isDragging={isDragging}
+          $editable={editable}
+          $theme={imageboxTheme}
+        >
+          <RiAddLine size={icon} />
+        </AddIconWrapper>
+      )}
     </InputBox>
   );
 }
@@ -232,6 +234,8 @@ function Imagebox({
   labelWidth,
   labelPosition,
   className,
+  mobile,
+  labelIcon,
   ...rest
 }: ImageboxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -245,12 +249,17 @@ function Imagebox({
     controlStyle,
     containerStyle,
     labelStyle,
-    ...ImageboxStyles
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
+    ...imageboxStyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       className={applyClassName("imagebox", className)}
@@ -267,13 +276,16 @@ function Imagebox({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseImagebox
         {...rest}
         id={inputId}
         disabled={disabled}
-        styles={ImageboxStyles}
+        styles={imageboxStyles}
       />
     </FieldLane>
   );

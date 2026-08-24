@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react/*";
-import { Toast } from "./toast";
-import { Button } from "./button";
-import { LoadingSpinner } from "./loading-spinner";
+import React from "react";
 import { css } from "styled-components";
 import { generateSentence } from "./../lib/text";
+import { Button } from "./button";
+import { LoadingSpinner } from "./loading-spinner";
+import { Toast } from "./toast";
 
 const meta: Meta<typeof Toast> = {
   title: "Stage/Toast",

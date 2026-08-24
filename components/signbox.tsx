@@ -25,7 +25,6 @@ interface BaseSignboxProps {
   height?: string;
   width?: string;
   styles?: SignboxStyles;
-  helper?: string;
   id?: string;
 }
 
@@ -335,6 +334,8 @@ function Signbox({
   labelPosition,
   required,
   className,
+  labelIcon,
+  mobile,
 }: SignboxProps) {
   const inputId = StatefulForm.sanitizeId({
     prefix: "signbox",
@@ -342,9 +343,22 @@ function Signbox({
     id,
   });
 
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    self,
+  } = styles ?? {};
+
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelGap={labelGap}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
@@ -359,10 +373,13 @@ function Signbox({
       required={required}
       className={applyClassName("signbox", className)}
       styles={{
-        bodyStyle: styles?.bodyStyle,
-        controlStyle: styles?.controlStyle,
-        containerStyle: styles?.containerStyle,
-        labelStyle: styles?.labelStyle,
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseSignbox
@@ -380,8 +397,8 @@ function Signbox({
             css`
               border-top-left-radius: 0px;
               border-bottom-left-radius: 0px;
-            `}
-            ${styles?.self}
+            `};
+            ${self}
           `,
         }}
       />

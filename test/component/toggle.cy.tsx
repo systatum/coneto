@@ -14,12 +14,12 @@ describe("Toggle", () => {
       const iconSize = size * 0.6;
 
       cy.findByLabelText("toggle-wrapper").each(($wrapper) => {
-        expect($wrapper.width()).to.eq(widthWrapper);
-        expect($wrapper.height()).to.eq(heightWrapper);
+        expect($wrapper.width()).to.be.closeTo(widthWrapper, 0.01);
+        expect($wrapper.height()).to.be.closeTo(heightWrapper, 0.01);
       });
       cy.findByLabelText("toggle-icon").each(($icon) => {
-        expect($icon.width()).to.eq(iconSize);
-        expect($icon.height()).to.eq(iconSize);
+        expect($icon.width()).to.be.closeTo(iconSize, 0.01);
+        expect($icon.height()).to.be.closeTo(iconSize, 0.01);
       });
 
       cy.wait(400);

@@ -1,8 +1,10 @@
 import React, {
   ComponentType,
   ReactNode,
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useRef,
 } from "react";
 import {
@@ -55,18 +57,44 @@ export type ScreenTransitionStyles = Pick<
   "indicatorStyle" | "contentStyle" | "containerStyle"
 >;
 
-function ScreenTransition<TScreens extends ScreensMap>({
-  screens,
-  activeScreens = [],
-  onScreenChange,
-  styles,
-}: ScreenTransitionProps<TScreens>) {
+export interface ScreenTransitionRef {
+  /**
+   * Cancels a pending `goBack` removal for `key` and re-opens its dialog.
+   *
+   * `goBack` applies its removal ~300ms after being triggered, to let the
+   * close animation play. If a caller re-pushes the same key while it's
+   * still on top (dedup keeps `activeScreens` unchanged), this component
+   * gets no signal that the pending close should be aborted. Call
+   * `reopen(key)` right after re-asserting that key to cancel the stale
+   * removal and restore the dialog's visual state.
+   */
+  reopen: (key: string) => void;
+}
+
+function ScreenTransitionInner<TScreens extends ScreensMap>(
+  {
+    screens,
+    activeScreens = [],
+    onScreenChange,
+    styles,
+  }: ScreenTransitionProps<TScreens>,
+  ref: React.Ref<ScreenTransitionRef>
+) {
   const dialogRefsRef = useRef<
     Map<number, React.RefObject<PaperDialogRef | null>>
   >(new Map());
   const mountedIndicesRef = useRef<Set<number>>(
     new Set(activeScreens.map((_, i) => i))
   );
+  // Indices with a goBack() removal still pending its 300ms delay.
+  const pendingCloseRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
+  // Tracks the latest `activeScreens` so a pending goBack() removal (below)
+  // applies against the current stack, not a stale snapshot from when it
+  // was scheduled.
+  const activeScreensRef = useRef(activeScreens);
+  activeScreensRef.current = activeScreens;
 
   type ScreenKey = keyof TScreens;
 
@@ -79,12 +107,38 @@ function ScreenTransition<TScreens extends ScreensMap>({
     });
   }, [activeScreens.length]);
 
+  useEffect(() => {
+    return () => {
+      pendingCloseRef.current.forEach(clearTimeout);
+      pendingCloseRef.current.clear();
+    };
+  }, []);
+
   const getDialogRef = (index: number) => {
     if (!dialogRefsRef.current.has(index)) {
       dialogRefsRef.current.set(index, React.createRef<PaperDialogRef>());
     }
     return dialogRefsRef.current.get(index)!;
   };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      reopen: (key) => {
+        const index = (activeScreens as string[]).lastIndexOf(key);
+        if (index === -1) return;
+
+        const pending = pendingCloseRef.current.get(index);
+        if (pending) {
+          clearTimeout(pending);
+          pendingCloseRef.current.delete(index);
+        }
+
+        dialogRefsRef.current.get(index)?.current?.openDialog();
+      },
+    }),
+    [activeScreens]
+  );
 
   const goToScreen = useCallback(
     (key: ScreenKey) => {
@@ -114,10 +168,20 @@ function ScreenTransition<TScreens extends ScreensMap>({
         ref?.current?.closeDialog({ withMinimize: true, withTimeout: true });
       }
 
-      setTimeout(() => {
-        onScreenChange(activeScreens.slice(0, -1));
+      const timeoutId = setTimeout(() => {
+        pendingCloseRef.current.delete(topIndex);
         mountedIndicesRef.current!.delete(topIndex);
+
+        // Splice this index out of the current stack rather than slicing
+        // the snapshot from when the close started, so any push that
+        // happened in between is preserved.
+        const current = activeScreensRef.current;
+        onScreenChange([
+          ...current.slice(0, topIndex),
+          ...current.slice(topIndex + 1),
+        ]);
       }, 300);
+      pendingCloseRef.current.set(topIndex, timeoutId);
     },
     [activeScreens, onScreenChange]
   );
@@ -166,6 +230,14 @@ function ScreenTransition<TScreens extends ScreensMap>({
 
   return renderStack(0);
 }
+
+const ScreenTransition = forwardRef(ScreenTransitionInner) as <
+  TScreens extends ScreensMap,
+>(
+  props: ScreenTransitionProps<TScreens> & {
+    ref?: React.Ref<ScreenTransitionRef>;
+  }
+) => ReturnType<typeof ScreenTransitionInner>;
 
 function getScreenConfig(screen: ScreenEntry): ScreenConfig {
   if (typeof screen === "function") {

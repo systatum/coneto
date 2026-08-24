@@ -1,4 +1,10 @@
-import { useState, useRef, useCallback, Fragment, useEffect } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled, { CSSProp } from "styled-components";
 import { useTheme, WheelThemeConfig } from "./../theme";
 

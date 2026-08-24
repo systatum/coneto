@@ -17,7 +17,6 @@ interface BaseFileInputBoxProps extends InputHTMLAttributes<HTMLInputElement> {
   showError?: boolean;
   errorMessage?: string;
   styles?: BaseFileInputBoxStyles;
-  helper?: string;
 }
 
 interface BaseFileInputBoxStyles {
@@ -157,7 +156,10 @@ export type FileInputBoxStyles = BaseFileInputBoxStyles & FieldLaneStyles;
 
 export interface FileInputBoxProps
   extends Omit<BaseFileInputBoxProps, "styles">,
-    Omit<FieldLaneProps, "styles" | "type" | "dropdowns" | "actions"> {
+    Omit<
+      FieldLaneProps,
+      "styles" | "type" | "dropdowns" | "actions" | "mobile"
+    > {
   styles?: FileInputBoxStyles;
 }
 
@@ -174,6 +176,7 @@ function FileInputBox({
   labelWidth,
   labelPosition,
   className,
+  labelIcon,
   ...rest
 }: FileInputBoxProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -187,12 +190,16 @@ function FileInputBox({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperArrowStyle,
+    helperDrawerStyle,
+    helperIconStyle,
     ...baseFileInputBoxtyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
       className={applyClassName("file-input-box", className)}
       showError={showError}
       labelGap={labelGap}
@@ -208,6 +215,9 @@ function FileInputBox({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperArrowStyle,
+        helperDrawerStyle,
+        helperIconStyle,
       }}
     >
       <BaseFileInputBox

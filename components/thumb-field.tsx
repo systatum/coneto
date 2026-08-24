@@ -5,13 +5,13 @@ import {
   RiThumbUpFill,
   RiThumbUpLine,
 } from "@remixicon/react";
-import { ChangeEvent, HTMLAttributes, ReactNode, useRef } from "react";
+import React, { ChangeEvent, HTMLAttributes, ReactNode, useRef } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { StatefulForm } from "./stateful-form";
-import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
-import { useTheme } from "./../theme/provider";
-import { ThumbFieldThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
+import { ThumbFieldThemeConfig } from "./../theme";
+import { useTheme } from "./../theme/provider";
+import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
+import { StatefulForm } from "./stateful-form";
 
 interface BaseThumbFieldProps
   extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -207,6 +207,8 @@ function ThumbField({
   labelWidth,
   labelPosition,
   className,
+  mobile,
+  labelIcon,
   ...props
 }: ThumbFieldProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -220,6 +222,9 @@ function ThumbField({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...thumbFieldStyles
   } = styles ?? {};
 
@@ -227,6 +232,8 @@ function ThumbField({
     <FieldLane
       id={inputId}
       labelGap={labelGap}
+      labelIcon={labelIcon}
+      mobile={mobile}
       labelWidth={labelWidth}
       labelPosition={labelPosition}
       showError={showError}
@@ -242,6 +249,9 @@ function ThumbField({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseThumbField

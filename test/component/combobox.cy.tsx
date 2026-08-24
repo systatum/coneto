@@ -1,12 +1,4 @@
 import {
-  Combobox,
-  ComboboxAction,
-  ComboboxItemAction,
-  ComboboxOption,
-  ComboboxProps,
-} from "./../../components/combobox";
-import { Button } from "./../../components/button";
-import {
   RiAddBoxLine,
   RiAddLine,
   RiDeleteBack2Line,
@@ -17,13 +9,21 @@ import {
   RiSettings2Line,
   RiUser2Line,
 } from "@remixicon/react";
-import { useEffect, useState } from "react";
-import { Sidebar } from "./../../components/sidebar";
+import React, { useEffect, useState } from "react";
 import { css } from "styled-components";
+import { Button } from "./../../components/button";
+import { Card } from "./../../components/card";
+import {
+  Combobox,
+  ComboboxAction,
+  ComboboxItemAction,
+  ComboboxOption,
+  ComboboxProps,
+} from "./../../components/combobox";
 import { NavTab, NavTabTab } from "./../../components/nav-tab";
+import { Sidebar } from "./../../components/sidebar";
 import { FormFieldGroup, StatefulForm } from "./../../components/stateful-form";
 import { Table, TableColumn, TableSubMenuList } from "./../../components/table";
-import { Card } from "./../../components/card";
 
 const flattenOptions = (items: ComboboxOption[]): string[] =>
   items.flatMap((item) =>

@@ -1,11 +1,11 @@
-import {
+import { RiCloseLine } from "@remixicon/react";
+import React, {
   Children,
   cloneElement,
   forwardRef,
   Fragment,
   HTMLAttributes,
   isValidElement,
-  MouseEvent,
   ReactElement,
   ReactNode,
   useCallback,
@@ -14,12 +14,10 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
-import { Button, ButtonStyles } from "./button";
-import { Figure } from "./figure";
-import { RiCloseLine } from "@remixicon/react";
 import { useTheme } from "../theme/provider";
 import { BaseAction } from "./../constants/action";
 import { applyClassName } from "./../constants/classname";
+import { Button, ButtonStyles } from "./button";
 
 export const SplitPaneOrientation = {
   Horizontal: "horizontal",

@@ -999,6 +999,8 @@ function Calendar({
   id,
   labelPosition,
   className,
+  mobile,
+  labelIcon,
   ...rest
 }: CalendarProps) {
   const inputId = StatefulForm.sanitizeId({
@@ -1012,12 +1014,17 @@ function Calendar({
     controlStyle,
     containerStyle,
     labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
     ...baseCalendartyles
   } = styles ?? {};
 
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       showError={showError}
       errorMessage={errorMessage}
       labelPosition={labelPosition}
@@ -1031,6 +1038,9 @@ function Calendar({
         controlStyle,
         containerStyle,
         labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCalendar {...rest} id={inputId} styles={baseCalendartyles} />

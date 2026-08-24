@@ -1,6 +1,5 @@
-import { applyClassName } from "./../constants/classname";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react";
-import {
+import React, {
   Children,
   ReactNode,
   useCallback,
@@ -9,6 +8,7 @@ import {
   useState,
 } from "react";
 import styled, { css, CSSProp } from "styled-components";
+import { applyClassName } from "./../constants/classname";
 
 export interface CarouselProps {
   length?: number;
@@ -246,31 +246,35 @@ function Carousel({
         ))}
       </Track>
 
-      <PrevButton
-        $controller={controller}
-        onClick={handlePrev}
-        disabled={atStart}
-        aria-label="carousel-previous-slide"
-        $style={css`
-          ${defaultArrowCss}
-          ${styles?.arrowControllerStyle}
-        `}
-      >
-        <RiArrowLeftSLine />
-      </PrevButton>
+      {controller?.arrow && (
+        <>
+          <PrevButton
+            $controller={controller}
+            onClick={handlePrev}
+            disabled={atStart}
+            aria-label="carousel-previous-slide"
+            $style={css`
+              ${defaultArrowCss}
+              ${styles?.arrowControllerStyle}
+            `}
+          >
+            <RiArrowLeftSLine />
+          </PrevButton>
 
-      <NextButton
-        $controller={controller}
-        onClick={handleNext}
-        disabled={atEnd}
-        aria-label="carousel-next-slide"
-        $style={css`
-          ${defaultArrowCss}
-          ${styles?.arrowControllerStyle}
-        `}
-      >
-        <RiArrowRightSLine />
-      </NextButton>
+          <NextButton
+            $controller={controller}
+            onClick={handleNext}
+            disabled={atEnd}
+            aria-label="carousel-next-slide"
+            $style={css`
+              ${defaultArrowCss}
+              ${styles?.arrowControllerStyle}
+            `}
+          >
+            <RiArrowRightSLine />
+          </NextButton>
+        </>
+      )}
 
       {controller && totalPages > 1 && (
         <Controls

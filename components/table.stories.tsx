@@ -36,6 +36,7 @@ import { List } from "./list";
 import { Card } from "./card";
 import { generateSentence } from "./../lib/text";
 import { TableThemeConfig, useTheme } from "./../theme";
+import { StatefulForm } from "./stateful-form";
 
 const meta: Meta<typeof Table> = {
   title: "Content/Table",
@@ -610,24 +611,24 @@ export const Loose: Story = {
 
     const TYPES_DATA = [
       {
-        name: "HTTP",
+        title: "HTTP",
         description: "Standard protocol for transferring web pages.",
       },
       {
-        name: "HTTPS",
+        title: "HTTPS",
         description: "Secure version of HTTP using TLS encryption.",
       },
       {
-        name: "TCP",
+        title: "TCP",
         description: "Reliable, connection-oriented transport protocol.",
       },
       {
-        name: "UDP",
+        title: "UDP",
         description:
           "Fast, connectionless protocol for low-latency communication.",
       },
       {
-        name: "QUIC",
+        title: "QUIC",
         description:
           "Modern transport protocol providing faster and more secure connections.",
       },
@@ -652,7 +653,7 @@ export const Loose: Story = {
     const initialRows = useMemo<LoadBalancerRow[]>(
       () =>
         Array.from({ length: 400 }, (_, i) => {
-          const type = TYPES_DATA[i % TYPES_DATA.length].name;
+          const type = TYPES_DATA[i % TYPES_DATA.length].title;
           const region = REGIONS[i % REGIONS.length];
           const status = STATUS[i % STATUS.length];
 
@@ -830,26 +831,14 @@ export const Loose: Story = {
             image: RiInformationLine,
           },
           subMenu: ({ show }) =>
-            show(
-              TYPES_DATA.map((protocol, index) => (
-                <ProtocolItem $theme={tableTheme} key={index}>
-                  <ProtocolName $theme={tableTheme}>
-                    {protocol.name}
-                  </ProtocolName>
-                  <ProtocolDescription $theme={tableTheme}>
-                    {protocol.description}
-                  </ProtocolDescription>
-                </ProtocolItem>
-              )),
-              {
-                drawerStyle: css`
-                  display: flex;
-                  flex-direction: column;
-                  gap: 6px;
-                  padding: 6px;
-                `,
-              }
-            ),
+            show(<StatefulForm.FieldTooltip items={TYPES_DATA} />, {
+              drawerStyle: css`
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                padding: 0px;
+              `,
+            }),
         };
       }
 

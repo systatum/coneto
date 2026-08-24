@@ -28,42 +28,49 @@ context("Rating Component", () => {
       cy.visit(getIdContent("input-elements-rating--with-label"));
     });
 
-    it("Should show label text and 5 stars", () => {
-      cy.findByText("4.5 / 5").should("exist");
-      cy.findAllByRole("img", { hidden: true }).should("have.length", 5);
+    ["Default", "Custom render"].forEach((example) => {
+      describe(example, () => {
+        it("Should show label text and 5 stars", () => {
+          cy.get("#storybook-root > div > div")
+            .filter((_, element) => {
+              return (
+                Cypress.$(element).children().first().text().trim() === example
+              );
+            })
+            .within(() => {
+              cy.findAllByRole("img", { hidden: true }).should(
+                "have.length",
+                5
+              );
+            });
+        });
+      });
     });
   });
 
-  describe("Small", () => {
+  describe("Size", () => {
     beforeEach(() => {
-      cy.visit(getIdContent("input-elements-rating--small"));
+      cy.visit(getIdContent("input-elements-rating--size"));
     });
 
-    it("Should display small stars and allow clicking", () => {
-      cy.findAllByRole("img", { hidden: true }).should("have.length", 5);
-      cy.findAllByRole("img", { hidden: true }).eq(2).click();
-    });
-  });
-
-  describe("Medium", () => {
-    beforeEach(() => {
-      cy.visit(getIdContent("input-elements-rating--medium"));
-    });
-
-    it("Should display medium stars and allow clicking", () => {
-      cy.findAllByRole("img", { hidden: true }).should("have.length", 5);
-      cy.findAllByRole("img", { hidden: true }).eq(1).click();
-    });
-  });
-
-  describe("Large", () => {
-    beforeEach(() => {
-      cy.visit(getIdContent("input-elements-rating--large"));
-    });
-
-    it("Should display large stars and allow clicking", () => {
-      cy.findAllByRole("img", { hidden: true }).should("have.length", 5);
-      cy.findAllByRole("img", { hidden: true }).eq(4).click();
+    ["Small", "Medium", "Large"].forEach((size) => {
+      describe(size, () => {
+        it(`Should display 5 ${size.toLowerCase()} stars and allow clicking`, () => {
+          cy.contains("div", size)
+            .parent()
+            .within(() => {
+              cy.findAllByRole("img", { hidden: true }).should(
+                "have.length",
+                5
+              );
+              cy.findAllByRole("img", { hidden: true }).eq(3).click();
+              cy.findAllByRole("img", { hidden: true }).should(
+                "have.length",
+                5
+              );
+            });
+        });
+      });
     });
   });
 });

@@ -59,7 +59,7 @@ describe("RichEditor", () => {
 </ul>
 </p>`;
         cy.findAllByRole("textbox").eq(0).should("contain.html", contentHTML);
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -93,7 +93,7 @@ describe("RichEditor", () => {
             );
           });
 
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -274,7 +274,7 @@ describe("RichEditor", () => {
             "box-shadow",
             "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
           );
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.findByRole("textbox").then(($el) => {
           const sel = $el[0].ownerDocument.getSelection();
@@ -304,7 +304,7 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
         cy.findAllByRole("button").eq(0).click();
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.findByRole("textbox").then(($el) => {
           const sel = $el[0].ownerDocument.getSelection();
@@ -363,7 +363,7 @@ describe("RichEditor", () => {
             "box-shadow",
             "rgba(0, 0, 0, 0.2) 0px 0.5px 4px 0px inset, rgb(207, 207, 207) 0px -0.5px 0.5px 0px inset"
           );
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.findByRole("textbox").then(($el) => {
           const sel = $el[0].ownerDocument.getSelection();
@@ -393,7 +393,7 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").should("contain.text", "Hello World");
 
         cy.findAllByRole("button").eq(1).click();
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.findByRole("textbox").then(($el) => {
           const sel = $el[0].ownerDocument.getSelection();
@@ -421,7 +421,7 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").click().type("Item 1");
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(2).click();
+        cy.findAllByRole("button").eq(3).click();
         cy.findByRole("textbox").find("ol").should("exist");
       });
     });
@@ -439,7 +439,7 @@ describe("RichEditor", () => {
         );
 
         cy.findByText("Test 2").should("not.exist");
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -456,7 +456,7 @@ describe("RichEditor", () => {
         cy.findByRole("textbox").click().type("Bullet Point");
         cy.findByRole("textbox").type("{selectall}");
 
-        cy.findAllByRole("button").eq(3).click();
+        cy.findAllByRole("button").eq(4).click();
         cy.findByRole("textbox").find("ul").should("exist");
       });
     });
@@ -467,7 +467,7 @@ describe("RichEditor", () => {
         it("render text with unordered list and normal text", () => {
           cy.findByRole("textbox").click().type("- Bullet Point{enter}{enter}");
           cy.findByRole("textbox").click().type("Normal Point");
-          cy.findAllByRole("button").eq(6).click();
+          cy.findAllByRole("button").eq(7).click();
 
           cy.get("pre")
             .invoke("text")
@@ -501,13 +501,13 @@ describe("RichEditor", () => {
   context("checkbox", () => {
     context("when given and click with toolbar", () => {
       it("render checked value", () => {
-        cy.findAllByRole("button").eq(4).click();
+        cy.findAllByRole("button").eq(5).click();
         cy.findByRole("textbox").click().type("Task 1 ");
         cy.get("input[type='checkbox']").check().should("be.checked");
       });
 
       it("render unchecked value", () => {
-        cy.findAllByRole("button").eq(4).click();
+        cy.findAllByRole("button").eq(5).click();
         cy.findByRole("textbox").click().type("Task 2 ");
         cy.get("input[type='checkbox']").uncheck().should("not.be.checked");
       });
@@ -516,7 +516,7 @@ describe("RichEditor", () => {
     context("when type [ ]", () => {
       it("render unchecked value", () => {
         cy.findByRole("textbox").click().type("[ ] checkbox value");
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -530,7 +530,7 @@ describe("RichEditor", () => {
     context("when type [x]", () => {
       it("render checked value", () => {
         cy.findByRole("textbox").click().type("[x] checkbox value checked");
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -582,7 +582,7 @@ describe("RichEditor", () => {
           .type("Accuracy is more important than speed.{enter}")
           .type("Stay consistent and avoid looking at the keyboard.");
 
-        cy.findAllByRole("button").eq(6).click();
+        cy.findAllByRole("button").eq(7).click();
 
         cy.get("pre")
           .invoke("text")
@@ -610,10 +610,10 @@ describe("RichEditor", () => {
       context(`when click tip ${data.label}`, () => {
         context(`when typing`, () => {
           it(`should focus and render text with ${data.label}`, () => {
-            cy.findAllByRole("button").eq(5).click();
+            cy.findAllByRole("button").eq(6).click();
             cy.findByText(data.label).click();
             cy.focused().type(`${data.label} Text`);
-            cy.findAllByRole("button").eq(6).click();
+            cy.findAllByRole("button").eq(7).click();
             cy.get("pre")
               .invoke("text")
               .then((text) => {
@@ -655,9 +655,9 @@ describe("RichEditor", () => {
               sel.addRange(range);
             });
 
-            cy.findAllByRole("button").eq(5).click();
-            cy.findByText(data.label).click();
             cy.findAllByRole("button").eq(6).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(7).click();
 
             cy.findByRole("textbox").then(($el) => {
               const sel = $el[0].ownerDocument.getSelection();
@@ -688,9 +688,9 @@ describe("RichEditor", () => {
             cy.findByRole("textbox").type(
               `${data.label} Text{leftarrow}{leftarrow}`
             );
-            cy.findAllByRole("button").eq(5).click();
-            cy.findByText(data.label).click();
             cy.findAllByRole("button").eq(6).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(7).click();
 
             cy.findByRole("textbox").then(($el) => {
               const sel = $el[0].ownerDocument.getSelection();
@@ -717,10 +717,10 @@ describe("RichEditor", () => {
               cy.findByRole("textbox")
                 .click()
                 .type(`${data.label} Text{selectall}`);
-              cy.findAllByRole("button").eq(5).click();
+              cy.findAllByRole("button").eq(6).click();
               cy.findByText(data.label).click();
               cy.findByRole("textbox").click().type("{enter}Paragraph text");
-              cy.findAllByRole("button").eq(6).click();
+              cy.findAllByRole("button").eq(7).click();
 
               cy.get("pre")
                 .invoke("text")
@@ -737,11 +737,11 @@ describe("RichEditor", () => {
         context(`when double click`, () => {
           it(`should not apply ${data.label}`, () => {
             cy.findByRole("textbox").type(`${data.label} Text{selectall}`);
-            cy.findAllByRole("button").eq(5).click();
-            cy.findByText(data.label).click();
-            cy.findAllByRole("button").eq(5).click();
+            cy.findAllByRole("button").eq(6).click();
             cy.findByText(data.label).click();
             cy.findAllByRole("button").eq(6).click();
+            cy.findByText(data.label).click();
+            cy.findAllByRole("button").eq(7).click();
 
             cy.get("pre")
               .invoke("text")

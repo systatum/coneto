@@ -29,21 +29,22 @@ import PdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?worker";
 
 /**
  * Registers the PDF.js worker factory exactly once.
- * Call before the first `getDocument()` invocation.
- * Safe to call multiple times — the `initialized` guard makes it a no-op.
+ * Returns the (cached) promise that resolves once `workerPort` is actually
+ * assigned — callers must await this before invoking `getDocument()`,
+ * otherwise pdf.js can run before the worker is registered.
  */
-let initialized = false;
+let workerInitPromise: Promise<void> | null = null;
 
-function initPdfWorker() {
-  if (initialized || typeof window === "undefined") return;
+function initPdfWorker(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
 
-  // Lazily import pdfjs-dist and point it at our bundled worker.
-  // We use a factory function so pdf.js can spawn multiple workers if needed.
-  import("pdfjs-dist").then((module) => {
-    module.GlobalWorkerOptions.workerPort = new PdfWorker();
-  });
+  if (!workerInitPromise) {
+    workerInitPromise = import("pdfjs-dist").then((module) => {
+      module.GlobalWorkerOptions.workerPort = new PdfWorker();
+    });
+  }
 
-  initialized = true;
+  return workerInitPromise;
 }
 
 // Cached promise so the pdfjs-dist bundle is only imported once.
@@ -238,9 +239,10 @@ const DocumentViewer = forwardRef<DocumentViewerRef, DocumentViewerProps>(
       let cancelled = false;
 
       if (resolvedSource.type === "pdf") {
-        // Use the cached singleton
-        getPdfJs()
-          .then((module) => {
+        // Use the cached singleton, but don't call getDocument() until the
+        // worker port is actually registered (initPdfWorker resolves).
+        Promise.all([initPdfWorker(), getPdfJs()])
+          .then(([, module]) => {
             return module.getDocument(resolvedSource.src).promise;
           })
           .then((pdf: PDFDocumentProxy) => {

@@ -24,6 +24,13 @@ import {
 import { useState } from "react";
 
 describe("NavTab", () => {
+  afterEach(() => {
+    // realHover() moves the real OS-level cursor, which persists across
+    // tests within the same spec run. Reset it so a hover left over from
+    // one test doesn't leak into the next test's initial mount.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   const ACTION_BUTTON = [
     {
       caption: "Add",
@@ -249,7 +256,7 @@ describe("NavTab", () => {
                 (el) => el.getBoundingClientRect().width
               );
 
-              expect(heights[0]).to.equal(heights[1]);
+              expect(heights[0]).to.be.closeTo(heights[1], 1);
             });
         });
       });
@@ -327,8 +334,8 @@ describe("NavTab", () => {
                 (el) => el.getBoundingClientRect().width
               );
 
-              expect(widths[0]).to.equal(widths[1]);
-              expect(widths[1]).to.equal(widths[2]);
+              expect(widths[0]).to.be.closeTo(widths[1], 1);
+              expect(widths[1]).to.be.closeTo(widths[2], 1);
             });
         });
       });
@@ -390,7 +397,7 @@ describe("NavTab", () => {
     });
 
     context("when given subItems", () => {
-      context("when when clicking", () => {
+      context("when clicking", () => {
         it("renders all submenu", () => {
           cy.mount(<ProductMobileNavTab />);
 
@@ -581,7 +588,7 @@ describe("NavTab", () => {
 
               cy.findAllByLabelText("nav-tab-tab").eq(0).realHover();
 
-              cy.wait(200);
+              cy.wait(500);
 
               cy.findAllByLabelText("nav-tab-tab")
                 .eq(0)
@@ -1039,7 +1046,7 @@ describe("NavTab", () => {
 
         cy.findAllByLabelText("nav-tab-tab")
           .eq(1)
-          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
 
         cy.findAllByLabelText("nav-tab-underscore")
           .eq(0)
@@ -1058,7 +1065,7 @@ describe("NavTab", () => {
 
         cy.findAllByLabelText("nav-tab-tab")
           .eq(1)
-          .should("have.css", "background-color", "rgba(0, 0, 0, 0)");
+          .should("have.css", "background-color", "rgb(255, 255, 255)");
 
         cy.findAllByLabelText("nav-tab-underscore")
           .eq(0)

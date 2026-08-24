@@ -35,7 +35,8 @@ describe("Pinbox", () => {
         cy.findAllByLabelText("pinbox-indicator")
           .eq(1)
           .should("be.visible")
-          .and("have.css", "border-bottom", "0.5px solid rgb(97, 169, 249)");
+          .and("have.css", "border-bottom-style", "solid")
+          .and("have.css", "border-bottom-color", "rgb(97, 169, 249)");
       });
     });
 

@@ -4,6 +4,13 @@ import { Radio } from "../../components/radio";
 import { css } from "styled-components";
 
 describe("ChoiceGroup", () => {
+  afterEach(() => {
+    // realHover() moves the real OS-level cursor, which persists across
+    // tests (and spec files) within the same run. Reset it so a hover left
+    // over from a previous test doesn't leak into the next test's mount.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   context("Radio", () => {
     context("when given disabled", () => {
       beforeEach(() => {

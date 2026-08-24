@@ -220,6 +220,7 @@ function TipMenuItem({
     return (
       <Tooltip
         ref={tooltipRef}
+        open={disabled ? false : undefined}
         dialogPlacement="right-center"
         safeAreaAriaLabels={["tip-menu"]}
         styles={{
@@ -231,10 +232,6 @@ function TipMenuItem({
           `,
           drawerStyle: (placement) => css`
             padding: 0px;
-            ${disabled &&
-            css`
-              display: none;
-            `}
             ${placement?.startsWith("right")
               ? css`
                   right: 9px;

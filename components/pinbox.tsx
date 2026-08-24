@@ -16,7 +16,6 @@ import { applyClassName } from "./../constants/classname";
 interface BasePinboxProps {
   fontSize?: number;
   label?: string;
-  helper?: string;
   showError?: boolean;
   errorMessage?: string;
   masked?: boolean;
@@ -484,6 +483,8 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       labelWidth,
       labelPosition,
       className,
+      labelIcon,
+      mobile,
       ...rest
     },
     ref
@@ -499,12 +500,17 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
       controlStyle,
       containerStyle,
       labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
       ...pinboxStyles
     } = styles ?? {};
 
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
@@ -521,6 +527,9 @@ const Pinbox = forwardRef<HTMLInputElement, PinboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
         }}
       >
         <BasePinbox

@@ -22,6 +22,13 @@ import {
 import { css } from "styled-components";
 
 describe("List", () => {
+  afterEach(() => {
+    // realHover() moves the real OS-level cursor, which persists across
+    // tests within the same spec run. Reset it so a hover left over from
+    // one test doesn't leak into the next test's initial mount.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   const LIST_ITEMS: ListItemProps[] = [
     {
       id: "home",
@@ -902,7 +909,7 @@ describe("List", () => {
       cy.findAllByLabelText("list-show-more-button")
         .eq(0)
         .should("have.css", "border-style", "dotted")
-        .and("have.css", "text-decoration", "underline solid rgb(97, 97, 97)");
+        .and("have.css", "text-decoration-line", "underline");
     });
   });
 

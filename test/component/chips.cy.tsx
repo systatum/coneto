@@ -1,8 +1,8 @@
-import { Chips, ChipsProps } from "./../../components/chips";
-import { BadgeProps } from "./../../components/badge";
-import { ChangeEvent, useState } from "react";
-import { css } from "styled-components";
 import { RiCloseLine } from "@remixicon/react";
+import React, { ChangeEvent, useState } from "react";
+import { css } from "styled-components";
+import { BadgeProps } from "./../../components/badge";
+import { Chips, ChipsProps } from "./../../components/chips";
 
 describe("Chips", () => {
   function ProductChips({

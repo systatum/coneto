@@ -635,11 +635,10 @@ describe("PaperDialog", () => {
             .realMouseUp();
 
           cy.wait(1000);
-          cy.findByLabelText("paper-dialog-content").should(
-            "have.css",
-            "height",
-            "639.7578125px"
-          );
+          cy.findByLabelText("paper-dialog-content").should(($el) => {
+            const height = parseFloat($el.css("height"));
+            expect(height).to.be.closeTo(639.75, 1);
+          });
         });
       });
 

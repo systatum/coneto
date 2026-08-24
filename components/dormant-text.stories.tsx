@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState, type ChangeEvent } from "react";
-import { DormantText } from "./dormant-text";
-import { Textbox } from "./textbox";
+import { CountryCode } from "../lib/phone";
+import { COUNTRY_CODES } from "./../constants/countries";
+import { Colorbox } from "./colorbox";
 import { Combobox } from "./combobox";
 import { Datebox } from "./datebox";
-import { Colorbox } from "./colorbox";
+import { DormantText } from "./dormant-text";
 import { formatMoneyboxNumber, Moneybox } from "./moneybox";
-import { PhoneboxCountryCode, Phonebox } from "./phonebox";
-import { COUNTRY_CODES } from "./../constants/countries";
+import { Phonebox, PhoneboxCountryCode } from "./phonebox";
+import { Textbox } from "./textbox";
 import { Timebox } from "./timebox";
-import { CountryCode } from "../lib/phone";
 
 const meta: Meta<typeof DormantText> = {
   title: "Stage/DormantText",
@@ -59,7 +59,7 @@ DormantText is an editable text component that starts in a **dormant (read-only)
       },
     cancel: {
       image: Ri24HoursFill,
-      },  
+      },
     }}
   styles={{
     dormantedStyle: css\`color: #333; background: #f9f9f9;\`,
@@ -136,19 +136,19 @@ Custom icons for accept and cancel actions.
 
 **Default:**
 
-accept → RiCheckLine  
-cancel → RiCloseLine  
+accept → RiCheckLine
+cancel → RiCloseLine
 
 **Usage:**
 
 \`\`\`tsx
 <DormantText
   icons={{
-    accept: { 
+    accept: {
       image: RiHeartLine,
       color: "green"
     },
-    cancel: { 
+    cancel: {
       image: RiTrash2Line,
       color: "red"
     },
@@ -590,10 +590,10 @@ export const WithColorbox: Story = {
 
   render: () => {
     const [value, setValue] = useState({
-      normal: "#zzzzzz",
-      full: "#zzzzzz",
-      max: "#zzzzzz",
-      keydown: "#zzzzzz",
+      normal: "#6a4444",
+      full: "#6a4444",
+      max: "#6a4444",
+      keydown: "#6a4444",
     });
 
     const [oldValue, setOldValue] = useState({

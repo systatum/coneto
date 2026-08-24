@@ -135,6 +135,8 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       labelGap,
       labelWidth,
       className,
+      labelIcon,
+      mobile,
       ...rest
     } = props;
 
@@ -143,6 +145,17 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
       name: props.name,
       id: props.id,
     });
+
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      self,
+    } = styles ?? {};
 
     return (
       <FieldLane
@@ -159,12 +172,17 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
         labelPosition={labelPosition}
         disabled={disabled}
         required={rest.required}
+        labelIcon={labelIcon}
+        mobile={mobile}
         className={applyClassName("textbox", className)}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTextbox
@@ -179,7 +197,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${self}
             `,
           }}
           type={type}

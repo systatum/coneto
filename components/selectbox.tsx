@@ -29,6 +29,10 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
+import {
+  castValue,
+  type SelectboxSelectedOptions,
+} from "../lib/converter";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { FigureProps } from "./figure";
@@ -38,7 +42,8 @@ import { useTheme } from "./../theme/provider";
 import { SelectboxThemeConfig } from "./../theme";
 import { applyClassName } from "./../constants/classname";
 
-export type SelectboxSelectedOptions = number | string | number[] | string[];
+export { castValue };
+export type { SelectboxSelectedOptions };
 
 interface BaseSelectboxProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "children"> {
@@ -75,7 +80,7 @@ interface BaseSelectboxProps
         setConfirmedValue?: (option: SelectboxOption | null) => void;
       }
   ) => ReactNode;
-  styles?: SelectboxStyles;
+  styles?: BaseSelectboxStyles;
   labels?: SelectboxLabels;
 }
 
@@ -87,8 +92,6 @@ interface BaseSelectboxStyles {
   selectboxStyle?: CSSProp;
   self?: CSSProp;
 }
-
-export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
 
 export interface DrawerProps extends InteractionModeProps {
   highlightedIndex: number | null;
@@ -661,6 +664,8 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   }
 );
 
+export type SelectboxStyles = FieldLaneStyles & BaseSelectboxStyles;
+
 export interface SelectboxProps
   extends Omit<BaseSelectboxProps, "styles">,
     Omit<FieldLaneProps, "styles" | "type" | "actions" | "children"> {
@@ -686,9 +691,11 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       labelWidth,
       labelPosition,
       className,
+      labelIcon,
       mobile,
       ...rest
     } = props;
+
     const inputId = StatefulForm.sanitizeId({
       prefix: "selectbox",
       name,
@@ -698,13 +705,25 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     const hasCombo = className?.includes("coneto-combobox");
     const hasDatebox = className?.includes("coneto-datebox");
 
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperIconStyle,
+      helperDrawerStyle,
+      helperArrowStyle,
+      ...selectboxStyles
+    } = styles ?? {};
+
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
-        mobile={mobile}
         className={
           hasCombo || hasDatebox
             ? className
@@ -720,10 +739,13 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         errorIconPosition={errorIconPosition}
         required={rest.required}
         styles={{
-          bodyStyle: styles?.bodyStyle,
-          controlStyle: styles?.controlStyle,
-          containerStyle: styles?.containerStyle,
-          labelStyle: styles?.labelStyle,
+          bodyStyle,
+          controlStyle,
+          containerStyle,
+          labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseSelectbox
@@ -734,13 +756,14 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           mobile={mobile}
           disabled={disabled}
           styles={{
+            ...selectboxStyles,
             self: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
               `}
-              ${styles?.self}
+              ${selectboxStyles?.self}
             `,
           }}
           type={type}
@@ -750,26 +773,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
     );
   }
 );
-
-export function castValue<T extends SelectboxSelectedOptions>(
-  value: any,
-  original: T
-): T {
-  if (Array.isArray(original)) {
-    if (Array.isArray(value)) {
-      return value.map((v) =>
-        typeof original[0] === "number" ? Number(v) : String(v)
-      ) as T;
-    }
-    return [value] as T;
-  }
-
-  if (typeof original === "number") {
-    return Number(value) as T;
-  }
-
-  return String(value) as T;
-}
 
 const Container = styled.div<{
   $style?: CSSProp;

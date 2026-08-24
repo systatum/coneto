@@ -59,7 +59,6 @@ interface BasePhoneboxProps {
       | ChangeEvent<HTMLInputElement>
   ) => void;
   placeholder?: string;
-  helper?: string;
   disabled?: boolean;
   showError?: boolean;
   errorMessage?: string;
@@ -413,6 +412,8 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       labelWidth,
       labelPosition,
       className,
+      mobile,
+      labelIcon,
       ...rest
     } = props;
 
@@ -421,6 +422,9 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
       containerStyle,
       controlStyle,
       labelStyle,
+      helperArrowStyle,
+      helperDrawerStyle,
+      helperIconStyle,
       ...phoneboxStyle
     } = styles ?? {};
 
@@ -433,6 +437,8 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
+        mobile={mobile}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
@@ -450,11 +456,15 @@ const Phonebox = forwardRef<HTMLInputElement, PhoneboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperArrowStyle,
+          helperDrawerStyle,
+          helperIconStyle,
         }}
       >
         <BasePhonebox
           {...rest}
           id={inputId}
+          mobile={mobile}
           showError={showError}
           disabled={disabled}
           styles={{

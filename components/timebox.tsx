@@ -498,6 +498,8 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       labelGap,
       labelWidth,
       labelPosition,
+      labelIcon,
+      mobile,
       className,
       ...rest
     } = props;
@@ -508,12 +510,22 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
       id: props.id,
     });
 
-    const { bodyStyle, containerStyle, controlStyle, labelStyle } =
-      styles ?? {};
+    const {
+      bodyStyle,
+      containerStyle,
+      controlStyle,
+      labelStyle,
+      helperDrawerStyle,
+      helperIconStyle,
+      helperArrowStyle,
+      inputWrapperStyle,
+      self,
+    } = styles ?? {};
 
     return (
       <FieldLane
         id={inputId}
+        labelIcon={labelIcon}
         labelGap={labelGap}
         labelWidth={labelWidth}
         labelPosition={labelPosition}
@@ -522,6 +534,7 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
         errorMessage={errorMessage}
         label={label}
         actions={actions}
+        mobile={mobile}
         helper={helper}
         disabled={disabled}
         required={rest.required}
@@ -532,6 +545,9 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           controlStyle,
           containerStyle,
           labelStyle,
+          helperDrawerStyle,
+          helperIconStyle,
+          helperArrowStyle,
         }}
       >
         <BaseTimebox
@@ -540,16 +556,17 @@ const Timebox = forwardRef<HTMLInputElement, TimeboxProps>(
           id={inputId}
           showError={showError}
           disabled={disabled}
+          mobile={mobile}
           styles={{
             inputWrapperStyle: css`
               ${dropdowns &&
               css`
                 border-top-left-radius: 0px;
                 border-bottom-left-radius: 0px;
-              `}
-              ${styles?.inputWrapperStyle}
+              `};
+              ${inputWrapperStyle};
             `,
-            self: styles?.self,
+            self,
           }}
         />
       </FieldLane>

@@ -8,7 +8,6 @@ describe("Imagebox", () => {
     return (
       <Imagebox
         value={value}
-        editable={false}
         size="xs"
         onFileSelected={setValue}
         {...props}
@@ -92,7 +91,7 @@ describe("Imagebox", () => {
   context("editable", () => {
     context("when not given (by default)", () => {
       it("renders add icon", () => {
-        cy.mount(<ProductImagebox editable={false} />);
+        cy.mount(<ProductImagebox />);
 
         cy.findByLabelText("imagebox-add-icon").should("exist");
       });
@@ -115,7 +114,7 @@ describe("Imagebox", () => {
 
     context("when given true", () => {
       it("renders add icon", () => {
-        cy.mount(<ProductImagebox editable={false} />);
+        cy.mount(<ProductImagebox editable />);
 
         cy.findByLabelText("imagebox-add-icon").should("exist");
       });

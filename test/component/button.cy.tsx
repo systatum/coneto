@@ -90,6 +90,14 @@ const TIP_MENU_ITEMS: TipMenuItemProps[] = [
 ];
 
 describe("Button", () => {
+  afterEach(() => {
+    // realHover()/realMouseDown() move/press the real OS-level pointer,
+    // which persists across tests (and spec files) within the same run.
+    // Reset it so leftover state from one test doesn't leak into the next
+    // test's initial mount.
+    cy.get("body").realMouseMove(0, 0);
+  });
+
   function ButtonWithIcon(
     props: ButtonProps & {
       maxOptions?: number;
@@ -211,13 +219,36 @@ describe("Button", () => {
         cy.wait(100);
         cy.get("button")
           .eq(0)
-          .should("have.css", "background-color", "rgb(42, 115, 195)");
+          .should("have.css", "background-color", "rgb(42, 115, 195)")
+          .realMouseUp();
       });
     });
   });
 
   context("styles", () => {
     context("self", () => {
+      context("when given red background color", () => {
+        it("renders with color rgb(255, 0, 0)", () => {
+          cy.mount(
+            <Button
+              styles={{
+                self: css`
+                  background-color: red;
+                `,
+              }}
+            >
+              Button
+            </Button>
+          );
+
+          cy.findByRole("button").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+
       context("when given max-width", () => {
         it("renders buttons with ellipsis on the text", () => {
           cy.mount(
@@ -234,10 +265,182 @@ describe("Button", () => {
               button with max-width 100px
             </Button>
           );
+
           cy.findByLabelText("button-label")
             .should("have.css", "width", "46px")
             .and("have.css", "text-overflow", "ellipsis")
             .and("have.css", "overflow", "hidden");
+        });
+      });
+    });
+
+    context("labelStyle", () => {
+      context("when given font-weight 700 and red color", () => {
+        it("renders the label with font-weight and color rgb(255, 0, 0)", () => {
+          cy.mount(
+            <Button
+              styles={{
+                labelStyle: css`
+                  color: red;
+                  font-weight: 700;
+                `,
+              }}
+            >
+              Button
+            </Button>
+          );
+
+          cy.findByLabelText("button-label")
+            .should("have.css", "color", "rgb(255, 0, 0)")
+            .and("have.css", "font-weight", "700");
+        });
+      });
+    });
+
+    context("containerStyle", () => {
+      it("applies custom styles to the wrapper", () => {
+        cy.mount(
+          <Button
+            styles={{
+              containerStyle: css`
+                margin-left: 20px;
+              `,
+            }}
+          >
+            Button
+          </Button>
+        );
+
+        cy.findByRole("button")
+          .parent()
+          .should("have.css", "margin-left", "20px");
+      });
+    });
+
+    context("toggleStyle", () => {
+      it("applies custom styles to the toggle button", () => {
+        cy.mount(
+          <Button
+            subMenu={({ list }) =>
+              list?.([
+                {
+                  caption: "Item",
+                  onClick: cy.stub(),
+                },
+              ])
+            }
+            styles={{
+              toggleStyle: css`
+                background: red;
+              `,
+            }}
+          >
+            Button
+          </Button>
+        );
+
+        cy.findByLabelText("button-toggle").should(
+          "have.css",
+          "background-color",
+          "rgb(255, 0, 0)"
+        );
+      });
+    });
+
+    context("dividerStyle", () => {
+      context("when given width 4px", () => {
+        it("renders the divider with the specified width", () => {
+          cy.mount(
+            <Button
+              subMenu={({ list }) =>
+                list?.([
+                  {
+                    caption: "Item",
+                    onClick: cy.stub(),
+                  },
+                ])
+              }
+              styles={{
+                dividerStyle: css`
+                  border-right-width: 4px;
+                `,
+              }}
+            >
+              Button
+            </Button>
+          );
+
+          cy.findByLabelText("divider").should(
+            "have.css",
+            "border-right-width",
+            "4px"
+          );
+        });
+      });
+    });
+
+    context("dropdownStyle", () => {
+      context("when given red background color", () => {
+        it("renders the dropdown with rgb(255, 0, 0)", () => {
+          cy.mount(
+            <Button
+              subMenu={({ list }) =>
+                list?.([
+                  {
+                    caption: "Item",
+                    onClick: cy.stub(),
+                  },
+                ])
+              }
+              styles={{
+                dropdownStyle: css`
+                  background-color: red;
+                `,
+              }}
+            >
+              Button
+            </Button>
+          );
+
+          cy.findByLabelText("button-toggle").click();
+
+          cy.findByLabelText("button-dropdown-wrapper").should(
+            "have.css",
+            "background-color",
+            "rgb(255, 0, 0)"
+          );
+        });
+      });
+
+      context("when given a function style", () => {
+        it("still support function style", () => {
+          cy.mount(
+            <Button
+              subMenu={({ list }) =>
+                list?.([
+                  {
+                    caption: "Item",
+                    onClick: cy.stub(),
+                  },
+                ])
+              }
+              styles={{
+                dropdownStyle: () => css`
+                  background: blue;
+                `,
+              }}
+            >
+              Button
+            </Button>
+          );
+
+          cy.findByLabelText("button-toggle").click();
+
+          cy.findByLabelText("button-dropdown-wrapper").should(
+            "have.css",
+            "background-color",
+            "rgb(0, 0, 255)"
+          );
         });
       });
     });
@@ -757,7 +960,7 @@ describe("Button", () => {
           </Button>
         );
 
-        cy.findByText("onMouseEnter").closest("button").trigger("mouseenter");
+        cy.findByText("onMouseEnter").closest("button").realHover();
 
         cy.get("@consoleLog").should(
           "have.been.calledWith",
@@ -784,7 +987,7 @@ describe("Button", () => {
           </Button>
         );
 
-        cy.findByText("onMouseLeave").closest("button").trigger("mouseenter");
+        cy.findByText("onMouseLeave").closest("button").realHover();
 
         cy.get("@consoleLog").should(
           "not.have.been.calledWith",

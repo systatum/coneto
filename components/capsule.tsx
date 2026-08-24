@@ -1,4 +1,10 @@
-import { ReactNode, useEffect, useRef, useState } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "framer-motion";
 import styled, { css, CSSProp } from "styled-components";
 import { StatefulForm } from "./stateful-form";
@@ -67,7 +73,7 @@ function BaseCapsule({
 
   const [maxTabWidth, setMaxTabWidth] = useState<number>(0);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!mobile || !tabRefs.current.length) return;
 
     const calculateMaxWidth = () => {
@@ -296,8 +302,20 @@ function Capsule({
   labelWidth,
   className,
   errorIconPosition,
+  mobile,
+  labelIcon,
   ...rest
 }: CapsuleProps) {
+  const {
+    bodyStyle,
+    controlStyle,
+    containerStyle,
+    labelStyle,
+    helperDrawerStyle,
+    helperIconStyle,
+    helperArrowStyle,
+    ...capsuleStyles
+  } = styles ?? {};
   const inputId = StatefulForm.sanitizeId({
     prefix: "capsule",
     name,
@@ -307,6 +325,8 @@ function Capsule({
   return (
     <FieldLane
       id={inputId}
+      labelIcon={labelIcon}
+      mobile={mobile}
       className={applyClassName("capsule", className)}
       showError={showError}
       errorMessage={errorMessage}
@@ -319,10 +339,13 @@ function Capsule({
       required={rest.required}
       errorIconPosition={errorIconPosition}
       styles={{
-        bodyStyle: styles?.bodyStyle,
-        controlStyle: styles?.controlStyle,
-        containerStyle: styles?.containerStyle,
-        labelStyle: styles?.labelStyle,
+        bodyStyle,
+        controlStyle,
+        containerStyle,
+        labelStyle,
+        helperDrawerStyle,
+        helperIconStyle,
+        helperArrowStyle,
       }}
     >
       <BaseCapsule
@@ -330,10 +353,8 @@ function Capsule({
         id={inputId}
         disabled={disabled}
         showError={showError}
-        styles={{
-          capsuleWrapperStyle: styles?.capsuleWrapperStyle,
-          tabStyle: styles?.tabStyle,
-        }}
+        mobile={mobile}
+        styles={capsuleStyles}
       />
     </FieldLane>
   );
