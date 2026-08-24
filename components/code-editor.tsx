@@ -3,11 +3,10 @@ import React, {
   MutableRefObject,
   RefObject,
   useEffect,
-  useId,
   useRef,
   useState,
+  useId,
 } from "react";
-import ReactDOM from "react-dom/client";
 import styled, { css, CSSProp } from "styled-components";
 import {
   getThemeSnapshot,
@@ -16,18 +15,14 @@ import {
   ThemeProvider,
   useTheme,
 } from "../theme";
-import marked from "./../lib/marked/marked";
-import TurndownService from "./../lib/turndown/turndown";
 import { Button } from "./button";
 import { Combobox, ComboboxOption } from "./combobox";
 import {
-  MonacoCodeLanguageEquivalent,
   RichEditor,
   RichEditorAction,
   CodeLanguageEquivalent,
   RichEditorToolbarPosition,
 } from "./rich-editor";
-import { useId } from "react";
 import ReactDOM from "react-dom/client";
 import TurndownService from "./../lib/turndown/turndown";
 import marked from "./../lib/marked/marked";
