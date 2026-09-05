@@ -175,6 +175,7 @@ describe("Tooltip", () => {
       cy.findByLabelText("tooltip-content").should("exist");
 
       cy.get("body").realMouseMove(0, 0);
+      cy.tick(200);
       cy.findByLabelText("tooltip-content").should("not.exist");
     });
 
