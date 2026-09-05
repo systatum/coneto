@@ -190,7 +190,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           !referenceEl.contains(event.target as Node)
         ) {
           setIsOpenLocal(false);
-          onVisibilityChange(false);
+          onVisibilityChange?.(false);
         }
       }
 
