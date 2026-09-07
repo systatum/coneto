@@ -1,29 +1,11 @@
-import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ReactNode } from "react";
-import { useTheme } from "./../theme/provider";
+import styled, { css, CSSProp, keyframes } from "styled-components";
 import { ErrorSlateThemeConfig } from "theme";
 import { applyClassName } from "./../constants/classname";
+import { useTheme } from "./../theme/provider";
 
 export interface ErrorSlateProps {
-  code?:
-    | "400"
-    | "401"
-    | "403"
-    | "404"
-    | "405"
-    | "408"
-    | "409"
-    | "410"
-    | "413"
-    | "414"
-    | "415"
-    | "429"
-    | "500"
-    | "501"
-    | "502"
-    | "503"
-    | "504"
-    | "505";
+  code?: string;
   children?: ReactNode;
   title?: string;
   styles?: ErrorSlateStyles;
@@ -77,6 +59,7 @@ function ErrorSlate({
   const { currentTheme } = useTheme();
   const errorSlateTheme = currentTheme.errorSlate;
 
+  if (typeof code != "string") code = "000";
   const FACE_DATA = [
     { face: "front", content: code[0] },
     { face: "back", content: code[0] },
