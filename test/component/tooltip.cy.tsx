@@ -175,6 +175,7 @@ describe("Tooltip", () => {
       cy.findByLabelText("tooltip-content").should("exist");
 
       cy.get("body").realMouseMove(0, 0);
+      cy.tick(200);
       cy.findByLabelText("tooltip-content").should("not.exist");
     });
 
@@ -240,6 +241,81 @@ describe("Tooltip", () => {
         cy.findByLabelText("tooltip-arrow").should("not.exist");
         cy.findByText("").should("not.exist");
       });
+    });
+  });
+
+  context("hideDialogOn is click", () => {
+    context("when onVisibilityChange is not given", () => {
+      it("closes on an outside click without throwing", () => {
+        cy.mount(
+          <div>
+            <Tooltip
+              showDialogOn="hover"
+              hideDialogOn="click"
+              dialog={
+                <div aria-label="tooltip-content">Dialog content</div>
+              }
+            >
+              Trigger
+            </Tooltip>
+            <button aria-label="outside-button">Outside</button>
+          </div>
+        );
+
+        cy.findByText("Trigger").realHover();
+        cy.findByLabelText("tooltip-content").should("exist");
+
+        // moving away must not close it - only an outside click should
+        cy.findByLabelText("outside-button").realHover();
+        cy.findByLabelText("tooltip-content").should("exist");
+
+        cy.findByLabelText("outside-button").click();
+        cy.findByLabelText("tooltip-content").should("not.exist");
+      });
+    });
+  });
+
+  context("hideDialogOn is hover, with interactive dialog content", () => {
+    it("stays open while hovering into the dialog, and lets a click inside it fire", () => {
+      const onDialogButtonClick = cy.stub().as("onDialogButtonClick");
+
+      cy.mount(
+        <div>
+          <Tooltip
+            showDialogOn="hover"
+            hideDialogOn="hover"
+            dialog={
+              <div aria-label="tooltip-content">
+                Dialog content
+                <button
+                  aria-label="dialog-button"
+                  onClick={onDialogButtonClick}
+                >
+                  Click me
+                </button>
+              </div>
+            }
+          >
+            Trigger
+          </Tooltip>
+          <button aria-label="outside-button">Outside</button>
+        </div>
+      );
+
+      cy.findByText("Trigger").realHover();
+      cy.findByLabelText("tooltip-content").should("exist");
+
+      // hovering into the dialog itself must not close it
+      cy.findByLabelText("dialog-button").realHover();
+      cy.findByLabelText("tooltip-content").should("exist");
+
+      cy.findByLabelText("dialog-button").click();
+      cy.get("@onDialogButtonClick").should("have.been.calledOnce");
+      cy.findByLabelText("tooltip-content").should("exist");
+
+      // leaving both the trigger and the dialog closes it, no click needed
+      cy.findByLabelText("outside-button").realHover();
+      cy.findByLabelText("tooltip-content").should("not.exist");
     });
   });
 });
