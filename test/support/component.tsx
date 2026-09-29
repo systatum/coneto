@@ -42,7 +42,7 @@ Cypress.Commands.add("shouldHaveEditorFromValue", (label, expectedValue) => {
   const actualLines: string[] = [];
 
   cy.findByLabelText(label)
-    .find(".view-line")
+    .find(".cm-line")
     .each(($el) => {
       actualLines.push(normalize($el.text() || ""));
     })
