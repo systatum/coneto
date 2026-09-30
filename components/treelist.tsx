@@ -1265,9 +1265,9 @@ function TreeListItem<T extends TreeListItem>({
                   }}
                   open={openRowId === item.id}
                   maxActionsBeforeCollapsing={2}
-                  focusBackgroundColor="#d4d4d4"
-                  hoverBackgroundColor="#d4d4d4"
-                  activeBackgroundColor="#d4d4d4"
+                  focusBackgroundColor={treeListTheme.rowActionBackgroundColor}
+                  hoverBackgroundColor={treeListTheme.rowActionBackgroundColor}
+                  activeBackgroundColor={treeListTheme.rowActionBackgroundColor}
                   actions={actionsWithIcons}
                   styles={{
                     containerStyle: css`
