@@ -789,6 +789,7 @@ export interface TipMenuThemeConfig
 export interface TreeListThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
+  hoverTextColor?: string;
   selectedBackgroundColor?: string;
 
   highlightedText?: string;

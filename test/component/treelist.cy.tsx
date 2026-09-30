@@ -1,11 +1,4 @@
 import {
-  TreeList,
-  TreeListAction,
-  TreeListContentAction,
-  TreeListContent,
-  TreeListItemAction,
-} from "./../../components/treelist";
-import {
   RiAddBoxLine,
   RiAtLine,
   RiDeleteBack2Line,
@@ -14,6 +7,15 @@ import {
   RiTable2,
 } from "@remixicon/react";
 import { StatefulForm } from "./../../components/stateful-form";
+import {
+  TreeList,
+  TreeListAction,
+  TreeListContent,
+  TreeListContentAction,
+  TreeListItemAction,
+} from "./../../components/treelist";
+import { lightTheme } from "./../../theme/mode/light";
+import { ThemeProvider } from "./../../theme/provider";
 
 describe("Treelist", () => {
   context("common behavior", () => {
@@ -504,6 +506,81 @@ describe("Treelist", () => {
             );
           });
         });
+      });
+    });
+  });
+
+  context("hover styling", () => {
+    // realHover() moves the real OS-level cursor, which persists across
+    // tests within the same spec run. Reset it so a hover left over from
+    // one test doesn't leak into the next test's initial mount.
+    afterEach(() => {
+      cy.get("body").realMouseMove(0, 0);
+    });
+
+    const TREE_LIST_DATA: TreeListContent[] = [
+      {
+        id: "member",
+        caption: "Member of Technical Staff",
+        items: [{ id: "mts-1", caption: "Adam Noto Hakarsa" }],
+      },
+    ];
+
+    const TREE_LIST_ACTIONS: TreeListAction[] = [
+      {
+        id: "discover",
+        caption: "Discover",
+        icon: { image: RiSearchLine },
+      },
+    ];
+
+    context("in light mode", () => {
+      it("renders a proper hover background and text color", () => {
+        cy.mount(
+          <TreeList content={TREE_LIST_DATA} actions={TREE_LIST_ACTIONS} />
+        );
+
+        cy.findByLabelText("tree-list-action")
+          .realHover()
+          .should("have.css", "background-color", "rgb(243, 244, 246)")
+          .and("have.css", "color", "rgb(0, 0, 0)");
+      });
+
+      // The default light-mode hoverTextColor happens to be plain black, same as the
+      // browser's own inherited default; asserting against it alone can't tell a real
+      // theme-driven color from an unstyled fallback. A distinct override color proves
+      // the theme's own hoverTextColor is what's actually being read and applied.
+      context("with a custom hoverTextColor", () => {
+        it("uses the overridden color instead of the default", () => {
+          const customTheme = {
+            ...lightTheme,
+            treelist: { ...lightTheme.treelist, hoverTextColor: "#ff00ff" },
+          };
+
+          cy.mountWithoutTheme(
+            <ThemeProvider mode="light" themes={{ light: customTheme }}>
+              <TreeList content={TREE_LIST_DATA} actions={TREE_LIST_ACTIONS} />
+            </ThemeProvider>
+          );
+
+          cy.findByLabelText("tree-list-action")
+            .realHover()
+            .should("have.css", "color", "rgb(255, 0, 255)");
+        });
+      });
+    });
+
+    context("in dark mode", () => {
+      it("renders a proper hover background and text color", () => {
+        cy.mount(
+          <TreeList content={TREE_LIST_DATA} actions={TREE_LIST_ACTIONS} />,
+          { mode: "dark" }
+        );
+
+        cy.findByLabelText("tree-list-action")
+          .realHover()
+          .should("have.css", "background-color", "rgb(31, 41, 55)")
+          .and("have.css", "color", "rgb(202, 206, 212)");
       });
     });
   });

@@ -1569,6 +1569,7 @@ const ActionItem = styled.div<{
 
   &:hover {
     background-color: ${({ $theme }) => $theme?.hoverBackgroundColor};
+    color: ${({ $theme }) => $theme?.hoverTextColor};
   }
 
   ${({ $isActive, $theme }) =>
