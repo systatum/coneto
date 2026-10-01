@@ -243,12 +243,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     );
 
     const FILTERED_NAVIGABLE_OPTIONS = hasInteracted
-      ? navigableOptions.filter((opt) =>
+      ? (navigableOptions ?? finalOptions).filter((opt) =>
           opt.text
             .toLowerCase()
             .includes(selectedOptionsLocal.text.toLowerCase())
         )
-      : navigableOptions;
+      : (navigableOptions ?? finalOptions);
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
