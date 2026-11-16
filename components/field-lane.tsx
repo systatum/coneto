@@ -170,12 +170,17 @@ function FieldLane({
                 }}
                 showSubMenuOn="self"
                 variant="outline-default"
+                hoverBackgroundColor={fieldLaneTheme?.highlightBackgroundColor}
                 styles={{
                   containerStyle: css`
                     align-self: stretch;
                     border-right: 0;
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
+                    border-top-left-radius: ${fieldLaneTheme
+                      ?.buttonBorderRadius};
+                    border-bottom-left-radius: ${fieldLaneTheme
+                      ?.buttonBorderRadius};
                     border-color: ${fieldLaneTheme?.buttonBorderColor};
 
                     ${showError &&
@@ -225,6 +230,11 @@ function FieldLane({
                     `};
 
                     height: 100%;
+
+                    &:focus-visible {
+                      outline: 2px solid ${fieldLaneTheme?.focusedBorderColor};
+                      outline-offset: -2px;
+                    }
 
                     ${dropdown.styles?.self};
                   `,
