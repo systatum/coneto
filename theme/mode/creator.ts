@@ -694,6 +694,7 @@ export function createFieldLaneTheme(
     {
       buttonTextColor: body.textColor,
       buttonBorderColor: "#d1d5db",
+      buttonBorderRadius: "2px",
       buttonErrorBorderColor: "#ef4444",
       buttonErrorTextColor: "#b91c1c",
 

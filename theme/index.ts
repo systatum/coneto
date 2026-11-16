@@ -75,6 +75,7 @@ export interface ButtonThemeConfig extends BodyThemeConfig {
   textDecoration?: string;
   focusBackgroundColor?: string;
   dividerColor?: string;
+  borderRadius?: string;
 }
 
 export interface TipMenuContainerThemeConfig extends BodyThemeConfig {
@@ -256,6 +257,7 @@ export interface FieldLaneThemeConfig
   extends Omit<BodyThemeConfig, "backgroundColor"> {
   buttonTextColor?: string;
   buttonBorderColor?: string;
+  buttonBorderRadius?: string;
   buttonErrorTextColor?: string;
   buttonErrorBorderColor?: string;
 
