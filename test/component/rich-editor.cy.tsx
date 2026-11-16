@@ -2,6 +2,7 @@ import marked from "./../../lib/marked/marked";
 import {
   RichEditor,
   RichEditorCodeAction,
+  RichEditorMode,
   RichEditorProps,
   RichEditorRef,
 } from "./../../components/rich-editor";
@@ -46,6 +47,34 @@ describe("RichEditor", () => {
       />
     );
   }
+
+  context("markdown autoformat", () => {
+    it("converts a typed heading prefix into a real heading", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("## ");
+      cy.get("h2").should("exist");
+
+      cy.findByRole("textbox").type("Hehe");
+      cy.get("h2").should("have.text", "Hehe");
+    });
+
+    it("converts a typed list prefix into a real list", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("- ");
+      cy.get("ul li").should("exist");
+
+      cy.findByRole("textbox").type("Item");
+      cy.get("ul li").should("have.text", "Item");
+    });
+  });
 
   context("formatting rule", () => {
     it("renders except checkboxes and code", () => {

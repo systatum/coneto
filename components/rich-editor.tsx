@@ -1118,8 +1118,83 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       handleEditorChange();
     };
 
+    // Converts the caret block when its text is a typed markdown block prefix
+    // ("#", "##", ..., "-", "*", "1."), Notion style. Returns whether it
+    // converted, so the caller can swallow the triggering space.
+    const convertMarkdownBlockPrefix = (): boolean => {
+      if (!editorRef.current) return false;
+
+      const selection = window.getSelection();
+
+      if (!selection || selection.rangeCount === 0) return false;
+
+      // Find the direct child of the editor that holds the caret.
+      let node: Node | null = selection.anchorNode;
+
+      while (node && node.parentElement !== editorRef.current) {
+        node = node.parentElement;
+      }
+
+      if (!(node instanceof HTMLElement)) return false;
+
+      const text = (node.textContent ?? "").trim();
+      const heading = text.match(/^(#{1,6})$/);
+
+      if (!heading && text !== "-" && text !== "*" && text !== "1.") {
+        return false;
+      }
+
+      const placeCaret = (target: HTMLElement) => {
+        selection.removeAllRanges();
+
+        const caret = document.createRange();
+        caret.selectNodeContents(target);
+        caret.collapse(true);
+        selection.addRange(caret);
+      };
+
+      // Empty blocks cannot hold a typing caret in Chromium, so give the new
+      // structure a <br> anchor for the caret to sit after.
+      const seedCaretAnchor = (target: HTMLElement) => {
+        if (!target.firstChild) {
+          target.appendChild(document.createElement("br"));
+        }
+      };
+
+      if (heading) {
+        const level = heading[1].length as 1 | 2 | 3 | 4 | 5 | 6;
+        const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
+        const newHeading = document.createElement(headingTag);
+
+        node.replaceWith(newHeading);
+        seedCaretAnchor(newHeading);
+        placeCaret(newHeading);
+      } else {
+        const list = document.createElement(text === "1." ? "ol" : "ul");
+        const item = document.createElement("li");
+
+        list.appendChild(item);
+        node.replaceWith(list);
+        seedCaretAnchor(item);
+        placeCaret(item);
+      }
+
+      return true;
+    };
+
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
+
+      if (mode === "markdown-editor" && e.key === " ") {
+        // Convert typed markdown block syntax (e.g. "## ") into a real
+        // structure so serialized bodies never keep escaped leftovers like
+        // "\## Heading".
+        if (convertMarkdownBlockPrefix()) {
+          e.preventDefault();
+          handleEditorChange();
+          return;
+        }
+      }
 
       if (mode === "view-only") {
         const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
