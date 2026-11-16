@@ -1270,11 +1270,19 @@ describe("RichEditor", () => {
             value={generateSentence({ minLen: 250, maxLen: 250, seed: 1234 })}
           />
         );
-        cy.findByLabelText("rich-editor-content").should(
-          "have.css",
-          "height",
-          "600px"
-        );
+        cy.findByLabelText("rich-editor-content")
+          .should("have.css", "min-height", "200px")
+          .and(
+            "have.css",
+            "overflow-y",
+            "hidden"
+          )
+          .and(($editor) => {
+            // Long content grows past the min height instead of scrolling
+            // inside a fixed box, so keep the assertion off the exact pixel
+            // height, which shifts with font wrapping.
+            expect(parseFloat($editor.css("height"))).to.be.greaterThan(200);
+          });
       });
 
       context("when pressing enter", () => {
@@ -1286,15 +1294,17 @@ describe("RichEditor", () => {
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "600px")
-            .click()
-            .type("{enter}{enter}{enter}");
-
-          cy.findByLabelText("rich-editor-content").should(
-            "have.css",
-            "height",
-            "696px"
-          );
+            .then(($editor) => cy.wrap(parseFloat($editor.css("height"))))
+            .then((before) => {
+              cy.findByLabelText("rich-editor-content")
+                .click()
+                .type("{enter}{enter}{enter}")
+                .then(($editor) => {
+                  expect(parseFloat($editor.css("height"))).to.be.greaterThan(
+                    before
+                  );
+                });
+            });
         });
       });
     });
