@@ -1118,8 +1118,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       handleEditorChange();
     };
 
-    // Converts the caret block when its text is a typed markdown block prefix
-    // ("#", "##", ..., "-", "*", "1."), Notion style. Returns whether it
+    // Converts the caret block when its text is a typed markdown heading
+    // prefix ("#", "##", ..., up to "######"), Notion style. Lists and
+    // checkboxes are handled by the space handler below. Returns whether it
     // converted, so the caller can swallow the triggering space.
     const convertMarkdownBlockPrefix = (): boolean => {
       if (!editorRef.current) return false;
@@ -1140,44 +1141,26 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const text = (node.textContent ?? "").trim();
       const heading = text.match(/^(#{1,6})$/);
 
-      if (!heading && text !== "-" && text !== "*" && text !== "1.") {
-        return false;
-      }
+      if (!heading) return false;
 
-      const placeCaret = (target: HTMLElement) => {
-        selection.removeAllRanges();
+      const level = heading[1].length as 1 | 2 | 3 | 4 | 5 | 6;
+      const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
+      const newHeading = document.createElement(headingTag);
 
-        const caret = document.createRange();
-        caret.selectNodeContents(target);
-        caret.collapse(true);
-        selection.addRange(caret);
-      };
+      node.replaceWith(newHeading);
 
       // Empty blocks cannot hold a typing caret in Chromium, so give the new
       // structure a <br> anchor for the caret to sit after.
-      const seedCaretAnchor = (target: HTMLElement) => {
-        if (!target.firstChild) {
-          target.appendChild(document.createElement("br"));
-        }
-      };
-
-      if (heading) {
-        const level = heading[1].length as 1 | 2 | 3 | 4 | 5 | 6;
-        const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
-        const newHeading = document.createElement(headingTag);
-
-        node.replaceWith(newHeading);
-        seedCaretAnchor(newHeading);
-        placeCaret(newHeading);
-      } else {
-        const list = document.createElement(text === "1." ? "ol" : "ul");
-        const item = document.createElement("li");
-
-        list.appendChild(item);
-        node.replaceWith(list);
-        seedCaretAnchor(item);
-        placeCaret(item);
+      if (!newHeading.firstChild) {
+        newHeading.appendChild(document.createElement("br"));
       }
+
+      selection.removeAllRanges();
+
+      const caret = document.createRange();
+      caret.selectNodeContents(newHeading);
+      caret.collapse(true);
+      selection.addRange(caret);
 
       return true;
     };
@@ -1434,18 +1417,31 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         if (isInFormattedText) {
           e.preventDefault();
 
-          const newP = document.createElement("p");
-          newP.innerHTML = "<br>";
+          let currentP: HTMLElement | null = container.parentElement;
 
-          let currentP = container.parentElement;
           while (currentP && currentP.tagName !== "P") {
             currentP = currentP.parentElement;
           }
 
-          if (currentP) {
-            currentP.insertAdjacentElement("afterend", newP);
-          } else {
-            container.parentElement?.insertAdjacentElement("afterend", newP);
+          const host =
+            currentP ?? (container.parentElement as HTMLElement);
+
+          const newP = document.createElement("p");
+          host.insertAdjacentElement("afterend", newP);
+
+          // Split at the caret: content after it moves into the new paragraph,
+          // like the plain text branch, instead of staying behind.
+          const afterRange = document.createRange();
+          afterRange.setStart(range.startContainer, range.startOffset);
+          afterRange.setEnd(host, host.childNodes.length);
+          const afterFragment = afterRange.extractContents();
+
+          const tempDiv = document.createElement("div");
+          tempDiv.appendChild(afterFragment);
+          newP.innerHTML = tempDiv.innerHTML || "<br>";
+
+          if (!host.textContent?.trim() && !host.querySelector("input")) {
+            host.innerHTML = "<br>";
           }
 
           const sel = window.getSelection();
@@ -1878,33 +1874,26 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       } else {
         newHeading = document.createElement(headingTag);
-        if (
-          sel.isCollapsed &&
-          range.startContainer.nodeType === Node.TEXT_NODE
-        ) {
-          const textContent = range.startContainer.textContent || "";
-          newHeading.textContent = textContent;
-          range.startContainer.parentNode?.replaceChild(
-            newHeading,
-            range.startContainer
-          );
-        } else if (!sel.isCollapsed) {
-          const startContainer = range.startContainer;
 
-          let lineNode: Node;
-          if (startContainer.nodeType === Node.TEXT_NODE) {
-            lineNode = startContainer;
-          } else {
-            lineNode =
-              startContainer.childNodes[range.startOffset] || startContainer;
-          }
+        const blockParagraph =
+          node instanceof HTMLElement ? node.closest("p") : null;
 
-          const lineText = lineNode.textContent || "";
-          newHeading.textContent = lineText;
+        // Headings cannot live inside a paragraph. Replace the paragraph
+        // with the heading, except for checkbox rows, where the heading goes
+        // after the row instead.
+        if (blockParagraph?.querySelector('input[type="checkbox"]')) {
+          newHeading.innerHTML = "<br>";
+          blockParagraph.insertAdjacentElement("afterend", newHeading);
 
-          if (lineNode.parentNode) {
-            lineNode.parentNode.replaceChild(newHeading, lineNode);
-          }
+          sel.removeAllRanges();
+
+          const caret = document.createRange();
+          caret.selectNodeContents(newHeading);
+          caret.collapse(false);
+          sel.addRange(caret);
+        } else if (blockParagraph) {
+          newHeading.innerHTML = blockParagraph.innerHTML || "<br>";
+          blockParagraph.replaceWith(newHeading);
         } else {
           newHeading.innerHTML = "<br>";
           range.insertNode(newHeading);
