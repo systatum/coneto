@@ -76,6 +76,60 @@ describe("RichEditor", () => {
     });
   });
 
+  context("enter inside formatted text", () => {
+    it("splits the block at the caret", () => {
+      cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("Hello world");
+      cy.findByRole("textbox").type(
+        "{home}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}"
+      );
+      cy.findByRole("textbox").type(
+        "{shift}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{shift}"
+      );
+      cy.findByLabelText("rich-editor-toolbar-bold").click();
+
+      // Park the caret inside the bold run, then split with enter.
+      cy.findByRole("textbox").type("{rightarrow}{leftarrow}{leftarrow}");
+      cy.findByRole("textbox").type("{enter}");
+
+      cy.get("p").should("have.length", 2);
+      cy.get("p")
+        .first()
+        .should("contain", "Hello")
+        .find("b")
+        .should("have.text", "wor");
+      cy.get("p")
+        .last()
+        .find("b")
+        .should("have.text", "ld");
+    });
+  });
+
+  context("heading after a checkbox row", () => {
+    it("places the new heading after the checkbox paragraph instead of nesting", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value=""
+          formatting={{ allowCheckBoxes: true }}
+        />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-checkbox").click();
+      cy.findByRole("textbox").type("Task{enter}");
+      cy.findByLabelText("rich-editor-toolbar-heading-menu").click();
+      cy.findByText("Heading 2").click();
+      cy.findByRole("textbox").type("Chapter");
+
+      cy.get("h2").should("have.text", "Chapter");
+      cy.get("p input[type=checkbox]").should("exist");
+      cy.get("p h2").should("not.exist");
+    });
+  });
+
   context("formatting rule", () => {
     it("renders except checkboxes and code", () => {
       cy.mount(<ProductRichEditor />);

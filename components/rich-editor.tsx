@@ -2694,6 +2694,18 @@ const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
 
+  // Token spans must never serialize as blank, or turndown's blank rule
+  // drops them before their own rule can match.
+  container
+    .querySelectorAll<HTMLElement>(
+      "[data-token-start] > span[contenteditable='false']"
+    )
+    .forEach((inner) => {
+      if (!inner.firstChild) {
+        inner.appendChild(document.createTextNode("\u200B"));
+      }
+    });
+
   Array.from(container.querySelectorAll("div")).forEach((div) => {
     if (div.closest("[data-token-start]")) return;
 
