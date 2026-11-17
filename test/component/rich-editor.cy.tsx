@@ -76,6 +76,45 @@ describe("RichEditor", () => {
     });
   });
 
+  context("undo after markdown autoformat", () => {
+    function UndoMount() {
+      const [value, setValue] = useState("");
+      const [printValue, setPrintValue] = useState("");
+
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <RichEditor
+            mode={RichEditorMode.MarkdownEditor}
+            value={value}
+            onChange={(next) => setValue(next)}
+          />
+          <RichEditor.ToolbarButton
+            ariaLabel="print-value"
+            icon={{ image: RiPrinterFill }}
+            onClick={() => setPrintValue(value)}
+          >
+            Print
+          </RichEditor.ToolbarButton>
+          <pre>{printValue}</pre>
+        </div>
+      );
+    }
+
+    it("keeps typing sane after undoing the conversion", () => {
+      cy.mount(<UndoMount />);
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("## ");
+      cy.findByRole("textbox").type("Hehe");
+      cy.findByRole("textbox").type("{ctrl+z}");
+      cy.findByRole("textbox").type("Yo");
+
+      cy.findByLabelText("print-value").click();
+      cy.get("pre").should("contain.text", "Yo");
+      cy.get("h2").should("contain.text", "Yo");
+    });
+  });
+
   context("enter inside formatted text", () => {
     it("splits the block at the caret", () => {
       cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);
