@@ -548,6 +548,19 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("#");
           },
           tokenizer(src) {
+            // A backslash before the hashes means the user wrote a literal
+            // "#", so keep the whole escaped line as plain text instead of
+            // turning it into a heading.
+            const escaped = src.match(/^(\\#{1,6}) ([^\n]+)/);
+            if (escaped) {
+              return {
+                type: "paragraph",
+                raw: escaped[0],
+                text: escaped[0],
+                tokens: this.lexer.inlineTokens(escaped[0]),
+              };
+            }
+
             const match = src.match(/^(#{1,6}) ([^\n]+)/);
             if (match) {
               return {
@@ -655,6 +668,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               if (lines.some((l) => /^ {4,}/.test(l))) return;
               if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
               if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
+              // Heading lines interrupt the run so the heading tokenizer
+              // renders them as real headings instead of paragraphs.
+              if (lines.some((l) => /^ {0,3}#{1,6}\s/.test(l))) return;
 
               return {
                 type: "lineSeparated",
@@ -1118,8 +1134,66 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       handleEditorChange();
     };
 
+    // Converts the caret block when its text is a typed markdown heading
+    // prefix ("#", "##", ..., up to "######"), Notion style. Lists and
+    // checkboxes are handled by the space handler below. Returns whether it
+    // converted, so the caller can swallow the triggering space.
+    const convertMarkdownBlockPrefix = (): boolean => {
+      if (!editorRef.current) return false;
+
+      const selection = window.getSelection();
+
+      if (!selection || selection.rangeCount === 0) return false;
+
+      // Find the direct child of the editor that holds the caret.
+      let node: Node | null = selection.anchorNode;
+
+      while (node && node.parentElement !== editorRef.current) {
+        node = node.parentElement;
+      }
+
+      if (!(node instanceof HTMLElement)) return false;
+
+      const text = (node.textContent ?? "").trim();
+      const heading = text.match(/^(#{1,6})$/);
+
+      if (!heading) return false;
+
+      const level = heading[1].length as 1 | 2 | 3 | 4 | 5 | 6;
+      const headingTag = `h${level}` as keyof HTMLElementTagNameMap;
+      const newHeading = document.createElement(headingTag);
+
+      node.replaceWith(newHeading);
+
+      // Empty blocks cannot hold a typing caret in Chromium, so give the new
+      // structure a <br> anchor for the caret to sit after.
+      if (!newHeading.firstChild) {
+        newHeading.appendChild(document.createElement("br"));
+      }
+
+      selection.removeAllRanges();
+
+      const caret = document.createRange();
+      caret.selectNodeContents(newHeading);
+      caret.collapse(true);
+      selection.addRange(caret);
+
+      return true;
+    };
+
     const handleOnKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e);
+
+      if (mode === "markdown-editor" && e.key === " ") {
+        // Convert typed markdown block syntax (e.g. "## ") into a real
+        // structure so serialized bodies never keep escaped leftovers like
+        // "\## Heading".
+        if (convertMarkdownBlockPrefix()) {
+          e.preventDefault();
+          handleEditorChange();
+          return;
+        }
+      }
 
       if (mode === "view-only") {
         const isCopy = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c";
@@ -1359,18 +1433,31 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         if (isInFormattedText) {
           e.preventDefault();
 
-          const newP = document.createElement("p");
-          newP.innerHTML = "<br>";
+          let currentP: HTMLElement | null = container.parentElement;
 
-          let currentP = container.parentElement;
           while (currentP && currentP.tagName !== "P") {
             currentP = currentP.parentElement;
           }
 
-          if (currentP) {
-            currentP.insertAdjacentElement("afterend", newP);
-          } else {
-            container.parentElement?.insertAdjacentElement("afterend", newP);
+          const host =
+            currentP ?? (container.parentElement as HTMLElement);
+
+          const newP = document.createElement("p");
+          host.insertAdjacentElement("afterend", newP);
+
+          // Split at the caret: content after it moves into the new paragraph,
+          // like the plain text branch, instead of staying behind.
+          const afterRange = document.createRange();
+          afterRange.setStart(range.startContainer, range.startOffset);
+          afterRange.setEnd(host, host.childNodes.length);
+          const afterFragment = afterRange.extractContents();
+
+          const tempDiv = document.createElement("div");
+          tempDiv.appendChild(afterFragment);
+          newP.innerHTML = tempDiv.innerHTML || "<br>";
+
+          if (!host.textContent?.trim() && !host.querySelector("input")) {
+            host.innerHTML = "<br>";
           }
 
           const sel = window.getSelection();
@@ -1803,33 +1890,26 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         }
       } else {
         newHeading = document.createElement(headingTag);
-        if (
-          sel.isCollapsed &&
-          range.startContainer.nodeType === Node.TEXT_NODE
-        ) {
-          const textContent = range.startContainer.textContent || "";
-          newHeading.textContent = textContent;
-          range.startContainer.parentNode?.replaceChild(
-            newHeading,
-            range.startContainer
-          );
-        } else if (!sel.isCollapsed) {
-          const startContainer = range.startContainer;
 
-          let lineNode: Node;
-          if (startContainer.nodeType === Node.TEXT_NODE) {
-            lineNode = startContainer;
-          } else {
-            lineNode =
-              startContainer.childNodes[range.startOffset] || startContainer;
-          }
+        const blockParagraph =
+          node instanceof HTMLElement ? node.closest("p") : null;
 
-          const lineText = lineNode.textContent || "";
-          newHeading.textContent = lineText;
+        // Headings cannot live inside a paragraph. Replace the paragraph
+        // with the heading, except for checkbox rows, where the heading goes
+        // after the row instead.
+        if (blockParagraph?.querySelector('input[type="checkbox"]')) {
+          newHeading.innerHTML = "<br>";
+          blockParagraph.insertAdjacentElement("afterend", newHeading);
 
-          if (lineNode.parentNode) {
-            lineNode.parentNode.replaceChild(newHeading, lineNode);
-          }
+          sel.removeAllRanges();
+
+          const caret = document.createRange();
+          caret.selectNodeContents(newHeading);
+          caret.collapse(false);
+          sel.addRange(caret);
+        } else if (blockParagraph) {
+          newHeading.innerHTML = blockParagraph.innerHTML || "<br>";
+          blockParagraph.replaceWith(newHeading);
         } else {
           newHeading.innerHTML = "<br>";
           range.insertNode(newHeading);
@@ -2618,6 +2698,18 @@ function syncCheckboxStates(container: HTMLElement) {
 const cleanupHtml = (html: string): string => {
   const container = document.createElement("div");
   container.innerHTML = html;
+
+  // Token spans must never serialize as blank, or turndown's blank rule
+  // drops them before their own rule can match.
+  container
+    .querySelectorAll<HTMLElement>(
+      "[data-token-start] > span[contenteditable='false']"
+    )
+    .forEach((inner) => {
+      if (!inner.firstChild) {
+        inner.appendChild(document.createTextNode("\u200B"));
+      }
+    });
 
   Array.from(container.querySelectorAll("div")).forEach((div) => {
     if (div.closest("[data-token-start]")) return;
