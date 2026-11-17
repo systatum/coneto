@@ -38,7 +38,7 @@ import { applyClassName } from "./../constants/classname";
  */
 
 import { EditorView, KeyBinding, keymap, lineNumbers } from "@codemirror/view";
-import { Compartment, EditorState, Prec } from "@codemirror/state";
+import { Compartment, EditorState, Extension, Prec } from "@codemirror/state";
 import {
   defaultKeymap,
   history,
@@ -51,7 +51,7 @@ import {
   bracketMatching,
   syntaxHighlighting,
   defaultHighlightStyle,
-  LanguageSupport,
+  StreamLanguage,
 } from "@codemirror/language";
 import {
   closeBrackets,
@@ -65,6 +65,14 @@ import { css as cssLanguage } from "@codemirror/lang-css";
 import { html as htmlLanguage } from "@codemirror/lang-html";
 import { python } from "@codemirror/lang-python";
 import { markdown } from "@codemirror/lang-markdown";
+import { cpp } from "@codemirror/lang-cpp";
+import { sql } from "@codemirror/lang-sql";
+import { java } from "@codemirror/lang-java";
+import { php } from "@codemirror/lang-php";
+import { go } from "@codemirror/lang-go";
+import { rust } from "@codemirror/lang-rust";
+import { ruby } from "@codemirror/legacy-modes/mode/ruby";
+import { r } from "@codemirror/legacy-modes/mode/r";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 /**
@@ -73,7 +81,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
  * extension. Anything unrecognized falls back to plain text (no
  * highlighting)
  */
-function getLanguageExtension(lang: string): LanguageSupport | [] {
+function getLanguageExtension(lang: string): Extension {
   switch (lang) {
     case "typescript":
     case "ts":
@@ -99,6 +107,24 @@ function getLanguageExtension(lang: string): LanguageSupport | [] {
     case "markdown":
     case "md":
       return markdown();
+    case "cpp":
+      return cpp();
+    case "sql":
+      return sql();
+    case "java":
+      return java();
+    case "php":
+      return php();
+    case "go":
+      return go();
+    case "rust":
+    case "rs":
+      return rust();
+    case "ruby":
+    case "rb":
+      return StreamLanguage.define(ruby);
+    case "r":
+      return StreamLanguage.define(r);
     default:
       return [];
   }

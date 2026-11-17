@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   CodeEditor,
+  CodeEditorLanguage,
   CodeEditorOption,
   CodeEditorProps,
 } from "./../../components/code-editor";
@@ -171,6 +172,53 @@ describe("CodeEditor", () => {
       codebox().realClick().realType("a{backspace}{backspace}");
 
       cy.get("@onClosed").should("have.been.called");
+    });
+  });
+
+  context("syntax highlighting", () => {
+    const SAMPLES: Partial<Record<CodeEditorLanguage, string>> = {
+      cpp: "int main() { return 0; }",
+      sql: "SELECT * FROM users;",
+      java: "public class Main {}",
+      php: "<?php echo 1; ?>",
+      go: "package main",
+      rust: "fn main() {}",
+      ruby: "def hello; end",
+      r: "value <- 1",
+    };
+
+    it("highlights every advertised language", () => {
+      Object.entries(SAMPLES).forEach(([language, sample]) => {
+        cy.mount(
+          <CodeEditor
+            language={language as CodeEditorLanguage}
+            value={sample}
+          />
+        );
+
+        cy.get(".cm-line span").should("have.length.greaterThan", 0);
+      });
+    });
+  });
+
+  context("completion", () => {
+    it("shows the completion popup outside the editor height", () => {
+      cy.mount(<ProductCodeEditor />);
+
+      codebox().realClick().realType("con");
+
+      cy.get(".cm-tooltip-autocomplete").should("exist");
+
+      cy.get(".cm-tooltip-autocomplete").then(($tooltip) => {
+        const tooltip = $tooltip[0] as HTMLElement;
+        const rect = tooltip.getBoundingClientRect();
+        const hit = document.elementFromPoint(
+          rect.left + rect.width / 2,
+          rect.bottom - 2
+        );
+
+        expect(tooltip.contains(hit)).to.equal(true);
+      });
     });
   });
 
