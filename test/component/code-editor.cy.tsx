@@ -198,6 +198,17 @@ describe("CodeEditor", () => {
 
       cy.shouldHaveEditorFromValue("rich-editor-code", "abc");
     });
+
+    it("does not close when backspacing a read-only empty editor", () => {
+      const onClosed = cy.stub().as("onClosed");
+      cy.mount(
+        <ProductCodeEditor readOnly removeOnEmpty onClosed={onClosed} />
+      );
+
+      codebox().realClick().realPress("Backspace");
+
+      cy.get("@onClosed").should("not.have.been.called");
+    });
   });
 
   context("autoFocus", () => {
