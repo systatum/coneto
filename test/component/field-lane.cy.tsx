@@ -89,6 +89,30 @@ describe("FieldLane", () => {
       cy.findByLabelText("tip-menu").should("have.css", "width", "200px");
     });
 
+    it("rounds only the outer corners of the dropdown button", () => {
+      cy.mount(
+        <FieldLane
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [{ text: "On-site", value: "1" }],
+            },
+          ]}
+        >
+          <input aria-label="lane-input" />
+        </FieldLane>
+      );
+
+      cy.findByText("Button")
+        .closest("button")
+        .should(($button) => {
+          const style = getComputedStyle($button[0]);
+
+          expect(style.borderTopRightRadius).to.eq("0px");
+          expect(style.borderBottomRightRadius).to.eq("0px");
+        });
+    });
+
     context("when given with hidden field", () => {
       it("renders without hidden dropdown", () => {
         cy.mount(
