@@ -278,6 +278,10 @@ function CodeEditor({
           ),
           readOnlyCompartment.of(EditorView.editable.of(!readOnly)),
           EditorState.readOnly.of(readOnly),
+          EditorView.contentAttributes.of({
+            "aria-label": "rich-editor-code",
+            "aria-multiline": "true",
+          }),
           EditorView.theme({
             "&": {
               fontSize: "13px",
@@ -452,7 +456,6 @@ function CodeEditor({
       )}
       <Editor
         id={id}
-        aria-label="rich-editor-code"
         $readOnly={readOnly}
         onKeyDown={(e) => {
           e.stopPropagation();
