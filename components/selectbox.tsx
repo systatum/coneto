@@ -252,6 +252,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
+      strategy: "fixed",
       open: isOpen,
       onOpenChange: setIsOpen,
       middleware: [offset(4), flip(), shift()],
