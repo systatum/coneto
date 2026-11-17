@@ -115,6 +115,23 @@ describe("RichEditor", () => {
     });
   });
 
+  context("headings after a paragraph line", () => {
+    it("renders single-newline headings as real headings on load", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value={
+            "Welcome to the demo.\n## Hey\n# Yyyo\nSup"
+          }
+        />
+      );
+
+      cy.get("h2").should("have.text", "Hey");
+      cy.get("h1").should("have.text", "Yyyo");
+      cy.get("p").last().should("have.text", "Sup");
+    });
+  });
+
   context("enter inside formatted text", () => {
     it("splits the block at the caret", () => {
       cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);

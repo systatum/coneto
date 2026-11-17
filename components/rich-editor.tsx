@@ -668,6 +668,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               if (lines.some((l) => /^ {4,}/.test(l))) return;
               if (lines.some((l) => /^[ \t]+\S/.test(l))) return;
               if (lines.some((l) => /^[ \t]*([-*+]|\d+\.)\s/.test(l))) return;
+              // Heading lines interrupt the run so the heading tokenizer
+              // renders them as real headings instead of paragraphs.
+              if (lines.some((l) => /^ {0,3}#{1,6}\s/.test(l))) return;
 
               return {
                 type: "lineSeparated",
