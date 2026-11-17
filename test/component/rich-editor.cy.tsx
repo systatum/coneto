@@ -7,6 +7,7 @@ import {
   RichEditorRef,
 } from "./../../components/rich-editor";
 import { useEffect, useRef, useState } from "react";
+import { css } from "styled-components";
 import { RiArrowRightSLine, RiPrinterFill } from "@remixicon/react";
 import { generateSentence } from "./../../lib/text";
 import { Badge } from "./../../components/badge";
@@ -120,9 +121,7 @@ describe("RichEditor", () => {
       cy.mount(
         <ProductRichEditor
           mode={RichEditorMode.MarkdownEditor}
-          value={
-            "Welcome to the demo.\n## Hey\n# Yyyo\nSup"
-          }
+          value={"Welcome to the demo.\n## Hey\n# Yyyo\nSup"}
         />
       );
 
@@ -134,7 +133,9 @@ describe("RichEditor", () => {
 
   context("enter inside formatted text", () => {
     it("splits the block at the caret", () => {
-      cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
 
       cy.findByRole("textbox").click();
       cy.findByRole("textbox").type("Hello world");
@@ -156,10 +157,7 @@ describe("RichEditor", () => {
         .should("contain", "Hello")
         .find("b")
         .should("have.text", "wor");
-      cy.get("p")
-        .last()
-        .find("b")
-        .should("have.text", "ld");
+      cy.get("p").last().find("b").should("have.text", "ld");
     });
   });
 
@@ -183,6 +181,27 @@ describe("RichEditor", () => {
       cy.get("h2").should("have.text", "Chapter");
       cy.get("p input[type=checkbox]").should("exist");
       cy.get("p h2").should("not.exist");
+    });
+  });
+
+  context("heading menu placement", () => {
+    it("opens the heading menu directly under its toolbar button", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByLabelText("rich-editor-toolbar-heading-menu").then(($button) => {
+        const button = $button[0].getBoundingClientRect();
+
+        cy.findByLabelText("rich-editor-toolbar-heading-menu").click();
+
+        cy.findByLabelText("tip-menu").then(($menu) => {
+          const menu = $menu[0].getBoundingClientRect();
+
+          expect(Math.abs(menu.left - button.left)).to.be.lessThan(2);
+          expect(menu.top).to.be.greaterThan(button.bottom);
+        });
+      });
     });
   });
 
@@ -1071,6 +1090,26 @@ describe("RichEditor", () => {
       });
     });
 
+    context("code-editor mode without id", () => {
+      it("keeps the generated id stable while typing", () => {
+        cy.mount(<ProductRichEditor mode="code-editor" value="" />);
+
+        cy.get("[id^='code-mirror-block-']")
+          .invoke("attr", "id")
+          .then((generatedId) => {
+            cy.findByRole("textbox", { name: "rich-editor-code" })
+              .realClick()
+              .realType("a");
+
+            cy.get("[id^='code-mirror-block-']").should(
+              "have.attr",
+              "id",
+              generatedId
+            );
+          });
+      });
+    });
+
     context("non code-editor mode", () => {
       beforeEach(() => {
         cy.mount(
@@ -1085,6 +1124,24 @@ describe("RichEditor", () => {
       it("renders the id in the parent", () => {
         cy.get("#markdown-editor-21").should("exist");
       });
+    });
+  });
+
+  context("styles", () => {
+    it("applies codeEditorStyle to the code editor", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode="code-editor"
+          value=""
+          styles={{
+            codeEditorStyle: css`
+              min-height: 321px;
+            `,
+          }}
+        />
+      );
+
+      cy.get(".cm-editor").parent().should("have.css", "min-height", "321px");
     });
   });
 
@@ -1202,6 +1259,49 @@ describe("RichEditor", () => {
           cy.shouldHaveEditorFromValue("rich-editor-code", "const x = 1");
         });
       });
+
+      context("when pressing enter inside an indented block", () => {
+        it("keeps the current line indentation", () => {
+          cy.mount(
+            <ProductRichEditor
+              mode="code-editor"
+              value={"func a() {\n  let i = 0;\n}"}
+            />
+          );
+
+          cy.get(".cm-line").contains("let i = 0;").realClick();
+          cy.findByRole("textbox", { name: "rich-editor-code" }).type(
+            "{end}{enter}let j = 1;"
+          );
+
+          cy.get(".cm-line").should(($lines) => {
+            expect($lines.eq(1).text()).to.eq("  let i = 0;");
+            expect($lines.eq(2).text()).to.eq("  let j = 1;");
+          });
+        });
+
+        it("keeps indentation after switching to rust", () => {
+          cy.mount(
+            <ProductRichEditor
+              mode="code-editor"
+              value=""
+              codeEditor={{ language: "cpp" }}
+            />
+          );
+
+          cy.findByRole("combobox").click();
+          cy.findByText("Rust").click();
+
+          cy.findByRole("textbox", { name: "rich-editor-code" })
+            .realClick()
+            .type("func a() {{}{enter}const i = 0;{enter}const j = 1;");
+
+          cy.get(".cm-line").should(($lines) => {
+            expect($lines.eq(1).text()).to.eq("  const i = 0;");
+            expect($lines.eq(2).text()).to.eq("  const j = 1;");
+          });
+        });
+      });
     });
   });
 
@@ -1254,6 +1354,29 @@ describe("RichEditor", () => {
       });
     });
 
+    context("when pressing enter inside a code block", () => {
+      it("keeps the current line indentation", () => {
+        cy.mount(
+          <ProductRichEditor
+            mode="markdown-editor"
+            value={"```go\nfunc a() {\n  let i = 0;\n}\n```"}
+          />
+        );
+
+        cy.findByRole("textbox", { name: "rich-editor-code" }).should("exist");
+
+        cy.get(".cm-line").contains("let i = 0;").realClick();
+        cy.findByRole("textbox", { name: "rich-editor-code" }).type(
+          "{end}{enter}let j = 1;"
+        );
+
+        cy.get(".cm-line").should(($lines) => {
+          expect($lines.eq(1).text()).to.eq("  let i = 0;");
+          expect($lines.eq(2).text()).to.eq("  let j = 1;");
+        });
+      });
+    });
+
     context("complex behavior", () => {
       beforeEach(() => {
         cy.findByLabelText("rich-editor-code").should("not.exist");
@@ -1282,7 +1405,7 @@ describe("RichEditor", () => {
                     : anchorNode?.parentElement;
 
                 // Should NOT be inside the monaco/code block
-                expect(el?.closest("[data-monaco-block-id]")).to.be.null;
+                expect(el?.closest("[data-cm-block-id]")).to.be.null;
 
                 // Should equal on the line 1 (a <p> with text "Test")
                 expect(el?.textContent?.trim()).to.equal("Test");
@@ -1411,11 +1534,7 @@ describe("RichEditor", () => {
         );
         cy.findByLabelText("rich-editor-content")
           .should("have.css", "min-height", "200px")
-          .and(
-            "have.css",
-            "overflow-y",
-            "hidden"
-          )
+          .and("have.css", "overflow-y", "hidden")
           .and(($editor) => {
             // Long content grows past the min height instead of scrolling
             // inside a fixed box, so keep the assertion off the exact pixel

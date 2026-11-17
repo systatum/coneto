@@ -125,7 +125,7 @@ When a formatting option is disabled:
   - \`-\` / \`*\` → unordered list
 - Smart keyboard handling (Enter, Backspace)
 - Outputs clean Markdown
-- No Monaco editor
+- No CodeMirror editor
 
 ---
 
@@ -147,7 +147,7 @@ When a formatting option is disabled:
 ---
 
 #### 💻 \`code-editor\`
-- Standalone Monaco editor
+- Standalone CodeMirror editor
 - No rich text features
 - Supports:
   - Syntax highlighting
@@ -157,7 +157,7 @@ When a formatting option is disabled:
 - Outputs raw code (not Markdown)
 - \`codeEditor.language\` — Default language (e.g. \`"tsx"\`, \`"py"\`, \`"sql"\`)
 - \`codeEditor.languageOptions\` — Languages available in the switcher dropdown
-- \`codeEditor.actions\` — Custom toolbar buttons rendered in the Monaco toolbar
+- \`codeEditor.actions\` — Custom toolbar buttons rendered in the toolbar
 - Supported languages:
 
 | Key | Value | Display Name |
@@ -179,7 +179,7 @@ When a formatting option is disabled:
 ---
 
 #### 🧩 \`markdown-editor\`
-- Rich text + embedded Monaco code blocks
+- Rich text + embedded CodeMirror code blocks
 - Supports all \`text-editor\` features
 - Code block support:
   - Type \`\`\` to insert
@@ -212,7 +212,7 @@ const x = 1;
 
 ### 💻 Code Editor Mode (\`mode="code-editor"\`)
 
-A standalone Monaco-based code editor.
+A standalone CodeMirror-based code editor.
 
 \`\`\`tsx
 <RichEditor
@@ -230,15 +230,15 @@ A standalone Monaco-based code editor.
 \`\`\`
 
 **\`codeEditor\` props:**
-- \`language\` — sets the active Monaco language
+- \`language\` — sets the active CodeMirror language
 - \`languageOptions\` — restricts the language switcher to a subset
-- \`actions\` — custom buttons injected into the Monaco toolbar
+- \`actions\` — custom buttons injected into the CodeMirror toolbar
 
 ---
 
 ### 📝 Markdown Editor Mode (\`mode="markdown-editor"\`)
 
-Supports embedded Monaco code blocks.
+Supports embedded CodeMirror code blocks.
 
 \`\`\`tsx
 <RichEditor
@@ -305,13 +305,7 @@ Token syntax in Markdown:
 - Built using \`document.execCommand\`
 - Includes DOM normalization
 - Designed for clean Markdown output
-- Monaco workers required (Vite config)
 
-\`\`\`ts
-optimizeDeps: {
-  exclude: ["@systatum/coneto"],
-}
-\`\`\`
 
 ---
 

@@ -1552,15 +1552,17 @@ describe("Table", () => {
         cy.findByLabelText("overlay-blocker").then(($overlay) => {
           const overlayRect = $overlay[0].getBoundingClientRect();
 
-          cy.findByLabelText("circle").then(($spinner) => {
-            const spinnerRect = $spinner[0].getBoundingClientRect();
+          cy.findByLabelText("circle")
+            .invoke("css", "animation", "none")
+            .then(($spinner) => {
+              const spinnerRect = $spinner[0].getBoundingClientRect();
 
-            const paddingTop = spinnerRect.top - overlayRect.top;
-            const paddingLeft = spinnerRect.left - overlayRect.left;
+              const paddingTop = spinnerRect.top - overlayRect.top;
+              const paddingLeft = spinnerRect.left - overlayRect.left;
 
-            expect(paddingTop).to.be.closeTo(14, 1);
-            expect(paddingLeft).to.be.closeTo(14, 1);
-          });
+              expect(paddingTop).to.be.closeTo(14, 1);
+              expect(paddingLeft).to.be.closeTo(14, 1);
+            });
         });
       });
 
