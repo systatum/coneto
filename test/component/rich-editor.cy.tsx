@@ -120,9 +120,7 @@ describe("RichEditor", () => {
       cy.mount(
         <ProductRichEditor
           mode={RichEditorMode.MarkdownEditor}
-          value={
-            "Welcome to the demo.\n## Hey\n# Yyyo\nSup"
-          }
+          value={"Welcome to the demo.\n## Hey\n# Yyyo\nSup"}
         />
       );
 
@@ -134,7 +132,9 @@ describe("RichEditor", () => {
 
   context("enter inside formatted text", () => {
     it("splits the block at the caret", () => {
-      cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
 
       cy.findByRole("textbox").click();
       cy.findByRole("textbox").type("Hello world");
@@ -156,10 +156,7 @@ describe("RichEditor", () => {
         .should("contain", "Hello")
         .find("b")
         .should("have.text", "wor");
-      cy.get("p")
-        .last()
-        .find("b")
-        .should("have.text", "ld");
+      cy.get("p").last().find("b").should("have.text", "ld");
     });
   });
 
@@ -1071,6 +1068,26 @@ describe("RichEditor", () => {
       });
     });
 
+    context("code-editor mode without id", () => {
+      it("keeps the generated id stable while typing", () => {
+        cy.mount(<ProductRichEditor mode="code-editor" value="" />);
+
+        cy.get("[id^='code-mirror-block-']")
+          .invoke("attr", "id")
+          .then((generatedId) => {
+            cy.findByRole("textbox", { name: "rich-editor-code" })
+              .realClick()
+              .realType("a");
+
+            cy.get("[id^='code-mirror-block-']").should(
+              "have.attr",
+              "id",
+              generatedId
+            );
+          });
+      });
+    });
+
     context("non code-editor mode", () => {
       beforeEach(() => {
         cy.mount(
@@ -1411,11 +1428,7 @@ describe("RichEditor", () => {
         );
         cy.findByLabelText("rich-editor-content")
           .should("have.css", "min-height", "200px")
-          .and(
-            "have.css",
-            "overflow-y",
-            "hidden"
-          )
+          .and("have.css", "overflow-y", "hidden")
           .and(($editor) => {
             // Long content grows past the min height instead of scrolling
             // inside a fixed box, so keep the assertion off the exact pixel

@@ -1453,8 +1453,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             currentP = currentP.parentElement;
           }
 
-          const host =
-            currentP ?? (container.parentElement as HTMLElement);
+          const host = currentP ?? (container.parentElement as HTMLElement);
 
           const newP = document.createElement("p");
           host.insertAdjacentElement("afterend", newP);
@@ -2016,7 +2015,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
-    const codeEditorId = CodeEditor.nextBlockId();
+    const codeEditorId = useMemo(() => CodeEditor.nextBlockId(), []);
 
     if (mode === "code-editor") {
       return (
