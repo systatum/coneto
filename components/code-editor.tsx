@@ -154,12 +154,8 @@ function insertNewlineWithFallback(view: EditorView): boolean {
   const keepsIndent = state.selection.ranges.every((range) => {
     const line = state.doc.lineAt(range.from);
     const lineIndent = countColumn(/^\s*/.exec(line.text)![0], state.tabSize);
-    const before = line.text.slice(0, range.from - line.from).trimEnd();
-    const closesBlock = [")", "]", "}"].includes(before[before.length - 1]);
 
-    return (
-      getIndentation(state, range.from) === 0 && lineIndent > 0 && !closesBlock
-    );
+    return getIndentation(state, range.from) === 0 && lineIndent > 0;
   });
 
   if (!keepsIndent) {

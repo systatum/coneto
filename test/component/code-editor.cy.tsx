@@ -167,8 +167,24 @@ describe("CodeEditor", () => {
       });
     });
 
-    it("dedents after a closing brace", () => {
-      cy.mount(<ProductCodeEditor value={"if (x) {\n  foo();\n  }"} />);
+    it("keeps nested indentation after a closing brace", () => {
+      cy.mount(
+        <ProductCodeEditor
+          language="rust"
+          value={"func a() {\n  match x {\n    _ => foo(),\n  }\n  bar();\n}"}
+        />
+      );
+
+      cy.get(".cm-line").eq(3).realClick();
+      codebox().type("{end}{enter}baz();");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(4).text()).to.eq("  baz();");
+      });
+    });
+
+    it("keeps top-level lines at column zero after a closing brace", () => {
+      cy.mount(<ProductCodeEditor value={"if (x) {\n  foo();\n}"} />);
 
       cy.get(".cm-line").eq(2).realClick();
       codebox().type("{end}{enter}bar");
