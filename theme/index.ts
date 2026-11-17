@@ -556,6 +556,7 @@ export interface SearchboxThemeConfig extends BodyThemeConfig {
 export interface SelectboxThemeConfig extends BodyThemeConfig {
   hoverBorderColor: string;
   focusedBorderColor: string;
+  borderRadius?: string;
 
   errorBorderColor: string;
 

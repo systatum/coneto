@@ -812,7 +812,7 @@ const Input = styled.input<{
   $theme: SelectboxThemeConfig;
 }>`
   width: 100%;
-  border-radius: 2px;
+  border-radius: ${({ $theme }) => $theme.borderRadius ?? "2px"};
   padding: 0.5rem 0.75rem;
   outline: none;
   height: 34px;
