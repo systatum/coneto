@@ -177,10 +177,8 @@ function FieldLane({
                     border-right: 0;
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
-                    border-top-left-radius: ${fieldLaneTheme
-                      ?.buttonBorderRadius};
-                    border-bottom-left-radius: ${fieldLaneTheme
-                      ?.buttonBorderRadius};
+                    border-top-left-radius: ${fieldLaneTheme?.buttonBorderRadius};
+                    border-bottom-left-radius: ${fieldLaneTheme?.buttonBorderRadius};
                     border-color: ${fieldLaneTheme?.buttonBorderColor};
 
                     ${showError &&
@@ -230,6 +228,9 @@ function FieldLane({
                     `};
 
                     height: 100%;
+                    /* Follow the lane's shared corners so the button reads as
+                       part of the field instead of a pill inside it. */
+                    border-radius: inherit;
 
                     &:focus-visible {
                       outline: 2px solid ${fieldLaneTheme?.focusedBorderColor};
