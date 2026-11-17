@@ -89,6 +89,58 @@ describe("FieldLane", () => {
       cy.findByLabelText("tip-menu").should("have.css", "width", "200px");
     });
 
+    it("rounds only the outer corners of the dropdown button", () => {
+      cy.mount(
+        <FieldLane
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [{ text: "On-site", value: "1" }],
+            },
+          ]}
+        >
+          <input aria-label="lane-input" />
+        </FieldLane>
+      );
+
+      cy.findByText("Button")
+        .closest("button")
+        .should(($button) => {
+          const style = getComputedStyle($button[0]);
+
+          expect(style.borderTopRightRadius).to.eq("0px");
+          expect(style.borderBottomRightRadius).to.eq("0px");
+        });
+    });
+
+    it("matches the box height of the lane input", () => {
+      cy.mount(
+        <FieldLane
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [{ text: "On-site", value: "1" }],
+            },
+          ]}
+        >
+          <input aria-label="lane-input" style={{ height: 40 }} />
+        </FieldLane>
+      );
+
+      cy.findByLabelText("lane-input").then(($input) => {
+        const input = $input[0].getBoundingClientRect();
+
+        cy.findByText("Button")
+          .closest("button")
+          .should(($button) => {
+            const button = $button[0].getBoundingClientRect();
+
+            expect(button.top).to.eq(input.top);
+            expect(button.bottom).to.eq(input.bottom);
+          });
+      });
+    });
+
     context("when given with hidden field", () => {
       it("renders without hidden dropdown", () => {
         cy.mount(
