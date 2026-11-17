@@ -38,10 +38,31 @@ describe("CodeEditor", () => {
   });
 
   context("value", () => {
+    function ExternalValueCodeEditor() {
+      const [value, setValue] = useState("const x = 1");
+
+      return (
+        <>
+          <button onClick={() => setValue("const y = 2")}>replace-code</button>
+          <CodeEditor value={value} onChange={setValue} />
+        </>
+      );
+    }
+
     it("renders the initial value", () => {
       cy.mount(<ProductCodeEditor value="const x = 1" />);
 
       cy.shouldHaveEditorFromValue("rich-editor-code", "const x = 1");
+    });
+
+    it("renders a value replaced by its parent", () => {
+      cy.mount(<ExternalValueCodeEditor />);
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "const x = 1");
+
+      cy.findByRole("button", { name: "replace-code" }).click();
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "const y = 2");
     });
 
     it("emits typed code with its language", () => {

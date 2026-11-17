@@ -343,6 +343,19 @@ function CodeEditor({
     });
   }, [mode]);
 
+  // Mirror a value replaced by the parent into the live document.
+  useEffect(() => {
+    const view = editorRef.current;
+    if (!view || view.composing) return;
+
+    const current = view.state.doc.toString();
+    if (current === value) return;
+
+    view.dispatch({
+      changes: { from: 0, to: current.length, insert: value },
+    });
+  }, [value]);
+
   // Keep the read-only compartment synced if the prop changes post-mount.
   useEffect(() => {
     if (!editorRef.current) return;
