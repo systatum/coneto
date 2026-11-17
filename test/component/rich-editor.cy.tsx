@@ -1238,6 +1238,27 @@ describe("RichEditor", () => {
           cy.shouldHaveEditorFromValue("rich-editor-code", "const x = 1");
         });
       });
+
+      context("when pressing enter inside an indented block", () => {
+        it("keeps the current line indentation", () => {
+          cy.mount(
+            <ProductRichEditor
+              mode="code-editor"
+              value={"func a() {\n  let i = 0;\n}"}
+            />
+          );
+
+          cy.get(".cm-line").contains("let i = 0;").realClick();
+          cy.findByRole("textbox", { name: "rich-editor-code" }).type(
+            "{end}{enter}let j = 1;"
+          );
+
+          cy.get(".cm-line").should(($lines) => {
+            expect($lines.eq(1).text()).to.eq("  let i = 0;");
+            expect($lines.eq(2).text()).to.eq("  let j = 1;");
+          });
+        });
+      });
     });
   });
 
@@ -1287,6 +1308,29 @@ describe("RichEditor", () => {
         cy.findByLabelText("rich-editor-code").should("not.exist");
         cy.findByLabelText("rich-editor-content").realClick().type("```");
         cy.findByLabelText("rich-editor-code").should("exist");
+      });
+    });
+
+    context("when pressing enter inside a code block", () => {
+      it("keeps the current line indentation", () => {
+        cy.mount(
+          <ProductRichEditor
+            mode="markdown-editor"
+            value={"```go\nfunc a() {\n  let i = 0;\n}\n```"}
+          />
+        );
+
+        cy.findByRole("textbox", { name: "rich-editor-code" }).should("exist");
+
+        cy.get(".cm-line").contains("let i = 0;").realClick();
+        cy.findByRole("textbox", { name: "rich-editor-code" }).type(
+          "{end}{enter}let j = 1;"
+        );
+
+        cy.get(".cm-line").should(($lines) => {
+          expect($lines.eq(1).text()).to.eq("  let i = 0;");
+          expect($lines.eq(2).text()).to.eq("  let j = 1;");
+        });
       });
     });
 

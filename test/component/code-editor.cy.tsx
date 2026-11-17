@@ -115,6 +115,57 @@ describe("CodeEditor", () => {
 
       cy.shouldHaveEditorFromValue("rich-editor-code", "  a");
     });
+
+    it("keeps the previous line indentation on Enter", () => {
+      cy.mount(<ProductCodeEditor value="  foo" />);
+
+      codebox().realClick().type("{end}{enter}bar");
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "  foo\n  bar");
+    });
+
+    it("keeps the previous line indentation in plain text", () => {
+      cy.mount(<ProductCodeEditor value="  foo" language="plaintext" />);
+
+      codebox().realClick().type("{end}{enter}bar");
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "  foo\n  bar");
+    });
+
+    it("indents after an opening brace in cpp", () => {
+      cy.mount(<ProductCodeEditor value="func a() {" language="cpp" />);
+
+      codebox().realClick().type("{end}{enter}let i = 0;");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(1).text()).to.eq("  let i = 0;");
+      });
+    });
+
+    it("keeps indentation after a statement inside a block", () => {
+      cy.mount(<ProductCodeEditor value={"func a() {\n  let i = 0;\n}"} />);
+
+      cy.get(".cm-line").contains("let i = 0;").realClick();
+      codebox().type("{end}{enter}let j = 1;");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(1).text()).to.eq("  let i = 0;");
+        expect($lines.eq(2).text()).to.eq("  let j = 1;");
+      });
+    });
+
+    it("indents typed lines inside a closed block", () => {
+      cy.mount(<ProductCodeEditor language="go" />);
+
+      codebox()
+        .realClick()
+        .type("func a() {{}{enter}let i = 0;{enter}let j = 1;");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(1).text()).to.eq("  let i = 0;");
+        expect($lines.eq(2).text()).to.eq("  let j = 1;");
+      });
+    });
   });
 
   context("language", () => {
