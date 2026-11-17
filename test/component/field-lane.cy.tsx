@@ -113,6 +113,34 @@ describe("FieldLane", () => {
         });
     });
 
+    it("matches the box height of the lane input", () => {
+      cy.mount(
+        <FieldLane
+          dropdowns={[
+            {
+              caption: "Button",
+              options: [{ text: "On-site", value: "1" }],
+            },
+          ]}
+        >
+          <input aria-label="lane-input" style={{ height: 40 }} />
+        </FieldLane>
+      );
+
+      cy.findByLabelText("lane-input").then(($input) => {
+        const input = $input[0].getBoundingClientRect();
+
+        cy.findByText("Button")
+          .closest("button")
+          .should(($button) => {
+            const button = $button[0].getBoundingClientRect();
+
+            expect(button.top).to.eq(input.top);
+            expect(button.bottom).to.eq(input.bottom);
+          });
+      });
+    });
+
     context("when given with hidden field", () => {
       it("renders without hidden dropdown", () => {
         cy.mount(
