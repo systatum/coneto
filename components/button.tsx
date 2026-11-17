@@ -427,7 +427,7 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
     box-sizing: border-box;
   }
 
-  z-index: 9992999;
+  z-index: 9994999;
 
   ${({ $style }) => $style};
 `;
