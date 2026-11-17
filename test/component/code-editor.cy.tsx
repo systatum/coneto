@@ -75,6 +75,34 @@ describe("CodeEditor", () => {
 
       cy.get("@onChange").should("have.been.calledWith", "const x = 1", "tsx");
     });
+
+    it("calls the latest onChange after it is replaced", () => {
+      const firstChange = cy.stub().as("firstChange");
+      const secondChange = cy.stub().as("secondChange");
+
+      function SwappedOnChangeCodeEditor() {
+        const [handler, setHandler] = useState<"first" | "second">("first");
+
+        return (
+          <>
+            <button onClick={() => setHandler("second")}>
+              use-second-handler
+            </button>
+            <CodeEditor
+              onChange={handler === "first" ? firstChange : secondChange}
+            />
+          </>
+        );
+      }
+
+      cy.mount(<SwappedOnChangeCodeEditor />);
+
+      cy.findByRole("button", { name: "use-second-handler" }).click();
+      codebox().realClick().realType("a");
+
+      cy.get("@firstChange").should("not.have.been.called");
+      cy.get("@secondChange").should("have.been.calledWith", "a", "tsx");
+    });
   });
 
   context("indentation", () => {

@@ -198,6 +198,12 @@ function CodeEditor({
   const langRef = useRef(lang);
   langRef.current = lang;
 
+  // Keep mount-time listeners on the latest callbacks.
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const onClosedRef = useRef(onClosed);
+  onClosedRef.current = onClosed;
+
   // Compartments let us swap language/theme/read-only state on an existing
   // view via `dispatch` instead of tearing the whole editor down (the CM6
   // equivalent of Monaco's `setModelLanguage` / `editor.setTheme`)
@@ -284,7 +290,7 @@ function CodeEditor({
         key: "Backspace",
         run: (view) => {
           if (removeOnEmpty && view.state.doc.length === 0) {
-            onClosed?.();
+            onClosedRef.current?.();
             return true;
           }
           return false;
@@ -343,7 +349,10 @@ function CodeEditor({
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
               updateHeight(update.view);
-              onChange?.(update.state.doc.toString(), langRef.current);
+              onChangeRef.current?.(
+                update.state.doc.toString(),
+                langRef.current
+              );
             }
           }),
         ],
