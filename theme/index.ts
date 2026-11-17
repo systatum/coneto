@@ -75,6 +75,7 @@ export interface ButtonThemeConfig extends BodyThemeConfig {
   textDecoration?: string;
   focusBackgroundColor?: string;
   dividerColor?: string;
+  borderRadius?: string;
 }
 
 export interface TipMenuContainerThemeConfig extends BodyThemeConfig {
@@ -256,6 +257,7 @@ export interface FieldLaneThemeConfig
   extends Omit<BodyThemeConfig, "backgroundColor"> {
   buttonTextColor?: string;
   buttonBorderColor?: string;
+  buttonBorderRadius?: string;
   buttonErrorTextColor?: string;
   buttonErrorBorderColor?: string;
 
@@ -554,6 +556,7 @@ export interface SearchboxThemeConfig extends BodyThemeConfig {
 export interface SelectboxThemeConfig extends BodyThemeConfig {
   hoverBorderColor: string;
   focusedBorderColor: string;
+  borderRadius?: string;
 
   errorBorderColor: string;
 
@@ -789,6 +792,7 @@ export interface TipMenuThemeConfig
 export interface TreeListThemeConfig
   extends Omit<BodyThemeConfig, "borderColor"> {
   hoverBackgroundColor?: string;
+  hoverTextColor?: string;
   selectedBackgroundColor?: string;
 
   highlightedText?: string;

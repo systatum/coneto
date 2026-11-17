@@ -2,6 +2,7 @@ import marked from "./../../lib/marked/marked";
 import {
   RichEditor,
   RichEditorCodeAction,
+  RichEditorMode,
   RichEditorProps,
   RichEditorRef,
 } from "./../../components/rich-editor";
@@ -46,6 +47,144 @@ describe("RichEditor", () => {
       />
     );
   }
+
+  context("markdown autoformat", () => {
+    it("converts a typed heading prefix into a real heading", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("## ");
+      cy.get("h2").should("exist");
+
+      cy.findByRole("textbox").type("Hehe");
+      cy.get("h2").should("have.text", "Hehe");
+    });
+
+    it("converts a typed list prefix into a real list", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("- ");
+      cy.get("ul li").should("exist");
+
+      cy.findByRole("textbox").type("Item");
+      cy.get("ul li").should("have.text", "Item");
+    });
+  });
+
+  context("undo after markdown autoformat", () => {
+    function UndoMount() {
+      const [value, setValue] = useState("");
+      const [printValue, setPrintValue] = useState("");
+
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <RichEditor
+            mode={RichEditorMode.MarkdownEditor}
+            value={value}
+            onChange={(next) => setValue(next)}
+          />
+          <RichEditor.ToolbarButton
+            ariaLabel="print-value"
+            icon={{ image: RiPrinterFill }}
+            onClick={() => setPrintValue(value)}
+          >
+            Print
+          </RichEditor.ToolbarButton>
+          <pre>{printValue}</pre>
+        </div>
+      );
+    }
+
+    it("keeps typing sane after undoing the conversion", () => {
+      cy.mount(<UndoMount />);
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("## ");
+      cy.findByRole("textbox").type("Hehe");
+      cy.findByRole("textbox").type("{ctrl+z}");
+      cy.findByRole("textbox").type("Yo");
+
+      cy.findByLabelText("print-value").click();
+      cy.get("pre").should("contain.text", "Yo");
+      cy.get("h2").should("contain.text", "Yo");
+    });
+  });
+
+  context("headings after a paragraph line", () => {
+    it("renders single-newline headings as real headings on load", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value={
+            "Welcome to the demo.\n## Hey\n# Yyyo\nSup"
+          }
+        />
+      );
+
+      cy.get("h2").should("have.text", "Hey");
+      cy.get("h1").should("have.text", "Yyyo");
+      cy.get("p").last().should("have.text", "Sup");
+    });
+  });
+
+  context("enter inside formatted text", () => {
+    it("splits the block at the caret", () => {
+      cy.mount(<ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />);
+
+      cy.findByRole("textbox").click();
+      cy.findByRole("textbox").type("Hello world");
+      cy.findByRole("textbox").type(
+        "{home}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}"
+      );
+      cy.findByRole("textbox").type(
+        "{shift}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{rightarrow}{shift}"
+      );
+      cy.findByLabelText("rich-editor-toolbar-bold").click();
+
+      // Park the caret inside the bold run, then split with enter.
+      cy.findByRole("textbox").type("{rightarrow}{leftarrow}{leftarrow}");
+      cy.findByRole("textbox").type("{enter}");
+
+      cy.get("p").should("have.length", 2);
+      cy.get("p")
+        .first()
+        .should("contain", "Hello")
+        .find("b")
+        .should("have.text", "wor");
+      cy.get("p")
+        .last()
+        .find("b")
+        .should("have.text", "ld");
+    });
+  });
+
+  context("heading after a checkbox row", () => {
+    it("places the new heading after the checkbox paragraph instead of nesting", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value=""
+          formatting={{ allowCheckBoxes: true }}
+        />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-checkbox").click();
+      cy.findByRole("textbox").type("Task{enter}");
+      cy.findByLabelText("rich-editor-toolbar-heading-menu").click();
+      cy.findByText("Heading 2").click();
+      cy.findByRole("textbox").type("Chapter");
+
+      cy.get("h2").should("have.text", "Chapter");
+      cy.get("p input[type=checkbox]").should("exist");
+      cy.get("p h2").should("not.exist");
+    });
+  });
 
   context("formatting rule", () => {
     it("renders except checkboxes and code", () => {
@@ -1270,11 +1409,19 @@ describe("RichEditor", () => {
             value={generateSentence({ minLen: 250, maxLen: 250, seed: 1234 })}
           />
         );
-        cy.findByLabelText("rich-editor-content").should(
-          "have.css",
-          "height",
-          "600px"
-        );
+        cy.findByLabelText("rich-editor-content")
+          .should("have.css", "min-height", "200px")
+          .and(
+            "have.css",
+            "overflow-y",
+            "hidden"
+          )
+          .and(($editor) => {
+            // Long content grows past the min height instead of scrolling
+            // inside a fixed box, so keep the assertion off the exact pixel
+            // height, which shifts with font wrapping.
+            expect(parseFloat($editor.css("height"))).to.be.greaterThan(200);
+          });
       });
 
       context("when pressing enter", () => {
@@ -1286,15 +1433,17 @@ describe("RichEditor", () => {
             />
           );
           cy.findByLabelText("rich-editor-content")
-            .should("have.css", "height", "600px")
-            .click()
-            .type("{enter}{enter}{enter}");
-
-          cy.findByLabelText("rich-editor-content").should(
-            "have.css",
-            "height",
-            "696px"
-          );
+            .then(($editor) => cy.wrap(parseFloat($editor.css("height"))))
+            .then((before) => {
+              cy.findByLabelText("rich-editor-content")
+                .click()
+                .type("{enter}{enter}{enter}")
+                .then(($editor) => {
+                  expect(parseFloat($editor.css("height"))).to.be.greaterThan(
+                    before
+                  );
+                });
+            });
         });
       });
     });

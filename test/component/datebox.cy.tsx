@@ -470,4 +470,29 @@ describe("Datebox", () => {
       });
     });
   });
+
+  context("keyboard interaction", () => {
+    it("does not crash when typing into the input", () => {
+      cy.mount(<Datebox />);
+      cy.findByPlaceholderText("mm/dd/yyyy").click().type("1");
+      cy.findByPlaceholderText("mm/dd/yyyy").should("be.visible");
+    });
+
+    it("does not crash when pressing Escape after picking a date in multiple mode", () => {
+      cy.mount(<Datebox calendarSelectabilityMode="multiple" />);
+      cy.findByPlaceholderText("mm/dd/yyyy").click();
+      cy.findByText("5").click();
+      cy.findByPlaceholderText("mm/dd/yyyy").type("{esc}{esc}");
+      cy.findByLabelText("calendar").should("not.exist");
+    });
+
+    it("does not crash when pressing Escape after picking a date in ranged mode", () => {
+      cy.mount(<Datebox calendarSelectabilityMode="ranged" />);
+      cy.findByPlaceholderText("mm/dd/yyyy").click();
+      cy.findByText("5").click();
+      cy.findByText("10").click();
+      cy.findByPlaceholderText("mm/dd/yyyy").type("{esc}{esc}");
+      cy.findByLabelText("calendar").should("not.exist");
+    });
+  });
 });

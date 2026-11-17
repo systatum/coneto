@@ -243,12 +243,12 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
     );
 
     const FILTERED_NAVIGABLE_OPTIONS = hasInteracted
-      ? navigableOptions.filter((opt) =>
+      ? (navigableOptions ?? finalOptions).filter((opt) =>
           opt.text
             .toLowerCase()
             .includes(selectedOptionsLocal.text.toLowerCase())
         )
-      : navigableOptions;
+      : (navigableOptions ?? finalOptions);
 
     const { refs, floatingStyles, context } = useFloating({
       placement: "bottom-start" as Placement,
@@ -812,7 +812,7 @@ const Input = styled.input<{
   $theme: SelectboxThemeConfig;
 }>`
   width: 100%;
-  border-radius: 2px;
+  border-radius: ${({ $theme }) => $theme.borderRadius ?? "2px"};
   padding: 0.5rem 0.75rem;
   outline: none;
   height: 34px;

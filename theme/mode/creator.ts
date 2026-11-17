@@ -694,6 +694,7 @@ export function createFieldLaneTheme(
     {
       buttonTextColor: body.textColor,
       buttonBorderColor: "#d1d5db",
+      buttonBorderRadius: "2px",
       buttonErrorBorderColor: "#ef4444",
       buttonErrorTextColor: "#b91c1c",
 
@@ -2029,12 +2030,13 @@ export function createTreeListTheme(
       textColor: body.textColor,
       backgroundColor: body.backgroundColor,
       hoverBackgroundColor: "#f3f4f6",
+      hoverTextColor: body.textColor,
       selectedBackgroundColor: "#f3f4f6",
       highlightedText: "#e5e7eb",
       dividerHierarchyColor: "rgb(243 243 243)",
       dividerHierarchyRelatedColor: "#d7d6d6",
       dividerHierarchySelectedColor: "#3b82f6",
-      rowActionBackgroundColor: "rgb(193, 214, 241)",
+      rowActionBackgroundColor: "#d4d4d4",
     },
     ...themeConfigurations
   );

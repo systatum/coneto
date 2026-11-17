@@ -190,7 +190,7 @@ const TooltipBase = forwardRef<TooltipRef, TooltipProps>(
           !referenceEl.contains(event.target as Node)
         ) {
           setIsOpenLocal(false);
-          onVisibilityChange(false);
+          onVisibilityChange?.(false);
         }
       }
 
@@ -441,7 +441,7 @@ const TooltipArrow = styled.div<{
     const opposite = staticSide[side];
 
     return css`
-      left: ${$arrowX != null ? `calc(${$arrowX}px - 5%)` : "auto"};
+      left: ${$arrowX != null ? `${$arrowX}px` : "auto"};
       top: ${$arrowY != null ? `${$arrowY}px` : "auto"};
       right: auto;
       bottom: auto;

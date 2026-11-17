@@ -553,12 +553,12 @@ const ButtonWrapper = styled.div<{
         `}
 
   ${({ $isOpen, $variant, $theme }) => {
-    const { border } = getButtonColors($theme, $variant, $isOpen);
+    const { border, borderRadius } = getButtonColors($theme, $variant, $isOpen);
     return css`
       ${$variant?.startsWith("outline") &&
       css`
         border: ${border};
-        border-radius: 2px;
+        border-radius: ${borderRadius};
       `}
     `;
   }}
@@ -658,7 +658,8 @@ const BaseButton = styled.button<{
 
   border: none;
   outline: none;
-  border-radius: 2px;
+  border-radius: ${({ $theme, $variant }) =>
+    getButtonColors($theme, $variant)?.borderRadius ?? "2px"};
 
   transition: all 0.2s ease-in-out;
   user-select: none;
@@ -829,12 +830,15 @@ const getButtonColors = (
 
   const divider = themeButton.dividerColor;
 
+  const borderRadius = themeButton.borderRadius ?? "2px";
+
   return {
     backgroundColor,
     color,
     border,
     textDecoration,
     dividerColor: divider,
+    borderRadius,
   };
 };
 

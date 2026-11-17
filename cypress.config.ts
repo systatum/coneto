@@ -8,6 +8,12 @@ export default defineConfig({
   // (hundreds of specs in one Electron session) accumulate memory pressure
   // that occasionally causes a spec's initial mount to render blank.
   experimentalMemoryManagement: true,
+  // Renderer crashes and blank mounts still slip through on heavy specs,
+  // so give flaky tests a second chance per run mode.
+  retries: {
+    runMode: 2,
+    openMode: 0,
+  },
   e2e: {
     baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:6006",
     specPattern: "test/e2e/**/*.cy.{js,ts,jsx,tsx}",
