@@ -2127,27 +2127,32 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   />
                 )}
 
-                <RichEditorToolbarButton
-                  ariaLabel="rich-editor-toolbar-heading-menu"
-                  icon={{ image: RiHeading }}
-                  isOpen={isOpen}
-                  onClick={() => {
-                    const sel = window.getSelection();
-                    if (sel && sel.rangeCount > 0) {
-                      savedSelection.current = sel.getRangeAt(0).cloneRange();
-                    }
-                    setIsOpen(!isOpen);
-                  }}
-                />
+                <MenuAnchor>
+                  <RichEditorToolbarButton
+                    ariaLabel="rich-editor-toolbar-heading-menu"
+                    icon={{ image: RiHeading }}
+                    isOpen={isOpen}
+                    onClick={() => {
+                      const sel = window.getSelection();
+                      if (sel && sel.rangeCount > 0) {
+                        savedSelection.current = sel.getRangeAt(0).cloneRange();
+                      }
+                      setIsOpen(!isOpen);
+                    }}
+                  />
 
-                {isOpen && (
-                  <MenuWrapper ref={menuRef} $toolbarPosition={toolbarPosition}>
-                    <TipMenu
-                      setIsOpen={() => setIsOpen(false)}
-                      subMenuList={TIP_MENU_RICH_EDITOR}
-                    />
-                  </MenuWrapper>
-                )}
+                  {isOpen && (
+                    <MenuWrapper
+                      ref={menuRef}
+                      $toolbarPosition={toolbarPosition}
+                    >
+                      <TipMenu
+                        setIsOpen={() => setIsOpen(false)}
+                        subMenuList={TIP_MENU_RICH_EDITOR}
+                      />
+                    </MenuWrapper>
+                  )}
+                </MenuAnchor>
               </>
             )
           }
@@ -2442,6 +2447,12 @@ const ToolbarRightPanel = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
+const MenuAnchor = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
 const MenuWrapper = styled.div<{
   $toolbarPosition?: RichEditorToolbarPosition;
 }>`
@@ -2456,7 +2467,8 @@ const MenuWrapper = styled.div<{
           bottom: 100%;
           transform: translateY(-4px);
         `}
-  right: -100px;
+  left: 0;
+  min-width: max-content;
   z-index: 40;
 `;
 
