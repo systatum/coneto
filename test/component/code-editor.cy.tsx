@@ -167,6 +167,17 @@ describe("CodeEditor", () => {
       });
     });
 
+    it("dedents after a closing brace", () => {
+      cy.mount(<ProductCodeEditor value={"if (x) {\n  foo();\n  }"} />);
+
+      cy.get(".cm-line").eq(2).realClick();
+      codebox().type("{end}{enter}bar");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(3).text()).to.eq("bar");
+      });
+    });
+
     it("indents typed lines inside an invalid rust block", () => {
       cy.mount(<ProductCodeEditor language="rust" />);
 
