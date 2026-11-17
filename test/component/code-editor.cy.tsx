@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { css } from "styled-components";
 import {
   CodeEditor,
   CodeEditorLanguage,
@@ -215,6 +216,22 @@ describe("CodeEditor", () => {
       cy.findByTitle("Remove code block").click();
 
       cy.get("@onClosed").should("have.been.called");
+    });
+  });
+
+  context("styles", () => {
+    it("applies its own container style", () => {
+      cy.mount(
+        <ProductCodeEditor
+          styles={{
+            self: css`
+              padding: 12px;
+            `,
+          }}
+        />
+      );
+
+      cy.get(".coneto-code-editor").should("have.css", "padding", "12px");
     });
   });
 

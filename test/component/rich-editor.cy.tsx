@@ -7,6 +7,7 @@ import {
   RichEditorRef,
 } from "./../../components/rich-editor";
 import { useEffect, useRef, useState } from "react";
+import { css } from "styled-components";
 import { RiArrowRightSLine, RiPrinterFill } from "@remixicon/react";
 import { generateSentence } from "./../../lib/text";
 import { Badge } from "./../../components/badge";
@@ -1102,6 +1103,24 @@ describe("RichEditor", () => {
       it("renders the id in the parent", () => {
         cy.get("#markdown-editor-21").should("exist");
       });
+    });
+  });
+
+  context("styles", () => {
+    it("applies codeEditorStyle to the code editor", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode="code-editor"
+          value=""
+          styles={{
+            codeEditorStyle: css`
+              min-height: 321px;
+            `,
+          }}
+        />
+      );
+
+      cy.get(".cm-editor").parent().should("have.css", "min-height", "321px");
     });
   });
 

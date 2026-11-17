@@ -2034,6 +2034,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                 : css`
                     margin-bottom: 37px;
                   `};
+              ${styles?.codeEditorStyle}
             `,
           }}
           className={codeClassName}

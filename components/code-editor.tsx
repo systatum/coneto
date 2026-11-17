@@ -455,6 +455,7 @@ function CodeEditor({
       styles={{
         containerStyle: css`
           overflow: unset;
+          ${styles?.self}
         `,
         toolbarStyle: css`
           padding-right: 6px;
