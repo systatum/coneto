@@ -184,6 +184,27 @@ describe("RichEditor", () => {
     });
   });
 
+  context("heading menu placement", () => {
+    it("opens the heading menu directly under its toolbar button", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByLabelText("rich-editor-toolbar-heading-menu").then(($button) => {
+        const button = $button[0].getBoundingClientRect();
+
+        cy.findByLabelText("rich-editor-toolbar-heading-menu").click();
+
+        cy.findByLabelText("tip-menu").then(($menu) => {
+          const menu = $menu[0].getBoundingClientRect();
+
+          expect(Math.abs(menu.left - button.left)).to.be.lessThan(2);
+          expect(menu.top).to.be.greaterThan(button.bottom);
+        });
+      });
+    });
+  });
+
   context("formatting rule", () => {
     it("renders except checkboxes and code", () => {
       cy.mount(<ProductRichEditor />);
