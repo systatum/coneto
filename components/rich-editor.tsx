@@ -548,6 +548,19 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
             return src.indexOf("#");
           },
           tokenizer(src) {
+            // A backslash before the hashes means the user wrote a literal
+            // "#", so keep the whole escaped line as plain text instead of
+            // turning it into a heading.
+            const escaped = src.match(/^(\\#{1,6}) ([^\n]+)/);
+            if (escaped) {
+              return {
+                type: "paragraph",
+                raw: escaped[0],
+                text: escaped[0],
+                tokens: this.lexer.inlineTokens(escaped[0]),
+              };
+            }
+
             const match = src.match(/^(#{1,6}) ([^\n]+)/);
             if (match) {
               return {
