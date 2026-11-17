@@ -172,7 +172,7 @@ describe("Combobox", () => {
 
   context("drawerHeight", () => {
     context("when given 60dvh", () => {
-      it("should render with 420px", () => {
+      it("caps the drawer at 60dvh while sizing to its content", () => {
         cy.viewport(500, 700);
 
         cy.mount(
@@ -182,13 +182,17 @@ describe("Combobox", () => {
         cy.findByRole("textbox").click();
 
         cy.window().then((win) => {
-          const expectedHeight = `${win.innerHeight * 0.6}px`;
+          const maxHeight = win.innerHeight * 0.6;
 
-          cy.findByLabelText("combobox-drawer").should(
-            "have.css",
-            "height",
-            expectedHeight
-          );
+          cy.findByLabelText("combobox-drawer").then(($drawer) => {
+            const height = $drawer.outerHeight() ?? 0;
+
+            expect(height).to.be.at.most(maxHeight);
+            expect(parseFloat($drawer.css("max-height"))).to.be.closeTo(
+              maxHeight,
+              1
+            );
+          });
         });
       });
 
@@ -203,25 +207,21 @@ describe("Combobox", () => {
           cy.findByRole("textbox").click();
 
           cy.window().then((win) => {
-            const expectedHeight = `${win.innerHeight * 0.6}px`;
+            const maxHeight = win.innerHeight * 0.6;
 
-            cy.findByLabelText("combobox-drawer").should(
-              "have.css",
-              "height",
-              expectedHeight
-            );
+            cy.findByLabelText("combobox-drawer")
+              .then(($drawer) => $drawer.outerHeight() ?? 0)
+              .should("be.lessThan", maxHeight);
           });
 
           cy.findByRole("textbox").click();
 
           cy.window().then((win) => {
-            const expectedHeight = `${win.innerHeight * 0.6}px`;
+            const maxHeight = win.innerHeight * 0.6;
 
-            cy.findByLabelText("combobox-drawer").should(
-              "have.css",
-              "height",
-              expectedHeight
-            );
+            cy.findByLabelText("combobox-drawer")
+              .then(($drawer) => $drawer.outerHeight() ?? 0)
+              .should("be.lessThan", maxHeight);
           });
         });
       });

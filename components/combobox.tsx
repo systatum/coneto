@@ -1292,7 +1292,10 @@ const DrawerWrapper = styled.ul<{
     const $height = $drawerHeight ?? "220px";
 
     return css`
-      height: ${$hasFewOptions ? "fit-content" : $height};
+      // Size to the content up to the cap, then scroll: counting options
+      // including collapsed children forced a tall fixed height with dead
+      // space for grouped lists.
+      height: fit-content;
       max-height: ${$height};
 
       ${$mobile &&
