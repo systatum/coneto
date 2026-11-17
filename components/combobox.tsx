@@ -1249,7 +1249,7 @@ const DrawerWrapper = styled.ul<{
   padding: 0;
 
   position: relative;
-  z-index: 9992999;
+  z-index: 9993999;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid
