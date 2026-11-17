@@ -82,6 +82,12 @@ import { oneDark } from "@codemirror/theme-one-dark";
  * highlighting)
  */
 function getLanguageExtension(lang: string): Extension {
+  // Legacy modes type their parser against their own streamparser copy.
+  const legacy = (parser: unknown) =>
+    StreamLanguage.define(
+      parser as Parameters<typeof StreamLanguage.define>[0]
+    );
+
   switch (lang) {
     case "typescript":
     case "ts":
@@ -122,9 +128,9 @@ function getLanguageExtension(lang: string): Extension {
       return rust();
     case "ruby":
     case "rb":
-      return StreamLanguage.define(ruby);
+      return legacy(ruby);
     case "r":
-      return StreamLanguage.define(r);
+      return legacy(r);
     default:
       return [];
   }
