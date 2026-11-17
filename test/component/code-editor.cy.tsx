@@ -166,6 +166,19 @@ describe("CodeEditor", () => {
         expect($lines.eq(2).text()).to.eq("  let j = 1;");
       });
     });
+
+    it("indents typed lines inside an invalid rust block", () => {
+      cy.mount(<ProductCodeEditor language="rust" />);
+
+      codebox()
+        .realClick()
+        .type("func a() {{}{enter}const i = 0;{enter}const j = 1;");
+
+      cy.get(".cm-line").should(($lines) => {
+        expect($lines.eq(1).text()).to.eq("  const i = 0;");
+        expect($lines.eq(2).text()).to.eq("  const j = 1;");
+      });
+    });
   });
 
   context("language", () => {

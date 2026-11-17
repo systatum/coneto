@@ -1258,6 +1258,28 @@ describe("RichEditor", () => {
             expect($lines.eq(2).text()).to.eq("  let j = 1;");
           });
         });
+
+        it("keeps indentation after switching to rust", () => {
+          cy.mount(
+            <ProductRichEditor
+              mode="code-editor"
+              value=""
+              codeEditor={{ language: "cpp" }}
+            />
+          );
+
+          cy.findByRole("combobox").click();
+          cy.findByText("Rust").click();
+
+          cy.findByRole("textbox", { name: "rich-editor-code" })
+            .realClick()
+            .type("func a() {{}{enter}const i = 0;{enter}const j = 1;");
+
+          cy.get(".cm-line").should(($lines) => {
+            expect($lines.eq(1).text()).to.eq("  const i = 0;");
+            expect($lines.eq(2).text()).to.eq("  const j = 1;");
+          });
+        });
       });
     });
   });

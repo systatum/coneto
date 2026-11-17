@@ -38,15 +38,25 @@ import { applyClassName } from "./../constants/classname";
  */
 
 import { EditorView, KeyBinding, keymap, lineNumbers } from "@codemirror/view";
-import { Compartment, EditorState, Extension, Prec } from "@codemirror/state";
+import {
+  Compartment,
+  EditorSelection,
+  EditorState,
+  Extension,
+  Prec,
+  countColumn,
+} from "@codemirror/state";
 import {
   defaultKeymap,
   history,
   historyKeymap,
   indentWithTab,
+  insertNewlineAndIndent,
 } from "@codemirror/commands";
 import {
+  getIndentation,
   indentOnInput,
+  indentString,
   indentUnit,
   bracketMatching,
   syntaxHighlighting,
@@ -134,6 +144,46 @@ function getLanguageExtension(lang: string): Extension {
     default:
       return [];
   }
+}
+
+/** Preserve the current indent when a language under-indents recovered code. */
+function insertNewlineWithFallback(view: EditorView): boolean {
+  const { state } = view;
+  if (state.readOnly) return false;
+
+  const keepsIndent = state.selection.ranges.every((range) => {
+    const line = state.doc.lineAt(range.from);
+    const lineIndent = countColumn(/^\s*/.exec(line.text)![0], state.tabSize);
+    const before = line.text.slice(0, range.from - line.from).trimEnd();
+    const closesBlock = [")", "]", "}"].includes(before[before.length - 1]);
+
+    return (
+      getIndentation(state, range.from) === 0 && lineIndent > 0 && !closesBlock
+    );
+  });
+
+  if (!keepsIndent) {
+    return insertNewlineAndIndent({
+      state,
+      dispatch: (transaction) => view.dispatch(transaction),
+    });
+  }
+
+  const changes = state.changeByRange((range) => {
+    const line = state.doc.lineAt(range.from);
+    const lineIndent = countColumn(/^\s*/.exec(line.text)![0], state.tabSize);
+    const insert = `\n${indentString(state, lineIndent)}`;
+
+    return {
+      changes: { from: range.from, to: range.to, insert },
+      range: EditorSelection.cursor(range.from + insert.length),
+    };
+  });
+
+  view.dispatch(
+    state.update(changes, { scrollIntoView: true, userEvent: "input" })
+  );
+  return true;
 }
 
 export type CodeEditorLanguage = CodeLanguageEquivalent;
@@ -311,6 +361,7 @@ function CodeEditor({
           syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
           keymap.of([
             ...editorKeymap,
+            { key: "Enter", run: insertNewlineWithFallback },
             indentWithTab,
             ...closeBracketsKeymap,
             ...completionKeymap,
