@@ -92,6 +92,17 @@ describe("CodeEditor", () => {
   });
 
   context("read-only", () => {
+    function ToggleReadOnlyCodeEditor() {
+      const [readOnly, setReadOnly] = useState(true);
+
+      return (
+        <>
+          <button onClick={() => setReadOnly(false)}>enable-editing</button>
+          <CodeEditor value="" readOnly={readOnly} />
+        </>
+      );
+    }
+
     it("blocks editing when read-only", () => {
       const onChange = cy.stub().as("onChange");
       cy.mount(
@@ -104,6 +115,21 @@ describe("CodeEditor", () => {
         .realType("abc");
 
       cy.get("@onChange").should("not.have.been.called");
+    });
+
+    it("allows editing after read-only turns off", () => {
+      cy.mount(<ToggleReadOnlyCodeEditor />);
+
+      codebox().should("have.attr", "contenteditable", "false");
+
+      cy.findByRole("button", { name: "enable-editing" }).click();
+
+      codebox()
+        .should("have.attr", "contenteditable", "true")
+        .realClick()
+        .realType("abc");
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "abc");
     });
   });
 

@@ -276,8 +276,10 @@ function CodeEditor({
           themeCompartment.of(
             mode === "dark" ? [oneDark, transparentBackground] : []
           ),
-          readOnlyCompartment.of(EditorView.editable.of(!readOnly)),
-          EditorState.readOnly.of(readOnly),
+          readOnlyCompartment.of([
+            EditorView.editable.of(!readOnly),
+            EditorState.readOnly.of(readOnly),
+          ]),
           EditorView.contentAttributes.of({
             "aria-label": "rich-editor-code",
             "aria-multiline": "true",
@@ -361,7 +363,10 @@ function CodeEditor({
     if (!editorRef.current) return;
     editorRef.current.dispatch({
       effects: [
-        readOnlyCompartment.reconfigure(EditorView.editable.of(!readOnly)),
+        readOnlyCompartment.reconfigure([
+          EditorView.editable.of(!readOnly),
+          EditorState.readOnly.of(readOnly),
+        ]),
       ],
     });
   }, [readOnly]);
