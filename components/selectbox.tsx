@@ -18,6 +18,7 @@ import {
   offset,
   flip,
   shift,
+  size,
   autoUpdate,
   Placement,
   useDismiss,
@@ -255,7 +256,18 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
       strategy: "fixed",
       open: isOpen,
       onOpenChange: setIsOpen,
-      middleware: [offset(4), flip(), shift()],
+      middleware: [
+        offset(4),
+        flip(),
+        shift(),
+        size({
+          // Fit the drawer into the space below first, so it only flips up
+          // when there is genuinely no room underneath.
+          apply({ availableHeight, elements }) {
+            elements.floating.style.maxHeight = `${Math.max(Math.min(availableHeight - 8, 420), 160)}px`;
+          },
+        }),
+      ],
       whileElementsMounted: autoUpdate,
     });
 

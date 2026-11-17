@@ -814,7 +814,9 @@ function ComboboxDrawer({
       const hasChildren = (item?.items?.length ?? 0) > 0;
       if (hasChildren) return;
 
-      setIsOpen(false);
+      // Close on the next frame: closing during mousedown detaches the row
+      // before the click completes, which makes synthetic clicks retry.
+      requestAnimationFrame(() => setIsOpen(false));
       setConfirmedValue?.(option);
       setSelectedOptionsLocal(option);
       handleOnChange([optionValue]);
@@ -1205,7 +1207,10 @@ function ComboboxDrawer({
     );
   }
 
-  return mainCombobox;
+  // Portal the drawer to the body: inside a dialog it would otherwise be
+  // contained by the dialog's transformed, scrollable wrapper, growing the
+  // dialog and mispositioning the fixed drawer.
+  return createPortal(mainCombobox, document.body);
 }
 
 const DrawerContainer = styled.div<{
