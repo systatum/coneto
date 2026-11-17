@@ -9,6 +9,7 @@ import {
 const LANGUAGE_OPTIONS: CodeEditorOption[] = [
   { text: "TypeScript", value: "tsx" },
   { text: "Python", value: "python" },
+  { text: "SQL", value: "sql" },
 ];
 
 describe("CodeEditor", () => {
@@ -88,6 +89,21 @@ describe("CodeEditor", () => {
   });
 
   context("language", () => {
+    function ExternalLanguageCodeEditor() {
+      const [language, setLanguage] = useState<CodeEditorLanguage>("tsx");
+
+      return (
+        <>
+          <button onClick={() => setLanguage("sql")}>use-sql</button>
+          <CodeEditor
+            options={LANGUAGE_OPTIONS}
+            language={language}
+            value="SELECT * FROM users;"
+          />
+        </>
+      );
+    }
+
     it("emits the selected language with the current code", () => {
       const onChange = cy.stub().as("onChange");
       cy.mount(<ProductCodeEditor value="const x = 1" onChange={onChange} />);
@@ -100,6 +116,16 @@ describe("CodeEditor", () => {
         "const x = 1",
         "python"
       );
+    });
+
+    it("renders a language replaced by its parent", () => {
+      cy.mount(<ExternalLanguageCodeEditor />);
+
+      cy.findByDisplayValue("TypeScript").should("exist");
+
+      cy.findByRole("button", { name: "use-sql" }).click();
+
+      cy.findByDisplayValue("SQL").should("exist");
     });
   });
 

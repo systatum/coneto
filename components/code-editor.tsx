@@ -393,6 +393,11 @@ function CodeEditor({
     });
   }, [value]);
 
+  // Mirror a language replaced by the parent into the language compartment.
+  useEffect(() => {
+    if (language) setLang(language);
+  }, [language]);
+
   // Keep the read-only compartment synced if the prop changes post-mount.
   useEffect(() => {
     if (!editorRef.current) return;
