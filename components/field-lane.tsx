@@ -174,17 +174,11 @@ function FieldLane({
                 styles={{
                   containerStyle: css`
                     align-self: stretch;
-                    border-right: 0;
+                    border: 0;
                     border-top-right-radius: 0;
                     border-bottom-right-radius: 0;
                     border-top-left-radius: ${fieldLaneTheme?.buttonBorderRadius};
                     border-bottom-left-radius: ${fieldLaneTheme?.buttonBorderRadius};
-                    border-color: ${fieldLaneTheme?.buttonBorderColor};
-
-                    ${showError &&
-                    css`
-                      border-color: ${fieldLaneTheme?.buttonErrorBorderColor};
-                    `}
 
                     ${index > 0 &&
                     css`
@@ -197,7 +191,7 @@ function FieldLane({
                       opacity: 0.5;
                     `}
 
-                    background-color:${bodyTheme?.backgroundColor};
+                    background-color: transparent;
 
                     ${dropdown.width &&
                     css`
@@ -213,6 +207,17 @@ function FieldLane({
                       color: ${fieldLaneTheme?.buttonTextColor};
                     }
                     min-height: 30px;
+                    box-sizing: border-box;
+
+                    /* The segment draws its own frame so it shares the exact
+                       box height of the neighbouring input. */
+                    border: 1px solid ${fieldLaneTheme?.buttonBorderColor};
+                    border-right: 0;
+
+                    ${showError &&
+                    css`
+                      border-color: ${fieldLaneTheme?.buttonErrorBorderColor};
+                    `}
 
                     ${!children &&
                     css`
