@@ -39,9 +39,15 @@ import { applyClassName } from "./../constants/classname";
 
 import { EditorView, KeyBinding, keymap, lineNumbers } from "@codemirror/view";
 import { Compartment, EditorState, Prec } from "@codemirror/state";
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+} from "@codemirror/commands";
 import {
   indentOnInput,
+  indentUnit,
   bracketMatching,
   syntaxHighlighting,
   defaultHighlightStyle,
@@ -267,11 +273,14 @@ function CodeEditor({
           syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
           keymap.of([
             ...editorKeymap,
+            indentWithTab,
             ...closeBracketsKeymap,
             ...completionKeymap,
             ...historyKeymap,
             ...defaultKeymap,
           ]),
+          EditorState.tabSize.of(2),
+          indentUnit.of("  "),
           languageCompartment.of(getLanguageExtension(lang)),
           themeCompartment.of(
             mode === "dark" ? [oneDark, transparentBackground] : []

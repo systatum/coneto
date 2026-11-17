@@ -75,6 +75,17 @@ describe("CodeEditor", () => {
     });
   });
 
+  context("indentation", () => {
+    it("indents with two spaces when pressing Tab", () => {
+      cy.mount(<ProductCodeEditor />);
+
+      codebox().realClick().realPress("Tab");
+      codebox().realType("a");
+
+      cy.shouldHaveEditorFromValue("rich-editor-code", "  a");
+    });
+  });
+
   context("language", () => {
     it("emits the selected language with the current code", () => {
       const onChange = cy.stub().as("onChange");
