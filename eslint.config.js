@@ -6,6 +6,10 @@ import js from "@eslint/js";
 import globals from "globals";
 
 export default [
+  {
+    // Skips generated build output so lint reports only source warnings.
+    ignores: ["dist/**", "storybook-static/**", "node_modules/**"],
+  },
   js.configs.recommended,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],

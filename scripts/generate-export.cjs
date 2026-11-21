@@ -16,6 +16,7 @@ function getFlatExportsFrom(dirPath, baseDistPath) {
     .filter(
       (f) =>
         (f.endsWith(".ts") || f.endsWith(".tsx")) &&
+        !f.endsWith(".d.ts") &&
         !f.endsWith(".stories.tsx") &&
         !f.endsWith(".stories.ts")
     )

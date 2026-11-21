@@ -21,6 +21,27 @@ export const DialogPlacement = {
 export type DialogPlacement =
   (typeof DialogPlacement)[keyof typeof DialogPlacement];
 
+export const drawerZIndex = 9993999;
+
+/** Gets a stacking level just above the nearest elevated ancestor. */
+export function getNextZIndex(
+  element?: HTMLElement | null,
+  baseZIndex = drawerZIndex
+): number {
+  let highest = 0;
+  let node = element?.parentElement ?? null;
+
+  while (node) {
+    const zIndex = Number.parseInt(getComputedStyle(node).zIndex, 10);
+    if (!Number.isNaN(zIndex)) {
+      highest = Math.max(highest, zIndex);
+    }
+    node = node.parentElement;
+  }
+
+  return Math.max(baseZIndex, highest + 1);
+}
+
 export function getFloatingPlacement(placement: DialogPlacement): Placement {
   switch (placement) {
     case "bottom-left":

@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 import {
   DialogPlacement,
   getFloatingPlacement,
+  getNextZIndex,
 } from "./../lib/floating-placement";
 import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
@@ -69,6 +70,8 @@ export const ButtonLabelMode = {
 
 export type ButtonLabelMode =
   (typeof ButtonLabelMode)[keyof typeof ButtonLabelMode];
+
+const dropdownZIndex = 9994999;
 
 export interface ButtonSubMenu {
   list?: (
@@ -192,6 +195,15 @@ function Button({
   }, []);
 
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  const [layerZIndex, setLayerZIndex] = React.useState<number>(dropdownZIndex);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setLayerZIndex(getNextZIndex(containerRef.current, dropdownZIndex));
+    }
+  }, [isOpen]);
+
   const safeAreaAriaLabelsLocal: string[] = [
     "combobox-drawer-month",
     "combobox-drawer-year",
@@ -359,7 +371,7 @@ function Button({
           <DropdownWrapper
             aria-label="button-dropdown-wrapper"
             ref={refs.setFloating}
-            style={{ ...floatingStyles }}
+            style={{ ...floatingStyles, zIndex: layerZIndex }}
             $style={
               typeof styles?.dropdownStyle === "function"
                 ? styles?.dropdownStyle(placement)
@@ -427,7 +439,7 @@ const DropdownWrapper = styled.div<{ $style?: CSSProp }>`
     box-sizing: border-box;
   }
 
-  z-index: 9994999;
+  z-index: ${dropdownZIndex};
 
   ${({ $style }) => $style};
 `;

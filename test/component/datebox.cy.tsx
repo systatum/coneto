@@ -234,7 +234,7 @@ describe("Datebox", () => {
         />
       );
 
-      cy.findByRole("button").should("have.css", "height", "32px");
+      cy.findByRole("button").should("have.css", "height", "34px");
       cy.findAllByLabelText("field-lane-wrapper")
         .eq(0)
         .should("have.css", "height", "34px");
