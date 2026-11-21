@@ -14,6 +14,7 @@ import React, {
 import { createPortal } from "react-dom";
 import styled, { css, CSSProp } from "styled-components";
 import { applyClassName } from "./../constants/classname";
+import { drawerZIndex, getNextZIndex } from "./../lib/floating-placement";
 import { ComboboxThemeConfig } from "./../theme";
 import { useTheme } from "./../theme/provider";
 import { Checkbox, CheckboxProps } from "./checkbox";
@@ -449,6 +450,12 @@ function ComboboxDrawer({
   const [showFadeBottom, setShowFadeBottom] = useState(true);
 
   const floatingRef = useRef<HTMLUListElement>(null);
+
+  const [layerZIndex, setLayerZIndex] = useState<number>(drawerZIndex);
+
+  useEffect(() => {
+    setLayerZIndex(getNextZIndex(refs?.reference?.current ?? null));
+  }, []);
 
   const hasNestedOptions = options?.some((opt) => opt.groupOptions?.length);
 
@@ -908,7 +915,7 @@ function ComboboxDrawer({
       }}
       $hasFewOptions={hasFewOptions}
       $hasNestedOptions={hasNestedOptions}
-      style={mobile ? {} : { ...floatingStyles }}
+      style={mobile ? {} : { ...floatingStyles, zIndex: layerZIndex }}
       $theme={comboboxTheme}
       $drawerHeight={drawerHeight}
       id="combo-list"
@@ -1254,7 +1261,7 @@ const DrawerWrapper = styled.ul<{
   padding: 0;
 
   position: relative;
-  z-index: 9993999;
+  z-index: ${drawerZIndex};
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid
