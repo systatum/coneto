@@ -169,7 +169,7 @@ Line 9
         />
       );
 
-      cy.findAllByRole("button").eq(0).should("have.css", "height", "68px");
+      cy.findAllByRole("button").eq(0).should("have.css", "height", "70px");
       cy.findAllByLabelText("field-lane-wrapper")
         .eq(0)
         .should("have.css", "height", "70px");

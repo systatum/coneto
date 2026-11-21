@@ -80,7 +80,7 @@ describe("Signbox", () => {
         />
       );
 
-      cy.findAllByRole("button").eq(0).should("have.css", "height", "198px");
+      cy.findAllByRole("button").eq(0).should("have.css", "height", "200px");
       cy.findAllByLabelText("field-lane-wrapper")
         .eq(0)
         .should("have.css", "height", "200px");
