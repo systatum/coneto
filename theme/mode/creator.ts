@@ -1589,6 +1589,7 @@ export function createTextareaTheme(
       scrollbarThumbColor: "#3f3f46",
 
       boxShadow: "0 0 0 1px transparent",
+      borderRadius: "2px",
     },
     ...themeConfigurations
   );
@@ -1613,6 +1614,7 @@ export function createTextboxTheme(
       disabledTextColor: fieldLane?.disabledTextColor || "#9ca3af",
       placeholderColor: fieldLane?.placeholderColor || "#9ca3af",
       boxShadow: "0 0 0 0.5px transparent",
+      borderRadius: "2px",
     },
     ...themeConfigurations
   );

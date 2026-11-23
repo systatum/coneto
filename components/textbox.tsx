@@ -214,7 +214,7 @@ const Input = styled.input<{
   $disabled?: boolean;
   $theme: TextboxThemeConfig;
 }>`
-  border-radius: 2px;
+  border-radius: ${({ $theme }) => $theme?.borderRadius ?? "2px"};
   font-size: 0.75rem;
   padding: 7px 8px;
   width: 100%;
