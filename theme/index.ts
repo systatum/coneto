@@ -652,6 +652,7 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   actionButton: ActionButtonThemeConfig;
 
   headerActionBackgroundColor?: string;
+  headerActionTextColor?: string;
   headerActionBorderColor?: string;
   headerActionHoverBackgroundColor?: string;
 
@@ -659,13 +660,19 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   rightLooseEffectColor?: string;
 
   headerBackgroundColor?: string;
+  headerTextColor?: string;
   headerBorderColor?: string;
+  headerBorderSideColor?: string;
+  headerBorderBottomColor?: string;
 
   rowGroupBackgroundColor?: string;
   rowGroupSubtitleTextColor?: string;
 
   rowBackgroundColor?: string;
+  rowBackdropFilter?: string;
   rowBorderColor?: string;
+  rowBorderSideColor?: string;
+  rowBorderBottomColor?: string;
   rowHoverBackgroundColor?: string;
   rowSelectedBackgroundColor?: string;
   rowContentBackgroundColor?: string;
