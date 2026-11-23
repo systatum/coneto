@@ -634,9 +634,9 @@ function Table({
                               aria-label="pagination-number"
                               $style={styles?.paginationNumberStyle}
                             >
-                              {typeof labels.pageNumberText === "number"
+                              {typeof labels?.pageNumberText === "number"
                                 ? `Pg. ${labels.pageNumberText}`
-                                : labels.pageNumberText}
+                                : labels?.pageNumberText ?? "1"}
                             </PaginationNumber>
                           )}
                           {selectable && (
