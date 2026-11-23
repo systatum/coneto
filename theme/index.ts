@@ -690,6 +690,7 @@ export interface TextboxThemeConfig extends BodyThemeConfig {
   placeholderColor?: string;
 
   boxShadow?: string;
+  borderRadius?: string;
 }
 
 // textarea.tsx
