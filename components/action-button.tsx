@@ -105,7 +105,8 @@ export function ActionButton({
           ${variant === "default" &&
           !pressed &&
           css`
-            background-color: transparent;
+            background-color: ${actionButtonTheme.backgroundColor ||
+            "transparent"};
             color: ${actionButtonTheme.textColor};
             &:hover {
               background-color: ${actionButtonTheme.hoverBackgroundColor};
