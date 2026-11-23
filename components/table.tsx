@@ -718,6 +718,14 @@ function Table({
                                   styles: {
                                     ...columnAction?.styles,
                                     self: css`
+                                      color: ${tableTheme?.headerTextColor ||
+                                      tableTheme?.actionButton?.textColor};
+                                      &:hover {
+                                        color: ${tableTheme?.headerTextColor ||
+                                        tableTheme?.actionButton
+                                          ?.hoverTextColor ||
+                                        tableTheme?.actionButton?.textColor};
+                                      }
                                       padding: 0px;
                                       height: 34px;
                                       width: 34px;
@@ -1187,7 +1195,8 @@ const TableContainer = styled.div<{
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background-color: ${({ $theme }) => $theme?.rowBackgroundColor};
+  background-color: ${({ $theme }) =>
+    $theme?.backgroundColor ?? $theme?.rowBackgroundColor};
 
   ${({ $hasSelected, $theme }) =>
     $hasSelected &&
