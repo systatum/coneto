@@ -68,19 +68,19 @@ function mountTable() {
 }
 
 describe("Table theme integration", () => {
-  it("uses table action colors independently from the normal action-button theme", () => {
+  it("uses the same text color as pagination for table actions", () => {
     mountTable();
 
     cy.findAllByLabelText("action-button")
       .first()
-      .should("have.css", "color", "rgb(255, 0, 255)")
-      .realHover();
-
-    cy.wait(400);
-
-    cy.findAllByLabelText("action-button")
-      .first()
-      .should("have.css", "color", "rgb(0, 255, 0)");
+      .invoke("css", "color")
+      .then((actionColor) => {
+        cy.findByLabelText("previous-button-pagination").should(
+          "have.css",
+          "color",
+          actionColor
+        );
+      });
   });
 
   it("renders header column actions with the header text color as circles", () => {

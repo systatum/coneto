@@ -591,7 +591,20 @@ function Table({
                                   key={index}
                                   {...rest}
                                   forTable
-                                  themeOverride={tableTheme?.actionButton}
+                                  themeOverride={
+                                    tableTheme?.actionButton
+                                      ? {
+                                          ...tableTheme.actionButton,
+                                          textColor:
+                                            tableTheme.textColor ||
+                                            tableTheme.actionButton.textColor,
+                                          hoverTextColor:
+                                            tableTheme.textColor ||
+                                            tableTheme.actionButton
+                                              .hoverTextColor,
+                                        }
+                                      : undefined
+                                  }
                                 />
                               );
                             })}

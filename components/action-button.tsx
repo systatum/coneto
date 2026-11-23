@@ -81,6 +81,7 @@ export function ActionButton({
           flex-direction: row;
           gap: 0.25rem;
           align-items: center;
+          min-height: 32px;
           cursor: pointer;
           border-radius: 6px;
           position: relative;
