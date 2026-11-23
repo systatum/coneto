@@ -1145,11 +1145,16 @@ const PaginationButton = styled.button<{ $theme?: TableThemeConfig }>`
   border-width: 0;
 
   display: flex;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  min-height: 32px;
   gap: 0.25rem;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
   border-radius: 9999px;
-  padding: 0.25rem;
+  padding: 0;
   background-color: ${({ $theme }) =>
     $theme?.rowBackgroundColor || "transparent"};
   border-color: ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
