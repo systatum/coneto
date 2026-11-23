@@ -726,14 +726,19 @@ function Table({
                                           ?.hoverTextColor ||
                                         tableTheme?.actionButton?.textColor};
                                       }
+                                      display: flex;
+                                      align-items: center;
+                                      justify-content: center;
                                       padding: 0px;
-                                      height: 34px;
-                                      width: 34px;
-                                      border-radius: 6px;
-                                      &:not(:focus-visible):not(:active):not(
-                                          :hover
-                                        ):not(:focus) {
-                                        background-color: transparent;
+                                      height: 32px;
+                                      width: 32px;
+                                      min-height: 32px;
+                                      border-radius: 9999px;
+                                      background-color: ${tableTheme?.rowBackgroundColor ||
+                                      "transparent"};
+                                      &:hover {
+                                        background-color: ${tableTheme?.headerActionHoverBackgroundColor ||
+                                        "rgba(0, 0, 0, 0.08)"};
                                       }
                                       ${columnAction?.styles?.self};
                                     `,
