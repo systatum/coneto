@@ -1118,7 +1118,8 @@ const HeaderActions = styled.div<{
   position: relative;
   border-bottom: 0.5px solid
     ${({ $theme }) => $theme?.headerBorderColor || "#e5e7eb"};
-  color: ${({ $theme }) => $theme?.textColor || "#343434"};
+  color: ${({ $theme }) =>
+    $theme?.headerActionTextColor || $theme?.textColor || "#343434"};
   background: ${({ $theme }) =>
     $theme?.headerActionBackgroundColor ||
     "linear-gradient(to bottom, #fbf9f9, #f0f0f0)"};
@@ -1204,13 +1205,22 @@ const TableHeader = styled.div<{
   display: flex;
   flex-direction: row;
   font-weight: 600;
-  color: ${({ $textColor }) => $textColor};
+  color: ${({ $theme, $textColor }) => $theme?.headerTextColor || $textColor};
   border-bottom: 1px solid
-    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+    ${({ $theme }) =>
+      $theme?.headerBorderBottomColor ||
+      $theme?.headerBorderColor ||
+      "#d1d5db"};
   border-left: 1px solid
-    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+    ${({ $theme }) =>
+      $theme?.headerBorderSideColor ||
+      $theme?.headerBorderColor ||
+      "#d1d5db"};
   border-right: 1px solid
-    ${({ $theme }) => $theme?.headerBorderColor || "#d1d5db"};
+    ${({ $theme }) =>
+      $theme?.headerBorderSideColor ||
+      $theme?.headerBorderColor ||
+      "#d1d5db"};
   box-shadow: ${({ $theme }) =>
     $theme?.boxShadow || "0 1px 2px 0 rgba(0, 0, 0, 0.05)"};
   align-items: stretch;
@@ -2002,11 +2012,18 @@ const TableRowWrapper = styled.div<{
   display: flex;
   position: relative;
   align-items: stretch;
+  backdrop-filter: ${({ $theme }) => $theme?.rowBackdropFilter};
+  -webkit-backdrop-filter: ${({ $theme }) => $theme?.rowBackdropFilter};
 
-  border-left: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
-  border-right: 1px solid ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+  border-left: 1px solid
+    ${({ $theme }) =>
+      $theme?.rowBorderSideColor || $theme?.rowBorderColor || "#e5e7eb"};
+  border-right: 1px solid
+    ${({ $theme }) =>
+      $theme?.rowBorderSideColor || $theme?.rowBorderColor || "#e5e7eb"};
   border-bottom: 1px solid
-    ${({ $theme }) => $theme?.rowBorderColor || "#e5e7eb"};
+    ${({ $theme }) =>
+      $theme?.rowBorderBottomColor || $theme?.rowBorderColor || "#e5e7eb"};
   cursor: default;
   height: 100%;
 
@@ -2189,6 +2206,7 @@ const CellContent = styled.div<{
   padding-right: 1.2rem;
   padding-top: 12px;
   padding-bottom: 12px;
+  min-width: 0;
   display: flex;
   align-items: center;
   word-break: break-word;
