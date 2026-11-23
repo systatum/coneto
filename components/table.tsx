@@ -587,7 +587,12 @@ function Table({
                               }
 
                               return (
-                                <ActionButton key={index} {...rest} forTable />
+                                <ActionButton
+                                  key={index}
+                                  {...rest}
+                                  forTable
+                                  themeOverride={tableTheme?.actionButton}
+                                />
                               );
                             })}
                         </ActionsWrapper>
@@ -1824,6 +1829,12 @@ function TableRow({
                 }}
                 open={openRowId === rowId}
                 styles={{
+                  self: css`
+                    color: ${tableTheme?.actionButton?.toggleTextColor};
+                    &:hover {
+                      color: ${tableTheme?.actionButton?.toggleTextColor};
+                    }
+                  `,
                   containerStyle: css`
                     width: fit-content;
                     position: absolute;

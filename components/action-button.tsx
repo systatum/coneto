@@ -7,6 +7,7 @@ import {
 } from "./button";
 import { ReactNode } from "react";
 import { useTheme } from "./../theme/provider";
+import type { ActionButtonThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
 import { TipMenuSize } from "./tip-menu";
 
@@ -45,9 +46,13 @@ export function ActionButton({
   hidden,
   id,
   tipMenuSize = "sm",
-}: ActionButtonProps & { forTable?: boolean }) {
+  themeOverride,
+}: ActionButtonProps & {
+  forTable?: boolean;
+  themeOverride?: ActionButtonThemeConfig;
+}) {
   const { currentTheme } = useTheme();
-  const actionButtonTheme = currentTheme.actionButton;
+  const actionButtonTheme = themeOverride ?? currentTheme.actionButton;
 
   if (hidden) {
     return;
@@ -104,6 +109,8 @@ export function ActionButton({
             color: ${actionButtonTheme.textColor};
             &:hover {
               background-color: ${actionButtonTheme.hoverBackgroundColor};
+              color: ${actionButtonTheme.hoverTextColor ||
+              actionButtonTheme.textColor};
             }
 
             &:disabled {
@@ -136,6 +143,8 @@ export function ActionButton({
               border-bottom: 1px solid ${actionButtonTheme.toggleBorderColor};
               &:hover {
                 background-color: ${actionButtonTheme.toggleHoverBackgroundColor};
+                color: ${actionButtonTheme.toggleHoverTextColor ||
+                actionButtonTheme.toggleTextColor};
               }
 
               &:disabled {
