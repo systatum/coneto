@@ -20,6 +20,8 @@ import {
   RiItalic,
   RiListOrdered,
   RiListUnordered,
+  RiPaintFill,
+  RiTableLine,
   RiUnderline,
 } from "@remixicon/react";
 import TurndownService from "./../lib/turndown/turndown";
@@ -41,6 +43,7 @@ export interface RichEditorFormatting {
   allowUnorderedList?: boolean;
   allowCheckBoxes?: boolean;
   allowHeading?: boolean;
+  allowTable?: boolean;
 }
 
 export interface RichEditorProps {
@@ -194,6 +197,141 @@ export interface RichEditorRef {
   syncTokens: () => void;
 }
 
+const TABLE_GRID_INITIAL_ROWS = 5;
+const TABLE_GRID_MAX_ROWS = 12;
+const TABLE_GRID_COLUMNS = 10;
+const TABLE_GRID_CELL_SIZE = 14;
+
+const normalizeHexColor = (color: string): string | null => {
+  const value = color.trim().toLowerCase();
+  if (!value || value === "transparent") return null;
+
+  if (value.startsWith("#")) {
+    if (/^#[0-9a-f]{3}$/.test(value)) {
+      return `#${value[1]}${value[1]}${value[2]}${value[2]}${value[3]}${value[3]}`;
+    }
+
+    return /^#[0-9a-f]{6}$/.test(value) ? value : null;
+  }
+
+  const match = value.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/
+  );
+  if (!match) return null;
+  if (match[4] && Number(match[4]) === 0) return null;
+
+  return `#${[match[1], match[2], match[3]]
+    .map((channel) => Number(channel).toString(16).padStart(2, "0"))
+    .join("")}`;
+};
+
+const TABLE_CELL_COLORS = [
+  "#000000",
+  "#3f3f3f",
+  "#7f7f7f",
+  "#a6a6a6",
+  "#c0c0c0",
+  "#d9d9d9",
+  "#e6e6e6",
+  "#f2f2f2",
+  "#fafafa",
+  "#ffffff",
+  "#5b0f00",
+  "#d02020",
+  "#e07a00",
+  "#ffd400",
+  "#5bdc28",
+  "#3ee0d8",
+  "#2f7de1",
+  "#1a2fd8",
+  "#7a1ce0",
+  "#d81ce0",
+  "#d9b3a8",
+  "#e6c9c2",
+  "#f2ece0",
+  "#f5f0c8",
+  "#dbe8d4",
+  "#cfdada",
+  "#cfdcef",
+  "#dce1ee",
+  "#e0d4e8",
+  "#ead4d9",
+  "#c97b6f",
+  "#d48b8f",
+  "#edc08f",
+  "#eee08a",
+  "#b3d190",
+  "#9dc0bb",
+  "#93b5d9",
+  "#95afd8",
+  "#a796c6",
+  "#c4a3b7",
+  "#ad4f3d",
+  "#c26b70",
+  "#d99b57",
+  "#dcbc4f",
+  "#82a965",
+  "#69918e",
+  "#5d82b5",
+  "#648cc6",
+  "#8069a8",
+  "#96658b",
+  "#8a2c1f",
+  "#a64449",
+  "#b8722e",
+  "#b79a35",
+  "#5d7a4c",
+  "#4d6a68",
+  "#3f5b88",
+  "#3f5f9e",
+  "#5c467e",
+  "#6c3e64",
+  "#5e1a10",
+  "#7a292f",
+  "#8a4f1e",
+  "#8b6f21",
+  "#3f5735",
+  "#34504e",
+  "#2c4164",
+  "#2c4478",
+  "#422f5e",
+  "#4b2b45",
+  "#3a0f08",
+  "#4d171a",
+  "#5c340f",
+  "#5a4812",
+  "#263521",
+  "#203432",
+  "#1d2b44",
+  "#1d2d50",
+  "#2a1d3e",
+  "#301a2b",
+];
+
+const PRESET_TABLE_COLOR_SET = new Set(
+  TABLE_CELL_COLORS.map((color) => color.toLowerCase())
+);
+
+const tableCustomColors = (table: HTMLTableElement | null): string[] => {
+  if (!table) return [];
+
+  const colors: string[] = [];
+  const seen = new Set<string>();
+
+  table.querySelectorAll<HTMLTableCellElement>("th, td").forEach((cell) => {
+    const color = normalizeHexColor(cell.style.backgroundColor);
+    if (!color) return;
+    if (color === "#e2e2e2") return;
+    if (PRESET_TABLE_COLOR_SET.has(color)) return;
+    if (seen.has(color)) return;
+
+    seen.add(color);
+    colors.push(color);
+  });
+
+  return colors;
+};
+
 const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
   (
     {
@@ -223,6 +361,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       allowUnorderedList = true,
       allowCheckBoxes = false,
       allowHeading = true,
+      allowTable = true,
     } = formatting ?? {};
 
     const {
@@ -251,6 +390,8 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const turndownService = new TurndownService();
 
     CodeEditor.addFencedCodeRule(turndownService);
+    addHtmlTableRule(turndownService);
+    addHtmlTableRule(turndownServiceRef.current);
 
     turndownService.addRule("atxHeading", {
       filter: ["h1", "h2", "h3", "h4", "h5", "h6"],
@@ -457,7 +598,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     let prevWalkToken: any = null;
 
     marked.use({
-      gfm: false,
+      // GFM provides table parsing. Strikethrough stays disabled below so the
+      // editor's single-tilde underline syntax remains unambiguous.
+      gfm: true,
       breaks: true,
       // Disable the built-in strong/em/list renderers when the
       // corresponding formatting isn't allowed, so markdown syntax like
@@ -471,6 +614,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         em(token) {
           if (!allowItalic) return this.parser.parseInline(token.tokens);
           return false;
+        },
+        del(token) {
+          return this.parser.parseInline(token.tokens);
         },
         list(token) {
           if (
@@ -508,9 +654,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           /**
            * Custom underline tokenizer.
            * Markdown has no native underline syntax, so this editor
-           * claims `~text~` as its own inline convention — safe to reuse
-           * since `gfm: false` keeps the GFM `~~strikethrough~~` extension
-           * off, so a single `~` is otherwise unclaimed here.
+           * claims `~text~` as its own inline convention. GFM's
+           * `~~strikethrough~~` token is rendered as plain text below, so
+           * single tildes remain unambiguous.
            *
            * When underline is disallowed, the tildes are dropped and the
            * inner content renders as plain inline text instead of <u>,
@@ -672,6 +818,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               // renders them as real headings instead of paragraphs.
               if (lines.some((l) => /^ {0,3}#{1,6}\s/.test(l))) return;
 
+              // Let the GFM table tokenizer own pipe-delimited rows.
+              if (lines.some((l) => /^\s*\|.*\|\s*$/.test(l))) return;
+
               return {
                 type: "lineSeparated",
                 raw: match[0],
@@ -705,6 +854,9 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     const editorRef = useRef<HTMLDivElement>(null);
     const savedSelection = useRef<Range | null>(null);
     const menuRef = useRef<HTMLDivElement | null>(null);
+    const tableMenuRef = useRef<HTMLDivElement | null>(null);
+    const cellColorMenuRef = useRef<HTMLDivElement | null>(null);
+    const activeTableCellRef = useRef<HTMLTableCellElement | null>(null);
 
     const handleEditorChange = () => {
       CodeEditor.serializeAndEmit(editorRef, turndownService, onChange);
@@ -747,6 +899,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         sel?.removeAllRanges();
         sel?.addRange(range);
+
+        if (editorRef.current) {
+          applyDefaultTableStyles(editorRef.current);
+        }
 
         handleFilteringCheckbox();
 
@@ -808,6 +964,18 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
     }));
 
     const [isOpen, setIsOpen] = useState(false);
+    const [isTableMenuOpen, setIsTableMenuOpen] = useState(false);
+    const [tableGridSize, setTableGridSize] = useState({
+      rows: 0,
+      columns: 0,
+    });
+    const [visibleTableRows, setVisibleTableRows] = useState(
+      TABLE_GRID_INITIAL_ROWS
+    );
+    const [isInTableCell, setIsInTableCell] = useState(false);
+    const [isCellColorMenuOpen, setIsCellColorMenuOpen] = useState(false);
+    const [customCellColor, setCustomCellColor] = useState("#ffffff");
+    const [customTableColors, setCustomTableColors] = useState<string[]>([]);
 
     const [formatStates, setFormatStates] = useState({
       bold: false,
@@ -824,8 +992,20 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       const node = sel.anchorNode;
 
       if (!node || !editorRef.current.contains(node)) {
+        setIsInTableCell(false);
         setFormatStates({ bold: false, italic: false, underline: false });
         return;
+      }
+
+      const element =
+        node.nodeType === Node.ELEMENT_NODE
+          ? (node as Element)
+          : node.parentElement;
+      const cell = element?.closest("td, th") as HTMLTableCellElement | null;
+
+      setIsInTableCell(!!cell);
+      if (cell) {
+        activeTableCellRef.current = cell;
       }
 
       try {
@@ -895,6 +1075,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         html = splitBrIntoParagraphs(html);
 
         editorRef.current.innerHTML = String(html);
+        const tableStylesChanged = applyDefaultTableStyles(editorRef.current);
         document.execCommand("defaultParagraphSeparator", false, "p");
 
         editorRef.current
@@ -912,6 +1093,10 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
           codeEditorActions,
           false
         );
+
+        if (tableStylesChanged && isMounted) {
+          handleEditorChange();
+        }
       };
 
       initializeEditor();
@@ -1049,6 +1234,140 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
         true
       );
 
+      handleEditorChange();
+    };
+
+    const getSelectedTableCell = (): HTMLTableCellElement | null => {
+      const selection = window.getSelection();
+      if (!selection || !selection.rangeCount) return null;
+
+      const node = selection.anchorNode;
+      if (!node || !editorRef.current?.contains(node)) return null;
+
+      const element =
+        node.nodeType === Node.ELEMENT_NODE
+          ? (node as Element)
+          : node.parentElement;
+
+      return element?.closest("td, th") as HTMLTableCellElement | null;
+    };
+
+    const focusTableCell = (cell: HTMLTableCellElement) => {
+      editorRef.current?.focus();
+      const selection = window.getSelection();
+      if (!selection) return;
+
+      const range = document.createRange();
+      range.selectNodeContents(cell);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    };
+
+    const insertTable = (rows: number, columns: number) => {
+      if (!editorRef.current || mode === "view-only") return;
+
+      editorRef.current.focus();
+
+      const selection = window.getSelection();
+      if (savedSelection.current && selection) {
+        selection.removeAllRanges();
+        selection.addRange(savedSelection.current);
+        savedSelection.current = null;
+      }
+
+      const range = selection?.rangeCount ? selection.getRangeAt(0) : null;
+
+      let anchor: HTMLElement | null = null;
+      let node: Node | null = range?.startContainer ?? null;
+
+      while (node && node !== editorRef.current) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as HTMLElement;
+          if (
+            element.tagName === "TABLE" ||
+            element.matches("p, div, h1, h2, h3, h4, h5, h6, blockquote, pre")
+          ) {
+            anchor = element;
+            break;
+          }
+        }
+        node = node.parentNode;
+      }
+
+      const createCell = (tagName: "th" | "td") => {
+        const cell = document.createElement(tagName);
+        cell.appendChild(document.createElement("br"));
+        return cell;
+      };
+
+      const table = document.createElement("table");
+      table.className = "rich-editor-table";
+
+      const header = document.createElement("thead");
+      const headerRow = document.createElement("tr");
+      for (let column = 0; column < columns; column++) {
+        headerRow.appendChild(createCell("th"));
+      }
+      header.appendChild(headerRow);
+      table.appendChild(header);
+
+      if (rows > 1) {
+        const body = document.createElement("tbody");
+        for (let row = 1; row < rows; row++) {
+          const bodyRow = document.createElement("tr");
+          for (let column = 0; column < columns; column++) {
+            bodyRow.appendChild(createCell("td"));
+          }
+          body.appendChild(bodyRow);
+        }
+        table.appendChild(body);
+      }
+
+      applyDefaultTableStyles(table);
+
+      const after = document.createElement("p");
+      after.appendChild(document.createElement("br"));
+
+      if (
+        anchor?.tagName === "P" &&
+        !anchor.textContent?.trim() &&
+        !anchor.querySelector("input, img, table")
+      ) {
+        anchor.replaceWith(table);
+        table.insertAdjacentElement("afterend", after);
+      } else if (anchor) {
+        anchor.insertAdjacentElement("afterend", table);
+        table.insertAdjacentElement("afterend", after);
+      } else {
+        editorRef.current.appendChild(table);
+        editorRef.current.appendChild(after);
+      }
+
+      const firstCell = table.querySelector(
+        "th, td"
+      ) as HTMLTableCellElement | null;
+      if (firstCell) {
+        focusTableCell(firstCell);
+        activeTableCellRef.current = firstCell;
+        setIsInTableCell(true);
+      }
+
+      setIsTableMenuOpen(false);
+      setTableGridSize({ rows: 0, columns: 0 });
+      handleEditorChange();
+    };
+
+    const applyCellBackground = (color: string) => {
+      const cell = activeTableCellRef.current;
+      if (!cell) return;
+
+      cell.style.backgroundColor = color;
+      setCustomCellColor(normalizeHexColor(color) ?? customCellColor);
+      setCustomTableColors(
+        tableCustomColors(cell.closest("table") as HTMLTableElement | null)
+      );
+      focusTableCell(cell);
       handleEditorChange();
     };
 
@@ -1200,6 +1519,71 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
 
         if (!isCopy) {
           e.preventDefault();
+        }
+      }
+
+      if (mode !== "view-only" && allowTable) {
+        const cell = getSelectedTableCell();
+
+        if (cell) {
+          if (e.key === "Tab") {
+            const cells = Array.from(
+              editorRef.current?.querySelectorAll<HTMLTableCellElement>(
+                "td, th"
+              ) ?? []
+            );
+            const index = cells.indexOf(cell);
+            if (index === -1) return;
+
+            const nextIndex = index + (e.shiftKey ? -1 : 1);
+            if (nextIndex >= 0 && nextIndex < cells.length) {
+              e.preventDefault();
+              focusTableCell(cells[nextIndex]);
+              return;
+            }
+
+            if (!e.shiftKey) {
+              e.preventDefault();
+
+              const table = cell.closest("table");
+              if (table) {
+                const row = table.insertRow(-1);
+                const columnCount = cell.parentElement?.children.length ?? 1;
+                for (let column = 0; column < columnCount; column++) {
+                  const newCell = row.insertCell();
+                  newCell.appendChild(document.createElement("br"));
+                }
+
+                applyDefaultTableStyles(table);
+
+                const firstCell = row.cells.item(0);
+                if (firstCell) focusTableCell(firstCell);
+                handleEditorChange();
+              }
+            }
+
+            return;
+          }
+
+          if (e.key === "Enter") {
+            e.preventDefault();
+
+            const selection = window.getSelection();
+            if (!selection || !selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+
+            const lineBreak = document.createElement("br");
+            range.insertNode(lineBreak);
+            range.setStartAfter(lineBreak);
+            range.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+            handleEditorChange();
+            return;
+          }
         }
       }
 
@@ -2015,6 +2399,40 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
       };
     }, [isOpen]);
 
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (
+          tableMenuRef.current &&
+          !tableMenuRef.current.contains(event.target as Node) &&
+          isTableMenuOpen
+        ) {
+          setIsTableMenuOpen(false);
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [isTableMenuOpen]);
+
+    useEffect(() => {
+      function handleClickOutside(event: MouseEvent) {
+        if (
+          cellColorMenuRef.current &&
+          !cellColorMenuRef.current.contains(event.target as Node) &&
+          isCellColorMenuOpen
+        ) {
+          setIsCellColorMenuOpen(false);
+        }
+      }
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [isCellColorMenuOpen]);
+
     const codeEditorId = useMemo(() => CodeEditor.nextBlockId(), []);
 
     if (mode === "code-editor") {
@@ -2111,6 +2529,189 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   />
                 )}
 
+                {allowTable && (
+                  <MenuAnchor ref={tableMenuRef}>
+                    <RichEditorToolbarButton
+                      ariaLabel="rich-editor-toolbar-table"
+                      icon={{ image: RiTableLine }}
+                      isOpen={isTableMenuOpen}
+                      onClick={() => {
+                        const sel = window.getSelection();
+                        if (sel && sel.rangeCount > 0) {
+                          savedSelection.current = sel
+                            .getRangeAt(0)
+                            .cloneRange();
+                        }
+                        setIsOpen(false);
+                        setTableGridSize({ rows: 0, columns: 0 });
+                        setVisibleTableRows(TABLE_GRID_INITIAL_ROWS);
+                        setIsTableMenuOpen(!isTableMenuOpen);
+                      }}
+                    />
+
+                    {isTableMenuOpen && (
+                      <MenuWrapper $toolbarPosition={toolbarPosition}>
+                        <TableGridMenu
+                          $theme={richEditorTheme}
+                          aria-label="rich-editor-table-grid"
+                          onMouseLeave={() => {
+                            setTableGridSize({ rows: 0, columns: 0 });
+                            setVisibleTableRows(TABLE_GRID_INITIAL_ROWS);
+                          }}
+                        >
+                          <TableGrid>
+                            {Array.from({ length: visibleTableRows }).map(
+                              (_, row) => (
+                                <TableGridRow key={row}>
+                                  {Array.from({
+                                    length: TABLE_GRID_COLUMNS,
+                                  }).map((_, column) => {
+                                    const active =
+                                      row < tableGridSize.rows &&
+                                      column < tableGridSize.columns;
+
+                                    return (
+                                      <TableGridCell
+                                        key={column}
+                                        type="button"
+                                        $theme={richEditorTheme}
+                                        $active={active}
+                                        aria-label={`Insert ${row + 1} by ${
+                                          column + 1
+                                        } table`}
+                                        onMouseDown={(event) =>
+                                          event.preventDefault()
+                                        }
+                                        onMouseEnter={() => {
+                                          setTableGridSize({
+                                            rows: row + 1,
+                                            columns: column + 1,
+                                          });
+
+                                          if (
+                                            row === visibleTableRows - 1 &&
+                                            visibleTableRows <
+                                              TABLE_GRID_MAX_ROWS
+                                          ) {
+                                            setVisibleTableRows((current) =>
+                                              Math.min(
+                                                current + 2,
+                                                TABLE_GRID_MAX_ROWS
+                                              )
+                                            );
+                                          }
+                                        }}
+                                        onClick={() =>
+                                          insertTable(row + 1, column + 1)
+                                        }
+                                      />
+                                    );
+                                  })}
+                                </TableGridRow>
+                              )
+                            )}
+                          </TableGrid>
+                          <TableGridLabel $theme={richEditorTheme}>
+                            {tableGridSize.rows > 0
+                              ? `${tableGridSize.rows} × ${tableGridSize.columns}`
+                              : "Insert table"}
+                          </TableGridLabel>
+                        </TableGridMenu>
+                      </MenuWrapper>
+                    )}
+                  </MenuAnchor>
+                )}
+
+                {allowTable && (isInTableCell || isCellColorMenuOpen) && (
+                  <MenuAnchor ref={cellColorMenuRef}>
+                    <RichEditorToolbarButton
+                      ariaLabel="rich-editor-toolbar-cell-color"
+                      icon={{ image: RiPaintFill }}
+                      isOpen={isCellColorMenuOpen}
+                      onClick={() => {
+                        const sel = window.getSelection();
+                        if (sel && sel.rangeCount > 0) {
+                          savedSelection.current = sel
+                            .getRangeAt(0)
+                            .cloneRange();
+                        }
+
+                        const cell = activeTableCellRef.current;
+                        setCustomCellColor(
+                          normalizeHexColor(
+                            cell?.style.backgroundColor ?? ""
+                          ) ?? "#ffffff"
+                        );
+                        setCustomTableColors(
+                          tableCustomColors(
+                            cell?.closest("table") as HTMLTableElement | null
+                          )
+                        );
+                        setIsOpen(false);
+                        setIsTableMenuOpen(false);
+                        setIsCellColorMenuOpen(!isCellColorMenuOpen);
+                      }}
+                    />
+
+                    {isCellColorMenuOpen && (
+                      <MenuWrapper
+                        $alignRight
+                        $toolbarPosition={toolbarPosition}
+                      >
+                        <CellColorMenu
+                          $theme={richEditorTheme}
+                          aria-label="rich-editor-cell-color-palette"
+                        >
+                          <CellColorGrid>
+                            {TABLE_CELL_COLORS.map((color) => (
+                              <CellColorSwatch
+                                key={color}
+                                type="button"
+                                $theme={richEditorTheme}
+                                $color={color}
+                                aria-label={`Set cell background color ${color}`}
+                                onMouseDown={(event) => event.preventDefault()}
+                                onClick={() => applyCellBackground(color)}
+                              />
+                            ))}
+                          </CellColorGrid>
+
+                          <CellColorCustom $theme={richEditorTheme}>
+                            <span>Custom</span>
+                            <input
+                              type="color"
+                              aria-label="Custom cell background color"
+                              value={customCellColor}
+                              onChange={(event) => {
+                                setCustomCellColor(event.target.value);
+                                applyCellBackground(event.target.value);
+                              }}
+                            />
+                          </CellColorCustom>
+
+                          {customTableColors.length > 0 && (
+                            <CellColorGrid aria-label="Custom colors used in this table">
+                              {customTableColors.map((color) => (
+                                <CellColorSwatch
+                                  key={color}
+                                  type="button"
+                                  $theme={richEditorTheme}
+                                  $color={color}
+                                  aria-label={`Set cell background color ${color}`}
+                                  onMouseDown={(event) =>
+                                    event.preventDefault()
+                                  }
+                                  onClick={() => applyCellBackground(color)}
+                                />
+                              ))}
+                            </CellColorGrid>
+                          )}
+                        </CellColorMenu>
+                      </MenuWrapper>
+                    )}
+                  </MenuAnchor>
+                )}
+
                 {allowCheckBoxes && (
                   <RichEditorToolbarButton
                     ariaLabel="rich-editor-toolbar-checkbox"
@@ -2137,6 +2738,7 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                       if (sel && sel.rangeCount > 0) {
                         savedSelection.current = sel.getRangeAt(0).cloneRange();
                       }
+                      setIsTableMenuOpen(false);
                       setIsOpen(!isOpen);
                     }}
                   />
@@ -2188,6 +2790,12 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
               } else {
                 document.execCommand("insertHTML", false, html);
               }
+
+              if (editorRef.current) {
+                applyDefaultTableStyles(editorRef.current);
+              }
+
+              handleEditorChange();
             }}
             onInput={() => {
               if (mode !== "view-only") {
@@ -2454,6 +3062,7 @@ const MenuAnchor = styled.div`
 `;
 
 const MenuWrapper = styled.div<{
+  $alignRight?: boolean;
   $toolbarPosition?: RichEditorToolbarPosition;
 }>`
   position: absolute;
@@ -2467,9 +3076,142 @@ const MenuWrapper = styled.div<{
           bottom: 100%;
           transform: translateY(-4px);
         `}
-  left: 0;
+  left: ${({ $alignRight }) => ($alignRight ? "auto" : "0")};
+  right: ${({ $alignRight }) => ($alignRight ? "0" : "auto")};
   min-width: max-content;
   z-index: 40;
+`;
+
+const TableGridMenu = styled.div<{ $theme: RichEditorThemeConfig }>`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid ${({ $theme }) => $theme.borderColor || "#d4d4d8"};
+  border-radius: 6px;
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#ffffff"};
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+`;
+
+const TableGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+`;
+
+const TableGridRow = styled.div`
+  display: flex;
+  gap: 3px;
+`;
+
+const TableGridCell = styled.button<{
+  $active: boolean;
+  $theme: RichEditorThemeConfig;
+}>`
+  flex: 0 0 ${TABLE_GRID_CELL_SIZE}px;
+  width: ${TABLE_GRID_CELL_SIZE}px;
+  height: ${TABLE_GRID_CELL_SIZE}px;
+  min-width: ${TABLE_GRID_CELL_SIZE}px;
+  min-height: ${TABLE_GRID_CELL_SIZE}px;
+  padding: 0;
+  border: 1px solid ${({ $theme }) => $theme.borderColor || "#d4d4d8"};
+  border-radius: 2px;
+  background-color: ${({ $active, $theme }) =>
+    $active ? $theme.toolbarButtonActive || "#dbeafe" : "transparent"};
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ $theme }) => $theme.toolbarButtonHover || "#eff6ff"};
+  }
+`;
+
+const TableGridLabel = styled.span<{ $theme: RichEditorThemeConfig }>`
+  font-size: 12px;
+  color: ${({ $theme }) =>
+    $theme.mutedTextColor || $theme.textColor || "#71717a"};
+  white-space: nowrap;
+`;
+
+const CellColorMenu = styled.div<{ $theme: RichEditorThemeConfig }>`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid ${({ $theme }) => $theme.borderColor || "#d4d4d8"};
+  border-radius: 6px;
+  background-color: ${({ $theme }) => $theme.backgroundColor || "#ffffff"};
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+`;
+
+const CellColorGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(10, 18px);
+  gap: 6px;
+`;
+
+const CellColorSwatch = styled.button<{
+  $color: string;
+  $theme: RichEditorThemeConfig;
+}>`
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0;
+  border: 1px solid ${({ $theme }) => $theme.borderColor || "#d4d4d8"};
+  border-radius: 50%;
+  background-color: ${({ $color }) => $color};
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.12);
+  }
+
+  &:focus-visible {
+    outline: 2px solid
+      ${({ $theme }) => $theme.toolbarButtonFocused || "#93c5fd"};
+    outline-offset: 1px;
+  }
+`;
+
+const CellColorCustom = styled.div<{ $theme: RichEditorThemeConfig }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: ${({ $theme }) =>
+    $theme.mutedTextColor || $theme.textColor || "#71717a"};
+
+  input[type="color"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px !important;
+    padding: 0;
+    border: 1px solid ${({ $theme }) => $theme.borderColor || "#d4d4d8"};
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+
+    &::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    &::-webkit-color-swatch {
+      border: 0;
+      border-radius: 50%;
+    }
+
+    &::-moz-color-swatch {
+      border: 0;
+      border-radius: 50%;
+    }
+  }
 `;
 
 const EditorArea = styled.div<{
@@ -2592,6 +3334,34 @@ const EditorArea = styled.div<{
     padding-bottom: 0.5rem;
   }
 
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    min-width: 2rem;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  th {
+    font-weight: 600;
+    background-color: #e2e2e2;
+  }
+
+  th:focus,
+  td:focus {
+    outline: 2px solid
+      ${({ $theme }) => $theme.toolbarButtonFocused || "#93c5fd"};
+    outline-offset: -2px;
+  }
+
   ${({ $editorStyle }) => $editorStyle};
 `;
 
@@ -2695,6 +3465,63 @@ function createCheckboxWrapper(
 // - Replacing non-breaking spaces (&nbsp;) with normal spaces
 // - Preserving spacing for list markers (*, [ ], numbers.)
 // - Collapsing multiple spaces into a single space elsewhere
+const addHtmlTableRule = (service: TurndownService) => {
+  service.addRule("htmlTable", {
+    filter: "table",
+    replacement: (_content, node) =>
+      `\n\n${(node as HTMLElement).outerHTML}\n\n`,
+  });
+};
+
+const setDefaultStyle = (
+  element: HTMLElement,
+  property: string,
+  value: string
+): boolean => {
+  if (element.style.getPropertyValue(property).trim() === "") {
+    element.style.setProperty(property, value);
+    return true;
+  }
+
+  return false;
+};
+
+// Tables carry their presentation inline so Webder renders the same table the
+// editor shows. Existing values are preserved so users can override them.
+const applyDefaultTableStyles = (root: HTMLElement): boolean => {
+  const tables = Array.from(root.querySelectorAll<HTMLTableElement>("table"));
+  if (root instanceof HTMLTableElement) tables.unshift(root);
+
+  let changed = false;
+
+  tables.forEach((table) => {
+    changed = setDefaultStyle(table, "width", "100%") || changed;
+    changed = setDefaultStyle(table, "border-collapse", "collapse") || changed;
+    changed = setDefaultStyle(table, "margin", "0.5rem 0") || changed;
+    changed = setDefaultStyle(table, "table-layout", "fixed") || changed;
+    changed = setDefaultStyle(table, "font-size", "1rem") || changed;
+
+    table.querySelectorAll<HTMLTableCellElement>("th, td").forEach((cell) => {
+      changed = setDefaultStyle(cell, "min-width", "2rem") || changed;
+      changed = setDefaultStyle(cell, "padding", "6px 8px") || changed;
+      changed = setDefaultStyle(cell, "border", "1px solid #d1d5db") || changed;
+      changed = setDefaultStyle(cell, "vertical-align", "top") || changed;
+      changed = setDefaultStyle(cell, "text-align", "left") || changed;
+
+      if (cell.tagName === "TH") {
+        changed = setDefaultStyle(cell, "font-size", "1rem") || changed;
+        changed = setDefaultStyle(cell, "font-weight", "600") || changed;
+        changed = setDefaultStyle(cell, "letter-spacing", "normal") || changed;
+        changed = setDefaultStyle(cell, "text-transform", "none") || changed;
+        changed =
+          setDefaultStyle(cell, "background-color", "#e2e2e2") || changed;
+      }
+    });
+  });
+
+  return changed;
+};
+
 const cleanSpacing = (text: string): string => {
   return text
     .replace(/\u200B/g, "")

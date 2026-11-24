@@ -77,6 +77,232 @@ describe("RichEditor", () => {
     });
   });
 
+  context("table insertion", () => {
+    it("inserts a table using the hovered grid size", () => {
+      cy.mount(
+        <ProductRichEditor mode={RichEditorMode.MarkdownEditor} value="" />
+      );
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-table").click();
+      cy.get('[aria-label^="Insert "]').should("have.length", 50);
+      cy.findByLabelText("Insert 1 by 1 table").then(($cell) => {
+        const cell = $cell[0].getBoundingClientRect();
+        expect(Math.round(cell.width)).to.equal(Math.round(cell.height));
+      });
+      cy.findByLabelText("Insert 2 by 3 table").realHover();
+      cy.findByLabelText("rich-editor-table-grid").should(
+        "contain.text",
+        "2 × 3"
+      );
+      cy.findByLabelText("Insert 2 by 3 table").click();
+
+      cy.get("table").should("exist");
+      cy.get("table thead th").should("have.length", 3);
+      cy.get("table tbody tr").should("have.length", 1);
+      cy.get("table tbody td").should("have.length", 3);
+    });
+
+    it("serializes table content as HTML and keeps cell styles", () => {
+      function TableMount() {
+        const [value, setValue] = useState("");
+
+        return (
+          <div>
+            <RichEditor
+              mode={RichEditorMode.MarkdownEditor}
+              value={value}
+              onChange={(next) => setValue(next)}
+            />
+            <pre data-testid="serialized-value">{value}</pre>
+          </div>
+        );
+      }
+
+      cy.mount(<TableMount />);
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-table").click();
+      cy.findByLabelText("Insert 2 by 2 table").click();
+      cy.get("th").first().invoke("css", "background-color", "rgb(255, 0, 0)");
+      cy.get("th").first().type("Name");
+
+      cy.findByTestId("serialized-value").should("contain.text", "<table");
+      cy.findByTestId("serialized-value").should("contain.text", "<th");
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "border-collapse: collapse"
+      );
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "table-layout: fixed"
+      );
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "border: 1px solid rgb(209, 213, 219)"
+      );
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "background-color: rgb(255, 0, 0)"
+      );
+      cy.findByTestId("serialized-value").should("contain.text", "Name");
+    });
+
+    it("adds inline presentation styles to existing tables", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value={"<table><tr><th>Name</th></tr></table>"}
+        />
+      );
+
+      cy.get("table")
+        .should("have.attr", "style")
+        .and("contain", "border-collapse: collapse")
+        .and("contain", "table-layout: fixed");
+      cy.get("th")
+        .should("have.attr", "style")
+        .and("contain", "background-color: rgb(226, 226, 226)")
+        .and("contain", "font-weight: 600");
+    });
+
+    it("applies background colors to header and body cells", () => {
+      function TableMount() {
+        const [value, setValue] = useState("");
+
+        return (
+          <div>
+            <RichEditor
+              mode={RichEditorMode.MarkdownEditor}
+              value={value}
+              onChange={(next) => setValue(next)}
+            />
+            <pre data-testid="serialized-value">{value}</pre>
+          </div>
+        );
+      }
+
+      cy.mount(<TableMount />);
+
+      cy.findByLabelText("rich-editor-toolbar-cell-color").should("not.exist");
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-table").click();
+      cy.findByLabelText("Insert 2 by 2 table").click();
+
+      cy.get("th").first().click();
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+      cy.get('[aria-label^="Set cell background color"]').should(
+        "have.length",
+        80
+      );
+      cy.findByLabelText("Set cell background color #d02020").click();
+      cy.get("th")
+        .first()
+        .should("have.css", "background-color", "rgb(208, 32, 32)");
+      cy.findByLabelText("rich-editor-cell-color-palette").should("exist");
+      cy.findByLabelText("Custom colors used in this table").should(
+        "not.exist"
+      );
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+
+      cy.get("td").first().click();
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+      cy.findByLabelText("Set cell background color #2f7de1").click();
+      cy.get("td")
+        .first()
+        .should("have.css", "background-color", "rgb(47, 125, 225)");
+
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "background-color: rgb(208, 32, 32)"
+      );
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "background-color: rgb(47, 125, 225)"
+      );
+    });
+
+    it("applies a custom color and keeps the picker mounted", () => {
+      function TableMount() {
+        const [value, setValue] = useState("");
+
+        return (
+          <div>
+            <RichEditor
+              height={600}
+              mode={RichEditorMode.MarkdownEditor}
+              value={value}
+              onChange={(next) => setValue(next)}
+            />
+            <pre data-testid="serialized-value">{value}</pre>
+          </div>
+        );
+      }
+
+      cy.mount(<TableMount />);
+
+      cy.findByRole("textbox").click();
+      cy.findByLabelText("rich-editor-toolbar-table").click();
+      cy.findByLabelText("Insert 2 by 2 table").click();
+      cy.get("td").first().click();
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+
+      const custom = cy.findByLabelText("Custom cell background color");
+      custom.should("be.visible").focus().should("be.visible");
+      custom.then(($input) => {
+        const style = getComputedStyle($input[0]);
+        expect(style.width).to.equal("18px");
+        expect(style.height).to.equal("18px");
+        expect(style.borderRadius).to.equal("50%");
+      });
+
+      custom.then(($input) => {
+        const input = $input[0] as HTMLInputElement;
+        const setValue = Object.getOwnPropertyDescriptor(
+          HTMLInputElement.prototype,
+          "value"
+        )?.set;
+
+        setValue?.call(input, "#123456");
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+
+      cy.get("td")
+        .first()
+        .should("have.css", "background-color", "rgb(18, 52, 86)");
+      cy.findByLabelText("rich-editor-cell-color-palette").should("exist");
+      cy.findByLabelText("Custom colors used in this table").within(() => {
+        cy.findByLabelText("Set cell background color #123456").should("exist");
+      });
+
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+      cy.findByLabelText("rich-editor-toolbar-cell-color").click();
+      cy.findByLabelText("Custom colors used in this table").within(() => {
+        cy.findByLabelText("Set cell background color #123456").should("exist");
+      });
+
+      cy.findByTestId("serialized-value").should(
+        "contain.text",
+        "background-color: rgb(18, 52, 86)"
+      );
+    });
+
+    it("renders an existing markdown table", () => {
+      cy.mount(
+        <ProductRichEditor
+          mode={RichEditorMode.MarkdownEditor}
+          value={"| Name | Score |\n| --- | --- |\n| Ada | 10 |"}
+        />
+      );
+
+      cy.get("table thead th").should("have.length", 2);
+      cy.get("table tbody td").should("have.length", 2);
+      cy.get("table tbody tr").should("contain.text", "Ada");
+    });
+  });
+
   context("undo after markdown autoformat", () => {
     function UndoMount() {
       const [value, setValue] = useState("");
@@ -206,6 +432,13 @@ describe("RichEditor", () => {
   });
 
   context("formatting rule", () => {
+    it("keeps GFM strikethrough disabled", () => {
+      cy.mount(<ProductRichEditor value="~~gone~~" />);
+
+      cy.get("del").should("not.exist");
+      cy.findByRole("textbox").should("contain.text", "gone");
+    });
+
     it("renders except checkboxes and code", () => {
       cy.mount(<ProductRichEditor />);
 
@@ -215,6 +448,7 @@ describe("RichEditor", () => {
       cy.findByLabelText("rich-editor-toolbar-ordered-list").should("exist");
       cy.findByLabelText("rich-editor-toolbar-unordered-list").should("exist");
       cy.findByLabelText("rich-editor-toolbar-heading-menu").should("exist");
+      cy.findByLabelText("rich-editor-toolbar-table").should("exist");
 
       cy.findByLabelText("rich-editor-toolbar-checkbox").should("not.exist");
       cy.findByLabelText("rich-editor-toolbar-code-block").should("not.exist");
@@ -229,6 +463,7 @@ describe("RichEditor", () => {
               allowCheckBoxes: false,
               allowItalic: false,
               allowOrderedList: false,
+              allowTable: false,
               allowUnderline: false,
               allowUnorderedList: false,
             }}
@@ -247,6 +482,7 @@ describe("RichEditor", () => {
         cy.findByLabelText("rich-editor-toolbar-heading-menu").should(
           "not.exist"
         );
+        cy.findByLabelText("rich-editor-toolbar-table").should("not.exist");
 
         cy.findByLabelText("rich-editor-toolbar-checkbox").should("not.exist");
         cy.findByLabelText("rich-editor-toolbar-code-block").should(
