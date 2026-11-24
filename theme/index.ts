@@ -29,12 +29,14 @@ export interface ActionCapsuleThemeConfig {
 // action-button.tsx
 export interface ActionButtonThemeConfig extends BodyThemeConfig {
   hoverBackgroundColor?: string;
+  hoverTextColor?: string;
   disabledBackgroundColor?: string;
   disabledOpacity?: number;
   borderRadius?: string;
 
   toggleBackgroundColor?: string;
   toggleTextColor?: string;
+  toggleHoverTextColor?: string;
   toggleHoverBackgroundColor?: string;
   toggleBorderColor?: string;
   toggleBorderRadius?: string;
@@ -647,8 +649,10 @@ export interface StatefulFormFieldTooltipThemeConfig {
 // table.tsx
 export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   boxShadow?: string;
+  actionButton: ActionButtonThemeConfig;
 
   headerActionBackgroundColor?: string;
+  headerActionTextColor?: string;
   headerActionBorderColor?: string;
   headerActionHoverBackgroundColor?: string;
 
@@ -656,13 +660,19 @@ export interface TableThemeConfig extends Omit<BodyThemeConfig, "borderColor"> {
   rightLooseEffectColor?: string;
 
   headerBackgroundColor?: string;
+  headerTextColor?: string;
   headerBorderColor?: string;
+  headerBorderSideColor?: string;
+  headerBorderBottomColor?: string;
 
   rowGroupBackgroundColor?: string;
   rowGroupSubtitleTextColor?: string;
 
   rowBackgroundColor?: string;
+  rowBackdropFilter?: string;
   rowBorderColor?: string;
+  rowBorderSideColor?: string;
+  rowBorderBottomColor?: string;
   rowHoverBackgroundColor?: string;
   rowSelectedBackgroundColor?: string;
   rowContentBackgroundColor?: string;

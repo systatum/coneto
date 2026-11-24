@@ -1629,6 +1629,7 @@ export function createTableTheme(
     {
       textColor: body.textColor || "#111827",
       backgroundColor: body?.backgroundColor,
+      actionButton: createActionButtonTheme(),
       boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
 
       headerActionBackgroundColor:
