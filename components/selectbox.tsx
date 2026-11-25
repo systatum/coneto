@@ -30,10 +30,7 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
-import {
-  castValue,
-  type SelectboxSelectedOptions,
-} from "../lib/converter";
+import { castValue, type SelectboxSelectedOptions } from "../lib/converter";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { FigureProps } from "./figure";
@@ -696,6 +693,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       actions,
       type,
       helper,
+      labelActions,
       disabled,
       name,
       errorIconPosition,
@@ -748,6 +746,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         label={label}
         type={type}
         helper={helper}
+        labelActions={labelActions}
         disabled={disabled}
         errorIconPosition={errorIconPosition}
         required={rest.required}

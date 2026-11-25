@@ -50,6 +50,8 @@ import {
   RiCoinsLine,
   RiInformationLine,
   RiTranslate2,
+  RiAddLine,
+  RiRefreshLine,
 } from "@remixicon/react";
 import { ComboboxOption } from "./combobox";
 
@@ -723,6 +725,25 @@ export const ConditionalElement: Story = {
           type: "combo",
           required: true,
           placeholder: "Select the target platform",
+          helper: "Choose where the compilation should run.",
+          actions: [
+            {
+              id: "add-target",
+              caption: "Add a new target",
+              icon: { image: RiAddLine },
+              onClick: () =>
+                setFormFields((prev) => ({
+                  ...prev,
+                  target: String(CompilationTarget.Interpreter),
+                })),
+            },
+            {
+              id: "refresh-targets",
+              caption: "Refresh",
+              icon: { image: RiRefreshLine },
+              onClick: () => setFormFields((prev) => ({ ...prev, target: "" })),
+            },
+          ],
           combobox: {
             options: COMPILATION_TARGET_OPTIONS,
           },

@@ -35,6 +35,7 @@ export interface FieldLaneProps {
   dropdowns?: FieldLaneDropdown[];
   styles?: FieldLaneStyles;
   helper?: ReactNode;
+  labelActions?: ReactNode;
   disabled?: boolean;
   children?: ReactNode;
   actions?: FieldLaneAction[];
@@ -94,6 +95,7 @@ function FieldLane({
   styles,
   dropdowns,
   helper,
+  labelActions,
   children,
   disabled,
   id,
@@ -458,6 +460,7 @@ function FieldLane({
               helperArrowStyle: styles?.helperArrowStyle,
             }}
             helper={helper}
+            actions={labelActions}
             label={label}
           >
             {labelIcon && !mobile && fieldLaneIcon}
