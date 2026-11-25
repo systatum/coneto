@@ -4,6 +4,7 @@ import React, {
   Fragment,
   LabelHTMLAttributes,
   ReactNode,
+  useContext,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -3181,6 +3182,8 @@ function StatefulFormLabel({
 }: StatefulFormLabelProps) {
   const { currentTheme } = useTheme();
   const statefulFormTheme = currentTheme?.statefulForm;
+  const contextActions = useContext(FieldActionsContext);
+  const labelActions = actions ?? contextActions;
 
   const helperValue =
     typeof helper === "string" ? (
@@ -3222,7 +3225,7 @@ function StatefulFormLabel({
         )}
       </LabelText>
 
-      {actions}
+      {labelActions}
 
       {helper && (
         <Helper
