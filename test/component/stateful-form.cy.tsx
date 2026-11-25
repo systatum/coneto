@@ -4017,5 +4017,28 @@ describe("StatefulForm", () => {
       cy.findByText("APA").click();
       cy.get("@fieldAction").should("have.been.calledOnce");
     });
+
+    it("renders field actions for combobox fields", () => {
+      cy.mount(
+        <StatefulForm
+          fields={[
+            {
+              name: "target",
+              title: "Target",
+              type: "combo",
+              helper: "Choose a target.",
+              actions: [{ caption: "Add a new target" }],
+              combobox: {
+                options: [{ text: "Local", value: "local" }],
+              },
+            },
+          ]}
+          formValues={{ target: "" }}
+          mode="onChange"
+        />
+      );
+
+      cy.findByLabelText("field-actions").should("exist");
+    });
   });
 });

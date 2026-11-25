@@ -159,7 +159,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       multiple,
       maxSelectableItems,
       helper,
-      labelActions,
       disabled,
       dropdowns,
       errorIconPosition,
@@ -262,7 +261,6 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         mobile={!!mobile}
         labelIcon={labelIcon}
         helper={helper}
-        labelActions={labelActions}
         errorIconPosition={errorIconPosition}
         dropdowns={dropdowns}
         showError={showError}

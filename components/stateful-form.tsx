@@ -50,6 +50,7 @@ import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Toggle, ToggleProps } from "./toggle";
 import { BaseAction } from "./../constants/action";
+import { FieldActionsContext } from "./../lib/field-actions-context";
 import { RiArrowDownSFill } from "@remixicon/react";
 
 export type StatefulOnChangeType =
@@ -3103,12 +3104,10 @@ function FormFields<T extends FieldValues>({
                     )}
                     {fieldNode}
                   </FieldWithActions>
-                ) : React.isValidElement(fieldNode) ? (
-                  React.cloneElement(fieldNode as React.ReactElement<any>, {
-                    labelActions: fieldActionsNode,
-                  })
                 ) : (
-                  fieldNode
+                  <FieldActionsContext.Provider value={fieldActionsNode}>
+                    {fieldNode}
+                  </FieldActionsContext.Provider>
                 )
               ) : (
                 fieldNode

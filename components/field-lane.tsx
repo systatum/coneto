@@ -1,5 +1,5 @@
 import { RiCheckLine, RiErrorWarningLine } from "@remixicon/react";
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactElement, ReactNode, useContext } from "react";
 import styled, { css, CSSProp } from "styled-components";
 import { Button } from "./button";
 import { StatefulForm, StatefulFormLabelStyles } from "./stateful-form";
@@ -8,6 +8,7 @@ import { Figure, FigureProps } from "./figure";
 import { useTheme } from "./../theme/provider";
 import { FieldLaneThemeConfig } from "./../theme";
 import { BaseAction } from "../constants/action";
+import { FieldActionsContext } from "./../lib/field-actions-context";
 import { applyClassName } from "./../constants/classname";
 
 export const FieldLaneErrorIconPosition = {
@@ -35,7 +36,6 @@ export interface FieldLaneProps {
   dropdowns?: FieldLaneDropdown[];
   styles?: FieldLaneStyles;
   helper?: ReactNode;
-  labelActions?: ReactNode;
   disabled?: boolean;
   children?: ReactNode;
   actions?: FieldLaneAction[];
@@ -95,7 +95,6 @@ function FieldLane({
   styles,
   dropdowns,
   helper,
-  labelActions,
   children,
   disabled,
   id,
@@ -113,6 +112,7 @@ function FieldLane({
   const { currentTheme } = useTheme();
   const fieldLaneTheme = currentTheme.fieldLane;
   const bodyTheme = currentTheme.body;
+  const labelActions = useContext(FieldActionsContext);
 
   const filteredActions = Array.isArray(actions)
     ? actions?.filter((action) => !action?.hidden)

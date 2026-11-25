@@ -105,7 +105,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       actions,
       type,
       helper,
-      labelActions,
       disabled,
       labelGap,
       labelWidth,
@@ -148,7 +147,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         actions={actions}
         type={type}
         helper={helper}
-        labelActions={labelActions}
         disabled={disabled}
         required={rest.required}
         styles={{

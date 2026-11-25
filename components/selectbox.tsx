@@ -693,7 +693,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       actions,
       type,
       helper,
-      labelActions,
       disabled,
       name,
       errorIconPosition,
@@ -746,7 +745,6 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
         label={label}
         type={type}
         helper={helper}
-        labelActions={labelActions}
         disabled={disabled}
         errorIconPosition={errorIconPosition}
         required={rest.required}
