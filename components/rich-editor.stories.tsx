@@ -90,6 +90,7 @@ By default, all formatting options are enabled except checkboxes.
     allowUnorderedList: true,
     allowCheckBoxes: false,
     allowHeading: true,
+    allowTable: true,
   }}
 />
 \`\`\`
@@ -105,6 +106,7 @@ By default, all formatting options are enabled except checkboxes.
 | \`allowUnorderedList\` | \`true\` | Enables unordered lists (\`- Item\` or \`* Item\`). |
 | \`allowCheckBoxes\` | \`false\` | Enables Markdown task lists (\`[ ]\` and \`[x]\`). |
 | \`allowHeading\` | \`true\` | Enables Markdown headings (\`#\` through \`######\`). |
+| \`allowTable\` | \`true\` | Enables the grid table picker and HTML table editing with cell styles. |
 
 When a formatting option is disabled:
 
@@ -119,7 +121,9 @@ When a formatting option is disabled:
 
 #### 📝 \`text-editor\` (default)
 - Fully editable rich text
-- Supports headings, lists, checklists, bold, italic
+- Supports headings, lists, checklists, bold, italic, and tables
+- Grid table picker with Tab/Shift+Tab cell navigation
+- Cell background color palette with custom color support
 - Auto-formatting:
   - \`1.\` → ordered list
   - \`-\` / \`*\` → unordered list
