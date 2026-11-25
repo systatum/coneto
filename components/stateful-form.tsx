@@ -49,6 +49,9 @@ import { Textbox, TextboxProps } from "./textbox";
 import { ThumbField, ThumbFieldProps } from "./thumb-field";
 import { Timebox, TimeboxProps } from "./timebox";
 import { Toggle, ToggleProps } from "./toggle";
+import { BaseAction } from "./../constants/action";
+import { FieldActionsContext } from "./../lib/field-actions-context";
+import { RiArrowDownSFill } from "@remixicon/react";
 
 export type StatefulOnChangeType =
   | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -182,6 +185,7 @@ export interface FormFieldProps {
   disabled?: boolean;
   rowJustifyPosition?: FormFieldRowJustifyPosition;
   rowItemsAlignment?: FormFieldRowItemsAligment;
+  actions?: BaseAction[];
   onChange?: (e?: StatefulOnChangeType) => void;
   onClick?: (e?: React.MouseEvent) => void;
   textbox?: TextboxProps;
@@ -3070,9 +3074,48 @@ function FormFields<T extends FieldValues>({
                 }
               })();
 
+              const fieldActionsNode =
+                field.actions && field.actions.length > 0 ? (
+                  <FieldActionsMenu actions={field.actions} />
+                ) : null;
+
+              const fieldWithActions = fieldActionsNode ? (
+                field.type === "custom" ? (
+                  <FieldWithActions
+                    $style={css`
+                      flex-direction: column;
+                      gap: 4px;
+                      ${field.width &&
+                      css`
+                        width: ${field.width};
+                      `}
+                    `}
+                  >
+                    {(field.title || fieldActionsNode) && (
+                      <CustomFieldHeader>
+                        {field.title && (
+                          <span>
+                            {field.title}
+                            {required && <Asterisk>*</Asterisk>}
+                          </span>
+                        )}
+                        {fieldActionsNode}
+                      </CustomFieldHeader>
+                    )}
+                    {fieldNode}
+                  </FieldWithActions>
+                ) : (
+                  <FieldActionsContext.Provider value={fieldActionsNode}>
+                    {fieldNode}
+                  </FieldActionsContext.Provider>
+                )
+              ) : (
+                fieldNode
+              );
+
               return (
                 <Fragment key={index}>
-                  {fieldNode}
+                  {fieldWithActions}
                   <Divider
                     aria-label="stateful-form-field-group-divider"
                     $style={css`
@@ -3107,6 +3150,7 @@ export interface StatefulFormLabelProps
   extends Omit<LabelHTMLAttributes<HTMLLabelElement>, "label" | "style"> {
   label?: string;
   helper?: ReactNode;
+  actions?: ReactNode;
   styles: StatefulFormLabelStyles;
   labelPosition?: FieldLaneProps["labelPosition"];
   labelWidth?: FieldLaneProps["labelWidth"];
@@ -3124,6 +3168,7 @@ export interface StatefulFormLabelStyles {
 function StatefulFormLabel({
   label,
   helper,
+  actions,
   styles,
   required,
   labelPosition,
@@ -3176,6 +3221,8 @@ function StatefulFormLabel({
           <Asterisk aria-label="stateful-form-label-asterisk">*</Asterisk>
         )}
       </LabelText>
+
+      {actions}
 
       {helper && (
         <Helper
@@ -3276,6 +3323,37 @@ const ContainerFormField = styled.div<{ $style: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
+function FieldActionsMenu({ actions }: { actions: BaseAction[] }) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="xs"
+      aria-label="field-actions"
+      icon={{ image: RiArrowDownSFill, size: 14 }}
+      showSubMenuOn="self"
+      subMenu={({ list }) => list?.(actions) ?? null}
+      styles={{
+        containerStyle: css`
+          width: fit-content;
+        `,
+        self: css`
+          width: fit-content;
+          height: 18px;
+          min-width: 18px;
+          min-height: 18px;
+          padding: 0;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          color: #6b7280;
+          cursor: pointer;
+        `,
+      }}
+    />
+  );
+}
+
 const RowFormField = styled.div<{ $style: CSSProp }>`
   display: flex;
   flex-direction: row;
@@ -3284,6 +3362,23 @@ const RowFormField = styled.div<{ $style: CSSProp }>`
   justify-content: start;
 
   ${({ $style }) => $style}
+`;
+
+const FieldWithActions = styled.div<{ $style?: CSSProp }>`
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+
+  ${({ $style }) => $style}
+`;
+
+const CustomFieldHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
 `;
 
 export interface FieldTooltipItem {

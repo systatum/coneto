@@ -3977,4 +3977,68 @@ describe("StatefulForm", () => {
       });
     });
   });
+
+  context("field actions", () => {
+    it("opens the configured actions from the field caret", () => {
+      const onClick = cy.stub().as("fieldAction");
+
+      cy.mount(
+        <StatefulForm
+          fields={[
+            {
+              name: "citation",
+              title: "Citation",
+              type: "text",
+              helper: "Choose how the citation should be formatted.",
+              actions: [
+                { caption: "APA", onClick },
+                { caption: "MLA", onClick },
+              ],
+            },
+          ]}
+          formValues={{ citation: "" }}
+          mode="onChange"
+        />
+      );
+
+      cy.findByLabelText("stateful-form-label-wrapper").then(($label) => {
+        const children = Array.from($label[0].children);
+        const actionIndex = children.findIndex((child) =>
+          child.querySelector('[aria-label="field-actions"]')
+        );
+        const helperIndex = children.findIndex((child) =>
+          child.classList.contains("coneto-helper")
+        );
+
+        expect(actionIndex).to.be.lessThan(helperIndex);
+      });
+
+      cy.findByLabelText("field-actions").click();
+      cy.findByText("APA").click();
+      cy.get("@fieldAction").should("have.been.calledOnce");
+    });
+
+    it("renders field actions for combobox fields", () => {
+      cy.mount(
+        <StatefulForm
+          fields={[
+            {
+              name: "target",
+              title: "Target",
+              type: "combo",
+              helper: "Choose a target.",
+              actions: [{ caption: "Add a new target" }],
+              combobox: {
+                options: [{ text: "Local", value: "local" }],
+              },
+            },
+          ]}
+          formValues={{ target: "" }}
+          mode="onChange"
+        />
+      );
+
+      cy.findByLabelText("field-actions").should("exist");
+    });
+  });
 });

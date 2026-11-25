@@ -30,10 +30,7 @@ import {
   RiCloseLine,
 } from "@remixicon/react";
 import styled, { css, CSSProp } from "styled-components";
-import {
-  castValue,
-  type SelectboxSelectedOptions,
-} from "../lib/converter";
+import { castValue, type SelectboxSelectedOptions } from "../lib/converter";
 import { isValidDateString } from "../lib/date";
 import { FieldLane, FieldLaneProps, FieldLaneStyles } from "./field-lane";
 import { FigureProps } from "./figure";
