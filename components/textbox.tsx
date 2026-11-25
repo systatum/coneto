@@ -79,20 +79,27 @@ const BaseTextbox = forwardRef<HTMLInputElement, BaseTextboxProps>(
                 z-index: 10;
               `,
               self: css`
-                padding: 2px;
-                border-radius: 2px;
-                cursor: pointer;
-                background: transparent;
-                z-index: 10;
-                height: 25px;
-                color: ${showError
-                  ? textboxTheme?.errorTextColor || "#f87171"
-                  : textboxTheme?.placeholderColor || "#6b7280"};
-
-                &:hover {
+                && {
+                  width: 28px;
+                  height: 28px;
+                  min-width: 28px;
+                  min-height: 28px;
+                  padding: 2px;
+                  border-radius: 2px;
+                  cursor: pointer;
+                  background: transparent;
+                  z-index: 10;
+                  box-sizing: border-box;
+                  flex-shrink: 0;
                   color: ${showError
-                    ? textboxTheme?.errorBorderColor || "#ef4444"
-                    : textboxTheme?.textColor || "#374151"};
+                    ? textboxTheme?.errorTextColor || "#f87171"
+                    : textboxTheme?.placeholderColor || "#6b7280"};
+
+                  &:hover {
+                    color: ${showError
+                      ? textboxTheme?.errorBorderColor || "#ef4444"
+                      : textboxTheme?.textColor || "#374151"};
+                  }
                 }
               `,
             }}
