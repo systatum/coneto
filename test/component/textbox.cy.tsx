@@ -92,6 +92,29 @@ describe("Textbox", () => {
         });
       });
 
+      it("keeps the password toggle compact against broad field-lane button styles", () => {
+        cy.mount(
+          <>
+            <style>{`
+              [aria-label="field-lane-control"] button {
+                min-height: 40px;
+                padding-left: 18px;
+                padding-right: 18px;
+                font-weight: 600;
+              }
+            `}</style>
+            <Textbox value="" type="password" />
+          </>
+        );
+
+        cy.findByLabelText("toggle-password")
+          .should("have.css", "width", "28px")
+          .should("have.css", "height", "28px")
+          .should("have.css", "min-height", "28px")
+          .should("have.css", "padding-left", "2px")
+          .should("have.css", "padding-right", "2px");
+      });
+
       context("when having error", () => {
         it("should render the actions, error, and password button", () => {
           cy.mount(
