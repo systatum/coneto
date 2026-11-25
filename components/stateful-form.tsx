@@ -3090,7 +3090,17 @@ function FormFields<T extends FieldValues>({
                       `}
                     `}
                   >
-                    <FieldActionBar>{fieldActionsNode}</FieldActionBar>
+                    {(field.title || fieldActionsNode) && (
+                      <CustomFieldHeader>
+                        {field.title && (
+                          <span>
+                            {field.title}
+                            {required && <Asterisk>*</Asterisk>}
+                          </span>
+                        )}
+                        {fieldActionsNode}
+                      </CustomFieldHeader>
+                    )}
                     {fieldNode}
                   </FieldWithActions>
                 ) : React.isValidElement(fieldNode) ? (
@@ -3329,15 +3339,16 @@ function FieldActionsMenu({ actions }: { actions: BaseAction[] }) {
           width: fit-content;
         `,
         self: css`
-          width: 24px;
-          height: 24px;
-          min-width: 24px;
-          min-height: 24px;
+          width: fit-content;
+          height: 18px;
+          min-width: 18px;
+          min-height: 18px;
           padding: 0;
-          border: 1px solid #d1d5db;
-          border-radius: 4px;
-          background: #ffffff;
-          color: #374151;
+          border: 0;
+          border-radius: 0;
+          background: transparent;
+          color: #6b7280;
+          cursor: pointer;
         `,
       }}
     />
@@ -3363,9 +3374,12 @@ const FieldWithActions = styled.div<{ $style?: CSSProp }>`
   ${({ $style }) => $style}
 `;
 
-const FieldActionBar = styled.div`
+const CustomFieldHeader = styled.div`
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
 `;
 
 export interface FieldTooltipItem {
