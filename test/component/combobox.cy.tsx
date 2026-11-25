@@ -143,6 +143,16 @@ describe("Combobox", () => {
     );
   }
 
+  it("calls onSearch when the user types", () => {
+    const onSearch = cy.stub().as("onSearch");
+
+    cy.mount(<ProductCombobox onSearch={onSearch} />);
+    cy.findByRole("textbox").type("Ap");
+
+    cy.get("@onSearch").should("have.been.called");
+    cy.get("@onSearch").should("have.been.calledWith", "A");
+  });
+
   context("when content is less than or equal 5", () => {
     it("should render drawer with fit content", () => {
       cy.viewport(500, 700);

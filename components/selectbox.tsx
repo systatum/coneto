@@ -49,6 +49,7 @@ interface BaseSelectboxProps
   navigableOptions?: SelectboxOption[];
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
+  onSearch?: (value: string) => void;
   placeholder?: string;
   iconOpened?: FigureProps["image"];
   iconClosed?: FigureProps["image"];
@@ -122,6 +123,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
   (
     {
       onChange,
+      onSearch,
       selectedOptions,
       options = [],
       placeholder,
@@ -288,6 +290,7 @@ const BaseSelectbox = forwardRef<HTMLInputElement, BaseSelectboxProps>(
         }
         handleOnChange([value]);
       }
+      onSearch?.(value);
       setSelectedOptionsLocal({ ...selectedOptionsLocal, text: value });
       setIsOpen(value.length > 0);
 
@@ -693,6 +696,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
       actions,
       type,
       helper,
+      onSearch,
       disabled,
       name,
       errorIconPosition,
@@ -762,6 +766,7 @@ const Selectbox = forwardRef<HTMLInputElement, SelectboxProps>(
           {...rest}
           id={inputId}
           actions={actions}
+          onSearch={onSearch}
           showError={showError}
           mobile={mobile}
           disabled={disabled}
