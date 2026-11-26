@@ -1269,6 +1269,7 @@ const DrawerWrapper = styled.ul<{
   position: relative;
   z-index: ${drawerZIndex};
   overflow-y: auto;
+  overscroll-behavior: none;
   border-radius: 4px;
   border: 1px solid
     ${({ $theme, $mobile }) =>
