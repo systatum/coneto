@@ -2728,33 +2728,37 @@ const RichEditor = forwardRef<RichEditorRef, RichEditorProps>(
                   />
                 )}
 
-                <MenuAnchor>
-                  <RichEditorToolbarButton
-                    ariaLabel="rich-editor-toolbar-heading-menu"
-                    icon={{ image: RiHeading }}
-                    isOpen={isOpen}
-                    onClick={() => {
-                      const sel = window.getSelection();
-                      if (sel && sel.rangeCount > 0) {
-                        savedSelection.current = sel.getRangeAt(0).cloneRange();
-                      }
-                      setIsTableMenuOpen(false);
-                      setIsOpen(!isOpen);
-                    }}
-                  />
+                {allowHeading && (
+                  <MenuAnchor>
+                    <RichEditorToolbarButton
+                      ariaLabel="rich-editor-toolbar-heading-menu"
+                      icon={{ image: RiHeading }}
+                      isOpen={isOpen}
+                      onClick={() => {
+                        const sel = window.getSelection();
+                        if (sel && sel.rangeCount > 0) {
+                          savedSelection.current = sel
+                            .getRangeAt(0)
+                            .cloneRange();
+                        }
+                        setIsTableMenuOpen(false);
+                        setIsOpen(!isOpen);
+                      }}
+                    />
 
-                  {isOpen && (
-                    <MenuWrapper
-                      ref={menuRef}
-                      $toolbarPosition={toolbarPosition}
-                    >
-                      <TipMenu
-                        setIsOpen={() => setIsOpen(false)}
-                        subMenuList={TIP_MENU_RICH_EDITOR}
-                      />
-                    </MenuWrapper>
-                  )}
-                </MenuAnchor>
+                    {isOpen && (
+                      <MenuWrapper
+                        ref={menuRef}
+                        $toolbarPosition={toolbarPosition}
+                      >
+                        <TipMenu
+                          setIsOpen={() => setIsOpen(false)}
+                          subMenuList={TIP_MENU_RICH_EDITOR}
+                        />
+                      </MenuWrapper>
+                    )}
+                  </MenuAnchor>
+                )}
               </>
             )
           }
