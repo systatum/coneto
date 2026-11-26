@@ -1276,7 +1276,21 @@ const DrawerWrapper = styled.ul<{
       $mobile ? $theme?.fadeColor : $theme?.borderColor};
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
-  width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
+  width: ${({ $width }) =>
+    $width ? `min(${$width * 1.5}px, calc(100vw - 20px))` : "100%"};
+
+  & [aria-label="tree-list-caption"] {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  & [aria-label="tree-list-caption"] > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   scrollbar-width: thin;
   scrollbar-color: ${({ $theme }) => $theme?.scrollThumbColor || "#52525b"}
