@@ -1277,7 +1277,9 @@ const DrawerWrapper = styled.ul<{
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
   width: ${({ $width }) =>
-    $width ? `min(${$width * 1.5}px, calc(100vw - 20px))` : "100%"};
+    $width
+      ? `min(${$width <= 350 ? $width * 1.5 : $width}px, calc(100vw - 20px))`
+      : "100%"};
 
   & [aria-label="tree-list-caption"] {
     min-width: 0;
