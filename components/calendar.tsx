@@ -627,6 +627,7 @@ function BaseCalendar({
                 options={monthNames}
                 selectedOptions={calendarState.month}
                 placeholder={monthNames[0].text}
+                drawerWidth={120}
                 styles={{
                   containerStyle: css`
                     min-width: 90px;
