@@ -184,6 +184,7 @@ export interface SeparatorAction extends BaseAction {
   className?: string;
   subMenu?: (props: SeparatorActionSubMenu) => ReactNode;
   dialogPlacement?: DialogPlacement;
+  showDelayPeriod?: number;
 }
 
 export type SeparatorActionSubMenu = ButtonSubMenu;
@@ -207,6 +208,7 @@ function SeparatorAction({
   subMenu,
   className,
   dialogPlacement,
+  showDelayPeriod = 0,
   id,
   safeAreaAriaLabels: _safeAreaAriaLabels = [],
 }: SeparatorAction) {
@@ -253,6 +255,7 @@ function SeparatorAction({
       open={isCaptionOpen}
       safeAreaAriaLabels={safeAreaArialabels}
       dialogPlacement={dialogPlacement}
+      showDelayPeriod={showDelayPeriod}
       styles={{
         arrowStyle: styles?.arrowStyle,
         containerStyle: css`
