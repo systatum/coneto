@@ -41,6 +41,7 @@ import {
 interface BaseComboboxProps {
   selectedOptions?: SelectboxSelectedOptions;
   onChange?: (selectedOptions: SelectboxSelectedOptions) => void;
+  onSearch?: (value: string) => void;
   clearable?: boolean;
   placeholder?: string;
   emptySlate?: string;
@@ -142,6 +143,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
     {
       options,
       onChange,
+      onSearch,
       clearable = false,
       placeholder,
       styles,
@@ -258,6 +260,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
         ref={ref}
         className={applyClassName("combobox", className)}
         isLoading={isLoading}
+        onSearch={onSearch}
         mobile={!!mobile}
         labelIcon={labelIcon}
         helper={helper}
@@ -380,6 +383,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               disabled={disabled}
               selectedOptions={selectedOptions}
               onChange={onChange}
+              onSearch={onSearch}
               highlightOnMatch={highlightOnMatch}
               emptySlate={emptySlate}
               actions={actions}
@@ -414,6 +418,7 @@ function ComboboxDrawer({
   refs,
   setHighlightedIndex,
   onChange,
+  onSearch,
   setSelectedOptionsLocal,
   selectedOptionsLocal,
   selectedOptions,
@@ -933,6 +938,7 @@ function ComboboxDrawer({
             const { value } = e.target;
             setHasInteracted(true);
             setHighlightedIndex(0);
+            onSearch?.(value);
             setSelectedOptionsLocal({
               ...selectedOptionsLocal,
               text: value,
@@ -1263,13 +1269,28 @@ const DrawerWrapper = styled.ul<{
   position: relative;
   z-index: ${drawerZIndex};
   overflow-y: auto;
+  overscroll-behavior: none;
   border-radius: 4px;
   border: 1px solid
     ${({ $theme, $mobile }) =>
       $mobile ? $theme?.fadeColor : $theme?.borderColor};
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
-  width: ${({ $width }) => ($width ? `${$width}px` : "100%")};
+  width: ${({ $width }) =>
+    $width ? `min(${$width * 1.5}px, calc(100vw - 20px))` : "100%"};
+
+  & [aria-label="tree-list-caption"] {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  & [aria-label="tree-list-caption"] > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   scrollbar-width: thin;
   scrollbar-color: ${({ $theme }) => $theme?.scrollThumbColor || "#52525b"}
