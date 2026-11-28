@@ -1210,10 +1210,10 @@ describe("Table", () => {
     });
 
     context("actions", () => {
-      it("renders with height and width 34px", () => {
+      it("renders with height and width 32px", () => {
         cy.findByLabelText("table-column-action")
-          .should("have.css", "height", "34px")
-          .and("have.css", "width", "34px");
+          .should("have.css", "height", "32px")
+          .and("have.css", "width", "32px");
       });
 
       const ICON_DEFAULT =
