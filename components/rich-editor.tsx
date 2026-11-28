@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -2869,6 +2870,28 @@ function BaseRichEditor({
   className,
   id,
 }: BaseRichEditorProps) {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(37);
+
+  useLayoutEffect(() => {
+    const toolbar = toolbarRef.current;
+
+    if (!toolbar) {
+      return;
+    }
+
+    const updateToolbarHeight = () => {
+      setToolbarHeight(toolbar.getBoundingClientRect().height);
+    };
+
+    updateToolbarHeight();
+
+    const observer = new ResizeObserver(updateToolbarHeight);
+    observer.observe(toolbar);
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <Wrapper
       id={id}
@@ -2877,9 +2900,15 @@ function BaseRichEditor({
       aria-label="rich-editor-wrapper"
       $containerStyle={styles?.containerStyle}
       $mode={mode}
+      style={
+        {
+          "--rich-editor-toolbar-height": `${toolbarHeight}px`,
+        } as React.CSSProperties
+      }
     >
       {(leftSidePanel || rightSidePanel) && (
         <ToolbarWrapper
+          ref={toolbarRef}
           aria-label="toolbar-content"
           $toolbarPosition={toolbarPosition}
           $mode={mode}
@@ -3265,10 +3294,10 @@ const EditorArea = styled.div<{
       : $mode !== "view-only"
         ? $toolbarPosition === "top"
           ? css`
-              margin-top: 37px;
+              margin-top: var(--rich-editor-toolbar-height, 37px);
             `
           : css`
-              margin-bottom: 37px;
+              margin-bottom: var(--rich-editor-toolbar-height, 37px);
             `
         : ""};
 

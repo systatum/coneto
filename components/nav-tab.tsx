@@ -667,6 +667,7 @@ function NavTab({
                       ...action?.styles,
                       self: css`
                         height: ${size === "sm" && "27px"};
+                        min-height: ${size === "sm" && "27px"};
                         border-bottom-width: 2px;
 
                         ${action.active &&
