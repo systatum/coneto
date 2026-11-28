@@ -181,6 +181,15 @@ function CalendarDrawer(props: CalendarDrawerProps) {
   const calendarTheme = currentTheme?.calendar;
 
   const { self, containerStyle } = styles ?? {};
+  const reference = (
+    props.refs as unknown as
+      | { reference?: { current?: HTMLElement | null } }
+      | undefined
+  )?.reference;
+  const referenceWidth = reference?.current?.getBoundingClientRect().width;
+  const calendarWidth = referenceWidth
+    ? Math.max(300, referenceWidth * 1.5)
+    : undefined;
 
   const calendarStyle: CalendarStyles = {
     ...props.styles,
@@ -214,6 +223,7 @@ function CalendarDrawer(props: CalendarDrawerProps) {
       $mobile={mobile}
       $showError={props?.showError}
       $theme={calendarTheme}
+      $width={calendarWidth}
       tabIndex={-1}
       role="listbox"
       aria-label="calendar"
@@ -246,6 +256,7 @@ const CalendarWrapper = styled.ul<{
   $theme?: CalendarThemeConfig;
   $mobile?: boolean;
   $showError?: boolean;
+  $width?: number;
 }>`
   list-style: none;
   margin: 0;
@@ -259,9 +270,12 @@ const CalendarWrapper = styled.ul<{
   border: 1px solid #d1d5db;
   border-radius: 0.125rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 300px;
-  min-width: 300px;
+  width: ${({ $width }) =>
+    $width ? `min(${$width}px, calc(100vw - 20px))` : "100%"};
+  max-width: ${({ $width }) =>
+    $width ? `min(${$width}px, calc(100vw - 20px))` : "300px"};
+  min-width: ${({ $width }) =>
+    $width ? `min(${$width}px, calc(100vw - 20px))` : "300px"};
   list-style: none;
   outline: none;
   z-index: 9992999;

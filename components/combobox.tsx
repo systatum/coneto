@@ -60,6 +60,7 @@ interface BaseComboboxProps {
   labels?: ComboboxLabelsProps;
   mobile?: boolean;
   drawerHeight?: string;
+  drawerWidth?: number | string;
 }
 
 export const ComboboxGroupInitialState = {
@@ -174,6 +175,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
       className,
       mobile,
       drawerHeight,
+      drawerWidth,
       labelIcon,
     },
     ref
@@ -390,6 +392,7 @@ const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(
               onClick={onClick}
               options={filteredForDrawer}
               drawerHeight={drawerHeight}
+              drawerWidth={drawerWidth}
               maxSelectableItems={maxSelectableItems}
               searchbox={multiple}
               checkbox={multiple}
@@ -441,6 +444,7 @@ function ComboboxDrawer({
   navigableOptions,
   mobile,
   drawerHeight,
+  drawerWidth,
   searchbox,
   children,
   checkbox,
@@ -923,6 +927,7 @@ function ComboboxDrawer({
       style={mobile ? {} : { ...floatingStyles, zIndex: layerZIndex }}
       $theme={comboboxTheme}
       $drawerHeight={drawerHeight}
+      $drawerWidth={drawerWidth}
       id="combo-list"
       aria-label="combobox-drawer"
       role="listbox"
@@ -1256,6 +1261,7 @@ const DrawerWrapper = styled.ul<{
   $hasNestedOptions?: boolean;
   $hasFewOptions?: boolean;
   $drawerHeight?: string;
+  $drawerWidth?: number | string;
 }>`
   *,
   ::before,
@@ -1276,10 +1282,15 @@ const DrawerWrapper = styled.ul<{
       $mobile ? $theme?.fadeColor : $theme?.borderColor};
   background-color: ${({ $theme }) => $theme?.backgroundColor};
   box-shadow: ${({ $theme }) => $theme?.boxShadow};
-  width: ${({ $width }) =>
-    $width
-      ? `min(${$width <= 350 ? $width * 1.5 : $width}px, calc(100vw - 20px))`
-      : "100%"};
+  width: ${({ $width, $drawerWidth }) => {
+    if (typeof $drawerWidth === "number") {
+      return `min(${$drawerWidth}px, calc(100vw - 20px))`;
+    }
+    if (typeof $drawerWidth === "string") {
+      return $drawerWidth;
+    }
+    return $width ? `min(${$width}px, calc(100vw - 20px))` : "100%";
+  }};
 
   & [aria-label="tree-list-caption"] {
     min-width: 0;
